@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;600;700&display=swap");
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/themes/souqify/**/*.blade.php';
+@source '../js/souqify.js';
+
+@theme {
+    --font-sans: 'Outfit', system-ui, sans-serif;
+    --font-manrope: 'Manrope', sans-serif;
+
+    --color-brand-blue: #1d4ed8;
+    --color-brand-amber: #f59e0b;
+    --color-brand-orange: #ea580c;
+}
+
+/* ── Souqify utilities ─────────────────────────────────────────────────────── */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.marquee-track {
+    animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.product-img-bg {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+.hero-overlay {
+    background: linear-gradient(90deg, rgba(8, 47, 73, 0.85) 0%, rgba(8, 47, 73, 0.4) 60%, rgba(8, 47, 73, 0) 100%);
+}

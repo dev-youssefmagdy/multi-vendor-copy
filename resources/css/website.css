@@ -1,0 +1,221 @@
+/* Ecommet — custom styles (Tailwind companion) */
+:root {
+    --primary: #FF4B2B;
+    --primary-dark: #e83a1a;
+    --primary-rgb: 255, 75, 43
+}
+
+/* ── Scroll-reveal ─────────────────────────────── */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease
+}
+
+[data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0)
+}
+
+/* ── Buttons ───────────────────────────────────── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FF4B2B, #FF622E);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: opacity .2s, transform .1s;
+    white-space: nowrap
+}
+
+.btn-primary:hover {
+    opacity: .88
+}
+
+.btn-primary:active {
+    transform: scale(.97)
+}
+
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #FF4B2B;
+    color: #FF4B2B;
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: background .2s, color .2s;
+    white-space: nowrap
+}
+
+.btn-outline:hover {
+    background: #FF4B2B;
+    color: #fff
+}
+
+/* ── Nav dropdown ──────────────────────────────── */
+.nav-dropdown-wrap {
+    position: relative
+}
+
+.nav-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border-radius: .875rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .12);
+    min-width: 180px;
+    z-index: 100;
+    padding: .5rem 0
+}
+
+.nav-dropdown-wrap:hover .nav-dropdown {
+    display: block
+}
+
+.nav-dropdown a {
+    display: block;
+    padding: .55rem 1.25rem;
+    color: #374151;
+    font-size: .875rem;
+    transition: background .15s
+}
+
+.nav-dropdown a:hover {
+    background: #fff5f3;
+    color: #FF4B2B
+}
+
+/* ── Template cards ────────────────────────────── */
+.tmpl-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: .875rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .08)
+}
+
+.tmpl-card img {
+    width: 100%;
+    display: block;
+    transition: transform .4s ease
+}
+
+.tmpl-card:hover img {
+    transform: scale(1.05)
+}
+
+.tmpl-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .3s
+}
+
+.tmpl-card:hover .tmpl-overlay {
+    opacity: 1
+}
+
+/* ── Features grid (desktop) ───────────────────── */
+@media(min-width:1024px) {
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr 260px 1fr;
+        grid-template-rows: auto auto;
+        gap: 1.5rem;
+        align-items: center
+    }
+
+    .feature-img-col {
+        grid-column: 2;
+        grid-row: 1/3
+    }
+}
+
+/* ── Testimonial slider ────────────────────────── */
+.testimonial-viewport {
+    overflow: hidden;
+    position: relative
+}
+
+#testimonialTrack {
+    display: flex;
+    transition: transform .5s ease;
+    will-change: transform
+}
+
+#testimonialTrack>* {
+    flex: 0 0 100%;
+    min-width: 100%
+}
+
+/* ── Category card hover ───────────────────────── */
+.cat-card {
+    transition: box-shadow .2s, transform .2s
+}
+
+.cat-card:hover {
+    box-shadow: 0 8px 30px rgba(255, 75, 43, .18);
+    transform: translateY(-4px)
+}
+
+/* ── Pricing card active ───────────────────────── */
+.pricing-active {
+    border-color: #FF4B2B !important;
+    transform: scale(1.03);
+    z-index: 1
+}
+
+/* ── FAQ ───────────────────────────────────────── */
+.faq-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .35s ease, padding .2s
+}
+
+.faq-body.open {
+    max-height: 400px;
+    padding-top: .75rem;
+    padding-bottom: .75rem
+}
+
+/* ── Tab active class (used by JS) ────────────── */
+.tab-active {
+    background: #FF4B2B !important;
+    color: #fff !important;
+    border-color: #FF4B2B !important
+}
+
+.tab-inactive {
+    background: #fff;
+    color: #6b7280;
+    border-color: #e5e7eb
+}
+
+/* ── Blog card ─────────────────────────────────── */
+.blog-card img {
+    transition: transform .4s
+}
+
+.blog-card:hover img {
+    transform: scale(1.04)
+}
+
+/* ── Section title underline ───────────────────── */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 3px;
+    background: #FF4B2B;
+    border-radius: 9px;
+    margin: .6rem auto 0
+}

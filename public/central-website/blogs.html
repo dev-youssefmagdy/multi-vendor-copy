@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Blog</title>
+    <meta name="description"
+        content="Read the latest e-commerce tips, guides, and platform updates from the Ecommet team.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="./templates.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Pricing</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button
+                            class="text-sm font-medium text-gray-600 hover:text-primary transition-colors flex items-center gap-1">More
+                            <i class="fas fa-chevron-down text-xs"></i></button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./faqs.html">FAQs</a>
+                            <a href="./blogs.html" class="!text-primary">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 p-2" aria-label="Menu"><i
+                            class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Home</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Pricing</a>
+                    <a href="./about.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">About</a>
+                    <a href="./blogs.html" class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">Blog</a>
+                    <a href="./faqs.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">FAQs</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="pt-28 pb-14 bg-gradient-to-br from-orange-50 to-white text-center">
+        <div class="max-w-2xl mx-auto px-4" data-reveal>
+            <span class="text-primary text-sm font-semibold tracking-wide uppercase">Our Blog</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mt-3 mb-4">Insights &amp; Guides</h1>
+            <p class="text-gray-500 text-lg">Tips, strategies, and updates to help you build a better online store.</p>
+        </div>
+    </section>
+
+    <!-- BLOG GRID -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Featured post -->
+            <div class="mb-12" data-reveal>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-md">
+                    <div class="bg-gray-100 h-72 lg:h-auto flex items-center justify-center">
+                        <img src="./assets/image/placeholder.png" alt="Featured Post"
+                            class="w-full h-full object-cover">
+                    </div>
+                    <div class="bg-white p-10 flex flex-col justify-center">
+                        <span class="text-xs font-bold text-primary uppercase tracking-widest mb-3">Featured</span>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-4 leading-snug">The Ultimate Guide to
+                            Starting Your E-Commerce Business in 2025</h2>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                            A comprehensive step-by-step guide covering everything from choosing your niche and setting
+                            up your store to marketing and scaling your operations.
+                        </p>
+                        <div class="flex items-center gap-4 text-sm text-gray-400 mb-6">
+                            <span><i class="fas fa-calendar-alt mr-1.5"></i>April 5, 2025</span>
+                            <span><i class="fas fa-clock mr-1.5"></i>8 min read</span>
+                        </div>
+                        <a href="#" class="btn-primary px-7 py-3 text-sm self-start rounded-xl">Read Article</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category filter -->
+            <div class="flex flex-wrap gap-2 mb-10" data-reveal>
+                <button data-ttab="all-blog" class="px-4 py-2 rounded-full text-sm font-semibold border tab-active">All
+                    Posts</button>
+                <button data-ttab="ecommerce"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">E-Commerce</button>
+                <button data-ttab="tips" class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Tips
+                    &amp; Tricks</button>
+                <button data-ttab="templates-blog"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Templates</button>
+                <button data-ttab="updates"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Updates</button>
+            </div>
+
+            <!-- Posts grid - all -->
+            <div data-tpanel="all-blog">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">E-Commerce</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">How to Build a
+                                Successful Online Store in 2025</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">Discover the key steps to
+                                launching and scaling your e-commerce store with the right tools.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Apr 8, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>5 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Templates</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">Top 5 Store Templates
+                                for Fashion Brands</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">Our curated list of the
+                                best fashion store templates to make your brand stand out online.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Apr 3, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>4 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Tips</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">Payment Gateway
+                                Integration Guide for Merchants</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">Everything you need to
+                                know about accepting payments securely and efficiently online.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Mar 28, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>6 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Updates</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">Ecommet v3.0 — What's
+                                New</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">We've released a major
+                                update with new features including improved analytics and more template options.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Mar 20, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>3 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Tips</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">10 Ways to Increase
+                                Your Store's Conversion Rate</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">Practical tactics to turn
+                                more visitors into paying customers without spending more on ads.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Mar 15, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>7 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                    <article
+                        class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100">
+                            <img src="./assets/image/placeholder.png" alt="Blog" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">E-Commerce</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base leading-snug">How to Choose the Right
+                                Pricing Plan for Your Business</h3>
+                            <p class="text-gray-500 text-sm mb-4 leading-relaxed line-clamp-2">A simple guide to
+                                understanding which plan matches your current needs and budget.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <span><i class="fas fa-calendar-alt mr-1"></i>Mar 10, 2025</span>
+                                <span><i class="fas fa-clock mr-1"></i>4 min read</span>
+                            </div>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+            <!-- Other tab panels (same content for demo) -->
+            <div data-tpanel="ecommerce" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100"><img src="./assets/image/placeholder.png"
+                                alt="Blog" class="w-full h-full object-cover"></div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">E-Commerce</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base">How to Build a Successful Online
+                                Store in 2025</h3>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div data-tpanel="tips" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100"><img src="./assets/image/placeholder.png"
+                                alt="Blog" class="w-full h-full object-cover"></div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Tips</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base">10 Ways to Increase Your Conversion
+                                Rate</h3>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div data-tpanel="templates-blog" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100"><img src="./assets/image/placeholder.png"
+                                alt="Blog" class="w-full h-full object-cover"></div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Templates</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base">Top 5 Templates for Fashion Brands
+                            </h3>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div data-tpanel="updates" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="blog-card bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
+                        data-reveal>
+                        <div class="overflow-hidden h-48 bg-gray-100"><img src="./assets/image/placeholder.png"
+                                alt="Blog" class="w-full h-full object-cover"></div>
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">Updates</span>
+                            <h3 class="font-bold text-gray-900 mt-2 mb-2 text-base">Ecommet v3.0 — What's New</h3>
+                            <a href="#" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                    class="fas fa-arrow-right text-xs ml-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="py-16 bg-primary">
+        <div class="max-w-3xl mx-auto px-4 text-center" data-reveal>
+            <h2 class="text-2xl font-extrabold text-white mb-3">Never Miss a Post</h2>
+            <p class="text-orange-100 mb-6">Subscribe to get the latest articles and guides directly in your inbox.</p>
+            <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" action="#" method="POST">
+                <input type="email" name="email" placeholder="Enter your email" required
+                    class="flex-1 px-5 py-3 rounded-full text-gray-800 outline-none focus:ring-2 focus:ring-white text-sm">
+                <button type="submit"
+                    class="bg-white text-primary font-bold px-6 py-3 rounded-full hover:bg-orange-50 transition-colors text-sm flex-shrink-0">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div><img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-7 w-auto brightness-0 invert mb-4">
+                    <p class="text-sm">The e-commerce platform built for growth.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./pricing.html" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="./contact.html" class="hover:text-primary transition-colors">Contact</a></li>
+                        <li><a href="./faqs.html" class="hover:text-primary transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i class="fas fa-envelope text-primary mt-0.5 w-4"></i><a
+                                href="mailto:contact@example.com" class="hover:text-primary">contact@example.com</a>
+                        </li>
+                        <li class="flex gap-2"><i class="fas fa-phone text-primary w-4"></i><a href="tel:01300000000"
+                                class="hover:text-primary">+880 1300 000 000</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 py-5 text-center text-sm">&copy; 2025 Ecommet. All rights reserved.</div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

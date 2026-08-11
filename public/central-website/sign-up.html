@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Create Your Store</title>
+    <meta name="description" content="Sign up and launch your e-commerce store on Ecommet in two simple steps.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+    <style>
+        .step-circle {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .875rem;
+            transition: all .3s
+        }
+
+        .step-active .step-circle {
+            background: #FF4B2B;
+            color: #fff
+        }
+
+        .step-done .step-circle {
+            background: #FF4B2B;
+            color: #fff
+        }
+
+        .step-inactive .step-circle {
+            background: #e5e7eb;
+            color: #9ca3af
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #e5e7eb;
+            transition: background .3s
+        }
+
+        .step-line.active {
+            background: #FF4B2B
+        }
+
+        .dual-box {
+            min-height: 130px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: .75rem;
+            width: 100%;
+            padding: .5rem;
+            font-size: .875rem;
+            color: #374151;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        .dual-box:focus {
+            border-color: #FF4B2B
+        }
+
+        .dual-box option:checked {
+            background: #FF4B2B;
+            color: #fff
+        }
+
+        .radio-label-wrap {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .6rem .75rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: .75rem;
+            cursor: pointer;
+            transition: border-color .2s, background .2s
+        }
+
+        .radio-label-wrap:has(input:checked) {
+            border-color: #FF4B2B;
+            background: #fff7f5
+        }
+
+        input[type="radio"] {
+            accent-color: #FF4B2B
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-800 bg-gray-50 antialiased">
+
+    <!-- TOP BAR -->
+    <div class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+            <a href="./index.html"><img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                    class="h-7 w-auto"></a>
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                Already have an account? <a href="./login.html" class="text-primary font-semibold hover:underline">Sign
+                    in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM AREA -->
+    <div class="min-h-[calc(100vh-3.5rem)] flex items-start justify-center py-10 px-4">
+        <div class="w-full max-w-xl">
+
+            <!-- Step progress indicator -->
+            <div class="flex items-center mb-8" id="stepIndicator">
+                <div class="step-active flex flex-col items-center gap-1" id="stepBadge1">
+                    <div class="step-circle">1</div>
+                    <span class="text-xs font-semibold text-primary">Account</span>
+                </div>
+                <div class="step-line mx-2" id="stepLine"></div>
+                <div class="step-inactive flex flex-col items-center gap-1" id="stepBadge2">
+                    <div class="step-circle">2</div>
+                    <span class="text-xs font-medium text-gray-400" id="stepLabel2">Preferences</span>
+                </div>
+            </div>
+
+            <!-- Step 1 -->
+            <div id="step1" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Account Information</h2>
+                <p class="text-gray-500 text-sm mb-6">Set up your login credentials.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5" for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="yourstore" required
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors"
+                            oninput="document.getElementById('subdomainPreview').textContent=this.value||'{username}'">
+                        <p class="text-xs text-gray-400 mt-1.5">Your store URL: <strong class="text-primary"><span
+                                    id="subdomainPreview">{username}</span>.ecommet.com</strong></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5" for="email">Email
+                            Address</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5" for="password">Password</label>
+                        <div class="relative">
+                            <input type="password" id="password" name="password" placeholder="Minimum 8 characters"
+                                required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors pr-10">
+                            <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary"
+                                onclick="togglePw('password','eyeIcon1')">
+                                <i id="eyeIcon1" class="fas fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5"
+                            for="password_confirmation">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                placeholder="Re-enter password" required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors pr-10">
+                            <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary"
+                                onclick="togglePw('password_confirmation','eyeIcon2')">
+                                <i id="eyeIcon2" class="fas fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="goToStep2()"
+                        class="btn-primary w-full py-3 text-sm font-semibold mt-2">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step2" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Shop Preferences</h2>
+                <p class="text-gray-500 text-sm mb-6">Customise your store to match your business.</p>
+                <form method="post" action="#" class="space-y-6">
+
+                    <!-- Category dual-list -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                            Shop Category <span class="text-gray-400 font-normal">(select up to 2)</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Available</p>
+                                <select id="catLeft" size="6" class="dual-box">
+                                    <option value="accessories">Accessories</option>
+                                    <option value="car">Car Accessories</option>
+                                    <option value="sports">Sports &amp; Outdoors</option>
+                                    <option value="books">Books &amp; Media</option>
+                                    <option value="beauty">Beauty &amp; Health</option>
+                                    <option value="food">Food &amp; Grocery</option>
+                                    <option value="tech">Tech &amp; Gadgets</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col justify-center items-center gap-2">
+                                <button type="button" onclick="moveRight()"
+                                    class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-primary-dark transition-colors"
+                                    title="Add"><i class="fas fa-chevron-right text-xs"></i></button>
+                                <button type="button" onclick="moveLeft()"
+                                    class="w-8 h-8 bg-gray-200 text-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors"
+                                    title="Remove"><i class="fas fa-chevron-left text-xs"></i></button>
+                            </div>
+                            <div class="col-start-2">
+                                <p class="text-xs text-gray-400 mb-1">Selected</p>
+                                <select id="catRight" size="6" class="dual-box" multiple></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theme -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5" for="theme">Select Theme</label>
+                        <select id="theme" name="theme"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors appearance-none bg-white">
+                            <option value="electronics">Electronics</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="kids">Kids</option>
+                            <option value="furniture">Furniture</option>
+                            <option value="manti">Multipurpose</option>
+                            <option value="pet">Pet Shop</option>
+                            <option value="skinflow">Skin Flow</option>
+                            <option value="jewellery">Jewellery</option>
+                            <option value="elora">Elora</option>
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Browse themes on the <a href="./templates.html"
+                                target="_blank" class="text-primary hover:underline">Templates page</a>.</p>
+                    </div>
+
+                    <!-- Currency + Language -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Currency</label>
+                            <div class="space-y-2">
+                                <label class="radio-label-wrap"><input type="radio" name="currency" value="SAR" checked>
+                                    <span class="text-sm">SAR — Saudi Riyal</span></label>
+                                <label class="radio-label-wrap"><input type="radio" name="currency" value="USD"> <span
+                                        class="text-sm">USD — US Dollar</span></label>
+                                <label class="radio-label-wrap"><input type="radio" name="currency" value="EUR"> <span
+                                        class="text-sm">EUR — Euro</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Store Language</label>
+                            <div class="space-y-2">
+                                <label class="radio-label-wrap"><input type="radio" name="language" value="en" checked>
+                                    <span class="text-sm">English</span></label>
+                                <label class="radio-label-wrap"><input type="radio" name="language" value="ar"> <span
+                                        class="text-sm">Arabic</span></label>
+                                <label class="radio-label-wrap"><input type="radio" name="language" value="es"> <span
+                                        class="text-sm">Spanish</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between gap-3 pt-2">
+                        <button type="button" onclick="goToStep1()"
+                            class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1">
+                            <i class="fas fa-arrow-left text-xs"></i> Back
+                        </button>
+                        <button type="submit" class="btn-primary px-7 py-3 text-sm font-semibold">
+                            Continue to Checkout <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function togglePw(id, iconId) { var f = document.getElementById(id), i = document.getElementById(iconId); if (f.type === 'password') { f.type = 'text'; i.classList.replace('fa-eye', 'fa-eye-slash') } else { f.type = 'password'; i.classList.replace('fa-eye-slash', 'fa-eye') } }
+        function goToStep2() {
+            var u = document.getElementById('username').value.trim(), e = document.getElementById('email').value.trim(), p = document.getElementById('password').value, c = document.getElementById('password_confirmation').value;
+            if (!u || !e || !p || !c) { alert('Please fill in all fields.'); return }
+            if (p.length < 8) { alert('Password must be at least 8 characters.'); return }
+            if (p !== c) { alert('Passwords do not match.'); return }
+            document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('stepBadge1').className = 'step-done flex flex-col items-center gap-1';
+            document.getElementById('stepBadge2').className = 'step-active flex flex-col items-center gap-1';
+            document.getElementById('stepLabel2').className = 'text-xs font-semibold text-primary';
+            document.getElementById('stepLine').classList.add('active');
+        }
+        function goToStep1() {
+            document.getElementById('step2').classList.add('hidden'); document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('stepBadge1').className = 'step-active flex flex-col items-center gap-1';
+            document.getElementById('stepBadge2').className = 'step-inactive flex flex-col items-center gap-1';
+            document.getElementById('stepLabel2').className = 'text-xs font-medium text-gray-400';
+            document.getElementById('stepLine').classList.remove('active');
+        }
+        function moveRight() { var l = document.getElementById('catLeft'), r = document.getElementById('catRight'); if (r.options.length >= 2) { alert('Maximum 2 categories.'); return } Array.from(l.selectedOptions).forEach(function (o) { if (r.options.length < 2) { r.add(new Option(o.text, o.value)); l.remove(o.index) } }) }
+        function moveLeft() { var l = document.getElementById('catLeft'), r = document.getElementById('catRight'); Array.from(r.selectedOptions).forEach(function (o) { l.add(new Option(o.text, o.value)); r.remove(o.index) }) }
+    </script>
+</body>
+
+</html>

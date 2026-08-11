@@ -1,0 +1,22 @@
+[Unit]
+Description=Multi-Vendor Python FastAPI Service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/multi-vendor/python-modules
+Environment="PATH=/var/www/multi-vendor/python-modules/venv/bin"
+EnvironmentFile=/var/www/multi-vendor/python-modules/.env
+ExecStart=/var/www/multi-vendor/python-modules/venv/bin/uvicorn \
+    app:app \
+    --host 127.0.0.1 \
+    --port 8001 \
+    --workers 2
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/python-modules.log
+StandardError=append:/var/log/python-modules-error.log
+
+[Install]
+WantedBy=multi-user.target

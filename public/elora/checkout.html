@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Checkout — ELORA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/main.css"/>
+
+</head>
+<body data-page="checkout" class="bg-white text-[#171717]">
+
+<!-- ═══════ NAVBAR ═══════ -->
+<header class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="bg-[#242424] overflow-hidden py-1.5">
+    <div class="marquee text-white text-xs">
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-10 py-2.5 bg-white">
+    <button id="menuBtn" class="flex flex-col gap-1 p-1.5 cursor-pointer flex-shrink-0" onclick="openMenu()">
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+    </button>
+    <a href="elora-homepage-v2.html" class="flex-shrink-0"><img src="data:image/png;base64,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" alt="ELORA" class="h-7 sm:h-9 lg:h-10 w-auto"/></a>
+    <div class="flex-1 min-w-0 flex items-center bg-[#F6F5F5] rounded-full px-3 sm:px-5 py-2 gap-2">
+      <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search..." class="bg-transparent flex-1 min-w-0 text-sm placeholder-gray-400 outline-none"/>
+      <button class="bg-main text-white text-xs font-medium px-3 py-1 rounded-full flex-shrink-0">Search</button>
+    </div>
+    <div class="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+      <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+        <img src="data:image/png;base64,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" alt="" class="w-6 h-4 object-cover rounded-sm"/>
+        <div class="text-xs hidden md:block leading-tight"><div class="font-light">En/</div><div class="font-medium">SAR</div></div>
+        <svg class="w-3 h-3 hidden md:block text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+      </div>
+      <a href="#" class="hidden sm:flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="text-xs hidden lg:block">Favorite</span>
+      </a>
+      <a href="elora-cart.html" class="flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <div class="relative">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-5 h-5 sm:w-6 sm:h-6 object-contain"/>
+          <span class="absolute -top-1.5 -right-1.5 bg-main text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">0</span>
+        </div>
+        <span class="text-xs hidden lg:block">Cart</span>
+      </a>
+      <a href="#" class="hidden md:flex items-center gap-1.5 text-elblack hover:text-main transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="text-xs leading-tight hidden lg:block"><div class="text-gray-400">Welcome</div><div class="font-semibold">Sign in / Register</div></div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ SIDE MENU ═══════ -->
+<div class="smenu-overlay" onclick="closeMenu()"></div>
+<div class="smenu-panel shadow-2xl">
+  <div class="flex items-center justify-between p-4 border-b border-gray-100">
+    <img src="data:image/png;base64,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" alt="ELORA" class="h-8 w-auto"/>
+    <button onclick="closeMenu()" class="text-xl text-gray-400 hover:text-main leading-none">✕</button>
+  </div>
+  <nav class="p-3 space-y-0.5 text-sm">
+    <div class="px-3 py-2.5 rounded-lg bg-orange-50 text-main font-medium cursor-pointer">Men's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Women's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Electronics</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Gaming</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Home &amp; Kitchen</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Sports</div>
+  </nav>
+</div>
+
+<!-- ═══════ BREADCRUMB ═══════ -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
+    <a href="elora-homepage-v2.html" class="hover:text-main transition-colors">Home</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <a href="#" class="hover:text-main transition-colors">Men</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <a href="#" class="hover:text-main transition-colors">Jackets</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span class="text-[#1B1B1B] font-semibold">Checkout</span>
+  </div>
+</div>
+
+<!-- ═══════ PAGE ═══════ -->
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-6 pb-16">
+  <div class="checkout-layout flex gap-8 lg:gap-12 items-start">
+
+    <!-- ════════════════════
+         LEFT — FORMS
+    ════════════════════ -->
+    <div class="checkout-left flex-1 min-w-0">
+
+      <!-- ── SHIPPING INFORMATION ── -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl sm:text-2xl font-medium text-[#171717]">Shipping information</h2>
+          <button onclick="toggleAddressModal()" class="flex items-center gap-1.5 text-main font-medium text-sm hover:underline transition-colors">
+            Change Address
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <!-- Address card -->
+        <div class="addr-card border border-[#E0E0E0] rounded-xl bg-white p-5 transition-colors cursor-pointer">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center gap-6 flex-wrap">
+                <span class="font-semibold text-base text-[#171717]">Abdullah Kamel</span>
+                <span class="text-base text-[#555]">+212 615 61 51 21</span>
+              </div>
+              <p class="text-base text-[#808080]">Abdullah Kamel@gmail.com</p>
+              <p class="text-base text-[#808080]">35 Department, Building 5, District 10, Casablanca, Morocco</p>
+            </div>
+            <!-- edit icon -->
+            <button onclick="toggleAddressModal()" class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-[#555] hover:text-main transition-colors mt-0.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAYMENT DETAILS ── -->
+      <div>
+        <h2 class="text-xl sm:text-2xl font-medium text-[#171717] mb-5">Payment details</h2>
+
+        <!-- Card option (selected by default) -->
+        <div class="border border-[#E0E0E0] rounded-xl bg-white overflow-hidden mb-3">
+          <label class="pay-label px-5 pt-4 pb-3" for="payCard">
+            <input class="pay-radio" type="radio" id="payCard" name="payment" checked onchange="showCardForm(true)"/>
+            <div class="pay-dot"></div>
+            <div class="flex items-center gap-3">
+              <!-- card icon -->
+              <div class="w-10 h-7 border border-gray-300 rounded flex items-center justify-center bg-gray-50">
+                <svg class="w-5 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              </div>
+              <span class="font-medium text-base text-[#171717]">Card</span>
+              <!-- card logos -->
+              <div class="flex items-center gap-1.5 ml-1">
+                <span class="text-blue-800 font-extrabold text-xs italic border border-gray-200 rounded px-1.5 py-0.5">VISA</span>
+                <div class="flex -space-x-1.5">
+                  <div class="w-5 h-5 rounded-full bg-red-500"></div>
+                  <div class="w-5 h-5 rounded-full bg-orange-400"></div>
+                </div>
+              </div>
+            </div>
+          </label>
+          <!-- Card form (expanded) -->
+          <div class="card-form open px-5 pb-5" id="cardForm">
+            <p class="text-sm text-[#555] mb-3">Card information</p>
+            <!-- Card number -->
+            <div class="relative mb-3">
+              <input type="text" id="cardNum" placeholder="1234 1234 1234 1234" maxlength="19"
+                class="cinput pr-32" oninput="formatCard(this)"/>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                <div class="bg-[#3DBFBF] rounded px-1.5 py-0.5"><span class="text-white font-bold text-[10px]">tabby</span></div>
+                <div class="rounded px-1.5 py-0.5" style="background:linear-gradient(90deg,#F7941D,#F26522)"><span class="text-white font-bold text-[10px]">tamara</span></div>
+                <span class="text-blue-800 font-extrabold text-[10px] italic border border-gray-200 rounded px-1 py-0.5">VISA</span>
+                <div class="flex -space-x-1"><div class="w-4 h-4 rounded-full bg-red-500"></div><div class="w-4 h-4 rounded-full bg-orange-400"></div></div>
+              </div>
+            </div>
+            <!-- MM/YY + CVC -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="relative">
+                <input type="text" placeholder="MM / YY" maxlength="7" class="cinput" oninput="formatExpiry(this)"/>
+              </div>
+              <div class="relative">
+                <input type="text" placeholder="CVC" maxlength="4" class="cinput pr-10"/>
+                <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              </div>
+            </div>
+            <!-- Billing address -->
+            <label class="flex items-center gap-3 cursor-pointer">
+              <div id="billingChk" onclick="toggleBilling()" class="w-4 h-4 border border-[#888] rounded flex items-center justify-center flex-shrink-0 transition-all">
+                <svg class="w-2.5 h-2" fill="none" viewBox="0 0 12 9" id="billingIcon" style="display:none"><path d="m1 4 4 4 7-7" stroke="#171717" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <span class="text-sm text-[#555]">Billing address is same as shipping</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- PayPal -->
+        <div class="border border-[#E0E0E0] rounded-xl bg-white mb-3 overflow-hidden">
+          <label class="pay-label px-5 py-4" for="payPal">
+            <input class="pay-radio" type="radio" id="payPal" name="payment" onchange="showCardForm(false)"/>
+            <div class="pay-dot"></div>
+            <div class="flex items-center gap-3 flex-wrap">
+              <!-- PayPal logo -->
+              <div class="w-14 h-8 border border-gray-200 rounded bg-white flex items-center justify-center px-1.5">
+                <span class="font-bold text-xs"><span class="text-[#003087]">Pay</span><span class="text-[#0070E0]">Pal</span></span>
+              </div>
+              <span class="font-medium text-base text-[#171717]">Paypal</span>
+              <div class="flex items-center gap-2 ml-auto">
+                <div class="w-5 h-5 border-2 border-[#C0C0C0] rounded-full flex items-center justify-center" id="remPalDot" onclick="toggleRemPal()"></div>
+                <span class="text-sm text-[#555]">Remember my Paypal</span>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Google Pay -->
+        <div class="border border-[#E0E0E0] rounded-xl bg-white mb-3 overflow-hidden">
+          <label class="pay-label px-5 py-4" for="payGoogle">
+            <input class="pay-radio" type="radio" id="payGoogle" name="payment" onchange="showCardForm(false)"/>
+            <div class="pay-dot"></div>
+            <div class="w-14 h-8 border border-gray-200 rounded bg-white flex items-center justify-center px-1">
+              <span class="font-bold text-xs text-gray-700">G<span class="text-blue-500">P</span><span class="text-red-500">a</span><span class="text-yellow-400">y</span></span>
+            </div>
+            <span class="font-medium text-base text-[#171717]">Google Pay</span>
+          </label>
+        </div>
+
+        <!-- Apple Pay -->
+        <div class="border border-[#E0E0E0] rounded-xl bg-white mb-3 overflow-hidden">
+          <label class="pay-label px-5 py-4" for="payApple">
+            <input class="pay-radio" type="radio" id="payApple" name="payment" onchange="showCardForm(false)"/>
+            <div class="pay-dot"></div>
+            <div class="w-14 h-8 border border-gray-200 rounded bg-white flex items-center justify-center gap-1 px-1">
+              <svg class="w-4 h-4 text-gray-800" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              <span class="text-xs font-medium text-gray-800">Pay</span>
+            </div>
+            <span class="font-medium text-base text-[#171717]">Apple Pay</span>
+          </label>
+        </div>
+
+        <!-- Ask friend to pay -->
+        <div class="border border-[#E0E0E0] rounded-xl bg-white overflow-hidden">
+          <label class="pay-label px-5 py-4" for="payFriend">
+            <input class="pay-radio" type="radio" id="payFriend" name="payment" onchange="showCardForm(false)"/>
+            <div class="pay-dot"></div>
+            <div class="w-14 h-8 border border-gray-200 rounded bg-white flex items-center justify-center">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span class="font-medium text-base text-[#171717]">Ask friend to pay</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════
+         RIGHT — ORDER SUMMARY
+    ════════════════════ -->
+    <div class="checkout-right flex-shrink-0" style="width:380px">
+
+      <!-- Total label + amount -->
+      <div class="mb-5">
+        <p class="text-sm text-[#555] mb-1">Total</p>
+        <p class="text-4xl font-bold text-main leading-none">$305.00</p>
+      </div>
+
+      <!-- ── ORDER ITEMS ── -->
+      <div class="flex flex-col gap-0 mb-5">
+
+        <!-- Item 1 -->
+        <div class="flex gap-3 py-4 border-b border-[#E0E0E0]">
+          <div class="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden" style="background:linear-gradient(135deg,#c8c4bc,#b8b4ac);display:flex;align-items:center;justify-content:center;font-size:36px">🧥</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-[#555] mb-1 truncate">Bomber Jacket – Modern &amp; Stylish Bomber Jacket...</p>
+            <p class="text-sm font-medium text-main mb-2">Estimated delivery: 9 – 11 April</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-base font-normal text-[#171717]">$100.00</span>
+                <span class="text-sm text-[#ADADAD] line-through font-light">$150.20</span>
+              </div>
+              <!-- qty pill — trash | num | + -->
+              <div class="qty-pill">
+                <button class="text-[#ADADAD] hover:text-red-500 transition-colors" onclick="removeItem(this)">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                </button>
+                <span class="text-base font-semibold text-main px-1 qty-num">1</span>
+                <button class="text-main hover:opacity-70 transition-opacity" onclick="changeQty(this,1)">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18"/><line x1="0" y1="9" x2="18" y2="9"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="flex gap-3 py-4 border-b border-[#E0E0E0]">
+          <div class="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden" style="background:linear-gradient(135deg,#d5d0c8,#c0bbb4);display:flex;align-items:center;justify-content:center;font-size:36px">👕</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-[#555] mb-1 truncate">Bomber Jacket – Modern &amp; Stylish Bomber Jacket...</p>
+            <p class="text-sm font-medium text-main mb-2">Estimated delivery: 9 – 11 April</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-base font-normal text-[#171717]">$200.00</span>
+                <span class="text-sm text-[#ADADAD] line-through font-light">$150.20</span>
+              </div>
+              <div class="qty-pill">
+                <button class="text-[#888]" onclick="changeQty(this,-1)">
+                  <svg class="w-3 h-0.5" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 14 2"><line x1="0" y1="1" x2="14" y2="1"/></svg>
+                </button>
+                <span class="text-base font-semibold text-main px-1 qty-num">2</span>
+                <button class="text-main hover:opacity-70 transition-opacity" onclick="changeQty(this,1)">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18"/><line x1="0" y1="9" x2="18" y2="9"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SUBTOTAL / SHIPPING / TOTAL ── -->
+      <div class="flex flex-col gap-3 py-4 border-b border-[#E0E0E0] mb-4">
+        <div class="flex items-center justify-between text-base text-[#171717]">
+          <span class="font-normal">Subtotal</span>
+          <span class="font-normal" id="subtotal">300.00</span>
+        </div>
+        <div class="flex flex-col gap-0.5">
+          <div class="flex items-center justify-between text-base text-[#171717]">
+            <span class="font-normal">Shipping</span>
+            <span class="font-normal">$5.00</span>
+          </div>
+          <p class="text-xs text-[#ADADAD]">Ground shipping (3–5 business days)</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-between mb-5">
+        <span class="text-lg font-medium text-[#171717]">Total due</span>
+        <span class="text-2xl font-bold text-[#171717]" id="totalDue">$305.00</span>
+      </div>
+
+      <!-- ── PAY BUTTON ── -->
+      <button id="payBtn" onclick="handlePay()" class="pay-btn w-full h-14 text-white text-xl font-semibold rounded-full transition-all duration-300 mb-4">
+        Pay $305.00
+      </button>
+
+      <!-- Powered by -->
+      <div class="flex items-center gap-2 text-xs text-[#ADADAD] mb-6">
+        <span>Powered by</span>
+        <span class="font-bold text-[#171717]">ELORA</span>
+        <span>|</span>
+        <a href="#" class="hover:underline text-[#555]">Terms</a>
+        <a href="#" class="hover:underline text-[#555]">Privacy</a>
+      </div>
+
+      <!-- ── 4 BENEFIT CARDS 2×2 ── -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Payment methods -->
+        <div class="border border-[#EEEEEE] rounded-xl bg-white p-3">
+          <p class="text-sm font-medium text-[#171717] mb-2">Payment methods:</p>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-blue-800 font-extrabold text-xs italic border border-gray-200 rounded px-1.5 py-0.5">VISA</span>
+            <div class="bg-[#3DBFBF] rounded px-1.5 py-0.5"><span class="text-white font-bold text-[10px]">tabby</span></div>
+            <div class="rounded px-1.5 py-0.5 border border-orange-300" style="background:linear-gradient(90deg,#F7941D,#F26522)"><span class="text-white font-bold text-[10px]">tamara</span></div>
+          </div>
+        </div>
+        <!-- Free returns: secure -->
+        <div class="border border-[#EEEEEE] rounded-xl bg-white p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4" stroke-linecap="round"/></svg>
+            <span class="text-sm font-semibold text-[#2AAF2F]">Free returns:</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs text-[#171717] mb-1"><span class="text-[#2AAF2F] font-bold">✓</span> Secure payment</div>
+          <div class="flex items-center gap-1.5 text-xs text-[#171717]"><span class="text-[#2AAF2F] font-bold">✓</span> Privacy protection</div>
+        </div>
+        <!-- Free returns: shipping -->
+        <div class="border border-[#EEEEEE] rounded-xl bg-white p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <img src="data:image/png;base64,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" alt="" class="w-5 h-5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+            <span class="text-sm font-semibold text-[#2AAF2F]">Free returns:</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs text-[#171717] mb-1"><span class="text-[#2AAF2F] font-bold">✓</span> Refund for lost packages</div>
+          <div class="flex items-center gap-1.5 text-xs text-[#171717]"><span class="text-[#2AAF2F] font-bold">✓</span> Coupon for late delivery</div>
+        </div>
+        <!-- Free returns: easy -->
+        <div class="border border-[#EEEEEE] rounded-xl bg-white p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke-linecap="round"/><path d="M3 3v5h5" stroke-linecap="round"/></svg>
+            <span class="text-sm font-semibold text-[#2AAF2F]">Free returns:</span>
+          </div>
+          <div class="flex items-start gap-1.5 text-xs text-[#171717]"><span class="text-[#2AAF2F] font-bold mt-0.5">✓</span> Easy and free return in 15 days.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ADDRESS MODAL ═══════ -->
+<div id="addrModal" class="fixed inset-0 z-[700] flex items-center justify-center p-4" style="display:none!important">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleAddressModal()"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 z-10">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-xl font-semibold text-[#171717]">Edit Address</h3>
+      <button onclick="toggleAddressModal()" class="text-gray-400 hover:text-main text-2xl leading-none">✕</button>
+    </div>
+    <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-2 gap-3">
+        <input type="text" placeholder="First name" value="Abdullah" class="cinput"/>
+        <input type="text" placeholder="Last name" value="Kamel" class="cinput"/>
+      </div>
+      <input type="email" placeholder="Email address" value="Abdullah Kamel@gmail.com" class="cinput"/>
+      <input type="tel" placeholder="Phone number" value="+212 615 61 51 21" class="cinput"/>
+      <input type="text" placeholder="Address" value="35 Department, Building 5" class="cinput"/>
+      <div class="grid grid-cols-3 gap-3">
+        <input type="text" placeholder="City" value="Casablanca" class="cinput"/>
+        <input type="text" placeholder="District" value="District 10" class="cinput"/>
+        <input type="text" placeholder="Country" value="Morocco" class="cinput"/>
+      </div>
+      <button onclick="saveAddress()" class="mt-2 w-full h-12 bg-[#171717] text-white font-medium rounded-full hover:bg-black transition-colors">
+        Save Address
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="bg-[#3B3B3B] text-white">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 pt-10 pb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+      <div class="col-span-2 lg:col-span-1">
+        <img src="data:image/png;base64,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" alt="ELORA" class="h-9 w-auto mb-3"/>
+        <p class="text-sm font-medium text-white mb-3">Connect with ELORA</p>
+        <div class="flex gap-3 mb-5">
+          <a href="#" class="w-5 h-5 fill-white/80 hover:fill-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="w-5 h-5 fill-white/80 hover:fill-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="w-5 h-5 fill-white/80 hover:fill-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42C1 8.14 1 12 1 12s0 3.86.46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96C23 15.86 23 12 23 12s0-3.86-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#3B3B3B"/></svg></a>
+          <a href="#" class="w-5 h-5 fill-white/80 hover:fill-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+        <p class="text-xs font-semibold mb-2">We accept</p>
+        <div class="flex gap-2 flex-wrap">
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-extrabold text-blue-800 italic">VISA</div>
+          <div class="bg-white rounded px-1 py-0.5 flex"><div class="w-4 h-4 rounded-full bg-red-500"></div><div class="w-4 h-4 rounded-full bg-orange-400 -ml-2"></div></div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-gray-700">Apple Pay</div>
+          <div class="bg-[#2AAF2F] rounded px-2 py-0.5 text-xs font-bold text-white">Fawry</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Customer service</h4>
+        <ul class="space-y-3 text-sm text-[#F2F2F2]">
+          <li><a href="#" class="hover:text-white">Return and refund policy</a></li>
+          <li><a href="#" class="hover:text-white">Intellectual property policy</a></li>
+          <li><a href="#" class="hover:text-white">Shipping info</a></li>
+          <li><a href="#" class="hover:text-white">Report suspicious activity</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Policies</h4>
+        <ul class="space-y-3 text-sm text-[#F2F2F2]">
+          <li><a href="#" class="hover:text-white">Shipping</a></li>
+          <li><a href="#" class="hover:text-white">Payment</a></li>
+          <li><a href="#" class="hover:text-white">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Company info</h4>
+        <ul class="space-y-3 text-sm text-white">
+          <li><a href="#" class="hover:text-main">About ELORA</a></li>
+          <li><a href="#" class="hover:text-main">Contact us</a></li>
+          <li><a href="#" class="hover:text-main">FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bg-[#5B5B5B] py-3">
+    <div class="max-w-[1200px] mx-auto px-4 flex flex-wrap justify-center gap-6 sm:gap-10 text-sm text-white">
+      <a href="#" class="hover:underline">Terms of use</a>
+      <a href="#" class="hover:underline">Privacy policy</a>
+      <a href="#" class="hover:underline">Your privacy choices</a>
+      <a href="#" class="hover:underline">Support</a>
+      <a href="#" class="hover:underline">FAQ</a>
+    </div>
+  </div>
+  <div class="bg-[#242424] py-4 text-center text-sm text-white">Copyright ©2026 ELORA. All Rights Reserved.</div>
+</footer>
+<script src="assets/js/pages/checkout.js"></script>
+</body>
+</html>

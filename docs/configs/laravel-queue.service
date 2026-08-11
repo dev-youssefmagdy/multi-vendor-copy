@@ -1,0 +1,21 @@
+[Unit]
+Description=Laravel Queue Worker — Multi-Vendor
+After=network.target mysql.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/multi-vendor
+ExecStart=/usr/bin/php artisan queue:work \
+    --queue=tenant-sync,default,neozena-import \
+    --sleep=3 \
+    --tries=3 \
+    --max-time=3600 \
+    --timeout=300
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/www/multi-vendor/storage/logs/queue.log
+StandardError=append:/var/www/multi-vendor/storage/logs/queue-error.log
+
+[Install]
+WantedBy=multi-user.target

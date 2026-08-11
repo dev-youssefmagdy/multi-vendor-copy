@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manti - Checkout</title>
+    <!-- Include Tailwind output CSS. For local development you would build it. I assume tailwind is running or linked. We will just use standard classes. -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                    screens: {
+                        '2xl': '1440px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#de1709',
+                        secondary: '#ffaf09',
+                        success: '#2aaf2e',
+                        purple: '#61167f',
+                        'gray-darkest': '#232323',
+                        'gray-dark': '#292d32',
+                        'gray-medium': '#7f7f7f',
+                        'gray-light': '#c4c4c4',
+                        'gray-lighter': '#e7e7e7',
+                        'gray-lightest': '#f5f5f5',
+                        'sale-light': '#ffecea',
+                        'yellow-light': '#fdff9f'
+                    },
+                    fontFamily: {
+                        main: "'Outfit', sans-serif"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            visibility: hidden;
+        }
+
+        body.loaded {
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col">
+
+    <!-- START HEADER -->
+    <header class="w-full relative z-50">
+        <!-- Top Dark Bar (Desktop Only) -->
+        <div class="bg-gray-darkest text-white text-xs py-2 hidden lg:block">
+            <div class="container flex justify-between items-center">
+                <div class="flex items-center gap-2 shipping-modal-trigger cursor-pointer">
+                    <!-- IMAGE: Shipping Icon -->
+                    <img src="assets/images/home/shippingIcon.png" alt="Shipping Icon" width="28" height="24">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Free shipping on all orders</span>
+                        <span class="text-gray-light text-center">Limited-time offer</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- IMAGE: Fire Icon -->
+                    <img src="assets/images/home/offerIcon.png" alt="Offer Icon" class="w-[14px] h-[19px]">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Limited-time Offers</span>
+                        <span class="text-gray-light text-center">Don't Miss Out</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- IMAGE: Lock Icon -->
+                    <img src="assets/images/home/secureIcon.png" alt="Secure Icon" class="w-[14px] h-[18px]">
+                    <span class="font-semibold text-gray-light">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar (Desktop Only) -->
+        <div class="bg-primary text-white hidden lg:block">
+            <div class="container py-4 flex items-center justify-between gap-6">
+
+                <!-- Logo area -->
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                </a>
+
+                <!-- Intranet Links -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold">
+                    <a href="best_selling.html" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/like.png" alt="Best Selling Icon" class="w-[20px] h-[20px]">
+                        Best-Selling Items
+                    </a>
+                    <a href="#" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/navStar.png" alt="Star Icon" class="w-[20px] h-[20px]">
+                        5-Star Rated
+                    </a>
+                    <a href="#" class="hover:text-yellow-light transition">New In</a>
+                    <button class="flex items-center gap-1 hover:text-yellow-light transition focus:outline-none">
+                        Categories
+                        <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon" class="w-[20px] h-[20px]">
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mx-4 relative">
+                    <input type="text" placeholder="Search..."
+                        class="w-full text-black rounded-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-yellow-light placeholder-gray-medium text-sm">
+                    <button
+                        class="absolute right-1 top-1 bottom-1 w-8 h-8 rounded-full bg-gray-darkest text-white flex items-center justify-center hover:bg-black transition">
+                        <!-- IMAGE: Search Icon -->
+                        <img src="assets/images/home/searchIcon.png" alt="Search Icon" class="w-[16px] h-[16px]">
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-5">
+                    <!-- Lang / Currency -->
+                    <button
+                        class="lang-currency-trigger flex items-center gap-2 text-xs text-white hover:text-yellow-light focus:outline-none">
+                        <img src="assets/images/home/flagImg.png" alt="Flag Icon" class="w-[40px] h-[25px]">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[12px] text-[#C5C5C5]">En/</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[12px]">SAR</span>
+                                <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon"
+                                    class="w-[16px] h-[16px]">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- User Account -->
+                    <a href="profile.html"
+                        class="flex items-center gap-2 text-white hover:text-yellow-light transition">
+                        <!-- IMAGE: User Icon -->
+                        <img src="assets/images/home/user.png" alt="Person Icon" class="w-[24px] h-[24px]">
+                        <div class="flex flex-col text-xs leading-tight">
+                            <span class="text-[#C5C5C5]">Welcome</span>
+                            <span>Sign in / Register</span>
+                        </div>
+                    </a>
+
+                    <!-- Cart -->
+                    <a href="cart.html" class="flex items-center gap-1 hover:text-yellow-light transition relative">
+                        <!-- IMAGE: Cart Icon -->
+                        <img src="assets/images/home/cartIcon.png" alt="Cart Icon" class="w-[24px] h-[24px]">
+                        <span
+                            class="absolute -top-2 -right-1 bg-gray-darkest text-white text-[10px] w-[30px] h-[16px] flex items-center justify-center px-1.5 py-0.5 rounded-full border border-primary">0</span>
+                        <span class="text-xs  mt-2 hidden sm:block">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex flex-col bg-white w-full z-40 sticky top-0 shadow-sm border-b border-[#eaeaea]">
+        <!-- Top Header -->
+        <div class="flex items-center justify-between px-4 py-3">
+            <a href="index.html" class="flex items-center shrink-0">
+                <div class="flex items-center gap-1">
+                    <span class="font-extrabold text-[20px] tracking-tight text-[#2272e2] flex items-center">
+                        <span
+                            class="inline-flex w-[18px] h-[18px] rounded-full border-[3px] border-[#2272e2] items-center justify-center mr-[4px] mt-0.5"><span
+                                class="w-1.5 h-1.5 bg-[#2272e2] rounded-full"></span></span>Manti
+                    </span>
+                </div>
+            </a>
+            <div class="flex-1 mx-3 relative">
+                <input type="text" placeholder="Search..."
+                    class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] px-4 outline-none text-[13px] placeholder-gray-500">
+            </div>
+            <div class="flex items-center gap-[14px] shrink-0">
+                <button
+                    class="lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
+                    <div class="flex items-end gap-[1px]">
+                        <span class="text-[11px] font-bold">En/</span>
+                    </div>
+                    <div class="flex items-center gap-[2px]">
+                        <span class="text-[11px] font-bold">SAR</span>
+                        <img src="assets/images/home/arrow-down-black.png" class="w-[8px] h-[8px]">
+                    </div>
+                </button>
+                <button class="flex flex-col gap-[3.5px] py-1 cursor-pointer">
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- END MOBILE HEADER -->
+
+    <main class="flex-grow bg-white pb-20">
+        <form action="https://demo.neozena.com/item/payment/submit" method="POST" id="userOrderForm"
+            enctype="multipart/form-data">
+            <input type="hidden" name="_token" value="7jV4lAnfeGkdmTXFotIVAX6hD2IbYEkgSButfx9J"> <input type="hidden"
+                name="shipping_address_id" id="selectedShippingAddressId" value="2">
+            <input type="hidden" name="shipping_fname" id="shipping_fname" value="Youssef">
+            <input type="hidden" name="shipping_lname" id="shipping_lname" value="Magdy">
+            <input type="hidden" name="shipping_email" id="shipping_email" value="eljoe1717@gmail.com">
+            <input type="hidden" name="shipping_number" id="shipping_number" value="01558099183">
+            <input type="hidden" name="shipping_country" id="shipping_country" value="Argentina">
+            <input type="hidden" name="shipping_state" id="shipping_state" value="Damietta">
+            <input type="hidden" name="shipping_city" id="shipping_city" value="damietta">
+            <input type="hidden" name="shipping_address" id="shipping_address" value="New Damietta">
+            <input type="hidden" name="billing_address_id" id="selectedBillingAddressId" value="2">
+            <input type="hidden" name="billing_fname" id="billing_fname" value="Youssef">
+            <input type="hidden" name="billing_lname" id="billing_lname" value="Magdy">
+            <input type="hidden" name="billing_email" id="billing_email" value="eljoe1717@gmail.com">
+            <input type="hidden" name="billing_number" id="billing_number" value="01558099183">
+            <input type="hidden" name="billing_country" id="billing_country" value="Argentina">
+            <input type="hidden" name="billing_state" id="billing_state" value="Damietta">
+            <input type="hidden" name="billing_city" id="billing_city" value="damietta">
+            <input type="hidden" name="billing_address" id="billing_address" value="New Damietta">
+            <input type="hidden" name="checkbox" id="differentaddressValue" value="0">
+            <input type="hidden" name="is_receipt" value="0" id="is_receipt">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="no_note" value="1">
+            <input type="hidden" name="lc" value="UK">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="ref_id" id="ref_id" value="">
+            <input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynow_LG.gif:NonHostedGuest">
+            <input type="hidden" name="currency_sign" value="$">
+            <input type="hidden" name="opaqueDataValue" id="opaqueDataValue" disabled="">
+            <input type="hidden" name="opaqueDataDescriptor" id="opaqueDataDescriptor" disabled="">
+
+            <div class="max-w-[1100px] mx-auto px-5 sm:px-8 mt-3 md:mt-5">
+                <div class="hidden md:flex items-center gap-2 text-[11px] font-[500] text-[#999] mb-10">
+                    <a href="https://demo.neozena.com" class="hover:text-black transition">Home</a>
+                    <img src="https://demo.neozena.com/manti/assets/images/home/arrow-Breadcrumb.png" width="5"
+                        alt="Breadcrumb">
+                    <a href="https://demo.neozena.com/cat" class="hover:text-black transition">Shop</a>
+                    <img src="https://demo.neozena.com/manti/assets/images/home/arrow-Breadcrumb.png" width="5"
+                        alt="Breadcrumb">
+                    <span class="text-[#242424] font-bold">Checkout</span>
+                </div>
+
+                <div class="mb-4 rounded-[16px] border border-[#bbf7d0] bg-[#f0fdf4] px-4 py-3 text-[#166534]">Address
+                    added successfully.</div>
+
+                <div class="flex flex-col-reverse md:flex-row gap-10 md:gap-[40px] lg:gap-[130px] items-start">
+                    <div class="flex-1 w-full max-w-full md:max-w-[420px]">
+
+                        <section class="mb-10">
+                            <div class="flex items-center justify-between gap-3 mb-5">
+                                <h2 class="text-[20px] font-[500] text-[#101828]">Shipping information</h2>
+                                <button type="button"
+                                    class="text-[13px] font-semibold text-[#2272e2] hover:underline open-address-modal"
+                                    data-address-context="shipping" data-bs-toggle="modal"
+                                    data-bs-target="#shippingAddressModal">
+                                    Change Address
+                                </button>
+                            </div>
+
+                            <div id="selectedShippingAddressCard" class="flex flex-col gap-3.5 cursor-pointer"
+                                data-address-context="shipping"
+                                data-arrow-src="https://demo.neozena.com/manti/assets/images/home/arrow-down-black.png"
+                                data-bs-toggle="modal" data-bs-target="#shippingAddressModal">
+                                <div
+                                    class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                    eljoe1717@gmail.com</div>
+                                <div
+                                    class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                    Youssef Magdy</div>
+                                <div
+                                    class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                    01558099183</div>
+                                <div
+                                    class="relative w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 pr-10 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                    New Damietta, damietta, Damietta, Argentina
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/arrow-down-black.png"
+                                        width="12" alt="Address arrow"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2">
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="text-[14px] text-[#99A1AF] hover:text-[#555] underline mt-3 block transition underline-offset-2 tracking-wide font-[400]"
+                                data-address-context="shipping" data-open-form="1" data-bs-toggle="modal"
+                                data-bs-target="#shippingAddressModal">
+                                Enter address manually
+                            </button>
+                        </section>
+
+                        <section class="mb-10">
+                            <label class="flex items-center gap-2.5 mt-5 cursor-pointer w-max">
+                                <input
+                                    class="w-3.5 h-3.5 appearance-none border border-[#ccc] rounded-[2px] checked:bg-black checked:border-black cursor-pointer relative before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] before:h-[8px] before:border-r-[1.5px] before:border-b-[1.5px] before:border-white before:transform before:rotate-45 before:left-[4px] before:top-[1px]"
+                                    type="checkbox" id="differentaddress" checked="">
+                                <span class="text-[11px] text-[#888] font-medium tracking-wide">Billing address is same
+                                    as shipping</span>
+                            </label>
+
+                            <div id="collapseAddress" class="mt-5 hidden">
+                                <div class="flex items-center justify-between gap-3 mb-4">
+                                    <h3 class="text-[20px] font-[500] text-[#101828]">Billing Address</h3>
+                                    <button type="button"
+                                        class="text-[13px] font-semibold text-[#2272e2] hover:underline open-address-modal"
+                                        data-address-context="billing" data-bs-toggle="modal"
+                                        data-bs-target="#shippingAddressModal">
+                                        Change Address
+                                    </button>
+                                </div>
+
+                                <div id="selectedBillingAddressCard" class="flex flex-col gap-3.5 cursor-pointer"
+                                    data-address-context="billing"
+                                    data-arrow-src="https://demo.neozena.com/manti/assets/images/home/arrow-down-black.png"
+                                    data-bs-toggle="modal" data-bs-target="#shippingAddressModal">
+                                    <div
+                                        class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                        eljoe1717@gmail.com</div>
+                                    <div
+                                        class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                        Youssef Magdy</div>
+                                    <div
+                                        class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                        01558099183</div>
+                                    <div
+                                        class="relative w-full border border-[#dcdcdc] rounded-[6px] px-4 py-2.5 pr-10 outline-none text-[13px] text-[#333] tracking-wide bg-white">
+                                        New Damietta, damietta, Damietta, Argentina
+                                        <img src="https://demo.neozena.com/manti/assets/images/home/arrow-down-black.png"
+                                            width="12" alt="Billing address arrow"
+                                            class="absolute right-4 top-1/2 -translate-y-1/2">
+                                    </div>
+                                </div>
+                                <button type="button"
+                                    class="text-[14px] text-[#99A1AF] hover:text-[#555] underline mt-3 block transition underline-offset-2 tracking-wide font-[400]"
+                                    data-address-context="billing" data-open-form="1" data-bs-toggle="modal"
+                                    data-bs-target="#shippingAddressModal">
+                                    Enter address manually
+                                </button>
+                            </div>
+                        </section>
+
+                        <input type="radio" checked="" name="shipping_charge" value="0" data="0"
+                            class="shipping-charge hidden">
+
+                        <section>
+                            <h2 class="text-[20px] font-[500] text-[#242424] mb-4">Payment details</h2>
+
+                            <div class="flex flex-col gap-2.5 mb-4">
+                                <label
+                                    class="flex items-center gap-3 rounded-[6px] border border-[#dcdcdc] px-4 py-3 cursor-pointer hover:border-[#242424] transition bg-white">
+                                    <input class="payment-gateway-radio accent-black" type="radio" name="payment_method"
+                                        value="Stripe" checked="">
+                                    <span class="text-[14px] font-medium text-[#242424]">Stripe</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-3 rounded-[6px] border border-[#dcdcdc] px-4 py-3 cursor-pointer hover:border-[#242424] transition bg-white">
+                                    <input class="payment-gateway-radio accent-black" type="radio" name="payment_method"
+                                        value="Paypal">
+                                    <span class="text-[14px] font-medium text-[#242424]">Paypal</span>
+                                </label>
+                            </div>
+
+
+                            <div class="gateway-details mt-4 hidden" id="tab-stripe" style="display: block;">
+                                <div class="mb-2 text-[14px] text-[#808080] font-[400] tracking-wide">Card information
+                                </div>
+                                <div class="flex flex-col gap-3 mt-2">
+                                    <div
+                                        class="relative border border-[#dcdcdc] rounded-[6px] overflow-hidden focus-within:border-[#242424] transition-colors bg-white px-4">
+                                        <div id="stripe-card-number" class="StripeElement StripeElement--empty">
+                                            <div class="__PrivateStripeElement"
+                                                style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;">
+                                                <iframe name="__privateStripeFrame4503" frameborder="0"
+                                                    allowtransparency="true" scrolling="no" role="presentation"
+                                                    allow="payment *"
+                                                    src="https://js.stripe.com/v3/elements-inner-card-bb76317d0f5d444194449e8391bce0fa.html#__shared_params__[version]=v3&amp;__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%22e4760cfb-9921-4313-a6ae-20386a0fb05e%22%2C%22assignments%22%3A%7B%22link_ewcs_prewarm_experiment_v2%22%3A%22treatment%22%2C%22react_version_17_v2%22%3A%22control%22%7D%7D&amp;wait=false&amp;mids[guid]=NA&amp;mids[muid]=89aaef97-2aec-4759-9204-cf1e17a72c23dd5174&amp;mids[sid]=d5e74339-f3de-4499-beef-e05ebd4b826e51bbd9&amp;elementId=cardNumber-e1d67d62-bdec-4153-8339-7f47b2c01583&amp;style[base][iconColor]=%23454545&amp;style[base][color]=%23454545&amp;style[base][fontWeight]=500&amp;style[base][lineHeight]=44px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][backgroundColor]=transparent&amp;style[base][:-webkit-autofill][color]=%23454545&amp;style[base][::placeholder][color]=%23454545&amp;stripeJsMountedInIframe=false&amp;rtl=false&amp;componentName=cardNumber&amp;keyMode=test&amp;apiKey=pk_test_UnU1Coi1p5qFGwtpjZMRMgJM&amp;frameMessagingStrategy=postMessage&amp;referrer=https%3A%2F%2Fdemo.neozena.com%2Fcustomer%2Fcheckout&amp;controllerId=__privateStripeController4501"
+                                                    title="نافذة إدخال رقم البطاقة الآمن"
+                                                    style="border: 0px !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; transform: translate(0px) !important; color-scheme: light only !important; height: 44px;"></iframe><input
+                                                    class="__PrivateStripeElement-input" aria-hidden="true"
+                                                    aria-label=" " autocomplete="false" maxlength="1"
+                                                    style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;">
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 opacity-90 h-[22px] pointer-events-none">
+                                            <img src="https://demo.neozena.com/assets/admin/img/icons/payments/visa.png"
+                                                alt="Visa" class="w-[30px] h-[20px] object-contain">
+                                            <img src="https://demo.neozena.com/assets/admin/img/icons/payments/mastercard.png"
+                                                alt="Mastercard" class="w-[30px] h-[20px] object-contain">
+                                            <img src="https://demo.neozena.com/assets/admin/img/icons/payments/amex-cc.png"
+                                                alt="Amex" class="w-[30px] h-[18px] object-contain">
+                                            <img src="https://demo.neozena.com/assets/admin/img/icons/payments/discover.png"
+                                                alt="Discover" class="w-[30px] h-[18px] object-contain">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div
+                                            class="flex-1 border border-[#dcdcdc] rounded-[6px] overflow-hidden focus-within:border-[#242424] transition-colors bg-white px-4">
+                                            <div id="stripe-card-expiry" class="StripeElement StripeElement--empty">
+                                                <div class="__PrivateStripeElement"
+                                                    style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;">
+                                                    <iframe name="__privateStripeFrame4504" frameborder="0"
+                                                        allowtransparency="true" scrolling="no" role="presentation"
+                                                        allow="payment *"
+                                                        src="https://js.stripe.com/v3/elements-inner-card-bb76317d0f5d444194449e8391bce0fa.html#__shared_params__[version]=v3&amp;__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%22e4760cfb-9921-4313-a6ae-20386a0fb05e%22%2C%22assignments%22%3A%7B%22link_ewcs_prewarm_experiment_v2%22%3A%22treatment%22%2C%22react_version_17_v2%22%3A%22control%22%7D%7D&amp;wait=false&amp;mids[guid]=NA&amp;mids[muid]=89aaef97-2aec-4759-9204-cf1e17a72c23dd5174&amp;mids[sid]=d5e74339-f3de-4499-beef-e05ebd4b826e51bbd9&amp;elementId=cardExpiry-0b8ed5d8-b0f7-41dc-a936-64a6727a31b1&amp;style[base][iconColor]=%23454545&amp;style[base][color]=%23454545&amp;style[base][fontWeight]=500&amp;style[base][lineHeight]=44px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][backgroundColor]=transparent&amp;style[base][:-webkit-autofill][color]=%23454545&amp;style[base][::placeholder][color]=%23454545&amp;stripeJsMountedInIframe=false&amp;rtl=false&amp;componentName=cardExpiry&amp;keyMode=test&amp;apiKey=pk_test_UnU1Coi1p5qFGwtpjZMRMgJM&amp;frameMessagingStrategy=postMessage&amp;referrer=https%3A%2F%2Fdemo.neozena.com%2Fcustomer%2Fcheckout&amp;controllerId=__privateStripeController4501"
+                                                        title="نافذة إدخال تاريخ انتهاء الصلاحية الآمن"
+                                                        style="border: 0px !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; transform: translate(0px) !important; color-scheme: light only !important; height: 44px;"></iframe><input
+                                                        class="__PrivateStripeElement-input" aria-hidden="true"
+                                                        aria-label=" " autocomplete="false" maxlength="1"
+                                                        style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="flex-1 border border-[#dcdcdc] rounded-[6px] overflow-hidden focus-within:border-[#242424] transition-colors bg-white px-4 relative">
+                                            <div id="stripe-card-cvc" class="StripeElement StripeElement--empty">
+                                                <div class="__PrivateStripeElement"
+                                                    style="margin: 0px !important; padding: 0px !important; border: none !important; display: block !important; background: transparent !important; position: relative !important; opacity: 1 !important;">
+                                                    <iframe name="__privateStripeFrame4505" frameborder="0"
+                                                        allowtransparency="true" scrolling="no" role="presentation"
+                                                        allow="payment *"
+                                                        src="https://js.stripe.com/v3/elements-inner-card-bb76317d0f5d444194449e8391bce0fa.html#__shared_params__[version]=v3&amp;__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%22e4760cfb-9921-4313-a6ae-20386a0fb05e%22%2C%22assignments%22%3A%7B%22link_ewcs_prewarm_experiment_v2%22%3A%22treatment%22%2C%22react_version_17_v2%22%3A%22control%22%7D%7D&amp;wait=false&amp;mids[guid]=NA&amp;mids[muid]=89aaef97-2aec-4759-9204-cf1e17a72c23dd5174&amp;mids[sid]=d5e74339-f3de-4499-beef-e05ebd4b826e51bbd9&amp;elementId=cardCvc-593a7e5e-3dba-4be4-85f3-cddde8adfd56&amp;style[base][iconColor]=%23454545&amp;style[base][color]=%23454545&amp;style[base][fontWeight]=500&amp;style[base][lineHeight]=44px&amp;style[base][fontSmoothing]=antialiased&amp;style[base][backgroundColor]=transparent&amp;style[base][:-webkit-autofill][color]=%23454545&amp;style[base][::placeholder][color]=%23454545&amp;stripeJsMountedInIframe=false&amp;rtl=false&amp;componentName=cardCvc&amp;keyMode=test&amp;apiKey=pk_test_UnU1Coi1p5qFGwtpjZMRMgJM&amp;frameMessagingStrategy=postMessage&amp;referrer=https%3A%2F%2Fdemo.neozena.com%2Fcustomer%2Fcheckout&amp;controllerId=__privateStripeController4501"
+                                                        title="نافذة إدخال رمز التحقق من البطاقة (CVC) الآمن"
+                                                        style="border: 0px !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; user-select: none !important; transform: translate(0px) !important; color-scheme: light only !important; height: 44px;"></iframe><input
+                                                        class="__PrivateStripeElement-input" aria-hidden="true"
+                                                        aria-label=" " autocomplete="false" maxlength="1"
+                                                        style="border: none !important; display: block !important; position: absolute !important; height: 1px !important; top: -1px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent !important; pointer-events: none !important; font-size: 16px !important;">
+                                                </div>
+                                            </div>
+                                            <svg class="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#777]"
+                                                viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path
+                                                    d="M3 5a2 2 0 012-2h10a2 2 0 012 2v1H3V5zm14 3H3v7a2 2 0 002 2h10a2 2 0 002-2V8zm-9 4a1 1 0 100 2h4a1 1 0 100-2H8z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div id="stripe-errors" class="text-[#de1709] text-[12px]"></div>
+                                </div>
+                            </div>
+
+                            <div class="gateway-details mt-4 hidden" id="tab-anet" style="display: none;">
+                                <div class="mb-2 text-[14px] text-[#808080] font-[400] tracking-wide">Card information
+                                </div>
+                                <div class="space-y-3">
+                                    <input
+                                        class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none text-[13px] text-[#333] placeholder-[#999] bg-white"
+                                        type="text" id="anetCardNumber" placeholder="Card Number" disabled="disabled">
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <input
+                                            class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none text-[13px] text-[#333] placeholder-[#999] bg-white"
+                                            type="text" id="anetExpMonth" placeholder="MM" disabled="disabled">
+                                        <input
+                                            class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none text-[13px] text-[#333] placeholder-[#999] bg-white"
+                                            type="text" id="anetExpYear" placeholder="YY" disabled="disabled">
+                                        <input
+                                            class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none text-[13px] text-[#333] placeholder-[#999] bg-white"
+                                            type="text" id="anetCardCode" placeholder="CVC" disabled="disabled">
+                                    </div>
+                                    <ul id="anetErrors" class="list-none text-[#de1709] text-[12px] p-0 m-0"></ul>
+                                </div>
+                            </div>
+
+                            <div id="instructions" class="mt-4" style="display: none;"></div>
+
+                            <button type="submit"
+                                class="w-full bg-[#1b1b1b] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:bg-black transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                id="checkoutMantiPayBtn">
+                                Pay <span id="checkoutMantiPayAmount">$4.40</span>
+                            </button>
+                        </section>
+                    </div>
+
+                    <div class="flex-1 w-full max-w-full lg:max-w-[380px] pt-1">
+                        <div class="hidden md:block mb-6">
+                            <div class="text-[14px] text-[#808080] font-[400] mb-0">Total</div>
+                            <div class="text-[32px] font-[500] text-[#101828] leading-none" id="coGrandTotal"
+                                data="4.4">$ 4.4</div>
+                        </div>
+
+                        <div class="flex flex-col gap-5 mt-4 md:mt-[30px]">
+                            <input type="hidden" name="product_id[]" value="3074">
+                            <div class="flex items-start gap-3.5">
+                                <div
+                                    class="w-[75px] h-[55px] md:w-[90px] md:h-[65px] bg-[#f5f5f5] shrink-0 relative flex items-center justify-center overflow-hidden rounded-[2px]">
+                                    <img src="https://demo.neozena.com/storage/catalog/products/images/24be9ae5aad63dd8ac9e1ded347f97dfd85cf9c8.jpg"
+                                        alt="Product" class="w-[60px] h-[60px] md:w-[75px] md:h-[75px] object-contain">
+                                </div>
+                                <div class="flex-1 mt-0 min-w-0">
+                                    <h3
+                                        class="text-[#242424] text-[12px] md:text-[13px] font-[400] leading-[1.3] line-clamp-2 max-w-[95%]">
+                                        <a href="https://demo.neozena.com/accessories/womens-accessories/womens-jewelry-set/new-pearl-necklace-earrings-two-piece-set-for-european-and-american-foreign-trade-womens-light-luxury-niche-versatile-sweater-chain-lock-bone-chain-alloy"
+                                            target="_blank">New pearl necklace earrings two-piece set for European and
+                                            Ame...</a>
+                                    </h3>
+                                    <div class="hidden md:flex flex-col gap-1.5 mt-1.5 mb-2">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="text-[16px] font-[400] text-[#242424]">$ 4.4</span>
+                                        </div>
+                                        <div
+                                            class="inline-flex items-center justify-between border border-[#707070] rounded-[4px] px-2 py-0.5 bg-white h-[20px] min-w-[68px] max-w-max">
+                                            <span class="text-[9px] font-[500] text-[#242424]">Qty 1</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex md:hidden items-center justify-between mt-2 gap-4">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-[14px] font-[600] text-[#242424]">$ 4.4</span>
+                                        </div>
+                                        <div
+                                            class="inline-flex items-center justify-between border border-[#DCDCDC] rounded-[4px] px-2 py-0.5 bg-white h-[24px] min-w-[55px]">
+                                            <span class="text-[11px] font-[400] text-[#242424]">1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-center border border-[#dcdcdc] rounded-[6px] h-[40px] overflow-hidden my-5 bg-white">
+                            <input type="text" name="coupon" placeholder="Enter the discount code"
+                                class="flex-1 px-4 py-2 text-[13px] outline-none text-[#333] placeholder-[#999] h-full font-[400] bg-transparent"
+                                autocomplete="off">
+                            <button type="button"
+                                class="couponBtn bg-[#787878] text-white px-5 h-full text-[13px] font-[500] hover:bg-[#555] transition shrink-0">Apply</button>
+                        </div>
+
+                        <div class="w-full h-px bg-[#f0f0f0] my-8"></div>
+
+                        <div id="cartTotal" class="flex flex-col gap-3">
+                            <div class="flex justify-between items-center text-[11px] tracking-wide">
+                                <span class="text-[#242424] text-[16px] font-[500] md:font-[400]">Subtotal</span>
+                                <span class="subtotal text-[#242424] text-[16px] font-[500] md:font-[400]" data="4.4">$
+                                    4.4</span>
+                            </div>
+                            <div class="flex justify-between items-start text-[11px] tracking-wide gap-4">
+                                <div class="flex flex-col mt-1">
+                                    <span class="text-[#808080] font-[400] text-[14px]">Shipping</span>
+                                    <span class="text-[14px] text-[#808080]" id="shippingSummaryText"></span>
+                                    <span class="text-[12px] text-[#16a34a] mt-1" id="shippingSummaryNote"></span>
+                                    <span class="text-[12px] text-[#a1a1aa] mt-1">Order weight: 20.00 g</span>
+                                </div>
+                                <span class="shipping text-[#808080] text-[14px] font-[400] mt-0.5" data="0"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] tracking-wide">
+                                <span class="text-[#808080] font-[400] text-[14px]">Tax (0.00%)</span>
+                                <span id="tax" data-tax="0" class="text-[#808080] text-[14px] font-[400]"></span>
+                            </div>
+                            <div class="w-full h-px bg-[#f0f0f0] my-6 hidden md:block"></div>
+                            <div class="flex justify-between items-center pb-4">
+                                <span class="text-[16px] font-bold text-[#242424]">Total due</span>
+                                <span class="grandTotal text-[16px] font-bold text-[#242424]" data="4.4">$ 4.4</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-px bg-[#f0f0f0] my-6 hidden md:block"></div>
+
+                        <div class="text-[14px] text-[#6A7282] font-[400] mt-auto">
+                            Powered by <strong class="text-[#364153] text-[14px] font-bold">Manti</strong> <span
+                                class="px-1 text-[#ccc]">|</span>
+                            <a href="https://demo.neozena.com/page/terms-and-conditions"
+                                class="underline hover:text-[#555] underline-offset-2">Terms</a>
+                            <a href="https://demo.neozena.com/page/privacy-policy"
+                                class="underline hover:text-[#555] underline-offset-2 ml-1">Privacy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto z-[1050] bg-black/40 backdrop-blur-sm"
+            id="shippingAddressModal" tabindex="-1" aria-labelledby="shippingAddressModalLabel"
+            data-address-modal-bound="1" aria-hidden="true" style="display: none;">
+            <div
+                class="modal-dialog relative w-auto pointer-events-none max-w-[600px] mx-auto mt-10 px-4 sm:px-0 flex items-center min-h-[calc(100%-3rem)]">
+                <div
+                    class="modal-content border-none shadow-2xl relative flex flex-col w-full pointer-events-auto bg-white rounded-[12px] outline-none text-current overflow-hidden">
+
+                    <div class="flex items-center justify-between p-6 border-b border-[#ececec]">
+                        <h5 class="text-[18px] font-[500] text-[#101828]" id="shippingAddressModalLabel">Select Address
+                        </h5>
+                        <button type="button"
+                            class="text-[#999] hover:text-[#242424] transition bg-transparent border-none outline-none"
+                            data-bs-dismiss="modal" aria-label="Close">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
+                        <div class="space-y-3 mb-6">
+                            <label
+                                class="flex items-start gap-4 p-4 rounded-[8px] border border-[#ececec] hover:border-[#242424] cursor-pointer transition bg-[#fafafa] hover:bg-white group">
+                                <input type="radio" name="selected_modal_address" value="2"
+                                    class="mt-1 w-4 h-4 accent-black" checked="" data-fname="Youssef" data-lname="Magdy"
+                                    data-email="eljoe1717@gmail.com" data-phone="01558099183" data-country="Argentina"
+                                    data-state="Damietta" data-city="damietta" data-address="New Damietta">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h3
+                                            class="text-[14px] font-medium text-[#242424] group-hover:text-black transition">
+                                            Youssef Magdy</h3>
+                                        <span class="text-[13px] text-[#666]">01558099183</span>
+                                    </div>
+                                    <p class="text-[13px] text-[#666] mb-1">damietta, Damietta, Argentina</p>
+                                    <p class="text-[13px] text-[#666] mb-0">New Damietta</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="border-t border-[#ececec] pt-6">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h6 class="text-[15px] font-[500] text-[#242424]">Add New Address</h6>
+                                    <p class="text-[12px] text-[#8a8a8a] mt-1">Fill in delivery details carefully for
+                                        faster shipping.</p>
+                                </div>
+                            </div>
+
+
+                            <form id="newAddressForm"
+                                action="https://demo.neozena.com/customer/checkout/shipping-address/store" method="POST"
+                                class="space-y-5">
+                                <input type="hidden" name="_token" value="7jV4lAnfeGkdmTXFotIVAX6hD2IbYEkgSButfx9J">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <label class="block">
+                                        <span class="mb-1.5 block text-[12px] font-medium text-[#555]">First Name</span>
+                                        <input type="text" name="first_name" value="" placeholder="First Name"
+                                            class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                    </label>
+
+                                    <label class="block">
+                                        <span class="mb-1.5 block text-[12px] font-medium text-[#555]">Last Name</span>
+                                        <input type="text" name="last_name" value="" placeholder="Last Name"
+                                            class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                    </label>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <label class="block">
+                                        <span class="mb-1.5 block text-[12px] font-medium text-[#555]">Email
+                                            Address</span>
+                                        <input type="email" name="email" value="" placeholder="Email Address"
+                                            class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                    </label>
+
+                                    <label class="block">
+                                        <span class="mb-1.5 block text-[12px] font-medium text-[#555]">Phone
+                                            Number</span>
+                                        <input type="text" name="phone" value="" placeholder="Phone Number"
+                                            class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                    </label>
+                                </div>
+
+                                <label class="block">
+                                    <span class="mb-1.5 block text-[12px] font-medium text-[#555]">Street Address</span>
+                                    <input type="text" name="address_line_1" value=""
+                                        placeholder="Street Address, building, apartment"
+                                        class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                </label>
+
+                                <div class="rounded-[10px] border border-[#ececec] bg-[#fafafa] px-4 py-4">
+                                    <div class="mb-3">
+                                        <h6 class="text-[13px] font-semibold text-[#242424]">Location details</h6>
+                                        <p class="text-[11px] text-[#8a8a8a] mt-1">Choose country first, then provide
+                                            your state and city.</p>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        <label class="block relative custom-select-wrapper">
+                                            <span class="mb-1.5 block text-[12px] font-medium text-[#555]">Country /
+                                                Region</span>
+
+                                            <div class="relative">
+                                                <select name="country" class="real-select hidden"
+                                                    style="display: none;">
+                                                    <option value="">Select Country</option>
+                                                    <option value="Argentina">Argentina</option>
+                                                    <option value="Bahrain">Bahrain</option>
+                                                    <option value="Brazil">Brazil</option>
+                                                    <option value="Canada">Canada</option>
+                                                    <option value="China">China</option>
+                                                    <option value="France">France</option>
+                                                    <option value="Germany">Germany</option>
+                                                    <option value="India">India</option>
+                                                    <option value="Italy">Italy</option>
+                                                    <option value="Japan">Japan</option>
+                                                    <option value="Kuwait">Kuwait</option>
+                                                    <option value="Mexico">Mexico</option>
+                                                    <option value="Morocco">Morocco</option>
+                                                    <option value="Netherlands">Netherlands</option>
+                                                    <option value="Oman">Oman</option>
+                                                    <option value="Qatar">Qatar</option>
+                                                    <option value="Saudi Arabia">Saudi Arabia</option>
+                                                    <option value="South Korea">South Korea</option>
+                                                    <option value="Spain">Spain</option>
+                                                    <option value="United Arab Emirates">United Arab Emirates</option>
+                                                    <option value="United Kingdom">United Kingdom</option>
+                                                    <option value="United States">United States</option>
+                                                </select>
+                                                <div class="nice-select real-select hidden" tabindex="0"><span
+                                                        class="current">Select Country</span>
+                                                    <ul class="list">
+                                                        <li data-value="" class="option selected">Select Country</li>
+                                                        <li data-value="Argentina" class="option">Argentina</li>
+                                                        <li data-value="Bahrain" class="option">Bahrain</li>
+                                                        <li data-value="Brazil" class="option">Brazil</li>
+                                                        <li data-value="Canada" class="option">Canada</li>
+                                                        <li data-value="China" class="option">China</li>
+                                                        <li data-value="France" class="option">France</li>
+                                                        <li data-value="Germany" class="option">Germany</li>
+                                                        <li data-value="India" class="option">India</li>
+                                                        <li data-value="Italy" class="option">Italy</li>
+                                                        <li data-value="Japan" class="option">Japan</li>
+                                                        <li data-value="Kuwait" class="option">Kuwait</li>
+                                                        <li data-value="Mexico" class="option">Mexico</li>
+                                                        <li data-value="Morocco" class="option">Morocco</li>
+                                                        <li data-value="Netherlands" class="option">Netherlands</li>
+                                                        <li data-value="Oman" class="option">Oman</li>
+                                                        <li data-value="Qatar" class="option">Qatar</li>
+                                                        <li data-value="Saudi Arabia" class="option">Saudi Arabia</li>
+                                                        <li data-value="South Korea" class="option">South Korea</li>
+                                                        <li data-value="Spain" class="option">Spain</li>
+                                                        <li data-value="United Arab Emirates" class="option">United Arab
+                                                            Emirates</li>
+                                                        <li data-value="United Kingdom" class="option">United Kingdom
+                                                        </li>
+                                                        <li data-value="United States" class="option">United States</li>
+                                                    </ul>
+                                                </div>
+
+                                                <button type="button"
+                                                    class="dropdown-trigger w-full flex justify-between items-center border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white cursor-pointer">
+                                                    <span class="dropdown-text text-[#333] truncate">
+                                                        Select Country
+                                                    </span>
+                                                    <svg class="dropdown-icon h-4 w-4 text-[#7a7a7a] transition-transform duration-200"
+                                                        viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                                                        stroke-width="1.8" aria-hidden="true">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M5 7.5L10 12.5L15 7.5"></path>
+                                                    </svg>
+                                                </button>
+
+                                                <div
+                                                    class="dropdown-menu absolute z-50 left-0 top-full mt-1.5 hidden w-full max-h-[260px] flex-col rounded-[8px] border border-[#ececec] bg-white shadow-lg opacity-0 transform scale-95 transition-all duration-200 origin-top overflow-hidden">
+                                                    <div
+                                                        class="sticky top-0 bg-white p-2 border-b border-[#ececec] z-10 shrink-0">
+                                                        <input type="text"
+                                                            class="dropdown-search w-full bg-[#f9f9f9] border border-[#ececec] rounded-[6px] px-3 py-2 text-[12px] outline-none focus:border-[#242424] transition"
+                                                            placeholder="Select country...">
+                                                    </div>
+                                                    <ul
+                                                        class="dropdown-list py-1 flex flex-col overflow-y-auto custom-scrollbar">
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="">Select Country</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Argentina">Argentina</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Bahrain">Bahrain</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Brazil">Brazil</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Canada">Canada</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="China">China</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="France">France</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Germany">Germany</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="India">India</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Italy">Italy</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Japan">Japan</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Kuwait">Kuwait</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Mexico">Mexico</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Morocco">Morocco</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Netherlands">Netherlands</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Oman">Oman</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Qatar">Qatar</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Saudi Arabia">Saudi Arabia</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="South Korea">South Korea</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="Spain">Spain</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="United Arab Emirates">United Arab Emirates</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="United Kingdom">United Kingdom</li>
+                                                        <li class="dropdown-option cursor-pointer px-4 py-2 text-[13px] text-[#555] hover:bg-[#f5f5f5] hover:text-[#242424] transition-colors"
+                                                            data-value="United States">United States</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </label>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <label class="block">
+                                                <span class="mb-1.5 block text-[12px] font-medium text-[#555]">State /
+                                                    Province</span>
+                                                <input type="text" name="state" value="" placeholder="State / Province"
+                                                    class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                            </label>
+
+                                            <label class="block">
+                                                <span
+                                                    class="mb-1.5 block text-[12px] font-medium text-[#555]">City</span>
+                                                <input type="text" name="city" value="" placeholder="City"
+                                                    class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-3 outline-none text-[13px] focus:border-[#242424] focus:ring-2 focus:ring-[#242424]/5 transition bg-white">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full bg-[#fafafa] border border-dashed border-[#d9d9d9] text-[#242424] rounded-[8px] py-3 text-[14px] font-[500] hover:bg-[#f0f0f0] hover:border-[#b0b0b0] transition">Save
+                                    New Address</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="p-6 border-t border-[#ececec] flex flex-wrap justify-end gap-3 bg-[#fdfdfd]">
+                        <button type="button"
+                            class="px-5 py-2.5 bg-[#f5f5f5] text-[#555] rounded-[6px] text-[13px] font-[500] hover:bg-[#e8e8e8] transition"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" id="confirmAddressSelectionBtn"
+                            class="px-5 py-2.5 bg-[#1b1b1b] text-white rounded-[6px] text-[13px] font-[500] hover:bg-black transition"
+                            data-bs-dismiss="modal">Confirm Selection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- START FOOTER -->
+    <footer class="mt-auto relative z-10 w-full font-main text-[#FFFFFF] bg-[#3B3B3B] pb-[50px] lg:pb-0">
+        <div class="max-w-[1280px] mx-auto py-10 lg:py-14 px-6 lg:px-8">
+
+            <!-- Grid Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12 gap-y-10">
+                <!-- Column 1: Company Info -->
+                <div class="flex flex-col gap-10">
+                    <div class="flex flex-col gap-3.5">
+                        <h3
+                            class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                            Company info</h3>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">About Manti</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Contact us</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Careers</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Press</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Manti's Tree Planting
+                            Program</a>
+                    </div>
+                    <!-- We accept (Desktop View) -->
+                    <div class="hidden lg:flex flex-col gap-4">
+                        <h3 class="font-bold text-[14px] text-white tracking-wide">We accept</h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/mastercard.png" alt="Mastercard"
+                                class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Customer Service -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Customer service</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Return and refund policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Intellectual property policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Shipping info</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Report suspicious activity</a>
+                </div>
+
+                <!-- Column 3: Help -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Help</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Safety center</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Purchase protection</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Sitemap</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Partner with Manti</a>
+                </div>
+
+                <!-- Column 4: Logo & Connect -->
+                <div class="hidden lg:flex flex-col gap-6 items-start">
+                    <a href="index.html" class="flex items-center gap-2 mb-2">
+                        <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                    </a>
+                    <div class="flex flex-col gap-4">
+                        <span class="text-white text-[13px] font-bold tracking-wide">Connect with Manti</span>
+                        <div class="flex items-center gap-4 text-white">
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Facebook - Original.png" alt="Facebook" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Twitter - Original.png" alt="Twitter" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Instagram - Original.png" alt="Instagram"
+                                    class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Youtube - Original.png" alt="Youtube" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/LinkedIn - Original.png" alt="LinkedIn" class="w-6 h-6"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Only View -->
+            <div class="lg:hidden flex flex-col gap-8 mt-5">
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">Connect with Manti</h3>
+                    <div class="flex items-center gap-6">
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Facebook - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Twitter - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Instagram - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Youtube - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/LinkedIn - Original.png" class="w-[28px] h-[28px]"></a>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">We accept</h3>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/mastercard.png" alt="Mastercard" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                    </div>
+                </div>
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="text-center text-[12px] text-[#666]">
+                    © 2025 Manti. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Footer Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#555] py-4 text-white">
+            <div
+                class="max-w-[1280px] mx-auto flex items-center justify-center gap-16 text-[13px] font-medium opacity-80">
+                <a href="#" class="hover:opacity-100 transition">Terms of use</a>
+                <a href="#" class="hover:opacity-100 transition">Privacy policy</a>
+                <a href="#" class="hover:opacity-100 transition">Your privacy choices</a>
+                <a href="#" class="hover:opacity-100 transition">Support</a>
+                <a href="#" class="hover:opacity-100 transition">FAQ</a>
+            </div>
+        </div>
+
+        <!-- Copyright Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#1b1b1b] py-5 text-[#888] text-[13px] text-center border-t border-[#222]">
+            Copyright ©2025 Manti. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+
+
+
+    <!-- Mobile Bottom Navigation -->
+    <div
+        class="lg:hidden fixed bottom-5 left-5 right-5 bg-[#1a1a1a] text-white rounded-full flex items-center justify-between px-6 py-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-[100]">
+        <!-- Home -->
+        <a href="index.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/home3.png" alt="Home" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Cart (Active) -->
+        <a href="cart.html"
+            class="flex items-center gap-2 bg-white text-[#1a1a1a] px-5 py-[8px] rounded-full font-bold text-[14px] relative shadow-lg transition-transform active:scale-95">
+            <div class="relative">
+                <img src="assets/images/home/cartIcon.png" alt="Cart" class="w-[22px] h-[22px]"
+                    style="filter: brightness(0);">
+                <span
+                    class="absolute -top-[8px] -right-[10px] bg-[#222] text-white text-[9px] font-bold w-[16px] h-[16px] flex items-center justify-center rounded-full border border-white">2</span>
+            </div>
+            <span>Cart</span>
+        </a>
+
+        <!-- Heart -->
+        <a href="#" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/heart.png" alt="Favorite" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Profile -->
+        <a href="profile.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/user.png" alt="Profile" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/cart.js"></script>
+</body>
+
+</html>

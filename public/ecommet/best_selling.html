@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manti - Best Selling</title>
+    <!-- Include Tailwind output CSS. For local development you would build it. I assume tailwind is running or linked. We will just use standard classes. -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                    screens: {
+                        '2xl': '1440px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#de1709',
+                        secondary: '#ffaf09',
+                        success: '#2aaf2e',
+                        purple: '#61167f',
+                        'gray-darkest': '#232323',
+                        'gray-dark': '#292d32',
+                        'gray-medium': '#7f7f7f',
+                        'gray-light': '#c4c4c4',
+                        'gray-lighter': '#e7e7e7',
+                        'gray-lightest': '#f5f5f5',
+                        'sale-light': '#ffecea',
+                        'yellow-light': '#fdff9f'
+                    },
+                    fontFamily: {
+                        main: "'Outfit', sans-serif"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            visibility: hidden;
+        }
+
+        body.loaded {
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col">
+
+    <!-- START HEADER -->
+    <header class="w-full relative z-50">
+        <!-- Top Dark Bar -->
+        <div class="bg-gray-darkest text-white text-xs py-2 hidden lg:block">
+            <div class="container flex justify-between items-center">
+                <div class="flex items-center gap-2 shipping-modal-trigger cursor-pointer">
+                    <!-- IMAGE: Shipping Icon -->
+                    <img src="assets/images/home/shippingIcon.png" alt="Shipping Icon" width="28" height="24">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Free shipping on all orders</span>
+                        <span class="text-gray-light text-center">Limited-time offer</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- IMAGE: Fire Icon -->
+                    <img src="assets/images/home/offerIcon.png" alt="Offer Icon" class="w-[14px] h-[19px]">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Limited-time Offers</span>
+                        <span class="text-gray-light text-center">Don't Miss Out</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- IMAGE: Lock Icon -->
+                    <img src="assets/images/home/secureIcon.png" alt="Secure Icon" class="w-[14px] h-[18px]">
+                    <span class="font-semibold text-gray-light">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <div class="bg-primary text-white hidden lg:block">
+            <div class="container py-4 flex items-center justify-between gap-6">
+
+                <!-- Logo area -->
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                </a>
+
+                <!-- Intranet Links -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold">
+                    <a href="best_selling.html" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/like.png" alt="Best Selling Icon" class="w-[20px] h-[20px]">
+                        Best-Selling Items
+                    </a>
+                    <a href="#" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/navStar.png" alt="Star Icon" class="w-[20px] h-[20px]">
+                        5-Star Rated
+                    </a>
+                    <a href="#" class="hover:text-yellow-light transition">New In</a>
+                    <button class="flex items-center gap-1 hover:text-yellow-light transition focus:outline-none">
+                        Categories
+                        <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon" class="w-[20px] h-[20px]">
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mx-4 relative">
+                    <input type="text" placeholder="Search..."
+                        class="w-full text-black rounded-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-yellow-light placeholder-gray-medium text-sm">
+                    <button
+                        class="absolute right-1 top-1 bottom-1 w-8 h-8 rounded-full bg-gray-darkest text-white flex items-center justify-center hover:bg-black transition">
+                        <!-- IMAGE: Search Icon -->
+                        <img src="assets/images/home/searchIcon.png" alt="Search Icon" class="w-[16px] h-[16px]">
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-5">
+                    <!-- Lang / Currency -->
+                    <button
+                        class="lang-currency-trigger flex items-center gap-2 text-xs text-white hover:text-yellow-light focus:outline-none">
+                        <img src="assets/images/home/flagImg.png" alt="Flag Icon" class="w-[40px] h-[25px]">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[12px] text-[#C5C5C5]">En/</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[12px]">SAR</span>
+                                <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon"
+                                    class="w-[12px] h-[12px]">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- User Account -->
+                    <a href="profile.html"
+                        class="flex items-center gap-2 text-white hover:text-yellow-light transition">
+                        <!-- IMAGE: User Icon -->
+                        <img src="assets/images/home/user.png" alt="Person Icon" class="w-[24px] h-[24px]">
+                        <div class="flex flex-col text-xs leading-tight">
+                            <span class="text-[#C5C5C5]">Welcome</span>
+                            <span>Sign in / Register</span>
+                        </div>
+                    </a>
+
+                    <!-- Cart -->
+                    <a href="cart.html" class="flex items-center gap-1 hover:text-yellow-light transition relative">
+                        <!-- IMAGE: Cart Icon -->
+                        <img src="assets/images/home/cartIcon.png" alt="Cart Icon" class="w-[24px] h-[24px]">
+                        <span
+                            class="absolute -top-2 -right-1 bg-gray-darkest text-white text-[10px] w-[30px] h-[16px] flex items-center justify-center px-1.5 py-0.5 rounded-full border border-primary">0</span>
+                        <span class="text-xs  mt-2 hidden sm:block">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- Mobile Header & Categories Nav -->
+    <div class="lg:hidden flex flex-col bg-white w-full z-40 sticky top-0 shadow-sm">
+        <!-- Top Header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-[#eaeaea]">
+            <a href="index.html" class="flex items-center shrink-0">
+                <div class="flex items-center gap-1">
+                    <span class="font-extrabold text-[20px] tracking-tight text-[#2272e2] flex items-center">
+                        <span
+                            class="inline-flex w-[18px] h-[18px] rounded-full border-[3px] border-[#2272e2] items-center justify-center mr-[4px] mt-0.5"><span
+                                class="w-1.5 h-1.5 bg-[#2272e2] rounded-full"></span></span>Manti
+                    </span>
+                </div>
+            </a>
+            <div class="flex-1 mx-3 relative">
+                <input type="text" placeholder="Search..."
+                    class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] px-4 outline-none text-[13px] placeholder-gray-500">
+            </div>
+            <div class="flex items-center gap-[14px] shrink-0">
+                <button
+                    class="lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
+                    <div class="flex items-end gap-[1px]">
+                        <span class="text-[11px] font-bold">En/</span>
+                    </div>
+                    <div class="flex items-center gap-[2px]">
+                        <span class="text-[11px] font-bold">SAR</span>
+                        <img src="assets/images/home/arrow-down-black.png" class="w-[8px] h-[8px]">
+                    </div>
+                </button>
+                <button class="flex flex-col gap-[3.5px] py-1 cursor-pointer">
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Categories Nav -->
+        <div class="overflow-x-auto whitespace-nowrap scroll-smooth no-scrollbar flex items-center px-4 pt-3 pb-0 text-[12px] font-bold text-gray-darkest gap-5"
+            style="scrollbar-width: none;">
+            <a href="#" class="relative pb-2 text-[#242424]">
+                Recommended
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[2.5px] bg-[#df190b] rounded-t-sm">
+                </div>
+            </a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Home Appliances</a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Mobile Devices</a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Computer Hardware</a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Fashion</a>
+        </div>
+    </div>
+    <!-- END HEADER -->
+
+
+    <!-- START MAIN CONTENT -->
+    <main class="flex-grow bg-white pt-8 w-full">
+        <div class="max-w-[1280px] mx-auto px-5 sm:px-8 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div class="flex items-center flex-wrap gap-4">
+                    <h1 class="text-[#333] font-medium text-[15px] mr-2">Best-Selling Items</h1>
+                    <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap scroll-smooth no-scrollbar pb-1 -mb-1 max-w-full"
+                        style="scrollbar-width: none;">
+                        <a href="https://demo.neozena.com/best-sellers?days=30"
+                            class="px-5 py-1.5 rounded-full border border-[#222] text-[#222] font-semibold text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Within
+                            last 30 days</a>
+                        <a href="https://demo.neozena.com/best-sellers?days=14"
+                            class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] font-medium text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Within
+                            last 14 days</a>
+                        <a href="https://demo.neozena.com/best-sellers?days=7"
+                            class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] font-medium text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Within
+                            last 7 days</a>
+                    </div>
+                </div>
+
+                <form action="https://demo.neozena.com/best-sellers" class="flex items-center gap-3 flex-wrap"
+                    style="position: relative;">
+                    <input type="hidden" name="days" value="30">
+                    <span class="text-[#888] text-[13px] font-medium">Filter by category</span>
+                    <input type="text" name="keyword" value="" placeholder="Search items"
+                        class="px-4 py-1.5 rounded-full border border-[#e5e5e5] text-[#444] font-medium text-[13px] bg-white focus:outline-none min-w-[180px]">
+                    <button type="submit"
+                        class="px-4 py-1.5 rounded-full border border-[#222] text-[#222] font-semibold text-[13px] bg-white hover:bg-gray-50 transition">Search</button>
+
+                    <div
+                        class="search-history-dropdown absolute top-full left-0 right-0 mt-3 bg-white rounded-[16px] shadow-2xl p-5 z-[150] hidden opacity-0 translate-y-2 transition-all duration-300 border border-gray-100 min-w-[300px]">
+                        <!-- Triangle -->
+                        <div
+                            class="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white">
+                        </div>
+
+                        <div class="flex flex-col gap-6">
+                            <!-- Section 1 -->
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[15px] font-bold text-[#111]">Recently searched</span>
+                                    <button
+                                        class="hover:bg-gray-100 p-1 rounded transition cursor-pointer border-none bg-transparent">
+                                        <img src="assets/images/home/trash.png" class="w-5 h-5 object-contain"
+                                            alt="Delete">
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/shoesSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">shoes</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div class="flex flex-col gap-3">
+                                <span class="text-[15px] font-bold text-[#111]">Recently searched</span>
+                                <div class="flex flex-wrap gap-2">
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/shoesSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">shoes</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/smartSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">watches for men</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/smartSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">watches</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/tabletSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">android tablet</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                            <img src="assets/images/home/shoesSearch.jpg"
+                                                class="w-[30px] h-[30px] object-contain" alt="">
+                                        </div>
+                                        <span class="text-[13px] font-medium text-[#111]">shoes for men</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap no-scrollbar pb-5"
+                style="scrollbar-width: none;">
+                <a href="https://demo.neozena.com/best-sellers?days=30"
+                    class="px-5 py-1.5 rounded-full border border-[#222] text-[#222] font-semibold text-[13px] bg-white hover:bg-gray-50 transition shrink-0">All
+                    categories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=316"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=317"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    bracelet chain</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=318"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Phone
+                    case</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=319"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    Ring</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=320"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women
+                    hat</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=321"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Woman's
+                    necklace</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=322"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    Bracelet</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=323"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    earrings</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=324"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Hair
+                    Clips</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=325"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    jewelry set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=326"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Seat
+                    Side Gap Organizers</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=582"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Bags
+                    &amp; Luggage</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=327"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Trunk Collapsible Storage Box</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=583"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’
+                    Tote Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=328"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Vehicle
+                    Interior Hook &amp; Storage Organizer Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=584"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Bag Sets</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=329"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Air
+                    Vent Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=585"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Underarm Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=330"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Dashboard
+                    Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=586"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Bucket Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=331"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Center
+                    Console Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=587"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Mini Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=332"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Windshield
+                    Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=588"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Designer / Premium Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=333"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Gravity
+                    Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=589"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Crossbody Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=334"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Clip-on
+                    Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=590"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Clutch Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=335"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Microfiber
+                    Cleaning Cloth &amp; Car Cleaning Towel</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=591"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    and women's sports and leisure backpacks</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=336"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Interior Cleaning Brush</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=592"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Primary
+                    school backpack</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=337"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Basic
+                    Car Interior Cleaning Kit</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=593"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=338"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Air
+                    Vent Cleaning Set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=594"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Handbags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=339"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Ornament Decorations</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=595"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women’s
+                    Shoulder Bags</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=340"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Compliant
+                    Car Ambient Lights</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=341"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Aromatherapy Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=342"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Cable
+                    Clips &amp; Charging Cable Organizers</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=343"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Mini
+                    Storage Boxes &amp; Car Accessory Combo Sets</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=344"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Woman's
+                    brooch</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=345"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Children's
+                    accessory set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=346"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Children's
+                    accessory</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=347"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Children's
+                    bracelet, necklace, earrings, and headwear set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=348"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Compact
+                    Bluetooth</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=349"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    backrest</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=350"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women
+                    watch</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=351"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    watch</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=352"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    belt</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=353"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    belt</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=354"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Couple
+                    watches</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=355"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    sunglasses</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=356"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    sunglasses</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=357"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Woman's
+                    tie</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=358"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men
+                    pocket watch</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=359"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Children's
+                    hair accessory set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=360"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Children's
+                    hair accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=361"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Rear shelf table board</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=362"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Front
+                    armrest storage box of car</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=363"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Powerful
+                    car fan</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=364"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Neck Pillow</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=365"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    aroma accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=366"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    anti-slip mat</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=367"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    rearview mirror</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=368"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Duster</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=369"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    fragrance diffuser</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=370"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=371"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Mobile
+                    &amp; Smart Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=372"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Electronics
+                    &amp; Smart Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=373"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Interior Storage &amp; Organization</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=374"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=375"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Hair
+                    &amp; Headscarf Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=376"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Phone
+                    protection</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=377"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Women's
+                    Accessories</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=378"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Seat &amp; Space Storage Solutions</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=379"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Seat Back Organizers</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=380"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Trunk Organizer</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=381"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Anti-Slip
+                    Car Trunk Storage Mat</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=382"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    phone holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=383"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Magnetic
+                    Car Phone Holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=384"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Interior Cleaning Tools &amp; Kits</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=385"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    Interior Ambience &amp; Decor</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=386"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Mini
+                    Multi-Function Tools &amp; Simple Emergency Tools</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=387"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Small
+                    Audio</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=388"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Earphones/Headphones</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=389"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Men's
+                    tie</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=390"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">children's
+                    hair accessories set</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=391"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Car
+                    cup holder</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=392"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Interior
+                    Ambient Lighting</a>
+                <a href="https://demo.neozena.com/best-sellers?days=30&amp;category_id=393"
+                    class="px-5 py-1.5 rounded-full border border-[#e5e5e5] text-[#888] text-[13px] bg-white hover:bg-gray-50 transition shrink-0">Adjustable
+                    Temporary Parking Number Plate</a>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+                <div onclick="window.location.href='https://demo.neozena.com/womans-necklace/womens-minimalist-pendant-with-stacked-collarbone-chain'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+                        <div class="absolute top-0 left-0 bg-[#E01911] text-white text-[11px] pl-3 w-[100px] h-[20px] flex items-center z-10 rounded-tl-lg"
+                            style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 50%, 100% 100%, 0 100%);">
+                            Best-Selling
+                        </div>
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/2a263a7dccb128c3e3fd7182e7840004be28d63d.png"
+                            alt="Women's minimalist pendant with stacked collarbone chain"
+                            class="object-cover w-full h-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Women's
+                            minimalist pendant with stacked collarbone c...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 5.50
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/black-star.png"
+                                        alt="Star" class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/black-star.png"
+                                        alt="Star" class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/black-star.png"
+                                        alt="Star" class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/black-star.png"
+                                        alt="Star" class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/black-star.png"
+                                        alt="Star" class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Women's minimalist pendant with stacked collarbone chain"
+                                data-current_price="5.50" data-item_id="3120" data-language_id="48" data-totalvari="1"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/3120">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="mt-auto relative z-10 w-full font-main text-[#d5d5d5] bg-[#333333] pt-8 md:bg-[#434343]">
+        <div class="max-w-[1280px] mx-auto py-0 md:py-12 px-5 sm:px-8">
+            <div
+                class="grid grid-cols-1 md:grid-cols-[1.4fr_1.2fr_1.2fr_1fr] lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] gap-6 md:gap-8 border-b md:border-none border-[#666] pb-6 md:pb-0">
+                <!-- Column 1 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Company info</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">About Manti</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Contact us</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Careers</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Press</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Manti's Tree
+                        Planting
+                        Program</a>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Customer service</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Return and refund
+                        policy</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Intellectual
+                        property
+                        policy</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Shipping info</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Report suspicious
+                        activity</a>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Help</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Safety center</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Manti purchase
+                        protection</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Sitemap</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Partner with
+                        Manti</a>
+                </div>
+
+                <!-- Column 4 -->
+                <div class="flex flex-col gap-3 mt-4 md:mt-[32px]">
+                    <a href="index.html" class="hidden md:flex items-center mb-2">
+                        <img src="assets/images/home/logo.png" alt="Manti Logo" class="h-[30px] object-contain">
+                    </a>
+
+                    <span class="text-white text-[13px] font-bold tracking-wide">Connect with Manti</span>
+                    <div class="flex items-center gap-4 text-white mt-0.5">
+                        <!-- IMAGE: Social Facebook -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Facebook - Original.png" alt="Facebook"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Twitter -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Twitter - Original.png" alt="Twitter"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Instagram -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Instagram - Original.png" alt="Instagram"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Youtube -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Youtube - Original.png" alt="Youtube"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social LinkedIn -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/LinkedIn - Original.png" alt="LinkedIn"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- We accept Section -->
+            <div class="mt-14 flex flex-col gap-3.5">
+                <h3 class="font-bold text-[14px] text-white tracking-wide">We accept</h3>
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- IMAGE: VISA -->
+                    <img src="assets/images/home/visa.png" alt="Visa" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: MASTERCARD -->
+                    <img src="assets/images/home/mastercard.png" alt="Mastercard" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: APPLE PAY -->
+                    <img src="assets/images/home/pay.png" alt="Apple Pay" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: Fawry -->
+                    <img src="assets/images/home/fawry.png" alt="Fawry" class="w-[56px] h-[37px]">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Footer Bar -->
+        <div class="bg-[#5E5E5E] text-[14px] text-[#000000] font-medium border-t border-[#666] hidden md:block">
+            <div
+                class="max-w-[1280px] mx-auto py-5 px-5 flex flex-col md:flex-row items-center justify-center md:gap-[80px] gap-4">
+                <a href="#" class="hover:text-white transition w-fit">Terms of use</a>
+                <a href="#" class="hover:text-white transition w-fit">Privacy policy</a>
+                <a href="#" class="hover:text-white transition w-fit">Your privacy choices</a>
+                <a href="#" class="hover:text-white transition w-fit">Support</a>
+                <a href="#" class="hover:text-white transition w-fit">FAQ</a>
+            </div>
+        </div>
+
+        <!-- Copyright Bar -->
+        <div
+            class="bg-transparent md:bg-[#242424] text-center pt-5 pb-[80px] md:py-5 text-[11px] md:text-[14px] text-[#A3A3A3] md:text-[#FFFFFF] md:border-t border-[#333] md:pb-5">
+            © 2025 Manti. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+
+    <!-- Mobile Bottom Navigation -->
+    <div
+        class="lg:hidden fixed bottom-5 left-5 right-5 bg-[#1a1a1a] text-white rounded-full flex items-center justify-between px-6 py-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-[100]">
+        <!-- Home (Active) -->
+        <a href="index.html"
+            class="flex items-center gap-2 bg-white text-[#1a1a1a] px-5 py-[8px] rounded-full font-bold text-[14px] relative shadow-lg transition-transform active:scale-95">
+            <img src="assets/images/home/home3.png" alt="Home" class="w-[20px] h-[20px]" style="filter: brightness(0);">
+            <span>Home</span>
+        </a>
+
+        <!-- Cart -->
+        <a href="cart.html" class="flex items-center justify-center relative transition-transform active:scale-90">
+            <div class="relative">
+                <img src="assets/images/home/cartIcon.png" alt="Cart" class="w-[22px] h-[22px]"
+                    style="filter: brightness(0) invert(1);">
+                <span
+                    class="absolute -top-[8px] -right-[10px] bg-white text-[#1a1a1a] text-[9px] font-bold w-[16px] h-[16px] flex items-center justify-center rounded-full border border-[#1a1a1a]">1</span>
+            </div>
+        </a>
+
+        <!-- Heart -->
+        <a href="#" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/heart.png" alt="Favorite" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Profile -->
+        <a href="profile.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/user.png" alt="Profile" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
+
+
+    <script src="assets/js/common.js"></script>
+
+</body>
+
+</html>

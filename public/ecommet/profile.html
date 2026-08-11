@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manti - Profile</title>
+    <!-- Include Tailwind output CSS. For local development you would build it. I assume tailwind is running or linked. We will just use standard classes. -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                    screens: {
+                        '2xl': '1440px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#de1709',
+                        secondary: '#ffaf09',
+                        success: '#2aaf2e',
+                        purple: '#61167f',
+                        'gray-darkest': '#232323',
+                        'gray-dark': '#292d32',
+                        'gray-medium': '#7f7f7f',
+                        'gray-light': '#c4c4c4',
+                        'gray-lighter': '#e7e7e7',
+                        'gray-lightest': '#f5f5f5',
+                        'sale-light': '#ffecea',
+                        'yellow-light': '#fdff9f'
+                    },
+                    fontFamily: {
+                        main: "'Outfit', sans-serif"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body { visibility: hidden; }
+        body.loaded { visibility: visible; }
+    </style>
+</head>
+
+<body class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col">
+
+    <!-- START HEADER -->
+    <header class="w-full relative z-50">
+        <!-- Top Dark Bar (Desktop Only) -->
+        <div class="bg-gray-darkest text-white text-xs py-2 hidden lg:block">
+            <div class="container flex justify-between items-center">
+                <div class="flex items-center gap-2 shipping-modal-trigger cursor-pointer">
+                    <!-- IMAGE: Shipping Icon -->
+                    <img src="assets/images/home/shippingIcon.png" alt="Shipping Icon" width="28" height="24">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Free shipping on all orders</span>
+                        <span class="text-gray-light text-center">Limited-time offer</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- IMAGE: Fire Icon -->
+                    <img src="assets/images/home/offerIcon.png" alt="Offer Icon" class="w-[14px] h-[19px]">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Limited-time Offers</span>
+                        <span class="text-gray-light text-center">Don't Miss Out</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- IMAGE: Lock Icon -->
+                    <img src="assets/images/home/secureIcon.png" alt="Secure Icon" class="w-[14px] h-[18px]">
+                    <span class="font-semibold text-gray-light">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar (Desktop Only) -->
+        <div class="bg-primary text-white hidden lg:block">
+            <div class="container py-4 flex items-center justify-between gap-6">
+
+                <!-- Logo area -->
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                </a>
+
+                <!-- Intranet Links -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold">
+                    <a href="best_selling.html" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/like.png" alt="Best Selling Icon" class="w-[20px] h-[20px]">
+                        Best-Selling Items
+                    </a>
+                    <a href="#" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/navStar.png" alt="Star Icon" class="w-[20px] h-[20px]">
+                        5-Star Rated
+                    </a>
+                    <a href="#" class="hover:text-yellow-light transition">New In</a>
+                    <button class="flex items-center gap-1 hover:text-yellow-light transition focus:outline-none">
+                        Categories
+                        <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon" class="w-[20px] h-[20px]">
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mx-4 relative">
+                    <input type="text" placeholder="Search..."
+                        class="w-full text-black rounded-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-yellow-light placeholder-gray-medium text-sm">
+                    <button
+                        class="absolute right-1 top-1 bottom-1 w-8 h-8 rounded-full bg-gray-darkest text-white flex items-center justify-center hover:bg-black transition">
+                        <!-- IMAGE: Search Icon -->
+                        <img src="assets/images/home/searchIcon.png" alt="Search Icon" class="w-[16px] h-[16px]">
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-5">
+                    <!-- Lang / Currency -->
+                    <button
+                        class="lang-currency-trigger flex items-center gap-2 text-xs text-white hover:text-yellow-light focus:outline-none">
+                        <img src="assets/images/home/flagImg.png" alt="Flag Icon" class="w-[40px] h-[25px]">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[12px] text-[#C5C5C5]">En/</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[12px]">SAR</span>
+                                <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon"
+                                    class="w-[16px] h-[16px]">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- User Account -->
+                    <a href="profile.html"
+                        class="flex items-center gap-2 text-white hover:text-yellow-light transition">
+                        <!-- IMAGE: User Icon -->
+                        <img src="assets/images/home/user.png" alt="Person Icon" class="w-[24px] h-[24px]">
+                        <div class="flex flex-col text-xs leading-tight">
+                            <span class="text-[#C5C5C5]">Welcome</span>
+                            <span>Sign in / Register</span>
+                        </div>
+                    </a>
+
+                    <!-- Cart -->
+                    <a href="cart.html" class="flex items-center gap-1 hover:text-yellow-light transition relative">
+                        <!-- IMAGE: Cart Icon -->
+                        <img src="assets/images/home/cartIcon.png" alt="Cart Icon" class="w-[24px] h-[24px]">
+                        <span
+                            class="absolute -top-2 -right-1 bg-gray-darkest text-white text-[10px] w-[30px] h-[16px] flex items-center justify-center px-1.5 py-0.5 rounded-full border border-primary">0</span>
+                        <span class="text-xs  mt-2 hidden sm:block">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex flex-col bg-white w-full z-40 sticky top-0 shadow-sm border-b border-[#eaeaea]">
+        <!-- Top Header -->
+        <div class="flex items-center justify-between px-4 py-3">
+            <a href="index.html" class="flex items-center shrink-0">
+                <div class="flex items-center gap-1">
+                    <span class="font-extrabold text-[20px] tracking-tight text-[#2272e2] flex items-center">
+                        <span
+                            class="inline-flex w-[18px] h-[18px] rounded-full border-[3px] border-[#2272e2] items-center justify-center mr-[4px] mt-0.5"><span
+                                class="w-1.5 h-1.5 bg-[#2272e2] rounded-full"></span></span>Manti
+                    </span>
+                </div>
+            </a>
+            <div class="flex-1 mx-3 relative">
+                <input type="text" placeholder="Search..."
+                    class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] px-4 outline-none text-[13px] placeholder-gray-500">
+            </div>
+            <div class="flex items-center gap-[14px] shrink-0">
+                <button class="lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
+                    <div class="flex items-end gap-[1px]">
+                        <span class="text-[11px] font-bold">En/</span>
+                    </div>
+                    <div class="flex items-center gap-[2px]">
+                        <span class="text-[11px] font-bold">SAR</span>
+                        <img src="assets/images/home/arrow-down-black.png" class="w-[8px] h-[8px]">
+                    </div>
+                </button>
+                <button class="flex flex-col gap-[3.5px] py-1 cursor-pointer">
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- END MOBILE HEADER -->
+    <!-- END HEADER -->
+
+    <!-- START MAIN CONTENT -->
+    <main class="flex-grow bg-white pb-20">
+        <div class="max-w-[1240px] mx-auto px-5 sm:px-8 mt-4 md:mt-6">
+
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-[14px] font-[400] text-[#808080] mb-4 md:mb-8">
+                <a href="index.html" class="hover:text-black transition">Home</a>
+                <img src="assets/images/home/arrow-Breadcrumb.png" width="5px" alt="">
+                <span class="text-[#242424] font-[500]">Profile</span>
+            </div>
+
+            <!-- Two Columns -->
+            <div class="flex flex-col md:flex-row gap-8 lg:gap-[50px] items-start">
+
+                <!-- Sidebar Navigation (Desktop & Mobile Menu Card) -->
+                <div id="sidebar-menu"
+                    class="w-full md:w-[260px] flex-shrink-0 flex flex-col gap-2 tracking-wide font-main bg-white md:bg-transparent rounded-[16px] p-2 md:p-0 border border-[#f0f0f0] md:border-transparent shadow-sm md:shadow-none">
+                    <!-- Nav Item -->
+                    <a href="order.html"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/document.png"
+                                class="w-[20px] object-contain opacity-80 group-hover:opacity-100" alt="">
+                        </div>
+                        Your orders
+                    </a>
+
+                    <!-- Nav Item -->
+                    <button onclick="showProfileDetails()"
+                        class="flex items-center gap-4 px-4 py-3 md:bg-[#f7f7f7] text-[14px] md:text-[15px] font-[500] md:font-[600] text-[#333] md:text-[#111] relative transition-colors rounded-r-md group w-full text-left">
+                        <div
+                            class="absolute left-0 top-1/2 transform -translate-y-1/2 w-[3px] h-[70%] bg-[#242424] rounded-r-full hidden md:block">
+                        </div>
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/user-2.png" class="w-[20px] object-contain" alt="">
+                        </div>
+                        Your Profile
+                    </button>
+
+                    <!-- Nav Item -->
+                    <a href="#"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/like-tag.png"
+                                class="w-[24px] object-contain opacity-80 group-hover:opacity-100" alt="">
+                        </div>
+                        Your reviews
+                    </a>
+
+                    <!-- Nav Item -->
+                    <a href="#"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/Credit-card-2.png"
+                                class="w-[20px] object-contain opacity-80 group-hover:opacity-100" alt="">
+                        </div>
+                        Credit balance
+                    </a>
+
+                    <!-- Nav Item -->
+                    <a href="#"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/Discount-2.png"
+                                class="w-[20px] object-contain opacity-80 group-hover:opacity-100" alt="">
+                        </div>
+                        Coupons & offers
+                    </a>
+
+                    <!-- Nav Item -->
+                    <a href="#"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/clock.png"
+                                class="w-[24px] object-contain opacity-80 group-hover:opacity-100" alt=""
+                                onerror="this.src='assets/images/home/Clock.png'">
+                        </div>
+                        Browsing history
+                    </a>
+                    <!-- Nav Item -->
+                    <a href="#"
+                        class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 text-[14px] md:text-[15px] font-[500] text-[#333] transition-colors rounded-md group">
+                        <div class="w-[24px] flex justify-center shrink-0">
+                            <img src="assets/images/home/Wallet.png"
+                                class="w-[24px] object-contain opacity-80 group-hover:opacity-100" alt="">
+                        </div>
+                        Payment methods
+                    </a>
+                </div>
+
+                <!-- Main Content Area (Hidden on Mobile) -->
+                <div id="profile-details" class="hidden md:flex flex-1 w-full flex flex-col gap-6">
+
+                    <!-- Personal Information Card -->
+                    <div
+                        class="bg-white rounded-[16px] p-6 md:p-8 border border-[#F0F0F0] shadow-sm md:shadow-none md:bg-[#fafafa] md:border-transparent">
+                        <div class="flex justify-between items-center mb-0 md:mb-2">
+                            <h2 class="text-[17px] md:text-[20px] font-bold md:font-[600] text-[#242424]">Personal
+                                Information</h2>
+                            <button
+                                class="flex items-center gap-1.5 text-[14px] md:text-[18px] text-[#808080] hover:text-black transition">
+                                <img src="assets/images/home/edit-2.png" class="w-[16px] md:w-[18px]" alt="">
+                                Edit
+                            </button>
+                        </div>
+
+                        <div class="hidden md:block w-full h-px bg-[#C4C4C4] mb-6"></div>
+
+                        <div class="flex flex-col gap-4 mt-6 md:mt-0 md:gap-3">
+                            <!-- Field -->
+                            <div class="flex flex-col md:flex-row md:items-center">
+                                <span
+                                    class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Username:
+                                    <span class="hidden md:inline text-[#808080] font-[400] text-[15px]">Ahmed
+                                        Ali</span></span>
+                                <span class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">Ahmed
+                                    Ali</span>
+                            </div>
+                            <!-- Field -->
+                            <div class="flex flex-col md:flex-row md:items-center">
+                                <span
+                                    class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Gmail:
+                                    <span
+                                        class="hidden md:inline text-[#808080] font-[400] text-[15px]">ahmedali223@gmail.com</span></span>
+                                <span
+                                    class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">ahmedali223@gmail.com</span>
+                            </div>
+                            <!-- Two Columns -->
+                            <div class="flex gap-10 md:flex-col md:gap-3">
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Date
+                                        of Birth: <span
+                                            class="hidden md:inline text-[#808080] font-[400] text-[15px]">22/02/1993</span></span>
+                                    <span
+                                        class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">22/02/1993</span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Phone
+                                        Number: <span
+                                            class="hidden md:inline text-[#808080] font-[400] text-[15px]">+966
+                                            000000</span></span>
+                                    <span class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">+966
+                                        000000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Card -->
+                    <div
+                        class="bg-white rounded-[16px] p-6 md:p-8 border border-[#F0F0F0] shadow-sm md:shadow-none md:bg-[#fafafa] md:border-transparent">
+                        <div class="flex justify-between items-center mb-0 md:mb-2">
+                            <h2 class="text-[17px] md:text-[20px] font-bold md:font-[600] text-[#242424]">Address</h2>
+                            <div class="flex items-center gap-3 md:gap-5">
+                                <button
+                                    class="flex items-center gap-1.5 text-[14px] md:text-[18px] text-[#808080] hover:text-black transition">
+                                    <img src="assets/images/home/trash-2.png" class="w-[16px] md:w-[18px]" alt="">
+                                    <span class="hidden md:inline">Delete</span>
+                                </button>
+                                <button
+                                    class="flex items-center gap-1 text-[14px] md:text-[18px] text-[#808080] hover:text-black transition">
+                                    <img src="assets/images/home/edit-2.png" class="w-[16px] md:w-[18px]" alt="">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="hidden md:block w-full h-px bg-[#C4C4C4] mb-6"></div>
+
+                        <div class="flex flex-col gap-4 mt-6 md:mt-0 md:gap-3">
+                            <!-- Two Columns -->
+                            <div class="flex gap-10 md:flex-col md:gap-3">
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Country:
+                                        <span class="hidden md:inline text-[#808080] font-[400] text-[15px]">Saudi
+                                            Arabia</span></span>
+                                    <span class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">Saudi
+                                        Arabia</span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">City:
+                                        <span
+                                            class="hidden md:inline text-[#808080] font-[400] text-[15px]">Riyadh</span></span>
+                                    <span
+                                        class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">Riyadh</span>
+                                </div>
+                            </div>
+                            <!-- Field -->
+                            <div class="flex flex-col md:flex-row md:items-center">
+                                <span
+                                    class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">District:
+                                    <span class="hidden md:inline text-[#808080] font-[400] text-[15px]">King Fahd Road,
+                                        Al Olaya
+                                        District</span></span>
+                                <span class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">King Fahd
+                                    Road, Al Olaya District</span>
+                            </div>
+                            <!-- Two Columns -->
+                            <div class="flex gap-10 md:flex-col md:gap-3">
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Building
+                                        Number: <span
+                                            class="hidden md:inline text-[#808080] font-[400] text-[15px]">8</span></span>
+                                    <span
+                                        class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">8</span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center flex-1">
+                                    <span
+                                        class="text-[11px] md:text-[16px] text-[#A0A0A0] md:text-[#242424] font-[400] md:font-[500] mb-1 md:mb-0 md:min-w-[150px]">Apartment
+                                        Number: <span
+                                            class="hidden md:inline text-[#808080] font-[400] text-[15px]">12</span></span>
+                                    <span
+                                        class="text-[15px] md:text-[16px] text-[#242424] font-[500] md:hidden">12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <!-- END MAIN CONTENT -->
+
+    <!-- START FOOTER -->
+    <footer class="mt-auto relative z-10 w-full font-main text-[#FFFFFF] bg-[#3B3B3B] pb-[80px] lg:pb-0">
+        <div class="max-w-[1280px] mx-auto py-10 lg:py-14 px-6 lg:px-8">
+
+            <!-- Grid Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12 gap-y-10">
+                <!-- Column 1: Company Info -->
+                <div class="flex flex-col gap-10">
+                    <div class="flex flex-col gap-3.5">
+                        <h3
+                            class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                            Company info</h3>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">About Manti</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Contact us</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Careers</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Press</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Manti's Tree Planting
+                            Program</a>
+                    </div>
+                    <!-- We accept (Desktop View) -->
+                    <div class="hidden lg:flex flex-col gap-4">
+                        <h3 class="font-bold text-[14px] text-white tracking-wide">We accept</h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/mastercard.png" alt="Mastercard"
+                                class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Customer Service -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Customer service</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Return and refund policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Intellectual property policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Shipping info</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Report suspicious activity</a>
+                </div>
+
+                <!-- Column 3: Help -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Help</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Safety center</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Purchase protection</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Sitemap</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Partner with Manti</a>
+                </div>
+
+                <!-- Column 4: Logo & Connect -->
+                <div class="hidden lg:flex flex-col gap-6 items-start">
+                    <a href="index.html" class="flex items-center gap-2 mb-2">
+                        <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                    </a>
+                    <div class="flex flex-col gap-4">
+                        <span class="text-white text-[13px] font-bold tracking-wide">Connect with Manti</span>
+                        <div class="flex items-center gap-4 text-white">
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Facebook - Original.png" alt="Facebook" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Twitter - Original.png" alt="Twitter" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Instagram - Original.png" alt="Instagram"
+                                    class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Youtube - Original.png" alt="Youtube" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/LinkedIn - Original.png" alt="LinkedIn" class="w-6 h-6"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Only View -->
+            <div class="lg:hidden flex flex-col gap-8 mt-5">
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">Connect with Manti</h3>
+                    <div class="flex items-center gap-6">
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Facebook - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Twitter - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Instagram - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Youtube - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/LinkedIn - Original.png" class="w-[28px] h-[28px]"></a>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">We accept</h3>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/mastercard.png" alt="Mastercard" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                    </div>
+                </div>
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="text-center text-[12px] text-[#666]">
+                    © 2025 Manti. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Footer Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#555] py-4 text-white">
+            <div
+                class="max-w-[1280px] mx-auto flex items-center justify-center gap-16 text-[13px] font-medium opacity-80">
+                <a href="#" class="hover:opacity-100 transition">Terms of use</a>
+                <a href="#" class="hover:opacity-100 transition">Privacy policy</a>
+                <a href="#" class="hover:opacity-100 transition">Your privacy choices</a>
+                <a href="#" class="hover:opacity-100 transition">Support</a>
+                <a href="#" class="hover:opacity-100 transition">FAQ</a>
+            </div>
+        </div>
+
+        <!-- Copyright Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#1b1b1b] py-5 text-[#888] text-[13px] text-center border-t border-[#222]">
+            Copyright ©2025 Manti. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+
+    <!-- Mobile Bottom Navigation -->
+    <div
+        class="lg:hidden fixed bottom-5 left-5 right-5 bg-[#1a1a1a] text-white rounded-full flex items-center justify-between px-6 py-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-[100]">
+        <!-- Home -->
+        <a href="index.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/home3.png" alt="Home" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Cart -->
+        <a href="cart.html" class="flex items-center justify-center relative transition-transform active:scale-90">
+            <div class="relative">
+                <img src="assets/images/home/cartIcon.png" alt="Cart" class="w-[22px] h-[22px]"
+                    style="filter: brightness(0) invert(1);">
+                <span
+                    class="absolute -top-[8px] -right-[10px] bg-white text-[#1a1a1a] text-[9px] font-bold w-[16px] h-[16px] flex items-center justify-center rounded-full border border-[#1a1a1a]">0</span>
+            </div>
+        </a>
+
+        <!-- Heart -->
+        <a href="#" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/heart.png" alt="Favorite" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Profile (Active) -->
+        <a href="profile.html"
+            class="flex items-center gap-2 bg-white text-[#1a1a1a] px-5 py-[8px] rounded-full font-bold text-[14px] relative shadow-lg transition-transform active:scale-95">
+            <img src="assets/images/home/user.png" alt="Profile" class="w-[20px] h-[20px]"
+                style="filter: brightness(0);">
+            <span>Profile</span>
+        </a>
+    </div>
+    <!-- END FOOTER -->
+
+    
+    
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/profile.js"></script>
+</body>
+
+</html>

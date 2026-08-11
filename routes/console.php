@@ -1,0 +1,22 @@
+<?php
+
+use App\Console\Commands\CleanupAiGeneratedLogosCommand;
+use App\Console\Commands\UpdateCurrencyRatesCommand;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+Artisan::command('currencies:update-rates', function () {
+    $this->call(UpdateCurrencyRatesCommand::class);
+})->daily();
+
+Artisan::command('logos:cleanup-ai-generated', function () {
+    $this->call(CleanupAiGeneratedLogosCommand::class);
+})->daily();
+
+Artisan::command('queue:retry-all', function () {
+    Artisan::call('queue:retry', ['id' => 'all']);
+})->describe('Retry all failed jobs')->everyFiveMinutes();

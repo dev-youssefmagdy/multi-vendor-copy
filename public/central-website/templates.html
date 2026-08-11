@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Templates</title>
+    <meta name="description"
+        content="Browse professional e-commerce templates for Fashion, Electronics, Furniture, Grocery, Pet Shop, Jewellery and more.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="./templates.html" class="text-sm font-medium text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Pricing</a>
+                    <a href="./how-it-works.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">How It Works</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button
+                            class="text-sm font-medium text-gray-600 flex items-center gap-1 hover:text-primary">More <i
+                                class="fas fa-chevron-down text-xs"></i></button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./faqs.html">FAQs</a>
+                            <a href="./blogs.html">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 p-2" aria-label="Menu"><i
+                            class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Home</a>
+                    <a href="./templates.html"
+                        class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">Templates</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Pricing</a>
+                    <a href="./how-it-works.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">How
+                        It Works</a>
+                    <a href="./contact.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="pt-28 pb-14 bg-gradient-to-br from-orange-50 to-white text-center">
+        <div class="max-w-2xl mx-auto px-4" data-reveal>
+            <span class="text-primary text-sm font-semibold tracking-wide uppercase">Store Templates</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mt-3 mb-4">Beautiful Templates</h1>
+            <p class="text-gray-500 text-lg">Choose from professionally designed templates and make your store live in
+                minutes.</p>
+        </div>
+    </section>
+
+    <!-- TEMPLATES SECTION -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Category tabs -->
+            <div class="flex flex-wrap justify-center gap-2 mb-10" data-reveal>
+                <button data-ttab="all"
+                    class="tab-active px-5 py-2 rounded-full text-sm font-semibold transition-all">All</button>
+                <button data-ttab="fashion"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Fashion</button>
+                <button data-ttab="skinflow"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Skin Flow</button>
+                <button data-ttab="furniture"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Furniture</button>
+                <button data-ttab="grocery"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Grocery</button>
+                <button data-ttab="electronics"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Electronics</button>
+                <button data-ttab="pet"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Pet Shop</button>
+                <button data-ttab="jewellery"
+                    class="tab-inactive px-5 py-2 rounded-full text-sm font-semibold transition-all">Jewellery</button>
+            </div>
+
+            <!-- All panel -->
+            <div data-tpanel="all">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/9a47946511d65f86288dbe3404d131e5f2f76c2b.png" alt="Fashion Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/9ddfc4ab6f359c15bda0ee04b184ae092e5e3fbf.png" alt="Grocery Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/f9cfebef163d8aa63752cb178d82f0cdf9493cef.png"
+                            alt="Electronics Template" class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/c5b486224c1a45b6cbd8f2fa2f68f1e0360c1002.png" alt="Fashion Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/94d5c154a7b58fc69b0acee46920499b94e1b1cf.png" alt="Furniture Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/964fb0768f8e185c53dc1ea1058a3ad8dbadaacf.png" alt="Fashion Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/2464e9aae773ac8ff1f90ff7818aeb106650f3d4.png" alt="Pet Shop Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/5087ef599467c13d3ce13bed1636a9813bc48117.png" alt="Skin Flow Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow"
+                        data-reveal>
+                        <img src="./assets/image/06d9b674bc8dc704f0a8e376252279a5081e05f8.png" alt="Jewellery Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fashion panel -->
+            <div data-tpanel="fashion" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/964fb0768f8e185c53dc1ea1058a3ad8dbadaacf.png" alt="Fashion Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/c5b486224c1a45b6cbd8f2fa2f68f1e0360c1002.png" alt="Fashion Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skin Flow panel -->
+            <div data-tpanel="skinflow" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/5087ef599467c13d3ce13bed1636a9813bc48117.png" alt="Skin Flow Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Furniture panel -->
+            <div data-tpanel="furniture" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/94d5c154a7b58fc69b0acee46920499b94e1b1cf.png" alt="Furniture Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grocery panel -->
+            <div data-tpanel="grocery" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/9ddfc4ab6f359c15bda0ee04b184ae092e5e3fbf.png" alt="Grocery Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Electronics panel -->
+            <div data-tpanel="electronics" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/f9cfebef163d8aa63752cb178d82f0cdf9493cef.png"
+                            alt="Electronics Template" class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Shop panel -->
+            <div data-tpanel="pet" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/2464e9aae773ac8ff1f90ff7818aeb106650f3d4.png" alt="Pet Shop Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jewellery panel -->
+            <div data-tpanel="jewellery" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="tmpl-card rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
+                        <img src="./assets/image/06d9b674bc8dc704f0a8e376252279a5081e05f8.png" alt="Jewellery Template"
+                            class="w-full object-cover" loading="lazy">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="inline-block bg-white text-primary font-semibold px-5 py-2 rounded-full text-sm hover:bg-orange-50">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-14 bg-gray-50 text-center">
+        <div class="max-w-xl mx-auto px-4" data-reveal>
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-3">Like What You See?</h2>
+            <p class="text-gray-500 mb-6">Start with any template and customise it to make it uniquely yours.</p>
+            <a href="./pricing.html" class="btn-primary px-8 py-3.5 text-base">Choose a Plan</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-7 w-auto brightness-0 invert mb-4">
+                    <p class="text-sm max-w-xs">The award-winning e-commerce platform built for businesses of all sizes.
+                    </p>
+                    <div class="flex gap-3 mt-5">
+                        <a href="https://t.me/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-telegram-plane text-xs"></i></a>
+                        <a href="https://www.instagram.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-instagram text-xs"></i></a>
+                        <a href="https://www.facebook.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-facebook-f text-xs"></i></a>
+                        <a href="https://bd.linkedin.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-linkedin-in text-xs"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./templates.html" class="hover:text-primary transition-colors">Templates</a></li>
+                        <li><a href="./pricing.html" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="./how-it-works.html" class="hover:text-primary transition-colors">How It Works</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt text-primary mt-0.5 w-4"></i><span>Sector
+                                11, Uttara, Dhaka</span></li>
+                        <li class="flex gap-2"><i class="fas fa-phone text-primary w-4"></i><a href="tel:01300000000"
+                                class="hover:text-primary">+880 1300 000 000</a></li>
+                        <li class="flex gap-2"><i class="fas fa-envelope text-primary mt-0.5 w-4"></i><a
+                                href="mailto:contact@example.com" class="hover:text-primary">contact@example.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 py-5 text-center text-sm">&copy; 2025 Ecommet. All rights reserved.</div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

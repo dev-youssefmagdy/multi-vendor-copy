@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Souqify — My Cart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Outfit', 'system-ui', 'sans-serif'], manrope: ['Manrope', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .product-img-bg {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+
+        .scroll-snap-x {
+            scroll-snap-type: x mandatory;
+        }
+
+        .scroll-snap-start {
+            scroll-snap-align: start;
+        }
+    </style>
+</head>
+
+<body class="bg-zinc-100 text-slate-900 antialiased">
+
+    <!-- =========== TOP UTILITY BAR =========== -->
+    <div class="bg-stone-950 text-gray-300 text-xs">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="hidden md:flex items-center gap-5">
+                <a href="#" class="flex items-center gap-1.5 hover:text-white transition">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <circle cx="12" cy="11" r="3" stroke-width="2" />
+                    </svg>
+                    <span>Find a Store</span>
+                </a>
+                <a href="#" class="flex items-center gap-1.5 hover:text-white transition">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <span>Order Tracking</span>
+                </a>
+                <a href="#" class="flex items-center gap-1.5 hover:text-white transition">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>Shop</span>
+                </a>
+            </div>
+            <div class="flex items-center gap-4 ml-auto">
+                <p class="hidden sm:flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-white">Free shipping worldwide.</span>
+                    <span class="text-gray-300">Orders over <span class="text-blue-500">$200</span></span>
+                </p>
+                <button class="flex items-center gap-1 hover:text-white transition">USD <svg class="w-3 h-3"
+                        fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd" />
+                    </svg></button>
+                <button class="flex items-center gap-1 hover:text-white transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    English <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========== MAIN HEADER =========== -->
+    <header class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4 lg:gap-6">
+            <button id="mobileMenuBtn" class="lg:hidden p-2 -ml-2" aria-label="Open menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <a href="index.html"
+                class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-blue-700 shrink-0">Souqify</a>
+            <div class="hidden lg:flex flex-1 max-w-3xl items-center gap-2">
+                <button
+                    class="h-14 px-4 bg-blue-700 hover:bg-blue-800 transition rounded text-white flex items-center gap-2 text-sm shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                    Shop By Department
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div class="flex-1 h-14 bg-neutral-100 rounded flex items-center pl-4 pr-2">
+                    <button
+                        class="flex items-center gap-1 text-sm text-zinc-700 pr-3 border-r border-neutral-300 mr-3 shrink-0">
+                        All Category
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <input type="text" placeholder="Search for premium tech, fashion, or home..."
+                        class="flex-1 bg-transparent outline-none text-sm text-neutral-700 placeholder:text-neutral-500" />
+                    <button class="p-2 text-neutral-700 hover:text-blue-700 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button class="lg:hidden ml-auto p-2" aria-label="Search">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+            <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 ml-auto lg:ml-4">
+                <button class="hidden sm:flex items-center gap-2 hover:text-blue-700 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <span class="text-sm hidden xl:inline">Wishlist</span>
+                </button>
+                <a href="cart.html" class="flex items-center gap-2 text-blue-700 transition relative">
+                    <div class="relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cartBadge"
+                            class="absolute -top-2 -right-2 bg-blue-700 text-white text-[10px] rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center font-medium">3</span>
+                    </div>
+                    <span class="text-sm hidden sm:inline">Cart</span>
+                </a>
+                <button class="hidden md:flex items-center gap-2 hover:text-blue-700 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="text-sm uppercase tracking-wide text-neutral-700">Account</span>
+                </button>
+            </div>
+        </div>
+        <div class="lg:hidden px-4 pb-3">
+            <div class="h-11 bg-neutral-100 rounded flex items-center px-3">
+                <svg class="w-5 h-5 text-neutral-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" placeholder="Search products..."
+                    class="flex-1 bg-transparent outline-none text-sm" />
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile menu drawer -->
+    <div id="mobileMenu" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/50" onclick="closeMobileMenu()"></div>
+        <aside class="absolute left-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-2xl p-6 overflow-y-auto">
+            <div class="flex items-center justify-between mb-8">
+                <span class="text-2xl font-semibold text-blue-700">Souqify</span>
+                <button onclick="closeMobileMenu()" class="p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg></button>
+            </div>
+            <nav class="flex flex-col gap-1 text-sm font-medium">
+                <a href="index.html" class="py-3 border-b border-neutral-200">Home</a>
+                <a href="category.html" class="py-3 border-b border-neutral-200">Shop</a>
+                <a href="product.html" class="py-3 border-b border-neutral-200">Products</a>
+                <a href="cart.html" class="py-3 border-b border-neutral-200 text-blue-700">My Cart</a>
+                <a href="#" class="py-3 border-b border-neutral-200">Account</a>
+                <a href="#" class="py-3 border-b border-neutral-200">Wishlist</a>
+            </nav>
+        </aside>
+    </div>
+
+    <!-- =========== BREADCRUMB =========== -->
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-2 text-sm text-neutral-500">
+            <a href="index.html" class="hover:text-blue-700 transition">Home</a>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="text-blue-700 font-medium">My Cart</span>
+        </nav>
+    </div>
+
+    <!-- =========== FREE SHIPPING PROGRESS BAR =========== -->
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="relative h-12 bg-zinc-300 rounded-full overflow-hidden">
+            <div id="shippingProgress" class="absolute inset-y-0 left-0 bg-orange-600 rounded-full transition-all"
+                style="width: 60%"></div>
+            <div class="relative z-10 h-full flex items-center justify-between px-5 sm:px-7 text-base font-medium">
+                <span class="text-white">0 g</span>
+                <div class="flex items-center gap-2 text-white">
+                    <span id="cartWeight" class="hidden sm:inline">( 600 g )</span>
+                    <span class="hidden sm:inline">Free Shipping!</span>
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    </svg>
+                </div>
+                <span class="text-neutral-500">1 kg</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========== CART CONTENT =========== -->
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Cart items -->
+            <div class="lg:col-span-2 flex flex-col gap-4" id="cartItems">
+                <!-- items injected by JS -->
+            </div>
+
+            <!-- Order summary -->
+            <aside class="lg:col-span-1">
+                <div
+                    class="bg-white rounded-2xl border border-stone-300 p-6 lg:p-8 lg:sticky lg:top-28 flex flex-col gap-6">
+                    <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">Order Summary</h2>
+
+                    <div class="flex flex-col gap-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-500 text-base sm:text-lg">Subtotal</span>
+                            <span id="subtotal" class="text-neutral-700 text-base sm:text-lg">$837.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-500 text-base sm:text-lg">Shipping Estimate</span>
+                            <span class="text-neutral-700 text-base sm:text-lg">$12.50</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-500 text-base sm:text-lg">Tax</span>
+                            <span class="text-neutral-700 text-base sm:text-lg">$66.96</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-stone-300">
+                            <span class="text-slate-900 text-lg sm:text-xl">Total</span>
+                            <span id="total" class="text-blue-700 text-2xl sm:text-3xl font-medium">$916.46</span>
+                        </div>
+                    </div>
+
+                    <!-- Promo code -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm text-gray-700">Have a promo code?</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Enter code"
+                                class="flex-1 h-12 px-4 bg-gray-100 rounded-lg text-sm placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-blue-300" />
+                            <button
+                                class="h-12 px-5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Checkout button -->
+                    <div class="flex flex-col gap-3">
+                        <button
+                            class="h-14 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-medium text-base flex items-center justify-center gap-2 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Proceed to Checkout
+                        </button>
+                        <p class="text-center text-xs text-gray-600">Secure SSL Checkout • Free Returns</p>
+                    </div>
+
+                    <!-- Trust badges -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
+                            <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                            </svg>
+                            <p class="text-sm font-semibold text-neutral-800">Free Delivery</p>
+                            <p class="text-xs text-neutral-500">Orders over $100</p>
+                        </div>
+                        <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
+                            <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-neutral-800">2-Year Warranty</p>
+                            <p class="text-xs text-neutral-500">Full coverage protection</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment methods -->
+                    <div class="flex items-center justify-center gap-3 flex-wrap">
+                        <div class="px-3 py-1.5 bg-zinc-100 rounded text-xs font-bold text-blue-700">VISA</div>
+                        <div class="px-3 py-1.5 bg-emerald-50 rounded text-xs font-bold text-emerald-600">tabby</div>
+                        <div class="px-3 py-1.5 bg-rose-50 rounded text-xs font-bold text-rose-500">tamara</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- =========== ADD ITEMS FOR FREE SHIPPING (orange section) =========== -->
+    <section class="bg-orange-600 py-12 lg:py-16 relative overflow-hidden">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white mb-8 lg:mb-10">
+                Add some Items to "<span class="text-slate-900">Get Free Shipping</span>"
+            </h2>
+            <div id="freeShippingProducts"
+                class="flex overflow-x-auto gap-4 sm:gap-5 no-scrollbar scroll-snap-x scroll-smooth pb-2"></div>
+        </div>
+        <!-- Decorative 25% text -->
+        <div
+            class="hidden lg:block absolute right-4 top-1/2 -translate-y-1/2 text-white/20 font-bold text-[160px] xl:text-[200px] leading-none pointer-events-none select-none rotate-90 origin-center">
+            25%</div>
+    </section>
+
+    <!-- =========== COMPLETE THE COLLECTION =========== -->
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">Complete the Collection</h2>
+            <div class="flex items-center gap-2">
+                <button onclick="scrollCarousel('collection', -1)"
+                    class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                    aria-label="Previous"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg></button>
+                <button onclick="scrollCarousel('collection', 1)"
+                    class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                    aria-label="Next"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg></button>
+            </div>
+        </div>
+        <div id="collection" class="flex overflow-x-auto gap-4 sm:gap-5 no-scrollbar scroll-snap-x scroll-smooth pb-2">
+            <a href="#" class="flex-shrink-0 w-56 sm:w-64 group scroll-snap-start">
+                <div class="aspect-square rounded-xl overflow-hidden bg-orange-100 mb-3"><img
+                        src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=500&q=80"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        alt="Curator Buds Lite" /></div>
+                <h3 class="font-medium text-zinc-900 mb-1">Curator Buds Lite</h3>
+                <p class="text-blue-700 font-medium">$129.00</p>
+            </a>
+            <a href="#" class="flex-shrink-0 w-56 sm:w-64 group scroll-snap-start">
+                <div class="aspect-square rounded-xl overflow-hidden bg-zinc-100 mb-3"><img
+                        src="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=500&q=80"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        alt="Acoustic Tower One" /></div>
+                <h3 class="font-medium text-zinc-900 mb-1">Acoustic Tower One</h3>
+                <p class="text-blue-700 font-medium">$899.00</p>
+            </a>
+            <a href="#" class="flex-shrink-0 w-56 sm:w-64 group scroll-snap-start">
+                <div class="aspect-square rounded-xl overflow-hidden bg-slate-900 mb-3"><img
+                        src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        alt="Studio Master X" /></div>
+                <h3 class="font-medium text-zinc-900 mb-1">Studio Master X</h3>
+                <p class="text-blue-700 font-medium">$450.00</p>
+            </a>
+            <a href="#" class="flex-shrink-0 w-56 sm:w-64 group scroll-snap-start">
+                <div class="aspect-square rounded-xl overflow-hidden bg-zinc-900 mb-3"><img
+                        src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=500&q=80"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        alt="Pro Stream Mic" /></div>
+                <h3 class="font-medium text-zinc-900 mb-1">Pro Stream Mic</h3>
+                <p class="text-blue-700 font-medium">$199.00</p>
+            </a>
+            <a href="#" class="flex-shrink-0 w-56 sm:w-64 group scroll-snap-start">
+                <div class="aspect-square rounded-xl overflow-hidden bg-amber-100 mb-3"><img
+                        src="https://images.unsplash.com/photo-1558537348-c0f8e733989d?auto=format&fit=crop&w=500&q=80"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        alt="Cable Set" /></div>
+                <h3 class="font-medium text-zinc-900 mb-1">Premium Cable Set</h3>
+                <p class="text-blue-700 font-medium">$59.00</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- =========== RECOMMENDED FOR YOU =========== -->
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">Recommended For You</h2>
+            <a href="#" class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">view all
+                products <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                </svg></a>
+        </div>
+        <div id="recommendedGrid" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
+        </div>
+    </section>
+
+    <!-- =========== HOT DEALS =========== -->
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">Hot Deals</h2>
+            <a href="#" class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">view all
+                products <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                </svg></a>
+        </div>
+        <div id="hotDealsGrid" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2"></div>
+    </section>
+
+    <!-- =========== EXPLORE PRODUCTS =========== -->
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">Explore Products</h2>
+            <a href="#" class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">view all
+                products <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                </svg></a>
+        </div>
+        <div id="exploreGrid" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2"></div>
+    </section>
+
+    <!-- =========== FOOTER =========== -->
+    <footer class="bg-slate-950 text-white pt-12">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+                <div class="lg:col-span-4">
+                    <div class="text-2xl font-medium text-blue-500 mb-3">Souqify</div>
+                    <p class="text-neutral-400 text-sm leading-6 mb-6">Elevating the everyday through curated premium
+                        experiences and cutting-edge technology.</p>
+                    <p class="text-base font-medium mb-3">Connect with Souqify</p>
+                    <div class="flex items-center gap-4">
+                        <a href="#" aria-label="Facebook"
+                            class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center"><svg
+                                class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg></a>
+                        <a href="#" aria-label="Twitter"
+                            class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center"><svg
+                                class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 9.93 9.93 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63A9.936 9.936 0 0024 4.59z" />
+                            </svg></a>
+                        <a href="#" aria-label="Instagram"
+                            class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center"><svg
+                                class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                            </svg></a>
+                        <a href="#" aria-label="YouTube"
+                            class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center"><svg
+                                class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                            </svg></a>
+                        <a href="#" aria-label="LinkedIn"
+                            class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center"><svg
+                                class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                            </svg></a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="text-xl font-medium mb-4">Shop</h4>
+                    <ul class="space-y-2 text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition">Electronics</a></li>
+                        <li><a href="#" class="hover:text-white transition">Fashion</a></li>
+                        <li><a href="#" class="hover:text-white transition">Home &amp; Living</a></li>
+                        <li><a href="#" class="hover:text-white transition">Computing</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="text-xl font-medium mb-4">Company</h4>
+                    <ul class="space-y-2 text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Sell with Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="text-xl font-medium mb-4">Support</h4>
+                    <ul class="space-y-2 text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+                        <li><a href="#" class="hover:text-white transition">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h4 class="text-base font-semibold mb-3">We accept</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <div
+                            class="w-14 h-9 bg-white rounded flex items-center justify-center text-xs font-bold text-blue-600">
+                            VISA</div>
+                        <div
+                            class="w-14 h-9 bg-white rounded flex items-center justify-center text-xs font-bold text-orange-600">
+                            MC</div>
+                        <div
+                            class="w-14 h-9 bg-white rounded flex items-center justify-center text-[10px] font-bold text-blue-800">
+                            PAYPAL</div>
+                        <div
+                            class="w-14 h-9 bg-white rounded flex items-center justify-center text-xs font-bold text-black">
+                            A•Pay</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-blue-700">
+            <div
+                class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-12">
+                <a href="#" class="text-white text-sm hover:underline">Terms of use</a>
+                <a href="#" class="text-white text-sm hover:underline">Privacy policy</a>
+                <a href="#" class="text-white text-sm hover:underline">Your privacy choices</a>
+                <a href="#" class="text-white text-sm hover:underline">Support</a>
+                <a href="#" class="text-white text-sm hover:underline">FAQ</a>
+            </div>
+        </div>
+        <div class="bg-slate-950">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5 text-center">
+                <p class="text-white text-sm">Copyright ©2026 Souqify. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========== SCRIPTS =========== -->
+    <script>
+        // === Cart data ===
+        const cartItemsData = [
+            { id: 1, name: 'Vanguard Performance Runners', meta: 'Size: 10.5 | Color: Crimson Red', price: 189, qty: 1, weight: 200, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80' },
+            { id: 2, name: 'Vanguard Performance Runners', meta: 'Size: 10.5 | Color: Crimson Red', price: 189, qty: 1, weight: 200, img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80' },
+            { id: 3, name: 'Vanguard Performance Runners', meta: 'Size: 10.5 | Color: Crimson Red', price: 189, qty: 1, weight: 200, img: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=400&q=80' },
+        ];
+
+        const SHIPPING_THRESHOLD = 1000; // 1kg in grams
+
+        function renderCartItem(item) {
+            return `
+    <div class="bg-white rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-6 items-stretch" data-id="${item.id}">
+      <div class="w-24 h-24 sm:w-40 sm:h-40 product-img-bg rounded-lg overflow-hidden shrink-0">
+        <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover" />
+      </div>
+      <div class="flex-1 flex flex-col justify-between min-w-0">
+        <div class="flex justify-between items-start gap-3">
+          <div class="min-w-0">
+            <h3 class="text-base sm:text-xl font-medium text-neutral-800 truncate">${item.name}</h3>
+            <p class="text-xs sm:text-sm text-neutral-400 mt-1">${item.meta}</p>
+            <p class="text-base sm:text-xl font-medium text-slate-900 mt-2 sm:mt-3">${item.weight}g</p>
+          </div>
+          <p class="text-lg sm:text-2xl font-medium text-blue-700 shrink-0">$${(item.price * item.qty).toFixed(2)}</p>
+        </div>
+        <div class="flex items-center justify-between gap-3 mt-3 sm:mt-0">
+          <div class="bg-violet-50 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-3 sm:gap-4">
+            <button class="qty-minus w-6 h-6 flex items-center justify-center text-stone-400 hover:text-blue-700 transition" aria-label="Decrease">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </button>
+            <span class="qty-value text-base sm:text-lg font-medium text-neutral-800 min-w-[16px] text-center">${item.qty}</span>
+            <button class="qty-plus w-6 h-6 flex items-center justify-center text-blue-700 hover:text-blue-800 transition" aria-label="Increase">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+          <button class="remove-btn flex items-center gap-1.5 text-neutral-400 hover:text-red-600 transition text-xs sm:text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
+            <span>Remove</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        const cartItemsEl = document.getElementById('cartItems');
+        const subtotalEl = document.getElementById('subtotal');
+        const totalEl = document.getElementById('total');
+        const cartWeightEl = document.getElementById('cartWeight');
+        const shippingProgress = document.getElementById('shippingProgress');
+        const cartBadge = document.getElementById('cartBadge');
+
+        function renderCart() {
+            if (cartItemsData.length === 0) {
+                cartItemsEl.innerHTML = `
+      <div class="bg-white rounded-2xl p-12 text-center">
+        <svg class="w-16 h-16 mx-auto text-neutral-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <h3 class="text-xl font-medium mb-2">Your cart is empty</h3>
+        <p class="text-neutral-500 mb-6">Looks like you haven't added anything yet.</p>
+        <a href="category.html" class="inline-block px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-medium transition">Continue Shopping</a>
+      </div>
+    `;
+            } else {
+                cartItemsEl.innerHTML = cartItemsData.map(renderCartItem).join('');
+                bindItemEvents();
+            }
+            updateTotals();
+        }
+
+        function bindItemEvents() {
+            document.querySelectorAll('#cartItems > div[data-id]').forEach(card => {
+                const id = parseInt(card.dataset.id);
+                const item = cartItemsData.find(i => i.id === id);
+                if (!item) return;
+                card.querySelector('.qty-minus').addEventListener('click', () => {
+                    if (item.qty > 1) { item.qty--; renderCart(); }
+                });
+                card.querySelector('.qty-plus').addEventListener('click', () => {
+                    if (item.qty < 99) { item.qty++; renderCart(); }
+                });
+                card.querySelector('.remove-btn').addEventListener('click', () => {
+                    const idx = cartItemsData.findIndex(i => i.id === id);
+                    if (idx >= 0) cartItemsData.splice(idx, 1);
+                    renderCart();
+                });
+            });
+        }
+
+        function updateTotals() {
+            const subtotal = cartItemsData.reduce((s, i) => s + i.price * i.qty, 0);
+            const weight = cartItemsData.reduce((s, i) => s + i.weight * i.qty, 0);
+            const shipping = subtotal > 0 ? 12.5 : 0;
+            const tax = subtotal * 0.08;
+            const total = subtotal + shipping + tax;
+
+            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            totalEl.textContent = `$${total.toFixed(2)}`;
+            cartWeightEl.textContent = `( ${weight} g )`;
+            cartBadge.textContent = cartItemsData.length;
+
+            // Progress bar
+            const pct = Math.min(100, (weight / SHIPPING_THRESHOLD) * 100);
+            shippingProgress.style.width = pct + '%';
+        }
+
+        // === Mobile menu ===
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn?.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+        function closeMobileMenu() { mobileMenu.classList.add('hidden'); }
+
+        // === Carousel scroll ===
+        function scrollCarousel(id, dir) {
+            const el = document.getElementById(id);
+            if (el) el.scrollBy({ left: dir * 300, behavior: 'smooth' });
+        }
+
+        // === Product cards ===
+        const productImages = [
+            'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=500&q=80',
+            'https://images.unsplash.com/photo-1605236453806-6ff36851218e?auto=format&fit=crop&w=500&q=80',
+        ];
+        const ribbons = [
+            { txt: '🔥 Trending Now', cls: 'bg-orange-500' },
+            { txt: '🎁 Free Gift', cls: 'bg-emerald-500' },
+            { txt: '🚚 Free Shipping', cls: 'bg-blue-700' },
+            { txt: '⚡ Limited Time', cls: 'bg-amber-500' },
+        ];
+
+        function compactCard(i) {
+            const ribbon = ribbons[i % ribbons.length];
+            const img = productImages[i % productImages.length];
+            return `
+    <a href="product.html" class="flex-shrink-0 w-60 sm:w-64 bg-white rounded-2xl overflow-hidden border border-neutral-100 hover:shadow-lg transition group scroll-snap-start">
+      <div class="relative aspect-square bg-zinc-100 overflow-hidden">
+        <img src="${img}" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+        <span class="absolute top-3 left-3 ${ribbon.cls} text-white text-xs font-medium px-2.5 py-1 rounded-md">${ribbon.txt}</span>
+        <button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center hover:bg-white transition" aria-label="Wishlist">
+          <svg class="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </button>
+        <button class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-blue-50 transition" aria-label="Add to cart">
+          <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </button>
+      </div>
+      <div class="p-3">
+        <h3 class="text-sm font-medium mb-1 line-clamp-1">SonicFlow Wireless Studio Headphones Gen 2</h3>
+        <div class="flex items-center justify-between text-xs mb-2">
+          <div class="flex items-center gap-1">
+            <div class="flex">
+              <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <svg class="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+            </div>
+            <span class="text-neutral-500">4.2 (+850)</span>
+          </div>
+          <span class="text-neutral-500 font-medium">200g</span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-blue-700 font-semibold">$149.00</span>
+          <span class="text-neutral-400 text-xs line-through">$199.00</span>
+          <span class="text-orange-600 text-[10px] bg-orange-50 px-1.5 py-0.5 rounded">25% off</span>
+        </div>
+      </div>
+    </a>
+  `;
+        }
+
+        // "Add some Items..." cards have a different look (with explicit "Add to cart" button visible inside the orange band)
+        function freeShippingCard(i, weight) {
+            const img = productImages[i % productImages.length];
+            return `
+    <div class="flex-shrink-0 w-64 sm:w-72 bg-white rounded-2xl overflow-hidden scroll-snap-start">
+      <div class="relative aspect-square bg-zinc-100 overflow-hidden">
+        <img src="${img}" alt="Product" class="w-full h-full object-cover" />
+        <span class="absolute top-3 left-3 bg-gradient-to-br from-red-700 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-br-md flex items-center gap-1">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          4.8
+        </span>
+        <span class="absolute top-3 right-3 bg-blue-700 text-white text-xs font-medium px-2 py-1 rounded-bl-md">${weight}g</span>
+        <span class="absolute bottom-0 left-0 bg-gradient-to-br from-red-700 to-red-600 text-white text-xs font-medium px-3 py-1.5 rounded-tr-2xl">🔥 Trending Now</span>
+      </div>
+      <div class="p-4">
+        <h3 class="text-sm sm:text-base font-medium mb-2 line-clamp-1">SonicFlow Wireless Studio Headphones Gen 2</h3>
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+          <span class="text-blue-700 font-semibold">$149.00</span>
+          <span class="text-neutral-400 text-xs line-through">$199.00</span>
+          <span class="text-orange-600 text-[10px] bg-orange-50 px-1.5 py-0.5 rounded">25% off</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="flex-1 h-10 bg-blue-700 hover:bg-blue-800 text-white text-sm rounded-lg flex items-center justify-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Add to cart
+          </button>
+          <button class="w-10 h-10 border border-blue-700 rounded-lg flex items-center justify-center text-blue-700 hover:bg-blue-50 transition" aria-label="Wishlist">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        // Populate carousels
+        const fsGrid = document.getElementById('freeShippingProducts');
+        const recGrid = document.getElementById('recommendedGrid');
+        const hotGrid = document.getElementById('hotDealsGrid');
+        const expGrid = document.getElementById('exploreGrid');
+
+        let fsHtml = '', recHtml = '', hotHtml = '', expHtml = '';
+        const weights = [300, 30, 30, 200, 150];
+        for (let i = 0; i < 5; i++) fsHtml += freeShippingCard(i, weights[i]);
+        for (let i = 0; i < 8; i++) {
+            recHtml += compactCard(i);
+            hotHtml += compactCard(i + 2);
+            expHtml += compactCard(i + 4);
+        }
+        fsGrid.innerHTML = fsHtml;
+        recGrid.innerHTML = recHtml;
+        hotGrid.innerHTML = hotHtml;
+        expGrid.innerHTML = expHtml;
+
+        // Initial render
+        renderCart();
+    </script>
+</body>
+
+</html>

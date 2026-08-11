@@ -1,0 +1,491 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Controllers\Tenant\CartController;
+use App\Http\Controllers\Tenant\StorefrontInvoiceController;
+use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
+use App\Http\Controllers\Tenant\HomePageController;
+use App\Http\Controllers\Tenant\PaymentController;
+use App\Http\Controllers\Tenant\LanguagePaymentController;
+use App\Http\Controllers\Tenant\SubscriptionPaymentController;
+use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
+use App\Livewire\Tenant\Analytics\CustomerLifetimeValuePage;
+use App\Livewire\Tenant\Analytics\OrderAnalyticsPage;
+use App\Livewire\Tenant\Analytics\ProductProfitabilityPage;
+use App\Livewire\Tenant\Analytics\ShippingAnalyticsPage;
+use App\Livewire\Tenant\Auth\LoginPage;
+use App\Livewire\Tenant\Category\AddEditCategory;
+use App\Livewire\Tenant\Category\CategoriesList;
+use App\Livewire\Tenant\Customer\CustomersList;
+use App\Livewire\Tenant\Customer\CustomerDetailPage;
+use App\Livewire\Tenant\Dashboard;
+use App\Livewire\Tenant\Finance\BillingPage;
+use App\Livewire\Tenant\Finance\BillingDetailPage;
+use App\Livewire\Tenant\Finance\BuyLanguagePage;
+use App\Livewire\Tenant\Finance\PayoutsReceivedPage;
+use App\Livewire\Tenant\Finance\SettlementPaymentsPage;
+use App\Livewire\Tenant\Finance\VendorPurchasePage;
+use App\Livewire\Tenant\Finance\VendorSettleOrderPage;
+use App\Livewire\Tenant\Finance\WalletPage;
+use App\Livewire\Tenant\Order\OrdersList;
+use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
+use App\Livewire\Tenant\Product\AddEditProduct;
+use App\Livewire\Tenant\Product\ProductsList;
+use App\Livewire\Tenant\Product\OwnProductsList;
+use App\Http\Controllers\Tenant\OwnProductController;
+use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
+use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
+use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;
+use App\Http\Controllers\Tenant\ManufacturingPaymentController;
+use App\Http\Controllers\Tenant\TenantImpersonateController;
+use App\Livewire\Tenant\Notifications\NotificationsPage;
+use App\Livewire\Tenant\Onboarding\OnboardingPage;
+use App\Livewire\Tenant\Setting\AccountSettingsPage;
+use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
+use App\Livewire\Tenant\Setting\AdminsList;
+use App\Livewire\Tenant\Setting\CurrenciesPage;
+use App\Livewire\Tenant\Setting\DomainsList;
+use App\Livewire\Tenant\Setting\EmailTemplatesPage;
+use App\Livewire\Tenant\Setting\GeneralSettingsPage;
+use App\Livewire\Tenant\Setting\LanguagesManagePage;
+use App\Livewire\Tenant\Setting\LanguagesPage;
+use App\Livewire\Tenant\Setting\MailConfigurationsPage;
+use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
+use App\Livewire\Tenant\Setting\RolesPermissionsList;
+use App\Livewire\Tenant\Setting\SubscribersPage;
+use App\Livewire\Tenant\Store\AppearancePage;
+use App\Livewire\Tenant\Store\CouponsPage;
+use App\Livewire\Tenant\Store\FlashSalesPage;
+use App\Livewire\Tenant\Store\AddEditPage;
+use App\Livewire\Tenant\Store\PagesList;
+use App\Livewire\Tenant\Store\AddEditThemePart;
+use App\Livewire\Tenant\Store\ThemesPage;
+use App\Livewire\Tenant\Store\ThemePartsPage;
+use App\Livewire\Tenant\Storefront\AuthPage;
+use App\Livewire\Tenant\Storefront\BestSellingPage;
+use App\Livewire\Tenant\Storefront\CartPage;
+use App\Livewire\Tenant\Storefront\CategoryPage;
+use App\Livewire\Tenant\Storefront\FavoritesPage;
+use App\Livewire\Tenant\Storefront\CheckoutPage;
+use App\Livewire\Tenant\Storefront\FullStarPage;
+use App\Livewire\Tenant\Storefront\HomePage;
+use App\Livewire\Tenant\Storefront\NewInPage;
+use App\Livewire\Tenant\Storefront\OffersPage;
+use App\Livewire\Tenant\Storefront\OrderStatusPage;
+use App\Livewire\Tenant\Storefront\OrderTrackingPage;
+use App\Livewire\Tenant\Storefront\ProductPage;
+use App\Http\Controllers\Tenant\RobotsController;
+use App\Http\Controllers\Tenant\SitemapController;
+use App\Livewire\Tenant\Storefront\NotFoundPage;
+use App\Livewire\Tenant\Storefront\PageView;
+use App\Livewire\Tenant\Storefront\ProfilePage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+
+/*
+|--------------------------------------------------------------------------
+| Tenant Routes
+|--------------------------------------------------------------------------
+|
+| Here you can register the tenant routes for your application.
+| These routes are loaded by the TenantRouteServiceProvider.
+|
+| Feel free to customize them however you want. Good luck!
+|
+*/
+
+Route::middleware([
+    'web',
+    InitializeTenancyByDomain::class,
+    PreventAccessFromCentralDomains::class,
+])->group(function () {
+
+    // ─── Storefront (public) ─────────────────────────────────────────────────
+
+    Route::get('/robots.txt', RobotsController::class)->middleware('tenant.storefront.context')->name('tenant.robots');
+    Route::get('/sitemap.xml', SitemapController::class)->middleware('tenant.storefront.context')->name('tenant.sitemap');
+
+    Route::middleware(['tenant.storefront.context', 'tenant.gateway.blocked', 'preview.template'])->group(function () {
+        Route::get('/', HomePage::class)->name('tenant.home');
+        Route::get('/best-selling', BestSellingPage::class)->name('tenant.storefront.best-selling');
+        Route::get('/full-star', FullStarPage::class)->name('tenant.storefront.full-star');
+        Route::get('/new-in', NewInPage::class)->name('tenant.storefront.new-in');
+        Route::get('/offers', OffersPage::class)->name('tenant.storefront.offers');
+        Route::get('/search', BestSellingPage::class)->name('tenant.storefront.search');
+        Route::get('/search/autocomplete', function () {
+            $keyword = trim((string) request('q', ''));
+            if (strlen($keyword) < 2) {
+                return response()->json(['products' => []]);
+            }
+            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
+            $products = $repo->autocompleteProducts($keyword);
+            $currentCurrency = request()->attributes->get('storefrontCurrentCurrency') ?: $repo->currentCurrency();
+            $symbol = data_get($currentCurrency, 'symbol', '$');
+            $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
+
+            return response()->json([
+                'products' => $products->map(function ($p) use ($symbol, $rate) {
+                    $pricing = $p->storefrontPricing();
+
+                    return [
+                        'name' => $p->translationValue('name') ?? $p->slug,
+                        'slug' => $p->slug,
+                        'url' => route('tenant.storefront.product', $p->slug),
+                        'image' => $p->primary_image_url,
+                        'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+                        'original_price' => $pricing['original_price'] !== null
+                            ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2)
+                            : null,
+                        'has_discount' => $pricing['has_discount'],
+                        'discount_percentage' => $pricing['discount_percentage'],
+                    ];
+                })->values(),
+            ]);
+        })->name('tenant.storefront.search.autocomplete');
+        Route::get('/api/products', function () {
+            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
+            $currentCurrency = request()->attributes->get('storefrontCurrentCurrency')
+                ?: $repo->currentCurrency();
+            $paginator = $repo->paginatedProducts([], 20);
+
+            // Resolve which product-card partial to use based on the active theme.
+            $theme = request()->attributes->get('storefrontCurrentTheme');
+            $themeSlug = $theme?->slug ?? 'elora';
+            $cardView = "themes.{$themeSlug}.pages._product-card";
+            if (!view()->exists($cardView)) {
+                $cardView = 'themes.elora.pages._product-card';
+            }
+
+            $cards = collect($paginator->items())->map(function ($product) use ($currentCurrency, $cardView) {
+                return view($cardView, [
+                    'product' => $product,
+                    'badge' => null,
+                    'currentCurrency' => $currentCurrency,
+                ])->render();
+            })->values()->all();
+
+            return response()->json([
+                'has_more' => $paginator->hasMorePages(),
+                'next_page' => $paginator->currentPage() + 1,
+                'cards' => $cards,
+            ]);
+        })->name('tenant.storefront.products.json');
+        Route::get('/api/home/tabbed-products', HomePageController::class)->name('tenant.storefront.home.tabbed-products');
+        Route::get('/categories/{slug?}', CategoryPage::class)->name('tenant.storefront.category');
+        Route::get('/categories-products/{slug?}', function (string $slug = null) {
+            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
+            $category = $repo->categoryBySlug($slug);
+            // if (!$category) {
+            //     return response()->json(['has_more' => false, 'cards' => []]);
+            // }
+            $filters = [
+                'keyword' => trim((string) request('keyword', '')),
+                'sort' => request('sort', 'latest'),
+                'availability' => request('availability', ''),
+                'product_flag' => request('product_flag', ''),
+                'on_sale' => request('on_sale', ''),
+                'ratings' => request('ratings', ''),
+                'min' => request('min', ''),
+                'max' => request('max', ''),
+            ];
+            $paginator = $repo->paginatedProductsByCategory($slug ? $category : null, $filters, 15);
+            $currentCurrency = $repo->currentCurrency();
+            $cards = collect($paginator->items())->map(fn($p) => view('themes.elora.pages._product-card', [
+                'product' => $p,
+                'badge' => null,
+                'currentCurrency' => $currentCurrency,
+            ])->render())->values()->all();
+            return response()->json([
+                'has_more' => $paginator->hasMorePages(),
+                'cards' => $cards,
+            ]);
+        })->name('tenant.storefront.category.products.json');
+        Route::get('/products/{slug}', ProductPage::class)->name('tenant.storefront.product');
+        Route::post('/cart/add', [CartController::class, 'add'])->name('tenant.storefront.cart.add');
+        Route::get('/cart', CartPage::class)->name('tenant.storefront.cart');
+        Route::get('/favorites', FavoritesPage::class)->name('tenant.storefront.favorites')->middleware('auth:storefront');
+        Route::get('/checkout', CheckoutPage::class)
+            ->name('tenant.storefront.checkout');
+        Route::get('/orders/{uuid}/status', OrderStatusPage::class)->name('tenant.storefront.order-status');
+        Route::get('/orders/{uuid}/tracking', OrderTrackingPage::class)->name('tenant.storefront.order-tracking');
+        Route::get('/orders/{uuid}/invoice', [StorefrontInvoiceController::class, 'show'])
+            ->middleware('auth:storefront')
+            ->name('tenant.storefront.order-invoice');
+
+        // Customer auth
+        Route::middleware('guest:storefront')->group(function () {
+            Route::get('/account/login', AuthPage::class)->name('tenant.storefront.login');
+        });
+
+        Route::get('/profile', ProfilePage::class)
+            ->middleware('auth:storefront')
+            ->name('tenant.storefront.profile');
+
+        Route::get('/pages/{slug}', PageView::class)->name('tenant.storefront.page');
+
+        // Catch-all for unknown storefront paths → themed 404 page
+        Route::fallback(NotFoundPage::class)->name('tenant.storefront.404');
+
+        // ─── Payment callbacks ───────────────────────────────────────────────
+        //
+        // GET      /checkout/payment/{gateway}/{orderUuid}  — initiate charge
+        // GET|POST /checkout/payment/{gateway}/success       — gateway callback
+        // GET      /checkout/payment/{gateway}/cancel        — user cancelled
+        //
+        // Flow (from CheckoutPage::placeOrder):
+        //   1. Order is created (paid=false, status=Pending)
+        //   2. Livewire redirects to tenant.payment.charge
+        //   3. PaymentController::charge() calls the gateway and follows the redirect
+        //   4. Gateway redirects back to tenant.payment.success  →  order marked paid
+        //
+        // Payment is always charged in USD. Currency shown on the frontend is
+        // display-only (conversion rate applied client-side / in the view layer).
+        //
+        Route::prefix('checkout/payment')->name('tenant.payment.')->middleware('auth:storefront')->group(function () {
+            Route::get('{gateway}/{orderUuid}', [PaymentController::class, 'charge'])->name('charge');
+            Route::match(['get', 'post'], '{gateway}/success', [PaymentController::class, 'success'])->name('success');
+            Route::get('{gateway}/cancel', [PaymentController::class, 'cancel'])->name('cancel');
+        });
+
+        Route::post('/account/logout', function (Request $request) {
+            Auth::guard('storefront')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('tenant.home');
+        })->middleware('auth:storefront')->name('tenant.storefront.logout');
+    });
+
+    // ─── Admin panel (all under /admin) ─────────────────────────────────────
+
+    Route::prefix('admin')->group(function () {
+
+        Route::get('/', function () {
+            return redirect()->route(
+                Auth::guard('tenant')->check() ? 'tenant.dashboard' : 'tenant.login'
+            );
+        });
+
+        Route::middleware('guest:tenant')->group(function () {
+            Route::get('/login', LoginPage::class)->name('tenant.login');
+        });
+
+        Route::post('/logout', function (Request $request) {
+            Auth::guard('tenant')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('tenant.login');
+        })->middleware('auth:tenant')->name('tenant.logout');
+
+        // Central-admin → Tenant impersonation (no auth guard yet – token IS the auth)
+        Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'accept'])
+            ->name('tenant.impersonate.accept');
+
+        Route::middleware('auth:tenant')->group(function () {
+
+            Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
+                ->name('tenant.dashboard');
+
+            Route::get('/onboarding/{tab?}', OnboardingPage::class)
+                ->where('tab', 'tour|setup')
+                ->name('tenant.onboarding');
+
+            Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
+                Route::get('/', ProductsList::class)->name('index');
+                Route::get('/create', AddEditProduct::class)->name('create');
+                Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
+            });
+
+            Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
+                Route::get('/', OwnProductsList::class)->name('index');
+                Route::get('/create', [OwnProductController::class, 'create'])->name('create');
+                Route::post('/', [OwnProductController::class, 'store'])->name('store');
+                Route::post('/validate', [OwnProductController::class, 'validateForm'])->name('validate');
+                Route::get('/{product}/edit', [OwnProductController::class, 'edit'])->name('edit');
+                Route::put('/{product}', [OwnProductController::class, 'update'])->name('update');
+                Route::post('/{product}/validate', [OwnProductController::class, 'validateForm'])->name('validate.update');
+            });
+
+            Route::prefix('manufacturing')->name('tenant.manufacturing.')->group(function () {
+                Route::get('/', TenantManufacturingRequestsList::class)->name('index');
+                Route::get('/create', AddManufacturingRequest::class)->name('create');
+                Route::get('/{id}', TenantManufacturingRequestDetail::class)->name('show');
+            });
+
+            Route::get('/notifications', NotificationsPage::class)->name('tenant.notifications.index');
+
+            Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
+                Route::get('/', CategoriesList::class)->name('index');
+                Route::get('/create', AddEditCategory::class)->name('create');
+                Route::get('/{category}/edit', AddEditCategory::class)->name('edit');
+            });
+
+            Route::prefix('badges')->name('tenant.badges.')->middleware('tenant.permission:catalog.badges.manage')->group(function () {
+                Route::get('/', function () {
+                    return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
+                })->name('index');
+                Route::get('/{badge}', [TenantBadgeProductsController::class, 'show'])->name('show');
+                Route::get('/{badge}/search', [TenantBadgeProductsController::class, 'searchProducts'])->name('search');
+                Route::post('/{badge}/assign-category', [TenantBadgeProductsController::class, 'assignCategory'])->name('assign-category');
+                Route::post('/{badge}/save', [TenantBadgeProductsController::class, 'save'])->name('save');
+            });
+
+            Route::get('/orders', OrdersList::class)
+                ->middleware('tenant.permission:sales.orders.view')
+                ->name('tenant.orders.index');
+
+            Route::get('/orders/{orderId}', TenantOrderDetailPage::class)
+                ->middleware('tenant.permission:sales.orders.view')
+                ->name('tenant.orders.show');
+
+            Route::get('/customers', CustomersList::class)
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.index');
+
+            Route::get('/customers/{customerId}', CustomerDetailPage::class)
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.show');
+
+            Route::prefix('analytics')->name('tenant.analytics.')->middleware('tenant.permission:analytics.view')->group(function () {
+                Route::get('/orders', OrderAnalyticsPage::class)->name('orders');
+                Route::get('/customer-lifetime-value', CustomerLifetimeValuePage::class)->name('clv');
+                Route::get('/shipping', ShippingAnalyticsPage::class)->name('shipping');
+                Route::get('/profitability', ProductProfitabilityPage::class)->name('profitability');
+            });
+
+            Route::prefix('finance')->name('tenant.finance.')->group(function () {
+                Route::get('/wallet', WalletPage::class)
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('wallet');
+                Route::get('/billing', BillingPage::class)
+                    ->middleware('tenant.permission:finance.billing.view')
+                    ->name('billing');
+                Route::get('/billing/{orderId}', BillingDetailPage::class)
+                    ->middleware('tenant.permission:finance.billing.view')
+                    ->name('billing.detail');
+                Route::get('/vendor-purchases', VendorPurchasePage::class)
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchases');
+                Route::get('/vendor-purchases/{orderId}/settle', VendorSettleOrderPage::class)
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchase-settle');
+                Route::get('/settlement-payments', SettlementPaymentsPage::class)
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('settlement-payments');
+                Route::get('/payouts-received', PayoutsReceivedPage::class)
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('payouts');
+                Route::get('/buy-languages', BuyLanguagePage::class)
+                    ->middleware('tenant.permission:settings.languages.purchase')
+                    ->name('buy-languages');
+            });
+
+            // Language purchase payment flow (no extra permission middleware – controller guards the logic)
+            // Subscription renewal / upgrade payment flow
+            Route::prefix('subscription-payment')->name('tenant.subscription-payment.')->group(function () {
+                Route::get('{gateway}/{packageId}/{type}', [SubscriptionPaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [SubscriptionPaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [SubscriptionPaymentController::class, 'cancel'])->name('cancel');
+            });
+
+            Route::prefix('language-purchase')->name('tenant.language-purchase.')->group(function () {
+                Route::get('{gateway}/{languageId}', [LanguagePaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [LanguagePaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [LanguagePaymentController::class, 'cancel'])->name('cancel');
+            });
+
+            Route::prefix('manufacturing-payment')->name('tenant.manufacturing-payment.')->group(function () {
+                Route::get('{gateway}/{paymentRequestId}', [ManufacturingPaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [ManufacturingPaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [ManufacturingPaymentController::class, 'cancel'])->name('cancel');
+            });
+
+            // Vendor-to-central settlement payment flow
+            Route::prefix('vendor-settlement')->name('tenant.vendor-settlement.')->group(function () {
+                Route::get('{gateway}/{orderId}', [VendorSettlementPaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [VendorSettlementPaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [VendorSettlementPaymentController::class, 'cancel'])->name('cancel');
+            });
+
+            Route::prefix('store')->name('tenant.store.')->group(function () {
+                Route::get('/themes', ThemesPage::class)
+                    ->middleware('tenant.permission:store.themes.manage')
+                    ->name('themes');
+                Route::get('/theme-parts', ThemePartsPage::class)
+                    ->middleware('tenant.permission:store.themes.manage')
+                    ->name('theme-parts');
+                Route::get('/theme-parts/create/{themeId?}', AddEditThemePart::class)
+                    ->middleware('tenant.permission:store.themes.manage')
+                    ->name('theme-parts.create');
+                Route::get('/theme-parts/{partId}/edit', AddEditThemePart::class)
+                    ->middleware('tenant.permission:store.themes.manage')
+                    ->name('theme-parts.edit');
+                Route::get('/pages', PagesList::class)
+                    ->middleware('tenant.permission:store.pages.manage')
+                    ->name('pages');
+                Route::get('/pages/create', AddEditPage::class)
+                    ->middleware('tenant.permission:store.pages.manage')
+                    ->name('pages.create');
+                Route::get('/pages/{page}/edit', AddEditPage::class)
+                    ->middleware('tenant.permission:store.pages.manage')
+                    ->name('pages.edit');
+                Route::get('/coupons', CouponsPage::class)
+                    ->middleware('tenant.permission:store.coupons.manage')
+                    ->name('coupons');
+                Route::get('/flash-sales', FlashSalesPage::class)
+                    ->middleware('tenant.permission:store.flash-sales.manage')
+                    ->name('flash-sales');
+                Route::get('/appearance', AppearancePage::class)
+                    ->middleware('tenant.permission:store.appearance.manage')
+                    ->name('appearance');
+            });
+
+            Route::prefix('settings')->name('tenant.settings.')->group(function () {
+                Route::get('/subscribers', SubscribersPage::class)
+                    ->middleware('tenant.permission:store.subscribers.manage')
+                    ->name('subscribers');
+                Route::get('/currencies', CurrenciesPage::class)
+                    ->middleware('tenant.permission:settings.regional.manage')
+                    ->name('currencies');
+                Route::get('/domains', DomainsList::class)
+                    ->middleware('tenant.permission:settings.domains.manage')
+                    ->name('domains');
+                Route::get('/languages', LanguagesPage::class)
+                    ->middleware('tenant.permission:settings.regional.manage')
+                    ->name('languages');
+                Route::get('/languages-manage', LanguagesManagePage::class)
+                    ->middleware('tenant.permission:settings.regional.manage')
+                    ->name('languages-manage');
+                Route::get('/admins', AdminsList::class)
+                    ->middleware('tenant.permission:settings.admins.manage')
+                    ->name('admins');
+                Route::get('/roles-permissions', RolesPermissionsList::class)
+                    ->middleware('tenant.permission:settings.roles.manage')
+                    ->name('roles-permissions');
+                Route::get('/payment-gateways', PaymentGatewaysPage::class)
+                    ->middleware('tenant.permission:settings.payment-gateways.manage')
+                    ->name('payment-gateways');
+                Route::get('/email-templates', EmailTemplatesPage::class)
+                    ->middleware('tenant.permission:settings.mail.manage')
+                    ->name('email-templates');
+                Route::get('/email-templates/{emailTemplate}/edit', AddEditEmailTemplate::class)
+                    ->middleware('tenant.permission:settings.mail.manage')
+                    ->name('email-templates.edit');
+                Route::get('/mail', MailConfigurationsPage::class)
+                    ->middleware('tenant.permission:settings.mail.manage')
+                    ->name('mail');
+                Route::get('/account', AccountSettingsPage::class)
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('account');
+                Route::get('/general', GeneralSettingsPage::class)
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('general');
+            });
+        });
+    });
+});

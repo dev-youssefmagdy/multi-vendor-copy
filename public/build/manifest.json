@@ -1,0 +1,153 @@
+{
+  "_bootstrap-BjclpLEM.js": {
+    "file": "assets/bootstrap-BjclpLEM.js",
+    "name": "bootstrap"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-yeGHV0OA.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/ecommet.css": {
+    "file": "assets/ecommet-BtrKg7WM.css",
+    "name": "ecommet",
+    "names": [
+      "ecommet.css"
+    ],
+    "src": "resources/css/ecommet.css",
+    "isEntry": true
+  },
+  "resources/css/elora.css": {
+    "file": "assets/elora-DJm7FVLq.css",
+    "name": "elora",
+    "names": [
+      "elora.css"
+    ],
+    "src": "resources/css/elora.css",
+    "isEntry": true
+  },
+  "resources/css/elora/category.css": {
+    "file": "assets/category-hppsyjQ7.css",
+    "name": "category",
+    "names": [
+      "category.css"
+    ],
+    "src": "resources/css/elora/category.css",
+    "isEntry": true
+  },
+  "resources/css/elora/home.css": {
+    "file": "assets/home-C3vL_iQ6.css",
+    "name": "home",
+    "names": [
+      "home.css"
+    ],
+    "src": "resources/css/elora/home.css",
+    "isEntry": true
+  },
+  "resources/css/souqify.css": {
+    "file": "assets/souqify-bWh4Wz24.css",
+    "name": "souqify",
+    "names": [
+      "souqify.css"
+    ],
+    "src": "resources/css/souqify.css",
+    "isEntry": true
+  },
+  "resources/css/website.css": {
+    "file": "assets/website-LWY6qRY-.css",
+    "name": "website",
+    "names": [
+      "website.css"
+    ],
+    "src": "resources/css/website.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-vR86fm_J.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap-BjclpLEM.js"
+    ]
+  },
+  "resources/js/ecommet.js": {
+    "file": "assets/ecommet-CERQP6M9.js",
+    "name": "ecommet",
+    "src": "resources/js/ecommet.js",
+    "isEntry": true
+  },
+  "resources/js/ecommet/cart.js": {
+    "file": "assets/cart-DQKVwfWi.js",
+    "name": "cart",
+    "src": "resources/js/ecommet/cart.js",
+    "isEntry": true
+  },
+  "resources/js/ecommet/home.js": {
+    "file": "assets/home-BCuzQayL.js",
+    "name": "home",
+    "src": "resources/js/ecommet/home.js",
+    "isEntry": true
+  },
+  "resources/js/ecommet/product.js": {
+    "file": "assets/product-URDBE9y9.js",
+    "name": "product",
+    "src": "resources/js/ecommet/product.js",
+    "isEntry": true
+  },
+  "resources/js/elora.js": {
+    "file": "assets/elora-CSFEMoUd.js",
+    "name": "elora",
+    "src": "resources/js/elora.js",
+    "isEntry": true
+  },
+  "resources/js/elora/cart.js": {
+    "file": "assets/cart-t8tZQcl-.js",
+    "name": "cart",
+    "src": "resources/js/elora/cart.js",
+    "isEntry": true
+  },
+  "resources/js/elora/category.js": {
+    "file": "assets/category-DtNvckId.js",
+    "name": "category",
+    "src": "resources/js/elora/category.js",
+    "isEntry": true
+  },
+  "resources/js/elora/home.js": {
+    "file": "assets/home-FIzo_x_w.js",
+    "name": "home",
+    "src": "resources/js/elora/home.js",
+    "isEntry": true
+  },
+  "resources/js/elora/product.js": {
+    "file": "assets/product-5hOgDt4e.js",
+    "name": "product",
+    "src": "resources/js/elora/product.js",
+    "isEntry": true
+  },
+  "resources/js/souqify.js": {
+    "file": "assets/souqify-Dskok5Cq.js",
+    "name": "souqify",
+    "src": "resources/js/souqify.js",
+    "isEntry": true
+  },
+  "resources/js/storefront-cart.js": {
+    "file": "assets/storefront-cart-YZYSdxPW.js",
+    "name": "storefront-cart",
+    "src": "resources/js/storefront-cart.js",
+    "isEntry": true
+  },
+  "resources/js/website.js": {
+    "file": "assets/website-CgQSzhcr.js",
+    "name": "website",
+    "src": "resources/js/website.js",
+    "isEntry": true,
+    "imports": [
+      "_bootstrap-BjclpLEM.js"
+    ]
+  }
+}

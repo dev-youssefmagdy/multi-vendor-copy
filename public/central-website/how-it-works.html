@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — How It Works</title>
+    <meta name="description" content="Learn how Ecommet works — from picking a plan to going live in minutes.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+    <style>
+        .step-connector {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #FF4B2B, #FF622E);
+            transform: translateY(-50%);
+            z-index: 0
+        }
+
+        .step-card {
+            position: relative;
+            z-index: 1
+        }
+
+        @media(max-width:1023px) {
+            .step-connector {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="./templates.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Pricing</a>
+                    <a href="./how-it-works.html" class="text-sm font-medium text-primary transition-colors">How It
+                        Works</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button
+                            class="text-sm font-medium text-gray-600 flex items-center gap-1 hover:text-primary">More <i
+                                class="fas fa-chevron-down text-xs"></i></button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./faqs.html">FAQs</a>
+                            <a href="./blogs.html">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 p-2" aria-label="Menu"><i
+                            class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Home</a>
+                    <a href="./templates.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Templates</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Pricing</a>
+                    <a href="./how-it-works.html"
+                        class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">How It Works</a>
+                    <a href="./contact.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="pt-28 pb-14 bg-gradient-to-br from-orange-50 to-white text-center">
+        <div class="max-w-2xl mx-auto px-4" data-reveal>
+            <span class="text-primary text-sm font-semibold tracking-wide uppercase">Simple Process</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mt-3 mb-4">How It Works</h1>
+            <p class="text-gray-500 text-lg">Launch your professional e-commerce store in four simple steps — no
+                technical skills required.</p>
+        </div>
+    </section>
+
+    <!-- STEPS — DESKTOP RADIAL LAYOUT -->
+    <section class="py-16 bg-white overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Desktop: central image with 4 steps around it -->
+            <div class="hidden lg:grid grid-cols-3 gap-8 items-center" data-reveal>
+                <!-- Left steps -->
+                <div class="space-y-12">
+                    <!-- Step 1 -->
+                    <div
+                        class="step-card bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-right hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-end gap-4">
+                            <div>
+                                <p class="text-gray-500 text-sm leading-relaxed">Pick a subscription plan that fits your
+                                    business needs.</p>
+                            </div>
+                            <div
+                                class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 text-white font-extrabold text-lg shadow-md">
+                                1</div>
+                        </div>
+                    </div>
+                    <!-- Step 4 -->
+                    <div
+                        class="step-card bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-right hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-end gap-4">
+                            <div>
+                                <p class="text-gray-500 text-sm leading-relaxed">Go live, manage orders, and grow your
+                                    online business.</p>
+                            </div>
+                            <div
+                                class="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center flex-shrink-0 text-white font-extrabold text-lg shadow-md">
+                                4</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center image -->
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-72 h-72 bg-orange-100 rounded-full opacity-50"></div>
+                    <div class="absolute w-56 h-56 bg-orange-200 rounded-full opacity-40"></div>
+                    <img src="./assets/image/how-it-works.png" alt="How Ecommet Works"
+                        class="relative z-10 w-64 drop-shadow-xl">
+                </div>
+
+                <!-- Right steps -->
+                <div class="space-y-12">
+                    <!-- Step 2 -->
+                    <div
+                        class="step-card bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 text-white font-extrabold text-lg shadow-md">
+                                2</div>
+                            <div>
+                                <p class="text-gray-500 text-sm leading-relaxed">Choose a ready-made theme and customize
+                                    it to match your brand.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div
+                        class="step-card bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 text-white font-extrabold text-lg shadow-md">
+                                3</div>
+                            <div>
+                                <p class="text-gray-500 text-sm leading-relaxed">Upload products, set prices, and
+                                    configure payment options easily.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile: vertical list -->
+            <div class="lg:hidden space-y-6 max-w-lg mx-auto">
+                <div class="flex gap-4 items-start" data-reveal>
+                    <div class="flex flex-col items-center flex-shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-extrabold shadow-md">
+                            1</div>
+                        <div class="w-0.5 h-full bg-orange-200 mt-2 min-h-[2rem]"></div>
+                    </div>
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 flex-1">
+                        <h3 class="font-bold text-gray-900 mb-1">Choose Your Plan</h3>
+                        <p class="text-gray-500 text-sm">Pick a subscription plan that fits your business needs.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start" data-reveal>
+                    <div class="flex flex-col items-center flex-shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-extrabold shadow-md">
+                            2</div>
+                        <div class="w-0.5 h-full bg-orange-200 mt-2 min-h-[2rem]"></div>
+                    </div>
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 flex-1">
+                        <h3 class="font-bold text-gray-900 mb-1">Pick a Template</h3>
+                        <p class="text-gray-500 text-sm">Choose a ready-made theme and customize it to match your brand.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start" data-reveal>
+                    <div class="flex flex-col items-center flex-shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-extrabold shadow-md">
+                            3</div>
+                        <div class="w-0.5 h-full bg-orange-200 mt-2 min-h-[2rem]"></div>
+                    </div>
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 flex-1">
+                        <h3 class="font-bold text-gray-900 mb-1">Add Your Products</h3>
+                        <p class="text-gray-500 text-sm">Upload products, set prices, and configure payment options
+                            easily.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start" data-reveal>
+                    <div class="flex flex-col items-center flex-shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white font-extrabold shadow-md">
+                            4</div>
+                    </div>
+                    <div class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 flex-1">
+                        <h3 class="font-bold text-gray-900 mb-1">Launch &amp; Grow</h3>
+                        <p class="text-gray-500 text-sm">Go live, manage orders, and grow your online business.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE HIGHLIGHTS -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-reveal>
+                <h2 class="section-title text-3xl font-extrabold text-gray-900">Everything You Need to Succeed</h2>
+                <p class="text-gray-500 mt-3 max-w-xl mx-auto">Ecommet gives you professional tools without the
+                    complexity.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-paint-brush text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Drag-and-Drop Builder</h3>
+                    <p class="text-gray-500 text-sm">Customise every aspect of your store with an intuitive visual
+                        editor — no code needed.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-credit-card text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Integrated Payments</h3>
+                    <p class="text-gray-500 text-sm">Accept credit cards, PayPal, and local payment methods right out of
+                        the box.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-truck text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Shipping Management</h3>
+                    <p class="text-gray-500 text-sm">Set shipping zones, rates and track deliveries from your
+                        centralized dashboard.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Analytics &amp; Reports</h3>
+                    <p class="text-gray-500 text-sm">Understand what's working with real-time sales metrics and customer
+                        insights.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-globe text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Multi-Language</h3>
+                    <p class="text-gray-500 text-sm">Serve customers worldwide with full support for multiple languages
+                        and currencies.</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-headset text-primary text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">Expert Support</h3>
+                    <p class="text-gray-500 text-sm">Get help whenever you need it via live chat, email, and our
+                        comprehensive help center.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-16 bg-primary text-white text-center">
+        <div class="max-w-2xl mx-auto px-4" data-reveal>
+            <h2 class="text-3xl font-extrabold mb-3">Ready to Build Your Store?</h2>
+            <p class="text-orange-100 mb-8">Join thousands of businesses already selling on Ecommet.</p>
+            <a href="./pricing.html"
+                class="inline-block bg-white text-primary font-bold px-8 py-3.5 rounded-full hover:bg-orange-50 transition-colors">Get
+                Started Free</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-7 w-auto brightness-0 invert mb-4">
+                    <p class="text-sm max-w-xs">The award-winning e-commerce platform built for businesses of all sizes.
+                    </p>
+                    <div class="flex gap-3 mt-5">
+                        <a href="https://t.me/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-telegram-plane text-xs"></i></a>
+                        <a href="https://www.instagram.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-instagram text-xs"></i></a>
+                        <a href="https://www.facebook.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-facebook-f text-xs"></i></a>
+                        <a href="https://bd.linkedin.com/" target="_blank"
+                            class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition-colors"><i
+                                class="fab fa-linkedin-in text-xs"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./templates.html" class="hover:text-primary transition-colors">Templates</a></li>
+                        <li><a href="./pricing.html" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="./how-it-works.html" class="hover:text-primary transition-colors">How It Works</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i class="fas fa-map-marker-alt text-primary mt-0.5 w-4"></i><span>Sector
+                                11, Uttara, Dhaka</span></li>
+                        <li class="flex gap-2"><i class="fas fa-phone text-primary w-4"></i><a href="tel:01300000000"
+                                class="hover:text-primary">+880 1300 000 000</a></li>
+                        <li class="flex gap-2"><i class="fas fa-envelope text-primary mt-0.5 w-4"></i><a
+                                href="mailto:contact@example.com" class="hover:text-primary">contact@example.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 py-5 text-center text-sm">&copy; 2025 Ecommet. All rights reserved.</div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

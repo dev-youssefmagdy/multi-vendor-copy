@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — FAQs</title>
+    <meta name="description" content="Frequently asked questions about Ecommet — plans, features, support and more.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="./templates.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Pricing</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button class="text-sm font-medium text-primary flex items-center gap-1">More <i
+                                class="fas fa-chevron-down text-xs"></i></button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./faqs.html" class="!text-primary">FAQs</a>
+                            <a href="./blogs.html">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 p-2" aria-label="Menu"><i
+                            class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Home</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Pricing</a>
+                    <a href="./about.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">About</a>
+                    <a href="./faqs.html" class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">FAQs</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="pt-28 pb-14 bg-gradient-to-br from-orange-50 to-white text-center">
+        <div class="max-w-2xl mx-auto px-4" data-reveal>
+            <span class="text-primary text-sm font-semibold tracking-wide uppercase">Help Center</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mt-3 mb-4">Frequently Asked Questions</h1>
+            <p class="text-gray-500 text-lg">Everything you need to know about Ecommet. Can't find the answer? <a
+                    href="./contact.html" class="text-primary hover:underline">Contact us.</a></p>
+        </div>
+    </section>
+
+    <!-- FAQS CONTENT -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+
+                <!-- Sidebar categories -->
+                <aside class="lg:col-span-1" data-reveal>
+                    <div class="sticky top-24 space-y-1">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Categories</p>
+                        <a href="#getting-started"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-primary bg-orange-50">Getting
+                            Started</a>
+                        <a href="#billing"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Billing
+                            &amp; Plans</a>
+                        <a href="#store"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Store
+                            Management</a>
+                        <a href="#technical"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Technical</a>
+                        <a href="#support"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Support</a>
+                    </div>
+                </aside>
+
+                <!-- FAQ sections -->
+                <div class="lg:col-span-3 space-y-14">
+
+                    <!-- Getting Started -->
+                    <div id="getting-started" data-reveal>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-rocket text-primary text-sm"></i>
+                            </div>
+                            Getting Started
+                        </h2>
+                        <div class="space-y-3">
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    How do I create an account on Ecommet?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Creating an account is simple. Click the "Sign Up" or "Get Started" button on any
+                                    page, choose your plan (you can start for free), provide your email address and set
+                                    a password. You'll receive a confirmation email and can start building your store
+                                    right away.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Do I need technical knowledge to use Ecommet?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Not at all! Ecommet is designed to be beginner-friendly. Our drag-and-drop store
+                                    builder, pre-built templates, and intuitive dashboard mean you can launch a
+                                    professional store without writing a single line of code.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    How long does it take to set up my store?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Most merchants set up their store in under 30 minutes. Simply pick a template, add
+                                    your products, configure payment and shipping settings, and you're ready to go. Our
+                                    setup wizard guides you through every step.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Can I try Ecommet for free?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yes! Our Basic plan is completely free with no time limit and no credit card
+                                    required. It includes up to 10 products, 100 orders per month, and a full set of
+                                    core features to get you started.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing -->
+                    <div id="billing" data-reveal>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-credit-card text-primary text-sm"></i>
+                            </div>
+                            Billing &amp; Plans
+                        </h2>
+                        <div class="space-y-3">
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Can I upgrade or downgrade my plan at any time?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yes, absolutely. You can upgrade or downgrade your plan from your account settings
+                                    at any time. Upgrades take effect immediately. When downgrading, your current plan
+                                    remains active until the end of the billing period.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    What payment methods do you accept?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    We accept all major credit and debit cards (Visa, MasterCard, American Express),
+                                    PayPal, and various local payment methods depending on your region. All payments are
+                                    processed securely via our payment partners.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Is there a refund policy?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied
+                                    within the first 14 days, contact our support team for a full refund. No questions
+                                    asked.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    How much do I save with yearly billing?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yearly billing saves you approximately 20% compared to monthly billing. For example,
+                                    the Standard plan costs $19/month or $190/year — saving you $38 per year.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Store Management -->
+                    <div id="store" data-reveal>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-store text-primary text-sm"></i>
+                            </div>
+                            Store Management
+                        </h2>
+                        <div class="space-y-3">
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Can I use my own custom domain?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yes! All plans including the free Basic plan support custom domain and subdomain
+                                    connections. You simply enter your domain in your store settings and update your DNS
+                                    records according to our instructions (usually takes 24–48 hours to propagate).
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    How many products can I list on my store?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    It depends on your plan. The Basic plan supports up to 10 products, Standard
+                                    supports up to 50, and the Premium plan gives you unlimited products. You can always
+                                    upgrade to unlock more capacity.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Does Ecommet support multiple languages?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yes! You can add additional languages to your store. The Basic plan allows 1 extra
+                                    language, Standard allows 2, and Premium allows unlimited languages. Your customers
+                                    can switch between languages directly on your store's front end.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Can I customise the store templates?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Absolutely. All templates are fully customisable. You can change colours, fonts,
+                                    layouts, images, and content without touching code. Advanced users can also inject
+                                    custom CSS and JavaScript for deeper customisation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical -->
+                    <div id="technical" data-reveal>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-cog text-primary text-sm"></i>
+                            </div>
+                            Technical
+                        </h2>
+                        <div class="space-y-3">
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Is my store data secure?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Absolutely. All data is encrypted in transit (TLS/HTTPS) and at rest. We conduct
+                                    regular security audits and comply with industry standards. Your store and customer
+                                    data are backed up daily.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Can I integrate Google Analytics and Facebook Pixel?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Google Analytics is available on Standard and Premium plans. Facebook Pixel and
+                                    other advanced integrations are available on the Premium plan. Simply enter your
+                                    tracking IDs in the integrations section of your dashboard.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    What is the uptime guarantee?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    We guarantee 99.9% uptime for all plans. Our infrastructure runs on redundant cloud
+                                    servers with automatic failover to ensure your store is always available to your
+                                    customers.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support -->
+                    <div id="support" data-reveal>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-headphones text-primary text-sm"></i>
+                            </div>
+                            Support
+                        </h2>
+                        <div class="space-y-3">
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    How do I contact customer support?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    You can reach our support team via the <a href="./contact.html"
+                                        class="text-primary hover:underline">Contact Us</a> page, live chat, or by
+                                    emailing contact@example.com. We typically respond within a few hours during
+                                    business days.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Do you offer onboarding assistance?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Yes! Premium plan customers receive dedicated onboarding sessions with one of our
+                                    e-commerce specialists. All users have access to our comprehensive documentation,
+                                    video tutorials, and community forum.
+                                </div>
+                            </div>
+                            <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                                <button data-faq-btn
+                                    class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors text-sm">
+                                    Is support available 24/7?
+                                    <span data-faq-icon
+                                        class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                                </button>
+                                <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                                    Our support is available Sunday through Thursday, 9am to 6pm (UTC+3). For Premium
+                                    plan subscribers, priority support is available with faster response times.
+                                    Emergency technical support is available 24/7 via our ticket system.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STILL HAVE QUESTIONS CTA -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4 text-center" data-reveal>
+            <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <i class="fas fa-comments text-primary text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-3">Still Have Questions?</h2>
+            <p class="text-gray-500 mb-8">Can't find what you're looking for? Our friendly team is happy to help.</p>
+            <a href="./contact.html" class="btn-primary px-8 py-3.5 text-base">Contact Support</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div><img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-7 w-auto brightness-0 invert mb-4">
+                    <p class="text-sm">The e-commerce platform built for growth.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./pricing.html" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="./about.html" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="./contact.html" class="hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i class="fas fa-envelope text-primary mt-0.5 w-4"></i><a
+                                href="mailto:contact@example.com" class="hover:text-primary">contact@example.com</a>
+                        </li>
+                        <li class="flex gap-2"><i class="fas fa-phone text-primary w-4"></i><a href="tel:01300000000"
+                                class="hover:text-primary">+880 1300 000 000</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 py-5 text-center text-sm">&copy; 2025 Ecommet. All rights reserved.</div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manti - Category Details</title>
+    <!-- Include Tailwind output CSS. For local development you would build it. I assume tailwind is running or linked. We will just use standard classes. -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                    screens: {
+                        '2xl': '1440px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#de1709',
+                        secondary: '#ffaf09',
+                        success: '#2aaf2e',
+                        purple: '#61167f',
+                        'gray-darkest': '#232323',
+                        'gray-dark': '#292d32',
+                        'gray-medium': '#7f7f7f',
+                        'gray-light': '#c4c4c4',
+                        'gray-lighter': '#e7e7e7',
+                        'gray-lightest': '#f5f5f5',
+                        'sale-light': '#ffecea',
+                        'yellow-light': '#fdff9f'
+                    },
+                    fontFamily: {
+                        main: "'Outfit', sans-serif"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            visibility: hidden;
+        }
+
+        body.loaded {
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col">
+
+    <!-- START HEADER -->
+    <header class="w-full relative z-50">
+        <!-- Top Dark Bar -->
+        <div class="bg-gray-darkest text-white text-xs py-2 hidden lg:block">
+            <div class="container flex justify-between items-center">
+                <div class="flex items-center gap-2 shipping-modal-trigger cursor-pointer">
+                    <!-- IMAGE: Shipping Icon -->
+                    <img src="assets/images/home/shippingIcon.png" alt="Shipping Icon" width="28" height="24">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Free shipping on all orders</span>
+                        <span class="text-gray-light text-center">Limited-time offer</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- IMAGE: Fire Icon -->
+                    <img src="assets/images/home/offerIcon.png" alt="Offer Icon" class="w-[14px] h-[19px]">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Limited-time Offers</span>
+                        <span class="text-gray-light text-center">Don't Miss Out</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- IMAGE: Lock Icon -->
+                    <img src="assets/images/home/secureIcon.png" alt="Secure Icon" class="w-[14px] h-[18px]">
+                    <span class="font-semibold text-gray-light">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <div class="bg-primary text-white hidden lg:block">
+            <div class="container py-4 flex items-center justify-between gap-6">
+
+                <!-- Logo area -->
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                </a>
+
+                <!-- Intranet Links -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold">
+                    <a href="best_selling.html" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/like.png" alt="Best Selling Icon" class="w-[20px] h-[20px]">
+                        Best-Selling Items
+                    </a>
+                    <a href="#" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/navStar.png" alt="Star Icon" class="w-[20px] h-[20px]">
+                        5-Star Rated
+                    </a>
+                    <a href="#" class="hover:text-yellow-light transition">New In</a>
+                    <button class="flex items-center gap-1 hover:text-yellow-light transition focus:outline-none">
+                        Categories
+                        <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon" class="w-[20px] h-[20px]">
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mx-4 relative">
+                    <input type="text" placeholder="Search..."
+                        class="w-full text-black rounded-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-yellow-light placeholder-gray-medium text-sm">
+                    <button
+                        class="absolute right-1 top-1 bottom-1 w-8 h-8 rounded-full bg-gray-darkest text-white flex items-center justify-center hover:bg-black transition">
+                        <!-- IMAGE: Search Icon -->
+                        <img src="assets/images/home/searchIcon.png" alt="Search Icon" class="w-[16px] h-[16px]">
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-5">
+                    <!-- Lang / Currency -->
+                    <button
+                        class="lang-currency-trigger flex items-center gap-2 text-xs text-white hover:text-yellow-light focus:outline-none">
+                        <img src="assets/images/home/flagImg.png" alt="Flag Icon" class="w-[40px] h-[25px]">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[12px] text-[#C5C5C5]">En/</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[12px]">SAR</span>
+                                <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon"
+                                    class="w-[12px] h-[12px]">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- User Account -->
+                    <a href="profile.html"
+                        class="flex items-center gap-2 text-white hover:text-yellow-light transition">
+                        <!-- IMAGE: User Icon -->
+                        <img src="assets/images/home/user.png" alt="Person Icon" class="w-[24px] h-[24px]">
+                        <div class="flex flex-col text-xs leading-tight">
+                            <span class="text-[#C5C5C5]">Welcome</span>
+                            <span>Sign in / Register</span>
+                        </div>
+                    </a>
+
+                    <!-- Cart -->
+                    <a href="cart.html" class="flex items-center gap-1 hover:text-yellow-light transition relative">
+                        <!-- IMAGE: Cart Icon -->
+                        <img src="assets/images/home/cartIcon.png" alt="Cart Icon" class="w-[24px] h-[24px]">
+                        <span
+                            class="absolute -top-2 -right-1 bg-gray-darkest text-white text-[10px] w-[30px] h-[16px] flex items-center justify-center px-1.5 py-0.5 rounded-full border border-primary">0</span>
+                        <span class="text-xs  mt-2 hidden sm:block">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- Mobile Header & Categories Nav -->
+    <div class="lg:hidden flex flex-col bg-white w-full z-40 sticky top-0 shadow-sm">
+        <!-- Top Header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-[#eaeaea]">
+            <a href="index.html" class="flex items-center shrink-0">
+                <div class="flex items-center gap-1">
+                    <span class="font-extrabold text-[20px] tracking-tight text-[#2272e2] flex items-center">
+                        <span
+                            class="inline-flex w-[18px] h-[18px] rounded-full border-[3px] border-[#2272e2] items-center justify-center mr-[4px] mt-0.5"><span
+                                class="w-1.5 h-1.5 bg-[#2272e2] rounded-full"></span></span>Manti
+                    </span>
+                </div>
+            </a>
+            <div class="flex-1 mx-3 relative">
+                <input type="text" placeholder="Search..."
+                    class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] px-4 outline-none text-[13px] placeholder-gray-500">
+            </div>
+            <div class="flex items-center gap-[14px] shrink-0">
+                <button
+                    class="lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
+                    <div class="flex items-end gap-[1px]">
+                        <span class="text-[11px] font-bold">En/</span>
+                    </div>
+                    <div class="flex items-center gap-[2px]">
+                        <span class="text-[11px] font-bold">SAR</span>
+                        <img src="assets/images/home/arrow-down-black.png" class="w-[8px] h-[8px]">
+                    </div>
+                </button>
+                <button class="flex flex-col gap-[3.5px] py-1 cursor-pointer">
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Categories Nav -->
+        <div class="overflow-x-auto whitespace-nowrap scroll-smooth no-scrollbar flex items-center px-4 pt-3 pb-0 text-[12px] font-bold text-gray-darkest gap-5"
+            style="scrollbar-width: none;">
+            <a href="#" class="relative pb-2 text-[#242424]">
+                Recommended
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[2.5px] bg-[#df190b] rounded-t-sm">
+                </div>
+            </a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Home Appliances</a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Mobile Devices</a>
+            <a href="#" class="pb-2 text-[#787878] hover:text-[#242424]">Computer Hardware</a>
+        </div>
+    </div>
+    <!-- END HEADER -->
+
+    <main class="flex-grow bg-white pt-6 pb-14 w-full">
+        <div class="max-w-[1280px] mx-auto px-5 sm:px-8">
+
+            <div class="flex items-center gap-2 text-[12px] text-[#808080] mb-6">
+                <a href="https://demo.neozena.com" class="hover:text-[#242424] transition">Home</a>
+                <img src="https://demo.neozena.com/manti/assets/images/home/arrow-Breadcrumb.png" width="5"
+                    alt="Breadcrumb">
+                <span class="text-[#242424] font-medium">Shop</span>
+            </div>
+
+            <div
+                class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-x-3 gap-y-6 mb-8 mt-2 max-w-[1180px] mx-auto justify-items-center">
+                <a href="https://demo.neozena.com/cat"
+                    class="flex flex-col items-center gap-2 w-full cursor-pointer group hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="w-[68px] h-[68px] rounded-full bg-[#f3f5f7] border-transparent flex items-center justify-center overflow-hidden border transition p-2 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-8 h-8 text-gray-600 group-hover:text-[#2272e2] transition-colors" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-bold text-center leading-[1.1] text-[#444]">All Accessories</span>
+                </a>
+                <a href="https://demo.neozena.com/cat/accessories/childrens-accessory-set"
+                    class="flex flex-col items-center gap-2 w-full cursor-pointer group hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="w-[68px] h-[68px] rounded-full bg-[#f5f5f5] border-transparent flex items-center justify-center overflow-hidden border transition p-2 shadow-sm">
+                        <img src="https://demo.neozena.com/assets/front/images/placeholder.png"
+                            alt="Children's accessory set" class="object-contain w-full h-full">
+                    </div>
+                    <span class="text-[10px] font-bold text-center leading-[1.1] text-[#444]">Children's
+                        accessory...</span>
+                </a>
+                <a href="https://demo.neozena.com/cat/accessories/childrens-accessory"
+                    class="flex flex-col items-center gap-2 w-full cursor-pointer group hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="w-[68px] h-[68px] rounded-full bg-[#f5f5f5] border-transparent flex items-center justify-center overflow-hidden border transition p-2 shadow-sm">
+                        <img src="https://demo.neozena.com/assets/front/images/placeholder.png"
+                            alt="Children's accessory" class="object-contain w-full h-full">
+                    </div>
+                    <span class="text-[10px] font-bold text-center leading-[1.1] text-[#444]">Children's
+                        accessory</span>
+                </a>
+                <a href="https://demo.neozena.com/cat/accessories/mens-accessories"
+                    class="flex flex-col items-center gap-2 w-full cursor-pointer group hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="w-[68px] h-[68px] rounded-full bg-[#f5f5f5] border-transparent flex items-center justify-center overflow-hidden border transition p-2 shadow-sm">
+                        <img src="https://demo.neozena.com/assets/front/images/placeholder.png" alt="Men's Accessories"
+                            class="object-contain w-full h-full">
+                    </div>
+                    <span class="text-[10px] font-bold text-center leading-[1.1] text-[#444]">Men's Accessories</span>
+                </a>
+                <a href="https://demo.neozena.com/cat/accessories/womens-accessories"
+                    class="flex flex-col items-center gap-2 w-full cursor-pointer group hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="w-[68px] h-[68px] rounded-full bg-[#e5f0ff] border-[#2272e2] flex items-center justify-center overflow-hidden border transition p-2 shadow-sm">
+                        <img src="https://demo.neozena.com/assets/admin/img/catalog/categories/db06e6e2f844ba8e9bbc369855c38669b042456b.png"
+                            alt="Women's Accessories" class="object-contain w-full h-full">
+                    </div>
+                    <span class="text-[10px] font-bold text-center leading-[1.1] text-[#444]">Women's Accessories</span>
+                </a>
+            </div>
+
+            <hr class="border-[#ebebeb] mb-6 mt-6">
+
+
+
+            <div class="relative mb-6" id="pill-filter-bar">
+
+
+                <form action="https://demo.neozena.com/cat/accessories/womens-accessories" method="GET"
+                    id="filter-form">
+
+
+                    <input type="hidden" name="keyword" id="hid-keyword" value="">
+                    <input type="hidden" name="sort" id="hid-sort" value="">
+                    <input type="hidden" name="availability" id="hid-avail" value="">
+                    <input type="hidden" name="product_flag" id="hid-flag" value="">
+                    <input type="hidden" name="on_sale" id="hid-sale" value="">
+                    <input type="hidden" name="ratings" id="hid-rating" value="">
+                    <input type="hidden" name="min" id="hid-min" value="">
+                    <input type="hidden" name="max" id="hid-max" value="">
+
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-0.5"
+                        style="scrollbar-width:none;-ms-overflow-style:none;">
+
+
+                        <button type="button" id="pill-search-toggle"
+                            class="pill-btn flex-shrink-0 flex items-center gap-2 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M6 8h12M9 12h6M11 16h2">
+                                </path>
+                            </svg>
+                            <span>Filter</span>
+                        </button>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                                <span class="pill-label">Sort by: <span
+                                        class="font-semibold pill-value">Relevance</span></span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 min-w-[180px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden py-1.5">
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors text-[#ff4e00]"
+                                    data-hidden="hid-sort" data-value="" data-display="Relevance">
+                                    Relevance
+                                    <svg class="w-3.5 h-3.5 text-[#ff4e00]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sort" data-value="new" data-display="Newest">
+                                    Newest
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sort" data-value="old" data-display="Oldest">
+                                    Oldest
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sort" data-value="best_selling" data-display="Best selling">
+                                    Best selling
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sort" data-value="ascending" data-display="Price: low to high">
+                                    Price: low to high
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sort" data-value="descending" data-display="Price: high to low">
+                                    Price: high to low
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                                <span class="pill-label">Availability: <span class="font-semibold pill-value">All
+                                        availability</span></span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 min-w-[170px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden py-1.5">
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors text-[#ff4e00]"
+                                    data-hidden="hid-avail" data-value="" data-display="All availability">
+                                    All availability
+                                    <svg class="w-3.5 h-3.5 text-[#ff4e00]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-avail" data-value="in_stock" data-display="In stock">
+                                    In stock
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-avail" data-value="out_of_stock" data-display="Out of stock">
+                                    Out of stock
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                                <span class="pill-label">Flag: <span class="font-semibold pill-value">All
+                                        products</span></span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 min-w-[170px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden py-1.5">
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors text-[#ff4e00]"
+                                    data-hidden="hid-flag" data-value="" data-display="All products">
+                                    All products
+                                    <svg class="w-3.5 h-3.5 text-[#ff4e00]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-flag" data-value="featured" data-display="Featured only">
+                                    Featured only
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                                <span class="pill-label">Sale: <span class="font-semibold pill-value">All
+                                        offers</span></span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 min-w-[170px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden py-1.5">
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors text-[#ff4e00]"
+                                    data-hidden="hid-sale" data-value="" data-display="All offers">
+                                    All offers
+                                    <svg class="w-3.5 h-3.5 text-[#ff4e00]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sale" data-value="on_sale" data-display="On sale">
+                                    On sale
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-sale" data-value="flash_sale" data-display="Flash sale">
+                                    Flash sale
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap ">
+                                <span class="pill-label">Rating: <span class="font-semibold pill-value">Any
+                                        rating</span></span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 min-w-[160px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden py-1.5">
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors text-[#ff4e00]"
+                                    data-hidden="hid-rating" data-value="" data-display="Any rating">
+                                    Any rating
+                                    <svg class="w-3.5 h-3.5 text-[#ff4e00]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-rating" data-value="4" data-display="4 stars &amp; up">
+                                    4 stars &amp; up
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-rating" data-value="3" data-display="3 stars &amp; up">
+                                    3 stars &amp; up
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-rating" data-value="2" data-display="2 stars &amp; up">
+                                    2 stars &amp; up
+                                </div>
+                                <div class="pill-option px-4 py-2.5 text-[13px] font-medium text-[#444] hover:bg-[#f5f5f5] hover:text-[#242424] cursor-pointer flex items-center justify-between transition-colors "
+                                    data-hidden="hid-rating" data-value="1" data-display="1 star &amp; up">
+                                    1 star &amp; up
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="pill-dropdown flex-shrink-0 relative">
+                            <button type="button"
+                                class="pill-toggle flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#d8d8d8] bg-white text-[13px] font-medium text-[#242424] hover:border-[#242424] transition-colors whitespace-nowrap "
+                                id="price-pill-toggle">
+                                <span id="price-pill-label">
+                                    Price
+                                </span>
+                                <svg class="pill-chevron w-3.5 h-3.5 text-[#888] transition-transform duration-200 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                class="pill-menu hidden absolute top-[calc(100%+6px)] left-0 z-50 w-[240px] bg-white border border-[#e5e5e5] rounded-2xl shadow-xl overflow-hidden p-4">
+                                <p class="text-[11px] font-semibold text-[#999] uppercase tracking-wide mb-3">Price
+                                    range</p>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="price-min-input" placeholder="Min" value="" min="0"
+                                        step="0.01"
+                                        class="w-full h-9 px-3 rounded-xl border border-[#e5e5e5] text-[13px] text-[#333] bg-[#fafafa] focus:outline-none focus:border-[#ff4e00] transition">
+                                    <span class="text-[#bbb] text-sm flex-shrink-0">–</span>
+                                    <input type="number" id="price-max-input" placeholder="Max" value="" min="0"
+                                        step="0.01"
+                                        class="w-full h-9 px-3 rounded-xl border border-[#e5e5e5] text-[13px] text-[#333] bg-[#fafafa] focus:outline-none focus:border-[#ff4e00] transition">
+                                </div>
+                                <button type="button" onclick="applyPrice()"
+                                    class="mt-3 w-full h-9 rounded-xl bg-[#242424] text-white text-[13px] font-semibold hover:bg-[#ff4e00] transition-colors">
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="flex-shrink-0 w-px h-5 bg-[#e5e5e5] mx-1"></div>
+
+
+                        <button type="submit"
+                            class="flex-shrink-0 h-9 px-5 rounded-full bg-[#242424] text-white text-[13px] font-semibold hover:bg-[#ff4e00] transition-colors whitespace-nowrap">
+                            Apply
+                        </button>
+
+                    </div>
+                </form>
+
+
+                <div id="search-panel" class="hidden mt-2">
+                    <div class="relative max-w-sm group" style="position: relative;">
+                        <input type="text" id="search-input" value="" placeholder="Search products, SKU or title"
+                            class="w-full ps-10 pe-4 py-2.5 rounded-full border border-[#e5e5e5] text-[13px] font-medium text-[#242424] bg-white focus:outline-none focus:border-[#ff4e00] focus:ring-1 focus:ring-[#ff4e00] transition-all placeholder-[#999]">
+                        <svg class="w-[16px] h-[16px] text-[#aaa] absolute start-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-[#ff4e00] transition-colors"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button type="button" onclick="applySearch()"
+                            class="absolute end-1.5 top-1/2 -translate-y-1/2 h-7 px-4 rounded-full bg-[#242424] text-white text-[12px] font-semibold hover:bg-[#ff4e00] transition-colors">
+                            Search
+                        </button>
+
+                        <div
+                            class="search-history-dropdown absolute top-full left-0 right-0 mt-3 bg-white rounded-[16px] shadow-2xl p-5 z-[150] hidden opacity-0 translate-y-2 transition-all duration-300 border border-gray-100 min-w-[300px]">
+                            <!-- Triangle -->
+                            <div
+                                class="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white">
+                            </div>
+
+                            <div class="flex flex-col gap-6">
+                                <!-- Section 1 -->
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[15px] font-bold text-[#111]">Recently searched</span>
+                                        <button
+                                            class="hover:bg-gray-100 p-1 rounded transition cursor-pointer border-none bg-transparent">
+                                            <img src="assets/images/home/trash.png" class="w-5 h-5 object-contain"
+                                                alt="Delete">
+                                        </button>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/shoesSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">shoes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 2 -->
+                                <div class="flex flex-col gap-3">
+                                    <span class="text-[15px] font-bold text-[#111]">Recently searched</span>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/shoesSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">shoes</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/smartSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">watches for men</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/smartSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">watches</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/tabletSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">android tablet</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center gap-2 bg-[#f2f2f2] rounded-full py-1.5 px-2 hover:bg-gray-200 transition cursor-pointer">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src="assets/images/home/shoesSearch.jpg"
+                                                    class="w-[30px] h-[30px] object-contain" alt="">
+                                            </div>
+                                            <span class="text-[13px] font-medium text-[#111]">shoes for men</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <style>
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none
+                }
+
+                .no-scrollbar {
+                    scrollbar-width: none;
+                    -ms-overflow-style: none
+                }
+
+                #pill-filter-bar .pill-menu {
+                    animation: pillFadeIn .12s ease
+                }
+
+                @keyframes pillFadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-4px)
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0)
+                    }
+                }
+            </style>
+
+            <!-- <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                <div>
+                    <h1 class="text-[#222] text-[18px] font-bold">Shop</h1>
+                    <p class="text-[#808080] text-[12px] mt-1">
+                                                    Showing 1-15 of 781 products
+                                            </p>
+                </div>
+            </div> -->
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-jewelry-set/new-pearl-necklace-earrings-two-piece-set-for-european-and-american-foreign-trade-womens-light-luxury-niche-versatile-sweater-chain-lock-bone-chain-alloy'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/24be9ae5aad63dd8ac9e1ded347f97dfd85cf9c8.jpg"
+                            alt="New pearl necklace earrings two-piece set for European and American foreign trade, women's light luxury niche versatile sweater chain lock bone chain alloy"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">New pearl
+                            necklace earrings two-piece set...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 4.40
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="New pearl necklace earrings two-piece set for European and American foreign trade, women's light luxury niche versatile sweater chain lock bone chain alloy"
+                                data-current_price="4.40" data-item_id="3074" data-language_id="48" data-totalvari="2"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/3074">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-belt/womens-statement-disc-chain-belt'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/696f775f13f70.webp"
+                            alt="Women's Statement Disc Chain Belt" class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Women's Statement
+                            Disc Chain Belt</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 3.33
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Women's Statement Disc Chain Belt" data-current_price="3.33"
+                                data-item_id="4406" data-language_id="48" data-totalvari="2" data-variations="yes"
+                                data-href="https://demo.neozena.com/add-to-cart/4406">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-belt/womens-star-link-chain-belt'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/6970cc2be06fa.webp"
+                            alt="Women's Star Link Chain Belt" class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Women's Star Link
+                            Chain Belt</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 2.89
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Women's Star Link Chain Belt" data-current_price="2.89" data-item_id="4823"
+                                data-language_id="48" data-totalvari="2" data-variations="yes"
+                                data-href="https://demo.neozena.com/add-to-cart/4823">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/women-watch/yake-womens-light-beige-alloy-quartz-watch-with-round-pink-dial-and-pink-leather-strap'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/69708cf13775e.webp"
+                            alt="Yake Women's Light Beige Alloy Quartz Watch with Round Pink Dial and Pink Leather Strap"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Yake Women's
+                            Light Beige Alloy Quartz Watc...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 5.40
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Yake Women's Light Beige Alloy Quartz Watch with Round Pink Dial and Pink Leather Strap"
+                                data-current_price="5.40" data-item_id="4698" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/4698">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/contrast-polygon-gradient-sunglasses-metal-alloy-pc-frame-uv400-protection-fashion-eyewear-for-men-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b31e0ceab7.webp"
+                            alt="Contrast Polygon Gradient Sunglasses | Metal Alloy &amp; PC Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Contrast Polygon
+                            Gradient Sunglasses | Met...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 3.80
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Contrast Polygon Gradient Sunglasses | Metal Alloy &amp; PC Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                                data-current_price="3.80" data-item_id="6298" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6298">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/metal-cat-eye-square-sunglasses-metal-alloy-frame-uv400-protection-fashion-eyewear-for-men-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b2c7e1aea7.webp"
+                            alt="Metal Cat-Eye Square Sunglasses | Metal Alloy Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Metal Cat-Eye
+                            Square Sunglasses | Metal Al...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 3.80
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Metal Cat-Eye Square Sunglasses | Metal Alloy Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                                data-current_price="3.80" data-item_id="6292" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6292">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/gradient-cat-eye-metal-sunglasses-metal-alloy-pc-frame-uv400-protection-fashion-eyewear-for-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b1a791d0fe.webp"
+                            alt="Gradient Cat Eye Metal Sunglasses | Metal Alloy &amp; PC Frame | UV400 Protection | Fashion Eyewear for Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Gradient Cat Eye
+                            Metal Sunglasses | Metal...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 3.90
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Gradient Cat Eye Metal Sunglasses | Metal Alloy &amp; PC Frame | UV400 Protection | Fashion Eyewear for Women"
+                                data-current_price="3.90" data-item_id="6279" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6279">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/rimless-square-sunglasses-with-letter-decor-pc-frame-metal-alloy-temples-uv400-protection-fashion-eyewear-for-men-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b18292eb69.webp"
+                            alt="Rimless Square Sunglasses with Letter Decor | PC Frame &amp; Metal Alloy Temples | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Rimless Square
+                            Sunglasses with Letter Deco...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 3.90
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Rimless Square Sunglasses with Letter Decor | PC Frame &amp; Metal Alloy Temples | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                                data-current_price="3.90" data-item_id="6276" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6276">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/trendy-rimless-oval-sunglasses-uv-blocking-fashion-sun-glasses'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b0672d59f6.webp"
+                            alt="Trendy Rimless Oval Sunglasses, UV Blocking Fashion Sun Glasses"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Trendy Rimless
+                            Oval Sunglasses, UV Blockin...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 4.10
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Trendy Rimless Oval Sunglasses, UV Blocking Fashion Sun Glasses"
+                                data-current_price="4.10" data-item_id="6269" data-language_id="48" data-totalvari="6"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6269">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/fashion-metal-square-sunglasses-metal-alloy-frame-uv400-protection-stylish-eyewear-for-wome'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b03774fb83.webp"
+                            alt="Fashion Metal Square Sunglasses | Metal Alloy Frame | UV400 Protection | Stylish Eyewear for Wome"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Fashion Metal
+                            Square Sunglasses | Metal Al...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 6.40
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Fashion Metal Square Sunglasses | Metal Alloy Frame | UV400 Protection | Stylish Eyewear for Wome"
+                                data-current_price="6.40" data-item_id="6266" data-language_id="48" data-totalvari="1"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6266">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/rhinestone-cat-eye-gradient-sunglasses-pc-frame-with-metal-alloy-temples-uv400-protection-stylish-eyewear-for-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b02b405019.webp"
+                            alt="Rhinestone Cat Eye Gradient Sunglasses | PC Frame with Metal Alloy Temples | UV400 Protection | Stylish Eyewear for Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Rhinestone Cat
+                            Eye Gradient Sunglasses | P...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 5.90
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Rhinestone Cat Eye Gradient Sunglasses | PC Frame with Metal Alloy Temples | UV400 Protection | Stylish Eyewear for Women"
+                                data-current_price="5.90" data-item_id="6265" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6265">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/vintage-tortoiseshell-pilot-sunglasses-pc-frame-uv400-protection-fashion-eyewear-for-men-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b017f38607.webp"
+                            alt="Vintage Tortoiseshell Pilot Sunglasses | PC Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Vintage
+                            Tortoiseshell Pilot Sunglasses | P...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 5.90
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Vintage Tortoiseshell Pilot Sunglasses | PC Frame | UV400 Protection | Fashion Eyewear for Men &amp; Women"
+                                data-current_price="5.90" data-item_id="6264" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6264">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/trendy-black-gold-rectangle-sunglasses-uv-blocking-fashion-sun-glasses'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697b00e961182.webp"
+                            alt="Trendy Black &amp; Gold Rectangle Sunglasses, UV Blocking Fashion Sun Glasses"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Trendy Black
+                            &amp; Gold Rectangle Sunglasses,...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 4.10
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Trendy Black &amp; Gold Rectangle Sunglasses, UV Blocking Fashion Sun Glasses"
+                                data-current_price="4.10" data-item_id="6263" data-language_id="48" data-totalvari="3"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6263">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/fashion-rhinestone-gradient-sunglasses-metal-alloy-frame-uv400-protection-stylish-eyewear-for-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697aefd158ac5.webp"
+                            alt="Fashion Rhinestone Gradient Sunglasses | Metal Alloy Frame | UV400 Protection | Stylish Eyewear for Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Fashion
+                            Rhinestone Gradient Sunglasses | M...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 6.50
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Fashion Rhinestone Gradient Sunglasses | Metal Alloy Frame | UV400 Protection | Stylish Eyewear for Women"
+                                data-current_price="6.50" data-item_id="6251" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6251">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='https://demo.neozena.com/accessories/womens-accessories/womens-sunglasses/fashion-two-tone-square-gradient-sunglasses-pc-frame-with-metal-alloy-temples-uv400-protection-stylish-eyewear-for-women'"
+                    class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+
+                    <div class="h-[140px] bg-[#f8f8f8] relative overflow-hidden">
+
+                        <img src="https://demo.neozena.com/storage/catalog/products/images/697aef19a315f.webp"
+                            alt="Fashion Two-Tone Square Gradient Sunglasses | PC Frame with Metal Alloy Temples | UV400 Protection | Stylish Eyewear for Women"
+                            class="object-contain w-full">
+                    </div>
+
+                    <div class="flex flex-col p-4 mt-auto bg-white">
+                        <h3 class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-2">Fashion Two-Tone
+                            Square Gradient Sunglasse...</h3>
+
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <span class="text-[#222222] font-bold text-[15px] leading-[1] tracking-tight">
+                                $ 6.50
+                            </span>
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto">
+                            <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                <div class="flex items-center gap-[2px]">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                    <img src="https://demo.neozena.com/manti/assets/images/home/star.png" alt="Star"
+                                        class="w-[16px] h-[16px] opacity-40">
+                                </div>
+                            </div>
+
+                            <a href="javascript:void(0)" onclick="event.stopPropagation()"
+                                class="w-[32px] h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2 cart-link"
+                                data-title="Fashion Two-Tone Square Gradient Sunglasses | PC Frame with Metal Alloy Temples | UV400 Protection | Stylish Eyewear for Women"
+                                data-current_price="6.50" data-item_id="6250" data-language_id="48" data-totalvari="4"
+                                data-variations="yes" data-href="https://demo.neozena.com/add-to-cart/6250">
+                                <img src="https://demo.neozena.com/manti/assets/images/home/saleCart.png"
+                                    alt="Add to cart" class="w-[22px] h-[22px]">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-10 flex-wrap">
+                <span
+                    class="px-5 py-2 rounded-full border border-[#e5e5e5] text-[#b0b0b0] text-[12px] font-semibold">Previous</span>
+
+                <span class="text-[12px] font-semibold text-[#666]">Page 1 of 53</span>
+
+                <a href="https://demo.neozena.com/cat/accessories/womens-accessories?category=womens-accessories&amp;page=2"
+                    class="px-5 py-2 rounded-full border border-[#242424] text-[#242424] text-[12px] font-semibold hover:bg-[#242424] hover:text-white transition">Next</a>
+            </div>
+        </div>
+    </main>
+    <footer class="mt-auto relative z-10 w-full font-main text-[#d5d5d5] bg-[#333333] pt-8 md:bg-[#434343]">
+        <div class="max-w-[1280px] mx-auto py-0 md:py-12 px-5 sm:px-8">
+            <div
+                class="grid grid-cols-1 md:grid-cols-[1.4fr_1.2fr_1.2fr_1fr] lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] gap-6 md:gap-8 border-b md:border-none border-[#666] pb-6 md:pb-0">
+                <!-- Column 1 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Company info</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">About Manti</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Contact us</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Careers</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Press</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Manti's Tree Planting
+                        Program</a>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Customer service</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Return and refund
+                        policy</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Intellectual property
+                        policy</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Shipping info</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Report suspicious
+                        activity</a>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="flex flex-col gap-3.5">
+                    <h3 class="font-bold text-[14px] text-white tracking-wide mb-1">Help</h3>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Safety center</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Manti purchase
+                        protection</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Sitemap</a>
+                    <a href="#" class="text-[13px] font-medium hover:text-white transition w-fit">Partner with Manti</a>
+                </div>
+
+                <!-- Column 4 -->
+                <div class="flex flex-col gap-3 mt-4 md:mt-[32px]">
+                    <a href="index.html" class="hidden md:flex items-center mb-2">
+                        <img src="assets/images/home/logo.png" alt="Manti Logo" class="h-[30px] object-contain">
+                    </a>
+
+                    <span class="text-white text-[13px] font-bold tracking-wide">Connect with Manti</span>
+                    <div class="flex items-center gap-4 text-white mt-0.5">
+                        <!-- IMAGE: Social Facebook -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Facebook - Original.png" alt="Facebook"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Twitter -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Twitter - Original.png" alt="Twitter"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Instagram -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Instagram - Original.png" alt="Instagram"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social Youtube -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/Youtube - Original.png" alt="Youtube"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                        <!-- IMAGE: Social LinkedIn -->
+                        <a href="#" class="hover:text-gray-medium transition">
+                            <img src="assets/images/home/LinkedIn - Original.png" alt="LinkedIn"
+                                class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] rounded-full object-cover">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- We accept Section -->
+            <div class="mt-14 flex flex-col gap-3.5">
+                <h3 class="font-bold text-[14px] text-white tracking-wide">We accept</h3>
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- IMAGE: VISA -->
+                    <img src="assets/images/home/visa.png" alt="Visa" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: MASTERCARD -->
+                    <img src="assets/images/home/mastercard.png" alt="Mastercard" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: APPLE PAY -->
+                    <img src="assets/images/home/pay.png" alt="Apple Pay" class="w-[56px] h-[37px]">
+                    <!-- IMAGE: Fawry -->
+                    <img src="assets/images/home/fawry.png" alt="Fawry" class="w-[56px] h-[37px]">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Footer Bar -->
+        <div class="bg-[#5E5E5E] text-[14px] text-[#000000] font-medium border-t border-[#666] hidden md:block">
+            <div
+                class="max-w-[1280px] mx-auto py-5 px-5 flex flex-col md:flex-row items-center justify-center md:gap-[80px] gap-4">
+                <a href="#" class="hover:text-white transition w-fit">Terms of use</a>
+                <a href="#" class="hover:text-white transition w-fit">Privacy policy</a>
+                <a href="#" class="hover:text-white transition w-fit">Your privacy choices</a>
+                <a href="#" class="hover:text-white transition w-fit">Support</a>
+                <a href="#" class="hover:text-white transition w-fit">FAQ</a>
+            </div>
+        </div>
+
+        <!-- Copyright Bar -->
+        <div
+            class="bg-transparent md:bg-[#242424] text-center pt-5 pb-5 md:py-5 text-[11px] md:text-[14px] text-[#A3A3A3] md:text-[#FFFFFF] md:border-t border-[#333] mb-[64px] md:mb-0">
+            © 2025 Manti. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+
+    <!-- Mobile Bottom Navigation -->
+    <div
+        class="lg:hidden fixed bottom-5 left-5 right-5 bg-[#1a1a1a] text-white rounded-full flex items-center justify-between px-6 py-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-[100]">
+        <!-- Home -->
+        <a href="index.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/home3.png" alt="Home" class="w-[22px] h-[22px]"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Cart -->
+        <a href="cart.html" class="flex items-center justify-center relative transition-transform active:scale-90">
+            <div class="relative">
+                <img src="assets/images/home/cartIcon.png" alt="Cart" class="w-[22px] h-[22px]"
+                    style="filter: brightness(0) invert(1);">
+                <span
+                    class="absolute -top-[8px] -right-[10px] bg-white text-[#1a1a1a] text-[9px] font-bold w-[16px] h-[16px] flex items-center justify-center rounded-full border border-[#1a1a1a]">0</span>
+            </div>
+        </a>
+
+        <!-- Heart -->
+        <a href="#" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/heart.png" alt="Favorite" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Profile -->
+        <a href="profile.html" class="flex items-center justify-center transition-transform active:scale-90">
+            <img src="assets/images/home/user.png" alt="Profile" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
+
+
+
+    <script src="assets/js/common.js"></script>
+</body>
+
+</html>

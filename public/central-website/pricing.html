@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Pricing Plans</title>
+    <meta name="description" content="Choose the plan that fits your business. Start free, scale as you grow.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="./templates.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html" class="text-sm font-medium text-primary">Pricing</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button
+                            class="text-sm font-medium text-gray-600 hover:text-primary transition-colors flex items-center gap-1">More
+                            <i class="fas fa-chevron-down text-xs"></i></button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./faqs.html">FAQs</a>
+                            <a href="./blogs.html">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 p-2" aria-label="Menu"><i
+                            class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Home</a>
+                    <a href="./templates.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Templates</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">Pricing</a>
+                    <a href="./contact.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Contact</a>
+                    <a href="./about.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">About</a>
+                    <a href="./faqs.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">FAQs</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <section class="pt-28 pb-16 bg-gradient-to-br from-orange-50 to-white text-center">
+        <div class="max-w-3xl mx-auto px-4" data-reveal>
+            <span class="text-primary text-sm font-semibold tracking-wide uppercase">Pricing Plan</span>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mt-3 mb-4">Choose the Perfect Plan<br>for Your
+                Business</h1>
+            <p class="text-gray-500 text-lg max-w-xl mx-auto">Start for free. Upgrade when you're ready. No hidden fees,
+                no contracts.</p>
+        </div>
+    </section>
+
+    <!-- BILLING TOGGLE -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex bg-gray-100 rounded-full p-1">
+                    <button data-ptab="monthly"
+                        class="px-7 py-2.5 rounded-full text-sm font-semibold tab-active transition-all">Monthly</button>
+                    <button data-ptab="yearly"
+                        class="px-7 py-2.5 rounded-full text-sm font-semibold tab-inactive transition-all">
+                        Yearly <span
+                            class="ml-1.5 bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">Save
+                            20%</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MONTHLY PLANS -->
+            <div data-ppanel="monthly">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <!-- Basic -->
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col shadow-sm" data-reveal>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-wrench text-primary text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Basic</h3>
+                                <p class="text-xs text-gray-400">For starters</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-gray-900">Free</span>
+                            <p class="text-gray-400 text-sm mt-1">No credit card required</p>
+                        </div>
+                        <hr class="mb-6 border-gray-100">
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">What's Included</p>
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>2 Categories</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>5 Subcategories</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>10 Products</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>100 Orders / month</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>1 Additional language</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Custom Domain</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Subdomain</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>QR Builder</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Blog</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Custom Pages</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Facebook Pixel</li>
+                        </ul>
+                        <a href="./login.html" class="btn-outline block text-center py-3.5 font-semibold rounded-xl">Get
+                            Started Free</a>
+                    </div>
+                    <!-- Standard (featured) -->
+                    <div class="bg-gray-900 rounded-2xl p-8 flex flex-col shadow-xl relative" data-reveal>
+                        <span
+                            class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-5 py-1.5 rounded-full">Most
+                            Popular</span>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chart-line text-primary text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Standard</h3>
+                                <p class="text-xs text-gray-400">For growing businesses</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-white">$19</span>
+                            <span class="text-gray-400 text-sm ml-1">/ monthly</span>
+                            <p class="text-gray-400 text-sm mt-1">Billed monthly</p>
+                        </div>
+                        <hr class="mb-6 border-gray-700">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">What's Included</p>
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>10 Categories</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>20 Subcategories</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>50 Products</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>300 Orders / month</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>2 Additional languages</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>20 Blog posts</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>3 Custom Pages</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Custom Domain</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Google Login</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-gray-500"><i
+                                    class="fas fa-times text-gray-600 w-4 flex-shrink-0"></i>Facebook Pixel</li>
+                            <li class="flex items-center gap-2 text-gray-500"><i
+                                    class="fas fa-times text-gray-600 w-4 flex-shrink-0"></i>WhatsApp Chat</li>
+                        </ul>
+                        <a href="./login.html"
+                            class="btn-primary block text-center py-3.5 font-semibold rounded-xl">Purchase Now</a>
+                    </div>
+                    <!-- Premium -->
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col shadow-sm" data-reveal>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-crown text-primary text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Premium</h3>
+                                <p class="text-xs text-gray-400">For enterprises</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-gray-900">$39</span>
+                            <span class="text-gray-400 text-sm ml-1">/ monthly</span>
+                            <p class="text-gray-400 text-sm mt-1">Billed monthly</p>
+                        </div>
+                        <hr class="mb-6 border-gray-100">
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">What's Included</p>
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Categories</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Subcategories</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Products</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Orders</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Languages</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Blog posts</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Unlimited Custom Pages</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Facebook Pixel</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Google Recaptcha</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>WhatsApp Chat Button</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Tawk.to Live Chat</li>
+                        </ul>
+                        <a href="./login.html"
+                            class="btn-primary block text-center py-3.5 font-semibold rounded-xl">Purchase Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YEARLY PLANS -->
+            <div data-ppanel="yearly" hidden>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col shadow-sm" data-reveal>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center"><i
+                                    class="fas fa-wrench text-primary text-lg"></i></div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Basic</h3>
+                                <p class="text-xs text-gray-400">For starters</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-gray-900">$90</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span>
+                            <p class="text-green-600 text-sm font-semibold mt-1">Save $18 vs monthly</p>
+                        </div>
+                        <hr class="mb-6 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>2 Categories</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>10 Products</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>100 Orders / month</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Custom Domain</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Blog</li>
+                            <li class="flex items-center gap-2 text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4 flex-shrink-0"></i>Analytics</li>
+                        </ul>
+                        <a href="./login.html"
+                            class="btn-primary block text-center py-3.5 font-semibold rounded-xl">Purchase Now</a>
+                    </div>
+                    <div class="bg-gray-900 rounded-2xl p-8 flex flex-col shadow-xl relative" data-reveal>
+                        <span
+                            class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-5 py-1.5 rounded-full">Most
+                            Popular</span>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center"><i
+                                    class="fas fa-chart-line text-primary text-lg"></i></div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Standard</h3>
+                                <p class="text-xs text-gray-400">For growing businesses</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-white">$190</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span>
+                            <p class="text-green-400 text-sm font-semibold mt-1">Save $38 vs monthly</p>
+                        </div>
+                        <hr class="mb-6 border-gray-700">
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>10 Categories</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>50 Products</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>300 Orders / month</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>20 Blog posts</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-gray-300"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>2 Languages</li>
+                        </ul>
+                        <a href="./login.html"
+                            class="btn-primary block text-center py-3.5 font-semibold rounded-xl">Purchase Now</a>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col shadow-sm" data-reveal>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center"><i
+                                    class="fas fa-crown text-primary text-lg"></i></div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">Premium</h3>
+                                <p class="text-xs text-gray-400">For enterprises</p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <span class="text-5xl font-extrabold text-gray-900">$390</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span>
+                            <p class="text-green-600 text-sm font-semibold mt-1">Save $78 vs monthly</p>
+                        </div>
+                        <hr class="mb-6 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-8 text-sm">
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Everything Unlimited</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>All Integrations</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Facebook Pixel</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>WhatsApp Chat</li>
+                            <li class="flex items-center gap-2 text-gray-600"><i
+                                    class="fas fa-check text-primary w-4 flex-shrink-0"></i>Priority Support</li>
+                        </ul>
+                        <a href="./login.html"
+                            class="btn-primary block text-center py-3.5 font-semibold rounded-xl">Purchase Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-extrabold text-gray-900 text-center mb-10" data-reveal>Plan Comparison</h2>
+            <div class="overflow-x-auto rounded-2xl shadow-sm border border-gray-200" data-reveal>
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-900 text-white">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold">Feature</th>
+                            <th class="px-6 py-4 font-semibold text-center">Basic</th>
+                            <th class="px-6 py-4 font-semibold text-center" style="background:#FF4B2B">Standard</th>
+                            <th class="px-6 py-4 font-semibold text-center">Premium</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Categories</td>
+                            <td class="px-6 py-3.5 text-center">2</td>
+                            <td class="px-6 py-3.5 text-center font-bold text-primary" style="background:#fff8f7">10
+                            </td>
+                            <td class="px-6 py-3.5 text-center font-bold">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Products</td>
+                            <td class="px-6 py-3.5 text-center">10</td>
+                            <td class="px-6 py-3.5 text-center font-bold text-primary" style="background:#fff8f7">50
+                            </td>
+                            <td class="px-6 py-3.5 text-center font-bold">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Orders / month</td>
+                            <td class="px-6 py-3.5 text-center">100</td>
+                            <td class="px-6 py-3.5 text-center font-bold text-primary" style="background:#fff8f7">300
+                            </td>
+                            <td class="px-6 py-3.5 text-center font-bold">Unlimited</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Blog</td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center" style="background:#fff8f7"><i
+                                    class="fas fa-check text-primary"></i></td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-check text-primary"></i></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Google Analytics</td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center" style="background:#fff8f7"><i
+                                    class="fas fa-check text-primary"></i></td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-check text-primary"></i></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Facebook Pixel</td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center" style="background:#fff8f7"><i
+                                    class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-check text-primary"></i></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">WhatsApp Chat</td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center" style="background:#fff8f7"><i
+                                    class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-check text-primary"></i></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3.5 text-gray-600">Priority Support</td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center" style="background:#fff8f7"><i
+                                    class="fas fa-times text-gray-300"></i></td>
+                            <td class="px-6 py-3.5 text-center"><i class="fas fa-check text-primary"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-extrabold text-gray-900 text-center mb-10" data-reveal>Frequently Asked Questions
+            </h2>
+            <div class="space-y-3">
+                <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                    <button data-faq-btn
+                        class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
+                        Can I upgrade or downgrade my plan?
+                        <span data-faq-icon
+                            class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                    </button>
+                    <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                        Yes! You can upgrade or downgrade your plan at any time from your account settings. Changes take
+                        effect immediately.
+                    </div>
+                </div>
+                <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                    <button data-faq-btn
+                        class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
+                        Is there a free trial?
+                        <span data-faq-icon
+                            class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                    </button>
+                    <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                        The Basic plan is completely free with no time limit. It's a great way to get started and
+                        explore the platform before upgrading.
+                    </div>
+                </div>
+                <div data-faq class="border border-gray-200 rounded-xl overflow-hidden" data-reveal>
+                    <button data-faq-btn
+                        class="w-full flex items-center justify-between px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
+                        What payment methods are accepted?
+                        <span data-faq-icon
+                            class="text-primary text-xl font-bold w-6 text-center flex-shrink-0">+</span>
+                    </button>
+                    <div data-faq-body class="faq-body px-6 text-gray-500 text-sm leading-relaxed">
+                        We accept all major credit cards, PayPal, and various local payment methods depending on your
+                        region.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-7 w-auto brightness-0 invert mb-4">
+                    <p class="text-sm">The e-commerce platform built for growth.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./about.html" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="./contact.html" class="hover:text-primary transition-colors">Contact</a></li>
+                        <li><a href="./faqs.html" class="hover:text-primary transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex gap-2"><i class="fas fa-envelope text-primary mt-0.5 w-4"></i><a
+                                href="mailto:contact@example.com" class="hover:text-primary">contact@example.com</a>
+                        </li>
+                        <li class="flex gap-2"><i class="fas fa-phone text-primary w-4"></i><a href="tel:01300000000"
+                                class="hover:text-primary">+880 1300 000 000</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 py-5 text-center text-sm">
+            <span>&copy; 2025 Ecommet. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

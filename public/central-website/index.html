@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Build Your Online Store in Minutes</title>
+    <meta name="description"
+        content="Build your e-commerce store in minutes. Manage products, payments and sales with ease.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- ════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 shadow-sm" style="backdrop-filter:blur(10px)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="./index.html" class="flex items-center gap-2 flex-shrink-0">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                        class="h-8 w-auto">
+                </a>
+                <!-- Desktop links -->
+                <div class="hidden lg:flex items-center gap-7">
+                    <a href="./index.html" class="text-sm font-medium text-primary">Home</a>
+                    <a href="./templates.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Templates</a>
+                    <a href="./pricing.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Pricing</a>
+                    <a href="./how-it-works.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">How It Works</a>
+                    <a href="./contact.html"
+                        class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Contact</a>
+                    <div class="nav-dropdown-wrap">
+                        <button
+                            class="text-sm font-medium text-gray-600 hover:text-primary transition-colors flex items-center gap-1">
+                            More <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="nav-dropdown">
+                            <a href="./about.html">About Us</a>
+                            <a href="./terms.html">Terms &amp; Conditions</a>
+                            <a href="./faqs.html">FAQs</a>
+                            <a href="./blogs.html">Blog</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- CTA + hamburger -->
+                <div class="flex items-center gap-3">
+                    <a href="./login.html" class="btn-primary px-5 py-2 text-sm">Login</a>
+                    <button id="menuBtn" class="lg:hidden text-gray-600 hover:text-primary p-2" aria-label="Menu">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+                <div class="flex flex-col gap-1 pt-3">
+                    <a href="./index.html" class="block px-3 py-2 text-sm font-medium text-primary rounded-lg">Home</a>
+                    <a href="./templates.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Templates</a>
+                    <a href="./pricing.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Pricing</a>
+                    <a href="./how-it-works.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">How
+                        It Works</a>
+                    <a href="./contact.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Contact</a>
+                    <a href="./about.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">About
+                        Us</a>
+                    <a href="./faqs.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">FAQs</a>
+                    <a href="./blogs.html"
+                        class="block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-primary rounded-lg">Blog</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+    <section class="pt-28 pb-20 bg-gradient-to-br from-orange-50 via-white to-orange-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="flex-1 text-center lg:text-left" data-reveal>
+                    <span
+                        class="inline-flex items-center gap-2 bg-orange-100 text-primary text-sm font-semibold px-4 py-1.5 rounded-full mb-5">
+                        Our platform is your success symbol
+                        <img src="./assets/image/icon-trophy.png" alt="" class="h-5 w-5">
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                        Build Your Online Store<br class="hidden sm:block"> in <span class="text-primary">Minutes</span>
+                    </h1>
+                    <p class="text-lg text-gray-500 mb-8 max-w-xl mx-auto lg:mx-0">
+                        Manage products, payments and sales with ease. Everything you need to grow your business is just
+                        one click away.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                        <a href="./pricing.html" class="btn-primary px-8 py-3.5 text-base">Get Started</a>
+                        <a href="./how-it-works.html" class="btn-outline px-8 py-3.5 text-base">How It Works</a>
+                    </div>
+                </div>
+                <div class="flex-1 flex justify-center" data-reveal>
+                    <div class="relative">
+                        <div class="absolute -top-6 -left-6 w-64 h-64 bg-orange-200 rounded-full opacity-30 blur-3xl">
+                        </div>
+                        <div
+                            class="absolute -bottom-6 -right-6 w-64 h-64 bg-orange-300 rounded-full opacity-20 blur-3xl">
+                        </div>
+                        <img src="./assets/image/c5b31ec6dd67c7260142577196b62dc79423b3da.png" alt="Ecommet Platform"
+                            class="relative w-full max-w-lg rounded-2xl">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     ACHIEVEMENTS
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">Our Overall Achievements</h2>
+                <p class="text-gray-500 mt-4 max-w-lg mx-auto">Join thousands of entrepreneurs building their online
+                    stores with ease.</p>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-orange-50 rounded-2xl p-8 text-center" data-reveal>
+                    <span class="text-5xl font-extrabold text-primary">500+</span>
+                    <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-2 mb-1">Active Users</p>
+                    <p class="text-sm text-gray-400">Users trust our platform daily.</p>
+                </div>
+                <div class="bg-orange-50 rounded-2xl p-8 text-center" data-reveal>
+                    <span class="text-5xl font-extrabold text-primary">900+</span>
+                    <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-2 mb-1">Daily Transactions
+                    </p>
+                    <p class="text-sm text-gray-400">Processed through our platform.</p>
+                </div>
+                <div class="bg-orange-50 rounded-2xl p-8 text-center" data-reveal>
+                    <span class="text-5xl font-extrabold text-primary">300+</span>
+                    <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-2 mb-1">Original Products</p>
+                    <p class="text-sm text-gray-400">Ready for your store.</p>
+                </div>
+                <div class="bg-orange-50 rounded-2xl p-8 text-center" data-reveal>
+                    <span class="text-5xl font-extrabold text-primary">100%</span>
+                    <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-2 mb-1">Security Ensured</p>
+                    <p class="text-sm text-gray-400">Protected &amp; reliable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">Features</h2>
+                <p class="text-gray-500 mt-4 max-w-lg mx-auto">With <strong class="text-primary">Ecommet</strong> your
+                    business is easier and you stay worry-free.</p>
+            </div>
+            <!-- Desktop grid -->
+            <div class="features-grid">
+                <!-- Top left -->
+                <div class="bg-white rounded-2xl p-7 shadow-sm" data-reveal>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-2xl text-primary"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">Scalable for Growth</h4>
+                    <p class="text-gray-500 text-sm">The platform grows with your business, providing flexibility to add
+                        new products, features and users easily.</p>
+                </div>
+                <!-- Bottom left -->
+                <div class="bg-white rounded-2xl p-7 shadow-sm" data-reveal>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-th-large text-2xl text-primary"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">Category Management</h4>
+                    <p class="text-gray-500 text-sm">You can simply choose a category right away and organise products
+                        intuitively.</p>
+                </div>
+                <!-- Center image -->
+                <div class="feature-img-col flex items-center justify-center">
+                    <img src="./assets/image/feature-img.png" alt="Features"
+                        class="w-full max-w-xs rounded-2xl shadow-lg">
+                </div>
+                <!-- Top right -->
+                <div class="bg-white rounded-2xl p-7 shadow-sm" data-reveal>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-hand-holding-box text-2xl text-primary"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">Easy-to-Use</h4>
+                    <p class="text-gray-500 text-sm">Manage products, orders and sales from one simple, intuitive
+                        interface.</p>
+                </div>
+                <!-- Bottom right -->
+                <div class="bg-white rounded-2xl p-7 shadow-sm" data-reveal>
+                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-credit-card text-2xl text-primary"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">Secure Payments</h4>
+                    <p class="text-gray-500 text-sm">Ensure your customers' data is protected with top-tier security and
+                        trusted protocols.</p>
+                </div>
+            </div>
+            <!-- Mobile stacked (hidden on desktop by features-grid) -->
+            <div class="lg:hidden flex flex-col gap-5 mt-5">
+                <div class="bg-white rounded-2xl p-7 shadow-sm flex gap-5 items-start">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-chart-line text-xl text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">Scalable for Growth</h4>
+                        <p class="text-gray-500 text-sm">The platform grows with your business.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-7 shadow-sm flex gap-5 items-start">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-th-large text-xl text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">Category Management</h4>
+                        <p class="text-gray-500 text-sm">Choose a category and organise products.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-7 shadow-sm flex gap-5 items-start">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-hand-holding-box text-xl text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">Easy-to-Use</h4>
+                        <p class="text-gray-500 text-sm">Manage everything from one simple interface.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-7 shadow-sm flex gap-5 items-start">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-credit-card text-xl text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-1">Secure Payments</h4>
+                        <p class="text-gray-500 text-sm">Top-tier security and trusted protocols.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     TEMPLATES
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-white" id="templates">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">Templates</h2>
+                <p class="text-gray-500 mt-4">Pick a professional template and launch your store today.</p>
+            </div>
+            <!-- Tabs -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+                <button data-ttab="all"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-active">All</button>
+                <button data-ttab="fashion"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Fashion</button>
+                <button data-ttab="leather"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Leather Flow</button>
+                <button data-ttab="furniture"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Furniture</button>
+                <button data-ttab="grocery"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Grocery</button>
+                <button data-ttab="electronics"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Electronics</button>
+                <button data-ttab="pets" class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Pet
+                    Shop</button>
+                <button data-ttab="jewelry"
+                    class="px-4 py-2 rounded-full text-sm font-semibold border tab-inactive">Jewelry</button>
+            </div>
+            <!-- All panel -->
+            <div data-tpanel="all">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/9a47946511d65f86288dbe3404d131e5f2f76c2b.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/9ddfc4ab6f359c15bda0ee04b184ae092e5e3fbf.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/f9cfebef163d8aa63752cb178d82f0cdf9493cef.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/c5b486224c1a45b6cbd8f2fa2f68f1e0360c1002.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/94d5c154a7b58fc69b0acee46920499b94e1b1cf.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/964fb0768f8e185c53dc1ea1058a3ad8dbadaacf.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/2464e9aae773ac8ff1f90ff7818aeb106650f3d4.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/5087ef599467c13d3ce13bed1636a9813bc48117.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card" data-reveal><img
+                            src="./assets/image/06d9b674bc8dc704f0a8e376252279a5081e05f8.png" alt="Template">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Category-specific panels -->
+            <div data-tpanel="fashion" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/964fb0768f8e185c53dc1ea1058a3ad8dbadaacf.png"
+                            alt="Fashion">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                    <div class="tmpl-card"><img src="./assets/image/c5b486224c1a45b6cbd8f2fa2f68f1e0360c1002.png"
+                            alt="Fashion">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="leather" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/5087ef599467c13d3ce13bed1636a9813bc48117.png"
+                            alt="Leather">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="furniture" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/94d5c154a7b58fc69b0acee46920499b94e1b1cf.png"
+                            alt="Furniture">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="grocery" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/9ddfc4ab6f359c15bda0ee04b184ae092e5e3fbf.png"
+                            alt="Grocery">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="electronics" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/f9cfebef163d8aa63752cb178d82f0cdf9493cef.png"
+                            alt="Electronics">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="pets" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/2464e9aae773ac8ff1f90ff7818aeb106650f3d4.png"
+                            alt="Pet Shop">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-tpanel="jewelry" hidden>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tmpl-card"><img src="./assets/image/06d9b674bc8dc704f0a8e376252279a5081e05f8.png"
+                            alt="Jewelry">
+                        <div class="tmpl-overlay"><a href="#"
+                                class="bg-white text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-primary hover:text-white transition-colors">Preview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-10">
+                <a href="./templates.html" class="btn-outline px-8 py-3 text-sm">See More Templates</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     CATEGORIES
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">Categories</h2>
+                <p class="text-gray-500 mt-4 max-w-xl mx-auto">Thousands of ready-made products across multiple
+                    categories to help you launch and sell with ease.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-tshirt text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Fashion</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-palette text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Beauty</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-heartbeat text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Fitness</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-chair text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Furniture</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-shopping-cart text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Grocery</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-laptop text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Electronics</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-paw text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Pets</p>
+                </div>
+                <div class="cat-card bg-white rounded-2xl p-5 text-center cursor-pointer" data-reveal>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-child text-primary text-xl"></i>
+                    </div>
+                    <p class="text-xs font-bold text-gray-700">Kids</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     HOW IT WORKS / SERVICES
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-white" id="how-it-works">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">How It Works</h2>
+                <p class="text-gray-500 mt-4">From setup to launch — we have you covered every step of the way.</p>
+            </div>
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="flex-1 flex flex-col gap-8">
+                    <div class="flex gap-5 items-start" data-reveal>
+                        <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-tools text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">Template Customization</h4>
+                            <p class="text-gray-500 text-sm">Tailored designs that fit your brand perfectly out of the
+                                box.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 items-start" data-reveal>
+                        <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-rocket text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">Store Setup</h4>
+                            <p class="text-gray-500 text-sm">From setup to launch, everything is handled in one place.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 items-start" data-reveal>
+                        <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-cog text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">Optimization</h4>
+                            <p class="text-gray-500 text-sm">Better performance means better results and higher
+                                conversions.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5 items-start" data-reveal>
+                        <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-headphones text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">Expert Support</h4>
+                            <p class="text-gray-500 text-sm">Guidance from our experts whenever you need it, 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 hidden lg:flex justify-center" data-reveal>
+                    <img src="./assets/image/services-imgrtl.png" alt="How it works"
+                        class="w-full max-w-md rounded-2xl shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-gray-50" id="pricing">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-reveal>
+                <span class="text-primary text-sm font-semibold tracking-wide uppercase">Pricing Plan</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 mt-2">Choose the Perfect Plan</h2>
+            </div>
+            <!-- Billing toggle -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex bg-white rounded-full p-1 shadow-sm border border-gray-200">
+                    <button data-ptab="monthly"
+                        class="px-6 py-2 rounded-full text-sm font-semibold tab-active">Monthly</button>
+                    <button data-ptab="yearly" class="px-6 py-2 rounded-full text-sm font-semibold tab-inactive">Yearly
+                        <span class="ml-1 bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">Save
+                            20%</span></button>
+                </div>
+            </div>
+            <!-- Monthly -->
+            <div data-ppanel="monthly">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Basic -->
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col" data-reveal>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-wrench text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Basic</h3>
+                        </div>
+                        <div class="mb-5">
+                            <span class="text-4xl font-extrabold text-gray-900">Free</span>
+                            <span class="text-gray-400 text-sm ml-1">/ monthly</span>
+                        </div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>2 Categories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>5 Subcategories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>10 Products</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>100 Orders limit</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>1 Additional language</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4"></i>Blog</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4"></i>Custom Pages</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Custom Domain</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Subdomain</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>QR Builder</li>
+                        </ul>
+                        <a href="./login.html" class="btn-outline block text-center py-3 font-semibold">Get Started
+                            Free</a>
+                    </div>
+                    <!-- Standard -->
+                    <div class="bg-white rounded-2xl p-8 border-2 pricing-active flex flex-col relative" data-reveal>
+                        <span
+                            class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">Popular</span>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Standard</h3>
+                        </div>
+                        <div class="mb-5">
+                            <span class="text-4xl font-extrabold text-gray-900">$19</span>
+                            <span class="text-gray-400 text-sm ml-1">/ monthly</span>
+                        </div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>10 Categories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>20 Subcategories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>50 Products</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>300 Orders limit</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>2 Additional languages</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>20 Blog posts</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>3 Custom Pages</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Custom Domain</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4"></i>Facebook Pixel</li>
+                        </ul>
+                        <a href="./pricing.html" class="btn-primary block text-center py-3 font-semibold">Purchase
+                            Now</a>
+                    </div>
+                    <!-- Premium -->
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col" data-reveal>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-crown text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Premium</h3>
+                        </div>
+                        <div class="mb-5">
+                            <span class="text-4xl font-extrabold text-gray-900">$39</span>
+                            <span class="text-gray-400 text-sm ml-1">/ monthly</span>
+                        </div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Categories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Products</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Orders</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Languages</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Blog posts</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Custom Pages</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Google Analytics</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Facebook Pixel</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>WhatsApp Chat Button</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Google Recaptcha</li>
+                        </ul>
+                        <a href="./pricing.html" class="btn-primary block text-center py-3 font-semibold">Purchase
+                            Now</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Yearly -->
+            <div data-ppanel="yearly" hidden>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col" data-reveal>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"><i
+                                    class="fas fa-wrench text-primary"></i></div>
+                            <h3 class="text-xl font-bold text-gray-900">Basic</h3>
+                        </div>
+                        <div class="mb-5"><span class="text-4xl font-extrabold text-gray-900">$90</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span></div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>2 Categories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>10 Products</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>100 Orders</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-400"><i
+                                    class="fas fa-times text-gray-300 w-4"></i>Blog</li>
+                        </ul>
+                        <a href="./pricing.html" class="btn-primary block text-center py-3 font-semibold">Purchase
+                            Now</a>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 border-2 pricing-active flex flex-col relative" data-reveal>
+                        <span
+                            class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">Popular</span>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"><i
+                                    class="fas fa-chart-line text-primary"></i></div>
+                            <h3 class="text-xl font-bold text-gray-900">Standard</h3>
+                        </div>
+                        <div class="mb-5"><span class="text-4xl font-extrabold text-gray-900">$190</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span></div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>10 Categories</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>50 Products</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>300 Orders</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>20 Blog posts</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Google Analytics</li>
+                        </ul>
+                        <a href="./pricing.html" class="btn-primary block text-center py-3 font-semibold">Purchase
+                            Now</a>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 border border-gray-200 flex flex-col" data-reveal>
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"><i
+                                    class="fas fa-crown text-primary"></i></div>
+                            <h3 class="text-xl font-bold text-gray-900">Premium</h3>
+                        </div>
+                        <div class="mb-5"><span class="text-4xl font-extrabold text-gray-900">$390</span><span
+                                class="text-gray-400 text-sm ml-1">/ yearly</span></div>
+                        <hr class="mb-5 border-gray-100">
+                        <ul class="space-y-3 flex-1 mb-6">
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Unlimited Everything</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>All Integrations</li>
+                            <li class="flex items-center gap-2 text-sm text-gray-600"><i
+                                    class="fas fa-check text-primary w-4"></i>Priority Support</li>
+                        </ul>
+                        <a href="./pricing.html" class="btn-primary block text-center py-3 font-semibold">Purchase
+                            Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">What Our Customers Say</h2>
+            </div>
+            <div class="testimonial-viewport max-w-3xl mx-auto" data-reveal>
+                <div id="testimonialTrack">
+                    <div class="px-4">
+                        <div class="bg-orange-50 rounded-2xl p-8">
+                            <i class="fas fa-quote-right text-3xl text-primary mb-4 block"></i>
+                            <p class="text-gray-600 text-lg leading-relaxed mb-6">"This platform transformed my
+                                business! The easy-to-use interface made managing my store a breeze, and the customer
+                                support is always there when I need help."</p>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                    A</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Ahmed K.</p>
+                                    <p class="text-sm text-gray-400">Online Merchant</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-orange-50 rounded-2xl p-8">
+                            <i class="fas fa-quote-right text-3xl text-primary mb-4 block"></i>
+                            <p class="text-gray-600 text-lg leading-relaxed mb-6">"Since switching to this platform, our
+                                sales increased by 30%! The payment gateway integrations and analytics tools gave us the
+                                insights we needed to grow."</p>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                    S</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Sara M.</p>
+                                    <p class="text-sm text-gray-400">Fashion Retailer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-orange-50 rounded-2xl p-8">
+                            <i class="fas fa-quote-right text-3xl text-primary mb-4 block"></i>
+                            <p class="text-gray-600 text-lg leading-relaxed mb-6">"I love how scalable the platform is.
+                                As my business grew, I had no worries about upgrading systems. Everything just works,
+                                and support is fantastic!"</p>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                    M</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Mohamed A.</p>
+                                    <p class="text-sm text-gray-400">Electronics Store Owner</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-orange-50 rounded-2xl p-8">
+                            <i class="fas fa-quote-right text-3xl text-primary mb-4 block"></i>
+                            <p class="text-gray-600 text-lg leading-relaxed mb-6">"Top-tier security and ease of use. My
+                                customers trust the payment process, and I can easily manage orders and inventory
+                                without any hassle."</p>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                    L</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Layla H.</p>
+                                    <p class="text-sm text-gray-400">Beauty Store Owner</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="bg-orange-50 rounded-2xl p-8">
+                            <i class="fas fa-quote-right text-3xl text-primary mb-4 block"></i>
+                            <p class="text-gray-600 text-lg leading-relaxed mb-6">"This platform changed the game for my
+                                business. It was easy to set up, and the features are exactly what I need to manage my
+                                store reliably."</p>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                                    O</div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Omar R.</p>
+                                    <p class="text-sm text-gray-400">Furniture Shop</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Controls -->
+            <div class="flex items-center justify-center gap-4 mt-8">
+                <button id="tPrev"
+                    class="w-10 h-10 rounded-full border border-gray-300 hover:border-primary hover:text-primary flex items-center justify-center transition-colors"><i
+                        class="fas fa-chevron-left text-sm"></i></button>
+                <div class="flex gap-2">
+                    <button data-tdot="0" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors"></button>
+                    <button data-tdot="1" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors"></button>
+                    <button data-tdot="2" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors"></button>
+                    <button data-tdot="3" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors"></button>
+                    <button data-tdot="4" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-colors"></button>
+                </div>
+                <button id="tNext"
+                    class="w-10 h-10 rounded-full border border-gray-300 hover:border-primary hover:text-primary flex items-center justify-center transition-colors"><i
+                        class="fas fa-chevron-right text-sm"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     BLOG PREVIEW
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14" data-reveal>
+                <h2 class="text-3xl font-extrabold text-gray-900 section-title">Latest from Our Blog</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <article
+                    class="blog-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="overflow-hidden h-48 bg-gray-100">
+                        <img src="./assets/image/placeholder.png" alt="Blog Post" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-primary uppercase tracking-wide">E-commerce</span>
+                        <h3 class="font-bold text-gray-900 mt-2 mb-2 text-lg leading-snug">How to Build a Successful
+                            Online Store in 2025</h3>
+                        <p class="text-gray-500 text-sm mb-4 line-clamp-2">Discover the key steps to launching and
+                            scaling your e-commerce store with the right tools and strategies.</p>
+                        <a href="./blogs.html" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                class="fas fa-arrow-right text-xs ml-1"></i></a>
+                    </div>
+                </article>
+                <article
+                    class="blog-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="overflow-hidden h-48 bg-gray-100">
+                        <img src="./assets/image/placeholder.png" alt="Blog Post" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-primary uppercase tracking-wide">Templates</span>
+                        <h3 class="font-bold text-gray-900 mt-2 mb-2 text-lg leading-snug">Top 5 Store Templates for
+                            Fashion Brands</h3>
+                        <p class="text-gray-500 text-sm mb-4 line-clamp-2">Our curated list of the best fashion store
+                            templates to make your brand stand out online.</p>
+                        <a href="./blogs.html" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                class="fas fa-arrow-right text-xs ml-1"></i></a>
+                    </div>
+                </article>
+                <article
+                    class="blog-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    data-reveal>
+                    <div class="overflow-hidden h-48 bg-gray-100">
+                        <img src="./assets/image/placeholder.png" alt="Blog Post" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-primary uppercase tracking-wide">Tips</span>
+                        <h3 class="font-bold text-gray-900 mt-2 mb-2 text-lg leading-snug">Payment Gateway Guide for
+                            Online Merchants</h3>
+                        <p class="text-gray-500 text-sm mb-4 line-clamp-2">Everything you need to know about integrating
+                            payment gateways and keeping transactions secure.</p>
+                        <a href="./blogs.html" class="text-primary font-semibold text-sm hover:underline">Read More <i
+                                class="fas fa-arrow-right text-xs ml-1"></i></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     NEWSLETTER
+════════════════════════════════════════════ -->
+    <section class="py-20 bg-primary">
+        <div class="max-w-3xl mx-auto px-4 text-center" data-reveal>
+            <h2 class="text-3xl font-extrabold text-white mb-3">Subscribe to Our Newsletter</h2>
+            <p class="text-orange-100 mb-8">Get the latest news, updates and exclusive offers delivered to your inbox.
+            </p>
+            <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" action="#" method="POST">
+                <input type="email" name="email" placeholder="Enter your email address" required
+                    class="flex-1 px-5 py-3.5 rounded-full text-gray-800 outline-none focus:ring-2 focus:ring-white text-sm">
+                <button type="submit"
+                    class="bg-white text-primary font-bold px-7 py-3.5 rounded-full hover:bg-orange-50 transition-colors text-sm flex-shrink-0">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+    <footer class="bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                <!-- Company -->
+                <div>
+                    <a href="./index.html" class="inline-block mb-4">
+                        <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet"
+                            class="h-8 w-auto brightness-0 invert">
+                    </a>
+                    <p class="text-sm leading-relaxed mb-5">We are an award-winning multinational company. We believe in
+                        quality and world-class standards.</p>
+                    <div class="flex gap-3">
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors"><i
+                                class="fab fa-facebook-f text-sm"></i></a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors"><i
+                                class="fab fa-twitter text-sm"></i></a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors"><i
+                                class="fab fa-instagram text-sm"></i></a>
+                        <a href="#"
+                            class="w-9 h-9 bg-gray-800 hover:bg-primary rounded-full flex items-center justify-center transition-colors"><i
+                                class="fab fa-linkedin-in text-sm"></i></a>
+                    </div>
+                </div>
+                <!-- Quick links -->
+                <div>
+                    <h4 class="text-white font-bold mb-5">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="./index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="./templates.html" class="hover:text-primary transition-colors">Templates</a></li>
+                        <li><a href="./pricing.html" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="./how-it-works.html" class="hover:text-primary transition-colors">How It Works</a>
+                        </li>
+                        <li><a href="./blogs.html" class="hover:text-primary transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <!-- More -->
+                <div>
+                    <h4 class="text-white font-bold mb-5">Company</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="./about.html" class="hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="./contact.html" class="hover:text-primary transition-colors">Contact Us</a></li>
+                        <li><a href="./faqs.html" class="hover:text-primary transition-colors">FAQs</a></li>
+                        <li><a href="./terms.html" class="hover:text-primary transition-colors">Terms &amp;
+                                Conditions</a></li>
+                    </ul>
+                </div>
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-white font-bold mb-5">Contact Info</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt text-primary mt-0.5 w-4"></i>
+                            <span>Sector 11, Uttara, Dhaka</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-phone text-primary w-4"></i>
+                            <a href="tel:01300000000" class="hover:text-primary transition-colors">+880 1300 000 000</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-envelope text-primary w-4"></i>
+                            <a href="mailto:contact@example.com"
+                                class="hover:text-primary transition-colors">contact@example.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800">
+            <div
+                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+                <span>&copy; 2025 Ecommet. All rights reserved.</span>
+                <div class="flex gap-5">
+                    <a href="./terms.html" class="hover:text-primary transition-colors">Privacy Policy</a>
+                    <a href="./terms.html" class="hover:text-primary transition-colors">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./assets/app.js"></script>
+</body>
+
+</html>

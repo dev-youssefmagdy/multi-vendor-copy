@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bomber Jacket – ELORA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/main.css"/>
+
+</head>
+<body data-page="product-details" class="bg-white text-elblack">
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<header class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="bg-[#242424] overflow-hidden py-1.5">
+    <div class="marquee text-white text-xs">
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-10 py-2.5 bg-white">
+    <!-- Hamburger -->
+    <button id="menuBtn" class="flex flex-col gap-1 p-1.5 cursor-pointer flex-shrink-0" onclick="openMenu()">
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+    </button>
+    <!-- Logo -->
+    <a href="elora-homepage-v2.html" class="flex-shrink-0">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABMAN8DASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQCAQMI/8QAOhAAAQMDAQUFBgQEBwAAAAAAAQACAwQFEQYSIUFRgQcTMWGRFBUycaGxIkJywSRS0fAjM0NUYoKS/8QAGgEBAQEAAwEAAAAAAAAAAAAAAAUGAQMEAv/EAC0RAAEDAwIDBwUBAQAAAAAAAAABAgMEBREhMRNBURJxgbHB4fAGFDKh0UJh/9oADAMBAAIRAxEAPwD+MkREAREQBERAEREAXZaLbWXatZR0MJlld6NHMngFyNBc4NaCSTgAcVtOi7LDYLO1rw0VMjQ+okPPlnkP6lTrlXJSR5TVy7FezWtbhNhVw1N19PE4tO6AtNDG2W4j2+pxkh26Np8hx6+gVgdW2K1YiNRbqLG4M2mR46LNtaa1q6+eSitczoKNpLTIw4dL554D+zyVMJJOSckqUy01FWnEqpFTPL5ohekv1Hb14VFEi459fVe/JvoqbFeAYhLbq/I3t2mSfTeq1qTs/tlZG6W1fwVR4hmSYnH5eI6eiydpLXBzSQQcgjgr1ojW9TT1EdBeJnTU7yGsnecujP8AyPEeZ8Fw+11NEnEppFXHL5opzFfKO5Lwq2JEzz990Kbc6Crtta+jrYXRTMO9p4+YPEea5lsuvLEy+WlzomD22AF0Lh4u5s6/dY0q9urkrIu1sqboZ+72x1vm7OctXZfnNAiIqBJCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgJ/QFI2r1VSB4yyImUj9I3fXCvvaPcX0WmZWRO2X1LhDkcAQS76Ajqqb2XuDdRvz4mmcB6tU52r7TrXRkfCJyD89k4/dZ6sbxLlG12yY9VNdb38GzyvZuufRDOURFoTIhERAbFoG5PuGmad0rtqSEmF557Ph9CFm+tqNtFqetiYAGOf3jQPD8Q2vuSrh2V7TbFUE/Cak4/wDLVW+0twdqd2MZELAfqs9Qt4VwkY3bU110fxrTC9+6Y8lQrKIi0JkQiIgCIiAIiIDvttnulyjfJQUM9Qxhw5zG5APJclRDLTzyQTxujljcWvY4YLSOC27Q1t90aapaZzdmZ472XntO346DA6Ki9rtr9nvMV0jbiOrbh/62jH1GPQqJS3dJ6tYcaa4Xrg0td9PrS0DanK9rTtJ0z/NCjoiK2ZoIiIAiIgCIiAIiICV0nWig1BSzvOGF2w88g7dnpnPRaFrOhdcrBNDG0uljIljA4kcPTKyhaLou/NrqRtHUv/iom4GT/mNHH581GucLmubUM3aaOyVLHMfRybO2+eRnSK86n0r7TM+stmw2R298J3AnmDw+Sp9Tb66meWz0k0ZHNhx6qhT1cU7ctXXoSaugmpXqjk068jmX1oLiAASTuAHFdNNbq+peGwUc7yeTDj18Fc9K6YFFK2tuGy+du+OMbww8zzK4qKyOBuVXXoc0dvmqnojUwnXkT+laI2yxU9NIMSY25PJx346eHRZpqWtFwvtXVtOWOfhh5tG4fQK4a3vzaWlfb6aQGolGJCPyNP7n++Cz5eG1wOy6ofu4qXyqYjWUkezN/JPcIiKwZ0IiIAiIgCndCWwXTUlPE9u1DEe+l+TfAdTgKCWn9l1u9ks8lfIMSVbvw+TG7h9c/ReC5VHAp3Km66J4lWy0n3VY1q7Jqvcn9XQnNXagZY6alkOC6adrSOTAcvPpu6r5rWgbeNM1EUeHyNb30JHEjfu+YyOqzrtGufvDUL4mOzDSjum7921+Y+u7orv2e3Q1+nYo3uzLTHuXfIfCfT7LPSUTqWniqG/ki5Xx2NdFc2V1XNSP/FUwnhov98DI0U1ra2+7NRVETG4ikPexfpdw6HI6KFWsikSViPbspgZ4XQSOjdui4CIi7DqCIiAIiIAiIgC9RvfHI2SNxY9py1wOCCvKIEXBbrTrJ7GiO5RGTH+rHjJ+Y8PRT0Oo7PK3IrWN8ngt+6zNFOltcD1ymncWIL3UxJhcO7zS59R2eJpJrWuPJgLs+igLxrCWVjorbG6IHcZX/F0HBVNEitkEa5XXvE97qZU7KYb3HqR7pHue9xc5xySTkkryiKiRwiIgCIiAIiIDottJJXV8FJF8crw0eXMrXLpVw2TT8kkYAZTQhkTTzxho9cKl9mlDt1c9yeN0Q7uP9R8T0H3V1r46Kqi7isbFIzO1sPO7PNZu6zNfUNYurW7mysVM6KldK3Rz9s/r9mOPc573Pe4uc45JPiSrL2cXL2K++zPdiKqbsf8AYb2/uOquHufT/wDsaP0C9R2qwxyNkZR0jXtILSMZBC7p7nFNEsasXU89LZZ6eZsqSJlF/wCkf2m2/wBqtUdexuZKV2HY/kd/Q49Ss2W01DYqulkgfh8crSx2N+Qdyx2vpn0dbNSyfFE8tPnjiuyzTZjWJeXkdP1HTI2ZJ27O3709vI/BERWjNhERAEREAREQBERAEREAREQBERAEREAREQBfQCTgDJK+Lv0+1r7zTBwDgH7WDzAyPsvl7uy1XdD7jZ23o3qpo1ipmWqywwPIaWM25Sf5jvPp+yzW8Vjrhc6irdn/ABH5aDwb4AemFctT184slQ1uy3bAYSBwJGVQlKtceVfM7dV9y7e5kRGU7NkT2QIiKuZ8u/ZzcCYZ7e929h7yP5Hcfrj1XJ2i0OxVw3Bg/DKNiTd+YeHqPsoTTdRJTXqmkiO8u2TnwIO5W3UUhq7TJFK1uMtIIG8HI8FFlbwK1Ht/16/Mmkgf91bXRu3bt4a+x//Z" alt="ELORA" class="h-7 sm:h-9 lg:h-10 w-auto"/>
+    </a>
+    <!-- Search -->
+    <div class="flex-1 min-w-0 flex items-center bg-gray-100 rounded-full px-3 sm:px-5 py-2 gap-2">
+      <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search for products, brands..." class="bg-transparent flex-1 min-w-0 text-sm text-gray-600 placeholder-gray-400 outline-none"/>
+      <button class="bg-main text-white text-xs font-medium px-3 py-1 rounded-full flex-shrink-0">Search</button>
+    </div>
+    <!-- Actions -->
+    <div class="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+      <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+        <img src="data:image/png;base64,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" alt="SA" class="w-6 h-4 object-cover rounded-sm"/>
+        <span class="text-xs text-gray-700 hidden md:block">En/SAR</span>
+        <svg class="w-3 h-3 text-gray-500 hidden md:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+      </div>
+      <a href="#" class="hidden sm:flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="text-xs hidden lg:block tracking-wide">Favorite</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <div class="relative">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="Cart" class="w-5 h-5 sm:w-6 sm:h-6 object-contain"/>
+          <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-main text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">3</span>
+        </div>
+        <span class="text-xs hidden lg:block tracking-wide">Cart</span>
+      </a>
+      <a href="#" class="hidden md:flex items-center gap-1.5 text-elblack hover:text-main transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="text-xs leading-tight hidden lg:block"><div class="text-gray-400">Welcome</div><div class="font-semibold text-elblack">Sign in</div></div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ SIDE MENU ═══════════ -->
+<div class="smenu-overlay" onclick="closeMenu()"></div>
+<div class="smenu-panel shadow-2xl">
+  <div class="flex items-center justify-between p-4 border-b border-gray-100">
+    <img src="data:image/png;base64,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" alt="ELORA" class="h-8 w-auto"/>
+    <button onclick="closeMenu()" class="text-xl text-gray-400 hover:text-main leading-none">✕</button>
+  </div>
+  <nav class="p-3 space-y-0.5 text-sm text-elblack">
+    <div class="px-3 py-2.5 rounded-lg bg-orange-50 text-main font-medium cursor-pointer">Men's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Women's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Electronics</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Gaming</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Home &amp; Kitchen</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Sports</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">Bags</div>
+  </nav>
+</div>
+
+<!-- ═══════════ BREADCRUMB ═══════════ -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-[1390px] mx-auto px-3 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1.5 text-xs sm:text-sm text-gray-400 flex-wrap">
+    <a href="elora-homepage-v2.html" class="hover:text-main transition-colors">Home</a>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <a href="elora-category-page.html" class="hover:text-main transition-colors">Men</a>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span class="text-elblack font-medium">Jackets</span>
+  </div>
+</div>
+
+<!-- ═══════════ FREE SHIPPING BAR ═══════════ -->
+<div class="max-w-[1390px] mx-auto px-3 sm:px-6 lg:px-10 pt-5">
+  <div class="border border-main rounded-2xl bg-orange-50 py-3 text-center text-sm sm:text-base font-medium text-main tracking-wide">
+    🚚 Free shipping when you purchase 1.2 kg
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+  PAGE INNER — max-w-[1390px]
+══════════════════════════════════════════════════════════════════════════ -->
+<div class="max-w-[1390px] mx-auto px-3 sm:px-6 lg:px-10 pb-28 sm:pb-12">
+
+  <!-- ████████████████████████████████████████████████████████
+       MAIN ROW — col-left (slider+details+reviews) | col-right (product info)
+  ████████████████████████████████████████████████████████ -->
+  <div class="pd-row flex gap-6 lg:gap-12 items-start mt-6">
+
+    <!-- ════════════════════════
+         LEFT COLUMN
+    ════════════════════════ -->
+    <div class="col-left" style="width:54%;min-width:0;flex-shrink:0">
+
+      <!-- ┌─────────────────────────────────┐
+           │   IMAGE SLIDER  (694 × 395 px)  │
+           └─────────────────────────────────┘ -->
+      <div class="relative rounded-xl overflow-hidden bg-[#e2dfd8]" style="aspect-ratio:694/395" id="mainImgWrap">
+        <!-- main image -->
+        <div id="mainImg" class="w-full h-full flex items-center justify-center select-none"
+          style="font-size:clamp(64px,10vw,140px);background:linear-gradient(145deg,#e6e2da,#d6d2ca)">🧥</div>
+        <!-- Best-Selling badge -->
+        <div class="absolute top-0 left-0 bg-main text-white text-xs font-normal px-2.5 py-1.5 z-10 tracking-wide" style="border-radius:8px 0 8px 0">#Best-Selling Item</div>
+        <!-- Prev arrow — 40×40, white circle, shadow -->
+        <button onclick="prevImg()" aria-label="Previous"
+          class="absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center bg-white rounded-full hover:scale-105 active:scale-95 transition-transform"
+          style="left:16px;width:40px;height:40px;box-shadow:4px 4px 10px rgba(88,88,88,.33)">
+          <svg width="10" height="14" fill="none" stroke="#242424" stroke-width="1.5" stroke-linecap="round"><path d="m8 1-7 6 7 6"/></svg>
+        </button>
+        <!-- Next arrow -->
+        <button onclick="nextImg()" aria-label="Next"
+          class="absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center bg-white rounded-full hover:scale-105 active:scale-95 transition-transform"
+          style="right:16px;width:40px;height:40px;box-shadow:4px 4px 10px rgba(88,88,88,.33)">
+          <svg width="10" height="14" fill="none" stroke="#242424" stroke-width="1.5" stroke-linecap="round"><path d="m2 1 7 6-7 6"/></svg>
+        </button>
+        <!-- Zoom icon bottom-left — 32×32 -->
+        <button class="absolute bottom-2.5 left-2.5 z-10 bg-white/80 rounded-lg p-1.5 hover:bg-white transition-colors">
+          <svg width="20" height="20" fill="none" stroke="#242424" stroke-width="1.5" stroke-linecap="round" viewBox="0 0 24 24">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- THUMBNAIL ROW  88×80, gap 16px, 7 thumbs -->
+      <div class="flex gap-4 mt-5 overflow-x-auto noscroll pb-1" id="thumbsRow">
+        <button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#e8e4dc,#d0ccc4)"
+        onclick="selectThumb(this,0)"
+        data-bg="linear-gradient(145deg,#e8e4dc,#d0ccc4)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#dddad4,#c8c4bc)"
+        onclick="selectThumb(this,1)"
+        data-bg="linear-gradient(145deg,#dddad4,#c8c4bc)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#e2dfd8,#d2cfc8)"
+        onclick="selectThumb(this,2)"
+        data-bg="linear-gradient(145deg,#e2dfd8,#d2cfc8)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-[#FF4D00] border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#e6e2da,#d6d2ca)"
+        onclick="selectThumb(this,3)"
+        data-bg="linear-gradient(145deg,#e6e2da,#d6d2ca)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      
+      
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#dddad4,#ccc8c0)"
+        onclick="selectThumb(this,4)"
+        data-bg="linear-gradient(145deg,#dddad4,#ccc8c0)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#1c1c1c,#2e2e2e)"
+        onclick="selectThumb(this,5)"
+        data-bg="linear-gradient(145deg,#1c1c1c,#2e2e2e)"
+        data-emoji="▶">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">▶</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-0.5 z-10">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span class="text-[10px] font-medium text-white tracking-wide">Play Video</span>
+        </div>
+    </button>
+<button class="thumb flex-shrink-0 w-[88px] h-[80px] rounded-lg border-transparent border-2 overflow-hidden relative transition-all duration-200 hover:border-orange-300"
+        style="background:linear-gradient(145deg,#e0ddd6,#d0cdc6)"
+        onclick="selectThumb(this,6)"
+        data-bg="linear-gradient(145deg,#e0ddd6,#d0cdc6)"
+        data-emoji="🧥">
+      <div class="absolute inset-0 flex items-center justify-center text-2xl z-0">🧥</div>
+      <div class="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      
+    </button>
+      </div>
+
+      <!-- ┌──────────────────────────────────────┐
+           │   PRODUCT DETAILS (below thumbnails) │
+           └──────────────────────────────────────┘ -->
+      <div class="mt-10">
+        <h2 class="font-medium text-[32px] leading-10 text-elblack mb-3">Product Details :</h2>
+        <!-- always-visible excerpt -->
+        <div class="text-sm text-[#606060] leading-[25px] tracking-[0.5px]">
+          A lightweight bomber jacket made from high-quality fabric, offering comfort and a sleek modern look.
+          Perfect for casual and everyday wear.<br/>
+          Material: Woven Fabric<br/>
+          Details: Pocket<br/>
+          Pattern: Solid color...
+        </div>
+        <!-- expandable body -->
+        <div class="det-body" id="detBody">
+          <div class="text-sm text-[#606060] leading-[25px] tracking-[0.5px] mt-1">
+            Sheer: No &nbsp; | &nbsp; Fabric: Non-Stretch &nbsp; | &nbsp; Collar Style: Hooded<br/>
+            Type: Jacket &nbsp; | &nbsp; Season: All-season<br/>
+            Operation: Hand wash, do not dry clean<br/>
+            Style: Casual &nbsp; | &nbsp; Fit Type: Regular<br/>
+            Composition: 100% Polyamide &nbsp; | &nbsp; Weaving: Woven<br/>
+            Texture: Smooth fabric &nbsp; | &nbsp; Lining: No lining<br/>
+            Fabric Weight: 100g/㎡ &nbsp; | &nbsp; Applicable People: Men<br/>
+            Closure Type: Zipper &nbsp; | &nbsp; Style source: Stock<br/>
+            Item ID: GN12151042 &nbsp; | &nbsp; Origin: Fujian, China
+          </div>
+        </div>
+        <button onclick="toggleDet()" class="mt-3 flex items-center gap-2 text-sm text-main font-normal tracking-wide hover:underline">
+          <span id="seeTxt">See more</span>
+          <svg id="seeArrow" class="w-4 h-4 transition-transform" fill="none" stroke="#FF4D00" stroke-width="2.5" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- ┌──────────────────────────────────────┐
+           │   REVIEWS                            │
+           └──────────────────────────────────────┘ -->
+      <div class="mt-10">
+        <!-- summary bar — border-bottom #8F8F8F -->
+        <div class="flex items-center gap-4 pb-4 border-b border-[#8F8F8F] flex-wrap gap-y-3">
+          <!-- count -->
+          <span class="text-xl font-medium text-black">285 review</span>
+          <!-- score + big stars -->
+          <div class="flex items-end gap-2 pl-4 border-l border-[#8F8F8F]">
+            <span class="text-2xl font-medium text-black leading-none">4.2</span>
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <div class="w-[30px] h-[30px] bg-[#171717]" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-[30px] h-[30px] bg-[#171717]" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-[30px] h-[30px] bg-[#171717]" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-[30px] h-[30px] bg-[#171717]" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-[30px] h-[30px] border border-gray-900 rounded-sm" style="clip-path:none"></div>
+            </div>
+          </div>
+          <!-- verified badge — green bg -->
+          <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg" style="background:rgba(42,175,47,.1)">
+            <svg class="w-5 h-5 flex-shrink-0" fill="#2AAF2F" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span class="text-sm font-medium text-[#2AAF2F] tracking-wide">All reviews are from verified purchases</span>
+          </div>
+        </div>
+        <!-- review list — each border-bottom #D4D4D4, padding 24px 0 -->
+        <div>
+          <div class="py-6 border-b border-[#D4D4D4] last:border-0">
+  <div class="flex items-center gap-2 mb-2 flex-wrap">
+    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+      <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </div>
+    <span class="text-base font-semibold text-gray-900">K****45</span>
+    <span class="text-sm text-gray-400">in</span>
+    <span>🇬🇧</span>
+    <span class="text-sm text-gray-400">on Mar 16, 2026</span>
+  </div>
+  <div class="flex items-center gap-1 mb-2"><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div></div>
+  <p class="text-lg font-semibold text-gray-900 leading-tight">Thank you, great jacket, great price. I'd definitely buy it again 🙏 🙏</p>
+</div>
+<div class="py-6 border-b border-[#D4D4D4] last:border-0">
+  <div class="flex items-center gap-2 mb-2 flex-wrap">
+    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+      <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </div>
+    <span class="text-base font-semibold text-gray-900">G****4</span>
+    <span class="text-sm text-gray-400">in</span>
+    <span>🇫🇷</span>
+    <span class="text-sm text-gray-400">on Mar 10, 2026</span>
+  </div>
+  <div class="flex items-center gap-1 mb-2"><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div></div>
+  <p class="text-lg font-semibold text-gray-900 leading-tight">Very nice, exactly as described and as shown in the photo</p>
+</div>
+<div class="py-6 border-b border-[#D4D4D4] last:border-0">
+  <div class="flex items-center gap-2 mb-2 flex-wrap">
+    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+      <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </div>
+    <span class="text-base font-semibold text-gray-900">L****00</span>
+    <span class="text-sm text-gray-400">in</span>
+    <span>🇩🇪</span>
+    <span class="text-sm text-gray-400">on Mar 6, 2026</span>
+  </div>
+  <div class="flex items-center gap-1 mb-2"><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-4 h-4 bg-gray-800" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div></div>
+  <p class="text-lg font-semibold text-gray-900 leading-tight">Very nice, exactly as described and as shown in the photo</p>
+</div>
+        </div>
+        <!-- see all button — 213×48, black pill -->
+        <button class="mt-4 bg-elblack text-white font-medium text-base tracking-wide rounded-full hover:bg-black transition-colors"
+          style="width:213px;height:48px;display:flex;align-items:center;justify-content:center">
+          See all reviews
+        </button>
+      </div>
+
+    </div><!-- / col-left -->
+
+    <!-- ════════════════════════
+         RIGHT COLUMN (542px)
+    ════════════════════════ -->
+    <div class="col-right flex-1 min-w-0" style="max-width:542px">
+
+      <!-- Title — Md-32 / weight 500 -->
+      <h1 class="font-medium leading-10 text-elblack mb-2" style="font-size:32px">
+        Bomber Jacket – Modern &amp; Stylish
+      </h1>
+
+      <!-- Stars + rating -->
+      <div class="flex items-center gap-4 mb-7">
+        <div class="flex items-center gap-1.5">
+          <div class="w-[17px] h-[16px] bg-yellow-400 star"></div>
+          <span class="text-base text-charcoal">4.7</span>
+        </div>
+        <span class="text-base text-elgray">( 697 rates )</span>
+      </div>
+
+      <!-- Price row — $200.44 line-through | $160.44 bold | -30% OFF badge -->
+      <div class="flex items-center gap-3 flex-wrap mb-5">
+        <span class="text-xl font-normal line-through text-[#808080]">$200.44</span>
+        <span class="text-2xl font-medium text-elblack">$160.44</span>
+        <span class="text-xs tracking-wide border border-main rounded text-main px-2 py-1">-30% OFF</span>
+      </div>
+
+      <!-- Delivery info -->
+      <div class="flex flex-col gap-1.5 mb-7">
+        <div class="flex items-center gap-1.5">
+          <img src="data:image/png;base64,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" alt="" class="w-6 h-6 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+          <span class="text-sm font-medium text-elgreen tracking-wide">Estimated delivery: 9 - 11 April</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4-4" stroke-linecap="round"/></svg>
+          <span class="text-sm font-medium text-elgreen tracking-wide">Only 5 left</span>
+        </div>
+      </div>
+
+      <!-- Color selector -->
+      <div class="mb-6">
+        <p class="text-base font-medium text-elblack mb-2">Color: <span id="colorVal" class="font-light text-elgray">white</span></p>
+        <div class="flex items-center gap-3 flex-wrap" id="colorRow">
+          <button class="opt"       onclick="pickOpt(this,'colorRow','colorVal')">blue</button>
+          <button class="opt sel"   onclick="pickOpt(this,'colorRow','colorVal')">white</button>
+          <button class="opt"       onclick="pickOpt(this,'colorRow','colorVal')">red</button>
+          <button class="opt"       onclick="pickOpt(this,'colorRow','colorVal')">gray</button>
+          <button class="opt"       onclick="pickOpt(this,'colorRow','colorVal')">pink</button>
+        </div>
+      </div>
+
+      <!-- Size selector -->
+      <div class="mb-6">
+        <p class="text-base font-medium text-elblack mb-2">Size: <span id="sizeVal" class="font-light text-elgray">XL</span></p>
+        <div class="flex items-center gap-3 flex-wrap" id="sizeRow">
+          <button class="opt"       onclick="pickOpt(this,'sizeRow','sizeVal')">S</button>
+          <button class="opt"       onclick="pickOpt(this,'sizeRow','sizeVal')">M</button>
+          <button class="opt"       onclick="pickOpt(this,'sizeRow','sizeVal')">L</button>
+          <button class="opt sel"   onclick="pickOpt(this,'sizeRow','sizeVal')">XL</button>
+          <button class="opt"       onclick="pickOpt(this,'sizeRow','sizeVal')">2XL</button>
+        </div>
+      </div>
+
+      <!-- Qty — 78×28 box, border #8F8F8F, radius 4 -->
+      <div class="flex items-center gap-3 mb-7">
+        <span class="text-base font-medium text-elblack">Qty</span>
+        <div class="relative flex items-center" style="width:78px;height:28px;border:1px solid #8F8F8F;border-radius:4px">
+          <select id="qtySelect"
+            class="w-full h-full bg-transparent text-sm font-medium text-elgray pl-3 pr-1 outline-none appearance-none cursor-pointer">
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option>
+          </select>
+          <svg class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none w-4 h-4 text-elgray" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" stroke-linecap="round"/></svg>
+        </div>
+        <span class="text-base font-medium text-elblack">Added</span>
+      </div>
+
+      <!-- Add to cart + heart + share — button 410×48, radius 32 -->
+      <div class="flex items-center gap-4 mb-10 flex-wrap">
+        <button id="addCartBtn" onclick="addToCart()"
+          class="flex items-center justify-center gap-2 bg-elblack text-white font-medium text-base rounded-full transition-colors hover:bg-black"
+          style="width:min(410px,100%);height:48px;border-radius:32px">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-6 h-6 object-contain" style="filter:brightness(10)"/>
+          Add to cart
+        </button>
+        <!-- heart round button — 48×48 white circle shadow -->
+        <button class="heart-btn flex items-center justify-center bg-white rounded-full hover:scale-105 transition-transform flex-shrink-0"
+          style="width:48px;height:48px;box-shadow:0 4px 4px rgba(0,0,0,.15)"
+          onclick="this.classList.toggle('liked')">
+          <svg class="w-5 h-5" fill="none" stroke="#111" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <!-- share round button -->
+        <button class="flex items-center justify-center bg-white rounded-full hover:scale-105 transition-transform flex-shrink-0"
+          style="width:48px;height:48px;box-shadow:0 4px 4px rgba(0,0,0,.15)">
+          <svg class="w-5 h-5" fill="none" stroke="#000" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Benefit cards 2×2 — each 257×100, border #EEEEEE radius 8 -->
+      <div class="grid grid-cols-2 gap-4 sm:gap-5">
+
+        <!-- Payment methods -->
+        <div class="bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg" style="padding:8px 0">
+          <div class="px-4 py-2 text-base text-gray-900">Payment methods:</div>
+          <div class="px-4 py-2 flex items-center gap-3 flex-wrap">
+            <!-- VISA -->
+            <div class="bg-white border border-gray-200 rounded px-2 py-0.5 flex items-center">
+              <span class="text-blue-800 font-extrabold text-sm italic tracking-tight">VISA</span>
+            </div>
+            <!-- tabby -->
+            <div class="bg-[#3DBFBF] rounded px-1.5 py-0.5 flex items-center">
+              <span class="text-white font-bold text-xs">tabby</span>
+            </div>
+            <!-- tamara -->
+            <div class="rounded px-1.5 py-0.5 flex items-center" style="background:linear-gradient(90deg,#F7941D,#F26522)">
+              <span class="text-white font-bold text-xs">tamara</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secure -->
+        <div class="bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg p-3 sm:p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4" stroke-linecap="round"/></svg>
+            <span class="text-[18px] font-medium text-elgreen leading-none">Free returns:</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-elblack tracking-wide mb-2">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="2.5" viewBox="0 0 10 7"><path d="m1 3 3 3 5-5" stroke-linecap="round"/></svg>
+            Secure payment
+          </div>
+          <div class="flex items-center gap-2 text-sm text-elblack tracking-wide">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="2.5" viewBox="0 0 10 7"><path d="m1 3 3 3 5-5" stroke-linecap="round"/></svg>
+            Privacy protection
+          </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg p-3 sm:p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <img src="data:image/png;base64,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" alt="" class="w-6 h-6 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+            <span class="text-[18px] font-medium text-elgreen leading-none">Free returns:</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-elblack tracking-wide mb-2">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="2.5" viewBox="0 0 10 7"><path d="m1 3 3 3 5-5" stroke-linecap="round"/></svg>
+            Refund for lost packages
+          </div>
+          <div class="flex items-center gap-2 text-sm text-elblack tracking-wide">
+            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="2.5" viewBox="0 0 10 7"><path d="m1 3 3 3 5-5" stroke-linecap="round"/></svg>
+            Coupon for late delivery
+          </div>
+        </div>
+
+        <!-- Easy return -->
+        <div class="bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg p-3 sm:p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke-linecap="round"/><path d="M3 3v5h5" stroke-linecap="round"/></svg>
+            <span class="text-[18px] font-medium text-elgreen leading-none">Free returns:</span>
+          </div>
+          <div class="flex items-start gap-2 text-sm text-elblack tracking-wide">
+            <svg class="w-3 h-3 flex-shrink-0 mt-0.5" fill="none" stroke="#2AAF2F" stroke-width="2.5" viewBox="0 0 10 7"><path d="m1 3 3 3 5-5" stroke-linecap="round"/></svg>
+            Easy and free return in 15 days.
+          </div>
+        </div>
+
+      </div><!-- /benefit grid -->
+    </div><!-- /col-right -->
+  </div><!-- /pd-row -->
+
+  <!-- ═══════════ SIMILAR ITEMS ═══════════ -->
+  <div class="mt-14">
+    <h2 class="text-2xl font-semibold text-elblack mb-5">Similar items :</h2>
+    <div class="scroll-row"><div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#ede8e0,#ddd4c5)">
+    👗
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Essential Hoodie</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Premium cotton blend</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8dce0,#c0c8d0)">
+    👖
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Slim Fit Pants</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Stretch denim fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$65.00</span>
+      <span class="text-xs text-gray-400 line-through">$95.00</span><span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAYFBwEDBAj/xAA3EAAABQMBAwgHCQAAAAAAAAABAgMEBQAGERITIUEHFCIjMVFxgRZHVoWUscMVMlJhkaHB0fD/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUAAf/EACkRAAEDAwQBBAEFAAAAAAAAAAECAxEAITEEBRNBURJhcYHBBjKRodH/2gAMAwEAAhEDEQA/APGVFPFptoiJslzdkjFpSrgXwM26Cw9UQdGoTGDjx/SsenUd7C238NU86xxS1JabKgDEyBf7qsNuZQ2lT7wSVCQIUbdTAi9JFFO/p1Hewtt/DVm628RLWS2uuOi0opcr0WThuiPVH6AmAwBw4VhrHErSHWykExMg3+qx25lbalMPBRSJIhQt3EiLUj0UUVQqTTv6kPf30aSKd/Uh7++jUXb9kXNPMefRsaZRtkQKodQpAOId2oQz49lStK+2wl1Tigkes5MVc1ume1K2UMoKjxpsASe/FLlWVbU9J27yQGfRSxUlzTQpCYxAN0RSAR3D4BVfSTF3GvVGT9uo3cJDg6ZwwIU7RjF5J8jyTFg3O4cq3BgiZA3j1P8At9bc+Jxtv1wUlQ+I/wAruyl5l53jkLCFREzNvua2xV9EuIVIW+dksxchpSdESKQ7U/AwYDs7/wCs0p3bbz625UzF4AHIYNaC5PuLE4GKP8cK67hsi5oFkD2SjTJt9wGUIoU4EEfxaRHHj2VMPF1XnIk2M6OKpmszsEDG3iRPZCOkB7sj8u4KE0WdOtK9KQW1GCBifIjB8jvOcneGo1Ta2tckh1CSoKUDJHYVNyPB6xjEXa14KQsUrEuYmPlWCi23BF0nq0KYxkPIKapdzC3vHRa6VxM7cMxT2SjBXoJpiA51p4EM7vkHZVXUUy9tra3OVs+leZF+owZH5pPT7y821wOgLbiINsGRcQbHqYqz7ov6D+0E0G8BHTxGyBEOfvksqLCUN47wzjx/Ot9r8pbDJ4daKaQLFyU5ecMi42Khi4BTGP38KqmignY9IWuMg/Mn+Yx/Ue1MJ/U+vS/ygj4gY8T+6PuferRiHMJZEdKOFbiaXGd8lsk2CQiZNTI7zKbxAPPgI9uaVLpu9Wai0optFR8UwTW2+xaJ6QMpjGofIe6lmijM7a2hzlWfUvMm3tgQPzS2p3l5xrgaAQ3EQL5Mm5k56mK//9k=" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 3 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+    🎧
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Headphones</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Noise cancelling</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$129.00</span>
+      <span class="text-xs text-gray-400 line-through">$180.00</span><span class="text-xs text-red-500 font-medium">28% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8e0d8,#c0c8c0)">
+    👔
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Classic Shirt</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Oxford cotton fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAYFBwEDBAj/xAA3EAAABQMBAwgHCQAAAAAAAAABAgMEBQAGERITIUEHFCIjMVFxgRZHVoWUscMVMlJhkaHB0fD/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUAAf/EACkRAAEDAwQBBAEFAAAAAAAAAAECAxEAITEEBRNBURJhcYHBBjKRodH/2gAMAwEAAhEDEQA/APGVFPFptoiJslzdkjFpSrgXwM26Cw9UQdGoTGDjx/SsenUd7C238NU86xxS1JabKgDEyBf7qsNuZQ2lT7wSVCQIUbdTAi9JFFO/p1Hewtt/DVm628RLWS2uuOi0opcr0WThuiPVH6AmAwBw4VhrHErSHWykExMg3+qx25lbalMPBRSJIhQt3EiLUj0UUVQqTTv6kPf30aSKd/Uh7++jUXb9kXNPMefRsaZRtkQKodQpAOId2oQz49lStK+2wl1Tigkes5MVc1ume1K2UMoKjxpsASe/FLlWVbU9J27yQGfRSxUlzTQpCYxAN0RSAR3D4BVfSTF3GvVGT9uo3cJDg6ZwwIU7RjF5J8jyTFg3O4cq3BgiZA3j1P8At9bc+Jxtv1wUlQ+I/wAruyl5l53jkLCFREzNvua2xV9EuIVIW+dksxchpSdESKQ7U/AwYDs7/wCs0p3bbz625UzF4AHIYNaC5PuLE4GKP8cK67hsi5oFkD2SjTJt9wGUIoU4EEfxaRHHj2VMPF1XnIk2M6OKpmszsEDG3iRPZCOkB7sj8u4KE0WdOtK9KQW1GCBifIjB8jvOcneGo1Ta2tckh1CSoKUDJHYVNyPB6xjEXa14KQsUrEuYmPlWCi23BF0nq0KYxkPIKapdzC3vHRa6VxM7cMxT2SjBXoJpiA51p4EM7vkHZVXUUy9tra3OVs+leZF+owZH5pPT7y821wOgLbiINsGRcQbHqYqz7ov6D+0E0G8BHTxGyBEOfvksqLCUN47wzjx/Ot9r8pbDJ4daKaQLFyU5ecMi42Khi4BTGP38KqmignY9IWuMg/Mn+Yx/Ue1MJ/U+vS/ygj4gY8T+6PuferRiHMJZEdKOFbiaXGd8lsk2CQiZNTI7zKbxAPPgI9uaVLpu9Wai0optFR8UwTW2+xaJ6QMpjGofIe6lmijM7a2hzlWfUvMm3tgQPzS2p3l5xrgaAQ3EQL5Mm5k56mK//9k=" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#dde0d8,#c8ccb8)">
+    👟
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Sneakers</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Breathable mesh</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$79.00</span>
+      <span class="text-xs text-gray-400 line-through">$99.00</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Delivered Apr 2</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d5d0e0,#b8b0c8)">
+    🧢
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#8A38F5;color:white;border-radius:0 8px 0 8px">New In</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Cap</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Adjustable strap</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$29.00</span>
+      <span class="text-xs text-gray-400 line-through">$40.00</span><span class="text-xs text-red-500 font-medium">25% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div></div>
+  </div>
+
+  <!-- ═══════════ SHOPPERS ALSO VIEWED ═══════════ -->
+  <div class="mt-10">
+    <h2 class="text-2xl font-semibold text-elblack mb-5">Shoppers also viewed :</h2>
+    <div class="scroll-row"><div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#ede8e0,#ddd4c5)">
+    🧢
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#8A38F5;color:white;border-radius:0 8px 0 8px">New In</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Cap</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Adjustable strap</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$29.00</span>
+      <span class="text-xs text-gray-400 line-through">$40.00</span><span class="text-xs text-red-500 font-medium">25% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8dce0,#c0c8d0)">
+    👟
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Sneakers</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Breathable mesh</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$79.00</span>
+      <span class="text-xs text-gray-400 line-through">$99.00</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Delivered Apr 2</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+    👔
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Classic Shirt</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Oxford cotton fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAYFBwEDBAj/xAA3EAAABQMBAwgHCQAAAAAAAAABAgMEBQAGERITIUEHFCIjMVFxgRZHVoWUscMVMlJhkaHB0fD/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUAAf/EACkRAAEDAwQBBAEFAAAAAAAAAAECAxEAITEEBRNBURJhcYHBBjKRodH/2gAMAwEAAhEDEQA/APGVFPFptoiJslzdkjFpSrgXwM26Cw9UQdGoTGDjx/SsenUd7C238NU86xxS1JabKgDEyBf7qsNuZQ2lT7wSVCQIUbdTAi9JFFO/p1Hewtt/DVm628RLWS2uuOi0opcr0WThuiPVH6AmAwBw4VhrHErSHWykExMg3+qx25lbalMPBRSJIhQt3EiLUj0UUVQqTTv6kPf30aSKd/Uh7++jUXb9kXNPMefRsaZRtkQKodQpAOId2oQz49lStK+2wl1Tigkes5MVc1ume1K2UMoKjxpsASe/FLlWVbU9J27yQGfRSxUlzTQpCYxAN0RSAR3D4BVfSTF3GvVGT9uo3cJDg6ZwwIU7RjF5J8jyTFg3O4cq3BgiZA3j1P8At9bc+Jxtv1wUlQ+I/wAruyl5l53jkLCFREzNvua2xV9EuIVIW+dksxchpSdESKQ7U/AwYDs7/wCs0p3bbz625UzF4AHIYNaC5PuLE4GKP8cK67hsi5oFkD2SjTJt9wGUIoU4EEfxaRHHj2VMPF1XnIk2M6OKpmszsEDG3iRPZCOkB7sj8u4KE0WdOtK9KQW1GCBifIjB8jvOcneGo1Ta2tckh1CSoKUDJHYVNyPB6xjEXa14KQsUrEuYmPlWCi23BF0nq0KYxkPIKapdzC3vHRa6VxM7cMxT2SjBXoJpiA51p4EM7vkHZVXUUy9tra3OVs+leZF+owZH5pPT7y821wOgLbiINsGRcQbHqYqz7ov6D+0E0G8BHTxGyBEOfvksqLCUN47wzjx/Ot9r8pbDJ4daKaQLFyU5ecMi42Khi4BTGP38KqmignY9IWuMg/Mn+Yx/Ue1MJ/U+vS/ygj4gY8T+6PuferRiHMJZEdKOFbiaXGd8lsk2CQiZNTI7zKbxAPPgI9uaVLpu9Wai0optFR8UwTW2+xaJ6QMpjGofIe6lmijM7a2hzlWfUvMm3tgQPzS2p3l5xrgaAQ3EQL5Mm5k56mK//9k=" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8e0d8,#c0c8c0)">
+    🎧
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Headphones</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Noise cancelling</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$129.00</span>
+      <span class="text-xs text-gray-400 line-through">$180.00</span><span class="text-xs text-red-500 font-medium">28% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#dde0d8,#c8ccb8)">
+    👖
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Slim Fit Pants</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Stretch denim fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$65.00</span>
+      <span class="text-xs text-gray-400 line-through">$95.00</span><span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 3 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d5d0e0,#b8b0c8)">
+    👗
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Essential Hoodie</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Premium cotton blend</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div></div>
+  </div>
+
+  <!-- ═══════════ RECOMMENDED FOR YOU ═══════════ -->
+  <div class="mt-10">
+    <h2 class="text-2xl font-semibold text-elblack mb-5">Recommended For You :</h2>
+    <div class="scroll-row"><div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#ede8e0,#ddd4c5)">
+    🧢
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#8A38F5;color:white;border-radius:0 8px 0 8px">New In</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Cap</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Adjustable strap</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$29.00</span>
+      <span class="text-xs text-gray-400 line-through">$40.00</span><span class="text-xs text-red-500 font-medium">25% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8dce0,#c0c8d0)">
+    👟
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Sneakers</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Breathable mesh</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$79.00</span>
+      <span class="text-xs text-gray-400 line-through">$99.00</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Delivered Apr 2</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+    👔
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Classic Shirt</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Oxford cotton fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAYFBwEDBAj/xAA3EAAABQMBAwgHCQAAAAAAAAABAgMEBQAGERITIUEHFCIjMVFxgRZHVoWUscMVMlJhkaHB0fD/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUAAf/EACkRAAEDAwQBBAEFAAAAAAAAAAECAxEAITEEBRNBURJhcYHBBjKRodH/2gAMAwEAAhEDEQA/APGVFPFptoiJslzdkjFpSrgXwM26Cw9UQdGoTGDjx/SsenUd7C238NU86xxS1JabKgDEyBf7qsNuZQ2lT7wSVCQIUbdTAi9JFFO/p1Hewtt/DVm628RLWS2uuOi0opcr0WThuiPVH6AmAwBw4VhrHErSHWykExMg3+qx25lbalMPBRSJIhQt3EiLUj0UUVQqTTv6kPf30aSKd/Uh7++jUXb9kXNPMefRsaZRtkQKodQpAOId2oQz49lStK+2wl1Tigkes5MVc1ume1K2UMoKjxpsASe/FLlWVbU9J27yQGfRSxUlzTQpCYxAN0RSAR3D4BVfSTF3GvVGT9uo3cJDg6ZwwIU7RjF5J8jyTFg3O4cq3BgiZA3j1P8At9bc+Jxtv1wUlQ+I/wAruyl5l53jkLCFREzNvua2xV9EuIVIW+dksxchpSdESKQ7U/AwYDs7/wCs0p3bbz625UzF4AHIYNaC5PuLE4GKP8cK67hsi5oFkD2SjTJt9wGUIoU4EEfxaRHHj2VMPF1XnIk2M6OKpmszsEDG3iRPZCOkB7sj8u4KE0WdOtK9KQW1GCBifIjB8jvOcneGo1Ta2tckh1CSoKUDJHYVNyPB6xjEXa14KQsUrEuYmPlWCi23BF0nq0KYxkPIKapdzC3vHRa6VxM7cMxT2SjBXoJpiA51p4EM7vkHZVXUUy9tra3OVs+leZF+owZH5pPT7y821wOgLbiINsGRcQbHqYqz7ov6D+0E0G8BHTxGyBEOfvksqLCUN47wzjx/Ot9r8pbDJ4daKaQLFyU5ecMi42Khi4BTGP38KqmignY9IWuMg/Mn+Yx/Ue1MJ/U+vS/ygj4gY8T+6PuferRiHMJZEdKOFbiaXGd8lsk2CQiZNTI7zKbxAPPgI9uaVLpu9Wai0optFR8UwTW2+xaJ6QMpjGofIe6lmijM7a2hzlWfUvMm3tgQPzS2p3l5xrgaAQ3EQL5Mm5k56mK//9k=" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d8e0d8,#c0c8c0)">
+    🎧
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Headphones</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Noise cancelling</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$129.00</span>
+      <span class="text-xs text-gray-400 line-through">$180.00</span><span class="text-xs text-red-500 font-medium">28% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#2AAF2F">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)"/>
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#dde0d8,#c8ccb8)">
+    👖
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Slim Fit Pants</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Stretch denim fabric</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$65.00</span>
+      <span class="text-xs text-gray-400 line-through">$95.00</span><span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 3 left</span>
+    </div>
+  </div>
+</div>
+<div class="flex-shrink-0 w-[210px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200" style="scroll-snap-align:start">
+  <div class="relative flex items-center justify-center text-5xl overflow-hidden" style="height:183px;background:linear-gradient(135deg,#d5d0e0,#b8b0c8)">
+    👗
+    <span class="absolute top-0 right-0 text-[10px] px-2 py-1 font-medium z-10" style="background:#FF4D00;color:white;border-radius:0 8px 0 8px">30% OFF</span>
+    <button class="heart-btn absolute top-2 left-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2 right-2 bg-white/90 rounded-xl p-1.5 z-10 hover:bg-[#FF4D00] transition-colors group">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-4 h-4 object-contain group-hover:brightness-[100]"/>
+    </button>
+  </div>
+  <div class="p-2">
+    <div class="flex items-center justify-between mb-0.5">
+      <span class="text-sm font-semibold text-gray-900 truncate">Essential Hoodie</span>
+      <span class="text-xs text-[#FF4D00] font-medium ml-1 flex-shrink-0">200g</span>
+    </div>
+    <p class="text-xs text-gray-400 truncate mb-1.5">Premium cotton blend</p>
+    <div class="flex items-center gap-0.5 mb-1.5">
+      <div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div><div class="w-2 h-2 bg-yellow-400" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <div class="w-2 h-2 bg-gray-200" style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></div>
+      <span class="text-[10px] text-gray-400 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+      <span class="text-base font-bold text-gray-900">$89.00</span>
+      <span class="text-xs text-gray-400 line-through">$110.00</span><span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs font-medium" style="color:#DE1709">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)"/>
+      <span>Only 5 left</span>
+    </div>
+  </div>
+</div></div>
+  </div>
+
+</div><!-- /page-inner -->
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="bg-[#3B3B3B] text-white">
+  <div class="max-w-[1390px] mx-auto px-4 sm:px-6 lg:px-10 pt-10 pb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+      <div class="col-span-2 lg:col-span-1">
+        <img src="data:image/png;base64,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" alt="ELORA" class="h-9 w-auto mb-3"/>
+        <p class="text-sm text-white/70 mb-3">Connect with ELORA</p>
+        <div class="flex gap-3 mb-5">
+          <a href="#" class="w-5 h-5 text-white/70 hover:text-white fill-current"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/70 hover:text-white fill-current"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/70 hover:text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/70 hover:text-white fill-current"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 C1 8.14 1 12 1 12s0 3.86.46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96C23 15.86 23 12 23 12s0-3.86-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#3B3B3B"/></svg></a>
+        </div>
+        <p class="text-xs font-semibold mb-2 text-white/90">We accept</p>
+        <div class="flex gap-2 flex-wrap">
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-extrabold text-blue-800 italic">VISA</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-red-600">MC</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-blue-500">PayPal</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-gray-700">Apple Pay</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-medium text-base mb-4">Customer service</h4>
+        <ul class="space-y-2.5 text-sm text-white/70">
+          <li><a href="#" class="hover:text-white transition-colors">Return and refund policy</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Intellectual property policy</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Shipping info</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Report suspicious activity</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-base mb-4">Policies</h4>
+        <ul class="space-y-2.5 text-sm text-white/70">
+          <li><a href="#" class="hover:text-white transition-colors">Shipping</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Payment</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-base mb-4">Company info</h4>
+        <ul class="space-y-2.5 text-sm text-white">
+          <li><a href="#" class="hover:text-main transition-colors">About ELORA</a></li>
+          <li><a href="#" class="hover:text-main transition-colors">Contact us</a></li>
+          <li><a href="#" class="hover:text-main transition-colors">FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bg-[#5B5B5B] py-3">
+    <div class="max-w-[1390px] mx-auto px-4 flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-white">
+      <a href="#" class="hover:underline">Terms of use</a>
+      <a href="#" class="hover:underline">Privacy policy</a>
+      <a href="#" class="hover:underline">Your privacy choices</a>
+      <a href="#" class="hover:underline">Support</a>
+      <a href="#" class="hover:underline">FAQ</a>
+    </div>
+  </div>
+  <div class="bg-[#242424] py-3.5 text-center text-xs sm:text-sm text-white tracking-wide">
+    Copyright ©2026 ELORA. All Rights Reserved.
+  </div>
+</footer>
+
+<!-- ═══════════ MOBILE STICKY ═══════════ -->
+<div class="mob-stick fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex gap-3 z-50">
+  <button class="heart-btn flex-1 h-11 border border-gray-300 rounded-full flex items-center justify-center gap-2 text-sm font-medium text-elblack bg-white hover:border-main transition-colors"
+    onclick="this.classList.toggle('liked')">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Wishlist
+  </button>
+  <button onclick="addToCart()" style="flex:2"
+    class="h-11 bg-main text-white rounded-full flex items-center justify-center gap-2 text-sm font-semibold hover:bg-orange-600 transition-colors">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="" class="w-5 h-5 object-contain" style="filter:brightness(10)"/>
+    Add to cart
+  </button>
+</div>
+<script src="assets/js/pages/product-details.js"></script>
+</body>
+</html>

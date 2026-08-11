@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Cart — ELORA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css" />
+
+</head>
+
+<body data-page="cart" class="bg-white text-[#171717]">
+
+    <!-- ═════════════ NAVBAR ═════════════ -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="bg-[#242424] overflow-hidden py-1.5">
+            <div class="marquee text-white text-xs">
+                <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF
+                    &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy
+                    Returns &nbsp;|&nbsp;</span>
+                <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF
+                    &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy
+                    Returns &nbsp;|&nbsp;</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-10 py-2.5 bg-white">
+            <button id="menuBtn" class="flex flex-col gap-1 p-1.5 cursor-pointer flex-shrink-0" onclick="openMenu()">
+                <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+                <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+                <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+            </button>
+            <a href="elora-homepage-v2.html" class="flex-shrink-0"><img
+                    src="data:image/png;base64,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"
+                    alt="ELORA" class="h-7 sm:h-9 lg:h-10 w-auto" /></a>
+            <div class="flex-1 min-w-0 flex items-center bg-[#F6F5F5] rounded-full px-3 sm:px-5 py-2 gap-2">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input type="text" placeholder="Search..."
+                    class="bg-transparent flex-1 min-w-0 text-sm text-gray-600 placeholder-gray-400 outline-none" />
+                <button
+                    class="bg-main text-white text-xs font-medium px-3 py-1 rounded-full flex-shrink-0">Search</button>
+            </div>
+            <div class="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+                <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+                    <img src="data:image/png;base64,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"
+                        alt="SA" class="w-6 h-4 object-cover rounded-sm" />
+                    <span class="text-xs hidden md:block">En/<br />SAR</span>
+                </div>
+                <a href="#" class="hidden sm:flex flex-col items-center text-elblack hover:text-main transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                    <span class="text-xs hidden lg:block">Favorite</span>
+                </a>
+                <a href="#" class="flex flex-col items-center text-elblack hover:text-main transition-colors">
+                    <div class="relative">
+                        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                            alt="" class="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
+                        <span id="cartBadge"
+                            class="absolute -top-1.5 -right-1.5 bg-main text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">0</span>
+                    </div>
+                    <span class="text-xs hidden lg:block">Cart</span>
+                </a>
+                <a href="#" class="hidden md:flex items-center gap-1.5 text-elblack hover:text-main transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <div class="text-xs leading-tight hidden lg:block">
+                        <div class="text-gray-400">Welcome</div>
+                        <div class="font-semibold">Sign in / Register</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═════════════ SIDE MENU ═════════════ -->
+    <div class="smenu-overlay" onclick="closeMenu()"></div>
+    <div class="smenu-panel shadow-2xl">
+        <div class="flex items-center justify-between p-4 border-b border-gray-100">
+            <img src="data:image/png;base64,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"
+                alt="ELORA" class="h-8 w-auto" />
+            <button onclick="closeMenu()" class="text-xl text-gray-400 hover:text-main leading-none">✕</button>
+        </div>
+        <nav class="p-3 space-y-0.5 text-sm text-elblack">
+            <div class="px-3 py-2.5 rounded-lg bg-orange-50 text-main font-medium cursor-pointer">Men's Clothing</div>
+            <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Women's Clothing</div>
+            <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Electronics</div>
+            <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Gaming</div>
+            <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Home &amp; Kitchen</div>
+            <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Sports</div>
+        </nav>
+    </div>
+
+    <!-- ═════════════ BREADCRUMB ═════════════ -->
+    <div class="bg-white border-b border-gray-100">
+        <div
+            class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[104px] py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
+            <a href="elora-homepage-v2.html" class="hover:text-main transition-colors tracking-[0.5px]">Home</a>
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+            <a href="elora-category-page.html" class="hover:text-main transition-colors tracking-[0.5px]">Men</a>
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+            <a href="elora-product-detail.html" class="hover:text-main transition-colors tracking-[0.5px]">Jackets</a>
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+            <span class="text-[#1B1B1B] font-medium tracking-[0.5px]">Cart</span>
+        </div>
+    </div>
+
+    <!-- ═════════════ PAGE CONTENT ═════════════ -->
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[104px] pb-12">
+
+        <!-- ── FREE SHIPPING PROGRESS BAR ── -->
+        <div class="mt-5 border border-main rounded-lg bg-[rgba(255,77,0,0.04)] px-4 sm:px-[18px] py-3 sm:py-4">
+            <div class="flex items-center justify-between gap-4 mb-3">
+                <p class="text-sm sm:text-lg font-medium text-[#FF522C] tracking-wide">
+                    <span class="font-semibold">Free Shipping!</span> You're <strong>600g</strong> away from free
+                    shipping. Add <strong>400g</strong> more for Free shipping!
+                </p>
+                <svg class="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 text-main" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+                </svg>
+            </div>
+            <!-- progress track -->
+            <div class="progress-track w-full">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- ── MAIN CART LAYOUT ── -->
+        <div class="cart-layout flex gap-[72px] items-start mt-6">
+
+            <!-- ════ LEFT: CART ITEMS (795px) ════ -->
+            <div class="flex-1 min-w-0">
+
+                <!-- Log in banner -->
+                <div
+                    class="flex items-center gap-3 border border-[#CCCCCC] rounded-lg bg-[#FFFBFB] px-3 sm:px-4 py-3 mb-6 cursor-pointer hover:border-main transition-colors">
+                    <svg class="w-6 h-6 flex-shrink-0 text-elblack" fill="none" stroke="currentColor" stroke-width="1.5"
+                        viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span class="text-sm text-[#171717] tracking-[0.5px]">Log in to complete your shopping faster</span>
+                </div>
+
+                <!-- Select all bar -->
+                <div class="flex items-center gap-4 pb-3 border-b border-[#C0C0C0] mb-0">
+                    <button id="selectAllBtn" onclick="toggleSelectAll()" class="flex items-center gap-4">
+                        <div id="selectAllBox"
+                            class="w-5 h-5 rounded border border-gray-900 flex items-center justify-center bg-[#171717]">
+                            <svg class="w-2.5 h-2" fill="none" viewBox="0 0 12 9">
+                                <path d="m1 4 4 4 7-7" stroke="white" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-elblack tracking-[0.5px]">Select all (2)</span>
+                    </button>
+                </div>
+
+                <!-- CART ITEMS -->
+                <div id="cartItems" class="flex flex-col gap-0">
+                    <div class="cart-item flex items-center gap-4 py-0 border-b border-[#C4C4C4]" data-index="0">
+                        <!-- checkbox -->
+                        <button
+                            class="item-check flex-shrink-0 w-6 h-6 rounded border border-gray-900 flex items-center justify-center transition-all border-[#000] bg-white"
+                            onclick="toggleItem(this)" aria-label="Select item">
+                            <svg class="w-2.5 h-1.5" fill="none" viewBox="0 0 12 9"></svg>
+                        </button>
+                        <!-- image -->
+                        <div class="flex-shrink-0 w-[171px] h-[162px] rounded-lg overflow-hidden"
+                            style="background:linear-gradient(135deg,#c8c4bc,#b8b4ac);display:flex;align-items:center;justify-content:center;font-size:64px">
+                            🧥</div>
+                        <!-- info -->
+                        <div class="flex-1 min-w-0 flex flex-col justify-between py-2 border-b border-[#C4C4C4]"
+                            style="min-height:176px;padding-bottom:24px">
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-base text-[#171717] font-normal">Bomber Jacket – Modern &
+                                                Stylish Bomber Jacket</span>
+                                            <span class="text-base text-main font-normal">300g</span>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <span class="text-sm text-[#171717] tracking-[0.5px]">Color: <strong
+                                                    class="font-medium">White</strong></span>
+                                            <span class="text-sm text-[#171717] tracking-[0.5px]">Size: <strong
+                                                    class="font-medium">Xl</strong></span>
+                                        </div>
+                                        <span class="text-sm text-main tracking-[0.5px] font-normal">Estimated delivery:
+                                            9 - 11 April</span>
+                                    </div>
+                                    <!-- trash -->
+                                    <button
+                                        class="flex-shrink-0 w-5 h-5 text-[#ADADAD] hover:text-red-500 transition-colors"
+                                        onclick="removeItem(this)">
+                                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- price + qty -->
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base text-[#171717] font-normal">$100.00</span>
+                                    <span class="text-sm text-[#ADADAD] line-through font-light">$150.20</span>
+                                </div>
+                                <!-- qty control — pill with −, orange bubble, + -->
+                                <div class="flex items-center gap-3 border border-[#E0E0E0] rounded-full px-2 py-1.5">
+                                    <button
+                                        class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        onclick="changeQty(this,-1)">
+                                        <svg class="w-3 h-px" fill="none" stroke="#C9C5C5" stroke-width="2"
+                                            viewBox="0 0 18 2">
+                                            <line x1="0" y1="1" x2="18" y2="1" />
+                                        </svg>
+                                    </button>
+                                    <div
+                                        class="w-[18px] h-[18px] bg-[#FFD3C0] rounded-full flex items-center justify-center">
+                                        <span class="text-xs font-medium text-main qty-num">1</span>
+                                    </div>
+                                    <button
+                                        class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        onclick="changeQty(this,1)">
+                                        <svg class="w-3 h-3" fill="none" stroke="#FF4D00" stroke-width="2"
+                                            viewBox="0 0 18 18">
+                                            <line x1="9" y1="0" x2="9" y2="18" />
+                                            <line x1="0" y1="9" x2="18" y2="9" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart-item flex items-center gap-4 py-0 border-b border-[#C4C4C4]" data-index="1">
+                        <!-- checkbox -->
+                        <button
+                            class="item-check flex-shrink-0 w-6 h-6 rounded border border-gray-900 flex items-center justify-center transition-all bg-[#171717] border-[#171717]"
+                            onclick="toggleItem(this)" aria-label="Select item">
+                            <svg class="w-2.5 h-1.5" fill="none" viewBox="0 0 12 9">
+                                <path d="m3 6 4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                        <!-- image -->
+                        <div class="flex-shrink-0 w-[171px] h-[162px] rounded-lg overflow-hidden"
+                            style="background:linear-gradient(135deg,#d5d0c8,#c0bbb4);display:flex;align-items:center;justify-content:center;font-size:64px">
+                            👕</div>
+                        <!-- info -->
+                        <div class="flex-1 min-w-0 flex flex-col justify-between py-2 border-b border-[#C4C4C4]"
+                            style="min-height:176px;padding-bottom:24px">
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-base text-[#171717] font-normal">Bomber Jacket – Modern &
+                                                Stylish Bomber Jacket</span>
+                                            <span class="text-base text-main font-normal">300g</span>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <span class="text-sm text-[#171717] tracking-[0.5px]">Color: <strong
+                                                    class="font-medium">White</strong></span>
+                                            <span class="text-sm text-[#171717] tracking-[0.5px]">Size: <strong
+                                                    class="font-medium">Xl</strong></span>
+                                        </div>
+                                        <span class="text-sm text-main tracking-[0.5px] font-normal">Estimated delivery:
+                                            9 - 11 April</span>
+                                    </div>
+                                    <!-- trash -->
+                                    <button
+                                        class="flex-shrink-0 w-5 h-5 text-[#ADADAD] hover:text-red-500 transition-colors"
+                                        onclick="removeItem(this)">
+                                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- price + qty -->
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base text-[#171717] font-normal">$200.00</span>
+                                    <span class="text-sm text-[#ADADAD] line-through font-light">$250.20</span>
+                                </div>
+                                <!-- qty control — pill with −, orange bubble, + -->
+                                <div class="flex items-center gap-3 border border-[#E0E0E0] rounded-full px-2 py-1.5">
+                                    <button
+                                        class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        onclick="changeQty(this,-1)">
+                                        <svg class="w-3 h-px" fill="none" stroke="#C9C5C5" stroke-width="2"
+                                            viewBox="0 0 18 2">
+                                            <line x1="0" y1="1" x2="18" y2="1" />
+                                        </svg>
+                                    </button>
+                                    <div
+                                        class="w-[18px] h-[18px] bg-[#FFD3C0] rounded-full flex items-center justify-center">
+                                        <span class="text-xs font-medium text-main qty-num">1</span>
+                                    </div>
+                                    <button
+                                        class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        onclick="changeQty(this,1)">
+                                        <svg class="w-3 h-3" fill="none" stroke="#FF4D00" stroke-width="2"
+                                            viewBox="0 0 18 18">
+                                            <line x1="9" y1="0" x2="9" y2="18" />
+                                            <line x1="0" y1="9" x2="18" y2="9" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ RIGHT: ORDER SUMMARY SIDEBAR (405px) ════ -->
+            <div class="cart-sidebar flex-shrink-0 flex flex-col gap-8" style="width:405px">
+
+                <!-- Order Summary card -->
+                <div class="border border-[#E8E8E8] rounded-2xl bg-white p-4">
+                    <!-- Title -->
+                    <h2 class="text-xl font-medium text-[#171717] mb-4 tracking-wide">Order Summary</h2>
+                    <!-- Subtotal / Shipping -->
+                    <div class="flex flex-col gap-4 pb-4 border-b border-[#E8E8E8] mb-4">
+                        <div class="flex items-center justify-between text-base text-[#171717]">
+                            <span class="font-normal">Subtotal:</span>
+                            <span class="font-normal" id="subtotalVal">$450.50</span>
+                        </div>
+                        <div class="flex items-center justify-between text-base text-[#171717]">
+                            <span class="font-normal">Shipping fee:</span>
+                            <span class="font-normal">$5.50</span>
+                        </div>
+                    </div>
+                    <!-- Discount code input -->
+                    <div class="relative border border-[#CACACA] rounded-lg overflow-hidden mb-4" style="height:48px">
+                        <input type="text" placeholder="Enter the discount code"
+                            class="w-full h-full pl-3 pr-24 text-base text-[#ADADAD] placeholder-[#ADADAD] outline-none bg-white" />
+                        <button
+                            class="absolute right-0 top-0 h-full px-4 bg-[#EB7441] text-white text-xl font-medium hover:bg-main transition-colors"
+                            style="border-radius:0 8px 8px 0">App</button>
+                    </div>
+                    <!-- Total -->
+                    <div class="flex items-center justify-between text-base font-medium text-[#171717] mb-2">
+                        <span>Total</span>
+                        <span id="totalVal">$300.00</span>
+                    </div>
+                    <p class="text-sm text-[#707070] mb-6 leading-snug">Please refer to your final actual payment
+                        amount. Tax &amp; levies excluded.</p>
+                    <!-- Checkout button -->
+                    <button onclick="checkout()"
+                        class="w-full h-[50px] bg-[#171717] text-white font-medium text-base rounded-full hover:bg-black transition-colors flex items-center justify-center"
+                        id="checkoutBtn">
+                        $300.00 to checkout
+                    </button>
+                </div>
+
+                <!-- Payment methods card -->
+                <div class="border border-[#D4D4D4] rounded-2xl bg-white p-4">
+                    <h3 class="text-xl font-medium text-[#242424] mb-4">1. Payment methods</h3>
+                    <div class="flex items-center justify-center gap-3 flex-wrap">
+                        <!-- tabby -->
+                        <div class="flex items-center justify-center bg-[#3DBFBF] rounded-lg px-3 py-1.5">
+                            <span class="text-white font-bold text-sm">tabby</span>
+                        </div>
+                        <!-- tamara -->
+                        <div class="flex items-center justify-center rounded-lg px-3 py-1.5"
+                            style="background:linear-gradient(90deg,#F7941D,#F26522)">
+                            <span class="text-white font-bold text-sm">tamara</span>
+                        </div>
+                        <!-- VISA -->
+                        <div
+                            class="flex items-center justify-center bg-white border border-gray-200 rounded-lg px-3 py-1.5">
+                            <span class="text-blue-800 font-extrabold text-base italic tracking-tight">VISA</span>
+                        </div>
+                        <!-- Mastercard -->
+                        <div class="flex items-center justify-center rounded-lg px-2 py-1"
+                            style="background:white;border:1px solid #eee">
+                            <div class="flex">
+                                <div class="w-6 h-6 rounded-full bg-red-500 opacity-90"></div>
+                                <div class="w-6 h-6 rounded-full bg-orange-400 opacity-90 -ml-3"></div>
+                            </div>
+                        </div>
+                        <!-- Apple Pay -->
+                        <div
+                            class="flex items-center justify-center bg-white border border-gray-200 rounded-lg px-3 py-1.5 gap-1">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                            </svg>
+                            <span class="text-sm font-medium">Pay</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RECOMMENDED PRODUCTS ── -->
+        <div class="mt-14">
+            <h2 class="text-2xl font-medium text-[#171717] mb-5 tracking-wide">Recommended products:</h2>
+            <div class="scroll-row">
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#ede8e0,#ddd4c5)">
+                        🔋
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Power
+                                Bank</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">100g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d8dce0,#c0c8d0)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+                        👖
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Pants</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">150g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d8e0d8,#c0c8c0)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#dde0d8,#c8ccb8)">
+                        🎧
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Headphone</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">250g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d5d0e0,#b8b0c8)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SHOPPERS ALSO VIEWED ── -->
+        <div class="mt-10">
+            <h2 class="text-2xl font-medium text-[#171717] mb-5 tracking-wide">Shoppers also viewed:</h2>
+            <div class="scroll-row">
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#ede8e0,#ddd4c5)">
+                        👖
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Pants</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">150g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d8dce0,#c0c8d0)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+                        🔋
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Power
+                                Bank</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">100g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d8e0d8,#c0c8c0)">
+                        🎧
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Headphone</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">250g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#dde0d8,#c8ccb8)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FFD428;color:#242424;border-radius:0 8px 0 8px">70% Sold</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#DE1709">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+                            <span>Only 5 left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-card flex-shrink-0 w-[210px] bg-[#FDFDFD] rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                    style="scroll-snap-align:start">
+                    <div class="relative flex items-center justify-center text-5xl overflow-hidden"
+                        style="height:183px;background:linear-gradient(135deg,#d5d0e0,#b8b0c8)">
+                        🧥
+                        <span class="absolute top-0 right-0 text-[11px] px-2 py-1 font-medium z-10"
+                            style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">30% OFF</span>
+                        <button
+                            class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow z-10 hover:scale-110 transition-transform"
+                            onclick="this.classList.toggle('liked')">
+                            <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                        </button>
+                        <button
+                            class="mini-cart-btn absolute bottom-2 right-2 bg-[#FDFDFD] rounded-2xl px-3 py-2 z-10 hover:bg-main transition-colors group"
+                            style="border-radius:16px">
+                            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k="
+                                alt="" class="w-5 h-5 object-contain group-hover:brightness-[100]" />
+                        </button>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span
+                                class="text-sm font-semibold text-[#171717] truncate max-w-[120px] tracking-[0.5px]">Essential
+                                Hoodie</span>
+                            <span class="text-xs text-main font-normal tracking-[0.5px] ml-1 flex-shrink-0">200g</span>
+                        </div>
+                        <p class="text-xs text-[#ADADAD] truncate mb-1.5 tracking-[0.5px]">Premium cotton blend</p>
+                        <div class="flex items-center gap-1 mb-1.5">
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#FFE100]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <div class="w-2.5 h-2.5 bg-[#D5D5D5]"
+                                style="clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">
+                            </div>
+                            <span class="text-[10px] text-[#ADADAD] ml-1 tracking-[0.5px]">4.2 (+850)</span>
+                        </div>
+                        <div class="flex items-end gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[18px] font-medium text-[#171717] leading-none">$89.00</span>
+                            <span class="text-xs text-[#ADADAD] line-through font-light">$89.00</span>
+                            <span class="text-[10px] text-[#FF522C] tracking-[0.5px]">20% Off</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-xs font-medium tracking-wide" style="color:#2AAF2F">
+                            <img src="data:image/png;base64,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"
+                                alt="" class="w-3.5 h-3.5 object-contain flex-shrink-0"
+                                style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+                            <span>Delivered by 24 March</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /page inner -->
+
+    <!-- ═════════════ FOOTER ═════════════ -->
+    <footer class="bg-[#3B3B3B] text-white">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-[104px] pt-10 pb-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-12">
+                <div class="col-span-2 lg:col-span-1">
+                    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABMAN8DASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQCAQMI/8QAOhAAAQMDAQUFBgQEBwAAAAAAAQACAwQFEQYSIUFRgQcTMWGRFBUycaGxIkJywSRS0fAjM0NUYoKS/8QAGgEBAQEAAwEAAAAAAAAAAAAAAAUGAQMEAv/EAC0RAAEDAwIDBwUBAQAAAAAAAAABAgMEBREhMRNBURJxgbHB4fAGFDKh0UJh/9oADAMBAAIRAxEAPwD+MkREAREQBERAEREAXZaLbWXatZR0MJlld6NHMngFyNBc4NaCSTgAcVtOi7LDYLO1rw0VMjQ+okPPlnkP6lTrlXJSR5TVy7FezWtbhNhVw1N19PE4tO6AtNDG2W4j2+pxkh26Np8hx6+gVgdW2K1YiNRbqLG4M2mR46LNtaa1q6+eSitczoKNpLTIw4dL554D+zyVMJJOSckqUy01FWnEqpFTPL5ohekv1Hb14VFEi459fVe/JvoqbFeAYhLbq/I3t2mSfTeq1qTs/tlZG6W1fwVR4hmSYnH5eI6eiydpLXBzSQQcgjgr1ojW9TT1EdBeJnTU7yGsnecujP8AyPEeZ8Fw+11NEnEppFXHL5opzFfKO5Lwq2JEzz990Kbc6Crtta+jrYXRTMO9p4+YPEea5lsuvLEy+WlzomD22AF0Lh4u5s6/dY0q9urkrIu1sqboZ+72x1vm7OctXZfnNAiIqBJCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgJ/QFI2r1VSB4yyImUj9I3fXCvvaPcX0WmZWRO2X1LhDkcAQS76Ajqqb2XuDdRvz4mmcB6tU52r7TrXRkfCJyD89k4/dZ6sbxLlG12yY9VNdb38GzyvZuufRDOURFoTIhERAbFoG5PuGmad0rtqSEmF557Ph9CFm+tqNtFqetiYAGOf3jQPD8Q2vuSrh2V7TbFUE/Cak4/wDLVW+0twdqd2MZELAfqs9Qt4VwkY3bU110fxrTC9+6Y8lQrKIi0JkQiIgCIiAIiIDvttnulyjfJQUM9Qxhw5zG5APJclRDLTzyQTxujljcWvY4YLSOC27Q1t90aapaZzdmZ472XntO346DA6Ki9rtr9nvMV0jbiOrbh/62jH1GPQqJS3dJ6tYcaa4Xrg0td9PrS0DanK9rTtJ0z/NCjoiK2ZoIiIAiIgCIiAIiICV0nWig1BSzvOGF2w88g7dnpnPRaFrOhdcrBNDG0uljIljA4kcPTKyhaLou/NrqRtHUv/iom4GT/mNHH581GucLmubUM3aaOyVLHMfRybO2+eRnSK86n0r7TM+stmw2R298J3AnmDw+Sp9Tb66meWz0k0ZHNhx6qhT1cU7ctXXoSaugmpXqjk068jmX1oLiAASTuAHFdNNbq+peGwUc7yeTDj18Fc9K6YFFK2tuGy+du+OMbww8zzK4qKyOBuVXXoc0dvmqnojUwnXkT+laI2yxU9NIMSY25PJx346eHRZpqWtFwvtXVtOWOfhh5tG4fQK4a3vzaWlfb6aQGolGJCPyNP7n++Cz5eG1wOy6ofu4qXyqYjWUkezN/JPcIiKwZ0IiIAiIgCndCWwXTUlPE9u1DEe+l+TfAdTgKCWn9l1u9ks8lfIMSVbvw+TG7h9c/ReC5VHAp3Km66J4lWy0n3VY1q7Jqvcn9XQnNXagZY6alkOC6adrSOTAcvPpu6r5rWgbeNM1EUeHyNb30JHEjfu+YyOqzrtGufvDUL4mOzDSjum7921+Y+u7orv2e3Q1+nYo3uzLTHuXfIfCfT7LPSUTqWniqG/ki5Xx2NdFc2V1XNSP/FUwnhov98DI0U1ra2+7NRVETG4ikPexfpdw6HI6KFWsikSViPbspgZ4XQSOjdui4CIi7DqCIiAIiIAiIgC9RvfHI2SNxY9py1wOCCvKIEXBbrTrJ7GiO5RGTH+rHjJ+Y8PRT0Oo7PK3IrWN8ngt+6zNFOltcD1ymncWIL3UxJhcO7zS59R2eJpJrWuPJgLs+igLxrCWVjorbG6IHcZX/F0HBVNEitkEa5XXvE97qZU7KYb3HqR7pHue9xc5xySTkkryiKiRwiIgCIiAIiIDottJJXV8FJF8crw0eXMrXLpVw2TT8kkYAZTQhkTTzxho9cKl9mlDt1c9yeN0Q7uP9R8T0H3V1r46Kqi7isbFIzO1sPO7PNZu6zNfUNYurW7mysVM6KldK3Rz9s/r9mOPc573Pe4uc45JPiSrL2cXL2K++zPdiKqbsf8AYb2/uOquHufT/wDsaP0C9R2qwxyNkZR0jXtILSMZBC7p7nFNEsasXU89LZZ6eZsqSJlF/wCkf2m2/wBqtUdexuZKV2HY/kd/Q49Ss2W01DYqulkgfh8crSx2N+Qdyx2vpn0dbNSyfFE8tPnjiuyzTZjWJeXkdP1HTI2ZJ27O3709vI/BERWjNhERAEREAREQBERAEREAREQBERAEREAREQBfQCTgDJK+Lv0+1r7zTBwDgH7WDzAyPsvl7uy1XdD7jZ23o3qpo1ipmWqywwPIaWM25Sf5jvPp+yzW8Vjrhc6irdn/ABH5aDwb4AemFctT184slQ1uy3bAYSBwJGVQlKtceVfM7dV9y7e5kRGU7NkT2QIiKuZ8u/ZzcCYZ7e929h7yP5Hcfrj1XJ2i0OxVw3Bg/DKNiTd+YeHqPsoTTdRJTXqmkiO8u2TnwIO5W3UUhq7TJFK1uMtIIG8HI8FFlbwK1Ht/16/Mmkgf91bXRu3bt4a+x//Z"
+                        alt="ELORA" class="h-9 w-auto mb-3" />
+                    <p class="text-sm font-medium text-white mb-3">Connect with ELORA</p>
+                    <div class="flex gap-3 mb-5">
+                        <a href="#" class="w-5 h-5 text-white/80 hover:text-white fill-current"><svg viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                            </svg></a>
+                        <a href="#" class="w-5 h-5 text-white/80 hover:text-white fill-current"><svg viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path
+                                    d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                            </svg></a>
+                        <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                            </svg></a>
+                        <a href="#" class="w-5 h-5 text-white/80 hover:text-white fill-current"><svg viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path
+                                    d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42C1 8.14 1 12 1 12s0 3.86.46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96C23 15.86 23 12 23 12s0-3.86-.46-5.58z" />
+                                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#3B3B3B" />
+                            </svg></a>
+                        <a href="#" class="w-5 h-5 text-white/80 hover:text-white fill-current"><svg viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect x="2" y="9" width="4" height="12" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg></a>
+                    </div>
+                    <p class="text-xs font-semibold mb-2">We accept</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <div class="bg-white rounded px-2 py-0.5 text-xs font-extrabold text-blue-800 italic">VISA</div>
+                        <div class="bg-white rounded px-2 py-0.5 flex">
+                            <div class="w-4 h-4 rounded-full bg-red-500 opacity-90"></div>
+                            <div class="w-4 h-4 rounded-full bg-orange-400 opacity-90 -ml-2"></div>
+                        </div>
+                        <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-blue-500">PayPal</div>
+                        <div class="bg-[#3DBFBF] rounded px-2 py-0.5 text-xs font-bold text-white">tabby</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">Customer service</h4>
+                    <ul class="space-y-3 text-sm text-[#F2F2F2]">
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Return and refund policy</a></li>
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Intellectual property policy</a></li>
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Shipping info</a></li>
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Report suspicious activity</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">Policies</h4>
+                    <ul class="space-y-3 text-sm text-[#F2F2F2]">
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Shipping</a></li>
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Payment</a></li>
+                        <li><a href="#" class="hover:text-white tracking-[0.5px]">Privacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-lg mb-4">Company info</h4>
+                    <ul class="space-y-3 text-sm text-white">
+                        <li><a href="#" class="hover:text-main">About ELORA</a></li>
+                        <li><a href="#" class="hover:text-main">Contact us</a></li>
+                        <li><a href="#" class="hover:text-main">FAQs</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bg-[#5B5B5B] py-3">
+            <div
+                class="max-w-[1440px] mx-auto px-4 flex flex-wrap justify-center gap-4 sm:gap-[88px] text-sm text-white">
+                <a href="#" class="hover:underline tracking-[0.5px]">Terms of use</a>
+                <a href="#" class="hover:underline tracking-[0.5px]">Privacy policy</a>
+                <a href="#" class="hover:underline tracking-[0.5px]">Your privacy choices</a>
+                <a href="#" class="hover:underline tracking-[0.5px]">Support</a>
+                <a href="#" class="hover:underline tracking-[0.5px]">FAQ</a>
+            </div>
+        </div>
+        <div class="bg-[#242424] py-4 text-center text-sm text-white tracking-[0.5px]">
+            Copyright ©2026 ELORA. All Rights Reserved.
+        </div>
+    </footer>
+    <script src="assets/js/pages/cart.js"></script>
+</body>
+
+</html>

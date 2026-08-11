@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Men's Clothing — ELORA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/main.css"/>
+  
+  
+</head>
+<body data-page="categories" class="bg-bg">
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <div class="bg-charcoal text-white text-xs py-1.5 overflow-hidden">
+    <div class="marquee-inner">
+      <span class="px-6">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+      <span class="px-6">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+    </div>
+  </div>
+  <div class="bg-white px-3 sm:px-6 lg:px-10 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
+    <button id="menuBtn" class="flex flex-col gap-1 p-1.5 flex-shrink-0">
+      <span class="w-5 h-0.5 bg-charcoal block"></span>
+      <span class="w-5 h-0.5 bg-charcoal block"></span>
+      <span class="w-5 h-0.5 bg-charcoal block"></span>
+    </button>
+    <a href="elora-homepage-v2.html" class="flex-shrink-0">
+      <img src="data:image/png;base64,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" alt="ELORA" class="h-7 sm:h-9 lg:h-11 w-auto"/>
+    </a>
+    <div class="flex-1 min-w-0 mx-1 sm:mx-3">
+      <div class="flex items-center bg-bg rounded-full px-3 sm:px-5 py-2 gap-2">
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search for products, brands..." class="bg-transparent flex-1 text-xs sm:text-sm text-gray-600 placeholder-gray-400 min-w-0 outline-none"/>
+        <button class="bg-main text-white text-xs font-medium px-2 sm:px-3 py-0.5 rounded-full flex-shrink-0">Search</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-3 lg:gap-5 flex-shrink-0">
+      <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+        <img src="data:image/png;base64,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" alt="SA" class="w-6 h-4 rounded-sm object-cover"/>
+        <span class="text-xs text-charcoal hidden md:inline">En/SAR</span>
+        <svg class="w-3 h-3 hidden md:block" fill="none" stroke="#242424" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+      </div>
+      <a href="#" class="hidden sm:flex flex-col items-center text-charcoal hover:text-main transition-colors">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="text-xs hidden lg:block">Favorite</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-charcoal hover:text-main transition-colors">
+        <div class="relative">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="Cart" class="w-5 h-5 sm:w-6 sm:h-6 object-contain"/>
+          <span class="absolute -top-1.5 -right-1.5 bg-main text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium leading-none">3</span>
+        </div>
+        <span class="text-xs hidden lg:block">Cart</span>
+      </a>
+      <a href="#" class="hidden md:flex items-center gap-1.5 text-charcoal hover:text-main transition-colors">
+        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="text-xs text-gray-500 hidden lg:block leading-tight">Welcome<br><span class="font-medium text-charcoal">Sign in</span></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ===== SIDE MENU ===== -->
+<div id="sideMenu" class="hidden fixed inset-0" style="z-index:600">
+  <div class="menu-overlay" onclick="closeSideMenu()"></div>
+  <div class="menu-panel shadow-2xl">
+    <div class="flex items-center justify-between p-4 border-b">
+      <img src="data:image/png;base64,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" alt="ELORA" class="h-8 w-auto"/>
+      <button onclick="closeSideMenu()" class="p-1 text-xl text-gray-400 hover:text-main">✕</button>
+    </div>
+    <nav class="p-3 space-y-0.5 text-sm">
+      <div class="py-2.5 px-3 rounded-lg bg-main/10 text-main font-medium cursor-pointer">Men's Clothing</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Women's Clothing</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Electronics</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Gaming</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Cameras</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Home &amp; Kitchen</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Sports</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Bags</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Kid's Fashion</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Furniture</div>
+      <div class="py-2.5 px-3 rounded-lg hover:bg-gray-50 cursor-pointer">Beauty</div>
+    </nav>
+  </div>
+</div>
+
+<!-- ===== MOBILE FILTER DRAWER ===== -->
+<div id="filterDrawer" class="hidden fixed inset-0" style="z-index:300">
+  <div class="drawer-overlay" onclick="closeFilterDrawer()"></div>
+  <div class="drawer-panel shadow-2xl">
+    <div class="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
+      <span class="font-semibold text-base text-black">Filters</span>
+      <button onclick="closeFilterDrawer()" class="text-xl text-gray-400 hover:text-main">✕</button>
+    </div>
+    <div class="p-4 space-y-4" id="drawerFiltersContent">
+      <!-- Cloned from sidebar on mobile -->
+    </div>
+    <div class="p-4 sticky bottom-0 bg-white border-t flex gap-3">
+      <button class="flex-1 py-2.5 border border-main text-main rounded-lg text-sm font-medium hover:bg-main/5 transition-colors" onclick="closeFilterDrawer()">Reset</button>
+      <button class="flex-1 py-2.5 bg-main text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors" onclick="closeFilterDrawer()">Apply Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BREADCRUMB ===== -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6 py-2.5 flex items-center gap-1.5 text-xs sm:text-sm text-gray3 overflow-x-auto no-scrollbar">
+    <a href="elora-homepage-v2.html" class="hover:text-main transition-colors whitespace-nowrap">Home</a>
+    <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span class="text-charcoal font-medium whitespace-nowrap">Men's Clothing</span>
+    <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span class="text-charcoal font-medium whitespace-nowrap">T-Shirts</span>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+  <div class="flex gap-4 lg:gap-6 items-start">
+
+    <!-- ===== LEFT SIDEBAR (desktop) ===== -->
+    <aside class="desktop-sidebar w-48 lg:w-56 xl:w-60 flex-shrink-0 bg-white rounded-xl shadow-sm overflow-hidden">
+
+      <!-- Category -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Category</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check" checked/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">T-Shirts</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Hoodies</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Jackets</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Trousers</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Shirts</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Sportswear</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Accessories</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Brand -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Brand</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3">
+          <div class="relative mb-3">
+            <input type="text" placeholder="Search (Brand)" class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 pl-8 outline-none focus:border-main transition-colors"/>
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
+          <p class="text-xs text-gray3 font-medium mb-2">Popular brands</p>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" checked/>
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Elora Collection</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">adidas</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Levi's</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Lee Cooper</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Guess</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Puma</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Tommy Hilfiger</span>
+            </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+              <input type="checkbox" class="custom-check" />
+              <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Calvin Klein</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Size</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3">
+          <div class="flex flex-wrap gap-2">
+            <button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">XS</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">S</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">M</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">L</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">XL</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">XXL</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">3XL</button>
+<button class="size-btn px-2.5 py-1 border border-gray-200 rounded-lg text-xs hover:border-main hover:text-main transition-colors" onclick="toggleSize(this)">4XL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promotional Items -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Promotional items</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Flash sale</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Coupon deals</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Free shipping</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">New arrivals</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Color -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Color</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3">
+          <div class="flex flex-wrap gap-2">
+            <button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#171717" title="Black"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#FFFFFF" title="White"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#FF4D00" title="Orange"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#1565C0" title="Blue"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#388E3C" title="Green"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#C62828" title="Red"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#E65100" title="Brown"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#FDD835" title="Yellow"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#9C27B0" title="Purple"></button>
+<button class="color-btn w-7 h-7 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-0 hover:ring-2 hover:ring-main" style="background:#607D8B" title="Grey"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Price</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray3">$0</span>
+            <span class="text-xs font-medium text-main" id="priceVal">$500</span>
+            <span class="text-xs text-gray3">$1000</span>
+          </div>
+          <input type="range" min="0" max="1000" value="500" class="w-full" oninput="document.getElementById('priceVal').textContent='$'+this.value"/>
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Gender</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check" checked/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Men</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check" />
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Women</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check" />
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Unisex</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check" />
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Kids</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Product Rating -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Product rating</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="radio" name="rating" class="accent-main"/>
+            <span class="flex items-center gap-0.5"><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span></span>
+            <span class="text-xs text-gray3">&amp; up</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="radio" name="rating" class="accent-main"/>
+            <span class="flex items-center gap-0.5"><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span></span>
+            <span class="text-xs text-gray3">&amp; up</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="radio" name="rating" class="accent-main"/>
+            <span class="flex items-center gap-0.5"><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span></span>
+            <span class="text-xs text-gray3">&amp; up</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="radio" name="rating" class="accent-main"/>
+            <span class="flex items-center gap-0.5"><span class="star filled" style="width:12px;height:12px"></span><span class="star filled" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span><span class="star empty" style="width:12px;height:12px"></span></span>
+            <span class="text-xs text-gray3">&amp; up</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Measurements -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Measurements</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Slim fit</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Regular fit</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Relaxed fit</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Oversized</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Pattern -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Pattern</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Solid</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Striped</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Printed</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Checked</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Floral</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fabric -->
+      <div class="filter-group p-4">
+        <button class="w-full flex items-center justify-between" onclick="toggleGroup(this.closest('.filter-group'))">
+          <span class="font-semibold text-sm text-black">Fabric Type</span>
+          <svg class="filter-toggle-icon w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div class="filter-body mt-3 space-y-2 collapsed-content" style="max-height:0;overflow:hidden">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Cotton</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Polyester</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Linen</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Wool</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Denim</span>
+          </label>
+<label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" class="custom-check"/>
+            <span class="text-xs sm:text-sm text-charcoal group-hover:text-main transition-colors">Silk</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="p-4 pt-2">
+        <button class="w-full py-2.5 bg-main text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors">Apply Filters</button>
+      </div>
+    </aside>
+
+    <!-- ===== RIGHT CONTENT ===== -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Filter Pills + Sort bar -->
+      <div class="bg-white rounded-xl shadow-sm p-3 sm:p-4 mb-4">
+        <!-- Pills row -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-2 sm:mb-0">
+          <!-- Mobile filter btn -->
+          <button id="filterDrawerBtn" onclick="openFilterDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-main text-main flex-shrink-0 sm:hidden">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            Filters
+          </button>
+          <button class="cat-pill active flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-main bg-main text-white flex-shrink-0" onclick="switchPill(this)">
+            <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain brightness-200"/>
+            Flash products
+          </button>
+          <button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-orange-200 text-main flex-shrink-0" onclick="switchPill(this)">
+            <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain"/>
+            Top-rated products
+          </button>
+          <button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-orange-200 text-main flex-shrink-0" onclick="switchPill(this)">
+            <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain"/>
+            Fast delivery
+          </button>
+          <button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-orange-200 text-main flex-shrink-0" onclick="switchPill(this)">
+            <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain"/>
+            Coupon deals
+          </button>
+          <button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-orange-200 text-main flex-shrink-0" onclick="switchPill(this)">
+            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwACgDASIAAhEBAxEB/8QAGgABAQEAAwEAAAAAAAAAAAAABQAHAgQGCP/EACwQAAAFAwIEBgIDAAAAAAAAAAECAwQRAAUSBhYTFDFBFRchUWFxB6FkscH/xAAYAQEAAwEAAAAAAAAAAAAAAAAFAAIEA//EADIRAAAEAwUGAgsAAAAAAAAAAAECERIAAwQFEyExYRQiMkFRgRViJEJjcXKRkqHB0fD/2gAMAwEAAhEDEQA/APjKqqqpEhXbt525uHkTeGZ4cfIvWcekzE+kxE0VW4wHKeXUBlt3PH+VOUf7WR6YCwDcDbjM/K04Y48njnnIROXaJ/VE0NonnlmGOXLEEzEo5d8Bh607Il0p5RJZuIEMJsgOHEHuBQgw5DkNicpijADAhHoNVaZ+bS6c8Rkhrj4xwEcQEC8AU4795iqtdDVbXILNaIL1/sow2nQ7BUmkOAycw/PQdI8rprRN9vzIX7ZJBuxAwlF05VBNOQ6/I/YBTTWwaLsTpJze9WJXBRE4H5W3JCoBxAZjPp/VEaW1jqKztBtrEUnbKTHFougCpB7m+Y79Ypdrf9GX5yk2vmlE7eqscCC7tyokAoiMTh0jv3+qOqdtvDPW78iKmrsfl2heiCzbogy0vfaOaujcPq7wbvJbzI3cKJo4+XBy9eFjhjPvj+6SdWDRl+cqubHqtO3qrHE4NLikJAKIjMZ9I7d/ujdmreZG0QWNHHjjCX14WOeUe+P7pJ1qDRlidKtrJpNK4KInEnNXFUVAOIDE4dP6qs1ik2NzmgiIjeSu7omOcWkXjZniDWPMrnK/1msxXJV3coI1Vo7UNnaBc33Cds5KQHaC4Kk9i/MdukVVw1Lra+35kDByqg3YgIGBq2SBNOQ6fI/QjVSdEFQEr0hHadP3AtojSDOWkc3zZrzTTouMdj8aapZ6Wubhw8txHRFkhKCgEAVExgYAsiAQIiAD9BXm7m5I8uC7pNsi1KqoJwRRCCJgPYA9q69VdCU0sk404OIyAPaOUytmzKclOYd0oiIYdc8Y3GQ5TzFkMtu4Zfypxn/Kw6ldxXnbm3ueP4ZnnwMSxM5dYmJ9YmJoqsdm0J6V7xVRQPhDIPuMIWxacuuu7sBBAUy8zjxCGgoEVVVVJwLH/9k=" alt="" class="w-3.5 h-3.5 object-contain"/>
+            New in
+          </button>
+          <!-- Sort (desktop) -->
+          <div class="ml-auto hidden sm:flex items-center gap-2 flex-shrink-0">
+            <span class="text-xs text-gray3">Sort:</span>
+            <div class="relative">
+              <select class="sort-select text-xs border border-gray-200 rounded-lg px-3 py-1.5 pr-7 outline-none focus:border-main text-charcoal bg-white">
+                <option>Most relevant</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Newest First</option>
+                <option>Top Rated</option>
+                <option>Best Seller</option>
+              </select>
+              <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray3 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+            </div>
+            <button class="p-1.5 border border-gray-200 rounded-lg hover:border-main transition-colors" title="Sort">
+              <svg class="w-4 h-4 text-gray3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile sort row -->
+        <div class="flex items-center justify-between sm:hidden pt-1 border-t border-gray-100">
+          <span class="text-xs text-gray3">1,240 products</span>
+          <div class="relative">
+            <select class="sort-select text-xs border border-gray-200 rounded-lg px-2 py-1.5 pr-6 outline-none text-charcoal bg-white">
+              <option>Most relevant</option>
+              <option>Price: Low to High</option>
+              <option>Price: High to Low</option>
+              <option>Newest First</option>
+              <option>Top Rated</option>
+            </select>
+            <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray3 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Circles -->
+      <div class="bg-white rounded-xl shadow-sm p-3 sm:p-4 mb-4 overflow-x-auto no-scrollbar">
+        <div class="flex gap-4 sm:gap-6" style="min-width:max-content">
+          <div class="cat-circle flex flex-col items-center gap-1.5 active" onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl border-2 border-main">👗</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Clothing</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">👜</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Accessory</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">👟</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Shoes</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">⚽</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Sports &
+Outdoor</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">💄</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Beauty</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">📱</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Electronic</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">🏠</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Home &
+Furniture</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">🎨</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Hobby</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">🪑</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Home &
+Furniture</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">🤰</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Maternity
+Clothing</span>
+          </div>
+<div class="cat-circle flex flex-col items-center gap-1.5 " onclick="document.querySelectorAll('.cat-circle').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+            <div class="circle-img w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center text-2xl ">🛋️</div>
+            <span class="text-xs text-charcoal text-center leading-tight" style="max-width:64px">Home &
+Furniture</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results count + Active filters -->
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs sm:text-sm text-gray3 hidden sm:block">Showing <span class="font-medium text-charcoal">1,240</span> products in <span class="font-medium text-main">Men's Clothing</span></span>
+          <!-- Active filter tags -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="flex items-center gap-1 bg-main/10 text-main text-xs px-2.5 py-1 rounded-full">
+              T-Shirts <button onclick="this.closest('span').remove()" class="ml-0.5 hover:text-main-dark">✕</button>
+            </span>
+            <span class="flex items-center gap-1 bg-main/10 text-main text-xs px-2.5 py-1 rounded-full">
+              Flash sale <button onclick="this.closest('span').remove()" class="ml-0.5">✕</button>
+            </span>
+            <button class="text-xs text-gray3 hover:text-main transition-colors underline">Clear all</button>
+          </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5">
+          <button class="grid-btn p-1.5 rounded-lg border border-main bg-main/10 text-main" onclick="setGrid(5,this)">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><rect x="0" y="0" width="3" height="3" rx="0.5"/><rect x="4.5" y="0" width="3" height="3" rx="0.5"/><rect x="9" y="0" width="3" height="3" rx="0.5"/><rect x="13.5" y="0" width="3" height="3" rx="0.5"/><rect x="0" y="4.5" width="3" height="3" rx="0.5"/><rect x="4.5" y="4.5" width="3" height="3" rx="0.5"/><rect x="9" y="4.5" width="3" height="3" rx="0.5"/><rect x="13.5" y="4.5" width="3" height="3" rx="0.5"/></svg>
+          </button>
+          <button class="grid-btn p-1.5 rounded-lg border border-gray-200 text-gray3" onclick="setGrid(4,this)">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><rect x="0" y="0" width="4" height="4" rx="0.5"/><rect x="6" y="0" width="4" height="4" rx="0.5"/><rect x="12" y="0" width="4" height="4" rx="0.5"/><rect x="0" y="6" width="4" height="4" rx="0.5"/><rect x="6" y="6" width="4" height="4" rx="0.5"/><rect x="12" y="6" width="4" height="4" rx="0.5"/></svg>
+          </button>
+          <button class="grid-btn p-1.5 rounded-lg border border-gray-200 text-gray3" onclick="setGrid(2,this)">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><rect x="0" y="0" width="7" height="7" rx="0.5"/><rect x="9" y="0" width="7" height="7" rx="0.5"/><rect x="0" y="9" width="7" height="7" rx="0.5"/><rect x="9" y="9" width="7" height="7" rx="0.5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="productsGrid">
+        <div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#f0f0f0,#e2e2e2);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👗
+    <span class="badge badge-off">30% OFF</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Essential Hoodie</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Premium cotton blend</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$89.00</span>
+      <span class="text-xs text-gray3 line-through">$110.00</span> <span class="text-xs text-red-500 font-medium">20% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 24 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e8e0f0,#d8cfe8);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👕
+    <span class="badge badge-new">New In</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Graphic Tee</div>
+    <p class="text-xs text-gray3 mb-2 truncate">100% organic cotton</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$35.00</span>
+      <span class="text-xs text-gray3 line-through">$49.00</span> <span class="text-xs text-red-500 font-medium">28% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 25 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#fff3e0,#ffe0b2);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👖
+    <span class="badge badge-hot">HOT DEAL</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Slim Fit Jeans</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Stretch denim fabric</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$65.00</span>
+      <span class="text-xs text-gray3 line-through">$95.00</span> <span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-red">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+      <span>Only 3 left!</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e0f7fa,#b2ebf2);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🧥
+    <span class="badge badge-sold">70% Sold</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Puffer Jacket</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Water-resistant shell</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$149.00</span>
+      <span class="text-xs text-gray3 line-through">$199.00</span> <span class="text-xs text-red-500 font-medium">25% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 26 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#fce4ec,#f8bbd9);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🎽
+    <span class="badge badge-limited">Limited</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Sports Polo</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Moisture-wicking fabric</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$45.00</span>
+      <span class="text-xs text-gray3 line-through">$59.00</span> <span class="text-xs text-red-500 font-medium">24% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAYFBwEDBAj/xAA3EAAABQMBAwgHCQAAAAAAAAABAgMEBQAGERITIUEHFCIjMVFxgRZHVoWUscMVMlJhkaHB0fD/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUAAf/EACkRAAEDAwQBBAEFAAAAAAAAAAECAxEAITEEBRNBURJhcYHBBjKRodH/2gAMAwEAAhEDEQA/APGVFPFptoiJslzdkjFpSrgXwM26Cw9UQdGoTGDjx/SsenUd7C238NU86xxS1JabKgDEyBf7qsNuZQ2lT7wSVCQIUbdTAi9JFFO/p1Hewtt/DVm628RLWS2uuOi0opcr0WThuiPVH6AmAwBw4VhrHErSHWykExMg3+qx25lbalMPBRSJIhQt3EiLUj0UUVQqTTv6kPf30aSKd/Uh7++jUXb9kXNPMefRsaZRtkQKodQpAOId2oQz49lStK+2wl1Tigkes5MVc1ume1K2UMoKjxpsASe/FLlWVbU9J27yQGfRSxUlzTQpCYxAN0RSAR3D4BVfSTF3GvVGT9uo3cJDg6ZwwIU7RjF5J8jyTFg3O4cq3BgiZA3j1P8At9bc+Jxtv1wUlQ+I/wAruyl5l53jkLCFREzNvua2xV9EuIVIW+dksxchpSdESKQ7U/AwYDs7/wCs0p3bbz625UzF4AHIYNaC5PuLE4GKP8cK67hsi5oFkD2SjTJt9wGUIoU4EEfxaRHHj2VMPF1XnIk2M6OKpmszsEDG3iRPZCOkB7sj8u4KE0WdOtK9KQW1GCBifIjB8jvOcneGo1Ta2tckh1CSoKUDJHYVNyPB6xjEXa14KQsUrEuYmPlWCi23BF0nq0KYxkPIKapdzC3vHRa6VxM7cMxT2SjBXoJpiA51p4EM7vkHZVXUUy9tra3OVs+leZF+owZH5pPT7y821wOgLbiINsGRcQbHqYqz7ov6D+0E0G8BHTxGyBEOfvksqLCUN47wzjx/Ot9r8pbDJ4daKaQLFyU5ecMi42Khi4BTGP38KqmignY9IWuMg/Mn+Yx/Ue1MJ/U+vS/ygj4gY8T+6PuferRiHMJZEdKOFbiaXGd8lsk2CQiZNTI7zKbxAPPgI9uaVLpu9Wai0optFR8UwTW2+xaJ6QMpjGofIe6lmijM7a2hzlWfUvMm3tgQPzS2p3l5xrgaAQ3EQL5Mm5k56mK//9k=" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🧣
+    <span class="badge badge-best">Best Seller</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Cashmere Scarf</div>
+    <p class="text-xs text-gray3 mb-2 truncate">100% pure cashmere</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$79.00</span>
+      <span class="text-xs text-gray3 line-through">$120.00</span> <span class="text-xs text-red-500 font-medium">34% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-red">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+      <span>Only 5 left!</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#fff8e1,#ffecb3);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👔
+    <span class="badge badge-off">25% OFF</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Formal Shirt</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Egyptian cotton poplin</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$55.00</span>
+      <span class="text-xs text-gray3 line-through">$75.00</span> <span class="text-xs text-red-500 font-medium">26% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 27 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#f3e5f5,#e1bee7);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🩱
+    <span class="badge badge-new">New In</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Athletic Top</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Breathable mesh panel</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$39.00</span>
+       
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e3f2fd,#bbdefb);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🧤
+    <span class="badge badge-sold">60% Sold</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Leather Gloves</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Genuine leather lining</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$49.00</span>
+      <span class="text-xs text-gray3 line-through">$70.00</span> <span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-red">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+      <span>Only 2 left!</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#dcedc8,#c5e1a5);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👟
+    <span class="badge badge-hot">HOT DEAL</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Running Sneakers</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Breathable mesh upper</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$99.00</span>
+      <span class="text-xs text-gray3 line-through">$149.00</span> <span class="text-xs text-red-500 font-medium">33% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 25 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#fbe9e7,#ffccbc);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🩲
+    <span class="badge badge-off">40% OFF</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Boxer Briefs Set</div>
+    <p class="text-xs text-gray3 mb-2 truncate">3-pack premium cotton</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$29.00</span>
+      <span class="text-xs text-gray3 line-through">$45.00</span> <span class="text-xs text-red-500 font-medium">35% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Free delivery</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e8eaf6,#c5cae9);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🧦
+    <span class="badge badge-limited">Limited</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Crew Socks 5-pack</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Cushioned sole comfort</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$19.00</span>
+      <span class="text-xs text-gray3 line-through">$29.00</span> <span class="text-xs text-red-500 font-medium">34% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 28 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#f9fbe7,#f0f4c3);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🧢
+    <span class="badge badge-best">Best Seller</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Baseball Cap</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Adjustable strap back</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$25.00</span>
+      <span class="text-xs text-gray3 line-through">$39.00</span> <span class="text-xs text-red-500 font-medium">36% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-red">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(20%) sepia(100%) saturate(600%) hue-rotate(340deg)" />
+      <span>Only 8 left!</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#e0f2f1,#b2dfdb);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    👒
+    <span class="badge badge-new">New In</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Wide Brim Hat</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Natural straw weave</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$55.00</span>
+      <span class="text-xs text-gray3 line-through">$75.00</span> <span class="text-xs text-red-500 font-medium">26% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Delivered by 26 March</span>
+    </div>
+  </div>
+</div>
+<div class="product-card bg-fill rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+  <div class="relative overflow-hidden" style="height:200px;background:linear-gradient(135deg,#fce4ec,#f48fb1);display:flex;align-items:center;justify-content:center;font-size:64px;">
+    🩳
+    <span class="badge badge-off">35% OFF</span>
+    <button class="heart-btn absolute top-2.5 left-2.5 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+      <svg class="w-4 h-4" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+    <button class="card-cart-btn absolute bottom-2.5 right-2.5 bg-white/90 backdrop-blur rounded-xl p-2 transition-all shadow-sm hover:scale-110">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="cart" class="w-4 h-4 object-contain" />
+    </button>
+    <div class="absolute top-2.5 right-2.5 bg-white/90 rounded-full px-1.5 py-0.5 text-xs text-gray-500 font-medium">200g</div>
+  </div>
+  <div class="p-3">
+    <div class="text-sm font-semibold text-black mb-0.5 truncate">Cargo Shorts</div>
+    <p class="text-xs text-gray3 mb-2 truncate">Multi-pocket utility</p>
+    <div class="stars mb-2">
+      <div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star filled"></div><div class="star empty"></div>
+      <span class="text-xs text-gray3 ml-1">4.2 (+850)</span>
+    </div>
+    <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+      <span class="text-base font-bold text-black">$45.00</span>
+      <span class="text-xs text-gray3 line-through">$65.00</span> <span class="text-xs text-red-500 font-medium">30% Off</span>
+    </div>
+    <div class="flex items-center gap-1 text-xs delivery-green">
+      <img src="data:image/png;base64,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" alt="" class="w-3.5 h-3.5 object-contain" style="filter:invert(35%) sepia(80%) saturate(600%) hue-rotate(80deg)" />
+      <span>Free shipping</span>
+    </div>
+  </div>
+</div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-xl shadow-sm p-3 sm:p-4">
+        <span class="text-xs sm:text-sm text-gray3">Showing 15 of 1,240 products</span>
+        <div class="flex items-center gap-1 sm:gap-1.5">
+          <button class="page-btn border border-gray-200 disabled" id="prevBtn" onclick="changePage(-1)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="page-btn border border-main active" onclick="goPage(1,this)">1</button>
+          <button class="page-btn border border-gray-200 text-charcoal" onclick="goPage(2,this)">2</button>
+          <button class="page-btn border border-gray-200 text-charcoal" onclick="goPage(3,this)">3</button>
+          <button class="page-btn border border-gray-200 text-charcoal" onclick="goPage(4,this)">4</button>
+          <span class="text-gray3 text-sm px-1">...</span>
+          <button class="page-btn border border-gray-200 text-charcoal" onclick="goPage(83,this)">83</button>
+          <button class="page-btn border border-main text-main" id="nextBtn" onclick="changePage(1)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="bg-gray1 text-white pt-8 sm:pt-10 pb-0 mt-8">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 pb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
+      <div class="col-span-2 lg:col-span-1">
+        <img src="data:image/png;base64,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" alt="ELORA" class="h-8 sm:h-10 w-auto mb-3"/>
+        <p class="text-xs sm:text-sm text-white/70 mb-3">Connect with ELORA</p>
+        <div class="flex items-center gap-2 mb-4">
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="w-6 h-6 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42C1 8.14 1 11.75 1 11.75s0 3.61.46 5.33a2.78 2.78 0 0 0 1.95 1.96C5.12 19.5 12 19.5 12 19.5s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96c.46-1.72.46-5.33.46-5.33s0-3.61-.47-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#3B3B3B"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+        <p class="text-xs font-semibold mb-2">We accept</p>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-blue-700">VISA</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-red-600">MC</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-blue-500">PayPal</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-gray-700">Apple Pay</div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-green-600">Fawry</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-medium text-sm sm:text-base mb-3">Customer service</h4>
+        <ul class="space-y-2 text-xs sm:text-sm text-white/70">
+          <li><a href="#" class="hover:text-white">Return and refund policy</a></li>
+          <li><a href="#" class="hover:text-white">Intellectual property policy</a></li>
+          <li><a href="#" class="hover:text-white">Shipping info</a></li>
+          <li><a href="#" class="hover:text-white">Report suspicious activity</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-sm sm:text-base mb-3">Policies</h4>
+        <ul class="space-y-2 text-xs sm:text-sm text-white/70">
+          <li><a href="#" class="hover:text-white">Shipping</a></li>
+          <li><a href="#" class="hover:text-white">Payment</a></li>
+          <li><a href="#" class="hover:text-white">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-sm sm:text-base mb-3">Company info</h4>
+        <ul class="space-y-2 text-xs sm:text-sm text-white">
+          <li><a href="#" class="hover:text-main">About ELORA</a></li>
+          <li><a href="#" class="hover:text-main">Contact us</a></li>
+          <li><a href="#" class="hover:text-main">FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div style="background:#5B5B5B" class="py-2.5">
+    <div class="max-w-screen-xl mx-auto px-4 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-white">
+      <a href="#" class="hover:underline">Terms of use</a>
+      <a href="#" class="hover:underline">Privacy policy</a>
+      <a href="#" class="hover:underline">Your privacy choices</a>
+      <a href="#" class="hover:underline">Support</a>
+      <a href="#" class="hover:underline">FAQ</a>
+    </div>
+  </div>
+  <div class="bg-charcoal py-3 text-center text-xs sm:text-sm text-white">Copyright ©2026 ELORA. All Rights Reserved.</div>
+</footer>
+<script src="assets/js/pages/categories.js"></script>
+</body>
+</html>

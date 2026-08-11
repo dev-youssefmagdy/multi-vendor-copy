@@ -1,0 +1,851 @@
+================================================================================
+  LARAVEL PAYMENT GATEWAY STRATEGY PATTERN — INSTALLATION & CONFIGURATION GUIDE
+================================================================================
+  Supports 20 gateways: Stripe, PayPal, Mollie, Razorpay, Flutterwave,
+  Paystack, Authorize.Net, Instamojo, Iyzico, Midtrans, MercadoPago,
+  MyFatoorah, PayTabs, Paytm, Perfect Money, PhonePe, ToyyibPay,
+  Xendit, Yoco, 2Checkout
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+ 1. File Structure
+ 2. Step 1 — Copy Files into Your Project
+ 3. Step 2 — Register the Service Provider
+ 4. Step 3 — Publish & Edit the Config File
+ 5. Step 4 — Add .env Keys
+ 6. Step 5 — Register Payment Routes
+ 7. Step 6 — Usage Examples
+ 8. Step 7 — Add Your Post-Payment Business Logic
+ 9. Per-Gateway Composer Packages & Configuration Notes
+    9.01  Stripe
+    9.02  PayPal
+    9.03  Mollie
+    9.04  Razorpay
+    9.05  Flutterwave
+    9.06  Paystack
+    9.07  Authorize.Net
+    9.08  Instamojo
+    9.09  Iyzico
+    9.10  Midtrans
+    9.11  MercadoPago
+    9.12  MyFatoorah
+    9.13  PayTabs
+    9.14  Paytm
+    9.15  Perfect Money
+    9.16  PhonePe
+    9.17  ToyyibPay
+    9.18  Xendit
+    9.19  Yoco
+    9.20  2Checkout
+10. Adding a Custom Gateway
+11. Security Checklist
+
+
+================================================================================
+1. FILE STRUCTURE
+================================================================================
+
+  Copy the following tree into your Laravel project root:
+
+  app/
+  ├── Http/Controllers/Payment/
+  │   └── UnifiedPaymentController.php
+  │
+  └── PaymentGateway/
+      ├── config/
+      │   └── payment-gateways.php          ← Gateway credentials config
+      ├── routes/
+      │   └── payment.php                   ← Route definitions
+      ├── Contracts/
+      │   └── PaymentGatewayInterface.php   ← Strategy contract
+      ├── DTOs/
+      │   ├── PaymentCharge.php             ← Input value object
+      │   └── PaymentResult.php             ← Output value object
+      ├── Exceptions/
+      │   └── PaymentException.php
+      ├── Facades/
+      │   └── Payment.php                   ← Optional Facade
+      ├── Gateways/
+      │   ├── AbstractPaymentGateway.php    ← Shared base class
+      │   ├── StripeGateway.php
+      │   ├── PayPalGateway.php
+      │   ├── MollieGateway.php
+      │   ├── RazorpayGateway.php
+      │   ├── FlutterwaveGateway.php
+      │   ├── PaystackGateway.php
+      │   ├── AuthorizeNetGateway.php
+      │   ├── InstamojoGateway.php
+      │   ├── IyzicoGateway.php
+      │   ├── MidtransGateway.php
+      │   ├── MercadopagoGateway.php
+      │   ├── MyFatoorahGateway.php
+      │   ├── PaytabsGateway.php
+      │   ├── PaytmGateway.php
+      │   ├── PerfectMoneyGateway.php
+      │   ├── PhonePeGateway.php
+      │   ├── ToyyibpayGateway.php
+      │   ├── XenditGateway.php
+      │   ├── YocoGateway.php
+      │   └── TwoCheckoutGateway.php
+      ├── PaymentManager.php                ← Strategy context / factory
+      └── Providers/
+          └── PaymentGatewayServiceProvider.php
+
+
+================================================================================
+2. STEP 1 — COPY FILES INTO YOUR PROJECT
+================================================================================
+
+  Simply copy the entire app/PaymentGateway/ directory and the two files:
+    • app/Http/Controllers/Payment/UnifiedPaymentController.php
+    • (optionally) app/PaymentGateway/config/payment-gateways.php
+
+  If you prefer a different namespace prefix (e.g. "Modules\Payment"),
+  perform a global search-and-replace:
+    Find:    App\PaymentGateway
+    Replace: Modules\Payment   (or your preferred namespace)
+
+
+================================================================================
+3. STEP 2 — REGISTER THE SERVICE PROVIDER
+================================================================================
+
+  Open  config/app.php  and add to the 'providers' array:
+
+    App\PaymentGateway\Providers\PaymentGatewayServiceProvider::class,
+
+  Optionally register the Facade in 'aliases':
+
+    'Payment' => App\PaymentGateway\Facades\Payment::class,
+
+  Laravel 11+: Add to bootstrap/providers.php instead:
+
+    return [
+        // ...
+        App\PaymentGateway\Providers\PaymentGatewayServiceProvider::class,
+    ];
+
+
+================================================================================
+4. STEP 3 — PUBLISH & EDIT THE CONFIG FILE
+================================================================================
+
+  Run:
+    php artisan vendor:publish --tag=payment-gateways-config
+
+  This copies  app/PaymentGateway/config/payment-gateways.php
+  to           config/payment-gateways.php
+
+  Then edit the 'gateways' section in config/payment-gateways.php and fill in
+  your credentials (or use .env variables — recommended for production).
+
+  To disable a gateway you don't need, remove its entry from 'drivers'.
+
+
+================================================================================
+5. STEP 4 — ADD .env KEYS
+================================================================================
+
+  Copy the relevant lines from the block below into your .env file:
+
+  # ── Default gateway ─────────────────────────────────────────────────────────
+  PAYMENT_GATEWAY_DEFAULT=stripe
+
+  # ── Stripe ──────────────────────────────────────────────────────────────────
+  STRIPE_KEY=pk_test_...
+  STRIPE_SECRET=sk_test_...
+  STRIPE_SANDBOX=true
+
+  # ── PayPal ──────────────────────────────────────────────────────────────────
+  PAYPAL_CLIENT_ID=
+  PAYPAL_CLIENT_SECRET=
+  PAYPAL_SANDBOX=true
+
+  # ── Mollie ──────────────────────────────────────────────────────────────────
+  MOLLIE_KEY=test_...
+  MOLLIE_SANDBOX=true
+
+  # ── Razorpay ─────────────────────────────────────────────────────────────────
+  RAZORPAY_KEY=rzp_test_...
+  RAZORPAY_SECRET=
+  RAZORPAY_SANDBOX=true
+
+  # ── Flutterwave ──────────────────────────────────────────────────────────────
+  FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-...
+  FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-...
+  FLUTTERWAVE_SANDBOX=true
+
+  # ── Paystack ─────────────────────────────────────────────────────────────────
+  PAYSTACK_PUBLIC_KEY=pk_test_...
+  PAYSTACK_SECRET_KEY=sk_test_...
+  PAYSTACK_SANDBOX=true
+
+  # ── Authorize.Net ────────────────────────────────────────────────────────────
+  AUTHNET_LOGIN_ID=
+  AUTHNET_TRANSACTION_KEY=
+  AUTHNET_SANDBOX=true
+
+  # ── Instamojo ────────────────────────────────────────────────────────────────
+  INSTAMOJO_API_KEY=
+  INSTAMOJO_AUTH_TOKEN=
+  INSTAMOJO_SANDBOX=true
+
+  # ── Iyzico ───────────────────────────────────────────────────────────────────
+  IYZICO_API_KEY=
+  IYZICO_SECRET_KEY=
+  IYZICO_SANDBOX=true
+
+  # ── Midtrans ─────────────────────────────────────────────────────────────────
+  MIDTRANS_SERVER_KEY=
+  MIDTRANS_CLIENT_KEY=
+  MIDTRANS_SANDBOX=true
+
+  # ── MercadoPago ──────────────────────────────────────────────────────────────
+  MERCADOPAGO_ACCESS_TOKEN=TEST-...
+  MERCADOPAGO_SANDBOX=true
+
+  # ── MyFatoorah ───────────────────────────────────────────────────────────────
+  MYFATOORAH_TOKEN=
+  MYFATOORAH_CURRENCY=KWD
+  MYFATOORAH_SANDBOX=true
+
+  # ── PayTabs ──────────────────────────────────────────────────────────────────
+  PAYTABS_PROFILE_ID=
+  PAYTABS_SERVER_KEY=
+  PAYTABS_REGION_URL=https://secure.paytabs.sa
+  PAYTABS_CURRENCY=SAR
+  PAYTABS_SANDBOX=true
+
+  # ── Paytm ────────────────────────────────────────────────────────────────────
+  PAYTM_MERCHANT_ID=
+  PAYTM_MERCHANT_KEY=
+  PAYTM_WEBSITE=WEBSTAGING
+  PAYTM_INDUSTRY_TYPE=Retail
+  PAYTM_CHANNEL_ID=WEB
+  PAYTM_SANDBOX=true
+
+  # ── Perfect Money ────────────────────────────────────────────────────────────
+  PERFECT_MONEY_WALLET_ID=
+  PERFECT_MONEY_PAYEE_NAME="My Website"
+  PERFECT_MONEY_SANDBOX=false
+
+  # ── PhonePe ──────────────────────────────────────────────────────────────────
+  PHONEPE_MERCHANT_ID=PGTESTPAYUAT
+  PHONEPE_SALT_KEY=
+  PHONEPE_SALT_INDEX=1
+  PHONEPE_SANDBOX=true
+
+  # ── ToyyibPay ────────────────────────────────────────────────────────────────
+  TOYYIBPAY_SECRET_KEY=
+  TOYYIBPAY_CATEGORY_CODE=
+  TOYYIBPAY_SANDBOX=true
+
+  # ── Xendit ───────────────────────────────────────────────────────────────────
+  XENDIT_SECRET_KEY=xnd_development_...
+  XENDIT_SANDBOX=true
+
+  # ── Yoco ─────────────────────────────────────────────────────────────────────
+  YOCO_SECRET_KEY=sk_test_...
+  YOCO_SANDBOX=true
+
+  # ── 2Checkout ────────────────────────────────────────────────────────────────
+  TWOCHECKOUT_SELLER_ID=
+  TWOCHECKOUT_PRIVATE_KEY=
+  TWOCHECKOUT_SECRET_WORD=
+  TWOCHECKOUT_SANDBOX=true
+
+
+================================================================================
+6. STEP 5 — REGISTER PAYMENT ROUTES
+================================================================================
+
+  In  routes/web.php  add:
+
+    require base_path('app/PaymentGateway/routes/payment.php');
+
+  This registers:
+    POST   /payment/{gateway}/charge    → UnifiedPaymentController@charge
+    GET    /payment/{gateway}/success   → UnifiedPaymentController@success
+    POST   /payment/{gateway}/success   → UnifiedPaymentController@success
+    GET    /payment/{gateway}/cancel    → UnifiedPaymentController@cancel
+    GET    /payment/confirmed           → payments.confirmed view
+    GET    /payment/cancelled           → payments.cancelled view
+
+  Create the terminal views:
+    resources/views/payments/confirmed.blade.php
+    resources/views/payments/cancelled.blade.php
+
+  And the gateway-specific form views:
+    resources/views/payments/razorpay.blade.php
+    resources/views/payments/midtrans.blade.php
+    resources/views/payments/paytm.blade.php
+    resources/views/payments/iyzico.blade.php
+    resources/views/payments/perfect-money.blade.php
+
+
+================================================================================
+7. STEP 6 — USAGE EXAMPLES
+================================================================================
+
+  ── 1. Simple redirect to checkout (e.g. PayPal, Mollie, Paystack) ───────────
+
+    use App\PaymentGateway\DTOs\PaymentCharge;
+    use App\PaymentGateway\PaymentManager;
+
+    public function pay(Request $request, PaymentManager $payment)
+    {
+        $charge = PaymentCharge::fromArray([
+            'amount'      => 99.00,
+            'currency'    => 'USD',
+            'description' => 'Premium Subscription',
+            'success_url' => route('payment.success', 'paypal'),
+            'cancel_url'  => route('payment.cancel',  'paypal'),
+            'email'       => $request->user()->email,
+            'order_id'    => 'ORDER-' . uniqid(),
+        ]);
+
+        $result = $payment->gateway('paypal')->charge($charge);
+
+        if ($result->isRedirect()) {
+            return redirect($result->redirectUrl, 303);
+        }
+
+        return back()->with('error', $result->errorMessage);
+    }
+
+
+  ── 2. Gateway selected by the user from a form ───────────────────────────────
+
+    // Your form has: <select name="gateway"><option value="stripe">Stripe</option>...
+    // POST to: /payment/{gateway}/charge  (the route handles it automatically)
+
+
+  ── 3. Using the Facade ───────────────────────────────────────────────────────
+
+    use App\PaymentGateway\Facades\Payment;
+
+    $result = Payment::gateway('stripe')->charge($charge);
+
+
+  ── 4. Synchronous gateways (Stripe, Authorize.Net) ──────────────────────────
+
+    // These require a token from the JS library on the frontend.
+    // Stripe example: include Stripe.js, generate stripeToken,
+    // then POST stripeToken along with your form to /payment/stripe/charge.
+
+    // Authorize.Net: include Accept.js, generate opaqueDataDescriptor +
+    // opaqueDataValue, then POST them to /payment/authorize_net/charge.
+
+
+================================================================================
+8. STEP 7 — ADD YOUR POST-PAYMENT BUSINESS LOGIC
+================================================================================
+
+  After successful payment verification, UnifiedPaymentController@success
+  has a clearly-marked placeholder block:
+
+    // ──────────────────────────────────────────────────────────────
+    // POST-PAYMENT LOGIC
+    // Replace the block below with your own order fulfilment logic.
+    // ──────────────────────────────────────────────────────────────
+
+  Replace it with anything you need, for example:
+
+    $order = Order::find($originalRequest['order_id']);
+    $order->markAsPaid($transactionId, $gateway);
+    Mail::to($originalRequest['email'])->send(new PaymentReceiptMail($order));
+    return redirect()->route('dashboard')->with('success', 'Payment confirmed!');
+
+  Alternatively, dispatch an event to keep the controller thin:
+
+    event(new PaymentSucceeded($gateway, $transactionId, $originalRequest));
+
+
+================================================================================
+9. PER-GATEWAY COMPOSER PACKAGES & CONFIGURATION NOTES
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+9.01  STRIPE
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require cartalyst/stripe-laravel
+
+  Publish config:
+    php artisan vendor:publish --provider="Cartalyst\Stripe\Laravel\StripeServiceProvider"
+
+  Frontend requirement:
+    • Include Stripe.js (https://js.stripe.com/v3/) in your checkout blade.
+    • Use Stripe Elements or stripe.createToken() to generate stripeToken.
+    • POST stripeToken to /payment/stripe/charge.
+
+  Dashboard:
+    https://dashboard.stripe.com/test/apikeys
+
+  Credentials needed:
+    STRIPE_KEY      (Publishable key — "pk_...")
+    STRIPE_SECRET   (Secret key     — "sk_...")
+
+────────────────────────────────────────────────────────────────────────────────
+9.02  PAYPAL
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require paypal/rest-api-sdk-php
+
+  Setup:
+    1. Create a sandbox/live app at https://developer.paypal.com/developer/applications
+    2. Copy the Client ID and Secret.
+
+  Credentials needed:
+    PAYPAL_CLIENT_ID
+    PAYPAL_CLIENT_SECRET
+
+  Note: The REST SDK uses PayPal's v1 API. For modern PayPal (Orders API v2)
+        consider "srmklive/paypal" instead:
+        composer require srmklive/paypal
+
+────────────────────────────────────────────────────────────────────────────────
+9.03  MOLLIE
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require mollie/laravel-mollie
+
+  Publish config:
+    php artisan vendor:publish --provider="Mollie\Laravel\MollieServiceProvider"
+
+  Add to config/mollie.php (or it reads from config/payment-gateways.php via boot()):
+    'key' => env('MOLLIE_KEY'),
+
+  Dashboard:
+    https://my.mollie.com/dashboard/developers/api-keys
+
+  Credentials needed:
+    MOLLIE_KEY   (test_...) for sandbox, (live_...) for live
+
+  Note: Mollie does not use a sandbox flag — the key itself determines the mode.
+
+────────────────────────────────────────────────────────────────────────────────
+9.04  RAZORPAY
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require razorpay/razorpay
+
+  Frontend requirement:
+    • Include Razorpay Checkout.js in the view returned by charge().
+    • The view resources/views/payments/razorpay.blade.php must embed the
+      Razorpay checkout form using the $data array passed by the gateway.
+
+  Dashboard:
+    https://dashboard.razorpay.com/app/keys
+
+  Credentials needed:
+    RAZORPAY_KEY     (rzp_test_... or rzp_live_...)
+    RAZORPAY_SECRET
+
+────────────────────────────────────────────────────────────────────────────────
+9.05  FLUTTERWAVE
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — the gateway uses Flutterwave's v3 REST API directly.
+
+  Optional SDK:
+    composer require kingflamez/laravelrave
+
+  Dashboard:
+    https://app.flutterwave.com/dashboard/settings/apis
+
+  Credentials needed:
+    FLUTTERWAVE_PUBLIC_KEY   (FLWPUBK_TEST-... or FLWPUBK-...)
+    FLUTTERWAVE_SECRET_KEY   (FLWSECK_TEST-... or FLWSECK-...)
+
+────────────────────────────────────────────────────────────────────────────────
+9.06  PAYSTACK
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses Paystack REST API directly.
+
+  Note: Amount is sent in the smallest currency unit (kobo for NGN, pesewas
+        for GHS). The gateway handles the conversion ×100 automatically.
+
+  Dashboard:
+    https://dashboard.paystack.com/#/settings/developer
+
+  Credentials needed:
+    PAYSTACK_PUBLIC_KEY   (pk_test_... or pk_live_...)
+    PAYSTACK_SECRET_KEY   (sk_test_... or sk_live_...)
+
+────────────────────────────────────────────────────────────────────────────────
+9.07  AUTHORIZE.NET
+────────────────────────────────────────────────────────────────────────────────
+  Packages:
+    composer require league/omnipay
+    composer require academe/omnipay-authorizenetapi
+
+  Frontend requirement:
+    • Include Authorize.Net Accept.js:
+      https://developer.authorize.net/api/reference/features/acceptjs.html
+    • It generates opaqueDataDescriptor and opaqueDataValue.
+    • POST those two values to /payment/authorize_net/charge along with amount.
+
+  Dashboard:
+    https://sandbox.authorize.net/  (sandbox)
+    https://account.authorize.net/  (production)
+
+  Credentials needed:
+    AUTHNET_LOGIN_ID        (API Login ID from "Settings > API Credentials")
+    AUTHNET_TRANSACTION_KEY (Transaction Key)
+
+────────────────────────────────────────────────────────────────────────────────
+9.08  INSTAMOJO
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses Instamojo REST API v1 directly via Http client.
+
+  Dashboard:
+    https://www.instamojo.com/developers/  (live)
+    https://test.instamojo.com/developers/ (sandbox)
+
+  Credentials needed:
+    INSTAMOJO_API_KEY    (from Profile > API & Plugins)
+    INSTAMOJO_AUTH_TOKEN (from Profile > API & Plugins)
+
+  Note: Instamojo's API key + auth token are different from OAuth tokens.
+        Use "X-Api-Key" and "X-Auth-Token" headers (already implemented).
+
+────────────────────────────────────────────────────────────────────────────────
+9.09  IYZICO
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require iyzico/iyzipay-php
+
+  Frontend:
+    The gateway returns a view (payments/iyzico.blade.php) that should render
+    the $form variable — the complete Iyzico checkout HTML form string.
+
+  Dashboard:
+    https://sandbox-merchant.iyzipay.com/  (sandbox)
+    https://merchant.iyzipay.com/          (production)
+
+  Credentials needed:
+    IYZICO_API_KEY
+    IYZICO_SECRET_KEY
+
+  Note: Iyzico works primarily with Turkish Lira (TRY). The currency is
+        hardcoded to TL in the gateway. Update Currency::TL if needed.
+
+  Additional request fields required in your checkout form:
+    identity_number  (Turkish national ID number — required by Iyzico)
+    address
+    city
+    country
+
+────────────────────────────────────────────────────────────────────────────────
+9.10  MIDTRANS
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    composer require midtrans/midtrans-php
+
+  Frontend:
+    The gateway returns a view (payments/midtrans.blade.php) with:
+      $snap_token    — token to initialize Snap.js
+      $client_key    — your Midtrans client key
+      $is_production — boolean
+      $success_url, $cancel_url
+
+    Include Midtrans Snap.js and call window.snap.pay($snap_token, {...}).
+
+  Dashboard:
+    https://dashboard.sandbox.midtrans.com/  (sandbox)
+    https://dashboard.midtrans.com/          (production)
+
+  Credentials needed:
+    MIDTRANS_SERVER_KEY
+    MIDTRANS_CLIENT_KEY
+
+────────────────────────────────────────────────────────────────────────────────
+9.11  MERCADOPAGO
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses MercadoPago REST API v1 directly.
+
+  Optional modern SDK:
+    composer require mercadopago/dx-php
+
+  Dashboard:
+    https://www.mercadopago.com.br/developers/en/docs/getting-started
+
+  Credentials needed:
+    MERCADOPAGO_ACCESS_TOKEN   (TEST-... for sandbox, APP_USR-... for live)
+
+  Note: MercadoPago requires the currency to be supported in the seller's
+        country (e.g. BRL for Brazil, ARS for Argentina). Set 'currency'
+        in your PaymentCharge accordingly.
+
+────────────────────────────────────────────────────────────────────────────────
+9.12  MYFATOORAH
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses MyFatoorah REST API v2 directly via Http client.
+
+  Optional legacy SDK:
+    composer require baselrabia/myfatoorah
+
+  Dashboard:
+    https://demo.myfatoorah.com/  (sandbox — use token from there)
+    https://portal.myfatoorah.com/ (production)
+
+  Sandbox token (fixed for testing):
+    rLtt6JWvbUHDDhsZnfpAhpYk4dxYDQkbcPTyGaKp2TYqQgG7FGZ3Tb5STp3QpZN68ycJh0OaYI...
+    (obtain full token from the MyFatoorah sandbox portal)
+
+  Credentials needed:
+    MYFATOORAH_TOKEN
+    MYFATOORAH_CURRENCY   (e.g. KWD, SAR, AED, BHD, QAR, OMR, JOD, EGP)
+
+────────────────────────────────────────────────────────────────────────────────
+9.13  PAYTABS
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses PayTabs REST API directly.
+
+  Dashboard:
+    https://merchant.paytabs.com/  or the region-specific portal
+
+  Region URLs (set PAYTABS_REGION_URL):
+    UAE:    https://secure.paytabs.com
+    SA:     https://secure.paytabs.sa
+    Egypt:  https://secure-egypt.paytabs.com
+    Jordan: https://secure-jordan.paytabs.com
+    Iraq:   https://secure-iraq.paytabs.com
+    Oman:   https://secure-oman.paytabs.com
+
+  Credentials needed:
+    PAYTABS_PROFILE_ID
+    PAYTABS_SERVER_KEY
+    PAYTABS_REGION_URL
+    PAYTABS_CURRENCY    (e.g. SAR, AED, EGP, USD)
+
+────────────────────────────────────────────────────────────────────────────────
+9.14  PAYTM
+────────────────────────────────────────────────────────────────────────────────
+  Package option A (no SDK — manual checksum function):
+    • Copy Paytm's official PHP checksum file into your project.
+    • Download from: https://github.com/Paytm-Payments/Paytm_Web_Sample_Kit_PHP
+    • The function getChecksumFromArray() must be available.
+
+  Package option B (Laravel wrapper):
+    composer require anandsiddharth/laravel-paytm-wallet
+
+  Frontend:
+    The gateway returns a view (payments/paytm.blade.php) rendering an
+    auto-submit form with paramList and checkSum hidden fields.
+
+  Dashboard:
+    https://developer.paytm.com/
+
+  Credentials needed:
+    PAYTM_MERCHANT_ID
+    PAYTM_MERCHANT_KEY
+    PAYTM_WEBSITE        (WEBSTAGING for sandbox, DEFAULT for production)
+    PAYTM_INDUSTRY_TYPE  (e.g. Retail)
+    PAYTM_CHANNEL_ID     (WEB)
+
+────────────────────────────────────────────────────────────────────────────────
+9.15  PERFECT MONEY
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No Composer package required. Uses a plain HTML form POST.
+
+  Frontend:
+    The gateway returns a view (payments/perfect-money.blade.php).
+    That view should render all $formData values as hidden inputs and
+    auto-submit to $postUrl.
+
+    Example minimal blade:
+      <form id="pmForm" method="POST" action="{{ $postUrl }}">
+          @foreach($formData as $key => $value)
+              <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+          @endforeach
+      </form>
+      <script>document.getElementById('pmForm').submit();</script>
+
+  Account:
+    https://perfectmoney.com/  (no sandbox — test with small amounts)
+
+  Credentials needed:
+    PERFECT_MONEY_WALLET_ID   (e.g. U12345678)
+    PERFECT_MONEY_PAYEE_NAME  (your site/business name)
+
+────────────────────────────────────────────────────────────────────────────────
+9.16  PHONEPE
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses PhonePe PG REST API with SHA256 HMAC signing.
+
+  Dashboard:
+    https://dashboard.phonepe.com/  (production)
+    Sandbox access: register at https://developer.phonepe.com/
+
+  Sandbox merchant ID (fixed):
+    PGTESTPAYUAT
+
+  Credentials needed:
+    PHONEPE_MERCHANT_ID   (PGTESTPAYUAT for sandbox)
+    PHONEPE_SALT_KEY      (from PhonePe developer portal)
+    PHONEPE_SALT_INDEX    (usually 1)
+
+  Note: Amount is in paise (INR subunit). Multiply by 100 (done automatically).
+
+────────────────────────────────────────────────────────────────────────────────
+9.17  TOYYIBPAY
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No Composer SDK required — uses ToyyibPay REST API directly.
+
+  Setup:
+    1. Register at https://toyyibpay.com/
+    2. Create a category, copy the category code.
+    3. Get your User Secret Key from the dashboard.
+
+  Dashboard:
+    https://toyyibpay.com/  (production)
+    https://dev.toyyibpay.com/  (sandbox)
+
+  Credentials needed:
+    TOYYIBPAY_SECRET_KEY     (User Secret Key from dashboard)
+    TOYYIBPAY_CATEGORY_CODE  (Category Code you created)
+
+  Note: Amount is in sen (MYR subunit). Multiply by 100 (done automatically).
+
+────────────────────────────────────────────────────────────────────────────────
+9.18  XENDIT
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses Xendit API v2 with Basic auth (secret_key + ':').
+
+  Dashboard:
+    https://dashboard.xendit.co/settings/developers
+
+  Credentials needed:
+    XENDIT_SECRET_KEY   (xnd_development_... for sandbox, xnd_production_... for live)
+
+  Note: Xendit uses Basic auth where the username is the secret key and the
+        password is empty. This is handled automatically by the gateway.
+
+────────────────────────────────────────────────────────────────────────────────
+9.19  YOCO
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses Yoco Payments REST API.
+
+  Dashboard:
+    https://app.yoco.com/developers
+
+  Credentials needed:
+    YOCO_SECRET_KEY   (sk_test_... for sandbox, sk_live_... for production)
+
+  Note: Currency is ZAR (South African Rand) by default.
+        Amount is in cents (multiply ×100 is handled automatically).
+
+────────────────────────────────────────────────────────────────────────────────
+9.20  2CHECKOUT (VERIFONE)
+────────────────────────────────────────────────────────────────────────────────
+  Package:
+    No SDK required — uses 2Checkout REST API v6 with HMAC-MD5 auth headers.
+
+  Frontend requirement:
+    • Include 2Pay.js:
+      https://www.2checkout.com/documentation/2pay-js/
+    • Use Twocheckout.components.create() to tokenize the card.
+    • POST 2co_token to /payment/2checkout/charge.
+
+  Dashboard:
+    https://sandbox.2checkout.com/  (sandbox)
+    https://app.2checkout.com/      (production)
+
+  IPN (Instant Payment Notification):
+    Configure your IPN URL in the 2Checkout dashboard to point to:
+      POST  /payment/2checkout/success
+    The verify() method will validate the MD5 hash from the IPN.
+
+  Credentials needed:
+    TWOCHECKOUT_SELLER_ID    (your numeric Merchant Code / Seller ID)
+    TWOCHECKOUT_PRIVATE_KEY  (Private Key from API section)
+    TWOCHECKOUT_SECRET_WORD  (Secret Word from Webhooks/IPN section)
+
+
+================================================================================
+10. ADDING A CUSTOM GATEWAY
+================================================================================
+
+  1. Create  app/PaymentGateway/Gateways/MyCustomGateway.php:
+
+     <?php
+     namespace App\PaymentGateway\Gateways;
+
+     use App\PaymentGateway\DTOs\PaymentCharge;
+     use App\PaymentGateway\DTOs\PaymentResult;
+     use Illuminate\Http\Request;
+
+     class MyCustomGateway extends AbstractPaymentGateway
+     {
+         public function getKey(): string { return 'my_gateway'; }
+
+         protected function boot(): void
+         {
+             $this->requireConfig(['api_key']);
+         }
+
+         public function charge(PaymentCharge $charge): PaymentResult
+         {
+             // ... call API, return PaymentResult::redirect($url) or failure
+         }
+
+         public function verify(Request $request): PaymentResult
+         {
+             // ... verify callback, return PaymentResult::success($txId) or failure
+         }
+     }
+
+  2. Register it in config/payment-gateways.php:
+
+     'drivers' => [
+         // ... existing entries ...
+         'my_gateway' => \App\PaymentGateway\Gateways\MyCustomGateway::class,
+     ],
+
+     'gateways' => [
+         // ... existing entries ...
+         'my_gateway' => [
+             'api_key' => env('MY_GATEWAY_API_KEY'),
+             'sandbox' => env('MY_GATEWAY_SANDBOX', true),
+         ],
+     ],
+
+  3. Done — use it via:
+     app(PaymentManager::class)->gateway('my_gateway')->charge($charge);
+
+
+================================================================================
+11. SECURITY CHECKLIST
+================================================================================
+
+  [ ] All credentials come from .env — never hard-code keys in source files.
+  [ ] .env is in .gitignore and never committed to version control.
+  [ ] Run in sandbox/test mode until you have tested every gateway flow.
+  [ ] Validate and sanitize all user-supplied inputs before building PaymentCharge.
+  [ ] Use HTTPS on all routes that handle payments.
+  [ ] Verify callback signatures / hashes server-side (each gateway's verify()).
+  [ ] Do not trust client-side amounts — always use the server-stored amount.
+  [ ] Implement idempotency: check for duplicate transaction IDs before fulfilling.
+  [ ] Enable CSRF protection (routes use 'web' middleware which includes VerifyCsrfToken).
+      If a gateway POSTs to your callback, add the route to $except in VerifyCsrfToken.
+  [ ] Rate-limit the /payment/{gateway}/charge route to prevent abuse.
+  [ ] Log payment events (success, failure, refund) for audit trails.
+  [ ] Use queue jobs for email notifications / order fulfilment to stay responsive.
+
+
+================================================================================
+  END OF INSTRUCTIONS
+================================================================================

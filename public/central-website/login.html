@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommet — Login</title>
+    <meta name="description" content="Sign in to your Ecommet account.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#FF4B2B', 'primary-dark': '#e83a1a' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="./assets/app.css">
+</head>
+
+<body class="font-sans text-gray-800 bg-white antialiased">
+
+    <!-- Simple top bar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="./index.html" class="flex items-center gap-2">
+                    <img src="./assets/image/4ad6eed1943b13bf773152f09ecf0d9ac498c5d3.png" alt="Ecommet" class="h-8 w-auto">
+                </a>
+                <div class="flex items-center gap-4 text-sm text-gray-500">
+                    <span>Don't have an account?</span>
+                    <a href="./pricing.html" class="btn-primary px-5 py-2 text-sm">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN SPLIT LAYOUT -->
+    <main class="min-h-screen flex pt-16">
+        <!-- Left panel (illustration) -->
+        <div
+            class="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-orange-600 items-center justify-center p-16 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2">
+            </div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2">
+            </div>
+            <div class="relative text-white max-w-sm">
+                <h2 class="text-4xl font-extrabold mb-5 leading-tight">Get Started with <span
+                        class="text-yellow-300">Ecommet</span></h2>
+                <p class="text-orange-100 leading-relaxed mb-10">
+                    Set up your account in just a few steps and start building your online store. Join thousands of
+                    successful merchants today.
+                </p>
+                <!-- Feature bullets -->
+                <ul class="space-y-4">
+                    <li class="flex items-center gap-3 text-sm">
+                        <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <span>Launch your store in minutes</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm">
+                        <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <span>No coding knowledge required</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm">
+                        <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <span>Secure payments &amp; data protection</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-sm">
+                        <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <span>24/7 expert support</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right panel (form) -->
+        <div class="flex-1 flex items-center justify-center p-6 sm:p-12">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome back</h1>
+                    <p class="text-gray-500 text-sm">Sign in to your Ecommet account</p>
+                </div>
+
+                <form action="#" method="POST" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                            Email Address <span class="text-primary">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fas fa-envelope text-sm"></i>
+                            </div>
+                            <input type="email" name="email" required autocomplete="email" placeholder="you@example.com"
+                                class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-sm font-semibold text-gray-700">Password <span
+                                    class="text-primary">*</span></label>
+                            <a href="#" class="text-xs text-primary hover:underline font-medium">Forgot password?</a>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fas fa-lock text-sm"></i>
+                            </div>
+                            <input type="password" name="password" id="passwordField" required
+                                autocomplete="current-password" placeholder="••••••••"
+                                class="w-full pl-11 pr-12 py-3.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all">
+                            <button type="button" id="togglePassword"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                                aria-label="Toggle password visibility">
+                                <i class="fas fa-eye text-sm" id="passwordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="rememberMe" name="remember"
+                            class="w-4 h-4 rounded border-gray-300 accent-primary">
+                        <label for="rememberMe" class="text-sm text-gray-600">Remember me for 30 days</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full py-3.5 font-semibold rounded-xl text-base mt-2">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    Don't have an account?
+                    <a href="./pricing.html" class="text-primary font-semibold hover:underline ml-1">Create one for
+                        free</a>
+                </div>
+
+                <!-- Terms note -->
+                <p class="mt-8 text-xs text-center text-gray-400 leading-relaxed">
+                    By signing in, you agree to our
+                    <a href="./terms.html" class="text-primary hover:underline">Terms of Service</a>
+                    and
+                    <a href="./terms.html" class="text-primary hover:underline">Privacy Policy</a>.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="./assets/app.js"></script>
+    <script>
+            // Password visibility toggle (standalone, not in app.js)
+            (function () {
+                var btn = document.getElementById('togglePassword');
+                var field = document.getElementById('passwordField');
+                var icon = document.getElementById('passwordIcon');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    var hidden = field.type === 'password';
+                    field.type = hidden ? 'text' : 'password';
+                    icon.className = hidden ? 'fas fa-eye-slash text-sm' : 'fas fa-eye text-sm';
+                });
+            })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,802 @@
+================================================================================
+  NEXUS — MULTI-VENDOR SAAS PLATFORM
+  Project Inventory & TODO
+  Generated: 2026-04-01
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — INFRASTRUCTURE & CORE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] Laravel 13 project scaffold (PHP 8.3)
+[✅] Stancl Tenancy v3 — multi-tenant, multi-database architecture
+[✅] Livewire v4 — all UI via Livewire components (no traditional controllers)
+[✅] Tailwind CSS v4 — via Vite + @tailwindcss/vite plugin
+[✅] Chart.js v4 — dashboard analytics charts
+[✅] SweetAlert2 — toast notifications and confirmation modals
+[✅] Intervention Image v3 — image processing (4 dimension derivatives)
+[✅] Vite build pipeline with hot reload (app.js, app.css, website.js)
+[✅] Multi-guard authentication (admin guard + tenant guard)
+[✅] Session domain isolation per host (prevents cookie bleed between tenants)
+[✅] Middleware: AdminAuth, TenantPermission, InitializeTenancyByDomainForLivewire
+[✅] Livewire persistent middleware for tenancy initialization
+[✅] bootstrap/app.php — middleware aliases registered
+[✅] Custom PSR-4 autoload: App\Traits\ → app/Helpers/
+[✅] Queue & job infrastructure (SyncTenantSectionsJob on tenant-sync queue)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — DATABASE & MIGRATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Central (shared) database migrations:
+[✅] create_tenants_table          — UUID, stancl tenancy base
+[✅] create_domains_table          — tenant domain mapping
+[✅] create_languages_table        — code, direction (RTL/LTR), is_default, sort_order
+[✅] create_translations_table     — polymorphic, field + value + language_id
+[✅] create_files_table            — key, path, storage_type, morphs
+[✅] create_categories_table       — catalog_id, parent_id, slug, is_featured, sort_order
+[✅] create_variations_tables      — variations + variation_options
+[✅] create_shipping_tables        — shipping_zones + shipping_zone_rates
+[✅] create_packages_table         — title (translated), term, price, trial_days
+[✅] create_products_tables        — products + product_variants + pivot tables
+[✅] update_tenants_table          — name, slug, email, phone, status, catalog_id,
+                                     primary_language_id, package_id, trial_ends_at,
+                                     activated_at, data (JSON)
+[✅] create_central_admin_support  — admins, admin_roles, payment_logs, blog_categories,
+                                     blog_posts, faqs, static_pages, domain_requests,
+                                     invoices, app_settings, templates, payment_gateways,
+                                     maintenance_windows, countries, currencies,
+                                     email_templates
+[✅] add_permissions_to_admin_roles
+[✅] add_catalogs_to_central_and_tenants  — catalogs table + catalog_id FK on categories + tenants
+[✅] add_authentication_columns_to_admins_and_tenants
+[✅] remove_authentication_columns_from_tenants_table
+
+Tenant (per-database) migrations:
+[✅] create_tenant_panel_tables    — languages, currencies, translations, files,
+                                     categories, products, product_variants, customers,
+                                     orders, order_items, order_activities, transactions,
+                                     subscriptions, themes, settings, pages,
+                                     email_templates, coupons, flash_sales, subscribers,
+                                     payment_gateways, product_categories
+[✅] create_tenant_admin_auth_tables — admins, admin_roles (with defaultRoleDefinitions)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — ENUMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Central enums (app/Enums/):
+[✅] ActivationStatus        — active | inactive
+[✅] AppSettingType          — string | boolean | integer | json | secret
+[✅] CategoryStatus          — published | inactive
+[✅] ContentStatus           — draft | active | published | archived
+[✅] DeliveryScope           — all_zones | selected_zones
+[✅] DomainRequestStatus     — pending | connected | removed
+[✅] FileStorageType         — local | s3 | ...
+[✅] FileType                — image | video | document
+[✅] InvoiceStatus           — pending | paid | cancelled
+[✅] LanguageDirection       — ltr | rtl
+[✅] OrderPaymentStatus      — paid | unpaid | pending | refunded
+[✅] OrderShippingStatus     — pending | processing | shipped | delivered
+[✅] OrderStatus             — pending | processing | completed | shipped | delivered
+                               | cancelled | rejected
+[✅] PackageStatus           — active | inactive
+[✅] PackageTerm             — monthly | yearly | lifetime
+[✅] PaymentGatewayMode      — sandbox | live
+[✅] PaymentLogStatus        — pending | paid | failed | refunded
+[✅] ProductStatus           — published | draft | inactive
+[✅] ShippingZoneStatus      — active | inactive
+[✅] TenantStatus            — onboarding | active | suspended | archived
+[✅] VariationStatus         — active | inactive
+[✅] WalletTransactionDirection — credit | debit
+[✅] WalletTransactionStatus    — pending | completed | failed
+
+Tenant enums (app/Enums/Tenant/):
+[✅] CouponType              — fixed | percentage
+[✅] SettingType             — string | number | boolean | json | password | ...
+[✅] SubscriptionGatewayType — central | tenant
+[✅] SubscriptionStatus      — active | expired | cancelled | trial
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — MODELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Central models (app/Models/):
+[✅] AdminRole, AdminUser    — central admin auth + roles
+[✅] AppSetting              — key/value central config
+[✅] BlogCategory, BlogPost  — central blog
+[✅] Catalog                 — translated, linked to categories + tenants
+[✅] Category                — translated, parent_id, catalog_id, is_featured
+[✅] Country                 — name, default language
+[✅] Currency                — name, sign, conversion_rate
+[✅] DomainRequest           — tenant domain requests
+[✅] EmailTemplate           — name, subject, body, status
+[✅] Faq                     — question, answer
+[✅] File                    — key, path, storage_type, morphs (model_type/model_id)
+[✅] Invoice                 — tenant billing invoices
+[✅] Language                — code, direction, is_default, sort_order
+[✅] MaintenanceWindow       — scheduled downtime windows
+[✅] Package                 — translated, term, price, trial_days
+[✅] PaymentGateway          — code, credentials (JSON), mode, status
+[✅] PaymentLog              — tenant subscription payment records
+[✅] Product                 — translated (name/summary/description), sku, delivery_scope,
+                               prices, stock, taxable, files, categories, variations
+[✅] ProductVariant          — price, position, status
+[✅] ShippingZone            — name, iso_code, currency, active
+[✅] ShippingZoneRate        — label, min/max grams, price, active
+[✅] StaticPage              — title, slug, content, status
+[✅] Template                — slug, image, version, author, is_active, is_default
+[✅] Tenant                  — UUID, extends BaseTenant, HasDatabase+HasDomains
+[✅] Translation             — field, value, language_id, translatable (morphs)
+[✅] Variation, VariationOption — translated
+
+Tenant models (app/Models/Tenant/):
+[✅] AdminRole, AdminUser    — tenant-scoped auth + defaultRoleDefinitions()
+[✅] Category                — central_category_id, order_number, active, featured
+[✅] Coupon                  — type (fixed/%), code, value, date range, minimum_spend
+[✅] Currency                — central_currency_id, code, symbol, conversion_rate
+[✅] EmailTemplate           — name, subject, body, is_active
+[✅] File                    — key, path, storage_type, morphs
+[✅] FlashSale               — product_id, discount_percentage, date range, active
+[✅] Language                — central_language_id, code, is_default, is_active
+[✅] Order                   — uuid, customer_id, shipping_address (JSON),
+                               payment_method, status, paid, payment_details (JSON)
+[✅] OrderActivity           — title, description
+[✅] OrderItem               — variant_id, qty, price, sub_total, discount, tax,
+                               weight, shipping_fee
+[✅] Page                    — slug, active, translated (title, body)
+[✅] PaymentGateway          — central_payment_gateway_id, credentials, is_active
+[✅] Product                 — central_product_id, slug, price, active, featured
+[✅] ProductVariant          — central_product_variant_id, real_price, sell_price,
+                               margin_percentage, thumbnail_path, active
+[✅] Setting                 — name, title (translated), value, type, options, group
+[✅] Subscriber              — email
+[✅] Subscription            — package_id, price, status, term, gateway_type,
+                               payment_gateway_id, transaction_id, start/end dates
+[✅] Theme                   — central_theme_id, name, slug, is_active, preview_path
+[✅] Transaction             — uuid, amount, type (debit/credit), morphs, admin_profit
+[✅] Translation             — field, value, language_id, translatable (morphs)
+
+Model concerns/traits:
+[✅] HasTranslations (central) — uses App\Traits\Translator
+[✅] HasTranslations (tenant)  — uses App\Traits\Translator
+[✅] Translator trait          — t(), translationsByLocale(), syncTranslations(),
+                                 translationValue(), __get() magic override
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — SERVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] AdminRoleService         — CRUD for central admin roles
+[✅] AdminUserService         — CRUD for central admins
+[✅] AppSettingService        — get/save central settings
+[✅] BlogCategoryService      — CRUD blog categories
+[✅] BlogPostService          — CRUD blog posts
+[✅] CacheAdminService        — flush main/tenant caches
+[✅] CatalogService           — CRUD catalogs
+[✅] CategoryService          — CRUD central categories
+[✅] DomainRequestService     — approve/reject domain requests
+[✅] EmailTemplateService     — CRUD email templates
+[✅] FaqService               — CRUD FAQs
+[✅] LanguageService          — CRUD languages + lang/ folder management
+[✅] MaintenanceService       — toggle maintenance windows
+[✅] PackageService           — CRUD subscription packages
+[✅] PaymentGatewayService    — toggle gateways, descriptor validation
+[✅] ProductMediaService      — image upload with 4 dimension derivatives
+                               (230×170, 300×200, 500×440, 70×70)
+[✅] ProductService           — CRUD products + media + translations + zones
+[✅] ShippingZoneService      — CRUD zones and rates
+[✅] StaticPageService        — CRUD static pages
+[✅] TemplateService          — activate templates
+[✅] TenantService            — create/update tenant: DB provisioning,
+                               owner admin sync, full catalog sync
+[✅] VariationService         — CRUD variations
+
+[✅] Tenant/TenantContextService       — currentCurrency(), currentLanguage() for storefront
+[✅] Tenant/CentralCatalogTenantSyncService — orchestrator: which tenants/catalogs to sync,
+                                              dispatches SyncTenantSectionsJob
+[✅] Tenant/TenantCatalogSyncService   — executes sync into tenant DB:
+                                         languages, currencies, settings, payment-gateways,
+                                         themes, email-templates, pages, categories, products
+[✅] Tenant/TenantPanelService         — tenant panel helpers
+
+[✅] Admin/TenantAdminAggregateService — aggregate orders/stats from all tenant DBs
+
+Payment strategy pattern (app/Services/Payments/):
+[✅] Contracts/PaymentGatewayStrategy  — interface: charge(), refund(), verify()
+[✅] Strategies/AbstractPaymentGatewayStrategy
+[✅] Strategies/StripePaymentGatewayStrategy
+[✅] Strategies/PaypalPaymentGatewayStrategy
+[✅] Strategies/GenericPaymentGatewayStrategy
+[✅] PaymentGatewayStrategyResolver    — resolves gateway by code
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — REPOSITORIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] AdminRoleRepository, AdminUserRepository
+[✅] AppSettingRepository
+[✅] BlogCategoryRepository, BlogPostRepository
+[✅] CatalogRepository
+[✅] CategoryRepository
+[✅] DashboardRepository        — aggregates stats from all tenant DBs
+[✅] DomainRequestRepository
+[✅] EmailTemplateRepository
+[✅] FaqRepository
+[✅] InvoiceRepository
+[✅] LanguageRepository
+[✅] MaintenanceRepository
+[✅] OrderRepository            — reads orders from all tenant databases
+[✅] PackageRepository
+[✅] PaymentGatewayRepository
+[✅] PaymentLogRepository
+[✅] ProductRepository          — paginate, stats, findForEditor (eager loads all)
+[✅] ShippingZoneRepository
+[✅] StaticPageRepository
+[✅] TemplateRepository
+[✅] TenantRepository           — paginate, stats, findForEditor
+[✅] VariationRepository
+[✅] WalletRepository, WalletTransactionRepository
+
+[✅] Tenant/TenantPanelRepository — paginateProducts, productStats, paginateCategories,
+                                    categoryStats, and more
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — OBSERVERS & SYNC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] CentralCatalogSyncObserver      — on Category/Product/Variation saved/deleted:
+                                        syncs affected tenant databases (catalog-based)
+[✅] CentralSharedTenantSyncObserver — on Language/PaymentGateway/Template/EmailTemplate/
+                                        StaticPage saved/deleted: syncs ALL tenant DBs
+[✅] SyncTenantSectionsJob           — queued job, dispatched to 'tenant-sync' queue,
+                                        calls TenantCatalogSyncService::syncForTenant()
+[✅] SyncTenantDataCommand           — artisan command: sync:tenant-data {--tenant=}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — HELPERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] Translator trait (app/Helpers/Translator.php, namespace App\Traits)
+     — t(), translationsByLocale(), syncTranslations(), translationValue()
+     — language fallback to is_default language
+     — __get() override for transparent property access
+[✅] AdminNavigation  — sections(), href(), groupIsActive(), routeInfo()
+[✅] TenantNavigation — visibleSections(), href(), groupIsActive()
+[✅] SeoHelper        — meta tag helpers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — ROUTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+routes/central.php  (all on central domains via routes/web.php domain group):
+  Public Website:
+  [✅] GET /                     → website.home    (LandingPage)
+  [✅] GET /about                → website.about   (AboutPage)
+  [✅] GET /contact              → website.contact (ContactPage)
+  [✅] GET /register             → website.register (RegisterPage)
+  [✅] GET /blog                 → website.blog    (BlogListPage)
+  [✅] GET /blog/{slug}          → website.blog.show (BlogDetailPage)
+
+  Admin panel (/admin/* with AdminAuth middleware):
+  [✅] GET /admin/               → admin.dashboard
+  [✅] GET /admin/login          → admin.login
+  [✅] POST /admin/logout        → admin.logout
+  [✅] GET /admin/products       → admin.products.index
+  [✅] GET /admin/products/create→ admin.products.create
+  [✅] GET /admin/products/{id}/edit → admin.products.edit
+  [✅] GET /admin/catalogs       → admin.catalogs.index (+create, +edit)
+  [✅] GET /admin/categories     → admin.categories.index (+create, +edit)
+  [✅] GET /admin/variations     → admin.variations.index (+create, +edit)
+  [✅] GET /admin/orders         → admin.orders.index
+  [✅] GET /admin/orders/report  → admin.orders.report
+  [✅] GET /admin/shipping/in-delivery        → admin.shipping.in-delivery
+  [✅] GET /admin/shipping/delivery-charges   → admin.shipping.delivery-charges (+create, +edit)
+  [✅] GET /admin/payment-logs   → admin.payment-logs.index
+  [✅] GET /admin/plans/registered-users      → admin.plans.users (+create, +edit)
+  [✅] GET /admin/plans          → admin.plans.index (+create, +edit)
+  [✅] GET /admin/wallets        → admin.wallets.index
+  [✅] GET /admin/wallet-transactions → admin.wallet-transactions.index
+  [✅] GET /admin/invoices       → admin.invoices.index
+  [✅] GET /admin/blog/categories → admin.blog.categories
+  [✅] GET /admin/blog/posts      → admin.blog.posts
+  [✅] GET /admin/domains/requests → admin.domains.requests
+  [✅] GET /admin/pages          → admin.pages.index
+  [✅] GET /admin/settings/general           → admin.settings.general
+  [✅] GET /admin/settings/templates         → admin.settings.templates
+  [✅] GET /admin/settings/payment-gateways  → admin.settings.payment-gateways
+  [✅] GET /admin/settings/email-templates   → admin.settings.email-templates
+  [✅] GET /admin/settings/email-configuration → admin.settings.email-configuration
+  [✅] GET /admin/settings/languages         → admin.settings.languages (+create, +edit)
+  [✅] GET /admin/settings/maintenance       → admin.settings.maintenance
+  [✅] GET /admin/admins         → admin.admins.index
+  [✅] GET /admin/admins/roles-permissions → admin.admins.roles-permissions
+  [✅] GET /admin/faqs           → admin.faqs.index
+  [✅] GET /admin/cache/tenants  → admin.cache.tenants
+  [✅] GET /admin/cache/main     → admin.cache.main
+
+routes/tenant.php  (all on tenant domains, InitializeTenancyByDomain middleware):
+  [✅] GET /                → redirect to login or dashboard
+  [✅] GET /login           → tenant.login
+  [✅] POST /logout         → tenant.logout
+  [✅] GET /dashboard       → tenant.dashboard
+  [✅] GET /products        → tenant.products.index (+create, +edit)
+  [✅] GET /categories      → tenant.categories.index (+create, +edit)
+  [✅] GET /orders          → tenant.orders.index
+  [✅] GET /customers       → tenant.customers.index
+  [✅] GET /analytics/orders → tenant.analytics.orders
+  [✅] GET /analytics/customer-lifetime-value → tenant.analytics.clv
+  [✅] GET /analytics/shipping → tenant.analytics.shipping
+  [✅] GET /analytics/profitability → tenant.analytics.profitability
+  [✅] GET /finance/wallet  → tenant.finance.wallet
+  [✅] GET /finance/billing → tenant.finance.billing
+  [✅] GET /store/themes    → tenant.store.themes
+  [✅] GET /store/pages     → tenant.store.pages
+  [✅] GET /store/coupons   → tenant.store.coupons
+  [✅] GET /store/flash-sales → tenant.store.flash-sales
+  [✅] GET /settings/subscribers → tenant.settings.subscribers
+  [✅] GET /settings/currencies  → tenant.settings.currencies
+  [✅] GET /settings/languages   → tenant.settings.languages
+  [✅] GET /settings/admins      → tenant.settings.admins
+  [✅] GET /settings/roles-permissions → tenant.settings.roles-permissions
+  [✅] GET /settings/payment-gateways  → tenant.settings.payment-gateways
+  [✅] GET /settings/mail        → tenant.settings.mail
+  [✅] GET /settings/account     → tenant.settings.account
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — ADMIN PANEL LIVEWIRE COMPONENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Base classes:
+[✅] Admin/Base/AdminPage     — abstract, render() calls pageView() + pageData()
+[✅] Admin/Base/ListPage      — generic list template with filters+stats+table
+[✅] Admin/Base/ContentPage   — generic content/form template
+[✅] Admin/Concerns/InteractsWithAdminUi — toast(), confirmAction() dispatchers
+
+Auth:
+[✅] Admin/Auth/LoginPage     — email/password login for admin guard
+
+Dashboard:
+[✅] Admin/Dashboard          — stats (revenue, tenants, orders, products),
+                                 monthly chart series, latest payment logs
+
+Product Management:
+[✅] Admin/Product/ProductsList    — search + category/status/scope filters,
+                                      stats cards, table, delete with confirmation
+[✅] Admin/Product/AddEditProduct  — multilingual tabs (name/summary/description),
+                                      sku, prices, stock, delivery scope, zones,
+                                      categories, variations, image upload
+
+Catalog:
+[✅] Admin/Catalog/CatalogsList    — table + filters + stats
+[✅] Admin/Catalog/AddEditCatalog  — name (translated), slug, status
+
+Category:
+[✅] Admin/Category/CategoriesList — table + filters + stats
+[✅] Admin/Category/AddEditCategory — translated fields, parent, catalog, status,
+                                       is_featured, image upload
+
+Variation:
+[✅] Admin/Variation/VariationsList — modal create/edit/delete (popup actions)
+[✅] Admin/Variation/AddEditVariation
+
+Shipping:
+[✅] Admin/Shipping/DeliveryChargesList — zones table + rates management modal
+[✅] Admin/Shipping/AddEditShippingZone — name, iso_code, currency, active + rates
+
+Orders:
+[✅] Admin/Order/OrdersList          — aggregated from all tenants, filters
+[✅] Admin/Order/OrdersReportPage    — placeholder ready for reporting
+[✅] Admin/Order/InDeliveryOrdersList — in-shipping orders
+
+Plans / Tenants:
+[✅] Admin/Plan/PlansList            — packages table + stats
+[✅] Admin/Plan/AddEditPackage        — icon, title (translated), term, price, status
+[✅] Admin/Plan/RegisteredUsersList   — tenants list, email status toggle, account toggle,
+                                        secret login link
+[✅] Admin/Plan/AddEditTenant         — full tenant form: name, email, password,
+                                         shop_name, phone, catalog, package, domain
+
+Payment:
+[✅] Admin/PaymentLog/PaymentLogsList — subscription payment history
+
+Wallet:
+[✅] Admin/Wallet/WalletsList         — tenant balances
+[✅] Admin/Wallet/TransactionsList    — debit/credit ledger
+[✅] Admin/Wallet/InvoicesList        — billing invoices
+
+Blog:
+[✅] Admin/Blog/BlogCategoriesList    — blog categories management
+[✅] Admin/Blog/BlogPostsList         — blog posts management
+
+Domain:
+[✅] Admin/Domain/DomainRequestsList  — all|pending|connected|removed filters
+
+Pages & FAQ:
+[✅] Admin/Page/StaticPagesList       — static pages management
+[✅] Admin/Faq/FaqsList              — FAQ management
+
+Settings:
+[✅] Admin/Setting/GeneralSettingsPage    — form: app_name, support_email,
+                                            default_currency, default_language,
+                                            marketplace_name
+[✅] Admin/Setting/TemplateControlPage    — templates list + set-active action
+[✅] Admin/Setting/PaymentGatewaysPage    — gateways list + toggle
+[✅] Admin/Setting/EmailTemplatesPage     — email template management
+[✅] Admin/Setting/EmailConfigurationPage — mail driver settings
+[✅] Admin/Setting/LanguagesPage          — languages list + create/edit
+[✅] Admin/Setting/AddEditLanguage        — name, code, direction, is_default +
+                                            creates lang/{code}/ folder
+[✅] Admin/Setting/MaintenanceModePage    — enable/disable maintenance windows
+
+Admins:
+[✅] Admin/Admin/AdminsList          — central admins management
+[✅] Admin/Admin/RolesPermissionsList — role + permission matrix
+
+Cache:
+[✅] Admin/Cache/MainCachePage       — flush main application cache
+[✅] Admin/Cache/TenantsCachePage    — flush per-tenant cache tags
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — TENANT PANEL LIVEWIRE COMPONENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Base classes:
+[✅] Tenant/Base/TenantPage    — abstract base
+[✅] Tenant/Base/ListPage      — generic list template (tenant variant)
+[✅] Tenant/Base/ContentPage   — generic content template (tenant variant)
+[✅] Tenant/Concerns/InteractsWithTenantUi — toast(), confirmAction()
+
+Auth:
+[✅] Tenant/Auth/LoginPage     — email/password login for tenant guard
+
+Dashboard:
+[✅] Tenant/Dashboard          — tenant-scoped stats, charts
+
+Catalog:
+[✅] Tenant/Product/ProductsList    — vendor products, toggleActive, toggleFeatured
+[✅] Tenant/Product/AddEditProduct  — tenant product details, translated fields
+[✅] Tenant/Category/CategoriesList — tenant categories from central sync
+[✅] Tenant/Category/AddEditCategory
+
+Orders & Customers:
+[✅] Tenant/Order/OrdersList   — tenant order list + view
+[✅] Tenant/Customer/CustomersList — list, view, edit, delete + create modal
+
+Analytics:
+[✅] Tenant/Analytics/OrderAnalyticsPage          — charts + stats
+[✅] Tenant/Analytics/CustomerLifetimeValuePage   — table: order count, total, avg, last order
+[✅] Tenant/Analytics/ShippingAnalyticsPage       — shipping charts
+[✅] Tenant/Analytics/ProductProfitabilityPage    — product profit analysis
+
+Finance:
+[✅] Tenant/Finance/WalletPage  — transactions ledger
+[✅] Tenant/Finance/BillingPage — subscriptions + manage/renew plan
+
+Store:
+[✅] Tenant/Store/ThemesPage    — themes list + activate + preview modal
+[✅] Tenant/Store/PagesList     — tenant pages management
+[✅] Tenant/Store/CouponsPage   — coupons: modal add/edit/delete
+[✅] Tenant/Store/FlashSalesPage — flash sales management
+
+Settings:
+[✅] Tenant/Setting/AccountSettingsPage   — tenant profile + change password
+[✅] Tenant/Setting/AdminsList            — tenant admin users
+[✅] Tenant/Setting/RolesPermissionsList  — tenant role/permission matrix
+[✅] Tenant/Setting/LanguagesPage         — tenant active languages + default
+[✅] Tenant/Setting/CurrenciesPage        — currency list + set default
+[✅] Tenant/Setting/PaymentGatewaysPage   — configure tenant gateways
+[✅] Tenant/Setting/MailConfigurationsPage — tenant mail settings
+[✅] Tenant/Setting/SubscribersPage       — newsletter subscribers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — PUBLIC WEBSITE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Layout:
+[✅] layouts/website.blade.php     — sticky nav (logo, links, dark toggle, CTA),
+                                      flash message bar, footer (4-col grid), responsive
+
+Components (Livewire, namespace App\Livewire\Website\):
+[✅] Website/LandingPage      — hero, stats, features (6), how-it-works (3-step),
+                                 plans (from DB), CTA
+[✅] Website/RegisterPage     — 3-step wizard:
+                                 Step 1: name, email, password, confirm
+                                 Step 2: shop_name, phone, catalog selection
+                                 Step 3: package plan selection
+                                 → calls TenantService::save() which:
+                                   1. Creates Tenant record (UUID)
+                                   2. Creates Domain (subdomain auto-generated
+                                      from Str::slug(shop_name))
+                                   3. Provisions tenant database (CreateDatabase job)
+                                   4. Runs tenant migrations (MigrateDatabase job)
+                                   5. Syncs owner admin (TenantAdminRole defaults)
+                                   6. Syncs all sections: languages, currencies,
+                                      settings, payment-gateways, themes,
+                                      email-templates, pages, categories, products
+                                 → Shows success page with tenant dashboard URL
+                                 → Domain uniqueness guard (slug + counter suffix)
+[✅] Website/BlogListPage     — published posts grid, category filter pills,
+                                 search, pagination (9 per page)
+[✅] Website/BlogDetailPage   — full post content (HTML safe), breadcrumb,
+                                 category badge, cover image, related posts
+[✅] Website/AboutPage        — mission, stats grid, values, tech stack, CTA
+[✅] Website/ContactPage      — contact form (name, email, subject, message),
+                                 sends to support_email from settings, success state
+
+JavaScript:
+[✅] resources/js/website.js  — dark/light theme (localStorage), mobile nav toggle,
+                                 sticky nav shadow on scroll, livewire:navigated hook
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — LAYOUTS & VIEWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] layouts/app.blade.php          — admin panel layout
+[✅] layouts/app/sidebar.blade.php  — admin sidebar (icons, nav groups, user info)
+[✅] layouts/app/header.blade.php   — admin top bar
+[✅] layouts/app/icon.blade.php     — SVG icon switcher (16 icons)
+[✅] layouts/tenant.blade.php       — tenant panel layout
+[✅] layouts/tenant/sidebar.blade.php
+[✅] layouts/tenant/header.blade.php
+[✅] layouts/tenant/icon.blade.php
+[✅] layouts/auth.blade.php         — login/auth layout
+[✅] layouts/website.blade.php      — public website layout (NEW)
+
+Shared Blade components (resources/views/components/):
+[✅] badge.blade.php, btn.blade.php, card.blade.php, card-collapse.blade.php
+[✅] dropzone.blade.php, input.blade.php, modal.blade.php
+[✅] select.blade.php, table.blade.php
+
+Admin views (resources/views/livewire/admin/):
+[✅] pages/list-page.blade.php       — generic list (filters + stats + table + modal)
+[✅] pages/content-page.blade.php    — generic content (cards + form + table)
+[✅] dashboard.blade.php
+[✅] product/products-list.blade.php, add-edit-product.blade.php
+[✅] catalog/catalogs-list.blade.php, add-edit-catalog.blade.php
+[✅] category/categories-list.blade.php, add-edit-category.blade.php
+[✅] variation/variations-list.blade.php, add-edit-variation.blade.php
+[✅] shipping/delivery-charges-list.blade.php, add-edit-shipping-zone.blade.php
+[✅] plan/plans-list.blade.php, add-edit-package.blade.php
+[✅] plan/registered-users-list.blade.php, add-edit-tenant.blade.php
+[✅] setting/languages-page.blade.php, add-edit-language.blade.php
+[✅] auth/panel-login.blade.php
+
+Website views (resources/views/livewire/website/):          ← NEW
+[✅] landing.blade.php
+[✅] register.blade.php
+[✅] blog-list.blade.php
+[✅] blog-detail.blade.php
+[✅] about.blade.php
+[✅] contact.blade.php
+
+Tenant views (resources/views/livewire/tenant/):
+[✅] pages/list-page.blade.php, pages/content-page.blade.php
+[✅] dashboard/index.blade.php
+[✅] product/add-edit-product.blade.php
+[✅] category/add-edit-category.blade.php
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✅  COMPLETED — BUG FIXES (this session)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[✅] FIXED: Admin sidebar `@include('layouts::app.icon')` → `@include('layouts.app.icon')`
+     — package-namespace syntax would throw View not found on every admin page load
+
+[✅] FIXED: Dashboard payment badge `$payment->status === 'paid'` (always false)
+     → `$payment->status->value === 'paid'` (correct enum comparison)
+
+[✅] FIXED: ProductsList::deleteProduct() unnecessary double-query via findForEditor
+     → replaced with Product::query()->findOrFail($productId)->delete()
+
+[✅] FIXED: Product::$translated had orphan 'title' key never saved by the form
+     → removed 'title', now ['name', 'summary', 'description'] only
+
+[✅] FIXED: Admin sidebar hardcoded "Alex Morgan" user name
+     → replaced with auth()->guard('admin')->user()?->name and role name
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔲  PENDING — HIGH PRIORITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Customer-facing storefront (tenant frontend website)
+    — product listing, product detail, cart, checkout, account
+    — uses TenantContextService for language/currency detection
+    — powered by tenant database (isolated)
+
+[ ] Checkout & payment flow
+    — PaymentGatewayStrategyResolver integrated into checkout
+    — handle tenant-gateway vs central-gateway split
+    — profit calculation: tenant_price - central_cost_price = owner profit
+    — write Transaction records (debit/credit) on order completion
+
+[ ] Order view + invoice page (admin + tenant)
+    — /admin/orders/{uuid} detail view
+    — /admin/orders/{uuid}/invoice PDF generation
+    — /orders/{uuid} tenant order detail
+
+[ ] Email notification system
+    — fire emails on: registration, order placed, order status change,
+      subscription payment, tenant activation
+    — uses EmailTemplate model (DB-driven, translatable subject + body)
+    — tenant email configuration (mail settings from Setting model)
+
+[ ] Domain requests workflow
+    — tenant submits custom domain via DomainRequestsList
+    — admin approves → Domain record created → DNS instructions email
+
+[ ] Real-time queue worker for SyncTenantSectionsJob
+    — set shouldBeQueued(true) in TenancyServiceProvider for production
+    — configure QUEUE_CONNECTION=redis or database in .env
+
+[ ] PDF invoice generation
+    — Laravel Dompdf or Browsershot for invoice/order PDFs
+    — accessible from InvoicesList (admin) and BillingPage (tenant)
+
+[ ] Search indexing (optional)
+    — Meilisearch or TNTSearch for fast product/order search
+    — especially useful for central OrderRepository across all tenant DBs
+
+[ ] Rate limiting on RegisterPage
+    — throttle registrations per IP to prevent abuse
+
+[ ] Blog admin views (AddEditPost, AddEditBlogCategory)
+    — currently using generic content-page template
+    — needs dedicated views with Summernote editor for post content
+
+[ ] Static pages admin view (AddEditStaticPage)
+    — Summernote editor integration
+
+[ ] FAQ admin modal (add/edit inline)
+    — list-page modal for quick FAQ CRUD
+
+[ ] Admin Orders view detail page
+    — dedicated view: order_number, items table, customer info,
+      activity log, status change actions with confirmation
+
+[ ] Tenant Orders view detail page
+    — /orders/{uuid}: items, customer, shipping, payment details,
+      activity timeline, status change (with SweetAlert confirmation)
+
+[ ] Flash sale & coupon validation on checkout
+    — apply discount codes at checkout, check date/min_spend rules
+
+[ ] Tenant subscriber export (CSV)
+    — export subscribers list from SubscribersPage
+
+[ ] Wallet payout system
+    — admin can initiate payout to tenant (debit central, credit tenant)
+    — Transaction records on both sides
+
+[ ] Maintenance mode middleware
+    — check MaintenanceWindow model and return 503 if active
+    — exclude admin panel from maintenance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔲  PENDING — MEDIUM PRIORITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Analytics page implementations (currently placeholder)
+    — OrderAnalyticsPage: revenue/order charts by day/week/month
+    — ShippingAnalyticsPage: zone breakdown, average delivery time
+    — ProductProfitabilityPage: margin per product/variant table
+
+[ ] Customer Lifetime Value (CLV) table
+    — join orders + order_items per customer
+    — columns: order count, total spend, avg order value, last order date
+
+[ ] Language file management (LanguageService)
+    — AddEditLanguage creates lang/{code}/ folder
+    — Language details page: list translation keys, edit values inline
+
+[ ] Currency conversion display
+    — TenantContextService.currentCurrency() feeds a JS converter
+    — prices shown in selected currency (display only, charge in USD)
+
+[ ] Import/Export for products
+    — CSV import for bulk product creation (central admin)
+    — CSV export from ProductsList
+
+[ ] Tenant "secret login" from RegisteredUsersList
+    — admin clicks "Login as tenant" → temporary signed URL → auto-login
+      as tenant owner in tenant dashboard
+
+[ ] Two-factor auth (admin panel)
+    — TOTP via pragmarx/google2fa or laravel-fortify
+
+[ ] API endpoints (optional, for mobile or headless)
+    — RESTful API protected by Sanctum
+    — endpoints: /api/products, /api/orders, /api/cart
+
+[ ] Webhook system
+    — outgoing webhooks for: order.created, order.shipped, payment.received
+    — configurable per tenant (webhook URL + secret)
+
+[ ] Multi-image product upload with sorting
+    — drag-and-drop reorder on product images
+    — currently only primary image is handled; extend to gallery
+
+[ ] Video support for products
+    — FileType::Video support in ProductMediaService
+    — video player preview in product form
+
+[ ] Blog: rich editor integration
+    — Summernote (already referenced in spec) for blog post content
+    — image upload within editor
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  🔲  PENDING — LOW PRIORITY / FUTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Mobile app (React Native / Flutter) using the API layer
+[ ] Affiliate system (referral codes, commission tracking)
+[ ] Advanced coupon rules (per-product, per-category, per-user)
+[ ] Subscription dunning (retry failed payments, grace period)
+[ ] Vendor review & rating system (customers rate stores)
+[ ] Internal messaging (admin ↔ tenant)
+[ ] Audit log (who changed what, when — central admin actions)
+[ ] GDPR tools: data export, account deletion for customers
+[ ] Sitemap generation per tenant storefront
+[ ] Google Shopping feed per tenant
+[ ] Multi-warehouse / multi-location stock
+[ ] Barcode / QR generation for products
+
+================================================================================
+  TECH STACK SUMMARY
+================================================================================
+
+Backend:  Laravel 13 · PHP 8.3 · MySQL (multi-DB via Stancl Tenancy)
+Frontend: Livewire 4 · Tailwind CSS 4 · Chart.js 4 · SweetAlert2 11
+Build:    Vite 8 + laravel-vite-plugin + @tailwindcss/vite
+Images:   Intervention Image 3 (4 auto-derived dimensions)
+Auth:     Multi-guard (admin + tenant), session-based, no Sanctum/Jetstream
+Design:   Repository + Service + Strategy (payments) patterns
+i18n:     DB-driven translations, RTL support, locale-aware storefront
+Queue:    SyncTenantSectionsJob → 'tenant-sync' queue (database or redis)
+
+================================================================================
+
+php artisan currencies:update-rates -> as cron job for currency conversion updates
+
+
+
+# Queue the entire 341-page import (one job per page, chained):
+php artisan neozena:import
+
+# Queue a single page only:
+php artisan neozena:import --page=10 --only-page
+
+# Queue a single product:
+php artisan neozena:import --product=5288
+
+# Run synchronously (debug / small batches):
+php artisan neozena:import --product=5288 --sync
+
+
+php artisan queue:work
+php artisan queue:work --queue=tenant-sync
+# Process the queue:
+php artisan queue:work --queue=neozena-import
+php artisan queue:work --queue=translations
+
+php artisan db:seed --class=TestPreviewTenantSeeder
+
+php artisan db:seed --class=WorldCitiesSeeder
+
+php artisan neozena:import-files
+
+post_max_size => 80M => 80M
+upload_max_filesize => 20M => 20M
+
+
+pa db:seed --class=EmailTemplateTranslationSeeder
+php artisan db:seed --class=CentralEmailTemplateSeeder
+
+pa db:seed --class=SettingsSeeder
+
+Remove All Payment Gateways
+
+pa db:seed --class=WorldCountriesSeeder
+----------------------------------------------------
+
+php artisan db:seed --class=EmailTemplateTranslationSeeder

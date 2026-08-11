@@ -1,0 +1,55 @@
+<?php
+
+use App\Enums\ShippingZoneStatus;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('shipping_zones', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('code');
+            $table->string('currency_code')->default('USD');
+            $table->string('status')->default(ShippingZoneStatus::Active->value);
+            $table->timestamps();
+        });
+
+        Schema::create('shipping_zone_rates', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('shipping_zone_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->decimal('min_weight', 10, 2)->nullable();
+            $table->decimal('max_weight', 10, 2)->nullable();
+            $table->decimal('price', 10, 2)->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+
+        DB::table('shipping_zones')->insert([
+            [
+                'name' => 'Local Delivery',
+                'code' => 'local',
+                'status' => ShippingZoneStatus::Active->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'International',
+                'code' => 'international',
+                'status' => ShippingZoneStatus::Active->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('shipping_zone_rates');
+        Schema::dropIfExists('shipping_zones');
+    }
+};

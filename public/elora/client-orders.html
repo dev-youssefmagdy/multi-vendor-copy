@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My Orders — ELORA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/main.css"/>
+
+</head>
+<body data-page="client-orders" class="bg-[#F9F9F9] text-[#171717]">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<header class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="bg-[#242424] overflow-hidden py-1.5">
+    <div class="marquee text-white text-xs">
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+      <span class="px-8">🚚 Free shipping on orders over $50 &nbsp;|&nbsp; 🎉 Ramadan Sale — Up to 70% OFF &nbsp;|&nbsp; 🔥 Flash deals every hour &nbsp;|&nbsp; ✅ Secure Payments &nbsp;|&nbsp; 📦 Easy Returns &nbsp;|&nbsp;</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 sm:gap-4 px-3 sm:px-6 lg:px-10 py-2.5 bg-white">
+    <button class="flex flex-col gap-1 p-1.5 cursor-pointer flex-shrink-0" onclick="openMenu()">
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+      <span class="block w-5 h-0.5 bg-charcoal rounded"></span>
+    </button>
+    <a href="elora-homepage-v2.html" class="flex-shrink-0">
+      <img src="data:image/png;base64,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" alt="ELORA" class="h-7 sm:h-9 lg:h-10 w-auto"/>
+    </a>
+    <div class="flex-1 min-w-0 flex items-center bg-[#F6F5F5] rounded-full px-3 sm:px-5 py-2 gap-2">
+      <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search..." class="bg-transparent flex-1 min-w-0 text-sm placeholder-gray-400 outline-none"/>
+      <button class="bg-main text-white text-xs font-medium px-3 py-1 rounded-full flex-shrink-0">Search</button>
+    </div>
+    <div class="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+      <div class="hidden sm:flex items-center gap-1 cursor-pointer">
+        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAyAFADASIAAhEBAxEB/8QAGgABAQEBAAMAAAAAAAAAAAAAAAMGBwIEBf/EADIQAAEDAwIFAgQEBwAAAAAAAAIBAwQABREGEiExMnSzE0EHIlFxFBVh0jRGUmKBhZH/xAAZAQEAAwEBAAAAAAAAAAAAAAAAAQIDBAf/xAApEQACAQMDAwIHAQAAAAAAAAAAAQIEETEzcbEDEqEhURMUUoGRwdHw/9oADAMBAAIRAxEAPwDlM3rZ7ZjxDUKvN62e2Y8Q1CuCWWec1WvPd8ilbXQOh11IwT777rDaqIgTY7lJS3oiYx7KHFc+6fWvO76Lt9rmWn8Rcn1jSmDkSk9Pa4yIihbUReosLjlzRV4JTteQqbqOKnb0MPSt7bvh48cMHJSzHXnG33UaitZUAa2rlc81MSyKe+R+tWvmidPxohTLfepTwN3Fbc+04IIbbgoaqXPCjgEVOXVjiorU9rJ+V6lr2OeUrpTXw9s56xhWZb3JCHKZ/ilYwgPfiCa2F7Ju2EiLx44z718nVWkLdaLVPkMXJ96TEOCJMm1tx67JGWfsQ4SnaxKl6kVd8/cxdXhdbvbveIqhV4XW7273iKojlEU2tDdcib1s9sx4hqFXm9bPbMeIahSWWKrXnu+TffDMr4kSV+XvOAHoPAKFMVkS3ogkI5JAHOBVVLntRE44rd64biXJ+1w4Wm/Wu8pt19PVnOObci2JKrnBPTwhLuX5V2FhVRUWuMWi/wB7tCj+V3abDQd2BaeIRTdjdwzjjtH/AIn0qoan1EE1ZqXy4LJJxHCdKQSkZJyUlVfm/wA5qyl6WOjp1UI9Psd/Hg7LZ7PbLgxAKa45AhgZNmEEcsPqDYEjqrx2NoaSBR3aqYDCcqz2tLjYX5F1agybQ9BuMmKJtWyK6AMkgPCJpuAdx5VCyKYVEVPeufsat1MxejvLF9ntXBwdhvg8qKQf0Ljht/t5fpXqMXm6MyG5Dc131mhUWjVcq0irn5FXpXKrxTCpRyRadZBxsl/se/g67PtU9+/QZoDEFG5LwbX5YM5VZRuio7lRCVFUix7IK+6pXwtZ3SJfNNXy7k845LN2PGfcJF2vONmSNmK+6+khZ+yL71z07vdHG4bblwkmEIlOKJOKqMkpblUUXlleNSkzpsmO3HflPOMtKRNtkaqIqS5JUTllfdfejkUnVJppLP8ALHrVeF1u9u94iqFXhdbvbveIqrHKMKbWhuuRN62e2Y8Q1CrzetntmPENQpLLFVrz3fIrUwrBpV9gDd11GjGSIpNuW19VFfpkUVKy1KIzhJRyr/n9M2BaZ0mnL4iW9f8AXSf21M9PaUH+f4Rfa2yf21k6UuvYv8WP0Lz/AE28bR+mpbEdY2vbUBuKomsgDbRFzwXBIiin6rWKMdpkO5CwuMpyWvGlGys5Rla0bCrwut3t3vEVQq8Lrd7d7xFSOUXptaG65E3rZ7ZjxDUKUpLLFVrz3fIpSlQYClKUApSlAKvC63e3e8RUpUxyjem1obrk/9k=" alt="SA" class="w-6 h-4 object-cover rounded-sm"/>
+        <div class="text-xs hidden md:block leading-tight"><div class="font-light">En/</div><div class="font-medium">SAR</div></div>
+        <svg class="w-3 h-3 hidden md:block text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12"><path d="m2 4 4 4 4-4"/></svg>
+      </div>
+      <a href="elora-favorite.html" class="hidden sm:flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="text-xs hidden lg:block">Favorite</span>
+      </a>
+      <a href="elora-cart.html" class="flex flex-col items-center text-elblack hover:text-main transition-colors">
+        <div class="relative">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAwADADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAQFAwEI/8QALBAAAgICAAQDBwUAAAAAAAAAAQIABAMRBRMxQRIhkRQVIlRkcdEyQoGh8P/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDxzUrPZZ1QgFV3o95hGuF5eVexk9GPhP8AMbt56uCw2JqKEjv5ef8AUCVCUPbafyCeo/EPbafyCeo/ECfCUBcpE6NFQO+tTLiddMGZeX+h18QB7QFQSDsdRKHFwMiYLQ/euj9/9uTpRqNisUTUyZBjdW2hMCdCUPdn1WH1h7s+qw+sBSpj51nHj7FvP7d5vxfJzLrAdE+ERqthw0C2fLnR2A0qrJTsWYs3mSdmByNcOrLZysHYhFG211is2q2MlbLzMet9CD0IgMXK2AVVs1mYoTohpnw6stnKwdiEUbbXWFy7ksqEKqiA78KzOrYyVsvMx630IPQiAxcrYBVWzWZihOiGiMauXcllQhVUQHfhWKwP/9k=" alt="Cart" class="w-5 h-5 sm:w-6 sm:h-6 object-contain"/>
+          <span class="absolute -top-1.5 -right-1.5 bg-main text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">0</span>
+        </div>
+        <span class="text-xs hidden lg:block">Cart</span>
+      </a>
+      <!-- Account — active since we're in profile -->
+      <a href="#" class="flex items-center gap-1.5 text-main">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="text-xs leading-tight hidden lg:block"><div class="text-main">Welcome</div><div class="font-semibold text-main">Sign in / Register</div></div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ SIDE MENU ═══════ -->
+<div class="smenu-overlay" onclick="closeMenu()"></div>
+<div class="smenu-panel">
+  <div class="flex items-center justify-between p-4 border-b border-gray-100">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABMAN8DASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQCAQMI/8QAOhAAAQMDAQUFBgQEBwAAAAAAAQACAwQFEQYSIUFRgQcTMWGRFBUycaGxIkJywSRS0fAjM0NUYoKS/8QAGgEBAQEAAwEAAAAAAAAAAAAAAAUGAQMEAv/EAC0RAAEDAwIDBwUBAQAAAAAAAAABAgMEBREhMRNBURJxgbHB4fAGFDKh0UJh/9oADAMBAAIRAxEAPwD+MkREAREQBERAEREAXZaLbWXatZR0MJlld6NHMngFyNBc4NaCSTgAcVtOi7LDYLO1rw0VMjQ+okPPlnkP6lTrlXJSR5TVy7FezWtbhNhVw1N19PE4tO6AtNDG2W4j2+pxkh26Np8hx6+gVgdW2K1YiNRbqLG4M2mR46LNtaa1q6+eSitczoKNpLTIw4dL554D+zyVMJJOSckqUy01FWnEqpFTPL5ohekv1Hb14VFEi459fVe/JvoqbFeAYhLbq/I3t2mSfTeq1qTs/tlZG6W1fwVR4hmSYnH5eI6eiydpLXBzSQQcgjgr1ojW9TT1EdBeJnTU7yGsnecujP8AyPEeZ8Fw+11NEnEppFXHL5opzFfKO5Lwq2JEzz990Kbc6Crtta+jrYXRTMO9p4+YPEea5lsuvLEy+WlzomD22AF0Lh4u5s6/dY0q9urkrIu1sqboZ+72x1vm7OctXZfnNAiIqBJCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgJ/QFI2r1VSB4yyImUj9I3fXCvvaPcX0WmZWRO2X1LhDkcAQS76Ajqqb2XuDdRvz4mmcB6tU52r7TrXRkfCJyD89k4/dZ6sbxLlG12yY9VNdb38GzyvZuufRDOURFoTIhERAbFoG5PuGmad0rtqSEmF557Ph9CFm+tqNtFqetiYAGOf3jQPD8Q2vuSrh2V7TbFUE/Cak4/wDLVW+0twdqd2MZELAfqs9Qt4VwkY3bU110fxrTC9+6Y8lQrKIi0JkQiIgCIiAIiIDvttnulyjfJQUM9Qxhw5zG5APJclRDLTzyQTxujljcWvY4YLSOC27Q1t90aapaZzdmZ472XntO346DA6Ki9rtr9nvMV0jbiOrbh/62jH1GPQqJS3dJ6tYcaa4Xrg0td9PrS0DanK9rTtJ0z/NCjoiK2ZoIiIAiIgCIiAIiICV0nWig1BSzvOGF2w88g7dnpnPRaFrOhdcrBNDG0uljIljA4kcPTKyhaLou/NrqRtHUv/iom4GT/mNHH581GucLmubUM3aaOyVLHMfRybO2+eRnSK86n0r7TM+stmw2R298J3AnmDw+Sp9Tb66meWz0k0ZHNhx6qhT1cU7ctXXoSaugmpXqjk068jmX1oLiAASTuAHFdNNbq+peGwUc7yeTDj18Fc9K6YFFK2tuGy+du+OMbww8zzK4qKyOBuVXXoc0dvmqnojUwnXkT+laI2yxU9NIMSY25PJx346eHRZpqWtFwvtXVtOWOfhh5tG4fQK4a3vzaWlfb6aQGolGJCPyNP7n++Cz5eG1wOy6ofu4qXyqYjWUkezN/JPcIiKwZ0IiIAiIgCndCWwXTUlPE9u1DEe+l+TfAdTgKCWn9l1u9ks8lfIMSVbvw+TG7h9c/ReC5VHAp3Km66J4lWy0n3VY1q7Jqvcn9XQnNXagZY6alkOC6adrSOTAcvPpu6r5rWgbeNM1EUeHyNb30JHEjfu+YyOqzrtGufvDUL4mOzDSjum7921+Y+u7orv2e3Q1+nYo3uzLTHuXfIfCfT7LPSUTqWniqG/ki5Xx2NdFc2V1XNSP/FUwnhov98DI0U1ra2+7NRVETG4ikPexfpdw6HI6KFWsikSViPbspgZ4XQSOjdui4CIi7DqCIiAIiIAiIgC9RvfHI2SNxY9py1wOCCvKIEXBbrTrJ7GiO5RGTH+rHjJ+Y8PRT0Oo7PK3IrWN8ngt+6zNFOltcD1ymncWIL3UxJhcO7zS59R2eJpJrWuPJgLs+igLxrCWVjorbG6IHcZX/F0HBVNEitkEa5XXvE97qZU7KYb3HqR7pHue9xc5xySTkkryiKiRwiIgCIiAIiIDottJJXV8FJF8crw0eXMrXLpVw2TT8kkYAZTQhkTTzxho9cKl9mlDt1c9yeN0Q7uP9R8T0H3V1r46Kqi7isbFIzO1sPO7PNZu6zNfUNYurW7mysVM6KldK3Rz9s/r9mOPc573Pe4uc45JPiSrL2cXL2K++zPdiKqbsf8AYb2/uOquHufT/wDsaP0C9R2qwxyNkZR0jXtILSMZBC7p7nFNEsasXU89LZZ6eZsqSJlF/wCkf2m2/wBqtUdexuZKV2HY/kd/Q49Ss2W01DYqulkgfh8crSx2N+Qdyx2vpn0dbNSyfFE8tPnjiuyzTZjWJeXkdP1HTI2ZJ27O3709vI/BERWjNhERAEREAREQBERAEREAREQBERAEREAREQBfQCTgDJK+Lv0+1r7zTBwDgH7WDzAyPsvl7uy1XdD7jZ23o3qpo1ipmWqywwPIaWM25Sf5jvPp+yzW8Vjrhc6irdn/ABH5aDwb4AemFctT184slQ1uy3bAYSBwJGVQlKtceVfM7dV9y7e5kRGU7NkT2QIiKuZ8u/ZzcCYZ7e929h7yP5Hcfrj1XJ2i0OxVw3Bg/DKNiTd+YeHqPsoTTdRJTXqmkiO8u2TnwIO5W3UUhq7TJFK1uMtIIG8HI8FFlbwK1Ht/16/Mmkgf91bXRu3bt4a+x//Z" alt="ELORA" class="h-8 w-auto"/>
+    <button onclick="closeMenu()" class="text-xl text-gray-400 hover:text-main leading-none">✕</button>
+  </div>
+  <nav class="p-3 space-y-0.5 text-sm text-elblack">
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Men's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Women's Clothing</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Electronics</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Gaming</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Home &amp; Kitchen</div>
+    <div class="px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">Sports</div>
+  </nav>
+</div>
+
+<!-- ═══════ BREADCRUMB ═══════ -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
+    <a href="elora-homepage-v2.html" class="hover:text-main transition-colors">Home</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <a href="#" class="hover:text-main transition-colors">Profile</a>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    <span class="text-[#1B1B1B] font-semibold">Orders</span>
+  </div>
+</div>
+
+<!-- ═══════ PAGE CONTENT ═══════ -->
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-6 pb-16">
+  <div class="flex gap-6 lg:gap-8 items-start">
+
+    <!-- ════ LEFT SIDEBAR (desktop only) ════ -->
+    <div class="desktop-sidebar flex-shrink-0" style="width:230px">
+
+      <!-- User info card -->
+      <div class="bg-white border border-[#F0F0F0] rounded-2xl p-5 mb-4 shadow-sm">
+        <p class="text-lg font-semibold text-[#171717] mb-0.5">Fatma Elsonny</p>
+        <p class="text-sm text-[#ADADAD] mb-3">fatmaelsonny@gmail.com</p>
+        <button onclick="editProfile()" class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors">
+          edit
+        </button>
+      </div>
+
+      <!-- My Orders nav -->
+      <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 mb-4 shadow-sm">
+        <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">My Orders</p>
+        <nav class="flex flex-col gap-0.5">
+          <div class="sidebar-nav-item active" onclick="filterOrders('all',this)">All</div>
+          <div class="sidebar-nav-item" onclick="filterOrders('pending',this)">Pending</div>
+          <div class="sidebar-nav-item" onclick="filterOrders('processing',this)">Processing</div>
+          <div class="sidebar-nav-item" onclick="filterOrders('shipped',this)">Shipped</div>
+          <div class="sidebar-nav-item" onclick="filterOrders('delivered',this)">Delivered</div>
+          <div class="sidebar-nav-item" onclick="filterOrders('cancelled',this)">Cancelled</div>
+        </nav>
+      </div>
+
+      <!-- Settings nav -->
+      <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 shadow-sm">
+        <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">Settings</p>
+        <nav class="flex flex-col gap-0.5">
+          <div class="sidebar-settings-item">Account &amp; Help</div>
+          <div class="sidebar-settings-item">My personal details</div>
+          <div class="sidebar-settings-item">My addresses</div>
+          <div class="sidebar-settings-item">Saved cards</div>
+          <div class="sidebar-settings-item">Login activities</div>
+          <div class="sidebar-settings-item">Help</div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ════ MAIN CONTENT ════ -->
+    <div class="flex-1 min-w-0">
+
+      <!-- Search bar -->
+      <div class="relative mb-4">
+        <input type="text" id="orderSearch" placeholder="Item name / Order ID / Tracking No."
+          class="w-full border border-[#E0E0E0] rounded-xl bg-white px-4 py-3 pr-12 text-sm text-[#171717] placeholder-[#ADADAD] outline-none focus:border-[#ADADAD] transition-colors"
+          oninput="searchOrders()"/>
+        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#ADADAD]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+
+      <!-- Info banner -->
+      <div class="flex items-center gap-3 bg-[#FFFDE7] border border-[#F5E58A] rounded-xl px-4 py-3 mb-5">
+        <svg class="w-5 h-5 text-[#B59A00] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p class="text-sm text-[#7A6800]">View all your orders in one place, including active, completed, and cancelled orders.</p>
+      </div>
+
+      <!-- Mobile filter tabs -->
+      <div class="mobile-filter-tabs gap-2 overflow-x-auto pb-1 mb-4" style="scrollbar-width:none">
+        <button class="filter-tab active flex-shrink-0" onclick="filterOrders('all',this)">All</button>
+        <button class="filter-tab flex-shrink-0" onclick="filterOrders('pending',this)">Pending</button>
+        <button class="filter-tab flex-shrink-0" onclick="filterOrders('processing',this)">Processing</button>
+        <button class="filter-tab flex-shrink-0" onclick="filterOrders('shipped',this)">Shipped</button>
+        <button class="filter-tab flex-shrink-0" onclick="filterOrders('delivered',this)">Delivered</button>
+        <button class="filter-tab flex-shrink-0" onclick="filterOrders('cancelled',this)">Cancelled</button>
+      </div>
+
+      <!-- ORDER CARDS -->
+      <div class="flex flex-col gap-4" id="ordersList">
+        <div class="order-card bg-white border border-[#F0F0F0] rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200" 
+     data-id="ORD-2026-001234" data-status="delivered" data-date="Jan 10, 2026" data-name="Essential Jacket">
+  <!-- Order header -->
+  <div class="flex items-start justify-between gap-3 mb-5">
+    <div>
+      <p class="text-base font-semibold text-[#171717] tracking-wide">ORD-2026-001234</p>
+      <p class="text-sm text-[#ADADAD] mt-0.5">Jan 10, 2026</p>
+    </div>
+    <!-- Status badge -->
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-sm font-medium"
+         style="background:#F0FBF0;color:#2AAF2F;border:1px solid #C6ECC6">
+      <span style="color:#2AAF2F"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke-linecap="round"/></svg></span>
+      Delivered
+    </div>
+  </div>
+
+  <!-- Product row -->
+  <div class="flex items-center gap-4 mb-5">
+    <!-- Product image -->
+    <div class="w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl flex-shrink-0 flex items-center justify-center text-4xl overflow-hidden"
+         style="background:linear-gradient(135deg,#c8c4bc,#b8b4ac)">
+      🧥
+    </div>
+    <!-- Product info -->
+    <div class="flex flex-col gap-1 min-w-0">
+      <p class="text-base font-medium text-[#171717] truncate">Essential Jacket</p>
+      
+      <p class="text-sm text-[#ADADAD]">Credit Card ****4532</p>
+      <p class="text-base font-semibold text-[#171717]">$139.98</p>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-[#F0F0F0] mb-4"></div>
+
+  <!-- Action buttons -->
+  <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+    <button onclick="viewDetails('ORD-2026-001234')" class="flex items-center justify-center gap-2 bg-[#171717] text-white text-sm font-medium rounded-full px-6 py-2.5 hover:bg-black transition-colors whitespace-nowrap">
+  View Details
+  <svg class="w-4 h-4" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" stroke-linecap="round"/></svg>
+</button>
+<button onclick="trackOrder(this)" class="flex items-center justify-center gap-2 border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+  Track Order
+</button>
+<button onclick="reorder(this)" class="flex items-center justify-center border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  Reorder
+</button>
+<button onclick="leaveReview(this)" class="flex items-center justify-center border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  Leave a Review
+</button>
+  </div>
+</div>
+<div class="order-card bg-white border border-[#F0F0F0] rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200" 
+     data-id="ORD-2026-001235" data-status="shipped" data-date="Jan 12, 2026" data-name="Essential Hoodie">
+  <!-- Order header -->
+  <div class="flex items-start justify-between gap-3 mb-5">
+    <div>
+      <p class="text-base font-semibold text-[#171717] tracking-wide">ORD-2026-001235</p>
+      <p class="text-sm text-[#ADADAD] mt-0.5">Jan 12, 2026</p>
+    </div>
+    <!-- Status badge -->
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-sm font-medium"
+         style="background:#EEF2FF;color:#3B5BDB;border:1px solid #C5D0FA">
+      <span style="color:#3B5BDB"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
+      Shipped
+    </div>
+  </div>
+
+  <!-- Product row -->
+  <div class="flex items-center gap-4 mb-5">
+    <!-- Product image -->
+    <div class="w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl flex-shrink-0 flex items-center justify-center text-4xl overflow-hidden"
+         style="background:linear-gradient(135deg,#dddad4,#c8c4bc)">
+      🧥
+    </div>
+    <!-- Product info -->
+    <div class="flex flex-col gap-1 min-w-0">
+      <p class="text-base font-medium text-[#171717] truncate">Essential Hoodie</p>
+      <p class="text-sm text-[#ADADAD]">+1 more item</p>
+      <p class="text-sm text-[#ADADAD]">PayPal</p>
+      <p class="text-base font-semibold text-[#171717]">$139.96</p>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-[#F0F0F0] mb-4"></div>
+
+  <!-- Action buttons -->
+  <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+    <button onclick="viewDetails('ORD-2026-001235')" class="flex items-center justify-center gap-2 bg-[#171717] text-white text-sm font-medium rounded-full px-6 py-2.5 hover:bg-black transition-colors whitespace-nowrap">
+  View Details
+  <svg class="w-4 h-4" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" stroke-linecap="round"/></svg>
+</button>
+<button onclick="trackOrder(this)" class="flex items-center justify-center gap-2 border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+  Track Order
+</button>
+<button onclick="reorder(this)" class="flex items-center justify-center border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  Reorder
+</button>
+  </div>
+</div>
+<div class="order-card bg-white border border-[#F0F0F0] rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200" 
+     data-id="ORD-2026-001236" data-status="processing" data-date="Jan 14, 2026" data-name="Smart Watch Series 5">
+  <!-- Order header -->
+  <div class="flex items-start justify-between gap-3 mb-5">
+    <div>
+      <p class="text-base font-semibold text-[#171717] tracking-wide">ORD-2026-001236</p>
+      <p class="text-sm text-[#ADADAD] mt-0.5">Jan 14, 2026</p>
+    </div>
+    <!-- Status badge -->
+    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 text-sm font-medium"
+         style="background:#FFFDE7;color:#B59A00;border:1px solid #F5E58A">
+      <span style="color:#B59A00"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke-linecap="round"/></svg></span>
+      Processing
+    </div>
+  </div>
+
+  <!-- Product row -->
+  <div class="flex items-center gap-4 mb-5">
+    <!-- Product image -->
+    <div class="w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl flex-shrink-0 flex items-center justify-center text-4xl overflow-hidden"
+         style="background:linear-gradient(135deg,#e8e2d8,#d5c8b8)">
+      ⌚
+    </div>
+    <!-- Product info -->
+    <div class="flex flex-col gap-1 min-w-0">
+      <p class="text-base font-medium text-[#171717] truncate">Smart Watch Series 5</p>
+      
+      <p class="text-sm text-[#ADADAD]">Credit Card ****4532</p>
+      <p class="text-base font-semibold text-[#171717]">$309.98</p>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-[#F0F0F0] mb-4"></div>
+
+  <!-- Action buttons -->
+  <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+    <button onclick="viewDetails('ORD-2026-001236')" class="flex items-center justify-center gap-2 bg-[#171717] text-white text-sm font-medium rounded-full px-6 py-2.5 hover:bg-black transition-colors whitespace-nowrap">
+  View Details
+  <svg class="w-4 h-4" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" stroke-linecap="round"/></svg>
+</button>
+<button onclick="cancelOrder(this,'ORD-2026-001236')" class="flex items-center justify-center border border-red-400 text-red-500 text-sm font-medium rounded-full px-5 py-2.5 hover:bg-red-50 transition-all whitespace-nowrap">
+  Cancel Order
+</button>
+<button onclick="reorder(this)" class="flex items-center justify-center border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+  Reorder
+</button>
+  </div>
+</div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-orders" id="emptyOrders">
+        <div class="text-6xl mb-4">📦</div>
+        <p class="text-xl font-medium text-[#555] mb-2">No orders found</p>
+        <p class="text-sm text-[#ADADAD]">Try a different filter or search term.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TRACK ORDER MODAL ═══════ -->
+<div class="modal-backdrop" id="trackModal" style="background:rgba(0,0,0,.5);backdrop-filter:blur(4px)">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative">
+    <button onclick="closeTrackModal()" class="absolute top-4 right-4 text-gray-400 hover:text-main text-xl leading-none">✕</button>
+    <h3 class="text-xl font-semibold text-[#171717] mb-2">Track Order</h3>
+    <p class="text-sm text-[#ADADAD] mb-6" id="trackOrderId">ORD-2026-001234</p>
+    <!-- Timeline -->
+    <div class="flex flex-col gap-0 relative">
+      <!-- vertical line -->
+      <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-[#F0F0F0]"></div>
+      <div class="flex flex-col gap-4">
+        <!-- step -->
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 rounded-full bg-[#2AAF2F] flex items-center justify-center z-10 flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="pt-1">
+            <p class="text-sm font-semibold text-[#171717]">Order Placed</p>
+            <p class="text-xs text-[#ADADAD]">Jan 10, 2026 · 09:32 AM</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 rounded-full bg-[#2AAF2F] flex items-center justify-center z-10 flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="pt-1">
+            <p class="text-sm font-semibold text-[#171717]">Payment Confirmed</p>
+            <p class="text-xs text-[#ADADAD]">Jan 10, 2026 · 09:35 AM</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 rounded-full bg-[#3B5BDB] flex items-center justify-center z-10 flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="pt-1">
+            <p class="text-sm font-semibold text-[#171717]">Out for Delivery</p>
+            <p class="text-xs text-[#ADADAD]">Jan 13, 2026 · 08:00 AM</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="w-8 h-8 rounded-full bg-[#2AAF2F] flex items-center justify-center z-10 flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="pt-1">
+            <p class="text-sm font-semibold text-[#171717]">Delivered ✓</p>
+            <p class="text-xs text-[#ADADAD]">Jan 13, 2026 · 02:15 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button onclick="closeTrackModal()" class="mt-6 w-full h-11 bg-[#171717] text-white font-medium rounded-full hover:bg-black transition-colors text-sm">
+      Close
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ CANCEL CONFIRM MODAL ═══════ -->
+<div class="modal-backdrop" id="cancelModal" style="background:rgba(0,0,0,.5);backdrop-filter:blur(4px)">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative text-center">
+    <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <h3 class="text-xl font-semibold text-[#171717] mb-2">Cancel Order?</h3>
+    <p class="text-sm text-[#ADADAD] mb-6">Are you sure you want to cancel order <span id="cancelOrderId" class="font-medium text-[#555]"></span>? This action cannot be undone.</p>
+    <div class="flex gap-3">
+      <button onclick="closeCancelModal()" class="flex-1 h-11 border border-[#E0E0E0] text-[#555] font-medium rounded-full hover:bg-gray-50 transition-colors text-sm">
+        Keep Order
+      </button>
+      <button id="confirmCancelBtn" class="flex-1 h-11 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 transition-colors text-sm">
+        Yes, Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="bg-[#3B3B3B] text-white">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 pt-10 pb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+      <div class="col-span-2 lg:col-span-1">
+        <img src="data:image/png;base64,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" alt="ELORA" class="h-9 w-auto mb-3"/>
+        <p class="text-sm font-medium text-white mb-3">Connect with ELORA</p>
+        <div class="flex gap-3 mb-5">
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42C1 8.14 1 12 1 12s0 3.86.46 5.58a2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96C23 15.86 23 12 23 12s0-3.86-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#3B3B3B"/></svg></a>
+          <a href="#" class="w-5 h-5 text-white/80 hover:text-white"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+        <p class="text-xs font-semibold mb-2">We accept</p>
+        <div class="flex gap-2 flex-wrap">
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-extrabold text-blue-800 italic">VISA</div>
+          <div class="bg-white rounded px-1 py-0.5 flex items-center"><div class="w-4 h-4 rounded-full bg-red-500"></div><div class="w-4 h-4 rounded-full bg-orange-400 -ml-2"></div></div>
+          <div class="bg-white rounded px-2 py-0.5 text-xs font-bold text-gray-700">Apple Pay</div>
+          <div class="bg-[#2AAF2F] rounded px-2 py-0.5 text-xs font-bold text-white">Fawry</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Customer service</h4>
+        <ul class="space-y-3 text-sm text-[#F2F2F2]">
+          <li><a href="#" class="hover:text-white">Return and refund policy</a></li>
+          <li><a href="#" class="hover:text-white">Intellectual property policy</a></li>
+          <li><a href="#" class="hover:text-white">Shipping info</a></li>
+          <li><a href="#" class="hover:text-white">Report suspicious activity</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Policies</h4>
+        <ul class="space-y-3 text-sm text-[#F2F2F2]">
+          <li><a href="#" class="hover:text-white">Shipping</a></li>
+          <li><a href="#" class="hover:text-white">Payment</a></li>
+          <li><a href="#" class="hover:text-white">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-medium text-lg mb-4">Company info</h4>
+        <ul class="space-y-3 text-sm text-white">
+          <li><a href="#" class="hover:text-main">About ELORA</a></li>
+          <li><a href="#" class="hover:text-main">Contact us</a></li>
+          <li><a href="#" class="hover:text-main">FAQs</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bg-[#5B5B5B] py-3">
+    <div class="max-w-[1200px] mx-auto px-4 flex flex-wrap justify-center gap-6 sm:gap-10 text-sm text-white">
+      <a href="#" class="hover:underline">Terms of use</a>
+      <a href="#" class="hover:underline">Privacy policy</a>
+      <a href="#" class="hover:underline">Your privacy choices</a>
+      <a href="#" class="hover:underline">Support</a>
+      <a href="#" class="hover:underline">FAQ</a>
+    </div>
+  </div>
+  <div class="bg-[#242424] py-4 text-center text-sm text-white">Copyright ©2026 ELORA. All Rights Reserved.</div>
+</footer>
+<script src="assets/js/pages/client-orders.js"></script>
+</body>
+</html>

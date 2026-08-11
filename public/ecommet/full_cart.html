@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manti - Full Cart</title>
+    <!-- Include Tailwind output CSS. For local development you would build it. I assume tailwind is running or linked. We will just use standard classes. -->
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                container: {
+                    center: true,
+                    padding: '1rem',
+                    screens: {
+                        '2xl': '1440px',
+                    },
+                },
+                extend: {
+                    colors: {
+                        primary: '#de1709',
+                        secondary: '#ffaf09',
+                        success: '#2aaf2e',
+                        purple: '#61167f',
+                        'gray-darkest': '#232323',
+                        'gray-dark': '#292d32',
+                        'gray-medium': '#7f7f7f',
+                        'gray-light': '#c4c4c4',
+                        'gray-lighter': '#e7e7e7',
+                        'gray-lightest': '#f5f5f5',
+                        'sale-light': '#ffecea',
+                        'yellow-light': '#fdff9f'
+                    },
+                    fontFamily: {
+                        main: "'Outfit', sans-serif"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body { visibility: hidden; }
+        body.loaded { visibility: visible; }
+    </style>
+</head>
+
+<body class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col">
+
+    <!-- START HEADER -->
+    <header class="w-full relative z-50">
+        <!-- Top Dark Bar (Desktop Only) -->
+        <div class="bg-gray-darkest text-white text-xs py-2 hidden lg:block">
+            <div class="container flex justify-between items-center">
+                <div class="flex items-center gap-2 shipping-modal-trigger cursor-pointer">
+                    <!-- IMAGE: Shipping Icon -->
+                    <img src="assets/images/home/shippingIcon.png" alt="Shipping Icon" width="28" height="24">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Free shipping on all orders</span>
+                        <span class="text-gray-light text-center">Limited-time offer</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- IMAGE: Fire Icon -->
+                    <img src="assets/images/home/offerIcon.png" alt="Offer Icon" class="w-[14px] h-[19px]">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-light">Limited-time Offers</span>
+                        <span class="text-gray-light text-center">Don't Miss Out</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- IMAGE: Lock Icon -->
+                    <img src="assets/images/home/secureIcon.png" alt="Secure Icon" class="w-[14px] h-[18px]">
+                    <span class="font-semibold text-gray-light">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar (Desktop Only) -->
+        <div class="bg-primary text-white hidden lg:block">
+            <div class="container py-4 flex items-center justify-between gap-6">
+
+                <!-- Logo area -->
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                </a>
+
+                <!-- Intranet Links -->
+                <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold">
+                    <a href="best_selling.html" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/like.png" alt="Best Selling Icon" class="w-[20px] h-[20px]">
+                        Best-Selling Items
+                    </a>
+                    <a href="#" class="flex items-center gap-1 hover:text-yellow-light transition">
+                        <img src="assets/images/home/navStar.png" alt="Star Icon" class="w-[20px] h-[20px]">
+                        5-Star Rated
+                    </a>
+                    <a href="#" class="hover:text-yellow-light transition">New In</a>
+                    <button class="flex items-center gap-1 hover:text-yellow-light transition focus:outline-none">
+                        Categories
+                        <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon" class="w-[20px] h-[20px]">
+                    </button>
+                </nav>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mx-4 relative">
+                    <input type="text" placeholder="Search..."
+                        class="w-full text-black rounded-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-yellow-light placeholder-gray-medium text-sm">
+                    <button
+                        class="absolute right-1 top-1 bottom-1 w-8 h-8 rounded-full bg-gray-darkest text-white flex items-center justify-center hover:bg-black transition">
+                        <!-- IMAGE: Search Icon -->
+                        <img src="assets/images/home/searchIcon.png" alt="Search Icon" class="w-[16px] h-[16px]">
+                    </button>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-5">
+                    <!-- Lang / Currency -->
+                    <button
+                        class="lang-currency-trigger flex items-center gap-2 text-xs text-white hover:text-yellow-light focus:outline-none">
+                        <img src="assets/images/home/flagImg.png" alt="Flag Icon" class="w-[40px] h-[25px]">
+                        <div class="flex flex-col items-start">
+                            <span class="text-[12px] text-[#C5C5C5]">En/</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[12px]">SAR</span>
+                                <img src="assets/images/home/arrow-down.png" alt="Arrow Down Icon"
+                                    class="w-[16px] h-[16px]">
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- User Account -->
+                    <a href="profile.html"
+                        class="flex items-center gap-2 text-white hover:text-yellow-light transition">
+                        <!-- IMAGE: User Icon -->
+                        <img src="assets/images/home/user.png" alt="Person Icon"
+                            class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                        <div class="flex flex-col text-xs leading-tight">
+                            <span class="text-[#C5C5C5]">Welcome</span>
+                            <span>Sign in / Register</span>
+                        </div>
+                    </a>
+
+                    <!-- Cart -->
+                    <a href="cart.html" class="flex items-center gap-1 hover:text-yellow-light transition relative">
+                        <!-- IMAGE: Cart Icon -->
+                        <img src="assets/images/home/cartIcon.png" alt="Cart Icon"
+                            class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                        <span
+                            class="absolute -top-2 -right-1 bg-gray-darkest text-white text-[10px] w-[30px] h-[16px] flex items-center justify-center px-1.5 py-0.5 rounded-full border border-primary">0</span>
+                        <span class="text-xs  mt-2 hidden sm:block">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex flex-col bg-white w-full z-40 sticky top-0 shadow-sm border-b border-[#eaeaea]">
+        <!-- Top Header -->
+        <div class="flex items-center justify-between px-4 py-3">
+            <a href="index.html" class="flex items-center shrink-0">
+                <div class="flex items-center gap-1">
+                    <span class="font-extrabold text-[20px] tracking-tight text-[#2272e2] flex items-center">
+                        <span
+                            class="inline-flex w-[18px] h-[18px] rounded-full border-[3px] border-[#2272e2] items-center justify-center mr-[4px] mt-0.5"><span
+                                class="w-1.5 h-1.5 bg-[#2272e2] rounded-full"></span></span>Manti
+                    </span>
+                </div>
+            </a>
+            <div class="flex-1 mx-3 relative">
+                <input type="text" placeholder="Search..."
+                    class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] px-4 outline-none text-[13px] placeholder-gray-500">
+            </div>
+            <div class="flex items-center gap-[14px] shrink-0">
+                <button class="lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
+                    <div class="flex items-end gap-[1px]">
+                        <span class="text-[11px] font-bold">En/</span>
+                    </div>
+                    <div class="flex items-center gap-[2px]">
+                        <span class="text-[11px] font-bold">SAR</span>
+                        <img src="assets/images/home/arrow-down-black.png" class="w-[8px] h-[8px]">
+                    </div>
+                </button>
+                <button class="flex flex-col gap-[3.5px] py-1 cursor-pointer">
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                    <div class="w-[18px] h-[2px] bg-gray-darkest rounded-full"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- END MOBILE HEADER -->
+
+    <!-- START MAIN CONTENT -->
+    <main class="flex-grow bg-white pt-3 lg:pt-6 pb-14 w-full">
+        <div class="max-w-[1280px] mx-auto px-4 lg:px-8">
+            <!-- Breadcrumb (Desktop Only) -->
+            <div class="hidden lg:flex items-center gap-2 text-[13px] text-[#707070] mb-8">
+                <a href="index.html" class="hover:text-primary">Home</a>
+                <img src="assets/images/home/arrow-Breadcrumb.png" alt="arrow" class="w-[10px] h-[10px]">
+                <span class="text-[#242424] font-medium">Cart</span>
+            </div>
+
+            <!-- START MAIN CONTENT -->
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
+
+                <!-- LEFT COLUMN -->
+                <div class="w-full lg:flex-1 flex flex-col gap-0">
+
+                    <!-- Free Shipping Progress Bar -->
+                    <div class="mb-4 lg:mb-10 block p-1 lg:p-0">
+                        <div class="flex items-center gap-4 mb-2">
+                            <div class="flex-1 h-[10px] lg:h-[12px] bg-[#FFB00A4D] rounded-full overflow-hidden">
+                                <div class="h-full bg-[#FFB00A] rounded-full" style="width: 75%"></div>
+                            </div>
+                            <span class="text-[14px] font-bold text-[#FFB00A]">75%</span>
+                        </div>
+                        <p class="text-[12px] lg:text-[14px] font-[400] text-[#242424]">Add <span
+                                class="text-[#FFB00A] font-[600]">1.2 kg</span> more to get <span
+                                class="text-[#FFB00A] font-[400]">free shipping</span></p>
+                    </div>
+
+                    <!-- Product List Section -->
+                    <div class="flex flex-col gap-0 border-b-0 border-[#C4C4C4] mb-8">
+                        <!-- Actions Row -->
+                        <div class="flex items-center justify-between pb-4 border-b border-[#eaeaea]">
+                            <label class="flex items-center gap-2 lg:gap-3 cursor-pointer">
+                                <input type="checkbox" checked
+                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer flex items-center justify-center relative
+                                    before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] lg:before:w-[5px] before:h-[9px] lg:before:h-[11px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:-mt-0.5">
+                                <span class="text-[14px] font-[500] text-[#242424]">Select all (2)</span>
+                            </label>
+                            <div class="flex items-center gap-1.5 lg:gap-2">
+                                <button
+                                    class="border border-[#808080] text-[#808080] font-[400] text-[12px] px-4 py-1.5 rounded-full hover:bg-gray-50 transition min-w-[70px]">All
+                                    (2)</button>
+                                <button
+                                    class="border border-[#242424] bg-white text-[#242424] font-[400] text-[12px] px-4 py-1.5 rounded-full min-w-[100px]">Selected
+                                    (2)</button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 lg:gap-5 pt-6 relative items-center border-b border-[#eaeaea] pb-6">
+                            <div class="flex items-center shrink-0">
+                                <input type="checkbox" checked
+                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer flex items-center justify-center relative
+                                    before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] lg:before:w-[5px] before:h-[9px] lg:before:h-[11px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:-mt-0.5">
+                            </div>
+
+                            <div
+                                class="w-[95px] h-[95px] lg:w-[230px] lg:h-[155px] bg-[#f9f9f9] rounded flex-shrink-0 relative flex items-center justify-center overflow-hidden">
+                                <div
+                                    class="absolute top-0 left-0 bg-[#de1709] text-white text-[11px] lg:text-[13px] font-bold px-1.5 lg:px-2.5 py-2 lg:py-1.5 z-10 leading-none rounded-br-[10px] min-w-[35px] lg:min-w-0 text-center">
+                                    <span class="lg:hidden">-30%</span>
+                                    <span class="hidden lg:inline">-30%off</span>
+                                </div>
+                                <img src="assets/images/home/img-two.png" alt="Product"
+                                    class="w-full h-full object-contain p-2">
+                            </div>
+
+                            <div class="flex-1 flex flex-col justify-between py-1 h-full min-h-[95px] lg:min-h-[155px]">
+                                <div class="flex justify-between items-start relative">
+                                    <div class="pr-6 lg:pr-8">
+                                        <h3
+                                            class="text-[#242424] text-[12px] lg:text-[13.5px] font-[400] leading-[1.3] lg:leading-[1.4] tracking-tight line-clamp-2">
+                                            CRELANDER 2025 new tablet Android 13, 2-in-1 tablet 10.1-inch 1280*800</h3>
+                                        <div
+                                            class="text-[#808080] text-[12px] lg:text-[13px] mt-1 lg:mt-1.5 font-[400] truncate max-w-[150px] lg:max-w-none">
+                                            12GB+512GB/Gre...</div>
+                                    </div>
+                                    <!-- delete icon -->
+                                    <button class="text-[#999] hover:text-[#333] transition absolute top-0 right-0">
+                                        <img src="assets/images/home/trash.png" alt="trash"
+                                            class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px]">
+                                    </button>
+                                </div>
+
+                                <div class="flex items-end justify-between mt-2 lg:mt-4">
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="text-[14px] lg:text-[16px] font-[400] text-[#242424] leading-none">$100.00</span>
+                                        <span
+                                            class="text-[11px] lg:text-[13px] text-[#808080] line-through font-[400] leading-[1.1]">$150.20</span>
+                                    </div>
+                                    <div class="relative qty-dropdown-container">
+                                        <button
+                                            class="qty-trigger flex items-center justify-between border border-[#707070] rounded-md px-2 lg:px-3 py-1 bg-white h-[28px] lg:h-[30px] min-w-[55px] lg:min-w-[90px] cursor-pointer hover:border-[#333] transition">
+                                            <span
+                                                class="qty-value text-[11px] lg:text-[12px] font-medium text-[#242424]"><span
+                                                    class="lg:inline hidden">Qty </span><span
+                                                    class="current-qty">1</span></span>
+                                            <img src="assets/images/home/arrow-down-black.png" alt="arrow"
+                                                class="qty-chevron w-[10px] h-[10px] lg:w-[14px] lg:h-[14px] object-contain transition-transform duration-200">
+                                        </button>
+                                        <div
+                                            class="qty-menu hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#eaeaea] rounded-lg shadow-xl z-50 overflow-hidden min-w-[65px]">
+                                            <div class="qty-item px-3 py-2 text-[12px] font-bold text-[#242424] flex items-center justify-between bg-[#f6f6f6] cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="1">
+                                                <span>1</span>
+                                                <img src="assets/images/home/trueIcon.png" class="w-3 h-3">
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="2">
+                                                <span>2</span>
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="3">
+                                                <span>3</span>
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer"
+                                                data-value="4">
+                                                <span>4</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 lg:gap-5 pt-6 relative items-center border-b border-[#eaeaea] pb-6">
+                            <div class="flex items-center shrink-0">
+                                <input type="checkbox" checked
+                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer flex items-center justify-center relative
+                                    before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] lg:before:w-[5px] before:h-[9px] lg:before:h-[11px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:-mt-0.5">
+                            </div>
+
+                            <div
+                                class="w-[95px] h-[95px] lg:w-[230px] lg:h-[155px] bg-[#f9f9f9] rounded flex-shrink-0 relative flex items-center justify-center overflow-hidden">
+                                <div
+                                    class="absolute top-0 left-0 bg-[#de1709] text-white text-[11px] lg:text-[13px] font-bold px-1.5 lg:px-2.5 py-2 lg:py-1.5 z-10 leading-none rounded-br-[10px] min-w-[35px] lg:min-w-0 text-center">
+                                    <span class="lg:hidden">-30%</span>
+                                    <span class="hidden lg:inline">-30%off</span>
+                                </div>
+                                <img src="assets/images/home/img-one.png" alt="Product"
+                                    class="w-full h-full object-contain p-2">
+                            </div>
+
+                            <div class="flex-1 flex flex-col justify-between py-1 h-full min-h-[95px] lg:min-h-[155px]">
+                                <div class="flex justify-between items-start relative">
+                                    <div class="pr-6 lg:pr-8">
+                                        <h3
+                                            class="text-[#242424] text-[12px] lg:text-[13.5px] font-[400] leading-[1.3] lg:leading-[1.4] tracking-tight line-clamp-2">
+                                            CRELANDER 2025 new tablet Android 13, 2-in-1 tablet 10.1-inch 1280*800</h3>
+                                        <div
+                                            class="text-[#808080] text-[12px] lg:text-[13px] mt-1 lg:mt-1.5 font-[400] truncate max-w-[150px] lg:max-w-none">
+                                            12GB+512GB/Gre...</div>
+                                    </div>
+                                    <!-- delete icon -->
+                                    <button class="text-[#999] hover:text-[#333] transition absolute top-0 right-0">
+                                        <img src="assets/images/home/trash.png" alt="trash"
+                                            class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px]">
+                                    </button>
+                                </div>
+
+                                <div class="flex items-end justify-between mt-2 lg:mt-4">
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="text-[14px] lg:text-[16px] font-[400] text-[#242424] leading-none">$100.00</span>
+                                        <span
+                                            class="text-[11px] lg:text-[13px] text-[#808080] line-through font-[400] leading-[1.1]">$150.20</span>
+                                    </div>
+                                    <div class="relative qty-dropdown-container">
+                                        <button
+                                            class="qty-trigger flex items-center justify-between border border-[#707070] rounded-md px-2 lg:px-3 py-1 bg-white h-[28px] lg:h-[30px] min-w-[55px] lg:min-w-[90px] cursor-pointer hover:border-[#333] transition">
+                                            <span
+                                                class="qty-value text-[11px] lg:text-[12px] font-medium text-[#242424]"><span
+                                                    class="lg:inline hidden">Qty </span><span
+                                                    class="current-qty">1</span></span>
+                                            <img src="assets/images/home/arrow-down-black.png" alt="arrow"
+                                                class="qty-chevron w-[10px] h-[10px] lg:w-[14px] lg:h-[14px] object-contain transition-transform duration-200">
+                                        </button>
+                                        <div
+                                            class="qty-menu hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#eaeaea] rounded-lg shadow-xl z-50 overflow-hidden min-w-[65px]">
+                                            <div class="qty-item px-3 py-2 text-[12px] font-bold text-[#242424] flex items-center justify-between bg-[#f6f6f6] cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="1">
+                                                <span>1</span>
+                                                <img src="assets/images/home/trueIcon.png" class="w-3 h-3">
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="2">
+                                                <span>2</span>
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer border-b border-[#f0f0f0]"
+                                                data-value="3">
+                                                <span>3</span>
+                                            </div>
+                                            <div class="qty-item px-3 py-2 text-[12px] font-medium text-[#242424] hover:bg-gray-50 cursor-pointer"
+                                                data-value="4">
+                                                <span>4</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Checkout Button -->
+                        <div class="lg:hidden mt-8 mb-4">
+                            <a href="check_out.html"
+                                class="w-full bg-[#232323] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center">
+                                checkout
+                            </a>
+                        </div>
+
+                        <!-- Mobile guarantees -->
+                        <div class="lg:hidden mt-10 -mx-5 bg-[#f6f6f6]">
+                            <div class="h-[12px]"></div>
+                            <div class="bg-white py-6 px-4">
+                                <div class="flex items-start justify-between w-full gap-1">
+                                    <div class="flex flex-col items-center gap-1.5 text-center w-1/4">
+                                        <div class="h-[24px] flex items-center justify-center">
+                                            <img src="assets/images/home/marketeq_secure.png"
+                                                style="filter: brightness(0) saturate(100%) invert(42%) sepia(76%) saturate(518%) hue-rotate(76deg);"
+                                                class="w-[21px] h-[21px] object-contain">
+                                        </div>
+                                        <span class="text-[10px] font-bold text-[#2AAF2F] leading-[1.25]">Safe
+                                            Payment<br>Options</span>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-1.5 text-center w-1/4">
+                                        <div class="h-[24px] flex items-center justify-center">
+                                            <img src="assets/images/home/secureCart.png"
+                                                style="filter: brightness(0) saturate(100%) invert(42%) sepia(76%) saturate(518%) hue-rotate(76deg);"
+                                                class="w-[21px] h-[21px] object-contain">
+                                        </div>
+                                        <span
+                                            class="text-[10px] font-bold text-[#2AAF2F] leading-[1.25]">Secure<br>privacy</span>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-1.5 text-center w-1/4">
+                                        <div class="h-[24px] flex items-center justify-center">
+                                            <img src="assets/images/home/group-product-details.png"
+                                                style="filter: brightness(0) saturate(100%) invert(42%) sepia(76%) saturate(518%) hue-rotate(76deg);"
+                                                class="w-[21px] h-[21px] object-contain">
+                                        </div>
+                                        <span
+                                            class="text-[10px] font-bold text-[#2AAF2F] leading-[1.25]">Delivery<br>guarantee</span>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-1.5 text-center w-1/4">
+                                        <div class="h-[24px] flex items-center justify-center">
+                                            <img src="assets/images/home/marketeq_secure.png"
+                                                style="filter: brightness(0) saturate(100%) invert(42%) sepia(76%) saturate(518%) hue-rotate(76deg);"
+                                                class="w-[21px] h-[21px] object-contain">
+                                        </div>
+                                        <span class="text-[10px] font-bold text-[#2AAF2F] leading-[1.25]">Manti
+                                            Purchase<br>Protection</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="h-[12px]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Explore Manti's Picks -->
+                    <div class="lg:mt-10 p-1 lg:p-0">
+                        <!-- Desktop Header -->
+                        <h2 class="hidden lg:block text-[18px] font-bold text-[#333] mb-5">Explore Manti's picks</h2>
+
+                        <!-- Mobile Tabs Header -->
+                        <div
+                            class="flex lg:hidden items-center overflow-x-auto no-scrollbar gap-5 border-b border-[#eee] mb-5 pb-0 pl-1">
+                            <button
+                                class="text-[12px] font-bold text-[#222] pb-2 border-b-2 border-black whitespace-nowrap">Recommended</button>
+                            <button
+                                class="text-[12px] font-medium text-[#787878] pb-2 border-b-2 border-transparent hover:text-[#222] whitespace-nowrap">Home
+                                Appliances</button>
+                            <button
+                                class="text-[12px] font-medium text-[#787878] pb-2 border-b-2 border-transparent hover:text-[#222] whitespace-nowrap">Mobile
+                                Devices</button>
+                            <button
+                                class="text-[12px] font-medium text-[#787878] pb-2 border-b-2 border-transparent hover:text-[#222] whitespace-nowrap">Computers</button>
+                        </div>
+
+                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 px-1 lg:px-0">
+                            <!-- Product Card 1 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-three.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                            <div
+                                                class="bg-[#7828c8] text-white text-[9px] font-bold px-[6px] py-[3px] rounded-full flex items-center gap-1 w-fit leading-[1] mt-1 shadow-sm">
+                                                <span class="text-[8px] leading-none">★</span> Star seller
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Card 2 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-one.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Card 3 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-two.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                            <div
+                                                class="bg-[#7828c8] text-white text-[9px] font-bold px-[6px] py-[3px] rounded-full flex items-center gap-1 w-fit leading-[1] mt-1 shadow-sm">
+                                                <span class="text-[8px] leading-none">★</span> Star seller
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Card 4 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-three.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                            <div
+                                                class="bg-[#7828c8] text-white text-[9px] font-bold px-[6px] py-[3px] rounded-full flex items-center gap-1 w-fit leading-[1] mt-1 shadow-sm">
+                                                <span class="text-[8px] leading-none">★</span> Star seller
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Card 5 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-one.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Card 6 -->
+                            <div onclick="window.location.href='product_details.html'"
+                                class="cursor-pointer bg-white border border-[#eaeaea] rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                <div
+                                    class="h-[120px] lg:h-[140px] bg-[#FAFAFA] flex items-center justify-center p-2 mix-blend-multiply">
+                                    <img src="/assets/images/home/img-two.png" alt="Tablet"
+                                        class="w-[150px] h-[150px] object-contain">
+                                </div>
+                                <div class="flex flex-col p-4 mt-auto bg-white">
+                                    <h3
+                                        class="text-[#a3a3a3] text-[11px] font-medium leading-[1.3] truncate mb-1 lg:mb-2">
+                                        Ultra-Slim 10.1" Android Tablet with...</h3>
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span
+                                            class="text-[#989898] text-[11px] font-medium leading-[1] line-through mt-[1px]">$175.99</span>
+                                        <span
+                                            class="text-[#222222] font-bold text-[14px] lg:text-[15px] leading-[1] tracking-tight">$100.31</span>
+                                    </div>
+                                    <div class="flex items-end justify-between">
+                                        <div class="flex flex-col items-start min-h-[30px] justify-center gap-[3px]">
+                                            <div class="flex items-center gap-[2px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                                <img src="assets/images/home/star.png" alt="Star"
+                                                    class="w-[16px] h-[16px]">
+                                            </div>
+                                            <div
+                                                class="bg-[#7828c8] text-white text-[9px] font-bold px-[6px] py-[3px] rounded-full flex items-center gap-1 w-fit leading-[1] mt-1 shadow-sm">
+                                                <span class="text-[8px] leading-none">★</span> Star seller
+                                            </div>
+                                        </div>
+                                        <button
+                                            class="w-[28px] h-[28px] lg:w-[48px] lg:h-[32px] rounded-full border border-gray-medium flex items-center justify-center hover:bg-gray-100 transition cursor-pointer shrink-0 ml-2">
+                                            <img src="assets/images/home/saleCart.png" alt="Add to cart"
+                                                class="w-[14px] h-[14px] lg:w-[24px] lg:h-[24px]">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- See More Button -->
+                        <div class="flex justify-center mt-10">
+                            <button
+                                class="bg-[#242424] text-white px-10 py-3 rounded-full text-[14px] font-bold hover:bg-black transition flex items-center gap-2">
+                                See More
+                                <img src="assets/images/home/arrow-down-seemore.png" alt="Arrow right"
+                                    class="w-[18px] h-[18px] lg:w-[24px] lg:h-[24px]">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (Order Summary) -->
+                <div class="hidden lg:block w-full lg:w-[350px] xl:w-[380px] shrink-0">
+                    <div
+                        class="bg-white rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.03)] border border-[#eaeaea] p-7 sticky top-4">
+                        <h2 class="text-[20px] font-[500] text-[#242424] mb-5">Order Summary</h2>
+
+                        <div class="flex justify-between items-end mb-3.5">
+                            <span class="text-[16px] font-medium text-[#000000]">Item total:</span>
+                            <span class="text-[16px] font-bold text-[#000000]">$450.50</span>
+                        </div>
+                        <div class="flex justify-between items-end mb-5">
+                            <span class="text-[16px] font-medium text-[#000000]">Item discount:</span>
+                            <span class="text-[16px] font-bold text-[#ED181A]">-$150.50</span>
+                        </div>
+
+                        <div
+                            class="flex items-center gap-0 w-full mb-6 relative border border-[#bbb] rounded overflow-hidden h-[38px]">
+                            <input type="text" placeholder="Enter the discount code"
+                                class="flex-1 px-3 py-2 text-[12px] outline-none min-w-0 bg-transparent h-full placeholder-[#999]">
+                            <button
+                                class="bg-[#787878] text-white px-6 w-[90px] text-[13px] font-bold hover:bg-[#555] transition border-l border-[#bbb] h-full flex items-center justify-center leading-none">App</button>
+                        </div>
+
+                        <div class="flex justify-between items-end mb-4 pt-4 border-t border-[#eaeaea]">
+                            <span class="text-[20px] font-bold text-[#000000]">Total</span>
+                            <span class="text-[20px] font-bold text-[#000000]">$300.00</span>
+                        </div>
+
+                        <p class="text-[16px] font-[400] text-[#707070] mb-5 leading-[1.6]">
+                            Please refer to your final actual payment amount. Tax & levies excluded.
+                        </p>
+
+                        <a href="check_out.html"
+                            class="w-full bg-[#242424] text-white py-4 rounded-full text-[16px] font-bold hover:bg-black transition mb-8 tracking-wide flex items-center justify-center">
+                            $300.00 to checkout
+                        </a>
+
+                        <div class="flex flex-col border-t border-[#eaeaea] pt-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="assets/images/home/marketeq_secure.png" alt="Star"
+                                        class="w-[20px] h-[20px]">
+                                    <h3 class="text-[14px] font-bold text-[#242424]">Safe Payment Options</h3>
+                                </div>
+                                <p class="text-[12px] font-[400] text-[#808080] leading-relaxed mb-5">
+                                    <span class="text-[#2AAF2F] font-bold">Manti is committed to protecting your payment
+                                        information.</span>
+                                    We follow PCI DSS standards, use strong encryption, and perform regular reviews of
+                                    its system to protect your privacy.
+                                </p>
+
+                                <h4 class="text-[14px] font-bold text-[#242424] mb-3">1. Payment methods</h4>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <img src="assets/images/home/visa.png" alt="Visa"
+                                        class="w-[45px] h-[30px] object-contain">
+                                    <img src="assets/images/home/mastercard.png" alt="Mastercard"
+                                        class="w-[45px] h-[30px] object-contain">
+                                    <img src="assets/images/home/pay.png" alt="Apple Pay"
+                                        class="w-[45px] h-[30px] object-contain">
+                                    <img src="assets/images/home/fawry.png" alt="Fawry"
+                                        class="w-[45px] h-[30px] object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Manti Purchase Protection -->
+                        <div class="pt-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <img src="assets/images/home/marketeq_secure.png" alt="Star" class="w-[25px] h-[25px]">
+                                <h3 class="text-[14px] font-bold text-[#333]">Manti Purchase Protection</h3>
+                            </div>
+                            <p class="text-[14px] text-[#808080] leading-relaxed mb-2">
+                                Shop confidently on Temu knowing that if something goes wrong, we've always got your
+                                back.
+                            </p>
+                            <a href="#" class="text-[13px] text-[#808080] flex items-center gap-1 hover:text-[#333]">
+                                See program terms
+                                <img src="assets/images/home/arrow-Breadcrumb.png" alt="Arrow right"
+                                    class="w-[8px] h-[8px] mt-[3px]">
+                            </a>
+                        </div>
+
+                        <!-- Secure privacy -->
+                        <div class="border-t border-[#eaeaea] pt-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <img src="assets/images/home/secureCart.png" alt="Secure privacy"
+                                    class="w-[16px] h-[16px]">
+                                <h3 class="text-[14px] font-bold text-[#333]">Secure privacy</h3>
+                            </div>
+                            <p class="text-[12px] text-[#808080] leading-relaxed mb-2">
+                                Protecting your privacy is important to us! Please be assured that your information
+                                will
+                                be kept secured and uncompromised. We will only use your information in accordance
+                                with
+                                our privacy policy to provide and improve our services to you.
+                            </p>
+                            <a href="#" class="text-[13px] text-[#808080] flex items-center gap-1 hover:text-[#333]">
+                                Learn more
+                                <img src="assets/images/home/arrow-Breadcrumb.png" alt="Arrow right"
+                                    class="w-[8px] h-[8px] mt-[4px]">
+                            </a>
+                        </div>
+
+                        <!-- Delivery guarantee -->
+                        <div class="border-t border-[#eaeaea] pt-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <img src="assets/images/home/group-product-details.png" alt="Delivery guarantee"
+                                    class="w-[20px] h-[20px]">
+                                <h3 class="text-[14px] font-bold text-[#333]">Delivery guarantee</h3>
+                            </div>
+                            <ul class="text-[12px] text-[#808080] grid grid-cols-2 gap-y-3 gap-x-2">
+                                <li class="flex items-start gap-1.5"><img src="assets/images/home/trueIcon.png"
+                                        alt="Check circle" class="w-[12px] h-[12px]"> <span>$48.00 Credit for
+                                        delay</span>
+                                </li>
+                                <li class="flex items-start gap-1.5"><img src="assets/images/home/trueIcon.png"
+                                        alt="Check circle" class="w-[12px] h-[12px]"> <span>Return if item
+                                        damaged</span>
+                                </li>
+                                <li class="flex items-start gap-1.5"><img src="assets/images/home/trueIcon.png"
+                                        alt="Check circle" class="w-[12px] h-[12px]"> <span>15-day no update
+                                        refund</span>
+                                </li>
+                                <li class="flex items-start gap-1.5"><img src="assets/images/home/trueIcon.png"
+                                        alt="Check circle" class="w-[12px] h-[12px]"> <span>45-day no delivery
+                                        refund</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+    </main>
+    <!-- END MAIN CONTENT -->
+
+    <!-- START FOOTER -->
+    <footer class="mt-auto relative z-10 w-full font-main text-[#FFFFFF] bg-[#3B3B3B] pb-[50px] lg:pb-0">
+        <div class="max-w-[1280px] mx-auto py-10 lg:py-14 px-6 lg:px-8">
+
+            <!-- Grid Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12 gap-y-10">
+                <!-- Column 1: Company Info -->
+                <div class="flex flex-col gap-10">
+                    <div class="flex flex-col gap-3.5">
+                        <h3
+                            class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                            Company info</h3>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">About Manti</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Contact us</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Careers</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Press</a>
+                        <a href="#" class="text-[13px] hover:text-white transition w-fit">Manti's Tree Planting
+                            Program</a>
+                    </div>
+                    <!-- We accept (Desktop View) -->
+                    <div class="hidden lg:flex flex-col gap-4">
+                        <h3 class="font-bold text-[14px] text-white tracking-wide">We accept</h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/mastercard.png" alt="Mastercard"
+                                class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                            <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Customer Service -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Customer service</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Return and refund policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Intellectual property policy</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Shipping info</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Report suspicious activity</a>
+                </div>
+
+                <!-- Column 3: Help -->
+                <div class="flex flex-col gap-3.5">
+                    <h3
+                        class="font-bold text-[15px] lg:text-[14px] text-white tracking-wide mb-1 uppercase lg:normal-case">
+                        Help</h3>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Safety center</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Purchase protection</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Sitemap</a>
+                    <a href="#" class="text-[13px] hover:text-white transition w-fit">Partner with Manti</a>
+                </div>
+
+                <!-- Column 4: Logo & Connect -->
+                <div class="hidden lg:flex flex-col gap-6 items-start">
+                    <a href="index.html" class="flex items-center gap-2 mb-2">
+                        <img src="assets/images/home/logo.png" alt="Manti Logo" class="w-[116px] h-[32px]">
+                    </a>
+                    <div class="flex flex-col gap-4">
+                        <span class="text-white text-[13px] font-bold tracking-wide">Connect with Manti</span>
+                        <div class="flex items-center gap-4 text-white">
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Facebook - Original.png" alt="Facebook" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Twitter - Original.png" alt="Twitter" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Instagram - Original.png" alt="Instagram"
+                                    class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/Youtube - Original.png" alt="Youtube" class="w-6 h-6"></a>
+                            <a href="#" class="opacity-80 hover:opacity-100 transition"><img
+                                    src="assets/images/home/LinkedIn - Original.png" alt="LinkedIn" class="w-6 h-6"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Only View -->
+            <div class="lg:hidden flex flex-col gap-8 mt-5">
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">Connect with Manti</h3>
+                    <div class="flex items-center gap-6">
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Facebook - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Twitter - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Instagram - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/Youtube - Original.png" class="w-[28px] h-[28px]"></a>
+                        <a href="#" class="opacity-90 hover:opacity-100 transition"><img
+                                src="assets/images/home/LinkedIn - Original.png" class="w-[28px] h-[28px]"></a>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-bold text-[15px] text-white tracking-wide">We accept</h3>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <img src="assets/images/home/visa.png" alt="Visa" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/mastercard.png" alt="Mastercard" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/pay.png" alt="Apple Pay" class="h-6 w-auto object-contain">
+                        <img src="assets/images/home/fawry.png" alt="Fawry" class="h-6 w-auto object-contain">
+                    </div>
+                </div>
+                <hr class="border-[#3d3d3d] w-full">
+                <div class="text-center text-[12px] text-[#666]">
+                    © 2025 Manti. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Footer Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#555] py-4 text-white">
+            <div
+                class="max-w-[1280px] mx-auto flex items-center justify-center gap-16 text-[13px] font-medium opacity-80">
+                <a href="#" class="hover:opacity-100 transition">Terms of use</a>
+                <a href="#" class="hover:opacity-100 transition">Privacy policy</a>
+                <a href="#" class="hover:opacity-100 transition">Your privacy choices</a>
+                <a href="#" class="hover:opacity-100 transition">Support</a>
+                <a href="#" class="hover:opacity-100 transition">FAQ</a>
+            </div>
+        </div>
+
+        <!-- Copyright Bar (Desktop Only) -->
+        <div class="hidden lg:block bg-[#1b1b1b] py-5 text-[#888] text-[13px] text-center border-t border-[#222]">
+            Copyright ©2025 Manti. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- END FOOTER -->
+
+    
+    <script src="assets/js/common.js"></script>
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <div
+        class="lg:hidden fixed bottom-5 left-5 right-5 bg-[#1a1a1a] text-white rounded-full flex items-center justify-between px-6 py-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-[100]">
+        <!-- Home -->
+        <a href="index.html" class="flex items-center justify-center">
+            <img src="assets/images/home/home3.png" alt="Home" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Cart (Active) -->
+        <a href="cart.html"
+            class="flex items-center gap-2 bg-white text-[#1a1a1a] px-5 py-[8px] rounded-full font-bold text-[14px] relative shadow-lg transition-transform active:scale-95">
+            <div class="relative">
+                <img src="assets/images/home/cartIcon.png" alt="Cart" class="w-[22px] h-[22px]"
+                    style="filter: brightness(0);">
+                <span
+                    class="absolute -top-[8px] -right-[10px] bg-[#222] text-white text-[9px] font-bold w-[16px] h-[16px] flex items-center justify-center rounded-full border border-white">2</span>
+            </div>
+            <span>Cart</span>
+        </a>
+
+        <!-- Heart -->
+        <a href="#" class="flex items-center justify-center">
+            <img src="assets/images/home/heart.png" alt="Favorite" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+
+        <!-- Profile -->
+        <a href="profile.html" class="flex items-center justify-center">
+            <img src="assets/images/home/user.png" alt="Profile" class="w-[22px] h-[22px] opacity-100"
+                style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
+
+    <script src="assets/js/cart.js"></script>
+</body>
+
+</html>

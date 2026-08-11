@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+use RuntimeException;
+
+class OpenAiTranslationService
+{
+    protected array $cache = [];
+
+    public function configured(): bool
+    {
+        return filled(config('services.openai.api_key'));
+    }
+
+    public function translateBatch(
+        array $texts,
+        string $sourceLocale,
+        string $targetLocale,
+        string $targetLanguage,
+        string $context,
+    ): array {
+        $translations = array_fill(0, count($texts), '');
+        $pending = [];
+
+        foreach ($texts as $index => $text) {
+            $value = trim((string) $text);
+
+            if ($value === '') {
+                continue;
+            }
+
+            $cacheKey = $this->cacheKey($sourceLocale, $targetLocale, $value);
+
+            if (array_key_exists($cacheKey, $this->cache)) {
+                $translations[$index] = $this->cache[$cacheKey];
+                continue;
+            }
+
+            if (!isset($pending[$cacheKey])) {
+                $pending[$cacheKey] = [
+                    'text' => $value,
+                    'indexes' => [],
+                ];
+            }
+
+            $pending[$cacheKey]['indexes'][] = $index;
+        }
+
+        foreach (array_chunk(array_values($pending), 25) as $chunk) {
+            $chunkTranslations = $this->requestTranslations(
+                array_map(fn(array $item) => $item['text'], $chunk),
+                $sourceLocale,
+                $targetLocale,
+                $targetLanguage,
+                $context,
+            );
+
+            foreach ($chunk as $chunkIndex => $item) {
+                $translated = trim((string) ($chunkTranslations[$chunkIndex] ?? $item['text']));
+                $cacheKey = $this->cacheKey($sourceLocale, $targetLocale, $item['text']);
+
+                $this->cache[$cacheKey] = $translated;
+
+                foreach ($item['indexes'] as $index) {
+                    $translations[$index] = $translated;
+                }
+            }
+        }
+
+        return $translations;
+    }
+
+    protected function requestTranslations(
+        array $texts,
+        string $sourceLocale,
+        string $targetLocale,
+        string $targetLanguage,
+        string $context,
+    ): array {
+        if (!$this->configured()) {
+            throw new RuntimeException('OpenAI translation is not configured.');
+        }
+
+        $items = array_map(
+            fn(string $text, int $index) => ['index' => $index, 'text' => $text],
+            array_values($texts),
+            array_keys($texts),
+        );
+
+        $response = Http::baseUrl(rtrim((string) config('services.openai.base_url', 'https://api.openai.com/v1'), '/'))
+            ->withToken((string) config('services.openai.api_key'))
+            ->acceptJson()
+            ->timeout((int) config('services.openai.timeout', 120))
+            ->post('/chat/completions', [
+                'model' => (string) config('services.openai.translation_model', 'gpt-4.1-mini'),
+                'temperature' => 0.1,
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => implode("\n", [
+                            'You are a professional ecommerce localization engine.',
+                            "Translate text from {$sourceLocale} into {$targetLanguage} ({$targetLocale}).",
+                            'Preserve placeholders exactly, including :name, :count, {name}, %s, HTML tags, URLs, SKUs, and line breaks.',
+                            'Keep the output natural for ecommerce UI and catalog content.',
+                            'Return JSON only with the shape {"translations":[{"index":0,"translation":"..."}]}.',
+                        ]),
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => json_encode([
+                            'context' => $context,
+                            'items' => $items,
+                        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    ],
+                ],
+            ])
+            ->throw();
+
+        $content = data_get($response->json(), 'choices.0.message.content');
+
+        if (!is_string($content) || trim($content) === '') {
+            throw new RuntimeException('OpenAI translation response was empty.');
+        }
+
+        $decoded = json_decode($content, true);
+
+        if (!is_array($decoded)) {
+            throw new RuntimeException('OpenAI translation response was not valid JSON.');
+        }
+
+        $rows = $decoded['translations'] ?? null;
+
+        if (!is_array($rows)) {
+            throw new RuntimeException('OpenAI translation response did not contain a translations array.');
+        }
+
+        $translations = array_fill(0, count($texts), '');
+
+        foreach ($rows as $row) {
+            $index = is_array($row) ? (int) ($row['index'] ?? -1) : -1;
+
+            if ($index < 0 || $index >= count($texts)) {
+                continue;
+            }
+
+            $translations[$index] = trim((string) ($row['translation'] ?? ''));
+        }
+
+        foreach ($translations as $index => $translation) {
+            if ($translation === '') {
+                $translations[$index] = (string) ($texts[$index] ?? '');
+            }
+        }
+
+        return $translations;
+    }
+
+    protected function cacheKey(string $sourceLocale, string $targetLocale, string $text): string
+    {
+        return $sourceLocale . '|' . $targetLocale . '|' . md5($text);
+    }
+}

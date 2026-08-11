@@ -1,0 +1,43 @@
+/* Sidebar accordion */
+.elora-filter-section details>summary {
+    list-style: none;
+}
+
+.elora-filter-section details>summary::-webkit-details-marker {
+    display: none;
+}
+
+.elora-filter-section details>summary .chevron {
+    transition: transform 0.2s ease;
+}
+
+.elora-filter-section details[open]>summary .chevron {
+    transform: rotate(180deg);
+}
+
+/* Hide scrollbar on category circles */
+.cat-circles-row {
+    scrollbar-width: none;
+}
+
+.cat-circles-row::-webkit-scrollbar {
+    display: none;
+}
+
+/* Sort select */
+.sort-select {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* RTL: mobile filter drawer should dock and slide in from the reading-start (right) side */
+@media (max-width: 1023px) {
+    [dir="rtl"] #mobile-filter-drawer {
+        left: auto;
+        right: 0;
+    }
+
+    [dir="rtl"] #mobile-filter-drawer.-translate-x-full {
+        transform: translateX(100%) !important;
+    }
+}
