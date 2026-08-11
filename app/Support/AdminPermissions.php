@@ -9,8 +9,6 @@ class AdminPermissions
         return [
             'dashboard.view' => 'View dashboard',
 
-            'catalog.catalogs.view' => 'View catalogs',
-            'catalog.catalogs.manage' => 'Manage catalogs',
             'catalog.products.view' => 'View products',
             'catalog.products.manage' => 'Manage products',
             'catalog.categories.view' => 'View categories',
@@ -138,9 +136,9 @@ class AdminPermissions
     protected static function legacyMap(): array
     {
         return [
-            'catalog.products.view' => ['catalog.products.view', 'catalog.catalogs.view'],
-            'catalog.products.manage' => ['catalog.catalogs.manage', 'catalog.products.manage'],
-            'catalog.categories.manage' => ['catalog.catalogs.view', 'catalog.categories.manage'],
+            'catalog.products.view' => ['catalog.products.view'],
+            'catalog.products.manage' => ['catalog.products.manage'],
+            'catalog.categories.manage' => ['catalog.categories.manage'],
             'catalog.variations.manage' => ['catalog.variations.manage'],
 
             'sales.orders.view' => ['sales.orders.view', 'sales.orders.report.view', 'shipping.delivery.view'],

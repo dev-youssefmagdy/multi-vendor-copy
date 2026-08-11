@@ -12,7 +12,7 @@ class CategoryRepository
     public function paginate(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return $this->baseQuery()
-            ->with(['catalogs.translations.language', 'parent.translations.language'])
+            ->with(['parent.translations.language'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
 
@@ -24,7 +24,6 @@ class CategoryRepository
                 });
             })
             ->when(filled($filters['status'] ?? null), fn($query) => $query->where('status', $filters['status']))
-            ->when(filled($filters['catalog_id'] ?? null), fn($query) => $query->whereHas('catalogs', fn($q) => $q->where('catalogs.id', $filters['catalog_id'])))
             ->latest('updated_at')
             ->paginate($perPage);
     }
@@ -40,7 +39,7 @@ class CategoryRepository
 
     public function findForEditor(Category $category): Category
     {
-        return $this->baseQuery()->with(['catalogs.translations.language', 'parent.translations.language'])->findOrFail($category->getKey());
+        return $this->baseQuery()->with(['parent.translations.language'])->findOrFail($category->getKey());
     }
 
     /**

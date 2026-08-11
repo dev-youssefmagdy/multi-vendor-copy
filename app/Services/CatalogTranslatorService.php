@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
@@ -16,7 +15,6 @@ use RuntimeException;
 class CatalogTranslatorService
 {
     protected const MODEL_FIELDS = [
-        Catalog::class => ['name'],
         Category::class => ['name', 'description', 'meta_keywords', 'meta_description'],
         Product::class => ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
         Variation::class => ['name', 'description'],

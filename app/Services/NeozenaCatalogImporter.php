@@ -8,7 +8,6 @@ use App\Enums\FileStorageType;
 use App\Enums\FileType;
 use App\Enums\ProductStatus;
 use App\Enums\VariationStatus;
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\File;
 use App\Models\Language;
@@ -258,20 +257,6 @@ class NeozenaCatalogImporter
             return $product->refresh();
         }, 5); // retry up to 5 times on deadlock / lock-wait timeout
 
-        // Dispatch tenant sync jobs AFTER the transaction commits so all data is visible.
-//        if ($product) {
-//            $catalogIds = $product->categories()
-//                ->pluck('catalog_id')
-//                ->filter()
-//                ->unique()
-//                ->values()
-//                ->all();
-//
-//            if ($catalogIds !== []) {
-//                $this->tenantSync->syncCatalogs($catalogIds, ['categories', 'products']);
-//            }
-//        }
-
         return $product;
     }
 
@@ -326,16 +311,6 @@ class NeozenaCatalogImporter
         return $this->retryOnDeadlock(function () use ($data, $parentId) {
             $category = Category::query()->where('external_id', $data['id'])->first() ?? new Category();
 
-            // Resolve which catalog(s) this category belongs to:
-            // prefer existing assignments, fall back to first catalog
-            $existingCatalogIds = $category->exists
-                ? $category->catalogs()->pluck('catalogs.id')->all()
-                : [];
-            if ($existingCatalogIds === []) {
-                $firstCatalogId = Catalog::query()->value('id');
-                $existingCatalogIds = $firstCatalogId ? [$firstCatalogId] : [];
-            }
-
             $category->fill([
                 'external_id' => $data['id'],
                 'parent_id' => $parentId,
@@ -344,9 +319,6 @@ class NeozenaCatalogImporter
                     : CategoryStatus::Draft->value,
                 'is_featured' => (bool) ($data['is_featured'] ?? false),
             ])->save();
-
-            // Sync catalog pivot (preserve existing assignments, add fallback if none)
-            $category->catalogs()->syncWithoutDetaching($existingCatalogIds);
 
             $translations = [];
             foreach ($data['translations'] ?? [] as $translation) {

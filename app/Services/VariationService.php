@@ -17,11 +17,8 @@ class VariationService
 
     public function save(array $attributes, ?Variation $variation = null): Variation
     {
-        $catalogIds = [];
-
-        $variation = DB::transaction(function () use ($attributes, $variation, &$catalogIds) {
+        $variation = DB::transaction(function () use ($attributes, $variation) {
             $variation ??= new Variation();
-            $catalogIds = $variation->exists ? $this->tenantSyncService->catalogIdsForVariation($variation) : [];
             $defaultLocale = Language::query()->where('is_default', true)->value('code') ?? array_key_first($attributes['translations'] ?? []) ?? 'en';
             $name = trim((string) data_get($attributes, "translations.{$defaultLocale}.name", ''));
 
@@ -61,7 +58,7 @@ class VariationService
             return $variation->fresh(['translations.language', 'options.translations.language']);
         });
 
-        $this->tenantSyncService->syncCatalogs($catalogIds, ['products']);
+        $this->tenantSyncService->syncAllTenants(['products']);
 
         return $variation;
     }

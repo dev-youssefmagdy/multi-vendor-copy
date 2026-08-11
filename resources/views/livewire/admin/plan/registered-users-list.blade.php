@@ -62,13 +62,6 @@
                     <option value="">All statuses</option>@foreach ($statusOptions as $statusOption)<option
                     value="{{ $statusOption->value }}">{{ ucfirst($statusOption->value) }}</option>@endforeach
                 </select></div>
-            {{--<div><label class="field-label">Catalog</label><select class="field-control"
-                    wire:model.live="catalogFilter">
-                    <option value="">All catalogs</option>@foreach ($catalogs as $catalog)<option
-                        value="{{ $catalog->id }}">
-                        {{ $catalog->name ?? $catalog->slug }}
-                    </option>@endforeach
-                </select></div> --}}
             <div><label class="field-label">Package</label><select class="field-control"
                     wire:model.live="packageFilter">
                     <option value="">All packages</option>@foreach ($packages as $package)<option

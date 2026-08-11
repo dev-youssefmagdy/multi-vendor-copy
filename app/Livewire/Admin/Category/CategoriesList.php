@@ -4,7 +4,6 @@ namespace App\Livewire\Admin\Category;
 
 use App\Enums\CategoryStatus;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
-use App\Models\Catalog;
 use App\Repositories\CategoryRepository;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,7 +16,6 @@ class CategoriesList extends Component
     public string $search = '';
 
     public string $statusFilter = '';
-    public string $catalogFilter = '';
 
     public function updatedSearch(): void
     {
@@ -29,14 +27,9 @@ class CategoriesList extends Component
         $this->resetPage();
     }
 
-    public function updatedCatalogFilter(): void
-    {
-        $this->resetPage();
-    }
-
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'catalogFilter']);
+        $this->reset(['search', 'statusFilter']);
         $this->resetPage();
     }
 
@@ -53,9 +46,7 @@ class CategoriesList extends Component
             'categories' => $categories->paginate([
                 'search' => $this->search,
                 'status' => $this->statusFilter,
-                'catalog_id' => $this->catalogFilter,
             ]),
-            'catalogs' => Catalog::query()->with('translations.language')->get(),
             'stats' => $categories->stats(),
             'statusOptions' => CategoryStatus::cases(),
             'canManageCategories' => $this->hasPermission('catalog.categories.manage'),

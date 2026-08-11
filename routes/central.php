@@ -11,8 +11,6 @@ use App\Livewire\Admin\Blog\BlogCategoriesList;
 use App\Livewire\Admin\Blog\BlogPostsList;
 use App\Livewire\Admin\Cache\MainCachePage;
 use App\Livewire\Admin\Cache\TenantsCachePage;
-use App\Livewire\Admin\Catalog\AddEditCatalog;
-use App\Livewire\Admin\Catalog\CatalogsList;
 use App\Livewire\Admin\Category\AddEditCategory;
 use App\Livewire\Admin\Category\CategoriesList;
 use App\Livewire\Admin\Domain\DnsRecordsList;
@@ -203,12 +201,6 @@ Route::group([
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
-    });
-
-    Route::prefix('catalogs')->name('catalogs.')->group(function () {
-        Route::get('/', CatalogsList::class)->middleware('admin.permission:catalog.catalogs.view,catalog.catalogs.manage')->name('index');
-        Route::get('/create', AddEditCatalog::class)->middleware('admin.permission:catalog.catalogs.manage')->name('create');
-        Route::get('/{catalog}/edit', AddEditCatalog::class)->middleware('admin.permission:catalog.catalogs.manage')->name('edit');
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {

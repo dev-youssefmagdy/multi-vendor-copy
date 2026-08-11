@@ -69,11 +69,6 @@
                     <option value="">All statuses</option>@foreach ($statusOptions as $statusOption)<option
                     value="{{ $statusOption->value }}">{{ $statusOption->label() }}</option>@endforeach
                 </select></div>
-            <div><label class="field-label" for="category-catalog">Catalog</label><select id="category-catalog"
-                    class="field-control" wire:model.live="catalogFilter">
-                    <option value="">All catalogs</option>@foreach ($catalogs as $catalog)<option
-                    value="{{ $catalog->id }}">{{ $catalog->name ?? $catalog->slug }}</option>@endforeach
-                </select></div>
         </div>
         <div class="filters-actions">
             <p class="filters-note">Use translated names for storefront display and keep slugs stable for URLs.</p>
@@ -95,7 +90,6 @@
                         <tr>
                             <th>Thumbnail</th>
                             <th>Category</th>
-                            <th>Catalog</th>
                             <th>Parent</th>
                             <th>Featured</th>
                             <th>Status</th>
@@ -120,13 +114,6 @@
                                 <td>
                                     <div class="entity-title">{{ $category->translationValue('name') ?? $category->slug }}</div>
                                     <div class="entity-subtitle">/{{ $category->slug }}</div>
-                                </td>
-                                <td>
-                                    @forelse ($category->catalogs as $cat)
-                                        <span class="badge badge-cyan">{{ $cat->translationValue('name') ?? $cat->slug }}</span>
-                                    @empty
-                                        <span class="entity-subtitle">No catalog</span>
-                                    @endforelse
                                 </td>
                                 <td>{{ $category->parent?->translationValue('name') ?? 'Root' }}</td>
                                 <td>{{ $category->is_featured ? 'Featured' : 'Standard' }}</td>

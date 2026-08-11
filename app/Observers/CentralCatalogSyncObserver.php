@@ -48,38 +48,22 @@ class CentralCatalogSyncObserver
 
     public function deleting(Category|Product|Variation|ProductVariant $model): void
     {
-        $model->tenant_sync_catalog_ids = $this->catalogIdsFor($model);
+        //
     }
 
     public function deleted(Category|Product|Variation|ProductVariant $model): void
     {
-        $catalogIds = $model->tenant_sync_catalog_ids ?? $this->catalogIdsFor($model);
-
         if ($model instanceof Category) {
-            app(CentralCatalogTenantSyncService::class)->syncCatalogs((array) $catalogIds, ['categories', 'products']);
+            app(CentralCatalogTenantSyncService::class)->syncAllTenants(['categories', 'products']);
 
             return;
         }
 
-        app(CentralCatalogTenantSyncService::class)->syncCatalogs((array) $catalogIds, ['products']);
+        app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);
     }
 
     public function restored(Product $model): void
     {
-        $catalogIds = app(CentralCatalogTenantSyncService::class)->catalogIdsForProduct($model);
-
-        app(CentralCatalogTenantSyncService::class)->syncCatalogs((array) $catalogIds, ['products']);
-    }
-
-    protected function catalogIdsFor(Category|Product|Variation|ProductVariant $model): array
-    {
-        $syncService = app(CentralCatalogTenantSyncService::class);
-
-        return match (true) {
-            $model instanceof Category => $model->catalogs()->pluck('catalogs.id')->all(),
-            $model instanceof Product => $syncService->catalogIdsForProduct($model),
-            $model instanceof Variation => $syncService->catalogIdsForVariation($model),
-            $model instanceof ProductVariant => $syncService->catalogIdsForProductVariant($model),
-        };
+        app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);
     }
 }

@@ -25,36 +25,6 @@ class CentralCatalogTenantSyncService
     {
     }
 
-    public function syncCatalogs(array $catalogIds, array $sections): void
-    {
-        $catalogIds = collect($catalogIds)
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
-
-        if ($catalogIds === []) {
-            return;
-        }
-
-        $this->dispatchToTenants($this->tenantsForCatalogIds($catalogIds), $sections);
-    }
-
-    /**
-     * @param  int[]  $catalogIds
-     * @return \Illuminate\Support\Collection<int, Tenant>
-     */
-    protected function tenantsForCatalogIds(array $catalogIds): \Illuminate\Support\Collection
-    {
-        $catalogIds = collect($catalogIds)->filter()->unique()->values()->all();
-
-        return Tenant::query()
-            ->orderBy('id')
-            ->get()
-            ->filter(fn(Tenant $tenant) => $tenant->all_catalogs || in_array($tenant->catalog_id, $catalogIds, true))
-            ->values();
-    }
-
     protected function dispatchProductToTenants(Product $product, iterable $tenants): void
     {
         foreach ($tenants as $tenant) {
@@ -67,33 +37,9 @@ class CentralCatalogTenantSyncService
         $this->dispatchToTenants(Tenant::query()->orderBy('id')->get(), $sections);
     }
 
-    public function catalogIdsForProduct(Product $product): array
-    {
-        return $product->categories()
-            ->join('category_catalog', 'categories.id', '=', 'category_catalog.category_id')
-            ->pluck('category_catalog.catalog_id')
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
-    }
-
-    public function catalogIdsForVariation(Variation $variation): array
-    {
-        return $variation->products()
-            ->join('category_product', 'products.id', '=', 'category_product.product_id')
-            ->join('category_catalog', 'category_product.category_id', '=', 'category_catalog.category_id')
-            ->pluck('category_catalog.catalog_id')
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
-    }
-
     public function syncCategory(Category $category, array $additionalCatalogIds = []): void
     {
-        $catalogIds = $category->catalogs()->pluck('catalogs.id')->all();
-        $this->syncCatalogs(array_merge($catalogIds, $additionalCatalogIds), ['categories', 'products']);
+        $this->syncAllTenants(['categories', 'products']);
     }
 
     /**
@@ -102,9 +48,7 @@ class CentralCatalogTenantSyncService
      */
     public function syncProduct(Product $product, array $additionalCatalogIds = []): void
     {
-        $catalogIds = array_merge($this->catalogIdsForProduct($product), $additionalCatalogIds);
-
-        $this->dispatchProductToTenants($product, $this->tenantsForCatalogIds($catalogIds));
+        $this->dispatchProductToTenants($product, Tenant::query()->orderBy('id')->get());
     }
 
     /**
@@ -130,18 +74,6 @@ class CentralCatalogTenantSyncService
         $this->dispatchProductToTenants($product, $tenants);
     }
 
-    public function catalogIdsForProductVariant(ProductVariant $variant): array
-    {
-        return $variant->product()
-            ->join('category_product', 'products.id', '=', 'category_product.product_id')
-            ->join('category_catalog', 'category_product.category_id', '=', 'category_catalog.category_id')
-            ->pluck('category_catalog.catalog_id')
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
-    }
-
     public function syncProductVariant(ProductVariant $variant, array $additionalCatalogIds = []): void
     {
         $product = $variant->product;
@@ -150,14 +82,12 @@ class CentralCatalogTenantSyncService
             return;
         }
 
-        $catalogIds = array_merge($this->catalogIdsForProductVariant($variant), $additionalCatalogIds);
-
-        $this->dispatchProductToTenants($product, $this->tenantsForCatalogIds($catalogIds));
+        $this->dispatchProductToTenants($product, Tenant::query()->orderBy('id')->get());
     }
 
     public function syncVariation(Variation $variation, array $additionalCatalogIds = []): void
     {
-        $this->syncCatalogs(array_merge($this->catalogIdsForVariation($variation), $additionalCatalogIds), ['products']);
+        $this->syncAllTenants(['products']);
     }
 
     public function syncSettings(): void

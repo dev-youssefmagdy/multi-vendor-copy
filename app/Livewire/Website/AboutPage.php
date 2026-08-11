@@ -6,7 +6,6 @@ use App\Enums\ContentStatus;
 use App\Enums\PackageStatus;
 use App\Enums\TenantStatus;
 use App\Models\BlogPost;
-use App\Models\Catalog;
 use App\Models\Package;
 use App\Models\Tenant;
 use App\Repositories\AppSettingRepository;
@@ -31,8 +30,8 @@ class AboutPage extends Component
                 'label' => 'Active Stores',
             ],
             [
-                'value' => number_format(Catalog::query()->where('status', 'active')->count()) . '+',
-                'label' => 'Catalogs Ready',
+                'value' => number_format(\App\Models\Product::query()->where('status', 'published')->count()) . '+',
+                'label' => 'Products Ready',
             ],
             [
                 'value' => number_format(BlogPost::query()->where('status', ContentStatus::Published->value)->count()) . '+',

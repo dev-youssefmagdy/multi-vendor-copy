@@ -31,7 +31,6 @@ class AdminNavigation
                         'label' => 'Product Management',
                         'icon' => 'products',
                         'children' => [
-                            // ['label' => 'Catalogs', 'route' => 'admin.catalogs.index', 'permission' => 'catalog.catalogs.view'],
                             ['label' => 'Products List', 'route' => 'admin.products.index', 'permission' => 'catalog.products.view'],
                             ['label' => 'Categories List', 'route' => 'admin.categories.index', 'permission' => 'catalog.categories.view'],
                             ['label' => 'Variations List', 'route' => 'admin.variations.index', 'permission' => 'catalog.variations.view'],
@@ -262,15 +261,6 @@ class AdminNavigation
                         'admin.products.edit-requests' => 'Product Edit Requests',
                     ],
                     'default' => 'Products List',
-                ],
-                'admin.catalogs.' => [
-                    'section' => 'Commerce',
-                    'group' => 'Product Management',
-                    'labels' => [
-                        'admin.catalogs.create' => 'Add Catalog',
-                        'admin.catalogs.edit' => 'Edit Catalog',
-                    ],
-                    'default' => 'Catalogs',
                 ],
                 'admin.categories.' => [
                     'section' => 'Commerce',

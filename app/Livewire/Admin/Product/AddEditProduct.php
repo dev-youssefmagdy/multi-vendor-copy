@@ -276,7 +276,6 @@ class AddEditProduct extends Component
         }
 
         $existingProduct = $this->productId ? Product::query()->findOrFail($this->productId) : null;
-        $previousCatalogIds = $existingProduct ? $tenantSyncService->catalogIdsForProduct($existingProduct) : [];
 
         $product = $service->save([
             'sku' => $validated['sku'],
@@ -302,7 +301,7 @@ class AddEditProduct extends Component
             'remove_gallery_ids' => $this->removeGalleryIds,
         ], $existingProduct);
 
-        $tenantSyncService->syncProduct($product, $previousCatalogIds);
+        $tenantSyncService->syncProduct($product);
 
         // ── Tenant Assignments ──────────────────────────────────────────────
         $previousAssignedTenantIds = ProductTenantAssignment::where('product_id', $product->id)

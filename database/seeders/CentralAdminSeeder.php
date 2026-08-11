@@ -15,7 +15,6 @@ use App\Models\AdminUser;
 use App\Models\AppSetting;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Faq;
 use App\Models\Language;
@@ -87,22 +86,6 @@ class CentralAdminSeeder extends Seeder
         // $this->syncTenantsFromCentral();
     }
 
-    protected function seedCatalogs(): Catalog
-    {
-        return $this->seedCatalog();
-    }
-
-    protected function seedCatalog(): Catalog
-    {
-        $catalog = Catalog::query()->firstOrCreate(
-            ['slug' => 'default-catalog'],
-            ['name' => 'Default Catalog', 'status' => 'active']
-        );
-        $catalog->syncTranslations(['en' => ['name' => 'Default Catalog']]);
-
-        return $catalog;
-    }
-
     protected function seedLanguages(): void
     {
         $this->seedLanguageEnglish();
@@ -142,22 +125,6 @@ class CentralAdminSeeder extends Seeder
         $pro->syncTranslations(['en' => ['name' => 'Pro', 'title' => 'Professional', 'description' => 'Advanced package for established tenants.']]);
 
         return $pro;
-    }
-
-    protected function seedCategories(Catalog $catalog): Category
-    {
-        return $this->seedCategoryElectronics($catalog);
-    }
-
-    protected function seedCategoryElectronics(Catalog $catalog): Category
-    {
-        $category = Category::query()->firstOrCreate(
-            ['external_id' => 'seed-electronics'],
-            ['catalog_id' => $catalog->id, 'status' => CategoryStatus::Published->value, 'is_featured' => true]
-        );
-        $category->syncTranslations(['en' => ['name' => 'Electronics', 'slug' => 'electronics', 'title' => 'Electronics', 'description' => 'Devices and accessories']]);
-
-        return $category;
     }
 
     protected function seedVariations(): Variation

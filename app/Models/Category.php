@@ -43,11 +43,6 @@ class Category extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function catalogs(): BelongsToMany
-    {
-        return $this->belongsToMany(Catalog::class, 'category_catalog');
-    }
-
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');

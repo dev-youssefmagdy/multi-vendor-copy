@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\Category;
 
 use App\Enums\CategoryStatus;
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Language;
 use App\Repositories\CategoryRepository;
@@ -25,7 +24,6 @@ class AddEditCategory extends Component
      */
     public array $parentPath = [];
 
-    public array $catalogIds = [];
     public string $status = 'draft';
     public bool $isFeatured = false;
     public array $translations = [];
@@ -57,7 +55,6 @@ class AddEditCategory extends Component
 
         $loaded = app(CategoryRepository::class)->findForEditor($category);
         $this->categoryId = $loaded->id;
-        $this->catalogIds = $loaded->catalogs->pluck('id')->map(fn($id) => (string) $id)->all();
 
         // Reconstruct the parentPath from root → parent
         if ($loaded->parent_id) {
@@ -116,7 +113,6 @@ class AddEditCategory extends Component
         $validated = $this->validate($this->rules());
 
         $category = $service->save([
-            'catalog_ids' => array_map('intval', $validated['catalogIds']),
             'parent_id' => !empty($this->parentPath) ? (int) end($this->parentPath) : null,
             'status' => $validated['status'],
             'is_featured' => $validated['isFeatured'],
@@ -135,8 +131,6 @@ class AddEditCategory extends Component
         $defaultLocale = Language::query()->where('is_default', true)->value('code') ?? 'en';
 
         $rules = [
-            'catalogIds' => ['required', 'array', 'min:1'],
-            'catalogIds.*' => ['integer', Rule::exists('catalogs', 'id')],
             'parentPath' => ['array'],
             'parentPath.*' => ['integer', Rule::exists('categories', 'id')],
             'status' => ['required', Rule::enum(CategoryStatus::class)],
@@ -199,7 +193,6 @@ class AddEditCategory extends Component
 
         return view('livewire.admin.category.add-edit-category', [
             'pageTitle' => $this->categoryId ? 'Edit Category' : 'Add Category',
-            'catalogs' => Catalog::query()->with('translations.language')->get(),
             'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
             'categoryLevels' => $categoryLevels,
             'statusOptions' => CategoryStatus::cases(),

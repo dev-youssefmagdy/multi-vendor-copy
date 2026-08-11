@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Translation;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
@@ -20,11 +19,8 @@ class CategoryService
 
     public function save(array $attributes, ?Category $category = null): Category
     {
-        $affectedCatalogIds = [];
-
-        $category = DB::transaction(function () use ($attributes, $category, &$affectedCatalogIds) {
+        $category = DB::transaction(function () use ($attributes, $category) {
             $category ??= new Category();
-            $previousCatalogIds = $category->catalogs()->pluck('catalogs.id')->all();
 
             // Build per-locale slugs: auto-generate from locale name if slug field is empty
             $translations = $attributes['translations'] ?? [];
@@ -36,18 +32,6 @@ class CategoryService
             }
             unset($localeData);
 
-            // Resolve catalog_ids: explicit array, fallback to parent's catalogs, fallback to first catalog
-            if (array_key_exists('catalog_ids', $attributes)) {
-                $newCatalogIds = array_values(array_filter(array_map('intval', (array) $attributes['catalog_ids'])));
-            } elseif ($category->exists) {
-                $newCatalogIds = $previousCatalogIds;
-            } elseif ($attributes['parent_id'] ?? null) {
-                $newCatalogIds = Category::query()->whereKey($attributes['parent_id'])->first()?->catalogs()->pluck('catalogs.id')->all() ?? [];
-            } else {
-                $firstCatalogId = Catalog::query()->value('id');
-                $newCatalogIds = $firstCatalogId ? [$firstCatalogId] : [];
-            }
-
             $category->fill([
                 'parent_id' => $attributes['parent_id'] ?? null,
                 'status' => $attributes['status'],
@@ -55,7 +39,6 @@ class CategoryService
             ]);
 
             $category->save();
-            $category->catalogs()->sync($newCatalogIds);
             $category->syncTranslations($translations);
 
             if (($attributes['remove_thumb'] ?? false) === true) {
@@ -66,12 +49,10 @@ class CategoryService
                 $this->mediaService->syncThumb($category, $attributes['thumb_image']);
             }
 
-            $affectedCatalogIds = array_values(array_unique(array_merge($previousCatalogIds, $newCatalogIds)));
-
             return $category->fresh(['translations.language', 'parent.translations.language', 'files']);
         });
 
-        $this->tenantSyncService->syncCatalogs($affectedCatalogIds, ['categories', 'products']);
+        $this->tenantSyncService->syncAllTenants(['categories', 'products']);
 
         return $category;
     }

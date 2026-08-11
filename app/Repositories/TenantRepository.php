@@ -27,7 +27,6 @@ class TenantRepository
                 });
             })
             ->when(filled($filters['status'] ?? null), fn($query) => $query/*->where('status', $filters['status'])*/ ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.status')) = ?", [$filters['status']]))
-            ->when(filled($filters['catalog_id'] ?? null), fn($query) => $query->whereJsonContains('category_ids', (int) $filters['catalog_id']))
             ->when(filled($filters['package_id'] ?? null), fn($query) => $query->where('package_id', $filters['package_id'])->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.package_id')) = ?", [$filters['package_id']]))
             ->latest('updated_at');
 

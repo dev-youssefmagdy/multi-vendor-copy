@@ -8,7 +8,6 @@ use App\Enums\PackageStatus;
 use App\Enums\SubscriberStatus;
 use App\Enums\TenantStatus;
 use App\Models\BlogPost;
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Faq;
 use App\Models\NewsletterSubscriber;
@@ -114,7 +113,7 @@ class LandingPage extends Component
                 'description' => 'Protected & Reliable.',
             ],
             [
-                'value' => number_format(Catalog::query()->where('status', 'active')->count()) . '+',
+                'value' => number_format(\App\Models\Product::query()->where('status', 'published')->count()) . '+',
                 'label' => 'Original Products',
                 'description' => 'Ready for your store.',
             ],

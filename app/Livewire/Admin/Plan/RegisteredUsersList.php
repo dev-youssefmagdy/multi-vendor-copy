@@ -6,7 +6,6 @@ use App\Enums\TenantStatus;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
 use App\Livewire\Admin\Concerns\HasCsvExport;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
-use App\Models\Catalog;
 use App\Models\Package;
 use App\Repositories\TenantRepository;
 use Livewire\Component;
@@ -21,7 +20,6 @@ class RegisteredUsersList extends Component
 
     public string $search = '';
     public string $statusFilter = '';
-    public string $catalogFilter = '';
     public string $packageFilter = '';
     public string $imageFilter = '';
 
@@ -42,11 +40,6 @@ class RegisteredUsersList extends Component
         $this->resetPage();
     }
 
-    public function updatedCatalogFilter(): void
-    {
-        $this->resetPage();
-    }
-
     public function updatedImageFilter(): void
     {
         $this->resetPage();
@@ -54,7 +47,7 @@ class RegisteredUsersList extends Component
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'catalogFilter', 'packageFilter', 'imageFilter']);
+        $this->reset(['search', 'statusFilter', 'packageFilter', 'imageFilter']);
         $this->resetPage();
     }
 
@@ -91,7 +84,6 @@ class RegisteredUsersList extends Component
         return $repository->paginate([
             'search' => $this->search,
             'status' => $this->statusFilter,
-            'catalog_id' => $this->catalogFilter,
             'package_id' => $this->packageFilter,
         ], 100000)->map(fn($tenant) => [
                 $tenant->id,
@@ -124,11 +116,9 @@ class RegisteredUsersList extends Component
             'tenants' => $tenants->paginate([
                 'search' => $this->search,
                 'status' => $this->statusFilter,
-                'catalog_id' => $this->catalogFilter,
                 'package_id' => $this->packageFilter,
                 'has_image' => $this->imageFilter,
             ]),
-            'catalogs' => Catalog::query()->with('translations.language')->get(),
             'stats' => $tenants->stats(),
             'statusOptions' => TenantStatus::cases(),
             'packages' => Package::query()->with('translations.language')->get(),

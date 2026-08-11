@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\CategoryStatus;
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
-use App\Models\Catalog;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
@@ -14,12 +13,6 @@ class CentralCatalogSeeder extends Seeder
 {
     public function run(): void
     {
-        $catalog = Catalog::query()->firstOrCreate(
-            ['slug' => 'main-catalog'],
-            ['name' => 'Main Catalog', 'status' => 'active']
-        );
-        $catalog->syncTranslations(['en' => ['name' => 'Main Catalog']]);
-
         // ── Categories ────────────────────────────────────────────────────────
 
 //        $categoriesData = [

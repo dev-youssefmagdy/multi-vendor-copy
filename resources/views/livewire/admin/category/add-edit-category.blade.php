@@ -29,20 +29,6 @@
       <x-card-collapse title="Configuration" subtitle="Catalog scope, hierarchy, status, and placement." class="form-card span-4" :start-open="true">
         <div class="form-grid">
           <div>
-            <label class="field-label">Catalogs *</label>
-            <div class="checkbox-list">
-              @foreach ($catalogs as $catalog)
-                <label class="toggle-field">
-                  <input type="checkbox" wire:model.live="catalogIds" value="{{ $catalog->id }}">
-                  <span>{{ $catalog->name ?? $catalog->slug }}</span>
-                </label>
-              @endforeach
-            </div>
-            @error('catalogIds') <p class="field-error">{{ $message }}</p> @enderror
-            @error('catalogIds.*') <p class="field-error">{{ $message }}</p> @enderror
-          </div>
-
-          <div>
             <label class="field-label">Parent Category</label>
 
             @foreach ($categoryLevels as $level)
