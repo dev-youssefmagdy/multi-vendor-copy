@@ -195,7 +195,7 @@ class TenantPanelService
                         $fill['thumbnail_path'] = $path;
                     } elseif (($variantAttributes['remove_image'] ?? false) === true) {
                         $fill['thumbnail_path'] = null;
-                    } elseif (array_key_exists('thumbnail_path', $variantAttributes)) {
+                    } elseif (array_key_exists('thumbnail_path', $variantAttributes) && $variantAttributes['thumbnail_path'] !== null) {
                         $fill['thumbnail_path'] = $variantAttributes['thumbnail_path'];
                     }
 

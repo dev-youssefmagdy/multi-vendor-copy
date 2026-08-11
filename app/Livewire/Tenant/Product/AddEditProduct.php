@@ -134,7 +134,6 @@ class AddEditProduct extends Component
                     'central_product_variant_id' => $variant['central_product_variant_id'] ?? null,
                     'real_price' => $variant['real_price'] ?? 0,
                     'sell_price' => $variant['sell_price'] ?? 0,
-                    'thumbnail_path' => $variant['thumbnail_path'] ?? null,
                     'active' => $variant['active'] ?? true,
                 ];
             })->all(),
