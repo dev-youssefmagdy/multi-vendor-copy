@@ -426,7 +426,7 @@
                 style="background:var(--surface-2,#1e293b);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;padding:24px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
                     <h3 style="font-size:16px;font-weight:600;color:var(--text-primary,#f1f5f9);margin:0;">
-                        &#9776; Price Breakdown — {{ $priceListProductName }}
+                        Price Breakdown — {{ $priceListProductName }}
                     </h3>
                     <button type="button" wire:click="closePriceListModal"
                         style="background:none;border:none;cursor:pointer;color:var(--text-muted,#94a3b8);font-size:18px;line-height:1;padding:4px;">&times;</button>

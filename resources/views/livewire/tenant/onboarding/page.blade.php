@@ -145,7 +145,7 @@
                                 </div>
 
                                 @if (!$item['done'])
-                                    <a href="{{ $item['action_url'] }}" class="ob-setup-action" wire:navigate>
+                                    <a href="{{ $item['action_url'] }}" class="ob-setup-action">
                                         {{ $item['action_label'] }}
                                         <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                             stroke-width="2.5">
@@ -220,6 +220,16 @@
                 @endif
 
             </div>
+
+            @script
+            <script>
+                document.addEventListener('visibilitychange', function () {
+                    if (!document.hidden) {
+                        $wire.$refresh();
+                    }
+                });
+            </script>
+            @endscript
         @endif
 
     </div>
