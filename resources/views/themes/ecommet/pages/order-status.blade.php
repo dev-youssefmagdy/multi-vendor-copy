@@ -103,11 +103,12 @@
                         @php
                             $orderedProduct = $item->product ?? $item->variant?->product;
                             $orderedVariantTitle = $item->variant?->display_label;
+                            $itemImage = $item->variant?->thumbnail_url ?? $orderedProduct?->primary_image_url;
                         @endphp
                         <div class="flex items-start gap-4 py-4">
                             <div class="w-[70px] h-[70px] bg-[#f5f5f5] shrink-0 rounded-lg overflow-hidden flex items-center justify-center">
-                                @if ($orderedProduct?->primary_image_url)
-                                    <img loading="lazy" src="{{ $orderedProduct->primary_image_url }}" alt="" class="w-[60px] h-[60px] object-contain">
+                                @if ($itemImage)
+                                    <img loading="lazy" src="{{ $itemImage }}" alt="" class="w-[60px] h-[60px] object-contain">
                                 @endif
                             </div>
                             <div class="flex-1">

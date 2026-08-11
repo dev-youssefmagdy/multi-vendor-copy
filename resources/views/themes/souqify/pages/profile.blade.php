@@ -172,7 +172,9 @@
                         $productName = $firstItem?->product?->translationValue('name')
                         ?? $firstItem?->product?->slug
                         ?? __('Product');
-                        $productImage = $firstItem?->product?->primary_image_url ?? null;
+                        $productImage = $firstItem?->variant?->thumbnail_url
+                        ?? $firstItem?->product?->primary_image_url
+                        ?? null;
                         $orderTotal = '$' . number_format((float) ($order->grand_total ?? 0), 2);
                         $paymentMethod = $order->payment_method ?? $order->gateway ?? '—';
                         $itemCount = $order->items->count();

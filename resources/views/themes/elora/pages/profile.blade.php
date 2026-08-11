@@ -344,6 +344,7 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                     @php
                     $firstItem = $order->items->first();
                     $firstProduct = $firstItem?->product ?? $firstItem?->variant?->product;
+                    $firstItemImage = $firstItem?->variant?->thumbnail_url ?? $firstProduct?->primary_image_url;
                     $extraCount = $order->items->count() - 1;
                     $badge = match ($order->status) {
                     OrderStatus::Pending => [
@@ -418,8 +419,8 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                         <div class="flex items-center gap-4 mb-5">
                             <div
                                 class="w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl flex-shrink-0 bg-[#F5F5F5] flex items-center justify-center overflow-hidden">
-                                @if ($firstProduct?->primary_image_url)
-                                <img loading="lazy" src="{{ $firstProduct->primary_image_url }}" alt=""
+                                @if ($firstItemImage)
+                                <img loading="lazy" src="{{ $firstItemImage }}" alt=""
                                     class="w-full h-full object-cover">
                                 @else
                                 <svg class="w-8 h-8 text-[#ccc]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

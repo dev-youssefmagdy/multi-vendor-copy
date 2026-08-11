@@ -128,9 +128,10 @@ $orders Collection<Order>
                                             @php
                                                 $firstItem = $order->items->first();
                                                 $firstProduct = $firstItem?->product ?? $firstItem?->variant?->product;
+                                                $firstItemImage = $firstItem?->variant?->thumbnail_url ?? $firstProduct?->primary_image_url;
                                             @endphp
-                                            @if ($firstProduct?->primary_image_url)
-                                                <img loading="lazy" src="{{ $firstProduct->primary_image_url }}" alt=""
+                                            @if ($firstItemImage)
+                                                <img loading="lazy" src="{{ $firstItemImage }}" alt=""
                                                     class="w-[60px] h-[60px] object-contain">
                                             @endif
                                         </div>

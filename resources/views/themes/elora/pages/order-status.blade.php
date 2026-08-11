@@ -140,11 +140,12 @@ $order Order (with items, activities, paymentGateway)
                                 @php
                                     $orderedProduct      = $item->product ?? $item->variant?->product;
                                     $orderedVariantTitle = $item->variant?->display_label;
+                                    $itemImage           = $item->variant?->thumbnail_url ?? $orderedProduct?->primary_image_url;
                                 @endphp
                                 <div class="flex items-start gap-3 px-4 pt-3 pb-3">
                                     <div class="w-[86px] h-[81px] rounded-lg flex-shrink-0 bg-[#F5F5F5] overflow-hidden">
-                                        @if ($orderedProduct?->primary_image_url)
-                                        <img loading="lazy" src="{{ $orderedProduct->primary_image_url }}" alt="" class="w-full h-full object-cover">
+                                        @if ($itemImage)
+                                        <img loading="lazy" src="{{ $itemImage }}" alt="" class="w-full h-full object-cover">
                                         @endif
                                     </div>
                                     <div class="flex-1 min-w-0 flex flex-col gap-1">
