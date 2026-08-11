@@ -96,7 +96,7 @@
                 </svg>
 
                 <span class="text-white">{{ __('Free shipping worldwide.') }}</span>
-                <span class="text-gray-300">{{ __('Orders over') }} <span class="text-blue-500">$200</span></span>
+                <span class="text-gray-300">{{ __('Orders over') }} <span class="text-blue-500">{{ $freeShippingThreshold ?? '$200' }}</span></span>
             </p>
             @endif
             {{-- Locale / Currency switcher Livewire component handles trigger + modal --}}
@@ -205,7 +205,7 @@
                 </svg>
                 <div class="{{ $cartCount > 0 ? '' : 'hidden lg:block' }}">
                     <span id="souqify-cart-badge"
-                        class="bg-blue-700 text-white text-[10px] rounded-full w-full h-[18px] flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
+                        class="souqify-cart-badge bg-blue-700 text-white text-[10px] rounded-full w-full h-[18px] flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
                     <span class="text-xs hidden lg:block">{{ __('Cart') }}</span>
                 </div>
             </a>
@@ -256,7 +256,7 @@
 <!-- Mobile menu drawer -->
 <div id="mobileMenu" class="fixed inset-0 z-[60] hidden">
     <div class="absolute inset-0 bg-black/50" onclick="closeMobileMenu()"></div>
-    <aside class="absolute left-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-2xl p-6 overflow-y-auto">
+    <aside class="absolute start-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-2xl p-6 overflow-y-auto">
         <div class="flex items-center justify-between mb-8">
             <x-storefront-logo :storeName="$storeName" class="h-8 w-auto" />
             <button onclick="closeMobileMenu()" class="p-1">

@@ -71,18 +71,18 @@ Vars: $product (Product model), $badgeText (optional)
         </a>
         @if($sliderJson)
             <button type="button"
-                class="absolute left-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
+                class="absolute start-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
                 style="box-shadow:0 2px 6px rgba(0,0,0,.45)"
                 onclick="event.preventDefault();event.stopPropagation();cardSliderNav(this,-1)">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <svg class="w-3 h-3 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
             <button type="button"
-                class="absolute right-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
+                class="absolute end-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
                 style="box-shadow:0 2px 6px rgba(0,0,0,.45)"
                 onclick="event.preventDefault();event.stopPropagation();cardSliderNav(this,1)">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <svg class="w-3 h-3 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
@@ -161,8 +161,9 @@ Vars: $product (Product model), $badgeText (optional)
                 var imgs;
                 try { imgs = JSON.parse(raw); } catch (e) { return; }
                 if (!imgs || imgs.length < 2) return;
+                var rtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
                 var idx = parseInt(img.getAttribute('data-slider-idx') || '0', 10);
-                idx = (idx + dir + imgs.length) % imgs.length;
+                idx = (idx + (rtl ? -dir : dir) + imgs.length) % imgs.length;
                 img.setAttribute('data-slider-idx', String(idx));
                 img.src = imgs[idx];
             };

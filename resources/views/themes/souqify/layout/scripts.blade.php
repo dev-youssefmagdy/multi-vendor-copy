@@ -325,7 +325,7 @@
                         rows +
                         '<a href="' + seeAll + '" class="souqify-see-all flex items-center justify-center gap-1 px-4 py-2.5 text-[12px] font-semibold text-blue-700 border-t border-neutral-100 hover:bg-neutral-50 transition">' +
                         '{{ __("See all results for") }} "<strong>' + safeText(kw) + '</strong>"' +
-                        '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>');
+                        '<svg class="w-3.5 h-3.5" style="' + (document.documentElement.dir === 'rtl' ? 'transform:rotate(180deg)' : '') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>');
                     bindResultEvents(kw);
                 }
 
@@ -388,13 +388,12 @@
 
             showStorefrontToast(message, 'success');
 
-            var badge = document.getElementById('souqify-cart-badge');
-            if (badge) {
+            document.querySelectorAll('.souqify-cart-badge').forEach(function (badge) {
                 var current = parseInt(badge.textContent, 10) || 0;
                 badge.textContent = current + qty;
                 badge.classList.remove('hidden');
                 badge.closest('div')?.classList.remove('hidden');
-            }
+            });
         });
 
         Livewire.on('storefront-toast', function (event) {

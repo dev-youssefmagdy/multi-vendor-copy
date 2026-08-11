@@ -1156,8 +1156,9 @@
     // ── Fixed corner video popup (picture-in-picture) ────────────────────────
     var sqPipModal = null;
     var sqPipVideo = null;
+    var sqPipDismissed = false;
 
-    function sqDestroyPip() {
+    function sqDestroyPip(userDismissed) {
         if (sqPipModal && sqPipModal.parentNode) {
             if (sqPipVideo) { sqPipVideo.pause(); sqPipVideo = null; }
             sqPipModal.style.opacity = '0';
@@ -1166,9 +1167,13 @@
             setTimeout(function () { if (m.parentNode) m.parentNode.removeChild(m); }, 300);
             sqPipModal = null;
         }
+        if (userDismissed) {
+            sqPipDismissed = true;
+        }
     }
 
     function sqShowPip(src, poster) {
+        if (sqPipDismissed) return;
         if (sqPipModal) {
             // update source if different
             if (sqPipVideo && sqPipVideo.getAttribute('data-src') !== src) {
@@ -1222,7 +1227,7 @@
             'cursor:pointer',
             'padding:0',
         ].join(';');
-        closeBtn.onclick = function () { sqDestroyPip(); };
+        closeBtn.onclick = function () { sqDestroyPip(true); };
 
         var vid = document.createElement('video');
         vid.src = src;
@@ -1260,6 +1265,7 @@
             var poster = videoEl.poster || videoEl.getAttribute('poster') || '';
             sqShowPip(src, poster);
         } else {
+            sqPipDismissed = false;
             sqDestroyPip();
         }
     }

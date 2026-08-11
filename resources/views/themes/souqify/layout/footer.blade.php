@@ -3,9 +3,9 @@ $shopCategories = ($categories ?? collect())->take(6);
 @endphp
 
 <!-- =========== FOOTER =========== -->
-<footer class="hidden lg:block bg-slate-950 text-white pt-12">
+<footer class="bg-slate-950 text-white pt-12 pb-24 lg:pb-0">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12">
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-8">
             <!-- Brand col -->
             <div class="lg:col-span-4">
                 <x-storefront-logo :storeName="$storeName" class="h-10 w-auto mb-3" />
