@@ -214,7 +214,7 @@
                     <label class="form-label" for="shipping-status-select">New Status</label>
                     <x-select wire:model="selectedShippingStatus" placeholder="— select status —">
                         <option value="">— select status —</option>
-                        @foreach ($shippingStatuses as $shippingStatus)
+                        @foreach (($shippingStatuses ?? []) as $shippingStatus)
                             <option value="{{ $shippingStatus->value }}">{{ $shippingStatus->label() }}</option>
                         @endforeach
                     </x-select>

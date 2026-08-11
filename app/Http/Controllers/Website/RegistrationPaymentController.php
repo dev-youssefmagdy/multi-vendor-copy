@@ -146,8 +146,6 @@ class RegistrationPaymentController extends Controller
                 'phone' => $data['phone'] ?? null,
                 'locale' => app()->getLocale(),
                 'package_id' => $package?->id,
-                'catalog_id' => $data['catalog_id'] ?? null,
-                'all_catalogs' => (bool) ($data['all_catalogs'] ?? true),
                 'payment_data' => array_merge($payment, [
                     'package_price' => (float) ($data['package_price'] ?? 0),
                 ]),

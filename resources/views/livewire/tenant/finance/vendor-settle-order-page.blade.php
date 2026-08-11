@@ -247,13 +247,20 @@
 
                 _vsoStripe     = Stripe(stripeKey);
                 const elms     = _vsoStripe.elements();
+                // Stripe card iframes can't read CSS variables, so resolve them here at init time.
+                const computedStyle  = getComputedStyle(document.documentElement);
+                const cardTextColor  = computedStyle.getPropertyValue('--t1').trim() || '#111827';
+                const placeholderClr = computedStyle.getPropertyValue('--t3').trim() || '#9ca3af';
+                const inputBg        = computedStyle.getPropertyValue('--card').trim() || 'transparent';
+
                 _vsoStripeCard = elms.create('card', {
                     style: {
                         base: {
                             fontSize: '13px',
-                            color: '#333333',
+                            color: cardTextColor,
                             fontFamily: 'inherit',
-                            '::placeholder': { color: '#aaaaaa' },
+                            backgroundColor: inputBg,
+                            '::placeholder': { color: placeholderClr },
                         },
                         invalid: { color: '#dc2626' },
                     },

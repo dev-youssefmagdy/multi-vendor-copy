@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Finance;
 
+use App\Enums\OrderShippingStatus;
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Models\Tenant\Order;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -36,6 +37,7 @@ class BillingDetailPage extends TenantPage
     {
         return array_merge(parent::pageData(), [
             'order' => $this->order,
+            'shippingStatuses' => OrderShippingStatus::cases(),
         ]);
     }
 }

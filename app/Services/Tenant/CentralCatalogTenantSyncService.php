@@ -37,7 +37,7 @@ class CentralCatalogTenantSyncService
         $this->dispatchToTenants(Tenant::query()->orderBy('id')->get(), $sections);
     }
 
-    public function syncCategory(Category $category, array $additionalCatalogIds = []): void
+    public function syncCategory(Category $category): void
     {
         $this->syncAllTenants(['categories', 'products']);
     }
@@ -46,7 +46,7 @@ class CentralCatalogTenantSyncService
      * Push a single product's own changes (price, stock, weight, details) to the
      * tenants that carry it, without re-syncing their entire product catalog.
      */
-    public function syncProduct(Product $product, array $additionalCatalogIds = []): void
+    public function syncProduct(Product $product): void
     {
         $this->dispatchProductToTenants($product, Tenant::query()->orderBy('id')->get());
     }
@@ -74,7 +74,7 @@ class CentralCatalogTenantSyncService
         $this->dispatchProductToTenants($product, $tenants);
     }
 
-    public function syncProductVariant(ProductVariant $variant, array $additionalCatalogIds = []): void
+    public function syncProductVariant(ProductVariant $variant): void
     {
         $product = $variant->product;
 
@@ -85,7 +85,7 @@ class CentralCatalogTenantSyncService
         $this->dispatchProductToTenants($product, Tenant::query()->orderBy('id')->get());
     }
 
-    public function syncVariation(Variation $variation, array $additionalCatalogIds = []): void
+    public function syncVariation(Variation $variation): void
     {
         $this->syncAllTenants(['products']);
     }

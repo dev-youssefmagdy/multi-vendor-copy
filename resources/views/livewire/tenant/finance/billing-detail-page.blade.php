@@ -17,6 +17,7 @@
     <div class="page-stack section-gap">
         @include('livewire.tenant.order.partials.order-details', [
             'order' => $order,
+            'shippingStatuses' => $shippingStatuses ?? [],
         ])
     </div>
 </main>

@@ -8,6 +8,7 @@ use App\Jobs\SyncProductFixedShippingCosts;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Tenant;
 use App\Models\Variation;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
 
@@ -43,6 +44,27 @@ class CentralCatalogSyncObserver
 
         if ($model instanceof ProductVariant && $model->wasChanged('stock')) {
             app(CentralCatalogTenantSyncService::class)->syncProductVariant($model);
+        }
+
+        // When a central product's publication status changes, immediately update
+        // the central_visible flag on every tenant's copy of the product.
+        // This handles published → archived (hide from tenants) and
+        // archived → published (restore to tenants) without needing a manual sync.
+        if ($model instanceof Product && $model->wasChanged('status')) {
+            $allTenants = Tenant::query()->orderBy('id')->get();
+
+            foreach ($allTenants as $tenant) {
+                tenancy()->initialize($tenant);
+                try {
+                    // Use withoutGlobalScope so we can find the row even when
+                    // central_visible is currently false (archived product).
+                    \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
+                        ->where('central_product_id', $model->id)
+                        ->update(['central_visible' => $model->isVisibleToTenants()]);
+                } finally {
+                    tenancy()->end();
+                }
+            }
         }
     }
 
