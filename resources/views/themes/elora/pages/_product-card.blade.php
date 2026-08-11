@@ -132,7 +132,10 @@
         @endif
 
         {{-- Favorite / heart button – top-left --}}
-        <button type="button" onclick="event.preventDefault(); eloraHeartToggle(this)" data-fav="{{ $favData }}"
+        <button type="button" onclick="event.preventDefault(); eloraHeartToggle(this)"
+            data-fav="{{ $favData }}"
+            data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+            data-product-id="{{ $product->id }}"
             class="heart-btn absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center z-10 transition-transform hover:scale-110"
             style="box-shadow:0 4px 4px rgba(0,0,0,.15)">
             <svg class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="#242424" stroke-width="1.5"
