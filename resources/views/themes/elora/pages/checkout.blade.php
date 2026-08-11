@@ -290,7 +290,7 @@
 
                     {{-- Mobile pay button --}}
                     <div
-                        class="sm:hidden fixed bottom-0 left-0 right-0 z-20 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px]">
+                        class="sm:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px]">
                         @if (!$hasAddresses)
                             <p class="text-red-600 text-xs font-medium text-center w-full mb-1">
                                 {{ __('Please add a shipping address before placing your order.') }}

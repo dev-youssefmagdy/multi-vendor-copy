@@ -265,7 +265,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 
                     {{-- Mobile CTA --}}
                     <div
-                        class="lg:hidden fixed bottom-0 left-0 right-0 z-20 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px] sm:h-auto">
+                        class="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px] sm:h-auto">
                         {{-- Grand Total --}}
                         <div class="">
                             <p class="text-[14px] mb-2 text-[#8F8F8F]">{{ __('Total') }}</p>
