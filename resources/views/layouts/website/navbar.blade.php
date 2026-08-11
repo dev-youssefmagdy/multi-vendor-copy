@@ -83,7 +83,7 @@
             </div>
         </div>
         <!-- Mobile menu -->
-        <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1">
+        <div id="mobileMenu" class="hidden lg:hidden pb-4 border-t border-gray-100 mt-1 max-h-[calc(100vh-80px)] overflow-y-auto">
             <div class="flex flex-col gap-1 pt-3">
                 <a href="{{ route('website.home') }}"
                     class="block px-3 py-2 text-sm font-medium rounded-lg {{ $currentRoute === 'website.home' ? 'text-primary' : 'text-gray-600 hover:bg-orange-50 hover:text-primary' }}">
