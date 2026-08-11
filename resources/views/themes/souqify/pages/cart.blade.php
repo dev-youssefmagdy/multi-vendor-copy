@@ -309,14 +309,14 @@
                     <button onclick="scrollCarousel('collection', -1)"
                         class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
                         aria-label="{{ __('Previous') }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button onclick="scrollCarousel('collection', 1)"
                         class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
                         aria-label="{{ __('Next') }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
@@ -354,16 +354,34 @@
         <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Recommended For You') }}</h2>
-                <a href="{{ route('tenant.storefront.category') }}"
-                    class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
-                    {{ __('view all products') }}
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
-                    </svg>
-                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <button onclick="scrollCarousel('recommended', -1)"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            aria-label="{{ __('Previous') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button onclick="scrollCarousel('recommended', 1)"
+                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            aria-label="{{ __('Next') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="{{ route('tenant.storefront.category') }}"
+                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        {{ __('view all products') }}
+                        <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <div class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
+            <div id="recommended" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
                 @foreach ($recommended as $product)
                     <div class="flex-shrink-0 w-60 sm:w-64 scroll-snap-start">
                         @include('themes.souqify.pages._product-card', ['product' => $product])
@@ -378,16 +396,34 @@
         <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Hot Deals') }}</h2>
-                <a href="{{ route('tenant.storefront.category') }}"
-                    class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
-                    {{ __('view all products') }}
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
-                    </svg>
-                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <button onclick="scrollCarousel('hot-deals', -1)"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            aria-label="{{ __('Previous') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button onclick="scrollCarousel('hot-deals', 1)"
+                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            aria-label="{{ __('Next') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="{{ route('tenant.storefront.category') }}"
+                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        {{ __('view all products') }}
+                        <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <div class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
+            <div id="hot-deals" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
                 @foreach ($hotDeals as $product)
                     <div class="flex-shrink-0 w-60 sm:w-64 scroll-snap-start">
                         @include('themes.souqify.pages._showcase-card', ['product' => $product])
@@ -402,16 +438,34 @@
         <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-16">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Explore Products') }}</h2>
-                <a href="{{ route('tenant.storefront.category') }}"
-                    class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
-                    {{ __('view all products') }}
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
-                    </svg>
-                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <button onclick="scrollCarousel('explore', -1)"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            aria-label="{{ __('Previous') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button onclick="scrollCarousel('explore', 1)"
+                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            aria-label="{{ __('Next') }}">
+                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="{{ route('tenant.storefront.category') }}"
+                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        {{ __('view all products') }}
+                        <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <div class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
+            <div id="explore" class="flex overflow-x-auto gap-4 no-scrollbar scroll-snap-x scroll-smooth pb-2">
                 @foreach ($explore as $product)
                     <div class="flex-shrink-0 w-60 sm:w-64 scroll-snap-start">
                         @include('themes.souqify.pages._showcase-card', ['product' => $product])
@@ -424,8 +478,10 @@
     <script>
         function scrollCarousel(id, dir) {
             var el = document.getElementById(id);
-            if (el) el.scrollBy({
-                left: dir * 300,
+            if (!el) return;
+            var rtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+            el.scrollBy({
+                left: (rtl ? -dir : dir) * 300,
                 behavior: 'smooth'
             });
         }

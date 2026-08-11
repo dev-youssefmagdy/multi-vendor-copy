@@ -53,4 +53,20 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException $e, \Illuminate\Http\Request $request) {
             return redirect(config('app.url') . '?error=' . urlencode('This store does not exist.'));
         });
+
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('admin*') || $request->is('owner*')) {
+                return null;
+            }
+
+            if (!in_array($e->getStatusCode(), [404, 500], true)) {
+                return null;
+            }
+
+            if (!\Illuminate\Support\Facades\Route::has('tenant.storefront.404')) {
+                return null;
+            }
+
+            return redirect(route('tenant.storefront.404'));
+        });
     })->create();
