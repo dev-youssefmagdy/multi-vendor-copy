@@ -179,7 +179,7 @@ class OnboardingPage extends Component
 
     public function paymentGatewayConfigured(): bool
     {
-        return PaymentGateway::query()->where('is_active', true)->exists();
+        return PaymentGateway::query()->where('is_active', true)->whereNotNull('connection_status')->exists();
     }
 
     public function languageConfigured(): bool
