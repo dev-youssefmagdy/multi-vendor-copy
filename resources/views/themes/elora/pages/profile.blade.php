@@ -15,16 +15,94 @@ $symbol = $currency?->symbol ?? '$';
 $rate = (float) ($currency?->conversion_rate ?? 1.0);
 @endphp
 <div class="bg-white">
+    {{-- ═══ Mobile sidebar drawer (hidden on desktop) ═══ --}}
+    <div id="elora-profile-drawer-overlay"
+        class="fixed inset-0 bg-black/40 z-[900] hidden lg:hidden"
+        onclick="eloraProfileDrawerClose()"></div>
+
+    <div id="elora-profile-drawer"
+        class="fixed top-0 end-0 h-full w-[280px] bg-white z-[901] shadow-2xl flex flex-col overflow-y-auto translate-x-full lg:hidden transition-transform duration-300 ease-in-out">
+
+        {{-- Drawer header --}}
+        <div class="flex items-center justify-between px-5 py-4 border-b border-[#F0F0F0]">
+            <span class="font-semibold text-[#171717]">{{ __('My Account') }}</span>
+            <button type="button" onclick="eloraProfileDrawerClose()"
+                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- User info --}}
+        <div class="px-5 py-4 border-b border-[#F0F0F0]">
+            <p class="text-base font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
+            <p class="text-sm text-[#ADADAD] mb-3">{{ $customer->email }}</p>
+            <button wire:click="setTab('profile')" onclick="eloraProfileDrawerClose()"
+                class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors">
+                {{ __('Edit') }}
+            </button>
+        </div>
+
+        {{-- My Orders nav --}}
+        <div class="px-5 py-4 border-b border-[#F0F0F0]">
+            <p class="text-sm font-semibold text-[#171717] mb-3">{{ __('My Orders') }}</p>
+            <nav class="flex flex-col gap-0.5">
+                <div wire:click="filterStatus(null)" onclick="eloraProfileDrawerClose()"
+                    class="sidebar-nav-item {{ $statusFilter === null && $activeTab === 'orders' ? 'active' : '' }}">
+                    {{ __('All') }}
+                </div>
+                @foreach ([
+                'pending' => __('Pending'),
+                'processing' => __('Processing'),
+                'shipped' => __('Shipped'),
+                'delivered' => __('Delivered'),
+                'cancelled' => __('Cancelled'),
+                ] as $val => $label)
+                <div wire:click="filterStatus('{{ $val }}')" onclick="eloraProfileDrawerClose()"
+                    class="sidebar-nav-item {{ $statusFilter === $val && $activeTab === 'orders' ? 'active' : '' }}">
+                    {{ $label }}
+                </div>
+                @endforeach
+            </nav>
+        </div>
+
+        {{-- Settings nav --}}
+        <div class="px-5 py-4">
+            <p class="text-sm font-semibold text-[#171717] mb-3">{{ __('Settings') }}</p>
+            <nav class="flex flex-col gap-0.5">
+                <div wire:click="setTab('profile')" onclick="eloraProfileDrawerClose()"
+                    class="sidebar-settings-item">
+                    {{ __('My personal details') }}
+                </div>
+                <div wire:click="logout" onclick="eloraProfileDrawerClose()"
+                    class="sidebar-settings-item" style="color:#dc2626">
+                    {{ __('Sign out') }}
+                </div>
+            </nav>
+        </div>
+    </div>
+
     {{-- Breadcrumb --}}
     <div class="bg-white">
         <div
-            class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
-            <a href="{{ route('tenant.home') }}"
-                class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Home') }}</a>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="m9 18 6-6-6-6" />
-            </svg>
-            <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : __('Orders') }}</span>
+            class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center justify-between gap-1 text-sm text-[#808080] flex-wrap">
+            <div class="flex items-center gap-1 flex-wrap">
+                <a href="{{ route('tenant.home') }}"
+                    class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Home') }}</a>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+                <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : __('Orders') }}</span>
+            </div>
+            {{-- Hamburger: only on mobile --}}
+            <button id="elora-profile-menu-btn" type="button"
+                class="lg:hidden flex flex-col gap-1 p-2 rounded-md hover:bg-gray-100 transition"
+                aria-label="{{ __('Menu') }}">
+                <span class="block w-5 h-0.5 bg-[#171717]"></span>
+                <span class="block w-5 h-0.5 bg-[#171717]"></span>
+                <span class="block w-5 h-0.5 bg-[#171717]"></span>
+            </button>
         </div>
     </div>
 
@@ -525,6 +603,41 @@ function searchOrders() {
             '' : 'none';
     });
 }
+
+// ── Mobile profile drawer ─────────────────────────────────────────────────
+function eloraProfileDrawerOpen() {
+    const drawer = document.getElementById('elora-profile-drawer');
+    const overlay = document.getElementById('elora-profile-drawer-overlay');
+    if (!drawer || !overlay) return;
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        drawer.classList.remove('translate-x-full', '-translate-x-full');
+    });
+    document.body.style.overflow = 'hidden';
+}
+
+function eloraProfileDrawerClose() {
+    const drawer = document.getElementById('elora-profile-drawer');
+    const overlay = document.getElementById('elora-profile-drawer-overlay');
+    if (!drawer || !overlay) return;
+    if (document.documentElement.dir === 'rtl') {
+        drawer.classList.add('-translate-x-full');
+    } else {
+        drawer.classList.add('translate-x-full');
+    }
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('elora-profile-menu-btn');
+    const drawer = document.getElementById('elora-profile-drawer');
+    if (drawer && document.documentElement.dir === 'rtl') {
+        drawer.classList.remove('translate-x-full');
+        drawer.classList.add('-translate-x-full');
+    }
+    if (btn) btn.addEventListener('click', eloraProfileDrawerOpen);
+});
 </script>
 @endpush
 

@@ -1128,6 +1128,10 @@ body[data-page="client-orders"] .modal-backdrop.open {
     body[data-page="client-orders"] .mobile-filter-tabs {
         display: flex;
     }
+
+    body[data-page="client-orders"] .mobile-profile-tabs {
+        display: flex;
+    }
 }
 
 @media (min-width: 900px) {
@@ -1136,6 +1140,10 @@ body[data-page="client-orders"] .modal-backdrop.open {
     }
 
     body[data-page="client-orders"] .mobile-filter-tabs {
+        display: none;
+    }
+
+    body[data-page="client-orders"] .mobile-profile-tabs {
         display: none;
     }
 }

@@ -4,7 +4,7 @@
     "name": "bootstrap"
   },
   "resources/css/app.css": {
-    "file": "assets/app-yeGHV0OA.css",
+    "file": "assets/app-B5_vPTuz.css",
     "name": "app",
     "names": [
       "app.css"
@@ -13,7 +13,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-BtrKg7WM.css",
+    "file": "assets/ecommet-J6II2Y11.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -22,7 +22,7 @@
     "isEntry": true
   },
   "resources/css/elora.css": {
-    "file": "assets/elora-DJm7FVLq.css",
+    "file": "assets/elora-Dy5DOk4y.css",
     "name": "elora",
     "names": [
       "elora.css"
@@ -49,7 +49,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-bWh4Wz24.css",
+    "file": "assets/souqify-CYoSbVdd.css",
     "name": "souqify",
     "names": [
       "souqify.css"
