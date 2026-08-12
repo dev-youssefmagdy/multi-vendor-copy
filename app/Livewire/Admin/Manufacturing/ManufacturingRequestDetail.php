@@ -49,7 +49,7 @@ class ManufacturingRequestDetail extends Component
 
     private function getRequest(): ManufacturingRequest
     {
-        return ManufacturingRequest::with(['tenant', 'messages', 'paymentRequests'])
+        return ManufacturingRequest::with(['tenant', 'messages', 'paymentRequests', 'product'])
             ->findOrFail($this->requestId);
     }
 
