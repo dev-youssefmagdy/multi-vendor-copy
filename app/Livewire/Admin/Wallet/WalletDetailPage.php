@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Wallet;
 use App\Livewire\Admin\Base\AdminPage;
 use App\Models\Tenant;
 use App\Models\Tenant\Order as TenantOrder;
+use App\Models\TenantPayout;
 use App\Models\VendorSettlement;
 use App\Services\Admin\TenantLedgerService;
 use Throwable;
@@ -123,6 +124,26 @@ class WalletDetailPage extends AdminPage
                     'admin' => auth()->user()?->name ?? 'admin',
                 ],
                 'settled_at' => now(),
+            ]);
+
+            TenantPayout::create([
+                'tenant_id' => $this->tenantId,
+                'invoice_number' => TenantPayout::nextInvoiceNumber($this->tenantId),
+                'tenant_name' => $this->row['tenant_name'] ?? '',
+                'tenant_email' => $this->row['tenant_email'] ?? '',
+                'amount' => $this->markAmount,
+                'status' => 'paid',
+                'currency' => 'USD',
+                'method' => $this->markMethod === 'payout_offset' ? 'payout_offset' : 'manual',
+                'transaction_reference' => $reference,
+                'note' => trim($this->markNote),
+                'admin_id' => auth()->id(),
+                'paid_at' => now(),
+                'orders_snapshot' => [
+                    'order_id' => $this->markOrderId,
+                    'order_uuid' => $this->markOrderUuid,
+                    'amount' => $this->markAmount,
+                ],
             ]);
 
             // Refresh ledger data
