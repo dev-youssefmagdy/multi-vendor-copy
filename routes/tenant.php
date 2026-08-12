@@ -228,6 +228,9 @@ Route::middleware([
 
         Route::get('/pages/{slug}', PageView::class)->name('tenant.storefront.page');
 
+        // Named 404 page — safe to call with route() (no dynamic parameters)
+        Route::get('/not-found', NotFoundPage::class)->name('tenant.storefront.not-found');
+
         // Catch-all for unknown storefront paths → themed 404 page
         Route::fallback(NotFoundPage::class)->name('tenant.storefront.404');
 

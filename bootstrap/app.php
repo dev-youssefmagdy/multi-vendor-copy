@@ -63,10 +63,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            if (!\Illuminate\Support\Facades\Route::has('tenant.storefront.404')) {
+            if (!\Illuminate\Support\Facades\Route::has('tenant.storefront.not-found')) {
                 return null;
             }
 
-            return redirect(route('tenant.storefront.404'));
+            // Use a plain RedirectResponse: Livewire may leave the 'redirect'
+            // container binding swapped to its own Redirector when a full-page
+            // component's render() throws mid-boot (dehydrate() never runs to
+            // restore it), so the redirect()/Redirect helpers can't be trusted here.
+            return new \Illuminate\Http\RedirectResponse(route('tenant.storefront.not-found'));
         });
     })->create();
