@@ -17,9 +17,11 @@ trait CalculatesFreeShipping
      * detected, or it has no free-shipping rate configured, falls back to the
      * default branch's `default_free_shipping_weight` (set from Branch add/edit).
      */
-    private function detectFreeShippingThreshold(): int
+    private function detectFreeShippingThreshold(?int $countryId = null): int
     {
-        $countryId = app(CustomerCountryResolver::class)->resolveId();
+        if ($countryId === null) {
+            $countryId = app(CustomerCountryResolver::class)->resolveId();
+        }
 
         if ($countryId) {
             $zone = ShippingZone::query()

@@ -329,8 +329,8 @@
                         <div class="text-[24px] font-medium text-[#FF4D00] font-['Outfit'] leading-none">{{ $formattedFinalTotal }}</div>
                     </div>
 
-                    @if($shippingThreshold > 0)
-                    {{-- Free shipping progress --}}
+                    @if($shippingThreshold > 0 && $cartShipping == 0)
+                    {{-- Free shipping progress (only show when shipping is actually free) --}}
                     <div class="p-3 bg-[#ff4d0016] rounded-2xl border border-[#ff4d00]">
                         <p class="text-center text-[14px] text-[#FF4D00] font-medium mb-2">
                             @if ($remainingForFreeShipping <= 0)

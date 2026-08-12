@@ -649,8 +649,8 @@ class CheckoutPage extends Component
         $cartFinalTotal = max(0.0, $cartTotal - $cartDiscount);
         $shippingCalculation = $this->resolveShippingCalculation($cartItems);
 
-        // Free-shipping progress bar — mirrors CartPage/ProductPage
-        $shippingThreshold = $this->detectFreeShippingThreshold();
+        // Free-shipping progress bar — use the same country as the selected shipping address
+        $shippingThreshold = $this->detectFreeShippingThreshold($this->resolveShippingCountryId());
         $cartWeight = $this->cartWeightGrams($cartItems);
         $shippingPct = $shippingThreshold > 0
             ? min(100, (int) round($cartWeight / $shippingThreshold * 100))

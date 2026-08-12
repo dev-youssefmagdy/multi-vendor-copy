@@ -386,8 +386,8 @@
                     <div class="bg-white rounded-3xl p-5 sm:p-6 flex flex-col gap-5 lg:sticky lg:top-28">
                         <h2 class="text-2xl sm:text-3xl font-medium text-slate-900">{{ __('Order Summary') }}</h2>
 
-                        @if($shippingThreshold > 0)
-                        <!-- Free shipping progress -->
+                        @if($shippingThreshold > 0 && $cartShipping == 0)
+                        <!-- Free shipping progress (only show when shipping is actually free) -->
                         <div class="relative h-10 bg-zinc-300 rounded-full overflow-hidden">
                             <div class="absolute inset-y-0 left-0 bg-orange-600 rounded-full transition-all"
                                 style="width: {{ $shippingPct }}%"></div>
