@@ -317,13 +317,21 @@
                 const stripeKey = container.dataset.stripeKey;
                 if (!stripeKey || typeof Stripe === 'undefined') return;
 
-                _mfStripe     = Stripe(stripeKey);
-                const elms    = _mfStripe.elements();
+                _mfStripe = Stripe(stripeKey);
+                const elms = _mfStripe.elements();
+
+                // Read the actual text color from the panel at mount time so the Stripe
+                // iframe inherits dark/light mode correctly (it can't read CSS variables).
+                const computedColor = getComputedStyle(document.documentElement)
+                    .getPropertyValue('--text-primary').trim()
+                    || getComputedStyle(document.body).color
+                    || '#111827';
+
                 _mfStripeCard = elms.create('card', {
                     style: {
                         base: {
                             fontSize: '13px',
-                            color: '#333333',
+                            color: computedColor,
                             fontFamily: 'inherit',
                             '::placeholder': { color: '#aaaaaa' },
                         },

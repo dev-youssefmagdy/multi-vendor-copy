@@ -220,7 +220,7 @@ class ProductsList extends ListPage
                 ],
                 [
                     'model' => 'priceListOpen',
-                    'title' => '&#9776; Price List — ' . $this->priceListProductName,
+                    'title' => 'Price List — ' . $this->priceListProductName,
                     'closeAction' => 'closePriceListModal',
                     'contentView' => 'livewire.tenant.product.price-list-modal',
                     'maxWidth' => '3xl',
