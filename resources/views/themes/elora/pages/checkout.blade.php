@@ -504,28 +504,16 @@
 
                         {{-- Card 1: Payment methods --}}
                         <div class="w-full sm:w-[228px] py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col">
-                            <div class="px-4 py-2 flex items-center">
-                                <span class="text-black text-base font-normal font-['Outfit']">{{ __('Payment methods:') }}</span>
+                            <div class="px-4 py-2 flex items-center justify-center">
+                                <span class="text-black text-base font-normal font-['Outfit'] text-center">{{ __('Payment methods:') }}</span>
                             </div>
-                            <div class="px-4 py-2 flex items-center gap-4">
+                            <div class="px-4 py-2 flex items-center justify-center gap-4">
                                 <!-- mastercard -->
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 42" width="37" height="25">
-                                    <rect width="72" height="42" rx="5" fill="#fff"/>
-                                    <rect width="72" height="42" rx="5" fill="none" stroke="#E0E0E0" stroke-width="1"/>
-                                    <circle cx="27" cy="21" r="12" fill="#EB001B"/>
-                                    <circle cx="45" cy="21" r="12" fill="#F79E1B"/>
-                                    <path d="M36 11.8a12 12 0 0 1 0 18.4A12 12 0 0 1 36 11.8z" fill="#FF5F00"/>
-                                </svg>
+                                <img src="{{ asset('elora/assets/images/pay-mastercard.svg') }}" alt="Mastercard" width="37" height="25">
                                 <!-- visa -->
-                                <svg width="56" height="24" viewBox="0 0 60 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="60" height="24" rx="3" fill="#1A1F71"/>
-                                    <text x="8" y="17" fill="white" font-family="Arial" font-size="14" font-weight="bold" font-style="italic">VISA</text>
-                                </svg>
-                                <!-- apple pay text badge -->
-                                <svg width="54" height="22" viewBox="0 0 60 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="60" height="24" rx="3" fill="#000"/>
-                                    <text x="7" y="17" fill="white" font-family="Arial" font-size="11" font-weight="500"> Pay</text>
-                                </svg>
+                                <img src="{{ asset('elora/assets/images/pay-visa.svg') }}" alt="Visa" width="56" height="24">
+                                <!-- apple pay -->
+                                <img src="{{ asset('elora/assets/images/pay-applepay.svg') }}" alt="Apple Pay" width="54" height="22">
                             </div>
                         </div>
 
