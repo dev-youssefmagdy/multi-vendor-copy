@@ -378,21 +378,6 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
         @endif
     </div>
 
-    {{-- ── Bottom Live Tracking bar ────────────────────────────────────── --}}
-    @if (!$isCancelled)
-    <div class="fixed bottom-0 left-0 right-0 bg-[#FDFDFD] px-4 py-2 z-20 lg:hidden">
-        <button type="button" class="w-full h-14 bg-[#0159ED] rounded-[32px] flex items-center justify-between px-6">
-            <div class="flex items-center gap-1">
-                {{-- Pulse icon --}}
-                <div class="w-[30px] h-[30px] relative flex items-center justify-center">
-                    <div class="w-[14px] h-[14px] rounded-full bg-white/75 absolute"></div>
-                    <div class="w-[10px] h-[10px] rounded-full bg-white absolute"></div>
-                </div>
-                <span class="text-base font-medium text-white leading-5">{{ __('Live Tracking') }}</span>
-            </div>
-        </button>
-    </div>
-    @endif
 </div>
 
 {{-- ══════════════════════════════════════════════════════════════════════

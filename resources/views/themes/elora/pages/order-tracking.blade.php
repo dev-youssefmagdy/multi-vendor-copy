@@ -370,18 +370,6 @@
                         @endif
                     </div>
 
-                    {{-- Live Tracking --}}
-                    <div class="bg-white border border-[#D4D4D4] rounded-2xl px-4 sm:px-6 pt-5 sm:pt-6 pb-5 sm:pb-6 flex flex-col gap-4">
-                        <h3 class="text-base sm:text-lg font-semibold text-[#0A0A0A] font-['Inter'] leading-7">{{ __('Live Tracking') }}</h3>
-                        <div class="w-full h-48 sm:h-64 rounded-xl overflow-hidden bg-[#F0F0F0] flex flex-col items-center justify-center gap-2">
-                            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-[#ADADAD]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                            <p class="text-sm text-[#ADADAD] font-['Inter']">{{ __('Map not available') }}</p>
-                        </div>
-                    </div>
-
                     {{-- Need Help --}}
                     <div class="rounded-2xl px-4 sm:px-5 py-5 sm:py-6 flex flex-col gap-3"
                         style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD4 100%); border: 1px solid #FFD6A8; box-shadow: 0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1)">

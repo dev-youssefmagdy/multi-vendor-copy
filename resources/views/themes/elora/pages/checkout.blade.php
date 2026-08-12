@@ -1,6 +1,6 @@
 @section('pageData','checkout')
 
-<main class="flex-grow bg-white pb-20">
+<main class="flex-grow bg-white pb-[160px] sm:pb-20">
     <div class="max-w-[1280px] mx-auto px-5 sm:px-8 mt-3 md:mt-6">
         <h1 class="text-[24px] font-bold text-[#242424] mb-8 lg:hidden">{{ __('Check out') }}</h1>
         {{-- ── Breadcrumb ──────────────────────────────────────────────────── --}}
@@ -503,7 +503,7 @@
                     <div class="flex flex-wrap gap-[18px]">
 
                         {{-- Card 1: Payment methods --}}
-                        <div class="w-[228px] py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col">
+                        <div class="w-full sm:w-[228px] py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col">
                             <div class="px-4 py-2 flex items-center">
                                 <span class="text-black text-base font-normal font-['Outfit']">{{ __('Payment methods:') }}</span>
                             </div>
@@ -530,7 +530,7 @@
                         </div>
 
                         {{-- Card 2: Privacy & Secure --}}
-                        <div class="w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
+                        <div class="w-full sm:w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
                             <div class="flex items-start gap-4">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0">
                                     <path d="M3 4.65V12C3 19.35 12 22.5 12 22.5C12 22.5 21 19.35 21 12V4.65L12 1.5L3 4.65Z" stroke="#2AAF2F" stroke-width="2" stroke-linecap="square"/>
@@ -551,7 +551,7 @@
                         </div>
 
                         {{-- Card 3: Free Shipping --}}
-                        <div class="w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
+                        <div class="w-full sm:w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
                             <div class="flex items-start gap-4">
                                 <svg width="24" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 mt-0.5">
                                     <path d="M18.25 14.25C18.25 15.493 17.243 16.5 16 16.5C14.757 16.5 13.75 15.493 13.75 14.25C13.75 13.007 14.757 12 16 12C17.243 12 18.25 13.007 18.25 14.25ZM8.25 14.25C8.25 15.493 7.243 16.5 6 16.5C4.757 16.5 3.75 15.493 3.75 14.25C3.75 13.007 4.757 12 6 12C7.243 12 8.25 13.007 8.25 14.25Z" stroke="#2AAF2F" stroke-width="1.5"/>
@@ -572,7 +572,7 @@
                         </div>
 
                         {{-- Card 4: Easy Returns --}}
-                        <div class="w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
+                        <div class="w-full sm:w-[228px] px-4 py-2 bg-[#FDFDFD] border border-[#EEEEEE] rounded-lg flex flex-col gap-4">
                             <div class="flex items-start gap-4">
                                 <svg width="24" height="24" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0">
                                     <path d="M0.75 5.75V11.75C0.75 15.521 0.75 17.407 1.92 18.578C3.093 19.75 4.979 19.75 8.75 19.75H12.25M0.75 5.75L2.118 3.565C2.979 2.189 3.411 1.501 4.089 1.125C4.767 0.75 5.579 0.75 7.203 0.75H13.353C15.013 0.75 15.842 0.75 16.53 1.139C17.218 1.529 17.644 2.24 18.498 3.663L19.75 5.75M0.75 5.75H19.75M19.75 12.25V5.75M10.25 5.75V0.75M14.25 12.75C14.25 12.75 11.75 14.591 11.75 15.25C11.75 15.909 14.25 17.75 14.25 17.75M12.25 15.25H17.5C18.657 15.25 19.75 16.343 19.75 17.5C19.75 18.657 18.657 19.75 17.5 19.75H16.75M8.25 8.75H12.25" stroke="#2AAF2F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
