@@ -22,7 +22,6 @@ class AddEditBranch extends Component
     public string $country = '';
     public bool $isDefault = false;
     public bool $isActive = true;
-    public int $defaultFreeShippingWeight = 1500;
     public array $shippingZones = [];
 
     public function mount(?Branch $branch = null): void
@@ -43,7 +42,6 @@ class AddEditBranch extends Component
         $this->country = $loaded->country ?? '';
         $this->isDefault = $loaded->is_default;
         $this->isActive = $loaded->is_active;
-        $this->defaultFreeShippingWeight = $loaded->default_free_shipping_weight ?? 1500;
 
         $this->shippingZones = $loaded->shippingZones->map(fn($zone) => [
             'id' => $zone->id,
@@ -124,7 +122,6 @@ class AddEditBranch extends Component
             'country' => $validated['country'],
             'is_default' => $validated['isDefault'],
             'is_active' => $validated['isActive'],
-            'default_free_shipping_weight' => $validated['defaultFreeShippingWeight'],
             'shipping_zones' => $validated['shippingZones'],
         ], $this->branchId ? Branch::query()->findOrFail($this->branchId) : null);
 
@@ -150,7 +147,6 @@ class AddEditBranch extends Component
             'country' => ['nullable', 'string', 'max:100'],
             'isDefault' => ['boolean'],
             'isActive' => ['boolean'],
-            'defaultFreeShippingWeight' => ['required', 'integer', 'min:0'],
             'shippingZones' => ['array'],
             'shippingZones.*.id' => ['sometimes', 'integer', 'exists:shipping_zones,id'],
             'shippingZones.*.country_id' => ['nullable', 'integer', 'exists:countries,id'],

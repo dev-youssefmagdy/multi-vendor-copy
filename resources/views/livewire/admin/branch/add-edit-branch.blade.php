@@ -85,13 +85,6 @@
                         <span>Active</span>
                     </label>
                 </div>
-
-                <div style="margin-top:16px">
-                    <label class="field-label">Default Free Shipping Weight (g)</label>
-                    <x-input type="number" min="0" wire:model.defer="defaultFreeShippingWeight" placeholder="1500" />
-                    <p class="field-hint">Used on the storefront when the customer's country has no free-shipping rate configured below (e.g. 1500 = 1.5 kg).</p>
-                    @error('defaultFreeShippingWeight') <p class="field-error">{{ $message }}</p> @enderror
-                </div>
             </x-card-collapse>
 
             {{-- ── Shipping Zones ───────────────────────────────────────────────── --}}

@@ -84,6 +84,40 @@
         </div>
     </details>
 
+    {{-- ── Global Free Shipping Threshold ──────────────────────────────────── --}}
+    <section class="card section-gap">
+        <div style="margin-bottom:16px">
+            <h3 class="panel-title">Default Free Shipping Weight</h3>
+            <p class="panel-copy">
+                Storefront fallback threshold (in grams) used when the customer's country has no
+                free-shipping rate configured in any shipping zone.
+                This value is read from the default branch and applies globally.
+                (e.g. 1500 = 1.5 kg)
+            </p>
+        </div>
+
+        @if ($canManage)
+        <div style="display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap">
+            <div style="flex:1; min-width:160px; max-width:280px">
+                <label class="field-label">Weight (g)</label>
+                <x-input type="number" min="0" wire:model.defer="defaultFreeShippingWeight" placeholder="1500" />
+                @error('defaultFreeShippingWeight')
+                    <p class="field-error">{{ $message }}</p>
+                @enderror
+            </div>
+            <button type="button" class="btn btn-primary"
+                wire:click="saveDefaultFreeShippingWeight">
+                Save
+            </button>
+        </div>
+        @else
+        <p class="field-hint">
+            Current value: <strong>{{ number_format($defaultFreeShippingWeight) }} g
+            ({{ number_format($defaultFreeShippingWeight / 1000, 2) }} kg)</strong>
+        </p>
+        @endif
+    </section>
+
     <section class="card table-card-shell">
         @if ($branches->count())
             <div class="table-scroll-wrap">
