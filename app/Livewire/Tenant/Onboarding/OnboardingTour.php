@@ -43,13 +43,11 @@ class OnboardingTour extends Component
             return;
         }
 
+        // Force the tour once — after that the admin can navigate freely.
+        // The setup checklist is reachable from the sidebar "Get Started" link;
+        // forcing it here blocks navigation from the setup action buttons themselves.
         if ($admin->tour_seen_at === null) {
             $this->redirectRoute('tenant.onboarding', ['tab' => 'tour'], navigate: true);
-            return;
-        }
-
-        if ($admin->setup_dismissed_at === null) {
-            $this->redirectRoute('tenant.onboarding', ['tab' => 'setup'], navigate: true);
         }
     }
 
