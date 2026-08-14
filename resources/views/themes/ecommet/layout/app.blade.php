@@ -54,6 +54,10 @@
 <body
     class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col overflow-x-hidden w-full pb-14 lg:pb-0">
 
+    @if (\App\Services\Preview\PreviewOverrides::active())
+        <x-preview-banner />
+    @endif
+
     @php
         $storefrontFlashMessages = [];
 

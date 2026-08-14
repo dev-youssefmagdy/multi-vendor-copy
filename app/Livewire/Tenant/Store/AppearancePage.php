@@ -5,9 +5,11 @@ namespace App\Livewire\Tenant\Store;
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Country;
+use App\Models\HomeVariant;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
+use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantThemeColor;
 use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\StorefrontRepository;
@@ -188,7 +190,41 @@ class AppearancePage extends TenantPage
             'colorKeyLabels' => collect(ThemeColorKeys::all())
                 ->mapWithKeys(fn($key) => [$key => ThemeColorKeys::label($key)])
                 ->all(),
+            'previewUrl' => $this->previewUrl($repo),
         ]);
+    }
+
+    /** Build the `/preview` URL that mirrors this tenant's current theme, colors, and homepage variant. */
+    protected function previewUrl(StorefrontRepository $repo): ?string
+    {
+        $theme = $repo->currentTheme();
+        if (!$theme) {
+            return null;
+        }
+
+        $query = ['theme' => $theme->slug];
+
+        foreach ($this->themeColors[$theme->id] ?? [] as $key => $value) {
+            $query['colors'][$key] = $value;
+        }
+
+        $variantId = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+
+        if ($variantId) {
+            $variantKey = tenancy()->central(fn() => HomeVariant::query()->find($variantId)?->key);
+            if ($variantKey) {
+                $query['homepage_variant'] = $variantKey;
+            }
+        }
+
+        $centralDomain = config('tenancy.central_domains.0')
+            ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
+        $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
+
+        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
     }
 
     // ── Tab ───────────────────────────────────────────────────────────────────

@@ -61,6 +61,10 @@
 
 <body @stack('body-attrs') class="bg-zinc-100 text-slate-900 antialiased">
 
+    @if (\App\Services\Preview\PreviewOverrides::active())
+        <x-preview-banner />
+    @endif
+
     {{-- ACCESSIBILITY FIX: Added aria-hidden="true" so screen readers don't get stuck on the visual preloader --}}
     <div id="page-preloader" aria-hidden="true"
         style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;transition:opacity .3s ease;">

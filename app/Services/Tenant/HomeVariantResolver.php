@@ -7,6 +7,7 @@ use App\Models\Country;
 use App\Models\HomeVariant;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantHomeVariant;
+use App\Services\Preview\PreviewOverrides;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 
 /**
@@ -26,6 +27,17 @@ class HomeVariantResolver
      */
     public function resolveFor(Theme $theme, ?Country $country): ?HomeVariant
     {
+        if (PreviewOverrides::active() && PreviewOverrides::homepageVariantKey()) {
+            $forced = tenancy()->central(fn() => HomeVariant::query()
+                ->forTheme($theme->slug)
+                ->where('key', PreviewOverrides::homepageVariantKey())
+                ->first());
+
+            if ($forced) {
+                return $forced;
+            }
+        }
+
         $row = null;
 
         if ($country) {

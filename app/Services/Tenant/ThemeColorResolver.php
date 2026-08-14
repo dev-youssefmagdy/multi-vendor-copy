@@ -7,6 +7,7 @@ use App\Models\HomeVariant;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantThemeColor;
 use App\Models\ThemeColorDefault;
+use App\Services\Preview\PreviewOverrides;
 use App\Support\ThemeColorKeys;
 
 /**
@@ -35,6 +36,10 @@ class ThemeColorResolver
             $values = array_merge($values, $variant->colors);
         }
         $values = array_merge($values, $this->tenantOverrides($theme));
+
+        if (PreviewOverrides::active() && PreviewOverrides::colors() !== []) {
+            $values = array_merge($values, PreviewOverrides::colors());
+        }
 
         return $values;
     }

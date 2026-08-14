@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.permission' => \App\Http\Middleware\TenantPermission::class,
             'tenant.gateway.blocked' => \App\Http\Middleware\CheckTenantGatewayBlocked::class,
             'preview.template' => \App\Http\Middleware\ForcePreviewTemplate::class,
+            'preview.init' => \App\Http\Middleware\InitializeTenancyForPreview::class,
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
         ]);
 

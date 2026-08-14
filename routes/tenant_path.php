@@ -32,6 +32,7 @@ use App\Http\Controllers\Tenant\SitemapController;
 use App\Http\Controllers\Tenant\StorefrontInvoiceController;
 use App\Http\Controllers\Tenant\PaymentController;
 use App\Http\Middleware\InitializeTenancyBySlug;
+use App\Http\Middleware\InitializeTenancyForPreview;
 use App\Livewire\Tenant\Storefront\AuthPage;
 use App\Livewire\Tenant\Storefront\BestSellingPage;
 use App\Livewire\Tenant\Storefront\CartPage;
@@ -226,3 +227,12 @@ Route::prefix('vendor/{tenant}')
             abort(404);
         })->where('any', '.*')->name('tenant.path.admin.redirect');
     });
+
+// ─── Theme preview (central domain) ────────────────────────────────────────
+// Renders the dedicated "preview" tenant's storefront with URL-supplied
+// theme/color/homepage-variant overrides. Never touches real tenant data.
+//
+//   /preview?theme=elora&colors[color-primary]=%23ff0000&homepage_variant=v2
+Route::get('/preview', HomePage::class)
+    ->middleware(['web', InitializeTenancyForPreview::class, 'tenant.storefront.context', 'preview.template'])
+    ->name('preview');

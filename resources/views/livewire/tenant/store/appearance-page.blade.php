@@ -92,6 +92,11 @@
             </div>
             <p class="page-copy">{{ $description }}</p>
         </div>
+        @if ($previewUrl)
+            <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">
+                Preview
+            </a>
+        @endif
     </div>
 
     {{-- Tabs --}}

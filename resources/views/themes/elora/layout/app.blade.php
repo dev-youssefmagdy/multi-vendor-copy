@@ -55,6 +55,10 @@
 
 <body @stack('body-attrs') data-page="index" class="bg-gray-50">
 
+    @if (\App\Services\Preview\PreviewOverrides::active())
+        <x-preview-banner />
+    @endif
+
     {{-- Page preloader: shown until all scripts/styles/fonts are loaded. Added aria-hidden so screen readers ignore it --}}
     <div id="page-preloader" aria-hidden="true"
         style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;transition:opacity .3s ease;">
