@@ -51,6 +51,7 @@ use App\Livewire\Tenant\Setting\DomainsList;
 use App\Livewire\Tenant\Setting\EmailTemplatesPage;
 use App\Livewire\Tenant\Setting\GeneralSettingsPage;
 use App\Livewire\Tenant\Setting\LanguagesManagePage;
+use App\Livewire\Tenant\Setting\TranslationsPage;
 use App\Livewire\Tenant\Setting\LanguagesPage;
 use App\Livewire\Tenant\Setting\MailConfigurationsPage;
 use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
@@ -464,6 +465,9 @@ Route::middleware([
                 Route::get('/languages-manage', LanguagesManagePage::class)
                     ->middleware('tenant.permission:settings.regional.manage')
                     ->name('languages-manage');
+                Route::get('/translations', TranslationsPage::class)
+                    ->middleware('tenant.permission:settings.translations.manage')
+                    ->name('translations');
                 Route::get('/admins', AdminsList::class)
                     ->middleware('tenant.permission:settings.admins.manage')
                     ->name('admins');

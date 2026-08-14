@@ -64,6 +64,7 @@ class AdminRole extends Model
             'settings.admins.manage' => 'Manage tenant admins',
             'settings.roles.manage' => 'Manage tenant roles',
             'settings.languages.purchase' => 'Purchase paid languages',
+            'settings.translations.manage' => 'Manage store translations',
         ];
     }
 

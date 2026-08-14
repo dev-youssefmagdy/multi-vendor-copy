@@ -29,6 +29,7 @@ class AddEditPackage extends Component
     public int $ordersPerMonthLimit = -1;
     public int $aiCallsLimit = -1;
     public int $imageSearchesLimit = -1;
+    public bool $aiTranslationEnabled = false;
 
     public function mount(?Package $package = null)
     {
@@ -66,6 +67,7 @@ class AddEditPackage extends Component
         $this->ordersPerMonthLimit = (int) ($loaded->orders_per_month_limit ?? -1);
         $this->aiCallsLimit = (int) ($loaded->ai_calls_limit ?? -1);
         $this->imageSearchesLimit = (int) ($loaded->image_searches_limit ?? -1);
+        $this->aiTranslationEnabled = (bool) ($loaded->ai_translation_enabled ?? false);
         $this->translations = array_replace_recursive($this->translations, $loaded->translationsByLocale(['name', 'description']));
     }
 
@@ -111,6 +113,7 @@ class AddEditPackage extends Component
             'orders_per_month_limit' => $validated['ordersPerMonthLimit'],
             'ai_calls_limit' => $validated['aiCallsLimit'],
             'image_searches_limit' => $validated['imageSearchesLimit'],
+            'ai_translation_enabled' => $this->aiTranslationEnabled,
             'trial_days' => $validated['trialDays'],
             'translations' => $validated['translations'],
         ], $this->packageId ? Package::query()->findOrFail($this->packageId) : null);
@@ -137,6 +140,7 @@ class AddEditPackage extends Component
             'ordersPerMonthLimit' => ['required', 'integer', 'min:-1'],
             'aiCallsLimit' => ['required', 'integer', 'min:-1'],
             'imageSearchesLimit' => ['required', 'integer', 'min:-1'],
+            'aiTranslationEnabled' => ['boolean'],
         ];
 
         foreach (Language::query()->where('is_active', true)->get() as $language) {

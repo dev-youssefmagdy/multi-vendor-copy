@@ -159,6 +159,15 @@
                 </div>
 
                 <div class="section-gap">
+                    <h3 class="panel-title">{{ __('Add-ons') }}</h3>
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                        <input type="checkbox" wire:model.defer="aiTranslationEnabled" class="field-control" style="width:auto;">
+                        <span class="field-label" style="margin:0;">{{ __('Enable AI Translation add-on') }}</span>
+                    </label>
+                    @error('aiTranslationEnabled') <p class="field-error">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="section-gap">
                     <div class="fu d0"
                         style="justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem;">
                         <div>

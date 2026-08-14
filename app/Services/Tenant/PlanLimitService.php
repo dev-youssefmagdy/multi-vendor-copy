@@ -62,6 +62,23 @@ class PlanLimitService
     }
 
     /**
+     * Whether the tenant's plan includes the AI Translation add-on.
+     * This is a boolean feature flag, not a numeric usage limit, so it is
+     * resolved directly here rather than through the LIMIT_COLUMNS pattern.
+     */
+    public function aiTranslationEnabled(TenantModel $tenant): bool
+    {
+        $package = $this->package($tenant);
+
+        return (bool) ($package?->ai_translation_enabled ?? false);
+    }
+
+    public function aiTranslationErrorMessage(): string
+    {
+        return 'AI Translation is a paid add-on. Upgrade your plan to enable it.';
+    }
+
+    /**
      * The numeric limit for a feature, or null when unlimited.
      */
     public function limit(TenantModel $tenant, string $feature): ?int

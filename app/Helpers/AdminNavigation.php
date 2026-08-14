@@ -176,6 +176,7 @@ class AdminNavigation
                             ['label' => 'Email Configuration', 'route' => 'admin.settings.email-configuration', 'permission' => 'settings.email-configuration.manage'],
                             ['label' => 'Currencies', 'route' => 'admin.settings.currencies', 'permission' => 'settings.currencies.view'],
                             ['label' => 'Languages', 'route' => 'admin.settings.languages', 'permission' => 'settings.languages.view'],
+                            ['label' => 'Translation Key Access', 'route' => 'admin.settings.translation-key-access', 'permission' => 'settings.languages.manage'],
                             ['label' => 'Language Purchases', 'route' => 'admin.settings.language-purchases', 'permission' => 'settings.languages.purchases.view'],
                             ['label' => 'Translation Files', 'route' => 'admin.settings.translations', 'permission' => 'settings.languages.view'],
                             ['label' => 'Countries', 'route' => 'admin.settings.countries', 'permission' => 'settings.countries.view'],

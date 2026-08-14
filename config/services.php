@@ -44,6 +44,8 @@ return [
         'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
         'translation_model' => env('OPENAI_TRANSLATION_MODEL', 'gpt-4.1-mini'),
         'timeout' => (int) env('OPENAI_TIMEOUT', 12000),
+        // TODO: pricing not yet configured — placeholder for future AI Translation billing.
+        'translation_price_per_1k_tokens' => (float) env('OPENAI_TRANSLATION_PRICE_PER_1K_TOKENS', 0),
     ],
 
     'python_modules' => [

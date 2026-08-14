@@ -105,6 +105,7 @@ class TenantNavigation
                             ['label' => 'Currencies', 'route' => 'tenant.settings.currencies', 'permission' => 'settings.regional.manage'],
                             // ['label' => 'Languages', 'route' => 'tenant.settings.languages', 'permission' => 'settings.regional.manage'],
                             ['label' => 'Languages Manage', 'route' => 'tenant.settings.languages-manage', 'permission' => 'settings.regional.manage'],
+                            ['label' => 'Translations', 'route' => 'tenant.settings.translations', 'permission' => 'settings.translations.manage'],
                         ]
                     ],
                     [

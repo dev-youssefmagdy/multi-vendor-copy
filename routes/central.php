@@ -53,6 +53,7 @@ use App\Livewire\Admin\Setting\MaintenanceModePage;
 use App\Livewire\Admin\Setting\AddEditPaymentGateway;
 use App\Livewire\Admin\Setting\PaymentGatewayLimitsPage;
 use App\Livewire\Admin\Setting\AiLogoLimitPage;
+use App\Livewire\Admin\Setting\TranslationKeyAccessPage;
 use App\Livewire\Admin\Setting\PaymentGatewaysPage;
 use App\Livewire\Admin\Setting\AddEditTemplatePart;
 use App\Livewire\Admin\Setting\TemplateControlPage;
@@ -372,6 +373,7 @@ Route::group([
         Route::get('/maintenance', MaintenanceModePage::class)->middleware('admin.permission:settings.maintenance.manage')->name('maintenance');
         Route::get('/default-banners', DefaultBannersPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
         Route::get('/ai-logo-limit', AiLogoLimitPage::class)->middleware('admin.permission:settings.ai-logo-limits.manage')->name('ai-logo-limit');
+        Route::get('/translation-key-access', TranslationKeyAccessPage::class)->middleware('admin.permission:settings.languages.manage')->name('translation-key-access');
     });
 
     Route::prefix('admins')->name('admins.')->group(function () {

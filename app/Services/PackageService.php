@@ -30,6 +30,7 @@ class PackageService
                 'orders_per_month_limit' => (int) ($attributes['orders_per_month_limit'] ?? -1),
                 'ai_calls_limit' => (int) ($attributes['ai_calls_limit'] ?? -1),
                 'image_searches_limit' => (int) ($attributes['image_searches_limit'] ?? -1),
+                'ai_translation_enabled' => (bool) ($attributes['ai_translation_enabled'] ?? false),
                 'trial_days' => $attributes['trial_days'] ?? 0,
             ]);
             $package->save();

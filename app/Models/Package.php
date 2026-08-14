@@ -32,6 +32,7 @@ class Package extends Model
         'orders_per_month_limit',
         'ai_calls_limit',
         'image_searches_limit',
+        'ai_translation_enabled',
         'trial_days',
     ];
 
@@ -49,6 +50,7 @@ class Package extends Model
             'orders_per_month_limit' => 'integer',
             'ai_calls_limit' => 'integer',
             'image_searches_limit' => 'integer',
+            'ai_translation_enabled' => 'boolean',
             'trial_days' => 'integer',
         ];
     }
