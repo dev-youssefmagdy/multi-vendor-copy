@@ -24,7 +24,7 @@ class TenantContextService
         return Language::query()
             ->where('is_active', true)
             ->when($code, fn ($query) => $query->where('code', $code))
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
             ->first();
     }
 }

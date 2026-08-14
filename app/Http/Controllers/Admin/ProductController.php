@@ -273,7 +273,7 @@ class ProductController extends Controller
 
     protected function viewData(?Product $product = null): array
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
 
         $blankTranslations = $languages->mapWithKeys(fn(Language $lang) => [
             $lang->code => [

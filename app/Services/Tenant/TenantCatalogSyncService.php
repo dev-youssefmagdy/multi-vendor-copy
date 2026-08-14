@@ -187,6 +187,7 @@ class TenantCatalogSyncService
                         'direction' => $language->direction->value,
                         'is_active' => $language->is_active,
                         'is_default' => $language->is_default,
+                        'sort_order' => $language->sort_order,
                     ]
                 );
             });

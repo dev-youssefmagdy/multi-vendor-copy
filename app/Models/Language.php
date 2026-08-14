@@ -26,6 +26,7 @@ class Language extends Model
         'countries',
         'image_file_id',
         'translation_progress',
+        'sort_order',
     ];
 
     protected $appends = ['image_url'];
@@ -40,6 +41,7 @@ class Language extends Model
             'price' => 'decimal:2',
             'countries' => 'array',
             'translation_progress' => 'integer',
+            'sort_order' => 'integer',
         ];
     }
 

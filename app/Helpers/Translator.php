@@ -88,7 +88,7 @@ trait Translator
     public function translationsByLocale(array $fields): array
     {
         $languageModel = $this->translationLanguageModelClass();
-        $languages = $languageModel::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = $languageModel::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $translations = $this->relationLoaded('translations')
             ? $this->getRelation('translations')
             : $this->translations()->with('language')->get();

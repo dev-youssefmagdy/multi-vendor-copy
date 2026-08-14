@@ -26,7 +26,7 @@ class AddEditPackage extends Component
 
     public function mount(?Package $package = null)
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
             $language->code => ['name' => '', 'description' => ''],
@@ -184,7 +184,7 @@ class AddEditPackage extends Component
     {
         return view('livewire.admin.plan.add-edit-package', [
             'pageTitle' => $this->packageId ? 'Edit Package' : 'Add Package',
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'statusOptions' => PackageStatus::cases(),
             'termOptions' => [
                 ['value' => 'monthly', 'label' => 'Monthly', 'description' => 'Billed every month', 'icon' => 'fas fa-calendar-alt'],

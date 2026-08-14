@@ -22,6 +22,7 @@ class Language extends Model
         'is_active',
         'is_default',
         'image_file_id',
+        'sort_order',
     ];
 
     protected $appends = ['image_url'];
@@ -62,6 +63,7 @@ class Language extends Model
             'direction' => LanguageDirection::class,
             'is_active' => 'boolean',
             'is_default' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 

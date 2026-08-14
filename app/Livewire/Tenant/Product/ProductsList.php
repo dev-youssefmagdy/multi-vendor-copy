@@ -254,7 +254,7 @@ class ProductsList extends ListPage
         $product = Product::query()->with('translations.language')->findOrFail($productId);
         $enabledLanguages = Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
             ->orderBy('name')
             ->get(['code', 'name', 'native_name']);
 

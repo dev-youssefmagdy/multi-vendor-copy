@@ -444,7 +444,7 @@ class StorefrontRepository
     {
         return $this->memo['active_languages'] ??= Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
 
             ->with('imageFile')
             ->get();
@@ -705,23 +705,7 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
-        $badged = $this->productsByBadgeQuery('featured')
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
-
-        if ($badged->isNotEmpty()) {
-            return $badged;
-        }
-
-        return $this->productBaseQuery()
-            ->where('active', true)
-            ->where('featured', true)
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
+        return app(\App\Services\HomeProductService::class)->getFeatured($limit);
     }
 
     public function latestProducts(int $limit = 20): Collection
@@ -926,34 +910,39 @@ class StorefrontRepository
 
     public function bestSellingProducts(int $perPage = 12, int $page = 1): LengthAwarePaginator
     {
-        return $this->productsByBadge('best-selling', $perPage, $page);
+        return $this->paginateFromService(
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit),
+            $perPage,
+            $page,
+        );
     }
 
     public function newInProducts(int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
-        return $this->productsByBadge('new-in', $perPage, $page);
+        return $this->paginateFromService(
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit),
+            $perPage,
+            $page,
+        );
+    }
+
+    protected function paginateFromService(callable $fetcher, int $perPage, int $page): LengthAwarePaginator
+    {
+        $limit = $perPage * $page;
+        $items = $fetcher($limit);
+        $total = $items->count() >= $limit ? $items->count() + 1 : $items->count();
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+        );
     }
 
     public function recommendedProducts(int $limit = 10): Collection
     {
-        return $this->memo['recommended_' . $limit] ??= (function () use ($limit) {
-            $badged = $this->productsByBadgeQuery('recommended')
-                ->orderByRaw($this->effectivePriceExpression() . ' asc')
-                ->orderByDesc('created_at')
-                ->limit($limit)
-                ->get();
-
-            if ($badged->isNotEmpty()) {
-                return $badged;
-            }
-
-            return $this->productBaseQuery()
-                ->where('featured', true)
-                ->orderByRaw($this->effectivePriceExpression() . ' asc')
-                ->orderByDesc('created_at')
-                ->limit($limit)
-                ->get();
-        })();
+        return $this->memo['recommended_' . $limit] ??= app(\App\Services\HomeProductService::class)->getRecommended($limit);
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator

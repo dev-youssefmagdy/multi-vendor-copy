@@ -45,7 +45,7 @@ class SocialPostService
     ): array {
         $languages = Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
             ->get();
 
         if ($language !== 'all') {

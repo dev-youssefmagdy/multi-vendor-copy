@@ -80,7 +80,7 @@ class AddEditProduct extends Component
 
     public function mount(?Product $product = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -498,7 +498,7 @@ class AddEditProduct extends Component
 
     public function render()
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
 
         $existingGallery = $this->productId
             ? Product::query()->with('files')->find($this->productId)?->files->where('key', 'gallery')->values()

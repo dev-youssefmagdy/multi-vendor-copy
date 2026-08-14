@@ -282,6 +282,15 @@ class AppearancePage extends TenantPage
         $this->toast('Banner deleted.');
     }
 
+    public function updateBannerOrder(array $orderedIds): void
+    {
+        foreach ($orderedIds as $index => $id) {
+            Banner::query()->where('id', (int) $id)->update(['serial_number' => $index]);
+        }
+
+        $this->toast('Banner order saved.');
+    }
+
     public function closeBannerModal(): void
     {
         $this->bannerModalOpen = false;

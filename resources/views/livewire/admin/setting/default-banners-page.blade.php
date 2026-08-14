@@ -16,9 +16,10 @@
     @if ($banners->count())
         <section class="card table-card-shell section-gap">
             <div class="table-scroll-wrap">
-                <table class="data-table">
+                <table class="data-table" wire:ignore.self>
                     <thead>
                         <tr>
+                            <th style="width:32px"></th>
                             <th>#</th>
                             <th>Image</th>
                             <th>Title (default locale)</th>
@@ -26,9 +27,15 @@
                             <th class="ta-r">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="default-banners-sortable">
                         @foreach ($banners as $banner)
-                            <tr>
+                            <tr data-id="{{ $banner->id }}" class="sortable-row" style="cursor:grab">
+                                <td>
+                                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <line x1="4" y1="8" x2="20" y2="8" />
+                                        <line x1="4" y1="16" x2="20" y2="16" />
+                                    </svg>
+                                </td>
                                 <td class="ta-c">{{ $banner->serial_number }}</td>
                                 <td>
                                     @if ($banner->image_path)
@@ -203,3 +210,23 @@ function switchBannerTab(code, btn) {
 }
 </script>
 @endscript
+
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            const list = document.getElementById('default-banners-sortable');
+            if (!list || typeof Sortable === 'undefined') {
+                return;
+            }
+
+            Sortable.create(list, {
+                animation: 150,
+                handle: '.sortable-row',
+                onEnd: () => {
+                    const orderedIds = Array.from(list.querySelectorAll('tr[data-id]')).map(row => parseInt(row.dataset.id, 10));
+                    @this.call('updateOrder', orderedIds);
+                },
+            });
+        });
+    </script>
+@endpush

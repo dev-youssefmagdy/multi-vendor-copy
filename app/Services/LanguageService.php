@@ -19,6 +19,7 @@ class LanguageService
     {
         return DB::transaction(function () use ($attributes, $language) {
             $previousCode = $language?->code;
+            $isCreating = $language === null;
             $language ??= new Language();
             $countries = $attributes['countries'] ?? [];
             if (is_string($countries)) {
@@ -36,6 +37,11 @@ class LanguageService
                 'price' => ($attributes['is_free'] ?? true) ? null : (float) ($attributes['price'] ?? 0),
                 'countries' => array_values(array_unique(array_filter($countries))),
             ]);
+
+            if ($isCreating) {
+                $language->sort_order = ((int) Language::query()->max('sort_order')) + 1;
+            }
+
             $language->save();
 
             if ($language->is_default) {

@@ -28,7 +28,7 @@ class AddEditBlogPost extends Component
 
     public function mount(?BlogPost $post = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -105,7 +105,7 @@ class AddEditBlogPost extends Component
             'pageTitle' => $this->postId ? 'Edit Blog Post' : 'Add Blog Post',
             'categoryOptions' => ['' => 'Uncategorized'] + app(BlogPostRepository::class)->categoryOptions(),
             'statusOptions' => ['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'],
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
         ]);
     }
 }

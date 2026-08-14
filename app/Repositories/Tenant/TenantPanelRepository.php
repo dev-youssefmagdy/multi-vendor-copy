@@ -616,7 +616,7 @@ class TenantPanelRepository
 
     public function languages()
     {
-        return Language::query()->orderByDesc('is_default')->get();
+        return Language::query()->orderBy('sort_order')->orderByDesc('is_default')->get();
     }
 
     public function paymentGateways()
@@ -714,7 +714,7 @@ class TenantPanelRepository
 
     public function activeLanguages()
     {
-        return Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        return Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
     }
 
     /**

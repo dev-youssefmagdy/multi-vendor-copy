@@ -257,7 +257,7 @@ class AddEditTenant extends Component
                 ->where('status', 'published')
                 ->orderBy('id')
                 ->get(),
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'packages' => Package::query()->with('translations.language')->get(),
             'currentPackage' => $tenant?->package,
             'billingHistory' => $tenant?->paymentLogs ?? collect(),

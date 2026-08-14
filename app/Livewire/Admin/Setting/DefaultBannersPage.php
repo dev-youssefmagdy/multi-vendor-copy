@@ -109,11 +109,24 @@ class DefaultBannersPage extends Component
         $this->dispatch('admin-toast', message: 'Banner deleted.', type: 'success');
     }
 
+    // ── Reorder ────────────────────────────────────────────────────────────
+
+    public function updateOrder(array $orderedIds): void
+    {
+        $this->authorizePermission('settings.default-banners.manage');
+
+        foreach ($orderedIds as $index => $id) {
+            DefaultBanner::query()->where('id', (int) $id)->update(['serial_number' => $index]);
+        }
+
+        $this->dispatch('admin-toast', message: 'Banner order saved.', type: 'success');
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────
 
     protected function initTranslations(): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
             $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
         ])->all();
@@ -139,7 +152,7 @@ class DefaultBannersPage extends Component
                 ->orderBy('serial_number')
                 ->orderBy('id')
                 ->get(),
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
         ]);
     }
 }

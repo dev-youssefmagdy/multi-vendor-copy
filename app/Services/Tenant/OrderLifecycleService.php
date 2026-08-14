@@ -5,6 +5,7 @@ namespace App\Services\Tenant;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Models\Tenant\Order;
+use App\Models\Tenant\Product;
 use App\Services\Mail\TemplateMailService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -18,9 +19,24 @@ class OrderLifecycleService
     public function recordPlaced(Order $order): void
     {
         $this->appendActivity($order, 'Order placed', 'Your order has been placed and is waiting for confirmation.');
+        $this->incrementOrdersCount($order);
         $freshOrder = $order->fresh();
         $this->templateMailService->sendTenantOrderPlaced($freshOrder);
         $this->templateMailService->sendAdminOrderAlert($freshOrder);
+    }
+
+    protected function incrementOrdersCount(Order $order): void
+    {
+        $productIds = $order->items()
+            ->with('variant')
+            ->get()
+            ->map(fn($item) => $item->product_id ?? $item->variant?->product_id)
+            ->filter()
+            ->unique();
+
+        if ($productIds->isNotEmpty()) {
+            Product::whereIn('id', $productIds)->increment('orders_count');
+        }
     }
 
     public function recordProcessing(Order $order): void
