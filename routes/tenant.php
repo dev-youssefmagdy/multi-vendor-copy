@@ -135,6 +135,8 @@ Route::middleware([
         Route::get('/new-in', NewInPage::class)->name('tenant.storefront.new-in');
         Route::get('/offers', OffersPage::class)->name('tenant.storefront.offers');
         Route::get('/search', BestSellingPage::class)->name('tenant.storefront.search');
+        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+        Route::post('/search/image', [\App\Http\Controllers\ImageSearchController::class, 'storefront'])->name('tenant.storefront.search.image');
         Route::get('/search/autocomplete', function () {
             $keyword = trim((string) request('q', ''));
             if (strlen($keyword) < 2) {
@@ -332,6 +334,8 @@ Route::middleware([
                 Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
                 Route::get('/create', AddEditProduct::class)->name('create');
                 Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
+                // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+                Route::post('/search-image', [\App\Http\Controllers\ImageSearchController::class, 'tenant'])->name('search-image');
             });
 
             Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {

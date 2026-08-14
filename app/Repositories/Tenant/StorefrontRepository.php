@@ -804,6 +804,28 @@ class StorefrontRepository
             ->get();
     }
 
+    /**
+     * Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+     * Load tenant products for a ranked list of central catalog product IDs
+     * (as returned by ImageSearchService::search), preserving similarity order.
+     *
+     * @param array<int> $centralProductIds ordered most-similar first
+     */
+    public function imageSearchProducts(array $centralProductIds, int $perPage = 20): LengthAwarePaginator
+    {
+        if (empty($centralProductIds)) {
+            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
+        }
+
+        $orderClause = 'FIELD(central_product_id, ' . implode(',', array_map('intval', $centralProductIds)) . ')';
+
+        $query = $this->productBaseQuery()
+            ->whereIn('central_product_id', $centralProductIds)
+            ->orderByRaw($orderClause);
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
     public function paginatedSearchProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         $sort = (string) ($filters['sort'] ?? 'latest');

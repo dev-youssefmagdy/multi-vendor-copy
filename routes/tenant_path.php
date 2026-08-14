@@ -85,6 +85,8 @@ Route::prefix('vendor/{tenant}')
         Route::get('/new-in', NewInPage::class)->name('tenant.path.storefront.new-in');
         Route::get('/offers', OffersPage::class)->name('tenant.path.storefront.offers');
         Route::get('/search', BestSellingPage::class)->name('tenant.path.storefront.search');
+        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+        Route::post('/search/image', [\App\Http\Controllers\ImageSearchController::class, 'storefront'])->name('tenant.path.storefront.search.image');
 
         Route::get('/search/autocomplete', function () {
             $keyword = trim((string) request('q', ''));

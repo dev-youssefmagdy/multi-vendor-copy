@@ -221,6 +221,8 @@ Route::group([
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
+        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+        Route::post('/search-image', [\App\Http\Controllers\ImageSearchController::class, 'admin'])->middleware('admin.permission:catalog.products.view,catalog.products.manage')->name('search-image');
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {

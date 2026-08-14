@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Variation;
 use App\Models\VariationOption;
+use App\Jobs\EmbedProductImagesJob;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -25,7 +26,7 @@ class ProductService
 
     public function save(array $attributes, ?Product $product = null): Product
     {
-        return DB::transaction(function () use ($attributes, $product) {
+        $saved = DB::transaction(function () use ($attributes, $product) {
             $product ??= new Product();
 
             $translations = $attributes['translations'] ?? [];
@@ -99,6 +100,13 @@ class ProductService
                 'files',
             ]);
         });
+
+        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+        // Re-embed asynchronously whenever the product (and possibly its
+        // primary image) is saved, so the index tracks catalog changes.
+        EmbedProductImagesJob::dispatch($saved->id);
+
+        return $saved;
     }
 
     protected function uniqueSlug(string $value, ?int $ignoreId = null): string

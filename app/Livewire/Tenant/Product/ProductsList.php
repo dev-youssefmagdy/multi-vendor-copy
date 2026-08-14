@@ -104,6 +104,8 @@ class ProductsList extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
+            // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+            'imageSearchAction' => route('tenant.products.search-image'),
             'records' => $records,
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],

@@ -23,12 +23,18 @@ class BestSellingPage extends Component
     public string $categoryId = '';
 
     public bool $isSearchRoute = false;
+    public bool $isImageSearch = false;
     public int $perPage = 20;
     public bool $hasMore = false;
 
     public function mount(): void
     {
-        $this->isSearchRoute = request()->routeIs('tenant.storefront.search');
+        $this->isSearchRoute = request()->routeIs('tenant.storefront.search') || request()->routeIs('tenant.path.storefront.search');
+
+        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+        // ImageSearchController stashes the ranked central product IDs in the
+        // session, then redirects here with ?mode=image.
+        $this->isImageSearch = $this->isSearchRoute && request('mode') === 'image' && session()->has('image_search_product_ids');
 
         // Bootstrap from URL on first load (Livewire #[Url] handles subsequent updates)
         if ($this->isSearchRoute && request()->has('q') && $this->search === '') {
@@ -107,15 +113,20 @@ class BestSellingPage extends Component
             ? (int) $this->categoryId
             : null;
 
-        $products = $this->isSearchRoute
-            ? $repo->paginatedSearchProducts([
+        $products = match (true) {
+            $this->isImageSearch => $repo->imageSearchProducts(
+                (array) session('image_search_product_ids', []),
+                $this->perPage,
+            ),
+            $this->isSearchRoute => $repo->paginatedSearchProducts([
                 'keyword' => $this->search,
                 'category_id' => $categoryId,
-            ], $this->perPage)
-            : $repo->paginatedBestSellingProducts($this->days, [
+            ], $this->perPage),
+            default => $repo->paginatedBestSellingProducts($this->days, [
                 'keyword' => $this->search,
                 'category_id' => $categoryId,
-            ], $this->perPage);
+            ], $this->perPage),
+        };
 
         $this->hasMore = $products->hasMorePages();
 
@@ -126,6 +137,7 @@ class BestSellingPage extends Component
             'days' => $this->days,
             'currentCategoryId' => $categoryId,
             'isSearchRoute' => $this->isSearchRoute,
+            'isImageSearch' => $this->isImageSearch,
             'hasMore' => $this->hasMore,
         ]);
 

@@ -184,9 +184,18 @@
                     <input type="text" name="q" value="{{ request('q') }}" autocomplete="off"
                         placeholder="{{ __('Search for premium tech, fashion, or home...') }}"
                         class="flex-1 bg-transparent outline-none text-sm text-neutral-700 placeholder:text-neutral-500" />
+                    {{-- Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.). --}}
+                    <button type="button" data-image-search-trigger="storefront-image-search-modal"
+                        class="p-2 text-neutral-700 hover:text-blue-700 transition" aria-label="{{ __('Search by Image') }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                            <circle cx="12" cy="13" r="3.2" />
+                        </svg>
+                    </button>
                 </div>
             </form>
         </div>
+        <x-image-search-modal id="storefront-image-search-modal" :action="route('tenant.storefront.search.image')" />
 
         <!-- Right icons -->
         <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 ml-auto lg:ml-4">
