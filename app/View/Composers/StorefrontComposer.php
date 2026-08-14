@@ -6,6 +6,7 @@ use App\Enums\ShippingZoneStatus;
 use App\Models\ShippingZone;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\Tenant\CustomerCountryResolver;
+use App\Services\Tenant\ThemeColorResolver;
 use Illuminate\View\View;
 
 /**
@@ -16,7 +17,7 @@ use Illuminate\View\View;
  */
 class StorefrontComposer
 {
-    public function __construct(protected StorefrontRepository $repo)
+    public function __construct(protected StorefrontRepository $repo, protected ThemeColorResolver $themeColorResolver)
     {
     }
 
@@ -35,7 +36,10 @@ class StorefrontComposer
                 app()->setLocale($currentLanguage->code);
             }
 
+            $currentTheme = $this->repo->currentTheme();
+
             request()->attributes->set('_sf_layout', [
+                'themeColorStyle' => $currentTheme ? $this->themeColorResolver->resolveInlineStyle($currentTheme) : '',
                 'storeName' => $this->repo->storeName(),
                 'logoPath' => $this->repo->logoPath(),
                 'cartCount' => $this->repo->cartCount(),

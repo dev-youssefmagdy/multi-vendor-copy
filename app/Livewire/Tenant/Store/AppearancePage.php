@@ -8,10 +8,14 @@ use App\Models\Country;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
+use App\Models\Tenant\TenantThemeColor;
+use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use App\Services\Tenant\ThemeColorResolver;
+use App\Support\ThemeColorKeys;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
@@ -80,10 +84,19 @@ class AppearancePage extends TenantPage
      */
     public array $footerTranslations = [];
 
+    // ── Colors ────────────────────────────────────────────────────────────────
+    /** @var array<int, array<string, string>> theme_id => [variable key => value] */
+    public array $themeColors = [];
+
     public function mount(): void
     {
         $repo = app(TenantPanelRepository::class);
         $languages = $repo->activeLanguages();
+
+        $resolver = app(ThemeColorResolver::class);
+        foreach ($repo->themes() as $theme) {
+            $this->themeColors[$theme->id] = $resolver->resolve($theme);
+        }
 
         $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
             $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
@@ -171,6 +184,10 @@ class AppearancePage extends TenantPage
                 ->where('is_active_for_tenants', true)
                 ->orderBy('name')
                 ->get(),
+            'colorThemes' => $repo->themes(),
+            'colorKeyLabels' => collect(ThemeColorKeys::all())
+                ->mapWithKeys(fn($key) => [$key => ThemeColorKeys::label($key)])
+                ->all(),
         ]);
     }
 
@@ -425,4 +442,42 @@ class AppearancePage extends TenantPage
         $this->toast('Footer settings saved successfully.');
     }
 
+    // ── Colors ────────────────────────────────────────────────────────────────
+
+    public function saveColors(): void
+    {
+        $themeIds = Theme::query()->pluck('id')->all();
+
+        $rules = [];
+        foreach ($this->themeColors as $themeId => $values) {
+            foreach (array_keys($values) as $key) {
+                $rules["themeColors.{$themeId}.{$key}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'];
+            }
+        }
+        $this->validate($rules);
+
+        foreach ($this->themeColors as $themeId => $values) {
+            if (!in_array((int) $themeId, $themeIds, true)) {
+                continue;
+            }
+            foreach ($values as $key => $value) {
+                TenantThemeColor::query()->updateOrCreate(
+                    ['theme_id' => $themeId, 'variable_key' => $key],
+                    ['value' => $value]
+                );
+            }
+        }
+
+        $this->toast('Theme colors saved successfully.');
+    }
+
+    public function resetColors(int $themeId): void
+    {
+        $theme = Theme::query()->findOrFail($themeId);
+
+        TenantThemeColor::query()->where('theme_id', $theme->id)->delete();
+
+        $this->themeColors[$theme->id] = app(ThemeColorResolver::class)->resolve($theme);
+        $this->toast('Theme colors reset to defaults.');
+    }
 }

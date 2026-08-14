@@ -1,3 +1,14 @@
+:root {
+    /* Theme color variables — defaults overridable per tenant via Appearance > Colors */
+    --color-primary: #111827;
+    --color-secondary: #6b7280;
+    --color-background: #ffffff;
+    --color-text: #111827;
+    --color-accent: #d97706;
+    --color-header-bg: #ffffff;
+    --color-footer-bg: #111827;
+}
+
 /* cart.html*/
 body[data-page="cart"] * {
     font-family: "Outfit", sans-serif;
