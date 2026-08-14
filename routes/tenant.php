@@ -301,7 +301,7 @@ Route::middleware([
                 ->name('tenant.onboarding');
 
             Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
-                Route::get('/', ProductsList::class)->name('index');
+                Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
                 Route::get('/create', AddEditProduct::class)->name('create');
                 Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
             });
@@ -342,7 +342,7 @@ Route::middleware([
             });
 
             Route::get('/orders', OrdersList::class)
-                ->middleware('tenant.permission:sales.orders.view')
+                ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
                 ->name('tenant.orders.index');
 
             Route::get('/orders/{orderId}', TenantOrderDetailPage::class)

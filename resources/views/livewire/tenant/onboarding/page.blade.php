@@ -9,6 +9,18 @@
         </div>
     </div>
 
+    @if (session('setup_error'))
+        <div class="ob-setup-banner ob-setup-banner-error">{{ session('setup_error') }}</div>
+    @elseif (session('setup_warning'))
+        <div class="ob-setup-banner ob-setup-banner-warning">
+            {{ session('setup_warning') }}
+            @if (session('setup_return_url'))
+                <a href="{{ session('setup_return_url') . (str_contains(session('setup_return_url'), '?') ? '&' : '?') . 'skip_setup=1' }}"
+                    class="ob-setup-banner-skip">Skip for now</a>
+            @endif
+        </div>
+    @endif
+
     {{-- ── Tabs ─────────────────────────────────────────────────────────────── --}}
     <div class="ob-page-tabs">
         <a href="{{ route('tenant.onboarding', ['tab' => 'tour']) }}" wire:navigate

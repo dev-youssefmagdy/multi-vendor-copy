@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'preview.template' => \App\Http\Middleware\ForcePreviewTemplate::class,
             'preview.init' => \App\Http\Middleware\InitializeTenancyForPreview::class,
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
+            'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
         ]);
 
         $middleware->web([
