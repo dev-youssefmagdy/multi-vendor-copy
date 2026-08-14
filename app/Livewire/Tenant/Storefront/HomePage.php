@@ -5,7 +5,10 @@ namespace App\Livewire\Tenant\Storefront;
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Tenant\Product;
+use App\Models\Tenant\Theme;
+use App\Models\Tenant\TenantPageSection;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\Tenant\PageBuilder\SectionRegistry;
 use Livewire\Component;
 
 class HomePage extends Component
@@ -77,6 +80,27 @@ class HomePage extends Component
         $this->dispatch('storefront-cart-added');
     }
 
+    /** @return string[] visible section keys for the active theme's home page, in order. */
+    protected function resolvedHomeSections(): array
+    {
+        $theme = $this->resolveStrategy()->slug();
+        $themeId = Theme::query()->where('slug', $theme)->value('id');
+
+        $rows = $themeId
+            ? TenantPageSection::query()
+                ->where('theme_id', $themeId)
+                ->where('page', 'home')
+                ->orderBy('sort_order')
+                ->get()
+            : collect();
+
+        if ($rows->isEmpty()) {
+            return SectionRegistry::defaultsFor($theme, 'home');
+        }
+
+        return $rows->where('is_visible', true)->pluck('section_key')->all();
+    }
+
     public function showProductTab(string $tab): void
     {
         $allowed = ['cat-flash', 'cat-bestselling', 'cat-newin', 'cat-toprated'];
@@ -146,6 +170,7 @@ class HomePage extends Component
             'trendingNowProducts' => $trendingNowProducts,
             'recommendedProducts' => $recommendedProducts,
             'paginatedProducts' => $paginatedProducts,
+            'homeSections' => $this->resolvedHomeSections(),
         ]);
 
         $storeName = $repo->storeName();

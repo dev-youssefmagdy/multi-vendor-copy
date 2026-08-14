@@ -83,6 +83,7 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'Themes', 'route' => 'tenant.store.themes', 'permission' => 'store.themes.manage'],
                             ['label' => 'Theme Parts', 'route' => 'tenant.store.theme-parts', 'permission' => 'store.themes.manage'],
+                            ['label' => 'Page Builder', 'route' => 'tenant.store.page-builder', 'permission' => 'store.page-builder.manage'],
                             ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
                         ]
                     ],

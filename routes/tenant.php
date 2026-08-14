@@ -56,6 +56,7 @@ use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
 use App\Livewire\Tenant\Setting\RolesPermissionsList;
 use App\Livewire\Tenant\Setting\SubscribersPage;
 use App\Livewire\Tenant\Store\AppearancePage;
+use App\Livewire\Tenant\Store\PageBuilderPage;
 use App\Livewire\Tenant\Store\CouponsPage;
 use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
@@ -448,6 +449,9 @@ Route::middleware([
                 Route::get('/appearance', AppearancePage::class)
                     ->middleware('tenant.permission:store.appearance.manage')
                     ->name('appearance');
+                Route::get('/page-builder', PageBuilderPage::class)
+                    ->middleware('tenant.permission:store.page-builder.manage')
+                    ->name('page-builder');
             });
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {
