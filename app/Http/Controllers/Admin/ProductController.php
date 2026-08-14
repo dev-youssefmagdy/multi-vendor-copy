@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
+use App\Models\ProductBadge;
 use App\Models\ProductTenantAssignment;
 use App\Models\Tenant;
 use App\Models\Variation;
@@ -100,6 +101,8 @@ class ProductController extends Controller
             'remove_gallery_ids' => $request->input('remove_gallery_ids', []),
         ], $product);
 
+        $savedProduct->badges()->sync(array_filter((array) $request->input('badge_ids', []), fn($id) => filled($id)));
+        $tenantSyncService->syncAllTenants(['badges']);
 
         $tenantIds = [];
         foreach (Tenant::all() as $tenant) {
@@ -248,6 +251,8 @@ class ProductController extends Controller
             'factory' => ['nullable', 'string', 'max:255'],
             'weight_grams' => ['nullable', 'integer', 'min:0'],
             'primary_image' => ['nullable', 'image', 'max:4096'],
+            'badge_ids' => ['array'],
+            'badge_ids.*' => ['integer', 'exists:product_badges,id'],
         ];
 
         foreach (Language::query()->where('is_active', true)->get() as $language) {
@@ -286,10 +291,13 @@ class ProductController extends Controller
         $existingImage = null;
         $existingGallery = collect();
         $assignedTenantIds = [];
+        $selectedBadgeIds = [];
         $productData = null;
 
         if ($product) {
             $loaded = app(ProductRepository::class)->findForEditor($product);
+
+            $selectedBadgeIds = $loaded->badges->pluck('id')->all();
 
             $translations = array_replace_recursive(
                 $blankTranslations,
@@ -386,6 +394,8 @@ class ProductController extends Controller
             'variants' => $variants,
             'assignedTenantIds' => $assignedTenantIds,
             'assignToAllTenants' => $assignToAllTenants ?? false,
+            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
+            'selectedBadgeIds' => $selectedBadgeIds,
         ];
     }
 }

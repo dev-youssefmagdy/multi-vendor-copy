@@ -145,7 +145,7 @@ class TenantPanelRepository
     public function paginateProducts(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return Product::query()
-            ->with(['translations.language', 'categories.translations.language', 'variants', 'files'])
+            ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
                 $query->where('slug', 'like', "%{$search}%")

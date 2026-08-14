@@ -495,6 +495,26 @@
                 </script>
             </x-card-collapse>
 
+            {{-- ── Badges ─────────────────────────────────────────────────── --}}
+            <x-card-collapse class="form-card span-6" title="Badges"
+                subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront."
+                :start-open="true">
+                @if ($badges->isEmpty())
+                    <div class="notice-muted">No badges available yet.</div>
+                @else
+                    @php $selectedBadgeIds = old('badge_ids', $selectedBadgeIds ?? []); @endphp
+                    <x-select multiple searchable name="badge_ids[]" placeholder="Search and select badges">
+                        @foreach ($badges as $badge)
+                            <option value="{{ $badge->id }}"
+                                {{ in_array($badge->id, $selectedBadgeIds) ? 'selected' : '' }}>
+                                {{ ucfirst(str_replace('-', ' ', $badge->text)) }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                    @error('badge_ids') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
             {{-- ── Product Variants ──────────────────────────────────────── --}}
             <x-card-collapse class="form-card span-12" title="Product Variants"
                 subtitle="Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image."

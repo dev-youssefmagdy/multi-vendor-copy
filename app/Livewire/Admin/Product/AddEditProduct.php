@@ -7,6 +7,7 @@ use App\Enums\ProductStatus;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
+use App\Models\ProductBadge;
 use App\Models\ProductTenantAssignment;
 use App\Models\ShippingZone;
 use App\Models\Tenant;
@@ -42,6 +43,7 @@ class AddEditProduct extends Component
 
     public array $categoryIds = [];
     public array $shippingZoneIds = [];
+    public array $badgeIds = [];
     public array $translations = [];
     public string $activeLocale = 'en';
 
@@ -116,6 +118,7 @@ class AddEditProduct extends Component
         $this->weightGrams = $loaded->weight_grams;
         $this->categoryIds = $loaded->categories->pluck('id')->all();
         $this->shippingZoneIds = $loaded->shippingZones->pluck('id')->all();
+        $this->badgeIds = $loaded->badges->pluck('id')->all();
 
         $this->translations = array_replace_recursive(
             $this->translations,
@@ -301,7 +304,10 @@ class AddEditProduct extends Component
             'remove_gallery_ids' => $this->removeGalleryIds,
         ], $existingProduct);
 
+        $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+
         $tenantSyncService->syncProduct($product);
+        $tenantSyncService->syncAllTenants(['badges']);
 
         // ── Tenant Assignments ──────────────────────────────────────────────
         $previousAssignedTenantIds = ProductTenantAssignment::where('product_id', $product->id)
@@ -369,6 +375,8 @@ class AddEditProduct extends Component
             'categoryIds.*' => ['integer', 'exists:categories,id'],
             'shippingZoneIds' => ['array'],
             'shippingZoneIds.*' => ['integer', 'exists:shipping_zones,id'],
+            'badgeIds' => ['array'],
+            'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'assignedTenantIds' => ['array'],
             'assignedTenantIds.*' => ['string', 'exists:tenants,id'],
             'removePrimaryImage' => ['boolean'],
@@ -411,6 +419,7 @@ class AddEditProduct extends Component
             'weightGrams' => 'weight (grams)',
             'categoryIds' => 'categories',
             'shippingZoneIds' => 'shipping zones',
+            'badgeIds' => 'badges',
             'primaryImage' => 'primary image',
         ];
     }
@@ -514,6 +523,7 @@ class AddEditProduct extends Component
             'existingImage' => $this->productId ? Product::query()->with('files')->find($this->productId)?->primary_image_url : null,
             'existingGallery' => $existingGallery,
             'tenants' => Tenant::query()->orderBy('name')->get(),
+            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
         ]);
     }
 }

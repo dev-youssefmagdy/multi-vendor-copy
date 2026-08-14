@@ -587,6 +587,26 @@
                 </div>
             </x-card-collapse>
 
+            {{-- ── Badges ─────────────────────────────────────────────────── --}}
+            <x-card-collapse title="Badges"
+                subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront."
+                :start-open="true">
+                @if ($badges->isEmpty())
+                    <div class="notice-muted">No badges available yet.</div>
+                @else
+                    @php $selectedBadgeIds = old('badge_ids', $selectedBadgeIds ?? []); @endphp
+                    <x-select multiple searchable name="badge_ids[]" placeholder="Search and select badges">
+                        @foreach ($badges as $badge)
+                            <option value="{{ $badge->id }}"
+                                {{ in_array($badge->id, $selectedBadgeIds) ? 'selected' : '' }}>
+                                {{ ucfirst(str_replace('-', ' ', $badge->text)) }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                    @error('badge_ids') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
             {{-- ── Tenant Assignments ────────────────────────────────────── --}}
             <x-card-collapse title="Tenant Assignments"
                 subtitle="Assign this product to specific tenants — they will be notified and the product will appear in their catalog."

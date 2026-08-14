@@ -3201,6 +3201,16 @@ details[open] .filters-chevron {
     color: var(--red);
 }
 
+.badge-cyan {
+    background: rgba(0, 229, 255, 0.12);
+    color: var(--cyan);
+}
+
+.badge-violet {
+    background: rgba(162, 89, 255, 0.12);
+    color: var(--violet);
+}
+
 .mb-5 {
     margin-bottom: 20px;
 }

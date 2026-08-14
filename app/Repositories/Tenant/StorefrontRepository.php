@@ -705,6 +705,16 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
+        $badged = $this->productsByBadgeQuery('featured')
+            ->orderByRaw($this->effectivePriceExpression() . ' asc')
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+
+        if ($badged->isNotEmpty()) {
+            return $badged;
+        }
+
         return $this->productBaseQuery()
             ->where('active', true)
             ->where('featured', true)
@@ -926,12 +936,24 @@ class StorefrontRepository
 
     public function recommendedProducts(int $limit = 10): Collection
     {
-        return $this->memo['recommended_' . $limit] ??= $this->productBaseQuery()
-            ->where('featured', true)
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
+        return $this->memo['recommended_' . $limit] ??= (function () use ($limit) {
+            $badged = $this->productsByBadgeQuery('recommended')
+                ->orderByRaw($this->effectivePriceExpression() . ' asc')
+                ->orderByDesc('created_at')
+                ->limit($limit)
+                ->get();
+
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
+
+            return $this->productBaseQuery()
+                ->where('featured', true)
+                ->orderByRaw($this->effectivePriceExpression() . ' asc')
+                ->orderByDesc('created_at')
+                ->limit($limit)
+                ->get();
+        })();
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator

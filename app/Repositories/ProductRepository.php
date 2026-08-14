@@ -161,6 +161,7 @@ class ProductRepository
             'variants.options.translations.language',
             'variants.files',
             'files',
+            'badges',
         ]);
     }
 }

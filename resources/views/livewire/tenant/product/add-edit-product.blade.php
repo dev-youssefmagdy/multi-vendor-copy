@@ -34,6 +34,13 @@
                         </option>@endforeach</x-select>@error('categoryIds')<div class="field-error">{{ $message }}
                         </div>@enderror
                 </div>
+                <div><label class="field-label">Badges</label><x-select multiple searchable
+                        wire:model.defer="badgeIds" class="{{ $errors->has('badgeIds') ? 'is-invalid' : '' }}"
+                        placeholder="Search and select badges">@foreach($badges as $badge)<option
+                            value="{{ $badge->id }}">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}
+                        </option>@endforeach</x-select>@error('badgeIds')<div class="field-error">{{ $message }}
+                        </div>@enderror
+                </div>
                 <label class="toggle-field"><input type="checkbox" wire:model.defer="active"><span>Product is
                         active</span></label>
                 <label class="toggle-field"><input type="checkbox" wire:model.defer="featured"><span>Product is

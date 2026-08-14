@@ -560,6 +560,20 @@
 
             </x-card-collapse>--}}
 
+            {{-- ── Badges ───────────────────────────────────────────────────── --}}
+            <x-card-collapse title="Badges" description="Assign badges such as Featured or Recommended — used to highlight this product on the storefront." :start-open="true">
+                @if ($badges->isEmpty())
+                    <div class="notice-muted">No badges available yet.</div>
+                @else
+                    <x-select multiple searchable wire:model.defer="badgeIds" placeholder="Search and select badges">
+                        @foreach ($badges as $badge)
+                            <option value="{{ $badge->id }}">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}</option>
+                        @endforeach
+                    </x-select>
+                    @error('badgeIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
             {{-- ── Tenant Assignments ──────────────────────────────────────── --}}
             <x-card-collapse title="Tenant Assignments" description="Assign this product to specific tenants — they will be notified and the product will appear in their catalog." :start-open="true">
                 @if ($tenants->isEmpty())

@@ -132,11 +132,20 @@ class ProductsList extends ListPage
                     : ($product->stock ?? 0);
                 $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>';
 
+                $badgeTones = [
+                    'featured' => 'badge-violet',
+                    'recommended' => 'badge-green',
+                    'best-selling' => 'badge-amber',
+                    'new-in' => 'badge-cyan',
+                ];
+                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(ucfirst(str_replace('-', ' ', $badge->text))) . '</span>')->implode(' ');
+                $badgeCell = $badgePills !== '' ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">' . $badgePills . '</div>' : '';
+
                 return [
                     ($imageUrl
                         ? '<img src="' . e($imageUrl) . '" alt="' . e($product->translationValue('name') ?? $product->slug ?? 'Product') . '" style="width:44px;height:44px;object-fit:cover;border-radius:10px;display:inline-block;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);">'
                         : '<span style="width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);">' . e(strtoupper(substr($product->translationValue('name') ?? $product->slug ?? 'P', 0, 1))) . '</span>'
-                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div></span>',
+                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div>' . $badgeCell . '</span>',
                     $central
                     ? '<div class="entity-title">$' . e(number_format((float) $centralPrice, 2)) . '</div><div class="entity-subtitle">Base $' . e(number_format((float) ($central['base_price'] ?? $centralPrice), 2)) . '</div>'
                     : '<span class="entity-subtitle">Not linked</span>',

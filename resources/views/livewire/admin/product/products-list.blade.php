@@ -308,6 +308,22 @@
                                     <div class="entity-title">{{ $product->translationValue('name') ?? 'Untitled product' }}
                                     </div>
                                     <div class="entity-subtitle">/{{ $product->slug }}</div>
+                                    @if ($product->badges->isNotEmpty())
+                                        <div class="entity-badges" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
+                                            @foreach ($product->badges as $badge)
+                                                @php
+                                                    $badgeTone = match ($badge->text) {
+                                                        'featured' => 'badge badge-violet',
+                                                        'recommended' => 'badge badge-green',
+                                                        'best-selling' => 'badge badge-amber',
+                                                        'new-in' => 'badge badge-cyan',
+                                                        default => 'badge badge-amber',
+                                                    };
+                                                @endphp
+                                                <span class="{{ $badgeTone }}" style="font-size:10px;">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}</span>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </td>
 
                                 {{-- SKU --}}
