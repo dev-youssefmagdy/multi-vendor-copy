@@ -153,6 +153,21 @@ class TemplateMailService
         );
     }
 
+    public function sendReturnStatusUpdate(\App\Models\ReturnRequest $returnRequest, Order $order): bool
+    {
+        return $this->sendTenantTemplate(
+            EmailTemplateAction::TenantReturnUpdate,
+            $this->orderRecipient($order),
+            $this->orderTokens($order, [
+                '{{return_status}}' => $returnRequest->status->label(),
+                '{{return_reason}}' => $returnRequest->reason->label(),
+                '{{processed_at}}' => optional($returnRequest->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
+            ]),
+            [],
+            $this->orderLocale($order),
+        );
+    }
+
     public function sendCentralTemplate(EmailTemplateAction $action, ?string $recipient, array $tokens = [], array $attachments = [], ?string $locale = null): bool
     {
         if (!filled($recipient)) {

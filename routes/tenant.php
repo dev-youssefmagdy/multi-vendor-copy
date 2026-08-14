@@ -31,6 +31,9 @@ use App\Livewire\Tenant\Finance\VendorSettleOrderPage;
 use App\Livewire\Tenant\Finance\WalletPage;
 use App\Livewire\Tenant\Order\OrdersList;
 use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
+use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
+use App\Livewire\Tenant\Return\ReturnDetailPage as TenantReturnDetailPage;
+use App\Livewire\Tenant\Storefront\RequestReturnForm;
 use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
 use App\Livewire\Tenant\Product\OwnProductsList;
@@ -216,6 +219,9 @@ Route::middleware([
             ->name('tenant.storefront.checkout');
         Route::get('/orders/{uuid}/status', OrderStatusPage::class)->name('tenant.storefront.order-status');
         Route::get('/orders/{uuid}/tracking', OrderTrackingPage::class)->name('tenant.storefront.order-tracking');
+        Route::get('/orders/{uuid}/return', RequestReturnForm::class)
+            ->middleware('auth:storefront')
+            ->name('tenant.storefront.order-return');
         Route::get('/orders/{uuid}/invoice', [StorefrontInvoiceController::class, 'show'])
             ->middleware('auth:storefront')
             ->name('tenant.storefront.order-invoice');
@@ -349,6 +355,14 @@ Route::middleware([
             Route::get('/orders/{orderId}', TenantOrderDetailPage::class)
                 ->middleware('tenant.permission:sales.orders.view')
                 ->name('tenant.orders.show');
+
+            Route::get('/returns', TenantReturnsList::class)
+                ->middleware('tenant.permission:sales.returns.manage')
+                ->name('tenant.returns.index');
+
+            Route::get('/returns/{id}', TenantReturnDetailPage::class)
+                ->middleware('tenant.permission:sales.returns.manage')
+                ->name('tenant.returns.show');
 
             Route::get('/customers', CustomersList::class)
                 ->middleware('tenant.permission:sales.customers.manage')

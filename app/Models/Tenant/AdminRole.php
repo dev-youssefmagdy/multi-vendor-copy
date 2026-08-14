@@ -43,6 +43,7 @@ class AdminRole extends Model
             'catalog.categories.manage' => 'Manage categories',
             'catalog.badges.manage' => 'Manage product badges',
             'sales.orders.view' => 'View orders',
+            'sales.returns.manage' => 'Manage return requests',
             'sales.customers.manage' => 'Manage customers',
             'analytics.view' => 'View analytics',
             'finance.wallet.view' => 'View wallet',
@@ -80,6 +81,7 @@ class AdminRole extends Model
                 'catalog.categories.manage',
                 'catalog.badges.manage',
                 'sales.orders.view',
+                'sales.returns.manage',
                 'sales.customers.manage',
                 'analytics.view',
                 'finance.wallet.view',
@@ -97,6 +99,7 @@ class AdminRole extends Model
             self::SUPPORT => [
                 'dashboard.view',
                 'sales.orders.view',
+                'sales.returns.manage',
                 'sales.customers.manage',
                 'store.subscribers.manage',
                 'settings.account.manage',
