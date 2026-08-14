@@ -20,4 +20,9 @@ class PaymentException extends RuntimeException
     {
         return new self("Charge failed on gateway [{$gateway}]: {$reason}");
     }
+
+    public static function notSupported(string $gateway, string $capability): self
+    {
+        return new self("Gateway [{$gateway}] does not support [{$capability}].");
+    }
 }

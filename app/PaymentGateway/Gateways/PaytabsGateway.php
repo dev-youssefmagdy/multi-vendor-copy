@@ -77,4 +77,82 @@ class PaytabsGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure("PayTabs response: {$status} — {$message}");
     }
+
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        $endpoint = rtrim($this->cfg('region_url'), '/') . '/payment/request';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $this->cfg('server_key'),
+                'Content-Type'  => 'application/json',
+            ])->post($endpoint, [
+                'profile_id'    => $this->cfg('profile_id'),
+                'tran_type'     => 'refund',
+                'tran_class'    => 'ecom',
+                'tran_ref'      => $transactionId,
+                'cart_id'       => $context['order_id'] ?? uniqid('pt_rf_'),
+                'cart_currency' => $currency,
+                'cart_amount'   => round($amount, 2),
+                'cart_description' => $context['reason'] ?? 'Refund',
+            ]);
+
+            $data = $response->json();
+
+            if (($data['payment_result']['response_status'] ?? null) === 'A') {
+                return PaymentResult::success((string) ($data['tran_ref'] ?? $transactionId), json_encode($data));
+            }
+
+            return PaymentResult::failure($data['message'] ?? 'PayTabs refund failed.');
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', 'paytabs'),
+            'events' => ['payment.captured', 'payment.refunded'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        $tranRef = $request->input('tranRef') ?? $request->input('tran_ref');
+
+        if (!$tranRef) {
+            return false;
+        }
+
+        $endpoint = rtrim($this->cfg('region_url'), '/') . '/payment/query';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $this->cfg('server_key'),
+                'Content-Type'  => 'application/json',
+            ])->post($endpoint, [
+                'profile_id' => $this->cfg('profile_id'),
+                'tran_ref'   => $tranRef,
+            ]);
+
+            $data = $response->json();
+
+            return $response->successful()
+                && ($data['tran_ref'] ?? null) === $tranRef
+                && isset($data['payment_result']['response_status']);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['SAR', 'AED', 'EGP', 'USD', 'KWD', 'BHD', 'OMR', 'QAR', 'JOD'],
+            'merchant_countries' => ['SA', 'AE', 'EG', 'KW', 'BH', 'OM', 'QA', 'JO'],
+            'customer_countries' => ['SA', 'AE', 'EG', 'KW', 'BH', 'OM', 'QA', 'JO', 'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'IE', 'IN', 'PK', 'TR', 'CA', 'AU', 'SG', 'MY'],
+            'payment_methods' => ['card', 'apple_pay', 'mada', 'stc_pay'],
+        ];
+    }
 }

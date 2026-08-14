@@ -112,6 +112,65 @@ class TwoCheckoutGateway extends AbstractPaymentGateway
         return PaymentResult::failure('2Checkout message_type not ORDER_CREATED: ' . $request->input('message_type'));
     }
 
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        $headers = $this->buildHeaders();
+
+        try {
+            $response = Http::withHeaders($headers)
+                ->post(self::PRODUCTION_URL . $transactionId . '/refund/', [
+                    'Reason' => $context['reason'] ?? 'Refund',
+                    'Comment' => $context['comment'] ?? 'Refund requested',
+                    'RefundType' => 'FULL',
+                ]);
+
+            $data = $response->json();
+
+            if ($response->successful()) {
+                return PaymentResult::success($transactionId, json_encode($data));
+            }
+
+            return PaymentResult::failure($data['error_code'] ?? '2Checkout refund failed.');
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', '2checkout'),
+            'events' => ['ORDER_CREATED', 'REFUND_ISSUED'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        $secretWord = $this->cfg('secret_word');
+        $sellerId = $this->cfg('seller_id');
+        $orderId = $request->input('order_number') ?? $request->input('invoice_id');
+        $total = $request->input('invoice_list_amount');
+        $hash = $request->input('key');
+
+        if (!$hash) {
+            return false;
+        }
+
+        $expectedHash = strtoupper(md5($secretWord . $sellerId . $orderId . $total));
+
+        return hash_equals($expectedHash, (string) $hash);
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['USD', 'EUR', 'GBP'],
+            'merchant_countries' => ['US', 'GB', 'DE', 'FR', 'ES', 'IT', 'NL', 'IE', 'SE', 'CA', 'AU', 'JP', 'SG', 'BR', 'MX', 'PL', 'PT', 'BE', 'AT', 'CH'],
+            'customer_countries' => ['US', 'GB', 'DE', 'FR', 'ES', 'IT', 'NL', 'IE', 'SE', 'CA', 'AU', 'JP', 'SG', 'BR', 'MX', 'PL', 'PT', 'BE', 'AT', 'CH'],
+            'payment_methods' => ['card', 'paypal', 'wallet'],
+        ];
+    }
+
     private function buildHeaders(): array
     {
         $date = gmdate('Y-m-d H:i:s');

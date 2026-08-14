@@ -41,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // token attached; the callback validates the signed `state` param itself.
         $middleware->validateCsrfTokens(except: [
             'auth/apple/callback',
+            'checkout/payment/*/webhook',
         ]);
 
 

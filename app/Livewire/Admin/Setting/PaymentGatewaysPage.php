@@ -6,6 +6,7 @@ use App\Enums\ActivationStatus;
 use App\Livewire\Admin\Base\ContentPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\PaymentGateway;
+use App\PaymentGateway\PaymentManager;
 use App\Repositories\PaymentGatewayRepository;
 use App\Services\PaymentGatewayService;
 
@@ -50,6 +51,7 @@ class PaymentGatewaysPage extends ContentPage
     {
         $repository = app(PaymentGatewayRepository::class);
         $service = app(PaymentGatewayService::class);
+        $manager = app(PaymentManager::class);
         $gateways = $repository->all();
         $stats = $repository->stats();
 
@@ -58,9 +60,10 @@ class PaymentGatewaysPage extends ContentPage
                 ['label' => 'Gateways', 'value' => number_format($stats['total']), 'caption' => 'Owner payment strategies', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Available for payment capture', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ],
-            'tableHeaders' => ['Gateway', 'Code', 'Type', 'Mode', 'Status', 'Credentials', 'Actions'],
-            'tableRows' => $gateways->map(function ($gateway) use ($service) {
+            'tableHeaders' => ['Gateway', 'Code', 'Type', 'Mode', 'Status', 'Credentials', 'Marketplace', 'Actions'],
+            'tableRows' => $gateways->map(function ($gateway) use ($service, $manager) {
                 $descriptor = $service->descriptor($gateway);
+                $meta = $manager->meta($gateway->code);
 
                 return [
                     ($gateway->logoFile?->full_path
@@ -72,9 +75,24 @@ class PaymentGatewaysPage extends ContentPage
                     e($gateway->mode->label()),
                     '<span class="badge ' . ($gateway->status === ActivationStatus::Active ? 'badge-green' : 'badge-amber') . '">' . e($gateway->status->label()) . '</span>',
                     '<div class="entity-subtitle">' . e((string) count($gateway->credentials ?? [])) . ' keys</div><div class="entity-subtitle">' . e($descriptor['valid'] ? 'Configured' : 'Missing: ' . implode(', ', $descriptor['missing'])) . '</div>',
+                    $this->renderMarketplaceCell($meta),
                     '<div class="flex gap-2"><a href="' . route('admin.settings.payment-gateways.edit', $gateway->id) . '"  class="btn btn-secondary btn-sm">Edit</a><button type="button" class="btn btn-secondary btn-sm" wire:click="requestToggle(' . $gateway->id . ')">Toggle</button></div>',
                 ];
             })->all(),
         ]);
+    }
+
+    private function renderMarketplaceCell(array $meta): string
+    {
+        $line = fn(string $label, array $values) => empty($values)
+            ? ''
+            : '<div class="entity-subtitle"><strong>' . e($label) . ':</strong> ' . e(implode(', ', array_slice($values, 0, 6)) . (count($values) > 6 ? ' +' . (count($values) - 6) : '')) . '</div>';
+
+        $html = $line('Merchant countries', $meta['merchant_countries'] ?? [])
+            . $line('Customer countries', $meta['customer_countries'] ?? [])
+            . $line('Currencies', $meta['currencies'] ?? [])
+            . $line('Methods', $meta['payment_methods'] ?? []);
+
+        return $html !== '' ? $html : '<div class="entity-subtitle">—</div>';
     }
 }

@@ -62,6 +62,18 @@
         </div>
     </div>
 
+    @if (!empty($recommendations ?? []))
+        <div class="card section-gap fu d1" style="padding:16px 20px;">
+            <div class="panel-title" style="margin-bottom:6px;">Best gateways for you</div>
+            <p class="panel-copy" style="margin-bottom:8px;">Based on the countries you sell to, these gateways are most likely to accept payments from your customers.</p>
+            <div class="flex gap-2" style="flex-wrap:wrap;">
+                @foreach ($recommendations as $rec)
+                    <span class="badge badge-cyan">{{ $rec['name'] }} ({{ $rec['score'] }} {{ $rec['score'] === 1 ? 'country' : 'countries' }} matched)</span>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <details class="card filters-card fu d1 section-gap" wire:ignore.self>
         <summary class="filters-summary">
             <div>
@@ -304,6 +316,14 @@
                                 <p class="empty-state-copy">This gateway has no credential keys defined.</p>
                             </div>
                         @endif
+                    @endif
+
+                    @if (!empty($webhookUrl ?? ''))
+                        <div>
+                            <label class="field-label">Webhook URL</label>
+                            <x-input type="text" value="{{ $webhookUrl }}" readonly onclick="this.select()" />
+                            <p class="field-hint">Paste this URL into your gateway's dashboard so it can notify us of payment events.</p>
+                        </div>
                     @endif
 
                     <div class="page-actions compact-actions justify-end">

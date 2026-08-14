@@ -8,6 +8,7 @@ use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
 use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
 use App\Http\Controllers\Tenant\HomePageController;
 use App\Http\Controllers\Tenant\PaymentController;
+use App\Http\Controllers\Tenant\PaymentWebhookController;
 use App\Http\Controllers\Tenant\LanguagePaymentController;
 use App\Http\Controllers\Tenant\SubscriptionPaymentController;
 use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
@@ -285,6 +286,12 @@ Route::middleware([
             Route::get('{gateway}/{orderUuid}', [PaymentController::class, 'charge'])->name('charge');
             Route::match(['get', 'post'], '{gateway}/success', [PaymentController::class, 'success'])->name('success');
             Route::get('{gateway}/cancel', [PaymentController::class, 'cancel'])->name('cancel');
+        });
+
+        // Inbound gateway webhook — no customer session, called by the gateway's
+        // own server. CSRF-exempt (see bootstrap/app.php validateCsrfTokens).
+        Route::prefix('checkout/payment')->name('tenant.payment.')->group(function () {
+            Route::post('{gateway}/webhook', [PaymentWebhookController::class, 'handle'])->name('webhook');
         });
 
         Route::post('/account/logout', function (Request $request) {

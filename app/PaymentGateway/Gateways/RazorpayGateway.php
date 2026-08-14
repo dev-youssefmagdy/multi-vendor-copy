@@ -83,4 +83,51 @@ class RazorpayGateway extends AbstractPaymentGateway
             return PaymentResult::failure('Razorpay signature verification failed: ' . $e->getMessage());
         }
     }
+
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        try {
+            $payment = $this->api->payment->fetch($transactionId);
+            $refund = $payment->refund([
+                'amount' => (int) round($amount * 100),
+            ]);
+
+            return PaymentResult::success($refund['id'], json_encode($refund->toArray()));
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', 'razorpay'),
+            'events' => ['payment.captured', 'payment.failed', 'refund.processed'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        try {
+            \Razorpay\Api\Utility::verifyWebhookSignature(
+                $request->getContent(),
+                $request->header('X-Razorpay-Signature'),
+                $this->cfg('webhook_secret')
+            );
+
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['INR'],
+            'merchant_countries' => ['IN'],
+            'customer_countries' => ['IN', 'US', 'GB', 'CA', 'AU', 'DE', 'FR', 'SG', 'AE', 'SA', 'MY', 'JP', 'NL', 'IE', 'ZA'],
+            'payment_methods' => ['card', 'upi', 'wallet', 'netbanking'],
+        ];
+    }
 }

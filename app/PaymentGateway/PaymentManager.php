@@ -212,6 +212,78 @@ class PaymentManager
         return $this->resolveGatewayConfig($key);
     }
 
+    /**
+     * The tenant's primary storefront gateway (is_primary = true), falling
+     * back to the first available gateway when none is explicitly marked.
+     * Returns null when the tenant has no usable gateway at all.
+     */
+    public function primaryGateway(): ?PaymentGatewayInterface
+    {
+        $gateways = $this->storefrontGateways();
+
+        if ($gateways->isEmpty()) {
+            return null;
+        }
+
+        $primaryCode = $this->inTenantContext()
+            ? TenantPaymentGateway::query()
+                ->where('is_active', true)
+                ->where('is_primary', true)
+                ->whereIn('code', $gateways->pluck('code')->all())
+                ->value('code')
+            : null;
+
+        $code = $primaryCode ?? $gateways->first()['code'];
+
+        return $this->gateway($code);
+    }
+
+    /**
+     * Remaining active gateways (excluding the primary), in display order —
+     * used to fall back when the primary gateway's charge attempt fails.
+     *
+     * @return PaymentGatewayInterface[]
+     */
+    public function fallbackGateways(): array
+    {
+        $gateways = $this->storefrontGateways();
+        $primary = $this->primaryGateway();
+
+        return $gateways
+            ->pluck('code')
+            ->reject(fn(string $code) => $primary && $code === $primary->getKey())
+            ->map(fn(string $code) => $this->gateway($code))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Capability metadata for a driver key (currencies / merchant countries /
+     * customer countries / payment methods) — readable WITHOUT credentials,
+     * for marketplace listings and recommendation scoring. Returns empty
+     * arrays for unregistered/legacy gateways that haven't defined meta().
+     *
+     * @return array{currencies: string[], merchant_countries: string[], customer_countries: string[], payment_methods: string[]}
+     */
+    public function meta(string $key): array
+    {
+        $empty = ['currencies' => [], 'merchant_countries' => [], 'customer_countries' => [], 'payment_methods' => []];
+        $class = config('payment-gateways.drivers')[$key] ?? null;
+
+        if (!$class || !class_exists($class)) {
+            return $empty;
+        }
+
+        try {
+            $method = new \ReflectionMethod($class, 'meta');
+            $method->setAccessible(true);
+
+            return array_merge($empty, $method->invoke(null));
+        } catch (\ReflectionException) {
+            return $empty;
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Internals
     // ─────────────────────────────────────────────────────────────────────────

@@ -39,6 +39,14 @@ return [
         'xendit' => \App\PaymentGateway\Gateways\XenditGateway::class,
         'yoco' => \App\PaymentGateway\Gateways\YocoGateway::class,
         '2checkout' => \App\PaymentGateway\Gateways\TwoCheckoutGateway::class,
+        'checkout_com' => \App\PaymentGateway\Gateways\CheckoutComGateway::class,
+        'adyen' => \App\PaymentGateway\Gateways\AdyenGateway::class,
+        'moyasar' => \App\PaymentGateway\Gateways\MoyasarGateway::class,
+        'hyperpay' => \App\PaymentGateway\Gateways\HyperPayGateway::class,
+        'tap' => \App\PaymentGateway\Gateways\TapGateway::class,
+        'amazon_payment_services' => \App\PaymentGateway\Gateways\AmazonPaymentServicesGateway::class,
+        'paymob' => \App\PaymentGateway\Gateways\PaymobGateway::class,
+        'cashfree' => \App\PaymentGateway\Gateways\CashfreeGateway::class,
     ],
 
 ];

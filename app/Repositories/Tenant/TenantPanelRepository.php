@@ -22,6 +22,7 @@ use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PaymentGateway;
+use App\PaymentGateway\PaymentManager;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
@@ -644,6 +645,97 @@ class TenantPanelRepository
         return PaymentGateway::query()->where('hide', false)->orderByDesc('is_active')->orderBy('name')->get();
     }
 
+    /**
+     * Payment Readiness Widget data: gateway connectivity + international
+     * sales / Apple Pay / Google Pay / target-currency / target-country
+     * coverage of the tenant's currently active gateways.
+     */
+    public function paymentReadiness(): array
+    {
+        $manager = app(PaymentManager::class);
+
+        $activeGateways = PaymentGateway::query()
+            ->where('is_active', true)
+            ->where('hide', false)
+            ->get();
+
+        $connected = $activeGateways->isNotEmpty();
+
+        $metas = $activeGateways->map(fn(PaymentGateway $gateway) => $manager->meta($gateway->code));
+
+        $merchantCountries = $metas->pluck('merchant_countries')->flatten()->unique();
+        $customerCountries = $metas->pluck('customer_countries')->flatten()->map(fn($c) => strtoupper($c))->unique();
+        $currencies = $metas->pluck('currencies')->flatten()->map(fn($c) => strtoupper($c))->unique();
+        $paymentMethods = $metas->pluck('payment_methods')->flatten()->unique();
+
+        $targetCurrencyCodes = Currency::query()
+            ->where('is_active', true)
+            ->pluck('code')
+            ->map(fn($c) => strtoupper($c))
+            ->unique();
+
+        $targetCountryCodes = collect();
+        if (tenant()) {
+            $targetCountryCodes = tenant()->tenantCountries()
+                ->where('is_active', true)
+                ->with('country')
+                ->get()
+                ->pluck('country.iso2')
+                ->filter()
+                ->map(fn($c) => strtoupper($c))
+                ->unique();
+        }
+
+        $supportsInternational = $merchantCountries->count() > 1;
+        $supportsApplePay = $paymentMethods->contains('apple_pay');
+        $supportsGooglePay = $paymentMethods->contains('google_pay');
+        $supportsTargetCurrencies = $targetCurrencyCodes->isNotEmpty()
+            && $targetCurrencyCodes->diff($currencies)->isEmpty();
+        $canReceiveFromTargetCountries = $targetCountryCodes->isNotEmpty()
+            && $targetCountryCodes->diff($customerCountries)->isEmpty();
+
+        return [
+            [
+                'label' => 'Gateway connected',
+                'ready' => $connected,
+                'caption' => $connected
+                    ? $activeGateways->count() . ' active gateway(s)'
+                    : 'Connect a payment gateway to start accepting orders.',
+            ],
+            [
+                'label' => 'Supports international sales',
+                'ready' => $supportsInternational,
+                'caption' => $supportsInternational
+                    ? 'Your connected gateways can onboard from multiple countries.'
+                    : 'Connect a gateway with broader merchant country coverage.',
+            ],
+            [
+                'label' => 'Supports Apple Pay',
+                'ready' => $supportsApplePay,
+                'caption' => $supportsApplePay ? 'Available at checkout.' : 'No connected gateway offers Apple Pay.',
+            ],
+            [
+                'label' => 'Supports Google Pay',
+                'ready' => $supportsGooglePay,
+                'caption' => $supportsGooglePay ? 'Available at checkout.' : 'No connected gateway offers Google Pay.',
+            ],
+            [
+                'label' => 'Supports your target currencies',
+                'ready' => $supportsTargetCurrencies,
+                'caption' => $targetCurrencyCodes->isEmpty()
+                    ? 'No active currencies configured yet.'
+                    : ($supportsTargetCurrencies ? 'All your active currencies are supported.' : 'Some of your active currencies are not supported by connected gateways.'),
+            ],
+            [
+                'label' => 'Can receive from your target countries',
+                'ready' => $canReceiveFromTargetCountries,
+                'caption' => $targetCountryCodes->isEmpty()
+                    ? 'No target countries configured yet.'
+                    : ($canReceiveFromTargetCountries ? 'All your target countries are covered.' : 'Some of your target countries are not covered by connected gateways.'),
+            ],
+        ];
+    }
+
     public function paginateAdmins(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return AdminUser::query()
@@ -1093,6 +1185,7 @@ class TenantPanelRepository
             'top_customers' => $topCustomers,
             'top_products' => $topProducts,
             'latest_orders' => $this->latestOrders(8),
+            'payment_readiness' => $this->paymentReadiness(),
             'chart_payload' => [
                 'revenueLabels' => $series->pluck('label')->values()->all(),
                 'revenueDatasets' => [
