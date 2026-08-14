@@ -1,3 +1,6 @@
+{{-- Header/Footer partial for souqify theme --}}
+{{-- Edit this file directly to change header/footer markup --}}
+{{-- Tenant-specific data via tenant() helper only --}}
 @php
     $cartCount = $cartCount ?? 0;
     $rootCategories = $rootCategories ?? collect();

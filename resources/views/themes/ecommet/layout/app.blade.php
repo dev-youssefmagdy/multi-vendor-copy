@@ -104,14 +104,11 @@
         <div class="w-10 h-10 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
     </div>
 
-    <x-theme-part :categories="$categories" :rootCategories="$rootCategories" :logoPath="$logoPath"
-        :storeName="$storeName" type="header" fallback-view="themes.ecommet.layout.header" />
+    @include('themes.ecommet.partials.header', ['categories' => $categories, 'rootCategories' => $rootCategories, 'logoPath' => $logoPath, 'storeName' => $storeName])
 
     {{ $slot }}
 
-    <x-theme-part :categories="$categories" :rootCategories="$rootCategories" :logoPath="$logoPath"
-        :socialLinks="$socialLinks" :storeName="$storeName" :footerText="$footerText" type="footer" :footerCopyright="$footerCopyright"
-        fallback-view="themes.ecommet.layout.footer" />
+    @include('themes.ecommet.partials.footer', ['categories' => $categories, 'rootCategories' => $rootCategories, 'logoPath' => $logoPath, 'socialLinks' => $socialLinks, 'storeName' => $storeName, 'footerText' => $footerText, 'footerCopyright' => $footerCopyright])
 
     @if(config('tenancy.path_tenant_slug'))
         <div data-update-uri="{{ url('/s/' . config('tenancy.path_tenant_slug') . '/livewire/update') }}"

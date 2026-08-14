@@ -1,3 +1,6 @@
+{{-- Header/Footer partial for elora theme --}}
+{{-- Edit this file directly to change header/footer markup --}}
+{{-- Tenant-specific data via tenant() helper only --}}
 <!-- ===== NAVBAR ===== -->
 @php
     $buildCatTree = function ($cats) use (&$buildCatTree) {

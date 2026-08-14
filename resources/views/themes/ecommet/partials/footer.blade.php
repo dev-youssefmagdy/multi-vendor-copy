@@ -1,3 +1,6 @@
+{{-- Header/Footer partial for ecommet theme --}}
+{{-- Edit this file directly to change header/footer markup --}}
+{{-- Tenant-specific data via tenant() helper only --}}
 <footer class="mt-auto relative z-10 w-full font-main text-[#d5d5d5] bg-[#333333] pt-8 md:bg-[#434343]">
     <div class="max-w-[1280px] mx-auto py-0 md:py-12 px-5 sm:px-8">
         <div

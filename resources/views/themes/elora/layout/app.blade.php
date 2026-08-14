@@ -117,14 +117,11 @@
         </script>
     @endif
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" type="header"
-        :cartCount="$cartCount" :rootCategories="$rootCategories" :socialLinks="$socialLinks"
-        fallback-view="themes.elora.layout.header" />
+    @include('themes.elora.partials.header', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
 
     {{ $slot }}
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" :socialLinks="$socialLinks"
-        :cartCount="$cartCount" type="footer" fallback-view="themes.elora.layout.footer" />
+    @include('themes.elora.partials.footer', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks, 'cartCount' => $cartCount])
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
     {{-- Path-based tenancy: override Livewire's update URI so component updates
     are routed through InitializeTenancyBySlug on the central domain.

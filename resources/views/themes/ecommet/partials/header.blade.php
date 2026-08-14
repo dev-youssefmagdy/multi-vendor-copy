@@ -1,3 +1,6 @@
+{{-- Header/Footer partial for ecommet theme --}}
+{{-- Edit this file directly to change header/footer markup --}}
+{{-- Tenant-specific data via tenant() helper only --}}
     <header class="w-full relative z-50">
 
         {{-- ── Announcement bar ────────────────────────────────────────────────── --}}

@@ -61,9 +61,7 @@ use App\Livewire\Tenant\Store\CouponsPage;
 use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
 use App\Livewire\Tenant\Store\PagesList;
-use App\Livewire\Tenant\Store\AddEditThemePart;
 use App\Livewire\Tenant\Store\ThemesPage;
-use App\Livewire\Tenant\Store\ThemePartsPage;
 use App\Livewire\Tenant\Storefront\AuthPage;
 use App\Livewire\Tenant\Storefront\BestSellingPage;
 use App\Livewire\Tenant\Storefront\CartPage;
@@ -422,15 +420,6 @@ Route::middleware([
                 Route::get('/themes', ThemesPage::class)
                     ->middleware('tenant.permission:store.themes.manage')
                     ->name('themes');
-                Route::get('/theme-parts', ThemePartsPage::class)
-                    ->middleware('tenant.permission:store.themes.manage')
-                    ->name('theme-parts');
-                Route::get('/theme-parts/create/{themeId?}', AddEditThemePart::class)
-                    ->middleware('tenant.permission:store.themes.manage')
-                    ->name('theme-parts.create');
-                Route::get('/theme-parts/{partId}/edit', AddEditThemePart::class)
-                    ->middleware('tenant.permission:store.themes.manage')
-                    ->name('theme-parts.edit');
                 Route::get('/pages', PagesList::class)
                     ->middleware('tenant.permission:store.pages.manage')
                     ->name('pages');

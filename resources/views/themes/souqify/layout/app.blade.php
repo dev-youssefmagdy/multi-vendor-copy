@@ -118,13 +118,11 @@
         </script>
     @endif
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" type="header"
-        :socialLinks="$socialLinks" fallback-view="themes.souqify.layout.header" />
+    @include('themes.souqify.partials.header', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks])
 
     {{ $slot }}
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" :socialLinks="$socialLinks"
-        type="footer" fallback-view="themes.souqify.layout.footer" />
+    @include('themes.souqify.partials.footer', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks])
     @if(config('tenancy.path_tenant_slug'))
         <div data-update-uri="{{ url('/s/' . config('tenancy.path_tenant_slug') . '/livewire/update') }}"
             style="display:none" aria-hidden="true"></div>

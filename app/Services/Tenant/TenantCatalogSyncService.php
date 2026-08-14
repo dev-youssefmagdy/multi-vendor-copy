@@ -343,7 +343,6 @@ class TenantCatalogSyncService
             );
 
             $this->syncThemeCountries($tenantTheme, $theme);
-            $this->syncThemePartsForTheme($tenantTheme, $theme);
         }
 
         Theme::query()
@@ -352,62 +351,6 @@ class TenantCatalogSyncService
             ->delete();
 
         return $themes->count();
-    }
-
-    /**
-     * Push central `template_parts` rows onto the tenant's `theme_parts` table.
-     *
-     * Rules:
-     *   - Match by `central_part_id`.
-     *   - Create missing rows verbatim.
-     *   - Skip updates for rows the tenant has locally customised
-     *     (`is_customized = true`) — we still keep the link, but never overwrite
-     *     their content/name/flags.
-     *   - Parts removed centrally are removed on the tenant (unless customised).
-     */
-    protected function syncThemePartsForTheme(Theme $tenantTheme, CentralTemplate $centralTemplate): void
-    {
-        $centralParts = $centralTemplate->parts; // eager-loaded
-        $centralIds = $centralParts->pluck('id')->map(fn($v) => (int) $v)->all();
-
-        // Delete tenant rows whose central counterpart vanished, unless customised.
-        \App\Models\Tenant\ThemePart::query()
-            ->where('theme_id', $tenantTheme->id)
-            ->whereNotNull('central_part_id')
-            ->when(
-                $centralIds,
-                fn($q) => $q->whereNotIn('central_part_id', $centralIds),
-                fn($q) => $q // empty: delete all central-linked rows
-            )
-            ->where('is_customized', false)
-            ->delete();
-
-        foreach ($centralParts as $cp) {
-            $existing = \App\Models\Tenant\ThemePart::query()
-                ->where('theme_id', $tenantTheme->id)
-                ->where('central_part_id', $cp->id)
-                ->first();
-
-            if ($existing && $existing->is_customized) {
-                continue;
-            }
-
-            \App\Models\Tenant\ThemePart::query()->updateOrCreate(
-                [
-                    'theme_id' => $tenantTheme->id,
-                    'central_part_id' => $cp->id,
-                ],
-                [
-                    'type' => $cp->type,
-                    'name' => $cp->name,
-                    'slug' => $cp->slug,
-                    'content' => $cp->content,
-                    'image' => $cp->image,
-                    'is_active' => (bool) $cp->is_active,
-                    'is_default' => (bool) $cp->is_default,
-                ]
-            );
-        }
     }
 
     /**
