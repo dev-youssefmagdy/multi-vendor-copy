@@ -98,7 +98,9 @@
 
                     <label class="field-label" for="primary-image">Primary Image</label>
                     <x-dropzone id="primary-image" model="primaryImage" remove-action="removeImage" accept="image/*"
-                        :multiple="false" label="Upload primary image" sublabel="PNG, JPG, WEBP up to 4MB" />
+                        :multiple="false" label="Upload primary image" sublabel="PNG, JPG, WEBP up to 4MB"
+                        :expected-width="config('image_dimensions.product.width')"
+                        :expected-height="config('image_dimensions.product.height')" />
                     @error('primaryImage') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
             </x-card-collapse>
@@ -142,7 +144,9 @@
                 <x-dropzone id="gallery-files" model="galleryFiles"
                     accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
                     :multiple="true" label="Upload images or videos"
-                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed" />
+                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed"
+                    :expected-width="config('image_dimensions.product.width')"
+                    :expected-height="config('image_dimensions.product.height')" />
             </x-card-collapse>
 
             {{-- ── Translations ─────────────────────────────────────────────────── --}}
@@ -351,7 +355,8 @@
                                 <div class="form-grid form-grid-1" style="margin-bottom:12px">
                                     <div>
                                         <label class="field-label">Variant Image</label>
-                                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                                        <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
+                                        <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
                                             @if ($variant['image'])
                                                 <img src="{{ $variant['image']->temporaryUrl() }}" alt=""
                                                     style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #ddd" />
@@ -370,6 +375,7 @@
                                                     <span>Uploading…</span>
                                                 </div>
                                             </div>
+                                            <x-dimension-feedback :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                                             @if ($variant['image'] || !empty($variant['thumbnail_url']))
                                                 <button type="button" class="btn btn-secondary btn-sm btn-danger"
                                                     wire:click="removeVariantImage({{ $vIdx }})">Remove image</button>

@@ -177,6 +177,8 @@ class AppearancePage extends TenantPage
     protected function pageData(): array
     {
         $repo = app(TenantPanelRepository::class);
+        $activeTheme = app(StorefrontRepository::class)->currentTheme();
+        $bannerDimensions = config('image_dimensions.themes.' . ($activeTheme->slug ?? ''));
 
         return array_merge(parent::pageData(), [
             'languages' => $repo->activeLanguages(),
@@ -191,6 +193,9 @@ class AppearancePage extends TenantPage
                 ->mapWithKeys(fn($key) => [$key => ThemeColorKeys::label($key)])
                 ->all(),
             'previewUrl' => $this->previewUrl($repo),
+            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
+            'bannerWidth' => $bannerDimensions['width'] ?? null,
+            'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
     }
 

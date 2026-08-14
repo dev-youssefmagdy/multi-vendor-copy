@@ -311,9 +311,15 @@
                     </div>
                     <div class="span-2">
                         <label class="field-label">Image</label>
+                        <p class="panel-copy" style="margin-bottom:6px;">
+                            This banner is displayed on the <strong>{{ $activeThemeLabel }}</strong> theme.
+                        </p>
                         <x-dropzone id="banner-image" model="bannerImage" :multiple="false" accept="image/*"
                             label="Upload banner image"
-                            sublabel="PNG, JPG, WEBP up to 2MB" />
+                            sublabel="PNG, JPG, WEBP up to 2MB"
+                            :expected-width="$bannerWidth"
+                            :expected-height="$bannerHeight"
+                            :dimension-label="$activeThemeLabel" />
                         <p class="panel-copy" style="margin-top:4px;">Max 2 MB. Leave empty to keep existing image.</p>
                         @error('bannerImage')<div class="field-error">{{ $message }}</div>@enderror
                     </div>

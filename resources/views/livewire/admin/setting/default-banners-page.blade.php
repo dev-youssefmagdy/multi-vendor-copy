@@ -93,6 +93,12 @@
             {{-- Image upload --}}
             <div>
                 <label class="field-label">Banner Image</label>
+                <p class="dimension-hint">
+                    This banner syncs to every tenant's storefront — required size varies by theme:
+                    @foreach (config('image_dimensions.themes') as $theme)
+                        <strong>{{ $theme['label'] }} {{ $theme['width'] }}×{{ $theme['height'] }}px</strong>@if (!$loop->last), @endif
+                    @endforeach
+                </p>
                 @if ($bannerId && DefaultBanner::find($bannerId)?->image_path)
                     <div class="mb-2">
                         <img src="{{ DefaultBanner::find($bannerId)->image_path }}" alt="" style="max-height:120px;border-radius:6px;object-fit:cover;">

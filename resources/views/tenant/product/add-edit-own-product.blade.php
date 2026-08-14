@@ -134,7 +134,10 @@
 
                     <input type="hidden" name="remove_primary_image" id="remove_primary_image_input" value="0">
 
-                    <div class="w-full relative group" data-dropzone>
+                    <div class="w-full relative group" data-dropzone
+                        data-expect-w="{{ config('image_dimensions.product.width') }}"
+                        data-expect-h="{{ config('image_dimensions.product.height') }}">
+                        <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                         <label class="relative flex flex-col items-center justify-center w-full py-4 px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">
                             <div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                             <div class="relative w-8 h-8 mb-2 rounded-full bg-(--surface) border border-(--border2) flex items-center justify-center text-(--cyan) shadow-sm group-hover:scale-110 transition-transform duration-300 z-10">
@@ -191,7 +194,10 @@
 
                 <div id="gallery-remove-inputs"></div>
 
-                <div class="w-full relative group" style="{{ $existingGallery->isNotEmpty() ? 'margin-top:16px' : '' }}" data-dropzone>
+                <div class="w-full relative group" style="{{ $existingGallery->isNotEmpty() ? 'margin-top:16px' : '' }}" data-dropzone
+                    data-expect-w="{{ config('image_dimensions.product.width') }}"
+                    data-expect-h="{{ config('image_dimensions.product.height') }}">
+                    <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                     <label class="relative flex flex-col items-center justify-center w-full py-10 px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">
                         <div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                         <div class="relative w-12 h-12 mb-4 rounded-full bg-(--surface) border border-(--border2) flex items-center justify-center text-(--cyan) shadow-sm group-hover:scale-110 transition-transform duration-300 z-10">

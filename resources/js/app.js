@@ -411,11 +411,93 @@ function initEnhancedSelects(root = document) {
     });
 }
 
+// Reads the pixel dimensions of an image file without uploading it.
+function readImageDimensions(file) {
+    return new Promise((resolve) => {
+        if (!file.type || !file.type.startsWith("image/")) {
+            resolve(null);
+            return;
+        }
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            resolve({ width: img.naturalWidth, height: img.naturalHeight });
+            URL.revokeObjectURL(url);
+        };
+        img.onerror = () => {
+            resolve(null);
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    });
+}
+
+// Non-blocking dimension check: returns a warning string, or null if the image matches
+// (or dimensions couldn't be determined).
+async function checkImageDimensionWarning(file, expectedWidth, expectedHeight) {
+    if (!expectedWidth || !expectedHeight) {
+        return null;
+    }
+    const dims = await readImageDimensions(file);
+    if (!dims) {
+        return null;
+    }
+    if (dims.width === expectedWidth && dims.height === expectedHeight) {
+        return null;
+    }
+    return `Image should be ${expectedWidth}×${expectedHeight}. Your image is ${dims.width}×${dims.height}.`;
+}
+
+// Plain (non-dropzone) file inputs: wrap markup in [data-dimension-check][data-expect-w][data-expect-h]
+// with a `.dimension-warning` slot; this binds a non-blocking dimension check on file selection.
+function initDimensionChecks(root = document) {
+    collectRoots(root, "[data-dimension-check]").forEach((wrapper) => {
+        const input = wrapper.querySelector('input[type="file"]');
+        const warningEl = wrapper.querySelector(".dimension-warning");
+        const previewImg = wrapper.querySelector(".dimension-preview-img");
+        const expectedWidth = parseInt(wrapper.dataset.expectW, 10) || null;
+        const expectedHeight = parseInt(wrapper.dataset.expectH, 10) || null;
+
+        if (!input || !warningEl || wrapper.dataset.dimBound) {
+            return;
+        }
+        wrapper.dataset.dimBound = "true";
+
+        input.addEventListener("change", async () => {
+            const file = input.files && input.files[0];
+            warningEl.hidden = true;
+            warningEl.textContent = "";
+
+            if (!file) {
+                return;
+            }
+
+            if (previewImg && file.type.startsWith("image/")) {
+                if (previewImg.dataset.blobUrl) {
+                    URL.revokeObjectURL(previewImg.dataset.blobUrl);
+                }
+                const url = URL.createObjectURL(file);
+                previewImg.dataset.blobUrl = url;
+                previewImg.src = url;
+                previewImg.hidden = false;
+            }
+
+            const warning = await checkImageDimensionWarning(file, expectedWidth, expectedHeight);
+            if (warning) {
+                warningEl.textContent = warning;
+                warningEl.hidden = false;
+            }
+        });
+    });
+}
+
 function renderDropzoneFiles(wrapper) {
     const input = wrapper.querySelector(".dropzone-input");
     const list = wrapper.querySelector("[data-dropzone-files]");
     const model = wrapper.dataset.model;
     const removeAction = wrapper.dataset.removeAction;
+    const expectedWidth = parseInt(wrapper.dataset.expectW, 10) || null;
+    const expectedHeight = parseInt(wrapper.dataset.expectH, 10) || null;
 
     if (!input || !list) {
         return;
@@ -439,16 +521,18 @@ function renderDropzoneFiles(wrapper) {
         }
 
         item.innerHTML = `
-            ${thumbHtml}
-            <div class="dropzone-file-meta">
-                <span class="dropzone-file-name">${file.name}</span>
-                <span class="dropzone-file-size">${Math.max(1, Math.round(file.size / 1024))} KB</span>
+            <div class="dropzone-file-row">
+                ${thumbHtml}
+                <div class="dropzone-file-meta">
+                    <span class="dropzone-file-name">${file.name}</span>
+                    <span class="dropzone-file-size">${Math.max(1, Math.round(file.size / 1024))} KB</span>
+                </div>
+                <button type="button" class="dropzone-file-remove" aria-label="Remove ${file.name}">
+                    <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
             </div>
-            <button type="button" class="dropzone-file-remove" aria-label="Remove ${file.name}">
-                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
         `;
 
         item.querySelector(".dropzone-file-remove")?.addEventListener(
@@ -478,6 +562,18 @@ function renderDropzoneFiles(wrapper) {
         );
 
         list.appendChild(item);
+
+        if (isImage && expectedWidth && expectedHeight) {
+            checkImageDimensionWarning(file, expectedWidth, expectedHeight).then((warning) => {
+                if (!warning) {
+                    return;
+                }
+                const warningEl = document.createElement("p");
+                warningEl.className = "dropzone-file-warning";
+                warningEl.textContent = warning;
+                item.appendChild(warningEl);
+            });
+        }
     });
 }
 
@@ -520,6 +616,7 @@ function initEnhancedFields(root = document) {
     cleanupOrphanedEnhancedSelectPanels();
     initEnhancedSelects(root);
     initDropzones(root);
+    initDimensionChecks(root);
 }
 
 function bindLivewireFieldHooks() {
