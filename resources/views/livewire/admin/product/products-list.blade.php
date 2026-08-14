@@ -171,9 +171,11 @@
 
             <div>
                 <label class="field-label" for="stock-filter">Stock</label>
-                <select id="stock-filter" class="field-control" wire:model.live="outOfStockFilter">
-                    <option value="">All stock levels</option>
-                    <option value="1">Out of stock</option>
+                <select id="stock-filter" class="field-control" wire:model.live="stockFilter">
+                    <option value="">All</option>
+                    <option value="in">In Stock</option>
+                    <option value="partial">Partially Out of Stock</option>
+                    <option value="out">Out of Stock</option>
                 </select>
             </div>
 
@@ -285,8 +287,15 @@
                                     return $html;
                                 };
                                 $catHtml = $renderCatTree($catRoots);
+
+                                $stockStatus = $product->stockStatus();
+                                $rowStockClass = match ($stockStatus) {
+                                    'out_of_stock' => 'row-out-of-stock',
+                                    'partial' => 'row-partial-stock',
+                                    default => '',
+                                };
                               @endphp
-                            <tr wire:key="product-row-{{ $product->id }}">
+                            <tr wire:key="product-row-{{ $product->id }}" class="{{ $rowStockClass }}">
 
                                 {{-- Image --}}
                                 <td>
@@ -308,6 +317,11 @@
                                     <div class="entity-title">{{ $product->translationValue('name') ?? 'Untitled product' }}
                                     </div>
                                     <div class="entity-subtitle">/{{ $product->slug }}</div>
+                                    @if ($stockStatus === 'out_of_stock')
+                                        <span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>
+                                    @elseif ($stockStatus === 'partial')
+                                        <span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>
+                                    @endif
                                     @if ($product->badges->isNotEmpty())
                                         <div class="entity-badges" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
                                             @foreach ($product->badges as $badge)
@@ -377,6 +391,11 @@
                                             : ($product->stock ?? 0);
                                     @endphp
                                     <div class="table-stat">{{ number_format($stockQty) }}</div>
+                                    @if ($stockStatus === 'out_of_stock')
+                                        <div class="table-meta" style="color:var(--red);">Out of stock</div>
+                                    @elseif ($stockStatus === 'partial')
+                                        <div class="table-meta" style="color:var(--amber);">Partial stock</div>
+                                    @endif
                                     <div class="table-meta">Min {{ number_format($product->min_stock) }}</div>
                                 </td>
 

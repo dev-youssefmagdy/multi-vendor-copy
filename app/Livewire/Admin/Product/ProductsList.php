@@ -24,7 +24,7 @@ class ProductsList extends Component
     public string $statusFilter = '';
     public string $categoryFilter = '';
     public string $deliveryScopeFilter = '';
-    public string $outOfStockFilter = '';
+    public string $stockFilter = '';
     public bool $showDeleted = false;
 
     // ── Price list modal ───────────────────────────────────────────────────
@@ -53,7 +53,7 @@ class ProductsList extends Component
         $this->resetPage();
     }
 
-    public function updatedOutOfStockFilter(): void
+    public function updatedStockFilter(): void
     {
         $this->resetPage();
     }
@@ -65,7 +65,7 @@ class ProductsList extends Component
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'categoryFilter', 'deliveryScopeFilter', 'outOfStockFilter', 'showDeleted']);
+        $this->reset(['search', 'statusFilter', 'categoryFilter', 'deliveryScopeFilter', 'stockFilter', 'showDeleted']);
         $this->resetPage();
     }
 
@@ -148,7 +148,7 @@ class ProductsList extends Component
             'status' => $this->statusFilter,
             'category_id' => $this->categoryFilter,
             'delivery_scope' => $this->deliveryScopeFilter,
-            'out_of_stock' => $this->outOfStockFilter,
+            'stock' => $this->stockFilter,
             'show_deleted' => $this->showDeleted,
         ]);
 

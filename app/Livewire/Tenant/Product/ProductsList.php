@@ -21,7 +21,7 @@ class ProductsList extends ListPage
 
     public string $search = '';
     public string $statusFilter = '';
-    public string $outOfStockFilter = '';
+    public string $stockFilter = '';
 
     // ── Social-post modal state ────────────────────────────────────────────
     public bool $socialModalOpen = false;
@@ -96,7 +96,7 @@ class ProductsList extends ListPage
     protected function pageData(): array
     {
         $repository = app(TenantPanelRepository::class);
-        $records = $repository->paginateProducts(['search' => $this->search, 'status' => $this->statusFilter, 'out_of_stock' => $this->outOfStockFilter]);
+        $records = $repository->paginateProducts(['search' => $this->search, 'status' => $this->statusFilter, 'stock' => $this->stockFilter]);
         $stats = $repository->productStats();
         $centralProducts = $repository->centralProductSnapshots(
             collect($records->items())->pluck('central_product_id')->all()
@@ -108,13 +108,18 @@ class ProductsList extends ListPage
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
-                ['label' => 'Stock', 'model' => 'outOfStockFilter', 'type' => 'select', 'options' => ['' => 'All stock levels', '1' => 'Out of stock']],
+                ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
             ],
             'statistics' => [
                 ['label' => 'Products', 'value' => number_format($stats['total']), 'caption' => 'Products in this tenant catalog', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently saleable products', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Featured', 'value' => number_format($stats['featured']), 'caption' => 'Homepage promoted products', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
+            'rowClasses' => collect($records->items())->map(fn(Product $product) => match ($product->stockStatus()) {
+                'out_of_stock' => 'row-out-of-stock',
+                'partial' => 'row-partial-stock',
+                default => '',
+            })->values()->all(),
             'rows' => collect($records->items())->map(function (Product $product) use ($centralProducts) {
                 $central = $centralProducts[$product->central_product_id] ?? null;
                 $imageUrl = $central['image_url'] ?? $product->primary_image_url;
@@ -130,7 +135,19 @@ class ProductsList extends ListPage
                 $stockQty = $product->variants->isNotEmpty()
                     ? $product->variants->sum('stock')
                     : ($product->stock ?? 0);
-                $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>';
+                $stockStatus = $product->stockStatus();
+                $stockBadge = match ($stockStatus) {
+                    'out_of_stock' => '<div class="entity-subtitle" style="color:var(--red);">Out of stock</div>',
+                    'partial' => '<div class="entity-subtitle" style="color:var(--amber);">Partial</div>',
+                    default => '',
+                };
+                $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>' . $stockBadge;
+
+                $titleStockBadge = match ($stockStatus) {
+                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>',
+                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>',
+                    default => '',
+                };
 
                 $badgeTones = [
                     'featured' => 'badge-violet',
@@ -145,7 +162,7 @@ class ProductsList extends ListPage
                     ($imageUrl
                         ? '<img src="' . e($imageUrl) . '" alt="' . e($product->translationValue('name') ?? $product->slug ?? 'Product') . '" style="width:44px;height:44px;object-fit:cover;border-radius:10px;display:inline-block;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);">'
                         : '<span style="width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);">' . e(strtoupper(substr($product->translationValue('name') ?? $product->slug ?? 'P', 0, 1))) . '</span>'
-                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div>' . $badgeCell . '</span>',
+                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div>' . $titleStockBadge . $badgeCell . '</span>',
                     $central
                     ? '<div class="entity-title">$' . e(number_format((float) $centralPrice, 2)) . '</div><div class="entity-subtitle">Base $' . e(number_format((float) ($central['base_price'] ?? $centralPrice), 2)) . '</div>'
                     : '<span class="entity-subtitle">Not linked</span>',
@@ -506,14 +523,14 @@ class ProductsList extends ListPage
         $this->resetPage();
     }
 
-    public function updatedOutOfStockFilter(): void
+    public function updatedStockFilter(): void
     {
         $this->resetPage();
     }
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'outOfStockFilter']);
+        $this->reset(['search', 'statusFilter', 'stockFilter']);
         $this->resetPage();
     }
 

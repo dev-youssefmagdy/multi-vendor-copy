@@ -2,6 +2,7 @@
     @php
         $filterFields = $filterFields ?? [];
         $rows = $rows ?? [];
+        $rowClasses = $rowClasses ?? [];
         $records = $records ?? null;
         $actionUrl = $actionUrl ?? null;
         $actionMethod = $actionMethod ?? null;
@@ -133,8 +134,8 @@
         </div>
 
         <x-table :headers="$headers">
-            @forelse ($rows as $row)
-                <tr>
+            @forelse ($rows as $rowIndex => $row)
+                <tr class="{{ $rowClasses[$rowIndex] ?? '' }}">
                     @foreach ($row as $cell)
                         <td>{!! $cell !!}</td>
                     @endforeach

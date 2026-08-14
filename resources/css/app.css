@@ -3206,6 +3206,22 @@ details[open] .filters-chevron {
     color: var(--cyan);
 }
 
+.row-out-of-stock {
+    background: rgba(255, 77, 106, 0.08) !important;
+}
+
+.row-out-of-stock:hover {
+    background: rgba(255, 77, 106, 0.14) !important;
+}
+
+.row-partial-stock {
+    background: rgba(255, 184, 48, 0.08) !important;
+}
+
+.row-partial-stock:hover {
+    background: rgba(255, 184, 48, 0.14) !important;
+}
+
 .badge-violet {
     background: rgba(162, 89, 255, 0.12);
     color: var(--violet);

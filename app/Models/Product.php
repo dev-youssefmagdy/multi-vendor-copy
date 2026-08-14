@@ -162,4 +162,26 @@ class Product extends Model
     {
         return $this->status === ProductStatus::Published && !$this->trashed();
     }
+
+    /**
+     * 'out_of_stock' when every variant (or the product itself, if it has no
+     * variants) has zero stock; 'partial' when only some variants are
+     * depleted; otherwise 'in_stock'.
+     */
+    public function stockStatus(): string
+    {
+        $variants = $this->relationLoaded('variants') ? $this->variants : $this->variants()->get();
+
+        if ($variants->isEmpty()) {
+            return (int) ($this->stock ?? 0) > 0 ? 'in_stock' : 'out_of_stock';
+        }
+
+        $outCount = $variants->filter(fn(ProductVariant $variant) => (int) $variant->stock <= 0)->count();
+
+        if ($outCount === 0) {
+            return 'in_stock';
+        }
+
+        return $outCount === $variants->count() ? 'out_of_stock' : 'partial';
+    }
 }

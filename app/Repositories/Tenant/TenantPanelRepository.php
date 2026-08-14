@@ -152,20 +152,40 @@ class TenantPanelRepository
                     ->orWhereHas('translations', fn(Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
-            ->when(($filters['out_of_stock'] ?? '') === '1', function ($query) {
-                $query->where(function ($q) {
-                    // No-variant products: stock management enabled and stock depleted
-                    $q->whereDoesntHave('variants')
-                        ->where('manage_stock', true)
-                        ->where('stock', '<=', 0);
-                })->orWhere(function ($q) {
-                    // Variant products: total variant stock is zero or negative
-                    $q->whereHas('variants')
-                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM product_variants pv WHERE pv.product_id = products.id) <= 0');
-                });
+            ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
+                $this->applyProductStockFilter($query, $filters['stock']);
             })
             ->latest('updated_at')
             ->paginate($perPage);
+    }
+
+    /**
+     * @param 'in'|'partial'|'out' $stock
+     */
+    protected function applyProductStockFilter(Builder $query, string $stock): void
+    {
+        match ($stock) {
+            'out' => $query->where(function (Builder $q) {
+                $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
+                });
+            }),
+            'in' => $query->where(function (Builder $q) {
+                $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where(function (Builder $nv) {
+                        $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
+                    });
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '<=', 0));
+                });
+            }),
+            'partial' => $query
+                ->whereHas('variants', fn($v) => $v->where('stock', '<=', 0))
+                ->whereHas('variants', fn($v) => $v->where('stock', '>', 0)),
+            default => null,
+        };
     }
 
     public function productStats(): array
