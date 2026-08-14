@@ -45,6 +45,7 @@ use App\Livewire\Admin\Setting\CurrenciesPage;
 use App\Livewire\Admin\Setting\EmailConfigurationPage;
 use App\Livewire\Admin\Setting\EmailTemplatesPage;
 use App\Livewire\Admin\Setting\GeneralSettingsPage;
+use App\Livewire\Admin\Setting\CountriesPage;
 use App\Livewire\Admin\Setting\LanguagesPage;
 use App\Livewire\Admin\Setting\MaintenanceModePage;
 use App\Livewire\Admin\Setting\AddEditPaymentGateway;
@@ -363,6 +364,7 @@ Route::group([
         Route::get('/languages/{language}/edit', [LanguageController::class, 'edit'])->middleware('admin.permission:settings.languages.manage')->name('languages.edit');
         Route::put('/languages/{language}', [LanguageController::class, 'update'])->middleware('admin.permission:settings.languages.manage')->name('languages.update');
         Route::get('/translations', TranslationsPage::class)->middleware('admin.permission:settings.languages.view,settings.languages.manage')->name('translations');
+        Route::get('/countries', CountriesPage::class)->middleware('admin.permission:settings.countries.view,settings.countries.manage')->name('countries');
         Route::get('/maintenance', MaintenanceModePage::class)->middleware('admin.permission:settings.maintenance.manage')->name('maintenance');
         Route::get('/default-banners', DefaultBannersPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
         Route::get('/ai-logo-limit', AiLogoLimitPage::class)->middleware('admin.permission:settings.ai-logo-limits.manage')->name('ai-logo-limit');

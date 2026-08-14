@@ -14,6 +14,7 @@ class PendingRegistration extends Model
         'locale',
         'package_id',
         'category_ids',
+        'country_ids',
         'payment_data',
         'expires_at',
         'completed_at',
@@ -21,6 +22,7 @@ class PendingRegistration extends Model
 
     protected $casts = [
         'category_ids' => 'array',
+        'country_ids' => 'array',
         'payment_data' => 'array',
         'expires_at' => 'datetime',
         'completed_at' => 'datetime',

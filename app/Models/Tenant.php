@@ -57,6 +57,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasMany(PaymentLog::class, 'tenant_id', 'id');
     }
 
+    public function tenantCountries(): HasMany
+    {
+        return $this->hasMany(TenantCountry::class);
+    }
+
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'tenant_id', 'id');

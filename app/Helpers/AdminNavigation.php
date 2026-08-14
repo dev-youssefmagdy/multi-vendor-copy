@@ -176,6 +176,7 @@ class AdminNavigation
                             ['label' => 'Languages', 'route' => 'admin.settings.languages', 'permission' => 'settings.languages.view'],
                             ['label' => 'Language Purchases', 'route' => 'admin.settings.language-purchases', 'permission' => 'settings.languages.purchases.view'],
                             ['label' => 'Translation Files', 'route' => 'admin.settings.translations', 'permission' => 'settings.languages.view'],
+                            ['label' => 'Countries', 'route' => 'admin.settings.countries', 'permission' => 'settings.countries.view'],
                             ['label' => 'Maintenance Mode', 'route' => 'admin.settings.maintenance', 'permission' => 'settings.maintenance.manage'],
                             ['label' => 'Default Banners', 'route' => 'admin.settings.default-banners', 'permission' => 'settings.default-banners.manage'],
                         ],

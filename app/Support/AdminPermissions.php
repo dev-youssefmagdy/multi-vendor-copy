@@ -75,6 +75,8 @@ class AdminPermissions
             'settings.languages.view' => 'View languages',
             'settings.languages.purchases.view' => 'View language purchases',
             'settings.languages.manage' => 'Manage languages',
+            'settings.countries.view' => 'View countries',
+            'settings.countries.manage' => 'Manage countries',
             'settings.maintenance.manage' => 'Manage maintenance mode',
             'settings.default-banners.manage' => 'Manage default banners',
             'settings.ai-logo-limits.manage' => 'Manage AI logo generation limits',
@@ -168,6 +170,7 @@ class AdminPermissions
             'settings.email.manage' => ['settings.email-templates.manage', 'settings.email-configuration.manage'],
             'settings.currencies.manage' => ['settings.currencies.manage'],
             'settings.languages.manage' => ['settings.languages.manage'],
+            'settings.countries.manage' => ['settings.countries.manage'],
             'settings.maintenance.manage' => ['settings.maintenance.manage'],
 
             'admins.users.manage' => ['admins.users.manage'],

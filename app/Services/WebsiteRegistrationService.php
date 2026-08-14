@@ -14,6 +14,7 @@ use App\Models\PaymentGateway;
 use App\Models\PaymentLog;
 use App\Models\Tenant;
 use App\Models\Tenant\Subscription;
+use App\Models\TenantCountry;
 use App\Models\TenantOwner;
 use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Language;
@@ -113,6 +114,13 @@ class WebsiteRegistrationService
         ];
 
         $tenant = $this->tenantService->save($tenantAttributes);
+
+        foreach ((array) ($registrationData['country_ids'] ?? []) as $countryId) {
+            TenantCountry::query()->updateOrCreate(
+                ['tenant_id' => $tenant->id, 'country_id' => (int) $countryId],
+                ['is_active' => true]
+            );
+        }
 
         if ($package && $payment && (float) ($payment['amount'] ?? 0) > 0) {
             $paymentLog = $this->createCentralPaymentLog($tenant, $package, $payment);
