@@ -496,7 +496,8 @@
                         @endphp
                         <button type="button" data-variant-id="{{ $v->id }}" onclick="sqSelectVariant({{ $v->id }})" title="{{ $vTitle }}"
                             @if($vMediaIndex !== null) onmouseenter="window.sqGoToMediaIndex && window.sqGoToMediaIndex({{ $vMediaIndex }})" @endif
-                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[#004AC6] bg-[#E1E2ED] text-[#004AC6]' : 'border-neutral-300 hover:border-[#004AC6]') . (!$vIsInStock ? ' line-through' : '') }}">
+                            @if(!$vIsInStock) aria-disabled="true" @endif
+                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50 cursor-not-allowed' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[#004AC6] bg-[#E1E2ED] text-[#004AC6]' : 'border-neutral-300 hover:border-[#004AC6]') . (!$vIsInStock ? ' line-through' : '') }}">
                             @if($vThumb)
                             {{-- Image swatch --}}
                             <div data-variant-ring class="relative w-[60px] h-[60px] rounded-xl border-2 p-0.5 overflow-hidden {{ $vIsActive ? 'border-[#004AC6] bg-[#E1E2ED]' : 'border-transparent ring-1 ring-neutral-200' }}">
@@ -1478,6 +1479,12 @@
     function sqSelectVariant(id) {
         const data = SQ_VARIANTS[id];
         if (!data) return;
+        if (!data.isInStock) {
+            if (typeof Livewire !== 'undefined') {
+                Livewire.dispatch('storefront-toast', { message: @json(__('This option is out of stock')), type: 'error' });
+            }
+            return;
+        }
 
         sqSelectedVariantId = id;
 

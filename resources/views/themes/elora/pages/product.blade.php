@@ -471,10 +471,14 @@
                         </div>
                         <div class="flex flex-wrap gap-2.5">
                             @foreach ($variants as $variant)
+                                @php
+                                    $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
+                                @endphp
                                 <button type="button"
                                         data-variant-id="{{ $variant->id }}"
                                         onclick="eloraSelectVariant({{ $variant->id }})"
-                                        class="flex flex-col items-center gap-1 cursor-pointer transition-all active:scale-95">
+                                        @if(!$vIsInStock) aria-disabled="true" @endif
+                                        class="flex flex-col items-center gap-1 transition-all active:scale-95 {{ $vIsInStock ? 'cursor-pointer' : 'cursor-not-allowed' }}">
                                     @php
                                         $vThumb = $variant->thumbnail_url ?? $variant->centralVariant?->thumbnail_url ?? null;
                                         $vTitle = $variant->display_label ?? __('Not available');
@@ -482,7 +486,6 @@
                                         $variantPricing = $product->storefrontPricing($variant);
                                         $vSell = (float) $variantPricing['current_price'];
                                         $vDisplay = number_format($vSell * $rate, 2);
-                                        $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
                                     @endphp
                                     <div data-variant-ring
                                          class="w-[60px] h-[60px] rounded-[8px] border-2 {{ $isActive ? 'border-[#222]' : 'border-transparent ring-1 ring-[#e5e5e5]' }} overflow-hidden bg-white p-[2px] {{ !$vIsInStock ? 'opacity-40' : '' }} relative">
@@ -1486,6 +1489,12 @@ We are committed to maintaining transparency and reducing permission requests wi
         function eloraSelectVariant(id) {
             const data = ELORA_VARIANTS[id];
             if (!data) return;
+            if (!data.isInStock) {
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('storefront-toast', { message: @json(__('This option is out of stock')), type: 'error' });
+                }
+                return;
+            }
 
             eloraSelectedVariantId = id;
 
