@@ -122,7 +122,7 @@ class Product extends Model
 
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'model');
+        return $this->morphMany(File::class, 'model')->orderBy('sort_order')->orderBy('id');
     }
 
     public function getPrimaryImageUrlAttribute(): ?string

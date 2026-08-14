@@ -112,10 +112,17 @@
 
                 {{-- Existing gallery files --}}
                 @if ($existingGallery->isNotEmpty())
-                    <div class="gallery-grid">
+                    <p class="field-hint mb-2">Drag thumbnails to reorder. The image order here controls the display order in the storefront slider.</p>
+                    <div class="gallery-grid" id="product-gallery-sortable" wire:ignore.self>
                         @foreach ($existingGallery as $file)
                             @if (!in_array($file->id, $removeGalleryIds))
-                                <div class="gallery-item" wire:key="gallery-{{ $file->id }}">
+                                <div class="gallery-item" data-id="{{ $file->id }}" wire:key="gallery-{{ $file->id }}">
+                                    <span class="gallery-item-handle" title="Drag to reorder">
+                                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <line x1="4" y1="8" x2="20" y2="8" />
+                                            <line x1="4" y1="16" x2="20" y2="16" />
+                                        </svg>
+                                    </span>
                                     @if ($file->file_type->value === 'video')
                                         <div class="gallery-item-video">
                                             <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -604,3 +611,31 @@
         </div>
     </form>
 </main>
+
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            const initGallerySortable = () => {
+                const grid = document.getElementById('product-gallery-sortable');
+                if (!grid || typeof Sortable === 'undefined' || grid.dataset.sortableInit) {
+                    return;
+                }
+
+                grid.dataset.sortableInit = '1';
+
+                Sortable.create(grid, {
+                    animation: 150,
+                    handle: '.gallery-item-handle',
+                    draggable: '.gallery-item',
+                    onEnd: () => {
+                        const orderedIds = Array.from(grid.querySelectorAll('.gallery-item[data-id]'))
+                            .map(item => parseInt(item.dataset.id, 10));
+                        @this.call('updateGalleryOrder', orderedIds);
+                    },
+                });
+            };
+
+            initGallerySortable();
+        });
+    </script>
+@endpush

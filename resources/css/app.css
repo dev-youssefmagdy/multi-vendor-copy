@@ -3632,6 +3632,30 @@ details[open] .filters-chevron {
     background: rgba(220, 60, 60, 0.85);
 }
 
+.gallery-item-handle {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    z-index: 1;
+}
+
+.gallery-item.sortable-ghost {
+    opacity: 0.4;
+}
+
+.gallery-item.sortable-drag {
+    cursor: grabbing;
+}
+
 /* ── Products list page – responsive ───────────────────────────────────── */
 
 /* Tablet: tighten table cell padding and shrink image */

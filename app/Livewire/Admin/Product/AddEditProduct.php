@@ -13,6 +13,7 @@ use App\Models\ShippingZone;
 use App\Models\Tenant;
 use App\Models\Variation;
 use App\Repositories\ProductRepository;
+use App\Services\ProductMediaService;
 use App\Services\ProductService;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
 use App\Services\TenantNotificationService;
@@ -191,6 +192,19 @@ class AddEditProduct extends Component
     public function markGalleryForRemoval(int $fileId): void
     {
         $this->removeGalleryIds[] = $fileId;
+    }
+
+    /**
+     * @param list<int|string> $orderedIds gallery file IDs in the desired display order
+     */
+    public function updateGalleryOrder(array $orderedIds, ProductMediaService $mediaService): void
+    {
+        if (!$this->productId) {
+            return;
+        }
+
+        $product = Product::query()->findOrFail($this->productId);
+        $mediaService->reorderGalleryFiles($product, array_map('intval', $orderedIds));
     }
 
     public function removeCategory(int $categoryId): void
