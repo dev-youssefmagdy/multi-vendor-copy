@@ -154,6 +154,7 @@
                                 <th>Title</th>
                                 <th>URL</th>
                                 <th>Image</th>
+                                <th>Country</th>
                                 <th>Order</th>
                                 <th>Actions</th>
                             </tr>
@@ -186,6 +187,16 @@
                                             <span class="panel-copy">—</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        @if ($banner->country_id)
+                                            @php($bannerCountry = $countries->firstWhere('id', $banner->country_id))
+                                            <span class="badge">
+                                                {{ $bannerCountry?->flag_emoji }} {{ e($bannerCountry->name ?? 'Unknown') }}
+                                            </span>
+                                        @else
+                                            <span class="badge">All Countries</span>
+                                        @endif
+                                    </td>
                                     <td>{{ e($banner->serial_number) }}</td>
                                     <td>
                                         <div class="flex gap-2">
@@ -198,7 +209,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <div class="empty-state">
                                             <div class="empty-state-title">No banners yet</div>
                                             <p class="empty-state-copy">Add your first banner to display on the storefront.</p>
@@ -243,6 +254,17 @@
                         <label class="field-label">URL</label>
                         <x-input type="url" wire:model.defer="bannerUrl" :error="$errors->has('bannerUrl')" />
                         @error('bannerUrl')<div class="field-error">{{ $message }}</div>@enderror
+                    </div>
+                    <div>
+                        <label class="field-label">Target Country</label>
+                        <select wire:model.defer="bannerCountryId" class="field-control">
+                            <option value="">All Countries</option>
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->flag_emoji }} {{ $country->name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="panel-copy" style="margin-top:4px;">Shown to visitors from this country only. Leave as "All Countries" to show everywhere.</p>
+                        @error('bannerCountryId')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="span-2">
                         <label class="field-label">Image</label>

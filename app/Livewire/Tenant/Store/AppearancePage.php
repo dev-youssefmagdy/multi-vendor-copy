@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
+use App\Models\Country;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
@@ -11,6 +12,7 @@ use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
 
@@ -58,6 +60,7 @@ class AppearancePage extends TenantPage
     public string $bannerUrl = '';
     public int $bannerSerial = 0;
     public $bannerImage = null;
+    public ?int $bannerCountryId = null;
     public array $bannerTranslations = [];
 
     // ── Social Links ──────────────────────────────────────────────────────────
@@ -164,6 +167,10 @@ class AppearancePage extends TenantPage
             'languages' => $repo->activeLanguages(),
             'banners' => $repo->banners(),
             'socialLinks' => $repo->socialLinks(),
+            'countries' => Country::query()
+                ->where('is_active_for_tenants', true)
+                ->orderBy('name')
+                ->get(),
         ]);
     }
 
@@ -228,6 +235,7 @@ class AppearancePage extends TenantPage
             $this->bannerId = $banner->id;
             $this->bannerUrl = (string) ($banner->url ?? '');
             $this->bannerSerial = (int) $banner->serial_number;
+            $this->bannerCountryId = $banner->country_id;
             $this->bannerTranslations = array_replace_recursive(
                 $this->bannerTranslations,
                 $banner->translationsByLocale(['title', 'subtitle', 'button_text'])
@@ -254,6 +262,7 @@ class AppearancePage extends TenantPage
             'bannerUrl' => ['nullable', 'url', 'max:500'],
             'bannerSerial' => ['required', 'integer', 'min:0'],
             'bannerImage' => ['nullable', 'image', 'max:2048'],
+            'bannerCountryId' => ['nullable', 'integer', Rule::exists('countries', 'id')->where('is_active_for_tenants', true)],
         ];
         foreach (array_keys($this->bannerTranslations) as $locale) {
             $rules["bannerTranslations.{$locale}.title"] = ['nullable', 'string', 'max:255'];
@@ -272,6 +281,7 @@ class AppearancePage extends TenantPage
             'url' => $this->bannerUrl ?: null,
             'image_path' => $imagePath,
             'serial_number' => $this->bannerSerial,
+            'country_id' => $this->bannerCountryId,
             'translations' => $this->bannerTranslations,
         ], $this->bannerId ? Banner::query()->findOrFail($this->bannerId) : null);
 
@@ -315,6 +325,7 @@ class AppearancePage extends TenantPage
         $this->bannerUrl = '';
         $this->bannerSerial = 0;
         $this->bannerImage = null;
+        $this->bannerCountryId = null;
 
         $languages = app(TenantPanelRepository::class)->activeLanguages();
         $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [

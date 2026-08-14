@@ -587,8 +587,21 @@ class StorefrontRepository
 
     public function activeBanners(): Collection
     {
-        return $this->memo['active_banners'] ??= Banner::query()
+        if (\array_key_exists('active_banners', $this->memo)) {
+            return $this->memo['active_banners'];
+        }
+
+        $countryId = $this->detectedCountry()?->id;
+
+        return $this->memo['active_banners'] = Banner::query()
             ->with('translations.language')
+            ->where(function (Builder $query) use ($countryId) {
+                $query->whereNull('country_id');
+
+                if ($countryId) {
+                    $query->orWhere('country_id', $countryId);
+                }
+            })
             ->orderBy('serial_number')
             ->get();
     }

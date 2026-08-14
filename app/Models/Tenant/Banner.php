@@ -15,5 +15,6 @@ class Banner extends Model
         'url',
         'image_path',
         'serial_number',
+        'country_id',
     ];
 }

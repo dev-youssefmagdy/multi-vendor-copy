@@ -557,6 +557,7 @@ class TenantPanelService
                 'url' => $data['url'] ?? null,
                 'image_path' => $data['image_path'] ?? null,
                 'serial_number' => (int) ($data['serial_number'] ?? 0),
+                'country_id' => $data['country_id'] ?? null,
             ]);
             $banner->save();
             $banner->syncTranslations($data['translations'] ?? []);
