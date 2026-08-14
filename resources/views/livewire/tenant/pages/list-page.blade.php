@@ -19,6 +19,8 @@
         $modalContentView = $modalContentView ?? null;
         $modalContentData = $modalContentData ?? [];
         $extraModals = $extraModals ?? [];
+        $secondaryActionLabel = $secondaryActionLabel ?? null;
+        $secondaryActionUrl = $secondaryActionUrl ?? null;
       @endphp
     <div class="page-head fu d0">
         <div>
@@ -33,6 +35,9 @@
         <div class="page-actions">
             @if ($exportable ?? false)
                 <x-btn variant="secondary" class="xs-hide" type="button" wire:click="export">Export</x-btn>
+            @endif
+            @if (!empty($secondaryActionLabel) && $secondaryActionUrl)
+                <a href="{{ $secondaryActionUrl }}" class="btn btn-secondary">{{ $secondaryActionLabel }}</a>
             @endif
             @if (!empty($actionLabel))
                 @if ($actionUrl)

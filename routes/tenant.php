@@ -18,6 +18,7 @@ use App\Livewire\Tenant\Auth\LoginPage;
 use App\Livewire\Tenant\Category\AddEditCategory;
 use App\Livewire\Tenant\Category\CategoriesList;
 use App\Livewire\Tenant\Category\CategoryProducts;
+use App\Livewire\Tenant\Category\SortCategories;
 use App\Livewire\Tenant\Customer\CustomersList;
 use App\Livewire\Tenant\Customer\CustomerDetailPage;
 use App\Livewire\Tenant\Dashboard;
@@ -333,6 +334,7 @@ Route::middleware([
 
             Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
                 Route::get('/', CategoriesList::class)->name('index');
+                Route::get('/sort', SortCategories::class)->name('sort');
                 Route::get('/create', AddEditCategory::class)->name('create');
                 Route::get('/{category}/edit', AddEditCategory::class)->name('edit');
                 Route::get('/{category}/products', CategoryProducts::class)->name('products');

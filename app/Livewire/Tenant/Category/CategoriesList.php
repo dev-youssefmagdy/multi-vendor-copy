@@ -25,6 +25,8 @@ class CategoriesList extends ListPage
             'description' => 'Manage tenant category ordering, featured state, and translated storefront copy.',
             'actionLabel' => 'Add Category',
             'actionUrl' => route('tenant.categories.create'),
+            'secondaryActionLabel' => 'Sort Categories',
+            'secondaryActionUrl' => route('tenant.categories.sort'),
             'tableTitle' => 'Tenant Categories',
             'headers' => ['Category', 'Parent', 'Status', 'Products', 'Updated At', 'Actions'],
         ];
