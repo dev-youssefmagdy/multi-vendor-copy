@@ -71,7 +71,11 @@ Route::prefix('vendor/{tenant}')
     ->middleware([InitializeTenancyBySlug::class, 'web', 'tenant.storefront.context', 'tenant.gateway.blocked', 'preview.template'])
     ->group(function () {
 
-        Route::get('/', HomePage::class)->name('tenant.path.home');
+        Route::get('/', HomePage::class)->middleware('custom.template.home')->name('tenant.path.home');
+
+        Route::get('/custom-template-assets/{file}', [\App\Http\Controllers\Tenant\CustomTemplateController::class, 'live'])
+            ->where('file', '.*')
+            ->name('tenant.path.custom-template.asset');
 
         Route::get('/robots.txt', RobotsController::class)->name('tenant.path.robots');
         Route::get('/sitemap.xml', SitemapController::class)->name('tenant.path.sitemap');

@@ -91,6 +91,7 @@ class TenantNavigation
                     ['type' => 'link', 'label' => 'Coupons', 'route' => 'tenant.store.coupons', 'icon' => 'payments', 'permission' => 'store.coupons.manage'],
                     ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
                     ['type' => 'link', 'label' => 'Appearance', 'route' => 'tenant.store.appearance', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
+                    ['type' => 'link', 'label' => 'Custom Template', 'route' => 'tenant.store.custom-template', 'icon' => 'appearance', 'permission' => 'store.custom-template.manage'],
                     // Subscribers page hidden from navbar
                     // ['type' => 'link', 'label' => 'Subscribers', 'route' => 'tenant.settings.subscribers', 'icon' => 'blog', 'permission' => 'store.subscribers.manage'],
                 ],
@@ -127,6 +128,7 @@ class TenantNavigation
                             ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
+                            ['label' => 'Tracking', 'route' => 'tenant.settings.tracking', 'permission' => 'settings.tracking.manage'],
                             ['label' => 'Account Settings', 'route' => 'tenant.settings.account', 'permission' => 'settings.account.manage'],
                             ['label' => 'General Settings', 'route' => 'tenant.settings.general', 'permission' => 'settings.account.manage'],
                             ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],

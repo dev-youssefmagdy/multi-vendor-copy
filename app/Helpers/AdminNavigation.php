@@ -170,6 +170,7 @@ class AdminNavigation
                             ['label' => 'Theme Colors', 'route' => 'admin.settings.theme-colors', 'permission' => 'settings.theme-colors.manage'],
                             ['label' => 'Home Variants', 'route' => 'admin.settings.home-variants', 'permission' => 'settings.home-variants.manage'],
                             ['label' => 'Template Control', 'route' => 'admin.settings.templates', 'permission' => 'settings.templates.manage'],
+                            ['label' => 'Custom Templates', 'route' => 'admin.settings.custom-templates', 'permission' => 'settings.templates.manage'],
                             ['label' => 'Payment Gateways', 'route' => 'admin.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
                             ['label' => 'Payment Gateway Limits', 'route' => 'admin.settings.payment-gateway-limits', 'permission' => 'settings.payment-gateway-limits.manage'],
                             ['label' => 'Email Templates', 'route' => 'admin.settings.email-templates', 'permission' => 'settings.email-templates.manage'],

@@ -49,6 +49,7 @@
 
     @livewireStyles
     @include('themes.elora.layout.styles')
+    @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>
 

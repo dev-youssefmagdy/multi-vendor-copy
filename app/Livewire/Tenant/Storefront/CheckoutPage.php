@@ -110,6 +110,13 @@ class CheckoutPage extends Component
         }
 
         $this->data['coupon']['code'] = session('storefront_coupon', '');
+
+        $cartItems = $repo->cartItems();
+        $this->dispatch('tracking-event', name: 'initiate_checkout', params: [
+            'content_ids' => collect($cartItems)->pluck('product_id')->values()->all(),
+            'num_items' => collect($cartItems)->sum('qty'),
+            'value' => collect($cartItems)->sum(fn($item) => (float) ($item['subtotal'] ?? 0)),
+        ]);
     }
 
     // ─── Address selection ────────────────────────────────────────────────────

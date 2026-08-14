@@ -63,6 +63,8 @@ use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
 use App\Livewire\Tenant\Setting\RolesPermissionsList;
 use App\Livewire\Tenant\Setting\SubscribersPage;
 use App\Livewire\Tenant\Store\AppearancePage;
+use App\Livewire\Tenant\Store\CustomTemplatePage;
+use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
 use App\Livewire\Tenant\Store\CouponsPage;
@@ -83,6 +85,7 @@ use App\Livewire\Tenant\Storefront\OffersPage;
 use App\Livewire\Tenant\Storefront\OrderStatusPage;
 use App\Livewire\Tenant\Storefront\OrderTrackingPage;
 use App\Livewire\Tenant\Storefront\ProductPage;
+use App\Http\Controllers\Tenant\CustomTemplateController;
 use App\Http\Controllers\Tenant\RobotsController;
 use App\Http\Controllers\Tenant\SitemapController;
 use App\Livewire\Tenant\Storefront\NotFoundPage;
@@ -118,7 +121,14 @@ Route::middleware([
     Route::get('/robots.txt', RobotsController::class)->middleware('tenant.storefront.context')->name('tenant.robots');
     Route::get('/sitemap.xml', SitemapController::class)->middleware('tenant.storefront.context')->name('tenant.sitemap');
 
-    Route::middleware(['tenant.storefront.context', 'tenant.gateway.blocked', 'preview.template'])->group(function () {
+    // Public asset endpoint for the active custom template (css/js/images referenced
+    // by the uploaded index.html). Read-only, content-type locked, no PHP execution.
+    Route::get('/custom-template-assets/{file}', [CustomTemplateController::class, 'live'])
+        ->where('file', '.*')
+        ->middleware('tenant.storefront.context')
+        ->name('tenant.custom-template.asset');
+
+    Route::middleware(['tenant.storefront.context', 'tenant.gateway.blocked', 'preview.template', 'custom.template.home'])->group(function () {
         Route::get('/', HomePage::class)->name('tenant.home');
         Route::get('/best-selling', BestSellingPage::class)->name('tenant.storefront.best-selling');
         Route::get('/full-star', FullStarPage::class)->name('tenant.storefront.full-star');
@@ -467,6 +477,13 @@ Route::middleware([
                 Route::get('/appearance', AppearancePage::class)
                     ->middleware('tenant.permission:store.appearance.manage')
                     ->name('appearance');
+                Route::get('/custom-template', CustomTemplatePage::class)
+                    ->middleware('tenant.permission:store.custom-template.manage')
+                    ->name('custom-template');
+                Route::get('/custom-template/preview/{version}/{file?}', [CustomTemplateController::class, 'preview'])
+                    ->where('file', '.*')
+                    ->middleware('tenant.permission:store.custom-template.manage')
+                    ->name('custom-template.preview');
                 Route::get('/page-builder', PageBuilderPage::class)
                     ->middleware('tenant.permission:store.page-builder.manage')
                     ->name('page-builder');
@@ -476,6 +493,9 @@ Route::middleware([
             });
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {
+                Route::get('/tracking', TrackingSettingsPage::class)
+                    ->middleware('tenant.permission:settings.tracking.manage')
+                    ->name('tracking');
                 Route::get('/subscribers', SubscribersPage::class)
                     ->middleware('tenant.permission:store.subscribers.manage')
                     ->name('subscribers');

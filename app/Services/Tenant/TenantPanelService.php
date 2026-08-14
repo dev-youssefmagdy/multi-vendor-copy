@@ -604,6 +604,16 @@ class TenantPanelService
     }
 
 
+    public function saveTrackingSettings(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'tracking']
+            );
+        }
+    }
+
     public function saveAppearanceSettings(array $data): void
     {
         $pathKeys = ['logo_path_ar', 'logo_path_en'];

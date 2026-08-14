@@ -1651,6 +1651,20 @@ class TenantPanelRepository
             ->all();
     }
 
+    public function trackingSettings(): array
+    {
+        return Setting::query()
+            ->whereIn('name', [
+                'tracking_fb_pixel_id',
+                'tracking_tiktok_pixel_id',
+                'tracking_snapchat_pixel_id',
+                'tracking_ga_measurement_id',
+            ])
+            ->get()
+            ->pluck('value', 'name')
+            ->all();
+    }
+
     // ─── Vendor Purchases ───────────────────────────────────────────────────
 
     /**

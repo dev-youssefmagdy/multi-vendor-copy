@@ -53,6 +53,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @livewireStyles
     @include('themes.souqify.layout.styles')
+    @include('storefront.partials.tracking-scripts')
     @stack('styles')
     @stack('head')
 

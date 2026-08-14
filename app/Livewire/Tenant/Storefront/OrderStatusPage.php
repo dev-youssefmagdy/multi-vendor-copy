@@ -26,6 +26,36 @@ class OrderStatusPage extends Component
     public function mount(string $uuid): void
     {
         $this->uuid = $uuid;
+
+        $this->fireOrderConfirmationTracking();
+    }
+
+    /**
+     * Fire the "purchase" tracking event once per order — guarded by a
+     * session flag so refreshing/re-visiting the order-status page doesn't
+     * double-count the conversion in Facebook/TikTok/Snapchat/GA.
+     */
+    protected function fireOrderConfirmationTracking(): void
+    {
+        $sessionKey = 'tracking_purchase_fired_' . $this->uuid;
+        if (session()->has($sessionKey)) {
+            return;
+        }
+
+        $order = app(StorefrontRepository::class)->orderByUuid($this->uuid);
+        if (!$order) {
+            return;
+        }
+
+        session()->put($sessionKey, true);
+
+        $this->dispatch('tracking-event', name: 'purchase', params: [
+            'content_ids' => $order->items->pluck('product_variant_id')->filter()->values()->all(),
+            'content_type' => 'product',
+            'num_items' => (int) $order->items->sum('qty'),
+            'value' => (float) $order->grand_total,
+            'order_id' => $order->uuid,
+        ]);
     }
 
     public function showTracking(): void

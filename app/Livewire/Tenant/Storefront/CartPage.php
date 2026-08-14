@@ -55,6 +55,12 @@ class CartPage extends Component
         session(['storefront_cart' => $cart]);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added');
+        $this->dispatch('tracking-event', name: 'add_to_cart', params: [
+            'content_ids' => [$product->id],
+            'content_name' => $product->translationValue('name') ?? $product->slug,
+            'content_type' => 'product',
+            'value' => $product->storefrontPricing()['current_price'] ?? null,
+        ]);
     }
 
     public function removeFromCart(string $key): void

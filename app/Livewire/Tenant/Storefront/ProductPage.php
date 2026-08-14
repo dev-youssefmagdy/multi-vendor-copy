@@ -46,6 +46,8 @@ class ProductPage extends Component
         $this->reviewsLimit += 10;
     }
 
+    public bool $viewContentTracked = false;
+
     public function mount(string $slug): void
     {
         $this->slug = $slug;
@@ -93,6 +95,12 @@ class ProductPage extends Component
         session(['storefront_cart' => $cart]);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added', itemName: $itemName, qty: 1);
+        $this->dispatch('tracking-event', name: 'add_to_cart', params: [
+            'content_ids' => [$product->id],
+            'content_name' => $itemName,
+            'content_type' => 'product',
+            'value' => $product->storefrontPricing()['current_price'] ?? null,
+        ]);
     }
 
     public function render()
@@ -102,6 +110,16 @@ class ProductPage extends Component
 
         if (!$product) {
             abort(404);
+        }
+
+        if (!$this->viewContentTracked) {
+            $this->viewContentTracked = true;
+            $this->dispatch('tracking-event', name: 'view_content', params: [
+                'content_ids' => [$product->id],
+                'content_name' => $product->translationValue('name') ?? $product->slug,
+                'content_type' => 'product',
+                'value' => $product->storefrontPricing()['current_price'] ?? null,
+            ]);
         }
 
         // Active variants, in-stock first
