@@ -97,8 +97,10 @@
                         $pct = $totalCount > 0 ? round(($doneCount / $totalCount) * 100) : 0;
                     @endphp
                     <div style="flex-shrink:0;text-align:right">
-                        <div style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.02em">{{ $doneCount }}/{{ $totalCount }}</div>
-                        <div style="margin-top:4px;width:48px;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
+                        <div style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.02em">
+                            Setup {{ $pct }}% complete — {{ $totalCount - $doneCount }} {{ \Illuminate\Support\Str::plural('step', $totalCount - $doneCount) }} remaining
+                        </div>
+                        <div style="margin-top:4px;width:100%;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
                             <div style="width:{{ $pct }}%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:4px;transition:width .4s"></div>
                         </div>
                     </div>

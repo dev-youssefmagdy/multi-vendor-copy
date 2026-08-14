@@ -519,6 +519,7 @@ class TenantPanelService
             'data' => array_merge($data, [
                 'shop_name' => $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name),
                 'address' => $attributes['address'] ?? ($data['address'] ?? null),
+                'description' => $attributes['description'] ?? ($data['description'] ?? null),
             ]),
         ]);
         $tenant->save();
@@ -529,6 +530,29 @@ class TenantPanelService
                 ['value' => (string) $attributes['shop_name'], 'group' => 'appearance']
             );
         }
+    }
+
+    public function updateCompliance(array $attributes): void
+    {
+        $tenant = tenant();
+
+        if (!$tenant) {
+            return;
+        }
+
+        $data = $tenant->data ?? [];
+
+        $tenant->fill([
+            'data' => array_merge($data, [
+                'compliance_owner_name' => $attributes['owner_name'] ?? ($data['compliance_owner_name'] ?? null),
+                'compliance_owner_id_number' => $attributes['owner_id_number'] ?? ($data['compliance_owner_id_number'] ?? null),
+                'compliance_registration_number' => $attributes['registration_number'] ?? ($data['compliance_registration_number'] ?? null),
+                'compliance_bank_name' => $attributes['bank_name'] ?? ($data['compliance_bank_name'] ?? null),
+                'compliance_bank_account_number' => $attributes['bank_account_number'] ?? ($data['compliance_bank_account_number'] ?? null),
+                'compliance_bank_iban' => $attributes['bank_iban'] ?? ($data['compliance_bank_iban'] ?? null),
+            ]),
+        ]);
+        $tenant->save();
     }
 
     public function deleteModel(Model $model): void

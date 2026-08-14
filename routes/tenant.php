@@ -43,6 +43,7 @@ use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
 use App\Livewire\Tenant\Setting\AccountSettingsPage;
+use App\Livewire\Tenant\Setting\ComplianceCenterPage;
 use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
 use App\Livewire\Tenant\Setting\AdminsList;
 use App\Livewire\Tenant\Setting\CurrenciesPage;
@@ -487,6 +488,9 @@ Route::middleware([
                 Route::get('/general', GeneralSettingsPage::class)
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('general');
+                Route::get('/compliance', ComplianceCenterPage::class)
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('compliance');
             });
         });
     });

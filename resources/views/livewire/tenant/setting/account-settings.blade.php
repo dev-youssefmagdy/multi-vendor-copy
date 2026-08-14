@@ -101,6 +101,34 @@
                 </div>
             </section>
 
+            {{-- Store details section --}}
+            <section class="card form-card fu d3 section-gap" id="store-details">
+                <div class="acct-section-head">
+                    <div class="acct-section-icon-wrap">
+                        <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-6h6v6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="panel-title">Store Details</h3>
+                        <p class="panel-copy">Details shown to customers on your storefront.</p>
+                    </div>
+                </div>
+                <div class="form-grid form-grid-2">
+                    <div class="acct-span-full">
+                        <label class="field-label">Store Description</label>
+                        <x-input type="text" wire:model.defer="description" :error="$errors->has('description')" />
+                        @error('description')<div class="field-error">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="acct-span-full">
+                        <label class="field-label">Address</label>
+                        <x-input type="text" wire:model.defer="address" :error="$errors->has('address')" />
+                        @error('address')<div class="field-error">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+            </section>
+
             {{-- Security section --}}
             <section class="card form-card fu d3">
                 <div class="acct-section-head">

@@ -127,6 +127,7 @@ class TenantNavigation
                             ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
                             ['label' => 'Account Settings', 'route' => 'tenant.settings.account', 'permission' => 'settings.account.manage'],
                             ['label' => 'General Settings', 'route' => 'tenant.settings.general', 'permission' => 'settings.account.manage'],
+                            ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],
                         ]
                     ],
                 ],
@@ -209,11 +210,11 @@ class TenantNavigation
         return false;
     }
 
-    /** Store-setup checklist progress, shown as a "x/4" badge on the Get Started nav item. */
+    /** Store-setup checklist progress, shown as a "x/7" badge on the Get Started nav item. */
     public static function onboardingSetupProgress(): array
     {
         $done = 0;
-        $total = 4;
+        $total = 7;
 
         if (self::logoIsConfigured()) {
             $done++;
@@ -227,8 +228,47 @@ class TenantNavigation
         if (Language::query()->where('is_active', true)->exists()) {
             $done++;
         }
+        if (self::profileComplete()) {
+            $done++;
+        }
+        if (self::storeDetailsComplete()) {
+            $done++;
+        }
+        if (self::complianceComplete()) {
+            $done++;
+        }
 
         return ['done' => $done, 'total' => $total];
+    }
+
+    /** Profile step: business name, logo, and a contact phone number set. */
+    public static function profileComplete(): bool
+    {
+        $tenant = tenant();
+
+        return self::logoIsConfigured()
+            && filled($tenant?->phone)
+            && filled(data_get($tenant, 'data.shop_name'));
+    }
+
+    /** Store-details step: store name, description, and address set. */
+    public static function storeDetailsComplete(): bool
+    {
+        $tenant = tenant();
+
+        return filled(data_get($tenant, 'data.shop_name'))
+            && filled(data_get($tenant, 'data.description'))
+            && filled(data_get($tenant, 'data.address'));
+    }
+
+    /** Compliance step: owner details, business registration, and bank info set. */
+    public static function complianceComplete(): bool
+    {
+        $tenant = tenant();
+
+        return filled(data_get($tenant, 'data.compliance_owner_name'))
+            && filled(data_get($tenant, 'data.compliance_registration_number'))
+            && filled(data_get($tenant, 'data.compliance_bank_account_number'));
     }
 
     /** A logo counts as configured once a text wordmark is chosen or any image is uploaded. */

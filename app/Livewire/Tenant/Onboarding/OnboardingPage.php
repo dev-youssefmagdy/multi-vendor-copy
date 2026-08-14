@@ -162,7 +162,13 @@ class OnboardingPage extends Component
 
     public function allItemsDone(): bool
     {
-        return $this->logoIsSet() && $this->activeTheme() !== null && $this->paymentGatewayConfigured() && $this->languageConfigured();
+        return $this->logoIsSet()
+            && $this->activeTheme() !== null
+            && $this->paymentGatewayConfigured()
+            && $this->languageConfigured()
+            && TenantNavigation::profileComplete()
+            && TenantNavigation::storeDetailsComplete()
+            && TenantNavigation::complianceComplete();
     }
 
     public function logoIsSet(): bool
@@ -238,6 +244,42 @@ class OnboardingPage extends Component
                 'action_url' => route('tenant.settings.languages'),
                 'action_label' => 'Manage Languages',
                 'icon' => 'languages',
+            ],
+            [
+                'key' => 'profile',
+                'label' => 'Complete Your Profile',
+                'detail' => TenantNavigation::profileComplete()
+                    ? 'Your business name, logo, and contact info are set.'
+                    : 'Add your business name, logo, and contact info.',
+                'mandatory' => true,
+                'done' => TenantNavigation::profileComplete(),
+                'action_url' => route('tenant.settings.account'),
+                'action_label' => 'Go to Account Settings',
+                'icon' => 'logo',
+            ],
+            [
+                'key' => 'store_details',
+                'label' => 'Complete Store Details',
+                'detail' => TenantNavigation::storeDetailsComplete()
+                    ? 'Your store name, description, and address are set.'
+                    : 'Add your store name, description, and address.',
+                'mandatory' => true,
+                'done' => TenantNavigation::storeDetailsComplete(),
+                'action_url' => route('tenant.settings.account') . '#store-details',
+                'action_label' => 'Go to Store Details',
+                'icon' => 'storefront',
+            ],
+            [
+                'key' => 'compliance',
+                'label' => 'Complete Compliance Information',
+                'detail' => TenantNavigation::complianceComplete()
+                    ? 'Owner details, business registration, and bank info are on file.'
+                    : 'Add owner details, business registration, and bank info in the Compliance Center.',
+                'mandatory' => true,
+                'done' => TenantNavigation::complianceComplete(),
+                'action_url' => route('tenant.settings.compliance'),
+                'action_label' => 'Go to Compliance Center',
+                'icon' => 'settings',
             ],
         ];
     }

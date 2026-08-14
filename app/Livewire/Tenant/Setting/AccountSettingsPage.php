@@ -19,7 +19,8 @@ class AccountSettingsPage extends ContentPage
     public string $adminEmail = '';
     public string $phone = '';
     public string $shopName = '';
-    // public string $address = '';
+    public string $description = '';
+    public string $address = '';
     public string $password = '';
 
     public function mount(): void
@@ -31,7 +32,8 @@ class AccountSettingsPage extends ContentPage
         $this->adminEmail = (string) ($admin?->email ?? '');
         $this->phone = (string) ($tenant->phone ?? '');
         $this->shopName = (string) data_get($tenant, 'data.shop_name', $tenant->name ?? '');
-        // $this->address = (string) data_get($tenant, 'data.address', '');
+        $this->description = (string) data_get($tenant, 'data.description', '');
+        $this->address = (string) data_get($tenant, 'data.address', '');
     }
 
     protected function pageMeta(): array
@@ -53,10 +55,18 @@ class AccountSettingsPage extends ContentPage
                         ['label' => 'Admin Email', 'model' => 'adminEmail', 'type' => 'email'],
                         ['label' => 'Store Phone', 'model' => 'phone'],
                         ['label' => 'Shop Name', 'model' => 'shopName'],
-                        // ['label' => 'Address', 'model' => 'address', 'wrapperClass' => 'span-2'],
                         ['label' => 'New Admin Password', 'model' => 'password', 'type' => 'password', 'wrapperClass' => 'span-2'],
                     ],
-                ]
+                ],
+                [
+                    'title' => 'Store Details',
+                    'description' => 'Details shown to customers on your storefront.',
+                    'gridClass' => 'form-grid-2',
+                    'fields' => [
+                        ['label' => 'Store Description', 'model' => 'description', 'wrapperClass' => 'span-2'],
+                        ['label' => 'Address', 'model' => 'address', 'wrapperClass' => 'span-2'],
+                    ],
+                ],
             ],
         ];
     }
@@ -68,7 +78,8 @@ class AccountSettingsPage extends ContentPage
             'adminEmail' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'shopName' => ['required', 'string', 'max:255'],
-            // 'address' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'address' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:6'],
         ]);
 
@@ -77,7 +88,8 @@ class AccountSettingsPage extends ContentPage
             'admin_email' => $validated['adminEmail'],
             'phone' => $validated['phone'] ?? '',
             'shop_name' => $validated['shopName'],
-            // 'address' => $validated['address'] ?? '',
+            'description' => $validated['description'] ?? '',
+            'address' => $validated['address'] ?? '',
             'password' => $validated['password'] ?? null,
         ]);
 
