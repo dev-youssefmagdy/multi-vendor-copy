@@ -3,6 +3,7 @@
 namespace App\Services\Tenant;
 
 use App\Contracts\TemplateStrategy;
+use App\Models\HomeVariant;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantThemeColor;
 use App\Models\ThemeColorDefault;
@@ -12,7 +13,8 @@ use App\Support\ThemeColorKeys;
  * Resolves the final set of CSS color variables for a theme, layering:
  *   1. The theme strategy's hardcoded defaults (base fallback)
  *   2. Admin-set global defaults for that theme slug (theme_color_defaults, central DB)
- *   3. The tenant's own overrides (tenant_theme_colors, tenant DB)
+ *   3. The selected home page variant's palette, if any (home_variants, central DB)
+ *   4. The tenant's own overrides (tenant_theme_colors, tenant DB)
  */
 class ThemeColorResolver
 {
@@ -23,12 +25,15 @@ class ThemeColorResolver
     /**
      * @return array<string, string> variable key => hex value
      */
-    public function resolve(Theme $theme): array
+    public function resolve(Theme $theme, ?HomeVariant $variant = null): array
     {
         $strategy = $this->registry->resolve((string) $theme->slug);
 
         $values = $strategy->colorDefaults();
         $values = array_merge($values, $this->globalDefaults($strategy));
+        if ($variant?->colors) {
+            $values = array_merge($values, $variant->colors);
+        }
         $values = array_merge($values, $this->tenantOverrides($theme));
 
         return $values;
@@ -37,10 +42,10 @@ class ThemeColorResolver
     /**
      * Build an inline `--color-x: #hex;` string suitable for a style="" attribute.
      */
-    public function resolveInlineStyle(Theme $theme): string
+    public function resolveInlineStyle(Theme $theme, ?HomeVariant $variant = null): string
     {
         $pairs = [];
-        foreach ($this->resolve($theme) as $key => $value) {
+        foreach ($this->resolve($theme, $variant) as $key => $value) {
             $pairs[] = "--{$key}: {$value}";
         }
 

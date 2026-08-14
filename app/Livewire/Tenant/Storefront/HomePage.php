@@ -8,6 +8,8 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantPageSection;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\CountryDetectorService;
+use App\Services\Tenant\HomeVariantResolver;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use Livewire\Component;
 
@@ -80,25 +82,39 @@ class HomePage extends Component
         $this->dispatch('storefront-cart-added');
     }
 
-    /** @return string[] visible section keys for the active theme's home page, in order. */
-    protected function resolvedHomeSections(): array
+    /** Resolve the tenant's Theme row + the home variant that applies for the visitor's country. */
+    protected function activeThemeAndVariant(): array
     {
-        $theme = $this->resolveStrategy()->slug();
-        $themeId = Theme::query()->where('slug', $theme)->value('id');
+        $slug = $this->resolveStrategy()->slug();
+        $theme = Theme::query()->where('slug', $slug)->first();
+        $variant = $theme
+            ? app(HomeVariantResolver::class)->resolveFor(
+                $theme,
+                app(CountryDetectorService::class)->detect(request())
+            )
+            : null;
 
-        $rows = $themeId
+        return [$theme, $variant];
+    }
+
+    /** @return string[] visible section keys for the active theme's home page, in order. */
+    protected function resolvedHomeSections(?Theme $theme, ?\App\Models\HomeVariant $variant): array
+    {
+        $slug = $this->resolveStrategy()->slug();
+
+        $rows = $theme
             ? TenantPageSection::query()
-                ->where('theme_id', $themeId)
+                ->where('theme_id', $theme->id)
                 ->where('page', 'home')
                 ->orderBy('sort_order')
                 ->get()
             : collect();
 
-        if ($rows->isEmpty()) {
-            return SectionRegistry::defaultsFor($theme, 'home');
-        }
+        $tenantOrder = $rows->isEmpty()
+            ? null
+            : $rows->where('is_visible', true)->pluck('section_key')->all();
 
-        return $rows->where('is_visible', true)->pluck('section_key')->all();
+        return app(HomeVariantResolver::class)->sectionsFor($variant, $slug, $tenantOrder);
     }
 
     public function showProductTab(string $tab): void
@@ -153,6 +169,8 @@ class HomePage extends Component
 
         $paginatedProducts = $repo->paginatedProducts([], $this->perPage, 1);
 
+        [$activeTheme, $activeVariant] = $this->activeThemeAndVariant();
+
         $data = array_merge($this->sharedData(), [
             'banners' => $repo->activeBanners(),
             'flashSales' => $flashSales,
@@ -170,13 +188,15 @@ class HomePage extends Component
             'trendingNowProducts' => $trendingNowProducts,
             'recommendedProducts' => $recommendedProducts,
             'paginatedProducts' => $paginatedProducts,
-            'homeSections' => $this->resolvedHomeSections(),
+            'homeSections' => $this->resolvedHomeSections($activeTheme, $activeVariant),
         ]);
 
         $storeName = $repo->storeName();
         $storeDesc = mb_substr(strip_tags($repo->footerText()), 0, 160);
 
-        return view($this->pageView('home'), $data)
+        $homeView = app(HomeVariantResolver::class)->viewFor($activeVariant, $this->resolveStrategy());
+
+        return view($homeView, $data)
             ->layout($this->storefrontLayout(), [
                 'title' => $storeName,
                 'metaDescription' => $storeDesc,

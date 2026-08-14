@@ -45,6 +45,7 @@ use App\Livewire\Admin\Setting\CurrenciesPage;
 use App\Livewire\Admin\Setting\EmailConfigurationPage;
 use App\Livewire\Admin\Setting\EmailTemplatesPage;
 use App\Livewire\Admin\Setting\GeneralSettingsPage;
+use App\Livewire\Admin\Setting\HomeVariantsPage;
 use App\Livewire\Admin\Setting\ThemeColorsPage;
 use App\Livewire\Admin\Setting\CountriesPage;
 use App\Livewire\Admin\Setting\LanguagesPage;
@@ -344,6 +345,7 @@ Route::group([
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/general', GeneralSettingsPage::class)->middleware('admin.permission:settings.general.manage')->name('general');
         Route::get('/theme-colors', ThemeColorsPage::class)->middleware('admin.permission:settings.theme-colors.manage')->name('theme-colors');
+        Route::get('/home-variants', HomeVariantsPage::class)->middleware('admin.permission:settings.home-variants.manage')->name('home-variants');
         Route::get('/templates', TemplateControlPage::class)->middleware('admin.permission:settings.templates.manage')->name('templates');
         Route::get('/template-parts', TemplatePartsPage::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts');
         Route::get('/template-parts/create/{templateId?}', AddEditTemplatePart::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.create');
