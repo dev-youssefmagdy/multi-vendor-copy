@@ -26,6 +26,12 @@ class Package extends Model
         'price',
         'features',
         'categories_count',
+        'products_limit',
+        'banners_limit',
+        'languages_limit',
+        'orders_per_month_limit',
+        'ai_calls_limit',
+        'image_searches_limit',
         'trial_days',
     ];
 
@@ -37,6 +43,12 @@ class Package extends Model
             'price' => 'decimal:2',
             'features' => 'array',
             'categories_count' => 'integer',
+            'products_limit' => 'integer',
+            'banners_limit' => 'integer',
+            'languages_limit' => 'integer',
+            'orders_per_month_limit' => 'integer',
+            'ai_calls_limit' => 'integer',
+            'image_searches_limit' => 'integer',
             'trial_days' => 'integer',
         ];
     }

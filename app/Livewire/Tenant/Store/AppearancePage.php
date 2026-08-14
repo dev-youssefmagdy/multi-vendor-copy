@@ -9,6 +9,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
@@ -238,6 +239,17 @@ class AppearancePage extends TenantPage
 
     public function saveBanner(TenantPanelService $service): void
     {
+        if (!$this->bannerId) {
+            $limitService = app(PlanLimitService::class);
+            if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_BANNERS)) {
+                $message = $limitService->errorMessage(PlanLimitService::FEATURE_BANNERS);
+                $this->dispatch('admin-toast', message: $message, type: 'error');
+                $this->addError('bannerUrl', $message);
+
+                return;
+            }
+        }
+
         $rules = [
             'bannerUrl' => ['nullable', 'url', 'max:500'],
             'bannerSerial' => ['required', 'integer', 'min:0'],

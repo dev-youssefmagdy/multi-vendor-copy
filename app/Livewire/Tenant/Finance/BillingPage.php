@@ -6,6 +6,7 @@ use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Order;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use Livewire\WithPagination;
 
 class BillingPage extends ListPage
@@ -52,6 +53,7 @@ class BillingPage extends ListPage
                 ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value with confirmed collection.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid order value still awaiting settlement.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
                 ['label' => 'Gateways', 'value' => $stats['gateways'], 'format' => 'number', 'caption' => 'Distinct payment methods seen in tenant orders.', 'dot' => 'dot-violet'],
+                ...$this->planUsageCards(),
             ]),
             'rows' => collect($records->items())->map(function (Order $order) {
                 $gatewayName = str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString() ?? $order->paymentGateway?->name ?? 'Unknown';
@@ -74,6 +76,37 @@ class BillingPage extends ListPage
             })->all(),
             'tableDescription' => $records->total() . ' billing records matched the current payment filters.',
         ]);
+    }
+
+    /**
+     * Plan usage-vs-limit cards ("Products: 45 / 100", "Languages: Unlimited", ...).
+     */
+    protected function planUsageCards(): array
+    {
+        $limitService = app(PlanLimitService::class);
+        $tenant = tenant();
+
+        $features = [
+            PlanLimitService::FEATURE_PRODUCTS => ['label' => 'Products', 'dot' => 'dot-cyan'],
+            PlanLimitService::FEATURE_CATEGORIES => ['label' => 'Categories', 'dot' => 'dot-green'],
+            PlanLimitService::FEATURE_BANNERS => ['label' => 'Banners', 'dot' => 'dot-amber'],
+            PlanLimitService::FEATURE_LANGUAGES => ['label' => 'Languages', 'dot' => 'dot-violet'],
+            PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => 'Orders this month', 'dot' => 'dot-cyan'],
+        ];
+
+        return $this->presentMetricCards(collect($features)->map(function (array $meta, string $feature) use ($limitService, $tenant) {
+            $usage = $limitService->usage($tenant, $feature);
+            $value = $usage['limit'] === null
+                ? number_format($usage['used']) . ' / Unlimited'
+                : number_format($usage['used']) . ' / ' . number_format($usage['limit']);
+
+            return [
+                'label' => $meta['label'],
+                'value' => $value,
+                'caption' => 'Plan usage for ' . strtolower($meta['label']) . '.',
+                'dot' => $meta['dot'],
+            ];
+        })->values()->all());
     }
 
     public function updatedSearch(): void

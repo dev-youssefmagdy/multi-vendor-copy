@@ -23,6 +23,12 @@ class AddEditPackage extends Component
     public string $icon = '';
     public int $categoriesCount = 0;
     public bool $allCategories = true; // true = no limit, false = limited count
+    public int $productsLimit = -1;
+    public int $bannersLimit = -1;
+    public int $languagesLimit = -1;
+    public int $ordersPerMonthLimit = -1;
+    public int $aiCallsLimit = -1;
+    public int $imageSearchesLimit = -1;
 
     public function mount(?Package $package = null)
     {
@@ -54,6 +60,12 @@ class AddEditPackage extends Component
         $this->icon = $loaded->icon ?? '';
         $this->categoriesCount = (int) ($loaded->categories_count ?? 0);
         $this->allCategories = ($this->categoriesCount === 0);
+        $this->productsLimit = (int) ($loaded->products_limit ?? -1);
+        $this->bannersLimit = (int) ($loaded->banners_limit ?? -1);
+        $this->languagesLimit = (int) ($loaded->languages_limit ?? -1);
+        $this->ordersPerMonthLimit = (int) ($loaded->orders_per_month_limit ?? -1);
+        $this->aiCallsLimit = (int) ($loaded->ai_calls_limit ?? -1);
+        $this->imageSearchesLimit = (int) ($loaded->image_searches_limit ?? -1);
         $this->translations = array_replace_recursive($this->translations, $loaded->translationsByLocale(['name', 'description']));
     }
 
@@ -93,6 +105,12 @@ class AddEditPackage extends Component
             'price' => $validated['price'],
             'features' => $this->normalizeFeatures(),
             'categories_count' => $this->allCategories ? 0 : $this->categoriesCount,
+            'products_limit' => $validated['productsLimit'],
+            'banners_limit' => $validated['bannersLimit'],
+            'languages_limit' => $validated['languagesLimit'],
+            'orders_per_month_limit' => $validated['ordersPerMonthLimit'],
+            'ai_calls_limit' => $validated['aiCallsLimit'],
+            'image_searches_limit' => $validated['imageSearchesLimit'],
             'trial_days' => $validated['trialDays'],
             'translations' => $validated['translations'],
         ], $this->packageId ? Package::query()->findOrFail($this->packageId) : null);
@@ -113,6 +131,12 @@ class AddEditPackage extends Component
             'featureRows.*.label' => ['nullable', 'string', 'max:255'],
             'featureRows.*.value' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:255'],
+            'productsLimit' => ['required', 'integer', 'min:-1'],
+            'bannersLimit' => ['required', 'integer', 'min:-1'],
+            'languagesLimit' => ['required', 'integer', 'min:-1'],
+            'ordersPerMonthLimit' => ['required', 'integer', 'min:-1'],
+            'aiCallsLimit' => ['required', 'integer', 'min:-1'],
+            'imageSearchesLimit' => ['required', 'integer', 'min:-1'],
         ];
 
         foreach (Language::query()->where('is_active', true)->get() as $language) {

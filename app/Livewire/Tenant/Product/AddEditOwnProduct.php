@@ -165,6 +165,17 @@ class AddEditOwnProduct extends Component
 
     public function save(TenantPanelService $service)
     {
+        if (!$this->productId) {
+            $limitService = app(\App\Services\Tenant\PlanLimitService::class);
+            if (!$limitService->canPerform(tenant(), \App\Services\Tenant\PlanLimitService::FEATURE_PRODUCTS)) {
+                $message = $limitService->errorMessage(\App\Services\Tenant\PlanLimitService::FEATURE_PRODUCTS);
+                $this->dispatch('admin-toast', message: $message, type: 'error');
+                $this->addError('name', $message);
+
+                return null;
+            }
+        }
+
         $validated = $this->validate($this->rules());
 
         $hasVariants = collect($this->variants)

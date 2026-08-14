@@ -120,6 +120,45 @@
                 </div>
 
                 <div class="section-gap">
+                    <h3 class="panel-title">{{ __('Plan Limits') }}</h3>
+                    <p class="panel-copy" style="margin-bottom:12px;">
+                        {{ __('Set -1 for unlimited on any field.') }}
+                    </p>
+                    <div class="form-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+                        <div class="form-field">
+                            <label class="field-label">{{ __('Products') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="productsLimit" min="-1" step="1">
+                            @error('productsLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">{{ __('Banners') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="bannersLimit" min="-1" step="1">
+                            @error('bannersLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">{{ __('Languages') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="languagesLimit" min="-1" step="1">
+                            @error('languagesLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">{{ __('Orders per Month') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="ordersPerMonthLimit" min="-1" step="1">
+                            @error('ordersPerMonthLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">{{ __('AI Calls') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="aiCallsLimit" min="-1" step="1">
+                            @error('aiCallsLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="form-field">
+                            <label class="field-label">{{ __('Image Searches') }}</label>
+                            <input type="number" class="field-control" wire:model.defer="imageSearchesLimit" min="-1" step="1">
+                            @error('imageSearchesLimit') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-gap">
                     <div class="fu d0"
                         style="justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1rem;">
                         <div>
