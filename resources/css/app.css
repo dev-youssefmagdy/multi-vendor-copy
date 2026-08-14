@@ -3267,6 +3267,24 @@ details[open] .filters-chevron {
     color: var(--cyan);
 }
 
+.tb tr.row-new-customer td {
+    background: #fffde7;
+}
+
+.customer-new-badge {
+    margin-inline-start: 8px;
+}
+
+@media print {
+    .tb tr.row-new-customer td {
+        background: #ffffff !important;
+    }
+
+    .customer-new-badge {
+        display: none !important;
+    }
+}
+
 .row-out-of-stock {
     background: rgba(255, 77, 106, 0.08) !important;
 }

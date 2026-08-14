@@ -25,6 +25,7 @@ use App\Livewire\Admin\Order\OrdersList;
 use App\Livewire\Admin\Order\OrdersReportPage;
 use App\Livewire\Admin\Page\AddEditStaticPage;
 use App\Livewire\Admin\Page\StaticPagesList;
+use App\Livewire\Admin\Customer\CentralCustomersList;
 use App\Livewire\Admin\PaymentLog\PaymentLogsList;
 use App\Livewire\Admin\Plan\PlansList;
 use App\Livewire\Admin\Plan\RegisteredUsersList;
@@ -291,6 +292,10 @@ Route::group([
     Route::prefix('payment-logs')->name('payment-logs.')->group(function () {
         Route::get('/', PaymentLogsList::class)->middleware('admin.permission:billing.payment-logs.view')->name('index');
         Route::get('/{tenantId}/{orderNumber}', PaymentLogDetailPage::class)->middleware('admin.permission:billing.payment-logs.view')->name('show');
+    });
+
+    Route::prefix('customers')->name('customers.')->group(function () {
+        Route::get('/', CentralCustomersList::class)->middleware('admin.permission:sales.customers.view')->name('index');
     });
 
     Route::prefix('plans')->name('plans.')->group(function () {

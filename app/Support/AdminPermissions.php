@@ -21,6 +21,7 @@ class AdminPermissions
             'sales.orders.view' => 'View orders',
             'sales.orders.manage' => 'Manage orders',
             'sales.orders.report.view' => 'View order reports',
+            'sales.customers.view' => 'View customers',
             'shipping.delivery.view' => 'View shipping delivery',
             'shipping.delivery.manage' => 'Manage shipping delivery',
             'shipping.settings.view' => 'View shipping settings',

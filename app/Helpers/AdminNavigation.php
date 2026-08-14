@@ -89,6 +89,13 @@ class AdminNavigation
                         'permission' => 'billing.payment-logs.view',
                     ],
                     [
+                        'type' => 'link',
+                        'label' => 'Customers',
+                        'route' => 'admin.customers.index',
+                        'icon' => 'orders',
+                        'permission' => 'sales.customers.view',
+                    ],
+                    [
                         'type' => 'group',
                         'label' => 'Plans',
                         'icon' => 'plans',

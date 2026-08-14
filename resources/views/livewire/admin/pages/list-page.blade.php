@@ -2,6 +2,7 @@
     @php
         $filterFields = $filterFields ?? [];
         $rows = $rows ?? [];
+        $rowClasses = $rowClasses ?? [];
         $records = $records ?? null;
         $actionUrl = $actionUrl ?? null;
         $actionMethod = $actionMethod ?? null;
@@ -61,13 +62,17 @@
         <div class="filters-grid">
             @forelse ($filterFields as $field)
                 <div>
-                    <label class="field-label">{{ $field['label'] }}</label>
+                    @if (($field['type'] ?? 'text') !== 'checkbox')
+                        <label class="field-label">{{ $field['label'] }}</label>
+                    @endif
                     @if (($field['type'] ?? 'text') === 'select')
                         <x-select wire:model.live="{{ $field['model'] }}">
                             @foreach ($field['options'] ?? [] as $optionValue => $optionLabel)
                                 <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
                             @endforeach
                         </x-select>
+                    @elseif (($field['type'] ?? 'text') === 'checkbox')
+                        <x-checkbox wire:model.live="{{ $field['model'] }}" label="{{ $field['toggleLabel'] ?? $field['label'] }}" />
                     @else
                         <x-input type="{{ $field['type'] ?? 'text' }}" wire:model.live.debounce.300ms="{{ $field['model'] }}"
                             placeholder="{{ $field['placeholder'] ?? '' }}" />
@@ -120,8 +125,8 @@
         </div>
 
         <x-table :headers="$headers">
-            @forelse ($rows as $row)
-                <tr>
+            @forelse ($rows as $index => $row)
+                <tr @if($rowClasses[$index] ?? null) class="{{ $rowClasses[$index] }}" @endif>
                     @foreach ($row as $cell)
                         <td>{!! $cell !!}</td>
                     @endforeach
