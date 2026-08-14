@@ -14,6 +14,9 @@ class TenantOwner extends Authenticatable
         'selected_tenant_id',
         'email',
         'password',
+        'provider',
+        'provider_id',
+        'avatar',
     ];
 
     protected $hidden = [

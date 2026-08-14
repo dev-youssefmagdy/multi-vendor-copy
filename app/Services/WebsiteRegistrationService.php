@@ -149,10 +149,13 @@ class WebsiteRegistrationService
 
         TenantOwner::updateOrCreate(
             ['email' => strtolower(trim((string) $registrationData['email']))],
-            [
+            array_filter([
                 'tenant_id' => $tenant->id,
                 'password' => bcrypt((string) $registrationData['password']),
-            ]
+                'provider' => $registrationData['provider'] ?? null,
+                'provider_id' => $registrationData['provider_id'] ?? null,
+                'avatar' => $registrationData['avatar'] ?? null,
+            ], fn ($value) => $value !== null)
         );
 
         $tenant = $tenant->fresh(['domains', 'package.translations.language']);

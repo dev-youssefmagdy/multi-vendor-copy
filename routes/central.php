@@ -110,6 +110,7 @@ use App\Livewire\Website\MaintenancePage;
 use App\Livewire\Website\NotFoundPage;
 use App\Livewire\Website\TenantLoginPage;
 use App\Http\Controllers\Website\RegistrationPaymentController;
+use App\Http\Controllers\Website\CentralSocialAuthController;
 use App\Http\Middleware\TenantOwnerAuth;
 use App\Livewire\TenantOwner\Auth\LoginPage as OwnerLoginPage;
 use App\Livewire\TenantOwner\Auth\SelectTenantPage as OwnerSelectTenantPage;
@@ -158,6 +159,18 @@ Route::get('/pages/{slug}', StaticPageView::class)->name('website.page');
 Route::get('/maintenance', MaintenancePage::class)->name('website.maintenance');
 Route::get('/sitemap.xml', SitemapController::class)->name('website.sitemap');
 Route::get('/login', OwnerLoginPage::class)->middleware('guest:tenant_owner')->name('owner.login');
+
+// ── Google / Apple sign-in (tenant-owner login & new-tenant registration) ─────
+Route::get('/auth/google/{intent}', [CentralSocialAuthController::class, 'redirectToGoogle'])
+    ->whereIn('intent', ['login', 'register'])
+    ->name('website.social.google');
+Route::get('/auth/google/callback', [CentralSocialAuthController::class, 'handleGoogleCallback'])
+    ->name('website.social.google.callback');
+Route::get('/auth/apple/{intent}', [CentralSocialAuthController::class, 'redirectToApple'])
+    ->whereIn('intent', ['login', 'register'])
+    ->name('website.social.apple');
+Route::post('/auth/apple/callback', [CentralSocialAuthController::class, 'handleAppleCallback'])
+    ->name('website.social.apple.callback');
 Route::get('/my-account/select-tenant', OwnerSelectTenantPage::class)->middleware('auth:tenant_owner')->name('owner.select-tenant');
 
 // ── Tenant Owner Panel ────────────────────────────────────────────────────────

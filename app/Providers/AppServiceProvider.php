@@ -28,9 +28,12 @@ use App\Observers\TenantOrderObserver;
 use App\Observers\TenantTransactionObserver;
 use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use SocialiteProviders\Apple\AppleExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
@@ -50,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureSessionDomain();
+
+        Event::listen(SocialiteWasCalled::class, [AppleExtendSocialite::class, 'handle']);
 
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomain::class,

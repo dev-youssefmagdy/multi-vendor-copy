@@ -36,6 +36,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->trustHosts(at: fn() => ['.*']);
 
+        // Apple posts its Sign in with Apple callback cross-site with no Laravel CSRF
+        // token attached; the callback validates the signed `state` param itself.
+        $middleware->validateCsrfTokens(except: [
+            'auth/apple/callback',
+        ]);
+
 
         // $middleware->priority([
         //     \Stancl\Tenancy\Middleware\PreventAccessFromTenantDomains::class,

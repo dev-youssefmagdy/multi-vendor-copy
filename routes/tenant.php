@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Tenant\CartController;
 use App\Http\Controllers\Tenant\StorefrontInvoiceController;
+use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
 use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
 use App\Http\Controllers\Tenant\HomePageController;
 use App\Http\Controllers\Tenant\PaymentController;
@@ -230,6 +231,15 @@ Route::middleware([
         // Customer auth
         Route::middleware('guest:storefront')->group(function () {
             Route::get('/account/login', AuthPage::class)->name('tenant.storefront.login');
+
+            Route::get('/auth/google', [StorefrontSocialAuthController::class, 'redirectToGoogle'])
+                ->name('tenant.storefront.social.google');
+            Route::get('/auth/google/callback', [StorefrontSocialAuthController::class, 'handleGoogleCallback'])
+                ->name('tenant.storefront.social.google.callback');
+            Route::get('/auth/apple', [StorefrontSocialAuthController::class, 'redirectToApple'])
+                ->name('tenant.storefront.social.apple');
+            Route::post('/auth/apple/callback', [StorefrontSocialAuthController::class, 'handleAppleCallback'])
+                ->name('tenant.storefront.social.apple.callback');
         });
 
         Route::get('/profile', ProfilePage::class)

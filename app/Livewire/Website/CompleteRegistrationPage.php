@@ -139,6 +139,12 @@ class CompleteRegistrationPage extends Component
         }
 
         $this->loadDnsRecords();
+
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $this->email) {
+            $this->name = (string) ($oauth['name'] ?? '');
+        }
     }
 
     public function updatedDomainType(): void
@@ -336,9 +342,19 @@ class CompleteRegistrationPage extends Component
             'locale' => $pending->locale,
         ];
 
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $pending->email) {
+            $registrationData['provider'] = $oauth['provider'] ?? null;
+            $registrationData['provider_id'] = $oauth['provider_id'] ?? null;
+            $registrationData['avatar'] = $oauth['avatar'] ?? null;
+        }
+
         $payment = !empty($pending->payment_data) ? $pending->payment_data : null;
 
         $tenant = $registrationService->finalize($registrationData, $payment);
+
+        session()->forget('website.register.oauth');
 
         $pending->markCompleted();
 
