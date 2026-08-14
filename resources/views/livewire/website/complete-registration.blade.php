@@ -399,8 +399,11 @@
                 @if($step === 2)
                 <div class="space-y-5">
                     <div>
+                        <h2 class="text-lg font-extrabold text-gray-900 mb-1">
+                            {{ __('Select Your Product Categories') }}
+                        </h2>
                         <p class="text-sm text-gray-600 mb-4">
-                            {{ __('Select up to :count product categories to sync into your store.', ['count' => $categoriesCount]) }}
+                            {{ __('Your plan allows up to :count categories.', ['count' => $categoriesCount]) }}
                         </p>
 
                         @if($rootCategories->isEmpty())
@@ -409,21 +412,28 @@
                                 {{ __('No categories are available yet.') }}
                             </div>
                         @else
-                            <div class="space-y-2">
-                                @foreach($rootCategories as $category)
-                                    @php $checked = in_array((string)$category->id, $selectedCategoryIds); @endphp
-                                    <label class="flex items-center gap-3 p-4 rounded-xl cursor-pointer border-2 transition-all
-                                        {{ $checked ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
-                                        <input wire:model.live="selectedCategoryIds"
-                                            type="checkbox"
-                                            value="{{ $category->id }}"
-                                            class="accent-primary w-4 h-4"
-                                            @if(!$checked && count($selectedCategoryIds) >= $categoriesCount) disabled @endif>
-                                        <span class="flex-1 font-semibold text-gray-900 text-sm">
+                            <div wire:ignore
+                                x-data="{
+                                    init() {
+                                        const el = $(this.$refs.categorySelect);
+                                        el.select2({
+                                            width: '100%',
+                                            placeholder: @js(__('Search and select categories...')),
+                                            maximumSelectionLength: {{ $categoriesCount }},
+                                        });
+                                        el.on('change', () => {
+                                            $wire.set('selectedCategoryIds', el.val() ?? []);
+                                        });
+                                    }
+                                }">
+                                <select multiple x-ref="categorySelect" class="w-full">
+                                    @foreach($rootCategories as $category)
+                                        <option value="{{ $category->id }}"
+                                            @selected(in_array((string) $category->id, $selectedCategoryIds))>
                                             {{ $category->translationValue('name') ?: $category->id }}
-                                        </span>
-                                    </label>
-                                @endforeach
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <p class="text-xs text-gray-400 mt-2">
                                 {{ __(':selected / :max selected', ['selected' => count($selectedCategoryIds), 'max' => $categoriesCount]) }}
@@ -463,6 +473,20 @@
 
     </div>
 </div>
+
+@if($categoriesCount > 0)
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+        <style>
+            .select2-container .select2-selection--multiple { min-height: 3rem; border-radius: 0.75rem; border-color: #e5e7eb; }
+            .select2-container--default .select2-selection--multiple .select2-selection__choice { background-color: #fff7ed; border-color: #fdba74; }
+        </style>
+    @endpush
+    @push('scripts')
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @endpush
+@endif
 
 @script
 <script>
