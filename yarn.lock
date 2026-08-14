@@ -382,6 +382,11 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
+intl-tel-input@^29.2.3:
+  version "29.2.3"
+  resolved "https://registry.npmjs.org/intl-tel-input/-/intl-tel-input-29.2.3.tgz"
+  integrity sha512-uwDslWntH/G5HuVlCSly8XdRC2iXVnpAEtj5I3JOFTy3G/7PARGsqbakWBBXfjzh3BjXXLOEOZDvqulvPSG0QQ==
+
 is-fullwidth-code-point@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz"

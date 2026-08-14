@@ -120,7 +120,7 @@
                         </div>
                         <div>
                             <label class="field-label">Phone</label>
-                            <x-input wire:model.defer="phone" placeholder="+1 555 000 0000" />
+                            <x-input type="tel" data-phone-input wire:model.defer="phone" placeholder="+1 555 000 0000" />
                             @error('phone') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -421,7 +421,7 @@
                     </div>
                     <div>
                         <label class="field-label">Phone</label>
-                        <x-input wire:model.defer="addrPhone" placeholder="+1 555 000 0000" />
+                        <x-input type="tel" data-phone-input wire:model.defer="addrPhone" placeholder="+1 555 000 0000" />
                     </div>
                     <div class="form-grid-full">
                         <label class="field-label">Address Line 1 <span class="field-required">*</span></label>

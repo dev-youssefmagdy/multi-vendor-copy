@@ -1,3 +1,15 @@
+import { initPhoneInputs } from "./phone-input";
+
+function bootPhoneInputs() {
+    initPhoneInputs(document);
+}
+
+document.addEventListener("DOMContentLoaded", bootPhoneInputs);
+document.addEventListener("livewire:navigated", bootPhoneInputs);
+document.addEventListener("livewire:init", () => {
+    window.Livewire?.hook("morphed", ({ el }) => initPhoneInputs(el));
+});
+
 // Shared add-to-cart helper used by every storefront theme's product page.
 // Posts directly to the cart-add endpoint (no Livewire round trip) and then
 // re-uses the existing Livewire event bus so the cart badge/toast keep

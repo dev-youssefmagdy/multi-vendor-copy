@@ -3,8 +3,31 @@
     "file": "assets/bootstrap-C-TG-P-E.js",
     "name": "bootstrap"
   },
+  "_phone-input-DynWKaYt.css": {
+    "file": "assets/phone-input-DynWKaYt.css",
+    "src": "_phone-input-DynWKaYt.css"
+  },
+  "_phone-input-Y1tOmwE6.js": {
+    "file": "assets/phone-input-Y1tOmwE6.js",
+    "name": "phone-input",
+    "css": [
+      "assets/phone-input-DynWKaYt.css"
+    ],
+    "assets": [
+      "assets/flags-DjVgN9ag.webp",
+      "assets/flags@2x-QBzdwbZ8.webp"
+    ]
+  },
+  "node_modules/intl-tel-input/dist/img/flags.webp": {
+    "file": "assets/flags-DjVgN9ag.webp",
+    "src": "node_modules/intl-tel-input/dist/img/flags.webp"
+  },
+  "node_modules/intl-tel-input/dist/img/flags@2x.webp": {
+    "file": "assets/flags@2x-QBzdwbZ8.webp",
+    "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-CDBvWeww.css",
+    "file": "assets/app-I6OWJW7N.css",
     "name": "app",
     "names": [
       "app.css"
@@ -13,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-N2K86OOk.css",
+    "file": "assets/ecommet-DFXdjcx2.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -22,7 +45,7 @@
     "isEntry": true
   },
   "resources/css/elora.css": {
-    "file": "assets/elora-Dy5DOk4y.css",
+    "file": "assets/elora-BtmeTYSy.css",
     "name": "elora",
     "names": [
       "elora.css"
@@ -49,7 +72,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-BIn7un7H.css",
+    "file": "assets/souqify-BcqgksJz.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -67,12 +90,13 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DXVvt02M.js",
+    "file": "assets/app-ouYFvUi6.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-C-TG-P-E.js"
+      "_bootstrap-C-TG-P-E.js",
+      "_phone-input-Y1tOmwE6.js"
     ]
   },
   "resources/js/ecommet.js": {
@@ -136,18 +160,22 @@
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-YZYSdxPW.js",
+    "file": "assets/storefront-cart-cGEsZnfo.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_phone-input-Y1tOmwE6.js"
+    ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-R94SpAo0.js",
+    "file": "assets/website-BDAyXmA1.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-C-TG-P-E.js"
+      "_bootstrap-C-TG-P-E.js",
+      "_phone-input-Y1tOmwE6.js"
     ]
   }
 }

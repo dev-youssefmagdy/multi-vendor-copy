@@ -301,7 +301,7 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                                 </div>
                                 <div>
                                     <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Phone') }}</label>
-                                    <input wire:model="addrPhone" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('Phone') }}" />
+                                    <input wire:model="addrPhone" type="tel" data-phone-input class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('Phone') }}" />
                                 </div>
                                 <div>
                                     <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Address') }} <span class="text-red-500">*</span></label>

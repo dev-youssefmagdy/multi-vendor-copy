@@ -1,6 +1,7 @@
 import Chart from "chart.js/auto";
 import Swal from "sweetalert2";
 import Sortable from "sortablejs";
+import { initPhoneInputs } from "./phone-input";
 import "./bootstrap";
 
 window.Sortable = Sortable;
@@ -617,6 +618,7 @@ function initEnhancedFields(root = document) {
     initEnhancedSelects(root);
     initDropzones(root);
     initDimensionChecks(root);
+    initPhoneInputs(root);
 }
 
 function bindLivewireFieldHooks() {

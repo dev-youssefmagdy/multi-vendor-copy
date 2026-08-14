@@ -124,7 +124,7 @@
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                                 {{ __('Phone') }} <span class="font-normal text-gray-400">({{ __('optional') }})</span>
                             </label>
-                            <input wire:model="phone" type="tel" placeholder="+1 555 000 0000"
+                            <input wire:model="phone" type="tel" data-phone-input placeholder="+1 555 000 0000"
                                 pattern="\+?[0-9]+" inputmode="tel"
                                 class="w-full px-4 py-3 rounded-xl border {{ $errors->has('phone') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20' }} text-sm outline-none transition-all">
                             @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror

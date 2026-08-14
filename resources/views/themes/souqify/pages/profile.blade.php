@@ -515,7 +515,7 @@
                                     </div>
                                     <div>
                                         <label class="text-xs font-semibold text-neutral-500 block mb-1">{{ __('Phone') }}</label>
-                                        <input wire:model="addrPhone" type="text" class="w-full border border-neutral-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" placeholder="{{ __('Phone') }}" />
+                                        <input wire:model="addrPhone" type="tel" data-phone-input class="w-full border border-neutral-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" placeholder="{{ __('Phone') }}" />
                                     </div>
                                     <div>
                                         <label class="text-xs font-semibold text-neutral-500 block mb-1">{{ __('Address') }} <span class="text-red-500">*</span></label>

@@ -269,7 +269,7 @@ $orders Collection<Order>
                                         </div>
                                         <div>
                                             <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Phone') }}</label>
-                                            <input wire:model="addrPhone" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('Phone') }}" />
+                                            <input wire:model="addrPhone" type="tel" data-phone-input class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('Phone') }}" />
                                         </div>
                                         <div>
                                             <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Address') }} <span class="text-red-500">*</span></label>

@@ -90,7 +90,7 @@
                     </div>
                     <div>
                         <label class="field-label">Store Phone</label>
-                        <x-input type="text" wire:model.defer="phone" :error="$errors->has('phone')" />
+                        <x-input type="tel" data-phone-input wire:model.defer="phone" :error="$errors->has('phone')" />
                         @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>

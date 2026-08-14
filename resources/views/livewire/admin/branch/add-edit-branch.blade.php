@@ -46,7 +46,7 @@
 
                     <div>
                         <label class="field-label">Phone</label>
-                        <x-input type="text" wire:model.defer="phone" placeholder="+20 10 0000 0000" />
+                        <x-input type="tel" data-phone-input wire:model.defer="phone" placeholder="+20 10 0000 0000" />
                         @error('phone') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 

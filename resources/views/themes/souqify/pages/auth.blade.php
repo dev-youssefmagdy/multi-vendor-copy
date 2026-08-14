@@ -102,7 +102,7 @@ $tab 'login' | 'register'
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Phone') }} <span
                                 class="text-neutral-400">({{ __('optional') }})</span></label>
-                        <input type="tel" wire:model.lazy="regPhone"
+                        <input type="tel" data-phone-input wire:model.lazy="regPhone"
                             class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm" />
                     </div>
                     <div class="grid grid-cols-2 gap-3">
