@@ -13,6 +13,7 @@ use App\Livewire\Admin\Cache\MainCachePage;
 use App\Livewire\Admin\Cache\TenantsCachePage;
 use App\Livewire\Admin\Category\AddEditCategory;
 use App\Livewire\Admin\Category\CategoriesList;
+use App\Livewire\Admin\Category\CategoryProducts;
 use App\Livewire\Admin\Domain\DnsRecordsList;
 use App\Livewire\Admin\Domain\DomainRequestsList;
 use App\Livewire\Admin\Faq\AddEditFaq;
@@ -207,6 +208,7 @@ Route::group([
         Route::get('/', CategoriesList::class)->middleware('admin.permission:catalog.categories.view,catalog.categories.manage')->name('index');
         Route::get('/create', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('create');
         Route::get('/{category}/edit', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('edit');
+        Route::get('/{category}/products', CategoryProducts::class)->middleware('admin.permission:catalog.categories.manage')->name('products');
     });
 
     Route::prefix('variations')->name('variations.')->group(function () {

@@ -17,6 +17,7 @@ use App\Livewire\Tenant\Analytics\ShippingAnalyticsPage;
 use App\Livewire\Tenant\Auth\LoginPage;
 use App\Livewire\Tenant\Category\AddEditCategory;
 use App\Livewire\Tenant\Category\CategoriesList;
+use App\Livewire\Tenant\Category\CategoryProducts;
 use App\Livewire\Tenant\Customer\CustomersList;
 use App\Livewire\Tenant\Customer\CustomerDetailPage;
 use App\Livewire\Tenant\Dashboard;
@@ -326,6 +327,7 @@ Route::middleware([
                 Route::get('/', CategoriesList::class)->name('index');
                 Route::get('/create', AddEditCategory::class)->name('create');
                 Route::get('/{category}/edit', AddEditCategory::class)->name('edit');
+                Route::get('/{category}/products', CategoryProducts::class)->name('products');
             });
 
             Route::prefix('badges')->name('tenant.badges.')->middleware('tenant.permission:catalog.badges.manage')->group(function () {

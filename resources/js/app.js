@@ -1,6 +1,9 @@
 import Chart from "chart.js/auto";
 import Swal from "sweetalert2";
+import Sortable from "sortablejs";
 import "./bootstrap";
+
+window.Sortable = Sortable;
 
 let sbCollapsed = false;
 let isDark = true;

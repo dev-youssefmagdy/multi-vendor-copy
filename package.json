@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "chart.js": "^4.5.1",
+        "sortablejs": "^1.15.6",
         "sweetalert2": "^11.23.0",
         "swiper": "^12.1.3"
     }
