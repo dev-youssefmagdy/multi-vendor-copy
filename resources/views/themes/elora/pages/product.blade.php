@@ -126,21 +126,13 @@
             </button>
         </div>
 
-        <!-- free shipping par -->
-        @if($shippingThreshold > 0)
-        <div id="elora-shipping-widget" class="hidden sm:block mb-4 p-3 bg-[#ff4d0016] rounded-2xl border border-[#ff4d00]">
-            <p id="elora-shipping-message" class="text-center text-[15px] text-[#FF4D00] font-medium mb-2">
-                @if ($remainingForFreeShipping <= 0)
-                    {{ __("You've reached free shipping!") }}
-                @else
-                    {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
-                @endif
-            </p>
-            <div class="h-2 bg-[#D9D9D9] rounded-full overflow-hidden">
-                <div id="elora-shipping-bar" class="h-full bg-[#FF4D00] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
-            </div>
+        <!-- free shipping bar -->
+        <div class="hidden sm:block mb-4">
+            <x-storefront.free-shipping-progress
+                theme="elora"
+                :threshold="$shippingThreshold"
+                :weight="$shippingProgressWeight" />
         </div>
-        @endif
 
         {{-- Breadcrumb --}}
         <nav aria-label="{{ __('Breadcrumb') }}" class="hidden lg:flex text-[12px] text-[#787878] mb-6 items-center gap-1 flex-wrap">
@@ -442,21 +434,15 @@
                 </div>--}}
 
 
-                <!-- free shipping par -->
-                @if($shippingThreshold > 0)
-                <div id="elora-shipping-widget-mobile" class="sm:hidden p-3 bg-[#ff4d0016] -mx-6">
-                    <p id="elora-shipping-message-mobile" class="text-center text-sm text-[#FF4D00] font-medium mb-2">
-                        @if ($remainingForFreeShipping <= 0)
-                            {{ __("You've reached free shipping!") }}
-                        @else
-                            {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
-                        @endif
-                    </p>
-                    <div class="h-2 bg-[#D9D9D9] rounded-full overflow-hidden mx-6">
-                        <div id="elora-shipping-bar-mobile" class="h-full bg-[#FF4D00] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
-                    </div>
+                <!-- free shipping bar -->
+                <div class="sm:hidden -mx-6">
+                    <x-storefront.free-shipping-progress
+                        theme="elora"
+                        :threshold="$shippingThreshold"
+                        :weight="$shippingProgressWeight"
+                        id-suffix="-mobile"
+                        :bare="true" />
                 </div>
-                @endif
 
 
                 {{-- Variant selector --}}

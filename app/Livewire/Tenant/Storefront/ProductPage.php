@@ -307,7 +307,7 @@ class ProductPage extends Component
         // country's free-shipping threshold.
         $shippingThreshold = $this->detectFreeShippingThreshold();
         $cartWeight = $this->cartWeightGrams($repo->cartItems());
-        $shippingProgressWeight = $cartWeight;
+        $shippingProgressWeight = $cartWeight + ($weightGrams * max(1, $this->qty));
         $shippingPct = $shippingThreshold > 0
             ? min(100, (int) round($shippingProgressWeight / $shippingThreshold * 100))
             : 0;
