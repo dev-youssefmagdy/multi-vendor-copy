@@ -2,11 +2,15 @@
 
 namespace App\Helpers;
 
+use App\Enums\TenantStatus;
 use App\Models\Tenant\AdminUser;
+use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\PaymentGateway;
+use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Theme;
+use App\Models\TenantCountry;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -268,11 +272,183 @@ class TenantNavigation
     /** Compliance step: owner details, business registration, and bank info set. */
     public static function complianceComplete(): bool
     {
-        $tenant = tenant();
+        return self::complianceCompletionPercent(tenant()) === 100;
+    }
 
-        return filled(data_get($tenant, 'data.compliance_owner_name'))
-            && filled(data_get($tenant, 'data.compliance_registration_number'))
-            && filled(data_get($tenant, 'data.compliance_bank_account_number'));
+    /**
+     * Weighted percentage across the Compliance Center's required fields, used both
+     * for the Account Setup Progress "compliance info" step and the admin overview.
+     */
+    public static function complianceCompletionPercent(mixed $tenant): int
+    {
+        $fields = [
+            'compliance_business_name',
+            'compliance_store_name',
+            'compliance_country',
+            'compliance_city',
+            'compliance_phone',
+            'compliance_email',
+            'compliance_owner_name',
+            'compliance_owner_id_number',
+            'compliance_registration_number',
+            'compliance_bank_name',
+            'compliance_bank_holder_name',
+            'compliance_bank_account_number',
+            'compliance_bank_iban',
+            'compliance_doc_national_id_path',
+        ];
+
+        $filledCount = 0;
+        foreach ($fields as $field) {
+            if (filled(data_get($tenant, "data.{$field}"))) {
+                $filledCount++;
+            }
+        }
+
+        return (int) round(($filledCount / count($fields)) * 100);
+    }
+
+    /**
+     * The 10-step "Account Setup Progress" checklist (Prompt 33), each step
+     * worth an equal 10% share of the persistent progress widget.
+     */
+    public static function setupProgress(): array
+    {
+        $steps = [
+            [
+                'key' => 'email_verified',
+                'label' => 'Email verified',
+                'done' => self::emailVerified(),
+                'action_label' => 'Resend verification email',
+                'action_route' => 'tenant.dashboard',
+            ],
+            [
+                'key' => 'store_name_logo',
+                'label' => 'Store name and logo set',
+                'done' => self::profileComplete(),
+                'action_label' => 'Go to Account Settings',
+                'action_route' => 'tenant.settings.account',
+            ],
+            [
+                'key' => 'category_selected',
+                'label' => 'At least one category selected',
+                'done' => self::categorySelected(),
+                'action_label' => 'Manage Categories',
+                'action_route' => 'tenant.categories.index',
+            ],
+            [
+                'key' => 'product_synced',
+                'label' => 'At least one product synced',
+                'done' => self::productSynced(),
+                'action_label' => 'Manage Products',
+                'action_route' => 'tenant.products.index',
+            ],
+            [
+                'key' => 'theme_selected',
+                'label' => 'Theme selected',
+                'done' => self::themeSelected(),
+                'action_label' => 'Browse Themes',
+                'action_route' => 'tenant.store.themes',
+            ],
+            [
+                'key' => 'payment_gateway',
+                'label' => 'Payment gateway configured',
+                'done' => self::paymentGatewayIsConfigured(),
+                'action_label' => 'Configure Payments',
+                'action_route' => 'tenant.settings.payment-gateways',
+            ],
+            [
+                'key' => 'target_countries',
+                'label' => 'Target countries set',
+                'done' => self::targetCountriesSet(),
+                'action_label' => 'Manage Countries',
+                'action_route' => 'tenant.settings.currencies',
+            ],
+            [
+                'key' => 'compliance_info',
+                'label' => 'Compliance info completed',
+                'done' => self::complianceComplete(),
+                'action_label' => 'Go to Compliance Center',
+                'action_route' => 'tenant.settings.compliance',
+            ],
+            [
+                'key' => 'default_pages_reviewed',
+                'label' => 'Default pages reviewed/edited',
+                'done' => self::defaultPagesReviewed(),
+                'action_label' => 'Review Pages',
+                'action_route' => 'tenant.store.pages',
+            ],
+            [
+                'key' => 'storefront_launched',
+                'label' => 'Storefront launched',
+                'done' => self::storefrontLaunched(),
+                'action_label' => 'Go to Dashboard',
+                'action_route' => 'tenant.dashboard',
+            ],
+        ];
+
+        $done = collect($steps)->filter(fn(array $step) => $step['done'])->count();
+        $total = count($steps);
+
+        foreach ($steps as &$step) {
+            $step['action_url'] = Route::has($step['action_route']) ? route($step['action_route']) : '#';
+        }
+        unset($step);
+
+        return [
+            'steps' => $steps,
+            'done' => $done,
+            'total' => $total,
+            'percent' => (int) round(($done / $total) * 100),
+        ];
+    }
+
+    public static function emailVerified(): bool
+    {
+        $admin = auth('tenant')->user();
+
+        return $admin instanceof AdminUser && $admin->hasVerifiedEmail();
+    }
+
+    public static function categorySelected(): bool
+    {
+        return Category::query()->exists();
+    }
+
+    public static function productSynced(): bool
+    {
+        return Product::query()->exists();
+    }
+
+    public static function themeSelected(): bool
+    {
+        return Theme::query()->where('is_active', true)->exists();
+    }
+
+    public static function paymentGatewayIsConfigured(): bool
+    {
+        return PaymentGateway::query()->where('is_active', true)->whereNotNull('connection_status')->exists();
+    }
+
+    public static function targetCountriesSet(): bool
+    {
+        $tenantId = tenant('id');
+
+        if (!$tenantId) {
+            return false;
+        }
+
+        return TenantCountry::query()->where('tenant_id', $tenantId)->where('is_active', true)->exists();
+    }
+
+    public static function defaultPagesReviewed(): bool
+    {
+        return filled(Setting::query()->where('name', 'default_pages_reviewed_at')->value('value'));
+    }
+
+    public static function storefrontLaunched(): bool
+    {
+        return tenant()?->status === TenantStatus::Active;
     }
 
     /** A logo counts as configured once a text wordmark is chosen or any image is uploaded. */

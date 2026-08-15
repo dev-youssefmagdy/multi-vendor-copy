@@ -83,6 +83,10 @@
         @endforeach
     </div>
 
+    @auth('tenant')
+        @livewire('tenant.widgets.account-setup-progress')
+    @endauth
+
     <div class="sb-user">
         <div class="su-inner">
             <div class="user-avatar-wrap">

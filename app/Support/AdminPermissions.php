@@ -50,6 +50,9 @@ class AdminPermissions
             'plans.pending-registrations.view' => 'View pending registrations',
             'plans.pending-registrations.manage' => 'Manage pending registrations',
 
+            'compliance.tenants.view' => 'View tenant compliance',
+            'compliance.tenants.manage' => 'Manage tenant compliance verification',
+
             'content.blog-categories.view' => 'View blog categories',
             'content.blog-categories.manage' => 'Manage blog categories',
             'content.blog-posts.view' => 'View blog posts',
@@ -161,6 +164,7 @@ class AdminPermissions
 
             'plans.packages.manage' => ['plans.packages.manage'],
             'plans.tenants.manage' => ['plans.tenants.manage'],
+            'compliance.tenants.manage' => ['compliance.tenants.view', 'compliance.tenants.manage'],
 
             'content.blog.manage' => ['content.blog-categories.manage', 'content.blog-posts.manage'],
             'content.pages.manage' => ['content.pages.manage'],

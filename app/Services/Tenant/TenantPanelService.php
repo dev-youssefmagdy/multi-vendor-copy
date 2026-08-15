@@ -303,6 +303,7 @@ class TenantPanelService
             ]);
             $page->save();
             $page->syncTranslations($attributes['translations'] ?? []);
+            $this->markDefaultPagesReviewed();
 
             return $page->fresh('translations.language');
         });
@@ -532,6 +533,11 @@ class TenantPanelService
         }
     }
 
+    /**
+     * Persist the full Compliance Center form. `$attributes` keys are the plain
+     * field names (see ComplianceCenterPage); this maps them to `compliance_*`
+     * keys inside the tenant's `data` JSON column, keeping anything not passed.
+     */
     public function updateCompliance(array $attributes): void
     {
         $tenant = tenant();
@@ -542,17 +548,65 @@ class TenantPanelService
 
         $data = $tenant->data ?? [];
 
-        $tenant->fill([
-            'data' => array_merge($data, [
-                'compliance_owner_name' => $attributes['owner_name'] ?? ($data['compliance_owner_name'] ?? null),
-                'compliance_owner_id_number' => $attributes['owner_id_number'] ?? ($data['compliance_owner_id_number'] ?? null),
-                'compliance_registration_number' => $attributes['registration_number'] ?? ($data['compliance_registration_number'] ?? null),
-                'compliance_bank_name' => $attributes['bank_name'] ?? ($data['compliance_bank_name'] ?? null),
-                'compliance_bank_account_number' => $attributes['bank_account_number'] ?? ($data['compliance_bank_account_number'] ?? null),
-                'compliance_bank_iban' => $attributes['bank_iban'] ?? ($data['compliance_bank_iban'] ?? null),
-            ]),
-        ]);
+        $fieldMap = [
+            // Business Info
+            'business_name' => 'compliance_business_name',
+            'store_name' => 'compliance_store_name',
+            'country' => 'compliance_country',
+            'city' => 'compliance_city',
+            'phone' => 'compliance_phone',
+            'email' => 'compliance_email',
+            // Owner Info
+            'owner_name' => 'compliance_owner_name',
+            'owner_id_number' => 'compliance_owner_id_number',
+            'owner_dob' => 'compliance_owner_dob',
+            'owner_contact' => 'compliance_owner_contact',
+            // Company Info
+            'company_name' => 'compliance_company_name',
+            'registration_number' => 'compliance_registration_number',
+            'registration_expiry' => 'compliance_registration_expiry',
+            'vat_number' => 'compliance_vat_number',
+            'registration_document_path' => 'compliance_registration_document_path',
+            // Bank Account
+            'bank_name' => 'compliance_bank_name',
+            'bank_holder_name' => 'compliance_bank_holder_name',
+            'bank_iban' => 'compliance_bank_iban',
+            'bank_account_number' => 'compliance_bank_account_number',
+            'bank_currency' => 'compliance_bank_currency',
+            // Verification Documents
+            'doc_national_id_path' => 'compliance_doc_national_id_path',
+            'doc_commercial_registration_path' => 'compliance_doc_commercial_registration_path',
+            'doc_tax_certificate_path' => 'compliance_doc_tax_certificate_path',
+            'doc_additional_paths' => 'compliance_doc_additional_paths',
+        ];
+
+        $updates = [];
+        foreach ($fieldMap as $attributeKey => $dataKey) {
+            if (array_key_exists($attributeKey, $attributes)) {
+                $updates[$dataKey] = $attributes[$attributeKey];
+            }
+        }
+
+        $tenant->fill(['data' => array_merge($data, $updates)]);
         $tenant->save();
+    }
+
+    /**
+     * Store a Compliance Center document upload under a per-tenant folder and
+     * return its public tenant_asset() URL.
+     */
+    public function storeComplianceDocument(\Illuminate\Http\UploadedFile $file): string
+    {
+        return tenant_asset($file->store('compliance-documents', 'public'));
+    }
+
+    /** Marks the setup-progress "default pages reviewed" step, called whenever a tenant saves a storefront page. */
+    public function markDefaultPagesReviewed(): void
+    {
+        Setting::query()->updateOrCreate(
+            ['name' => 'default_pages_reviewed_at'],
+            ['value' => (string) now(), 'group' => 'general']
+        );
     }
 
     public function deleteModel(Model $model): void

@@ -106,6 +106,13 @@ class AdminNavigation
                         ],
                     ],
                     [
+                        'type' => 'link',
+                        'label' => 'Compliance',
+                        'route' => 'admin.compliance.index',
+                        'icon' => 'admins',
+                        'permission' => 'compliance.tenants.view',
+                    ],
+                    [
                         'type' => 'group',
                         'label' => 'Wallet Management',
                         'icon' => 'wallet',

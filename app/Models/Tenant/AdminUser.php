@@ -22,6 +22,7 @@ class AdminUser extends Authenticatable
         'last_login_at',
         'tour_seen_at',
         'setup_dismissed_at',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -36,12 +37,23 @@ class AdminUser extends Authenticatable
             'last_login_at' => 'datetime',
             'tour_seen_at' => 'datetime',
             'setup_dismissed_at' => 'datetime',
+            'email_verified_at' => 'datetime',
         ];
     }
 
     public function role(): BelongsTo
     {
         return $this->belongsTo(AdminRole::class, 'role_id');
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill(['email_verified_at' => now()])->save();
     }
 
     public function hasPermission(string $permission): bool

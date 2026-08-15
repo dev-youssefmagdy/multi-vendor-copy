@@ -29,6 +29,10 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'activated_at',
         'profit_percentage',
         'data',
+        'compliance_status',
+        'compliance_admin_note',
+        'compliance_reviewed_by',
+        'compliance_reviewed_at',
     ];
 
     protected $casts = [
@@ -36,6 +40,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'trial_ends_at' => 'datetime',
         'activated_at' => 'datetime',
         'compliance_accepted_at' => 'datetime',
+        'compliance_reviewed_at' => 'datetime',
         'profit_percentage' => 'decimal:2',
         'category_ids' => 'array',
         'data' => 'array',

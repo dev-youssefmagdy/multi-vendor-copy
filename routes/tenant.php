@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Tenant\CartController;
+use App\Http\Controllers\Tenant\EmailVerificationController;
 use App\Http\Controllers\Tenant\StorefrontInvoiceController;
 use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
 use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
@@ -328,7 +329,17 @@ Route::middleware([
         Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'accept'])
             ->name('tenant.impersonate.accept');
 
+        // Email verification — the signed link itself doesn't require a session
+        // (it may be opened from a different browser than the one logged in).
+        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+            ->middleware(['signed', 'throttle:6,1'])
+            ->name('tenant.verification.verify');
+
         Route::middleware('auth:tenant')->group(function () {
+
+            Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+                ->middleware('throttle:6,1')
+                ->name('tenant.verification.send');
 
             Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
                 ->name('tenant.dashboard');

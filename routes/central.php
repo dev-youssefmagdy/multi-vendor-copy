@@ -79,6 +79,8 @@ use App\Livewire\Admin\Manufacturing\ManufacturingRequestsList;
 use App\Livewire\Admin\Manufacturing\ManufacturingRequestDetail;
 use App\Livewire\Admin\Variation\AddEditVariation;
 use App\Livewire\Admin\Variation\VariationsList;
+use App\Livewire\Admin\Compliance\ComplianceOverviewList;
+use App\Livewire\Admin\Compliance\ComplianceDetailPage;
 use App\Livewire\Admin\Wallet\InvoicesList;
 use App\Livewire\Admin\Wallet\InvoiceDetailPage;
 use App\Livewire\Admin\Wallet\WalletDetailPage;
@@ -317,6 +319,11 @@ Route::group([
     Route::prefix('wallets')->name('wallets.')->group(function () {
         Route::get('/', WalletsList::class)->middleware('admin.permission:billing.wallets.view')->name('index');
         Route::get('/{tenantId}', WalletDetailPage::class)->middleware('admin.permission:billing.wallets.view')->name('show');
+    });
+
+    Route::prefix('compliance')->name('compliance.')->group(function () {
+        Route::get('/', ComplianceOverviewList::class)->middleware('admin.permission:compliance.tenants.view')->name('index');
+        Route::get('/{tenant}', ComplianceDetailPage::class)->middleware('admin.permission:compliance.tenants.view')->name('show');
     });
 
     Route::prefix('wallet-transactions')->name('wallet-transactions.')->group(function () {

@@ -5,26 +5,79 @@
             <div class="page-title-row">
                 <h1 class="D page-title">Compliance Center</h1>
                 <span class="page-badge">Compliance</span>
+                <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ $completionPercent }}% Complete</span>
             </div>
-            <p class="page-copy">Owner details, business registration, and bank information required to keep your store in good standing.</p>
+            <p class="page-copy">Business, owner, company, banking, and verification details required to keep your store in good standing.</p>
         </div>
         <div class="page-actions">
             <x-btn type="submit" form="compliance-center-form">Save Changes</x-btn>
         </div>
     </div>
 
-    <form id="compliance-center-form" wire:submit="save">
+    <form id="compliance-center-form" wire:submit="save" enctype="multipart/form-data">
 
+        {{-- ── Business Info ──────────────────────────────────────────────── --}}
         <section class="card form-card fu d1 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
                     <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m8-16h.01M11 9h.01M11 13h.01M11 17h.01M15 9h.01M15 13h.01M15 17h.01"/>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Owner Details</h3>
+                    <h3 class="panel-title">Business Info</h3>
+                    <p class="panel-copy">Where your business legally operates from.</p>
+                </div>
+            </div>
+            <div class="form-grid form-grid-2">
+                <div>
+                    <label class="field-label">Business Name</label>
+                    <x-input type="text" wire:model.defer="businessName" :error="$errors->has('businessName')" />
+                    @error('businessName')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Store Name</label>
+                    <x-input type="text" wire:model.defer="storeName" :error="$errors->has('storeName')" />
+                    @error('storeName')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Country</label>
+                    <select class="input" wire:model.defer="countryId">
+                        <option value="">Select country</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('countryId')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">City</label>
+                    <x-input type="text" wire:model.defer="city" :error="$errors->has('city')" />
+                    @error('city')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Phone</label>
+                    <x-input type="text" wire:model.defer="phone" :error="$errors->has('phone')" />
+                    @error('phone')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Email</label>
+                    <x-input type="email" wire:model.defer="email" :error="$errors->has('email')" />
+                    @error('email')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </section>
+
+        {{-- ── Owner Info ──────────────────────────────────────────────────── --}}
+        <section class="card form-card fu d2 section-gap">
+            <div class="acct-section-head">
+                <div class="acct-section-icon-wrap">
+                    <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="panel-title">Owner Info</h3>
                     <p class="panel-copy">The legal owner or representative of this store.</p>
                 </div>
             </div>
@@ -35,45 +88,81 @@
                     @error('ownerName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Owner ID / National Number</label>
+                    <label class="field-label">Owner ID / Passport Number</label>
                     <x-input type="text" wire:model.defer="ownerIdNumber" :error="$errors->has('ownerIdNumber')" />
                     @error('ownerIdNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
+                <div>
+                    <label class="field-label">Date of Birth (optional)</label>
+                    <x-input type="date" wire:model.defer="ownerDob" :error="$errors->has('ownerDob')" />
+                    @error('ownerDob')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Owner Contact Details</label>
+                    <x-input type="text" wire:model.defer="ownerContact" placeholder="Phone or alternate email" :error="$errors->has('ownerContact')" />
+                    @error('ownerContact')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
             </div>
         </section>
 
-        <section class="card form-card fu d2 section-gap">
+        {{-- ── Company Info ────────────────────────────────────────────────── --}}
+        <section class="card form-card fu d3 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
                     <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Business Registration</h3>
-                    <p class="panel-copy">Your registered business or commercial registration number.</p>
+                    <h3 class="panel-title">Company Info (if applicable)</h3>
+                    <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
-                <div class="acct-span-full">
-                    <label class="field-label">Business Registration Number</label>
+                <div>
+                    <label class="field-label">Company Name</label>
+                    <x-input type="text" wire:model.defer="companyName" :error="$errors->has('companyName')" />
+                    @error('companyName')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Commercial Registration Number</label>
                     <x-input type="text" wire:model.defer="registrationNumber" :error="$errors->has('registrationNumber')" />
                     @error('registrationNumber')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Registration Expiry Date</label>
+                    <x-input type="date" wire:model.defer="registrationExpiry" :error="$errors->has('registrationExpiry')" />
+                    @error('registrationExpiry')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">VAT / Tax Registration Number</label>
+                    <x-input type="text" wire:model.defer="vatNumber" :error="$errors->has('vatNumber')" />
+                    @error('vatNumber')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="acct-span-full">
+                    <label class="field-label">Commercial Registration Document</label>
+                    @if ($registrationDocumentPath)
+                        <div class="flex items-center gap-2" style="margin-bottom:8px;">
+                            <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">View uploaded document</a>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('registration')">Remove</button>
+                        </div>
+                    @endif
+                    <input type="file" wire:model="registrationDocumentUpload" class="input" />
+                    @error('registrationDocumentUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
         </section>
 
-        <section class="card form-card fu d3">
+        {{-- ── Bank Account ────────────────────────────────────────────────── --}}
+        <section class="card form-card fu d4 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
                     <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M3 10h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Bank Information</h3>
+                    <h3 class="panel-title">Bank Account</h3>
                     <p class="panel-copy">Used to process payouts for your store's earnings.</p>
                 </div>
             </div>
@@ -84,15 +173,117 @@
                     @error('bankName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Bank Account Number</label>
-                    <x-input type="text" wire:model.defer="bankAccountNumber" :error="$errors->has('bankAccountNumber')" />
-                    @error('bankAccountNumber')<div class="field-error">{{ $message }}</div>@enderror
+                    <label class="field-label">Account Holder Name</label>
+                    <x-input type="text" wire:model.defer="bankHolderName" :error="$errors->has('bankHolderName')" />
+                    @error('bankHolderName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
-                <div class="acct-span-full">
-                    <label class="field-label">IBAN (optional)</label>
+                <div>
+                    <label class="field-label">IBAN</label>
                     <x-input type="text" wire:model.defer="bankIban" :error="$errors->has('bankIban')" />
                     @error('bankIban')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
+                <div>
+                    <label class="field-label">Account Number</label>
+                    <x-input type="text" wire:model.defer="bankAccountNumber" :error="$errors->has('bankAccountNumber')" />
+                    @error('bankAccountNumber')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Currency</label>
+                    <x-input type="text" wire:model.defer="bankCurrency" placeholder="e.g. USD" :error="$errors->has('bankCurrency')" />
+                    @error('bankCurrency')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </section>
+
+        {{-- ── Verification Documents ──────────────────────────────────────── --}}
+        <section class="card form-card fu d5 section-gap">
+            <div class="acct-section-head">
+                <div class="acct-section-icon-wrap">
+                    <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="panel-title">Verification Documents</h3>
+                    <p class="panel-copy">Upload the documents our compliance team needs to verify your store.</p>
+                </div>
+            </div>
+            <div class="form-grid form-grid-2">
+                <div>
+                    <label class="field-label">National ID</label>
+                    @if ($docNationalIdPath)
+                        <div class="flex items-center gap-2" style="margin-bottom:8px;">
+                            <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('national_id')">Remove</button>
+                        </div>
+                    @endif
+                    <input type="file" wire:model="docNationalIdUpload" class="input" />
+                    @error('docNationalIdUpload')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Commercial Registration</label>
+                    @if ($docCommercialRegistrationPath)
+                        <div class="flex items-center gap-2" style="margin-bottom:8px;">
+                            <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('commercial_registration')">Remove</button>
+                        </div>
+                    @endif
+                    <input type="file" wire:model="docCommercialRegistrationUpload" class="input" />
+                    @error('docCommercialRegistrationUpload')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Tax Certificate</label>
+                    @if ($docTaxCertificatePath)
+                        <div class="flex items-center gap-2" style="margin-bottom:8px;">
+                            <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('tax_certificate')">Remove</button>
+                        </div>
+                    @endif
+                    <input type="file" wire:model="docTaxCertificateUpload" class="input" />
+                    @error('docTaxCertificateUpload')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="acct-span-full">
+                    <label class="field-label">Additional Documents</label>
+                    @if (!empty($docAdditionalPaths))
+                        <div class="flex flex-wrap gap-2" style="margin-bottom:8px;">
+                            @foreach ($docAdditionalPaths as $i => $path)
+                                <span class="flex items-center gap-2">
+                                    <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">Document {{ $i + 1 }}</a>
+                                    <button type="button" class="btn btn-secondary btn-sm" wire:click="removeAdditionalDocument({{ $i }})">Remove</button>
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
+                    <input type="file" wire:model="docAdditionalUploads" multiple class="input" />
+                    @error('docAdditionalUploads.*')<div class="field-error">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </section>
+
+        {{-- ── Store Policies ──────────────────────────────────────────────── --}}
+        <section class="card form-card fu d6">
+            <div class="acct-section-head">
+                <div class="acct-section-icon-wrap">
+                    <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s4.332.477 5.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="panel-title">Store Policies</h3>
+                    <p class="panel-copy">Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.</p>
+                </div>
+            </div>
+            <div class="form-grid form-grid-2">
+                @foreach ($policyPages as $entry)
+                    <div class="flex items-center justify-between" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;">
+                        <span class="field-label" style="margin:0;">{{ $entry['label'] }}</span>
+                        @if ($entry['page'])
+                            <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">Edit page</a>
+                        @else
+                            <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">Create page</a>
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </section>
 
