@@ -353,12 +353,13 @@
 
                 @if($product->translationValue('description'))
                 <div>
-                    <div id="sq-desc-text"
-                        class="text-base text-neutral-700 leading-7 line-clamp-3 overflow-hidden transition-all duration-300">
-                        {!! $product->translationValue('description') !!}
+                    <div id="sq-desc-wrap" class="sq-desc-readmore" data-lines="3">
+                        <div id="sq-desc-text" class="text-base text-neutral-700 leading-7">
+                            {!! $product->translationValue('description') !!}
+                        </div>
+                        <span class="sq-desc-fade" aria-hidden="true"></span>
                     </div>
-                    <button id="sq-desc-toggle"
-                        onclick="(function(){var el=document.getElementById('sq-desc-text'),btn=document.getElementById('sq-desc-toggle'),icon=document.getElementById('sq-desc-icon');var expanded=el.classList.toggle('line-clamp-none');el.classList.toggle('line-clamp-3',!expanded);btn.querySelector('span').textContent=expanded?'{{ __('See less') }}':'{{ __('See more') }}';icon.style.transform=expanded?'rotate(180deg)':'rotate(0deg)';})()"
+                    <button id="sq-desc-toggle" type="button"
                         class="mt-1 flex items-center gap-1 text-[#0159ED] text-sm font-medium hover:underline focus:outline-none">
                         <span>{{ __('See more') }}</span>
                         <svg id="sq-desc-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
@@ -367,6 +368,76 @@
                         </svg>
                     </button>
                 </div>
+                <style>
+                    .sq-desc-readmore {
+                        position: relative;
+                        overflow: hidden;
+                        transition: max-height 0.35s ease;
+                    }
+
+                    .sq-desc-fade {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        height: 48px;
+                        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+                        pointer-events: none;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    }
+
+                    .sq-desc-readmore.is-collapsed .sq-desc-fade {
+                        opacity: 1;
+                    }
+                </style>
+                <script>
+                    (function () {
+                        function initSqDescReadMore() {
+                            var wrap = document.getElementById('sq-desc-wrap');
+                            var content = document.getElementById('sq-desc-text');
+                            var btn = document.getElementById('sq-desc-toggle');
+                            var icon = document.getElementById('sq-desc-icon');
+                            if (!wrap || !content || !btn || wrap.dataset.readmoreInit) return;
+                            wrap.dataset.readmoreInit = '1';
+
+                            var lines = parseInt(wrap.getAttribute('data-lines') || '3', 10);
+                            var lineHeight = parseFloat(getComputedStyle(content).lineHeight);
+                            if (!lineHeight || isNaN(lineHeight)) lineHeight = 24;
+                            var collapsedHeight = Math.ceil(lineHeight * lines);
+                            var fullHeight = wrap.scrollHeight;
+
+                            if (fullHeight <= collapsedHeight + 8) {
+                                btn.style.display = 'none';
+                                return;
+                            }
+
+                            wrap.style.maxHeight = collapsedHeight + 'px';
+                            wrap.classList.add('is-collapsed');
+
+                            btn.addEventListener('click', function () {
+                                var isCollapsed = wrap.classList.contains('is-collapsed');
+                                if (isCollapsed) {
+                                    wrap.style.maxHeight = fullHeight + 'px';
+                                    wrap.classList.remove('is-collapsed');
+                                    btn.querySelector('span').textContent = '{{ __('See less') }}';
+                                    icon.style.transform = 'rotate(180deg)';
+                                } else {
+                                    wrap.style.maxHeight = collapsedHeight + 'px';
+                                    wrap.classList.add('is-collapsed');
+                                    btn.querySelector('span').textContent = '{{ __('See more') }}';
+                                    icon.style.transform = 'rotate(0deg)';
+                                }
+                            });
+                        }
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', initSqDescReadMore);
+                        } else {
+                            initSqDescReadMore();
+                        }
+                        document.addEventListener('livewire:navigated', initSqDescReadMore);
+                    })();
+                </script>
                 @endif
 
                 <!--Free shipping / weight info banner -->

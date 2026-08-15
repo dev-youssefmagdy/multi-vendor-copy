@@ -112,9 +112,14 @@
                         @endif
                         @if ($product->translationValue('description') ?? null)
                         <section class="mt-4  max-w-4xl">
-                            <div class="text-[15px] text-gray-700 leading-relaxed space-y-4 prose max-w-none">
-                                {!! $product->translationValue('description') !!}
+                            <div class="desc-readmore" data-lines="4">
+                                <div class="text-[15px] text-gray-700 leading-relaxed space-y-4 prose max-w-none">
+                                    {!! $product->translationValue('description') !!}
+                                </div>
+                                <span class="desc-readmore-fade" aria-hidden="true"></span>
                             </div>
+                            <button type="button" class="desc-readmore-btn"
+                                data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                         </section>
                         @endif
                     </div>

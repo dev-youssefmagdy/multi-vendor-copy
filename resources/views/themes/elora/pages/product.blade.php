@@ -273,7 +273,12 @@
                             <span>{{ __('Category: :category', ['category' => $primaryCategory->translationValue('name') ?? $primaryCategory->slug]) }}</span>
                         @endif
                         @if ($product->translationValue('description') ?? null)
-                            <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                            <div class="desc-readmore" data-lines="4">
+                                <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                                <span class="desc-readmore-fade" aria-hidden="true"></span>
+                            </div>
+                            <button type="button" class="desc-readmore-btn"
+                                data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                         @endif
                     </div>
                 </div>
@@ -804,7 +809,12 @@
                     <span>{{ __('Category: :category', ['category' => $primaryCategory->translationValue('name') ?? $primaryCategory->slug]) }}</span>
                 @endif
                 @if ($product->translationValue('description') ?? null)
-                    <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                    <div class="desc-readmore" data-lines="4">
+                        <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                        <span class="desc-readmore-fade" aria-hidden="true"></span>
+                    </div>
+                    <button type="button" class="desc-readmore-btn"
+                        data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                 @endif
             </div>
         </div>

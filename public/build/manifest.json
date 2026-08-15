@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-mnI5iYeG.css",
+    "file": "assets/app-Bx7oZ8_m.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-CkdhVl2J.css",
+    "file": "assets/ecommet-dhOVvTfW.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -45,7 +45,7 @@
     "isEntry": true
   },
   "resources/css/elora.css": {
-    "file": "assets/elora-BtmeTYSy.css",
+    "file": "assets/elora-BRj0xYbh.css",
     "name": "elora",
     "names": [
       "elora.css"
@@ -72,7 +72,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-BAs3iGGi.css",
+    "file": "assets/souqify-D1ofZIEv.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -118,7 +118,7 @@
     "isEntry": true
   },
   "resources/js/ecommet/product.js": {
-    "file": "assets/product-B4iQTV_l.js",
+    "file": "assets/product-COb6PNRo.js",
     "name": "product",
     "src": "resources/js/ecommet/product.js",
     "isEntry": true
@@ -148,7 +148,7 @@
     "isEntry": true
   },
   "resources/js/elora/product.js": {
-    "file": "assets/product-DGQPEnwc.js",
+    "file": "assets/product-mu4YZGrg.js",
     "name": "product",
     "src": "resources/js/elora/product.js",
     "isEntry": true
