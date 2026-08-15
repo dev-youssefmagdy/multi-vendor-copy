@@ -6,6 +6,7 @@ use App\Enums\ReturnReason;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\ReturnRequestService;
+use App\Services\ReturnRequestValidationService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -26,10 +27,20 @@ class RequestReturnForm extends Component
     /** @var mixed */
     public $video = null;
 
+    /** @var string[] */
+    public array $validationErrors = [];
+
     public function mount(string $uuid): void
     {
         $this->uuid = $uuid;
         $this->orderItemId = (int) request()->query('item', 0);
+    }
+
+    public function updated(string $property): void
+    {
+        if (in_array($property, ['reason', 'description', 'photos', 'video'], true)) {
+            $this->runPreCheck();
+        }
     }
 
     public function submit(): void
@@ -64,6 +75,22 @@ class RequestReturnForm extends Component
             return;
         }
 
+        $this->validationErrors = app(ReturnRequestValidationService::class)->validate(
+            [
+                'reason' => $this->reason,
+                'description' => $this->description,
+                'photos' => $this->photos,
+                'video' => $this->video,
+            ],
+            tenant()->id,
+            $order->uuid,
+            $item->product_id,
+        );
+
+        if (!empty($this->validationErrors)) {
+            return;
+        }
+
         try {
             app(ReturnRequestService::class)->create(
                 [
@@ -85,6 +112,36 @@ class RequestReturnForm extends Component
 
         session()->flash('return_submitted', true);
         $this->redirectRoute('tenant.storefront.order-status', ['uuid' => $this->uuid]);
+    }
+
+    private function runPreCheck(): void
+    {
+        $customer = Auth::guard('storefront')->user();
+
+        if (!$customer) {
+            return;
+        }
+
+        $repo = app(StorefrontRepository::class);
+        $order = $repo->orderByUuid($this->uuid);
+
+        if (!$order || $order->customer_id !== $customer->id) {
+            return;
+        }
+
+        $item = $order->items->firstWhere('id', $this->orderItemId);
+
+        $this->validationErrors = app(ReturnRequestValidationService::class)->validate(
+            [
+                'reason' => $this->reason,
+                'description' => $this->description,
+                'photos' => $this->photos,
+                'video' => $this->video,
+            ],
+            tenant()->id,
+            $order->uuid,
+            $item?->product_id,
+        );
     }
 
     public function render()

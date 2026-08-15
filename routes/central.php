@@ -253,6 +253,7 @@ Route::group([
         Route::get('/', OrdersList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('index');
         Route::get('/report', OrdersReportPage::class)->middleware('admin.permission:sales.orders.report.view,sales.orders.manage')->name('report');
         Route::get('/returns', OrderReturnsList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.index');
+        Route::get('/returns/analytics', \App\Livewire\Admin\Order\ReturnAnalyticsPage::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.analytics');
         Route::get('/returns/{id}', OrderReturnDetailPage::class)->middleware('admin.permission:sales.orders.manage')->name('returns.show');
         Route::get('/{tenantId}/{orderNumber}', OrderDetailPage::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('show');
         Route::get('/{tenantId}/{orderNumber}/receipt', [OrderReceiptController::class, 'show'])->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('receipt');
@@ -403,6 +404,7 @@ Route::group([
         Route::get('/default-banners', DefaultBannersPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
         Route::get('/ai-logo-limit', AiLogoLimitPage::class)->middleware('admin.permission:settings.ai-logo-limits.manage')->name('ai-logo-limit');
         Route::get('/translation-key-access', TranslationKeyAccessPage::class)->middleware('admin.permission:settings.languages.manage')->name('translation-key-access');
+        Route::get('/return-policy', \App\Livewire\Admin\Setting\ReturnPolicySettingsPage::class)->middleware('admin.permission:settings.general.manage')->name('return-policy');
     });
 
     Route::prefix('admins')->name('admins.')->group(function () {

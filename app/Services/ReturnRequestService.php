@@ -17,14 +17,15 @@ use RuntimeException;
 
 class ReturnRequestService
 {
-    /** Return window, in days, from the order's "delivered" activity — hardcoded until policy settings ship. */
-    public const RETURN_WINDOW_DAYS = 14;
+    /** @deprecated kept only as a last-resort fallback; use ReturnPolicyService for the real, configurable window. */
+    public const RETURN_WINDOW_DAYS = ReturnPolicyService::DEFAULT_WINDOW_DAYS;
 
     public function __construct(
         private readonly OrderRepository $orderRepository,
         private readonly TenantNotificationService $tenantNotificationService,
         private readonly AdminNotificationService $adminNotificationService,
         private readonly TemplateMailService $mailService,
+        private readonly ReturnPolicyService $returnPolicyService,
     ) {
     }
 
@@ -41,8 +42,10 @@ class ReturnRequestService
             throw new RuntimeException('Order not found.');
         }
 
-        if (!$this->isWithinReturnWindow($data['tenant_id'], $data['order_number'])) {
-            throw new RuntimeException('This order is outside the ' . self::RETURN_WINDOW_DAYS . '-day return window.');
+        $windowDays = $this->getReturnWindowDays($data['tenant_id'], $data['product_id'] ?? null);
+
+        if (!$this->isWithinReturnWindow($data['tenant_id'], $data['order_number'], $windowDays)) {
+            throw new RuntimeException("This order is outside the {$windowDays}-day return window.");
         }
 
         if (empty($photoFiles)) {
@@ -166,7 +169,7 @@ class ReturnRequestService
      * Determine eligibility for a fresh return request: order delivered within the window,
      * and no existing non-closed return request already covers this product/variant.
      */
-    public function isWithinReturnWindow(string $tenantId, string $orderNumber): bool
+    public function isWithinReturnWindow(string $tenantId, string $orderNumber, ?int $windowDays = null): bool
     {
         $deliveredAt = $this->deliveredAt($tenantId, $orderNumber);
 
@@ -174,7 +177,19 @@ class ReturnRequestService
             return false;
         }
 
-        return $deliveredAt->copy()->addDays(self::RETURN_WINDOW_DAYS)->isFuture();
+        $windowDays ??= $this->getReturnWindowDays($tenantId);
+
+        return $deliveredAt->copy()->addDays($windowDays)->isFuture();
+    }
+
+    /**
+     * Resolve the configured return window, in days, for a given tenant/product: admin policy
+     * for central-catalog products, tenant policy for the tenant's own products, falling back to
+     * ReturnPolicyService::DEFAULT_WINDOW_DAYS if nothing is configured.
+     */
+    public function getReturnWindowDays(string $tenantId, ?int $productId = null): int
+    {
+        return $this->returnPolicyService->resolvePolicy($tenantId, $productId)['window_days'];
     }
 
     public function deliveredAt(string $tenantId, string $orderNumber): ?Carbon

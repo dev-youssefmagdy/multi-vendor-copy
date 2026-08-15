@@ -404,6 +404,10 @@ Route::middleware([
                 ->middleware('tenant.permission:sales.returns.manage')
                 ->name('tenant.returns.index');
 
+            Route::get('/returns/analytics', \App\Livewire\Tenant\Return\ReturnAnalyticsPage::class)
+                ->middleware('tenant.permission:sales.returns.manage')
+                ->name('tenant.returns.analytics');
+
             Route::get('/returns/{id}', TenantReturnDetailPage::class)
                 ->middleware('tenant.permission:sales.returns.manage')
                 ->name('tenant.returns.show');
@@ -563,6 +567,9 @@ Route::middleware([
                 Route::get('/compliance', ComplianceCenterPage::class)
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('compliance');
+                Route::get('/return-policy', \App\Livewire\Tenant\Setting\ReturnPolicyPage::class)
+                    ->middleware('tenant.permission:sales.returns.manage')
+                    ->name('return-policy');
             });
         });
     });

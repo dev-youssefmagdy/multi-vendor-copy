@@ -22,4 +22,13 @@ enum ReturnReason: string
             self::Other => 'Other',
         };
     }
+
+    /** Reasons where a video is required as evidence, by default policy. */
+    public function requiresVideo(): bool
+    {
+        return match ($this) {
+            self::Defective, self::WrongItem, self::NotAsDescribed => true,
+            default => false,
+        };
+    }
 }

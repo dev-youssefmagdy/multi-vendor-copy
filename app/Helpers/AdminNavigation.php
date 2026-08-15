@@ -47,6 +47,7 @@ class AdminNavigation
                             ['label' => 'Orders List', 'route' => 'admin.orders.index', 'permission' => 'sales.orders.view'],
                             ['label' => 'Orders Report', 'route' => 'admin.orders.report', 'permission' => 'sales.orders.report.view'],
                             ['label' => 'Return Requests', 'route' => 'admin.orders.returns.index', 'permission' => 'sales.orders.view'],
+                            ['label' => 'Return Analytics', 'route' => 'admin.orders.returns.analytics', 'permission' => 'sales.orders.view'],
                         ],
                     ],
                     [
@@ -196,6 +197,7 @@ class AdminNavigation
                             ['label' => 'Translation Files', 'route' => 'admin.settings.translations', 'permission' => 'settings.languages.view'],
                             ['label' => 'Countries', 'route' => 'admin.settings.countries', 'permission' => 'settings.countries.view'],
                             ['label' => 'Maintenance Mode', 'route' => 'admin.settings.maintenance', 'permission' => 'settings.maintenance.manage'],
+                            ['label' => 'Return Policy', 'route' => 'admin.settings.return-policy', 'permission' => 'settings.general.manage'],
                             ['label' => 'Default Banners', 'route' => 'admin.settings.default-banners', 'permission' => 'settings.default-banners.manage'],
                         ],
                     ],

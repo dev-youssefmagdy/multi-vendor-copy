@@ -44,6 +44,7 @@ class TenantNavigation
                     ],
                     ['type' => 'link', 'label' => 'Orders', 'route' => 'tenant.orders.index', 'icon' => 'orders', 'permission' => 'sales.orders.view'],
                     ['type' => 'link', 'label' => 'Returns', 'route' => 'tenant.returns.index', 'icon' => 'orders', 'permission' => 'sales.returns.manage'],
+                    ['type' => 'link', 'label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'icon' => 'dashboard', 'permission' => 'sales.returns.manage'],
                     ['type' => 'link', 'label' => 'Customers', 'route' => 'tenant.customers.index', 'icon' => 'admins', 'permission' => 'sales.customers.manage'],
                     ['type' => 'link', 'label' => 'Manufacturing Requests', 'route' => 'tenant.manufacturing.index', 'icon' => 'manufacturing', 'permission' => 'catalog.products.manage'],
                     ['type' => 'link', 'label' => 'Notifications', 'route' => 'tenant.notifications.index', 'icon' => 'notifications', 'permission' => 'dashboard.view'],
@@ -129,6 +130,7 @@ class TenantNavigation
                         'icon' => 'settings',
                         'children' => [
                             ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
                             ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
