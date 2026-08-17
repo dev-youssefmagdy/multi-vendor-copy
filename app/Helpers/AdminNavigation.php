@@ -36,6 +36,8 @@ class AdminNavigation
                             ['label' => 'Variations List', 'route' => 'admin.variations.index', 'permission' => 'catalog.variations.view'],
                             ['label' => 'New In Products', 'route' => 'admin.badges.new-in', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'admin.badges.best-selling', 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Featured Products', 'route' => 'admin.badges.featured', 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Recommended Products', 'route' => 'admin.badges.recommended', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Product Edit Requests', 'route' => 'admin.products.edit-requests', 'permission' => 'catalog.product-edit-requests.manage'],
                         ],
                     ],
@@ -307,6 +309,8 @@ class AdminNavigation
                     'labels' => [
                         'admin.badges.new-in' => 'New In Products',
                         'admin.badges.best-selling' => 'Best Selling Products',
+                        'admin.badges.featured' => 'Featured Products',
+                        'admin.badges.recommended' => 'Recommended Products',
                     ],
                     'default' => 'Product Badges',
                 ],

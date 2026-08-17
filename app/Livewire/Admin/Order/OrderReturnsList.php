@@ -27,6 +27,8 @@ class OrderReturnsList extends ListPage
             'filtersDescription' => 'Filter returns by status and search by order number or tenant.',
             'tableTitle'         => 'Return Requests',
             'headers'            => ['Order', 'Tenant', 'Status', 'Reason', 'Refund', 'Date', 'Actions'],
+            'secondaryActionLabel' => 'Return Analytics',
+            'secondaryActionUrl'   => route('admin.orders.returns.analytics'),
         ];
     }
 

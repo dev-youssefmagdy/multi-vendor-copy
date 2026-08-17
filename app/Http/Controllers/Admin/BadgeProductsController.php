@@ -18,6 +18,8 @@ class BadgeProductsController extends Controller
         $badgeTitle = match ($badge->text) {
             'new-in'       => 'New In Products',
             'best-selling' => 'Best Selling Products',
+            'featured'     => 'Featured Products',
+            'recommended'  => 'Recommended Products',
             default        => ucwords(str_replace('-', ' ', $badge->text)) . ' Products',
         };
 

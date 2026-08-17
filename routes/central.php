@@ -244,6 +244,8 @@ Route::group([
         Route::get('/{badge}', [BadgeProductsController::class, 'show'])->name('show');
         Route::get('/new-in', [BadgeProductsController::class, 'show'])->name('new-in');
         Route::get('/best-selling', [BadgeProductsController::class, 'show'])->name('best-selling');
+        Route::get('/featured', [BadgeProductsController::class, 'show'])->name('featured');
+        Route::get('/recommended', [BadgeProductsController::class, 'show'])->name('recommended');
         Route::get('/{badge}/search', [BadgeProductsController::class, 'searchProducts'])->name('search');
         Route::post('/{badge}/assign-category', [BadgeProductsController::class, 'assignCategory'])->name('assign-category');
         Route::post('/{badge}/save', [BadgeProductsController::class, 'save'])->name('save');

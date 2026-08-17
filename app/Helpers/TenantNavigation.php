@@ -40,6 +40,8 @@ class TenantNavigation
                             ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
                             ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Featured Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'featured'], 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Recommended Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'recommended'], 'permission' => 'catalog.badges.manage'],
                         ]
                     ],
                     ['type' => 'link', 'label' => 'Orders', 'route' => 'tenant.orders.index', 'icon' => 'orders', 'permission' => 'sales.orders.view'],

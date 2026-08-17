@@ -10,6 +10,11 @@ use Illuminate\Support\Carbon;
 
 class ReturnAnalyticsPage extends ContentPage
 {
+    protected function pageView(): string
+    {
+        return 'livewire.tenant.return.return-analytics';
+    }
+
     protected function pageMeta(): array
     {
         return [
