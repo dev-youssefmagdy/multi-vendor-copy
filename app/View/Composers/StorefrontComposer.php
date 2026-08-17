@@ -8,7 +8,6 @@ use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
 use App\Services\Tenant\HomeVariantResolver;
-use App\Services\Tenant\ThemeColorResolver;
 use Illuminate\View\View;
 
 /**
@@ -21,7 +20,6 @@ class StorefrontComposer
 {
     public function __construct(
         protected StorefrontRepository $repo,
-        protected ThemeColorResolver $themeColorResolver,
         protected HomeVariantResolver $homeVariantResolver,
     ) {
     }
@@ -48,9 +46,7 @@ class StorefrontComposer
                 : null;
 
             request()->attributes->set('_sf_layout', [
-                'themeColorStyle' => $currentTheme
-                    ? $this->themeColorResolver->resolveInlineStyle($currentTheme, $currentVariant)
-                    : '',
+                'themeColorStyle' => '',
                 'currentHomeVariant' => $currentVariant,
                 'storeName' => $this->repo->storeName(),
                 'logoPath' => $this->repo->logoPath(),

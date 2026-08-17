@@ -3,7 +3,6 @@
 namespace App\Services\Tenant\Templates;
 
 use App\Contracts\TemplateStrategy;
-use App\Support\ThemeColorKeys;
 
 /**
  * Elora storefront template strategy.
@@ -51,19 +50,6 @@ class EloraTemplateStrategy implements TemplateStrategy
             'order-status',
             'profile',
             'auth',
-        ];
-    }
-
-    public function colorDefaults(): array
-    {
-        return [
-            ThemeColorKeys::PRIMARY => '#111827',
-            ThemeColorKeys::SECONDARY => '#6b7280',
-            ThemeColorKeys::BACKGROUND => '#ffffff',
-            ThemeColorKeys::TEXT => '#111827',
-            ThemeColorKeys::ACCENT => '#d97706',
-            ThemeColorKeys::HEADER_BG => '#ffffff',
-            ThemeColorKeys::FOOTER_BG => '#111827',
         ];
     }
 }

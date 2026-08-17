@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ $currentLanguage?->code ?? app()->getLocale() }}"
     dir="{{ (($currentLanguage?->direction?->value ?? null) === 'rtl' || in_array($currentLanguage?->code ?? app()->getLocale(), ['ar', 'he', 'fa'])) ? 'rtl' : 'ltr' }}"
-    data-locale-managed="server" style="{{ $themeColorStyle ?? '' }}">
+    data-locale-managed="server">
 
 <head>
     <meta charset="UTF-8" />
@@ -165,7 +165,7 @@
                     {{ __('Cancel') }}
                 </button>
                 <button id="variant-modal-confirm"
-                    class="flex-1 py-2 rounded-lg bg-[var(--color-primary)] text-white text-[14px] hover:opacity-90 transition">
+                    class="flex-1 py-2 rounded-lg bg-[#111827] text-white text-[14px] hover:opacity-90 transition">
                     {{ __('Add to Cart') }}
                 </button>
             </div>

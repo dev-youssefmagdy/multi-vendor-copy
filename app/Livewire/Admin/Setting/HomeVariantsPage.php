@@ -7,8 +7,6 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\HomeVariant;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use App\Services\Tenant\TemplateRegistryService;
-use App\Support\ColorPresets;
-use App\Support\ThemeColorKeys;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -23,9 +21,6 @@ class HomeVariantsPage extends AdminPage
     public string $name = '';
     public string $key = '';
     public string $description = '';
-    public string $preset = '';
-    /** @var array<string, string> */
-    public array $colors = [];
     /** @var array<int, string> selected section keys, in order */
     public array $sections = [];
     public string $view = '';
@@ -63,16 +58,11 @@ class HomeVariantsPage extends AdminPage
                 'is_default' => $v->is_default,
                 'is_active' => $v->is_active,
                 'section_count' => $v->sections ? count($v->sections) : null,
-                'swatches' => array_values(($v->colors ?? []) ?: []),
             ]);
 
         return array_merge($this->pageMeta(), [
             'themes' => $themes,
             'variants' => $variants,
-            'presets' => array_keys(ColorPresets::all()),
-            'colorKeyLabels' => collect(ThemeColorKeys::all())
-                ->mapWithKeys(fn($k) => [$k => ThemeColorKeys::label($k)])
-                ->all(),
             'sectionLabels' => $this->themeSlug ? SectionRegistry::labelsFor($this->themeSlug, 'home') : [],
         ]);
     }
@@ -81,7 +71,6 @@ class HomeVariantsPage extends AdminPage
     {
         $labels = SectionRegistry::labelsFor($this->themeSlug, 'home');
         $this->sections = array_keys($labels);
-        $this->resetColorsToStrategyDefault();
     }
 
     public function updatedName(): void
@@ -89,24 +78,6 @@ class HomeVariantsPage extends AdminPage
         if (!$this->editingId) {
             $this->key = Str::slug($this->name);
         }
-    }
-
-    public function applyPreset(): void
-    {
-        if ($this->preset && $values = ColorPresets::get($this->preset)) {
-            $this->colors = $values;
-        }
-    }
-
-    protected function resetColorsToStrategyDefault(): void
-    {
-        if (!$this->themeSlug) {
-            $this->colors = [];
-            return;
-        }
-
-        $strategy = app(TemplateRegistryService::class)->resolve($this->themeSlug);
-        $this->colors = $strategy->colorDefaults();
     }
 
     public function openCreate(): void
@@ -124,16 +95,12 @@ class HomeVariantsPage extends AdminPage
         $this->name = $variant->name;
         $this->key = $variant->key;
         $this->description = (string) $variant->description;
-        $this->preset = '';
         $this->view = (string) $variant->view;
         $this->isDefault = $variant->is_default;
         $this->isActive = $variant->is_active;
 
         $labels = SectionRegistry::labelsFor($this->themeSlug, 'home');
         $this->sections = $variant->sections ?? array_keys($labels);
-
-        $strategy = app(TemplateRegistryService::class)->resolve($this->themeSlug);
-        $this->colors = array_merge($strategy->colorDefaults(), $variant->colors ?? []);
 
         $this->modalOpen = true;
     }
@@ -165,12 +132,10 @@ class HomeVariantsPage extends AdminPage
         $this->name = '';
         $this->key = '';
         $this->description = '';
-        $this->preset = '';
         $this->view = '';
         $this->isDefault = false;
         $this->isActive = true;
         $this->sections = $this->themeSlug ? array_keys(SectionRegistry::labelsFor($this->themeSlug, 'home')) : [];
-        $this->resetColorsToStrategyDefault();
         $this->resetErrorBag();
     }
 
@@ -190,9 +155,6 @@ class HomeVariantsPage extends AdminPage
             'description' => ['nullable', 'string', 'max:500'],
             'view' => ['nullable', 'string', 'max:150'],
         ];
-        foreach (array_keys($this->colors) as $colorKey) {
-            $rules["colors.{$colorKey}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'];
-        }
         $this->validate($rules);
 
         $labels = SectionRegistry::labelsFor($this->themeSlug, 'home');
@@ -206,7 +168,6 @@ class HomeVariantsPage extends AdminPage
             'name' => $this->name,
             'description' => $this->description ?: null,
             'sections' => $sectionsToStore,
-            'colors' => $this->colors,
             'view' => $this->view ?: null,
             'is_default' => $this->isDefault,
             'is_active' => $this->isActive,

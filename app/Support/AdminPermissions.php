@@ -69,7 +69,6 @@ class AdminPermissions
             'domains.dns.manage' => 'Manage DNS records',
 
             'settings.general.manage' => 'Manage general settings',
-            'settings.theme-colors.manage' => 'Manage theme color defaults',
             'settings.home-variants.manage' => 'Manage home page variants',
             'settings.templates.manage' => 'Manage templates',
             'settings.payment-gateways.manage' => 'Manage payment gateways',
@@ -173,7 +172,6 @@ class AdminPermissions
             'domains.requests.review' => ['domains.requests.manage'],
 
             'settings.general.manage' => ['settings.general.manage'],
-            'settings.theme-colors.manage' => ['settings.theme-colors.manage'],
             'settings.home-variants.manage' => ['settings.home-variants.manage'],
             'settings.templates.manage' => ['settings.templates.manage'],
             'settings.email.manage' => ['settings.email-templates.manage', 'settings.email-configuration.manage'],

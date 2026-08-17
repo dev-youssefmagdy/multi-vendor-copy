@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Models\Tenant\Theme;
 use App\Services\Preview\PreviewOverrides;
 use App\Services\Tenant\TemplateRegistryService;
-use App\Support\ThemeColorKeys;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
  * storefront with URL-supplied overrides without ever touching real tenant
  * data:
  *
- *   /preview?theme=elora&colors[color-primary]=%23ff0000&homepage_variant=v2
+ *   /preview?theme=elora&homepage_variant=v2
  *
  * Only activates when the current tenant has slug `preview`. `theme` (or the
  * legacy `_tpl` alias) forces the template strategy and the tenant's
- * "active" theme row; `colors[...]` overrides CSS variables; `homepage_variant`
- * forces which HomeVariant is used, all for this request only.
+ * "active" theme row; `homepage_variant` forces which HomeVariant is used,
+ * all for this request only.
  */
 class ForcePreviewTemplate
 {
@@ -40,14 +39,6 @@ class ForcePreviewTemplate
 
             Theme::query()->whereSlug($slug)->update(['is_active' => 1]);
             Theme::query()->where('slug', '!=', $slug)->update(['is_active' => 0]);
-        }
-
-        $colors = (array) $request->query('colors', []);
-        if ($colors !== []) {
-            PreviewOverrides::setColors(array_intersect_key(
-                array_map('strval', $colors),
-                array_flip(ThemeColorKeys::all())
-            ));
         }
 
         $variant = $request->query('homepage_variant');

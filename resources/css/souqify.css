@@ -15,17 +15,6 @@
     --color-brand-orange: #ea580c;
 }
 
-:root {
-    /* Theme color variables — defaults overridable per tenant via Appearance > Colors */
-    --color-primary: #0159ED;
-    --color-secondary: #001537;
-    --color-background: #ffffff;
-    --color-text: #001537;
-    --color-accent: #FFE100;
-    --color-header-bg: #001537;
-    --color-footer-bg: #001537;
-}
-
 /* ── Souqify utilities ─────────────────────────────────────────────────────── */
 html {
     scroll-behavior: smooth;

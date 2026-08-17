@@ -288,11 +288,11 @@
 
     .cat-menu-btn:hover .cat-menu-label,
     .cat-menu-btn:hover .cat-menu-arrow {
-        color: var(--color-primary) !important;
+        color: #111827 !important;
     }
 
     .elora-sub-link:hover {
-        color: var(--color-primary) !important;
+        color: #111827 !important;
         background: rgba(255, 82, 44, 0.06);
     }
 

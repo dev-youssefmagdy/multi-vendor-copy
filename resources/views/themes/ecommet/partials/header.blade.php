@@ -102,7 +102,7 @@
                                     {{-- Left: parent category tabs --}}
                                     <div class="w-1/3 bg-[#f8f8f8] border-e border-gray-200 flex flex-col py-3 h-[420px] overflow-y-auto no-scrollbar">
                                         @foreach ($rootCategories as $i => $parent)
-                                            <div class="mega-menu-tab w-full text-start px-4 xl:px-5 py-2.5 text-[13px] font-medium transition-colors flex justify-between items-center cursor-pointer {{ $i === 0 ? 'bg-white text-[var(--color-primary)]' : 'text-[#333] hover:text-[var(--color-primary)]' }}"
+                                            <div class="mega-menu-tab w-full text-start px-4 xl:px-5 py-2.5 text-[13px] font-medium transition-colors flex justify-between items-center cursor-pointer {{ $i === 0 ? 'bg-white text-[#de1709]' : 'text-[#333] hover:text-[#de1709]' }}"
                                                 data-target="mega-content-{{ $parent->id }}">
                                                 {{ $parent->translationValue('name') ?? $parent->slug }}
                                                 <svg class="w-3.5 h-3.5 text-gray-300 rtl:rotate-180 shrink-0"
@@ -139,7 +139,7 @@
                                                                         </div>
                                                                     @endif
                                                                 </div>
-                                                                <span class="text-[11px] font-medium text-[#333] group-hover/item:text-[var(--color-primary)] transition-colors leading-snug line-clamp-2 px-1">
+                                                                <span class="text-[11px] font-medium text-[#333] group-hover/item:text-[#de1709] transition-colors leading-snug line-clamp-2 px-1">
                                                                     {{ $child->translationValue('name') ?? $child->slug }}
                                                                 </span>
                                                             </a>
@@ -165,7 +165,7 @@
                                                                     </div>
                                                                 @endif
                                                             </div>
-                                                            <span class="text-[11px] font-medium text-[#333] group-hover/item:text-[var(--color-primary)] transition-colors leading-snug line-clamp-2 px-1">
+                                                            <span class="text-[11px] font-medium text-[#333] group-hover/item:text-[#de1709] transition-colors leading-snug line-clamp-2 px-1">
                                                                 {{ $parent->translationValue('name') ?? $parent->slug }}
                                                             </span>
                                                         </a>
@@ -486,11 +486,11 @@
             document.querySelectorAll('.mega-menu-tab').forEach(function (tab) {
                 function activateTab(el) {
                     document.querySelectorAll('.mega-menu-tab').forEach(function (t) {
-                        t.classList.remove('bg-white', 'text-[var(--color-primary)]');
-                        t.classList.add('text-[#333]', 'hover:text-[var(--color-primary)]');
+                        t.classList.remove('bg-white', 'text-[#de1709]');
+                        t.classList.add('text-[#333]', 'hover:text-[#de1709]');
                     });
-                    el.classList.add('bg-white', 'text-[var(--color-primary)]');
-                    el.classList.remove('text-[#333]', 'hover:text-[var(--color-primary)]');
+                    el.classList.add('bg-white', 'text-[#de1709]');
+                    el.classList.remove('text-[#333]', 'hover:text-[#de1709]');
 
                     document.querySelectorAll('.mega-menu-content').forEach(function (c) {
                         c.classList.add('hidden');

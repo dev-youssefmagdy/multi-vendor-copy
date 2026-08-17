@@ -29,7 +29,6 @@
                         <th>Name</th>
                         <th>Key</th>
                         <th>Sections</th>
-                        <th>Colors</th>
                         <th>Default</th>
                         <th>Active</th>
                         <th></th>
@@ -42,16 +41,6 @@
                             <td>{{ $variant['name'] }}</td>
                             <td><code>{{ $variant['key'] }}</code></td>
                             <td>{{ $variant['section_count'] ?? 'Theme default' }}</td>
-                            <td>
-                                <div class="flex gap-1">
-                                    @foreach (array_slice($variant['swatches'], 0, 5) as $hex)
-                                        <span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:{{ $hex }};border:1px solid var(--border2);"></span>
-                                    @endforeach
-                                    @if (empty($variant['swatches']))
-                                        <span class="panel-copy">Theme default</span>
-                                    @endif
-                                </div>
-                            </td>
                             <td>{{ $variant['is_default'] ? 'Yes' : '—' }}</td>
                             <td>{{ $variant['is_active'] ? 'Yes' : 'No' }}</td>
                             <td>
@@ -67,7 +56,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7">
+                            <td colspan="6">
                                 <div class="empty-state">
                                     <div class="empty-state-title">No variants yet</div>
                                     <p class="empty-state-copy">Add a home page variant for this theme.</p>
@@ -139,31 +128,6 @@
                                     wire:click="toggleSection('{{ $sectionKey }}')" />
                                 <span>{{ $label }}</span>
                             </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="panel-title">Colors</h4>
-                    <div class="form-grid form-grid-2">
-                        <div class="span-2">
-                            <label class="field-label">Start from a preset</label>
-                            <div class="flex gap-2">
-                                <select wire:model.defer="preset" class="field-control">
-                                    <option value="">Custom colors</option>
-                                    @foreach ($presets as $presetName)
-                                        <option value="{{ $presetName }}">{{ $presetName }}</option>
-                                    @endforeach
-                                </select>
-                                <x-btn type="button" variant="secondary" wire:click="applyPreset">Apply Preset</x-btn>
-                            </div>
-                        </div>
-                        @foreach ($colorKeyLabels as $colorKey => $label)
-                            <div>
-                                <label class="field-label">{{ $label }}</label>
-                                <input type="color" wire:model.defer="colors.{{ $colorKey }}" class="field-control" />
-                                @error("colors.{$colorKey}")<div class="field-error">{{ $message }}</div>@enderror
-                            </div>
                         @endforeach
                     </div>
                 </div>

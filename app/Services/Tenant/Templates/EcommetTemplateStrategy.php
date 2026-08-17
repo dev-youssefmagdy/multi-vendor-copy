@@ -3,7 +3,6 @@
 namespace App\Services\Tenant\Templates;
 
 use App\Contracts\TemplateStrategy;
-use App\Support\ThemeColorKeys;
 
 /**
  * Ecommet storefront template strategy.
@@ -53,19 +52,6 @@ class EcommetTemplateStrategy implements TemplateStrategy
             'order-tracking',
             'profile',
             'auth',
-        ];
-    }
-
-    public function colorDefaults(): array
-    {
-        return [
-            ThemeColorKeys::PRIMARY => '#de1709',
-            ThemeColorKeys::SECONDARY => '#ffaf09',
-            ThemeColorKeys::BACKGROUND => '#ffffff',
-            ThemeColorKeys::TEXT => '#232323',
-            ThemeColorKeys::ACCENT => '#61167f',
-            ThemeColorKeys::HEADER_BG => '#ffffff',
-            ThemeColorKeys::FOOTER_BG => '#232323',
         ];
     }
 }

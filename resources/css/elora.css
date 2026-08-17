@@ -1,14 +1,3 @@
-:root {
-    /* Theme color variables — defaults overridable per tenant via Appearance > Colors */
-    --color-primary: #111827;
-    --color-secondary: #6b7280;
-    --color-background: #ffffff;
-    --color-text: #111827;
-    --color-accent: #d97706;
-    --color-header-bg: #ffffff;
-    --color-footer-bg: #111827;
-}
-
 /* cart.html*/
 body[data-page="cart"] * {
     font-family: "Outfit", sans-serif;
@@ -86,8 +75,8 @@ body[data-page="cart"].menu-open .smenu-overlay {
 
 /* heart */
 body[data-page="cart"] .heart-btn.liked svg {
-    fill: var(--color-primary);
-    stroke: var(--color-primary);
+    fill: #111827;
+    stroke: #111827;
 }
 
 /* mini cart hover */
@@ -104,7 +93,7 @@ body[data-page="cart"] .progress-track {
 }
 
 body[data-page="cart"] .progress-fill {
-    background: var(--color-primary);
+    background: #111827;
     border-radius: 24px;
     height: 8px;
     width: 72.8%;
@@ -122,8 +111,8 @@ body[data-page="cart"] .cart-item:last-child {
 
 /* checked state */
 body[data-page="cart"] .item-check.checked {
-    background: var(--color-text);
-    border-color: var(--color-text);
+    background: #111827;
+    border-color: #111827;
 }
 
 /* mobile: stack layout */
@@ -186,8 +175,8 @@ body[data-page="categories"] .product-card:hover {
 }
 
 body[data-page="categories"] .heart-btn.active svg {
-    fill: var(--color-primary);
-    stroke: var(--color-primary);
+    fill: #111827;
+    stroke: #111827;
 }
 
 /* Product grid */
@@ -239,7 +228,7 @@ body[data-page="categories"] .badge-sold {
 }
 
 body[data-page="categories"] .badge-off {
-    background: var(--color-primary);
+    background: #111827;
     color: white;
 }
 
@@ -254,7 +243,7 @@ body[data-page="categories"] .badge-new {
 }
 
 body[data-page="categories"] .badge-best {
-    background: var(--color-primary);
+    background: #111827;
     color: white;
 }
 
@@ -301,9 +290,9 @@ body[data-page="categories"] .cat-pill {
 }
 
 body[data-page="categories"] .cat-pill.active {
-    background: var(--color-primary) !important;
+    background: #111827 !important;
     color: white !important;
-    border-color: var(--color-primary) !important;
+    border-color: #111827 !important;
 }
 
 /* Filter sidebar */
@@ -429,7 +418,7 @@ body[data-page="categories"] .cat-circle .circle-img {
 
 body[data-page="categories"] .cat-circle:hover .circle-img,
 body[data-page="categories"] .cat-circle.active .circle-img {
-    border-color: var(--color-primary);
+    border-color: #111827;
 }
 
 /* Checkbox */
@@ -448,8 +437,8 @@ body[data-page="categories"] .custom-check {
 }
 
 body[data-page="categories"] .custom-check:checked {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #111827;
+    border-color: #111827;
 }
 
 body[data-page="categories"] .custom-check:checked::after {
@@ -468,7 +457,7 @@ body[data-page="categories"] .sort-select {
 
 /* Price range */
 body[data-page="categories"] input[type="range"] {
-    accent-color: var(--color-primary);
+    accent-color: #111827;
 }
 
 /* Pagination */
@@ -486,11 +475,11 @@ body[data-page="categories"] .page-btn {
 
 body[data-page="categories"] .page-btn:hover:not(.active) {
     background: #fff5f2;
-    color: var(--color-primary);
+    color: #111827;
 }
 
 body[data-page="categories"] .page-btn.active {
-    background: var(--color-primary);
+    background: #111827;
     color: white;
     font-weight: 600;
 }
@@ -587,7 +576,7 @@ body[data-page="checkout"] .pay-dot {
 }
 
 body[data-page="checkout"] .pay-radio:checked+.pay-label .pay-dot {
-    border-color: var(--color-text);
+    border-color: #111827;
 }
 
 body[data-page="checkout"] .pay-radio:checked+.pay-label .pay-dot::after {
@@ -596,7 +585,7 @@ body[data-page="checkout"] .pay-radio:checked+.pay-label .pay-dot::after {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--color-text);
+    background: #111827;
 }
 
 /* card form expand */
@@ -621,14 +610,14 @@ body[data-page="checkout"] .cinput {
     border-radius: 8px;
     padding: 12px 14px;
     font-size: 15px;
-    color: var(--color-text);
+    color: #111827;
     outline: none;
     background: white;
     transition: border-color 0.15s;
 }
 
 body[data-page="checkout"] .cinput:focus {
-    border-color: var(--color-primary);
+    border-color: #111827;
 }
 
 body[data-page="checkout"] .cinput::placeholder {
@@ -674,7 +663,7 @@ body[data-page="checkout"] .star {
 
 /* address card edit hover */
 body[data-page="checkout"] .addr-card:hover {
-    border-color: var(--color-primary);
+    border-color: #111827;
 }
 
 /* pay button shine */
@@ -689,7 +678,7 @@ body[data-page="checkout"] .addr-card:hover {
 }
 
 body[data-page="checkout"] .pay-btn {
-    background: linear-gradient(90deg, var(--color-primary), #ff6b2b, var(--color-primary));
+    background: linear-gradient(90deg, #111827, #ff6b2b, #111827);
     background-size: 200%;
     animation: shine 3s linear infinite;
 }
@@ -760,14 +749,14 @@ body[data-page="client-empty-orders"] .sidebar-item {
 
 body[data-page="client-empty-orders"] .sidebar-item:hover {
     background: #fff5f2;
-    color: var(--color-primary);
+    color: #111827;
 }
 
 body[data-page="client-empty-orders"] .sidebar-item.active {
     background: rgba(255, 77, 0, 0.07);
-    color: var(--color-primary);
+    color: #111827;
     font-weight: 500;
-    border-left-color: var(--color-primary);
+    border-left-color: #111827;
 }
 
 body[data-page="client-empty-orders"] .settings-item {
@@ -783,7 +772,7 @@ body[data-page="client-empty-orders"] .settings-item {
 
 body[data-page="client-empty-orders"] .settings-item:hover {
     background: #f5f5f5;
-    color: var(--color-text);
+    color: #111827;
 }
 
 body[data-page="client-empty-orders"] .prof-sidebar {
@@ -801,7 +790,7 @@ body[data-page="client-empty-orders"] .toast {
     top: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: var(--color-text);
+    background: #111827;
     color: white;
     padding: 10px 24px;
     border-radius: 32px;
@@ -880,14 +869,14 @@ body[data-page="client-order-details"] .sidebar-item {
 
 body[data-page="client-order-details"] .sidebar-item:hover {
     background: #fff5f2;
-    color: var(--color-primary);
+    color: #111827;
 }
 
 body[data-page="client-order-details"] .sidebar-item.active {
     background: rgba(255, 77, 0, 0.07);
-    color: var(--color-primary);
+    color: #111827;
     font-weight: 500;
-    border-left-color: var(--color-primary);
+    border-left-color: #111827;
 }
 
 body[data-page="client-order-details"] .settings-item {
@@ -903,7 +892,7 @@ body[data-page="client-order-details"] .settings-item {
 
 body[data-page="client-order-details"] .settings-item:hover {
     background: #f5f5f5;
-    color: var(--color-text);
+    color: #111827;
 }
 
 body[data-page="client-order-details"] .prof-sidebar {
@@ -921,7 +910,7 @@ body[data-page="client-order-details"] .toast {
     top: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: var(--color-text);
+    background: #111827;
     color: white;
     padding: 10px 24px;
     border-radius: 32px;
@@ -1020,14 +1009,14 @@ body[data-page="client-orders"] .sidebar-nav-item {
 
 body[data-page="client-orders"] .sidebar-nav-item:hover {
     background: #fff5f2;
-    color: var(--color-primary);
+    color: #111827;
 }
 
 body[data-page="client-orders"] .sidebar-nav-item.active {
     background: rgba(255, 77, 0, 0.07);
-    color: var(--color-primary);
+    color: #111827;
     font-weight: 500;
-    border-left-color: var(--color-primary);
+    border-left-color: #111827;
 }
 
 body[data-page="client-orders"] .sidebar-settings-item {
@@ -1042,7 +1031,7 @@ body[data-page="client-orders"] .sidebar-settings-item {
 
 body[data-page="client-orders"] .sidebar-settings-item:hover {
     background: #f5f5f5;
-    color: var(--color-text);
+    color: #111827;
 }
 
 /* Filter tabs */
@@ -1059,15 +1048,15 @@ body[data-page="client-orders"] .filter-tab {
 }
 
 body[data-page="client-orders"] .filter-tab.active {
-    background: var(--color-text);
+    background: #111827;
     color: white;
-    border-color: var(--color-text);
+    border-color: #111827;
     font-weight: 500;
 }
 
 body[data-page="client-orders"] .filter-tab:hover:not(.active) {
-    border-color: var(--color-text);
-    color: var(--color-text);
+    border-color: #111827;
+    color: #111827;
 }
 
 /* Order card hide/show */
@@ -1097,7 +1086,7 @@ body[data-page="client-orders"] .toast {
     top: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: var(--color-text);
+    background: #111827;
     color: white;
     padding: 10px 24px;
     border-radius: 32px;
@@ -1244,14 +1233,14 @@ body[data-page="client-tracking-order"] .sidebar-item {
 
 body[data-page="client-tracking-order"] .sidebar-item:hover {
     background: #fff5f2;
-    color: var(--color-primary);
+    color: #111827;
 }
 
 body[data-page="client-tracking-order"] .sidebar-item.active {
     background: rgba(255, 77, 0, 0.07);
-    color: var(--color-primary);
+    color: #111827;
     font-weight: 500;
-    border-left-color: var(--color-primary);
+    border-left-color: #111827;
 }
 
 body[data-page="client-tracking-order"] .settings-item {
@@ -1267,7 +1256,7 @@ body[data-page="client-tracking-order"] .settings-item {
 
 body[data-page="client-tracking-order"] .settings-item:hover {
     background: #f5f5f5;
-    color: var(--color-text);
+    color: #111827;
 }
 
 body[data-page="client-tracking-order"] .prof-sidebar {
@@ -1285,7 +1274,7 @@ body[data-page="client-tracking-order"] .toast {
     top: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: var(--color-text);
+    background: #111827;
     color: white;
     padding: 10px 24px;
     border-radius: 32px;
@@ -1343,13 +1332,13 @@ body[data-page="client-tracking-order"] .tl-icon {
 }
 
 body[data-page="client-tracking-order"] .tl-icon.done {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #111827;
+    border-color: #111827;
 }
 
 body[data-page="client-tracking-order"] .tl-icon.current {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #111827;
+    border-color: #111827;
     box-shadow: 0 0 0 4px rgba(255, 77, 0, 0.15);
 }
 
@@ -1593,7 +1582,7 @@ body[data-page="favorite"] .toast {
     top: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
-    background: var(--color-text);
+    background: #111827;
     color: white;
     padding: 10px 24px;
     border-radius: 32px;
@@ -1661,8 +1650,8 @@ body[data-page="index"] .product-card:hover {
 
 /* ── HEARTS ── */
 body[data-page="index"] .heart-btn.active svg {
-    fill: var(--color-primary);
-    stroke: var(--color-primary);
+    fill: #111827;
+    stroke: #111827;
 }
 
 /* ── PRODUCT ROW ── */
@@ -1687,9 +1676,9 @@ body[data-page="index"] .cat-pill {
 }
 
 body[data-page="index"] .cat-pill.active {
-    background: var(--color-primary) !important;
+    background: #111827 !important;
     color: white !important;
-    border-color: var(--color-primary) !important;
+    border-color: #111827 !important;
 }
 
 /* ── BADGES ── */
@@ -1708,8 +1697,8 @@ body[data-page="index"] .cat-pill.active {
 
 /* Global heart-btn active state (works across all pages) */
 .heart-btn.active svg {
-    fill: var(--color-primary);
-    stroke: var(--color-primary);
+    fill: #111827;
+    stroke: #111827;
 }
 
 .badge-sold {
@@ -1718,7 +1707,7 @@ body[data-page="index"] .cat-pill.active {
 }
 
 .badge-off {
-    background: var(--color-primary);
+    background: #111827;
     color: white;
 }
 
@@ -1733,7 +1722,7 @@ body[data-page="index"] .cat-pill.active {
 }
 
 .badge-best {
-    background: var(--color-primary);
+    background: #111827;
     color: white;
 }
 
@@ -1911,7 +1900,7 @@ body[data-page="index"] .mobile-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: #111827;
     color: white;
     font-weight: 700;
     font-size: 16px;
@@ -1930,7 +1919,7 @@ body[data-page="index"] .mobile-greeting {
 body[data-page="index"] .mob-hi {
     font-size: 15px;
     font-weight: 700;
-    color: var(--color-text);
+    color: #111827;
     margin: 0;
 }
 
@@ -1974,7 +1963,7 @@ body[data-page="index"] .mob-search-input {
     outline: none;
     font-size: 13px;
     flex: 1;
-    color: var(--color-text);
+    color: #111827;
 }
 
 body[data-page="index"] .mob-search-input::placeholder {
@@ -2013,7 +2002,7 @@ body[data-page="index"] .mob-cam-btn {
     gap: 6px;
     box-sizing: border-box;
     overflow: hidden;
-    background-color: var(--color-text);
+    background-color: #111827;
 }
 
 .mob-nav-item {
@@ -2034,7 +2023,7 @@ body[data-page="index"] .mob-cam-btn {
 }
 
 .mob-nav-item.active {
-    color: var(--color-primary);
+    color: #111827;
 }
 
 .mob-nav-item svg {
@@ -2053,7 +2042,7 @@ body[data-page="index"] .mob-cam-btn {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    background: var(--color-primary);
+    background: #111827;
     border-radius: 14px;
     width: 100%;
     max-width: 100%;
@@ -2255,7 +2244,7 @@ body[data-page="index"] .cat-card-label {
     background: white;
     padding: 10px 14px;
     font-weight: 500;
-    color: var(--color-text);
+    color: #111827;
 }
 
 /* ── DELIVERY ── */
@@ -2424,13 +2413,13 @@ body[data-page="product-details"].menu-open .smenu-overlay {
 
 /* heart toggle */
 body[data-page="product-details"] .heart-btn.liked svg {
-    fill: var(--color-primary);
-    stroke: var(--color-primary);
+    fill: #111827;
+    stroke: #111827;
 }
 
 /* thumb active */
 body[data-page="product-details"] .thumb.active {
-    border-color: var(--color-primary) !important;
+    border-color: #111827 !important;
     border-width: 2px !important;
 }
 
@@ -2456,13 +2445,13 @@ body[data-page="product-details"] .opt {
 }
 
 body[data-page="product-details"] .opt:hover:not(.sel) {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: #111827;
+    color: #111827;
 }
 
 body[data-page="product-details"] .opt.sel {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #111827;
+    border-color: #111827;
     color: #fff;
     font-weight: 400;
 }

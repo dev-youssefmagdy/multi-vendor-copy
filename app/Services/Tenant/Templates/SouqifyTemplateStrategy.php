@@ -3,7 +3,6 @@
 namespace App\Services\Tenant\Templates;
 
 use App\Contracts\TemplateStrategy;
-use App\Support\ThemeColorKeys;
 
 /**
  * Souqify storefront template strategy.
@@ -53,19 +52,6 @@ class SouqifyTemplateStrategy implements TemplateStrategy
             'order-status',
             'profile',
             'auth',
-        ];
-    }
-
-    public function colorDefaults(): array
-    {
-        return [
-            ThemeColorKeys::PRIMARY => '#0159ED',
-            ThemeColorKeys::SECONDARY => '#001537',
-            ThemeColorKeys::BACKGROUND => '#ffffff',
-            ThemeColorKeys::TEXT => '#001537',
-            ThemeColorKeys::ACCENT => '#FFE100',
-            ThemeColorKeys::HEADER_BG => '#001537',
-            ThemeColorKeys::FOOTER_BG => '#001537',
         ];
     }
 }

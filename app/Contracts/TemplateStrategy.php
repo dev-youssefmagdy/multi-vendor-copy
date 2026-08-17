@@ -42,13 +42,4 @@ interface TemplateStrategy
      * @return string[]
      */
     public function supportedPages(): array;
-
-    /**
-     * This theme's default CSS color variables, keyed by variable name
-     * (without the leading `--`), e.g. 'color-primary' => '#de1709'.
-     * Used as the base layer before admin global defaults and tenant overrides.
-     *
-     * @return array<string, string>
-     */
-    public function colorDefaults(): array;
 }

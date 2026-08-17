@@ -103,7 +103,6 @@
     <div class="appearance-tabs fu d1 section-gap">
         @foreach ([
             'general'      => 'General',
-            'colors'       => 'Colors',
             'banners'      => 'Banners',
             'social_links' => 'Social Links',
             'footer'       => 'Footer',
@@ -134,43 +133,6 @@
                         @include('livewire.tenant.store.partials.logo-builder')
                     </div>
                 </section>
-            </form>
-        </div>
-    @endif
-
-    {{-- ─────────────────────────────────── TAB: COLORS ─────────────────────────────────── --}}
-    @if ($activeTab === 'colors')
-        <div class="appearance-tab-panel fu d2">
-            <form wire:submit="saveColors" class="page-stack">
-                @foreach ($colorThemes as $theme)
-                    <section class="card form-card">
-                        <div class="panel-head mb-5">
-                            <div>
-                                <h3 class="panel-title">{{ e($theme->name ?? $theme->slug) }}</h3>
-                                <p class="panel-copy">Override this theme's default color variables for your storefront.</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <x-btn type="button" variant="secondary" class="btn-sm"
-                                    wire:click="resetColors({{ $theme->id }})">Reset to Defaults</x-btn>
-                                <x-btn type="submit">Save Colors</x-btn>
-                            </div>
-                        </div>
-
-                        <div class="form-grid form-grid-2">
-                            @foreach ($colorKeyLabels as $key => $label)
-                                <div>
-                                    <label class="field-label">{{ $label }}</label>
-                                    <div class="flex items-center gap-2">
-                                        <input type="color" class="logo-builder-color"
-                                            wire:model.live="themeColors.{{ $theme->id }}.{{ $key }}" />
-                                        <span class="panel-copy">{{ $themeColors[$theme->id][$key] ?? '' }}</span>
-                                    </div>
-                                    @error("themeColors.{$theme->id}.{$key}")<div class="field-error">{{ $message }}</div>@enderror
-                                </div>
-                            @endforeach
-                        </div>
-                    </section>
-                @endforeach
             </form>
         </div>
     @endif

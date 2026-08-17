@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ $currentLanguage?->code ?? app()->getLocale() }}"
     dir="{{ (($currentLanguage?->direction?->value ?? null) === 'rtl' || in_array($currentLanguage?->code ?? app()->getLocale(), ['ar', 'he', 'fa'])) ? 'rtl' : 'ltr' }}"
-    data-locale-managed="server" style="{{ $themeColorStyle ?? '' }}">
+    data-locale-managed="server">
 
 <head>
     {{-- Logo fonts (text-logo builder) --}}

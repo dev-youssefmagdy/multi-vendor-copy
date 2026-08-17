@@ -184,7 +184,6 @@ class AdminNavigation
                         'icon' => 'settings',
                         'children' => [
                             ['label' => 'General Settings', 'route' => 'admin.settings.general', 'permission' => 'settings.general.manage'],
-                            ['label' => 'Theme Colors', 'route' => 'admin.settings.theme-colors', 'permission' => 'settings.theme-colors.manage'],
                             ['label' => 'Home Variants', 'route' => 'admin.settings.home-variants', 'permission' => 'settings.home-variants.manage'],
                             ['label' => 'Template Control', 'route' => 'admin.settings.templates', 'permission' => 'settings.templates.manage'],
                             ['label' => 'Custom Templates', 'route' => 'admin.settings.custom-templates', 'permission' => 'settings.templates.manage'],
