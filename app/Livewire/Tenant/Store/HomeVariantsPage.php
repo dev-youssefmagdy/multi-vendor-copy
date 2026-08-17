@@ -75,12 +75,13 @@ class HomeVariantsPage extends TenantPage
         $availableVariants = collect();
 
         if ($selectedTheme) {
-            $availableVariants = HomeVariant::query()
+            $availableVariants = tenancy()->central(fn() => HomeVariant::query()
                 ->forTheme($selectedTheme->slug)
                 ->where('is_active', true)
                 ->orderByDesc('is_default')
                 ->orderBy('name')
-                ->get();
+                ->get()
+            );
 
             $selections = TenantHomeVariant::query()
                 ->where('theme_id', $selectedTheme->id)

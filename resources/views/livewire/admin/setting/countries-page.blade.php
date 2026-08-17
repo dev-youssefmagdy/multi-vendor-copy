@@ -62,7 +62,17 @@
                 </tr>@endforeach</tbody>
             </table>
         </div>
-        <div class="section-gap">{{ $countries->links() }}</div>
+        <div class="table-footer-shell">
+            <div class="pagination-meta">
+                @if ($countries->total() > 0)
+                    Showing {{ $countries->firstItem() }} to {{ $countries->lastItem() }}
+                    of {{ $countries->total() }} results
+                @endif
+            </div>
+            <div class="pagination-shell">
+                <x-pagination :paginator="$countries" />
+            </div>
+        </div>
     @else<div class="empty-state">
             <h3 class="panel-title">No countries found</h3>
             <p class="panel-copy">Adjust your search filters.</p>

@@ -102,17 +102,34 @@ class HomePage extends Component
     {
         $slug = $this->resolveStrategy()->slug();
 
-        $rows = $theme
-            ? TenantPageSection::query()
-                ->where('theme_id', $theme->id)
-                ->where('page', 'home')
-                ->orderBy('sort_order')
-                ->get()
-            : collect();
+        if (!$theme) {
+            return app(HomeVariantResolver::class)->sectionsFor($variant, $slug, null);
+        }
 
-        $tenantOrder = $rows->isEmpty()
-            ? null
-            : $rows->where('is_visible', true)->pluck('section_key')->all();
+        $allDefaultKeys = SectionRegistry::defaultsFor($slug, 'home');
+
+        $rows = TenantPageSection::query()
+            ->where('theme_id', $theme->id)
+            ->where('page', 'home')
+            ->orderBy('sort_order')
+            ->get()
+            ->keyBy('section_key');
+
+        if ($rows->isEmpty()) {
+            return app(HomeVariantResolver::class)->sectionsFor($variant, $slug, null);
+        }
+
+        $savedKeys = $rows->sortBy('sort_order')->keys()->all();
+
+        $unsavedKeys = array_values(array_diff($allDefaultKeys, $savedKeys));
+
+        $tenantOrder = collect($savedKeys)
+            ->merge($unsavedKeys)
+            ->filter(function (string $key) use ($rows) {
+                return !$rows->has($key) || (bool) $rows->get($key)->is_visible;
+            })
+            ->values()
+            ->all();
 
         return app(HomeVariantResolver::class)->sectionsFor($variant, $slug, $tenantOrder);
     }
