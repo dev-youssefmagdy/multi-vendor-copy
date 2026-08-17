@@ -742,7 +742,8 @@ class StorefrontRepository
 
     public function paginatedProductsByCategory(?Category $category = null, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $sort = (string) ($filters['sort'] ?? 'latest');
+        $userSort = (string) ($filters['sort'] ?? 'latest');
+        $sort = $userSort;
 
         // Section presets: override sort when the user hasn't explicitly chosen one
         if ($sort === 'latest') {
@@ -757,11 +758,24 @@ class StorefrontRepository
 
         $categoryIdWithChildrenIds = $category ? array_merge([$category->id], $this->categoryDescendantIds($category->id)) : null;
         // dd($categoryIdWithChildrenIds);
-        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock')
-            ->when($categoryIdWithChildrenIds, fn($categoryQuery) => $categoryQuery->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIdWithChildrenIds)));
+        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
 
-        $this->applyProductFilters($query, $filters);
-        $this->applyProductSort($query, $sort);
+        if ($category && $userSort === 'latest') {
+            $query->join('category_product', function ($join) use ($categoryIdWithChildrenIds) {
+                $join->on('category_product.product_id', '=', 'products.id')
+                    ->whereIn('category_product.category_id', $categoryIdWithChildrenIds);
+            })
+                ->orderBy('category_product.sort_order', 'asc')
+                ->orderByDesc('products.created_at')
+                ->select('products.*');
+
+            $this->applyProductFilters($query, $filters);
+        } else {
+            $query->when($categoryIdWithChildrenIds, fn($categoryQuery) => $categoryQuery->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIdWithChildrenIds)));
+
+            $this->applyProductFilters($query, $filters);
+            $this->applyProductSort($query, $sort);
+        }
 
         return $query->paginate($perPage)->withQueryString();
     }
