@@ -1,3 +1,4 @@
+<main id="mn">
 <style>
 .hv-tabs {
     display: flex;
@@ -44,7 +45,6 @@
     opacity: 1;
 }
 </style>
-<main id="mn">
     {{-- Page header --}}
     <div class="page-head fu d0">
         <div>
