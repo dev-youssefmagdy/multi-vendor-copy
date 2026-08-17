@@ -148,7 +148,7 @@
                     {{ __('Cancel') }}
                 </button>
                 <button id="variant-modal-confirm"
-                    class="flex-1 py-2 rounded-lg bg-[#242424] text-white text-[14px] hover:bg-[#3a3a3a] transition">
+                    class="flex-1 py-2 rounded-lg bg-[var(--color-primary)] text-white text-[14px] hover:opacity-90 transition">
                     {{ __('Add to Cart') }}
                 </button>
             </div>

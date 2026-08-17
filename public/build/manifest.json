@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-j_ZFRZHf.css",
+    "file": "assets/app-ux_G0dgf.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-D6_HCWEW.css",
+    "file": "assets/ecommet-DoPlpoVj.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -45,7 +45,7 @@
     "isEntry": true
   },
   "resources/css/elora.css": {
-    "file": "assets/elora-BRj0xYbh.css",
+    "file": "assets/elora-eTJoLevD.css",
     "name": "elora",
     "names": [
       "elora.css"
@@ -72,7 +72,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-D5hjeX4k.css",
+    "file": "assets/souqify-ZCrEmwLa.css",
     "name": "souqify",
     "names": [
       "souqify.css"

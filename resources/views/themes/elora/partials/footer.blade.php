@@ -2,7 +2,7 @@
 {{-- Edit this file directly to change header/footer markup --}}
 {{-- Tenant-specific data via tenant() helper only --}}
 <!-- ===== FOOTER ===== -->
-<footer class="text-white" style="background:#3B3B3B">
+<footer class="text-white" style="background:var(--color-footer-bg)">
 
     {{-- ── Main grid ─────────────────────────────────────────────────────────── --}}
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-10 sm:py-14">

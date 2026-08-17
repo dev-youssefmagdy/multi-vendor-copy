@@ -1,7 +1,7 @@
 {{-- Header/Footer partial for ecommet theme --}}
 {{-- Edit this file directly to change header/footer markup --}}
 {{-- Tenant-specific data via tenant() helper only --}}
-<footer class="mt-auto relative z-10 w-full font-main text-[#d5d5d5] bg-[#333333] pt-8 md:bg-[#434343]">
+<footer class="mt-auto relative z-10 w-full font-main text-[#d5d5d5] bg-[var(--color-footer-bg)] pt-8 md:bg-[#434343]">
     <div class="max-w-[1280px] mx-auto py-0 md:py-12 px-5 sm:px-8">
         <div
             class="grid grid-cols-1 md:grid-cols-[1.4fr_1.2fr_1.2fr_1fr] lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] gap-6 md:gap-8 border-b md:border-none border-[#666] pb-6 md:pb-0">
