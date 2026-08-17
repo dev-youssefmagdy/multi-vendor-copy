@@ -204,8 +204,8 @@
                         </thead>
                         <tbody id="tenant-banners-sortable">
                             @forelse ($banners as $banner)
-                                <tr data-id="{{ $banner->id }}" class="sortable-row" style="cursor:grab">
-                                    <td>
+                                <tr data-id="{{ $banner->id }}">
+                                    <td class="drag-handle" style="cursor:grab">
                                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <line x1="4" y1="8" x2="20" y2="8" />
                                             <line x1="4" y1="16" x2="20" y2="16" />
@@ -264,25 +264,28 @@
                     </table>
                 </div>
 
-                @push('scripts')
+                @script
                     <script>
-                        document.addEventListener('livewire:init', () => {
-                            const list = document.getElementById('tenant-banners-sortable');
-                            if (!list || typeof Sortable === 'undefined') {
-                                return;
+                        (function () {
+                            function initBannerSort() {
+                                const list = document.getElementById('tenant-banners-sortable');
+                                if (!list || typeof Sortable === 'undefined') return;
+                                if (list._sortable) { list._sortable.destroy(); }
+                                list._sortable = Sortable.create(list, {
+                                    animation: 150,
+                                    handle: '.drag-handle',
+                                    onEnd: () => {
+                                        const orderedIds = Array.from(
+                                            list.querySelectorAll('tr[data-id]')
+                                        ).map(row => parseInt(row.dataset.id, 10));
+                                        $wire.updateBannerOrder(orderedIds);
+                                    },
+                                });
                             }
-
-                            Sortable.create(list, {
-                                animation: 150,
-                                handle: '.sortable-row',
-                                onEnd: () => {
-                                    const orderedIds = Array.from(list.querySelectorAll('tr[data-id]')).map(row => parseInt(row.dataset.id, 10));
-                                    @this.call('updateBannerOrder', orderedIds);
-                                },
-                            });
-                        });
+                            initBannerSort();
+                        })();
                     </script>
-                @endpush
+                @endscript
             </div>
         </div>
 
