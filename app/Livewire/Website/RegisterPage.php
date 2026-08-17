@@ -19,16 +19,20 @@ use Livewire\Component;
 
 class RegisterPage extends Component
 {
+    // Steps:
+    // 1 = Plan selection
+    // 2 = Identity (email + phone + social)
+    // 3 = Payment
     public int $step = 1;
 
-    // Step 1 – Identity + Plan
+    // Step 2 – Identity
     public string $email = '';
     public string $phone = '';
 
     #[Url]
     public string $packageId = '';
 
-    // Step 2 – Payment gateway (only for paid plans)
+    // Step 3 – Payment gateway (only for paid plans)
     public string $gatewayCode = '';
     public string $stripeToken = '';
     public string $authnetDescriptor = '';
@@ -63,7 +67,7 @@ class RegisterPage extends Component
                 $this->updatedPackageId();
             }
 
-            $this->step = 2;
+            $this->step = 3;
         }
 
         $sentEmail = session('registration_email_sent');
@@ -76,13 +80,14 @@ class RegisterPage extends Component
 
     public function nextStep(): void
     {
-        $this->validateStepOne();
-        $this->step = 2;
+        if ($this->step === 1) {
+            $this->step = 2;
+        }
     }
 
     public function prevStep(): void
     {
-        $this->step = 1;
+        $this->step = max(1, $this->step - 1);
     }
 
     public function updatedGatewayCode(): void
@@ -116,10 +121,16 @@ class RegisterPage extends Component
      */
     public function proceed(): void
     {
-        $this->validateStepOne();
+        $this->validateIdentity();
 
         if ($this->requiresPayment()) {
-            $this->validateStepTwo();
+            if ($this->step < 3) {
+                $this->step = 3;
+
+                return;
+            }
+
+            $this->validateGateway();
             $this->startPayment();
 
             return;
@@ -127,6 +138,23 @@ class RegisterPage extends Component
 
         // Free plan
         $this->createPendingAndSendEmail(planName: __('Free Plan'));
+    }
+
+    public function socialAuthComplete(string $email, string $name, string $provider): void
+    {
+        $this->email = strtolower(trim($email));
+
+        if ($this->requiresPayment()) {
+            $this->step = 3;
+
+            return;
+        }
+
+        $package = filled($this->packageId)
+            ? Package::query()->find((int) $this->packageId)
+            : null;
+
+        $this->createPendingAndSendEmail(planName: $package?->name ?? __('Free Plan'));
     }
 
     protected function startPayment(): void
@@ -215,7 +243,7 @@ class RegisterPage extends Component
             : __('Email resent. You have reached the resend limit.');
     }
 
-    protected function validateStepOne(): array
+    protected function validateIdentity(): array
     {
         return $this->validate([
             'email' => ['required', 'email', 'max:255'],
@@ -224,7 +252,7 @@ class RegisterPage extends Component
         ]);
     }
 
-    protected function validateStepTwo(): array
+    protected function validateGateway(): array
     {
         return $this->validate([
             'gatewayCode' => [
@@ -321,6 +349,11 @@ class RegisterPage extends Component
             'hasAuthorizeNet' => $hasAuthorizeNet,
             'has2Checkout' => $has2Checkout,
             'authNetSandbox' => $authNetSandbox,
+            'stepLabels' => [
+                1 => __('Choose Plan'),
+                2 => __('Your Details'),
+                3 => __('Payment'),
+            ],
         ])->layout('layouts.website', ['title' => __('Create Your Store') . ' — Ecommet']);
     }
 }

@@ -24,7 +24,7 @@ class CentralSocialAuthController extends Controller
             ->redirect();
     }
 
-    public function handleGoogleCallback(): RedirectResponse
+    public function handleGoogleCallback(): \Illuminate\Http\Response|RedirectResponse
     {
         $socialUser = Socialite::driver('google')
             ->redirectUrl(route('website.social.google.callback'))
@@ -43,7 +43,7 @@ class CentralSocialAuthController extends Controller
             ->redirect();
     }
 
-    public function handleAppleCallback(): RedirectResponse
+    public function handleAppleCallback(): \Illuminate\Http\Response|RedirectResponse
     {
         $socialUser = Socialite::driver('apple')
             ->redirectUrl(route('website.social.apple.callback'))
@@ -55,18 +55,37 @@ class CentralSocialAuthController extends Controller
 
     private function stashIntent(Request $request, string $intent): void
     {
+        $validIntents = ['login', 'register', 'register-popup'];
+
         session([
-            'central_social_intent' => in_array($intent, ['login', 'register'], true) ? $intent : 'login',
+            'central_social_intent' => in_array($intent, $validIntents, true) ? $intent : 'login',
             'central_social_package_id' => $request->query('package_id'),
         ]);
     }
 
-    private function handle(SocialiteUser $socialUser, string $provider): RedirectResponse
+    private function handle(SocialiteUser $socialUser, string $provider): \Illuminate\Http\Response|RedirectResponse
     {
         $intent = session()->pull('central_social_intent', 'login');
         $packageId = session()->pull('central_social_package_id');
 
         $email = $socialUser->getEmail();
+
+        if ($intent === 'register-popup') {
+            if (!$email) {
+                return $this->popupError(
+                    __('We could not retrieve your email from :provider. Please try again.', ['provider' => ucfirst($provider)])
+                );
+            }
+
+            $email = strtolower(trim($email));
+
+            return $this->popupSuccess(
+                email: $email,
+                name: $socialUser->getName() ?: $socialUser->getNickname() ?: Str::before($email, '@'),
+                provider: $provider,
+                existingAccount: TenantOwner::query()->where('email', $email)->exists(),
+            );
+        }
 
         if (!$email) {
             $route = $intent === 'register' ? 'website.register' : 'owner.login';
@@ -138,6 +157,35 @@ class CentralSocialAuthController extends Controller
         ]);
 
         return redirect()->route('website.register.complete', ['token' => $token]);
+    }
+
+    private function popupSuccess(string $email, string $name, string $provider, bool $existingAccount = false): \Illuminate\Http\Response
+    {
+        $payload = json_encode([
+            'type' => 'social_auth_success',
+            'email' => $email,
+            'name' => $name,
+            'provider' => $provider,
+            'existing_account' => $existingAccount,
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+
+        return response(view('auth.social-popup-result', [
+            'payload' => $payload,
+            'success' => true,
+        ]));
+    }
+
+    private function popupError(string $message): \Illuminate\Http\Response
+    {
+        $payload = json_encode([
+            'type' => 'social_auth_error',
+            'message' => $message,
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+
+        return response(view('auth.social-popup-result', [
+            'payload' => $payload,
+            'success' => false,
+        ]));
     }
 
     private function loginOwner(TenantOwner $owner): RedirectResponse

@@ -166,12 +166,12 @@ Route::get('/login', OwnerLoginPage::class)->middleware('guest:tenant_owner')->n
 
 // ── Google / Apple sign-in (tenant-owner login & new-tenant registration) ─────
 Route::get('/auth/google/{intent}', [CentralSocialAuthController::class, 'redirectToGoogle'])
-    ->whereIn('intent', ['login', 'register'])
+    ->whereIn('intent', ['login', 'register', 'register-popup'])
     ->name('website.social.google');
 Route::get('/auth/google/callback', [CentralSocialAuthController::class, 'handleGoogleCallback'])
     ->name('website.social.google.callback');
 Route::get('/auth/apple/{intent}', [CentralSocialAuthController::class, 'redirectToApple'])
-    ->whereIn('intent', ['login', 'register'])
+    ->whereIn('intent', ['login', 'register', 'register-popup'])
     ->name('website.social.apple');
 Route::post('/auth/apple/callback', [CentralSocialAuthController::class, 'handleAppleCallback'])
     ->name('website.social.apple.callback');
