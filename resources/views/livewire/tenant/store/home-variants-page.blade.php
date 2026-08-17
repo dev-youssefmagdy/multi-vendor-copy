@@ -1,3 +1,49 @@
+<style>
+.hv-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: fit-content;
+    margin-bottom: 24px;
+}
+.hv-tab {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--t2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.hv-tab:hover:not(.act) {
+    background: var(--card);
+    color: var(--t1);
+}
+.hv-tab.act {
+    background: var(--card);
+    color: var(--t1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+.hv-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary, #f97316);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.hv-tab.act .hv-dot {
+    opacity: 1;
+}
+</style>
 <main id="mn">
     {{-- Page header --}}
     <div class="page-head fu d0">
@@ -13,11 +59,12 @@
     </div>
 
     {{-- Theme switcher --}}
-    <div class="appearance-tabs fu d1 section-gap">
+    <div class="hv-tabs fu d1 section-gap">
         @foreach ($themes as $theme)
             <button type="button"
-                class="appearance-tab {{ $selectedThemeId === $theme->id ? 'act' : '' }}"
+                class="hv-tab {{ $selectedThemeId === $theme->id ? 'act' : '' }}"
                 wire:click="selectTheme({{ $theme->id }})">
+                <span class="hv-dot"></span>
                 {{ $theme->name }}
             </button>
         @endforeach
@@ -50,8 +97,8 @@
                         <tr>
                             <td>{{ $row['label'] }}</td>
                             <td>
-                                <select class="field-control home-variant-select"
-                                    data-country-id="{{ $row['country_id'] ?? '' }}">
+                                <select class="field-control"
+                                    wire:change="selectVariant({{ $row['country_id'] ?? 'null' }}, $event.target.value ? parseInt($event.target.value) : null)">
                                     <option value="" @selected(!$row['selected_variant_id'])>Theme default</option>
                                     @foreach ($availableVariants as $variant)
                                         <option value="{{ $variant->id }}" @selected($row['selected_variant_id'] === $variant->id)>
@@ -79,17 +126,4 @@
         @endif
     </div>
 
-    @push('scripts')
-        <script>
-            document.addEventListener('livewire:init', () => {
-                document.querySelectorAll('.home-variant-select').forEach((select) => {
-                    select.addEventListener('change', () => {
-                        const countryId = select.dataset.countryId ? parseInt(select.dataset.countryId, 10) : null;
-                        const variantId = select.value ? parseInt(select.value, 10) : null;
-                        @this.call('selectVariant', countryId, variantId);
-                    });
-                });
-            });
-        </script>
-    @endpush
 </main>
