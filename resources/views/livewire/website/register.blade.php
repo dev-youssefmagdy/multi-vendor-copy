@@ -369,9 +369,7 @@
     </div>
 </div>
 
-@if ($hasStripe)
-    <script src="https://js.stripe.com/v3/"></script>
-@endif
+<script src="https://js.stripe.com/v3/"></script>
 @if ($hasAuthorizeNet)
     <script src="{{ $authNetSandbox ? 'https://jstest.authorize.net/v1/Accept.js' : 'https://js.authorize.net/v1/Accept.js' }}" charset="utf-8"></script>
 @endif
@@ -397,16 +395,31 @@
 
     async function initRegisterPaymentForms() {
         const container = document.getElementById('register-inline-card-form');
-        if (!container || container.dataset.initialized) return;
+        if (!container) return;
 
         const gateway = container.dataset.gateway;
 
         if (gateway === 'stripe') {
             const stripeKey = container.dataset.stripeKey;
-            if (!stripeKey) return;
+            if (!stripeKey) {
+                console.warn('Stripe: no publishable key found in data-stripe-key');
+                return;
+            }
 
+            if (registerStripeCard) {
+                try { registerStripeCard.unmount(); } catch (e) {}
+                registerStripeCard = null;
+                registerStripe = null;
+            }
+
+            let attempts = 0;
+            while (typeof Stripe === 'undefined' && attempts < 20) {
+                await new Promise(r => setTimeout(r, 100));
+                attempts++;
+            }
             if (typeof Stripe === 'undefined') {
-                try { await loadSdkScript('https://js.stripe.com/v3/'); } catch { return; }
+                console.error('Stripe.js failed to load');
+                return;
             }
 
             registerStripe = Stripe(stripeKey);
@@ -424,7 +437,15 @@
                 hidePostalCode: true,
             });
 
-            registerStripeCard.mount('#register-stripe-card-element');
+            await new Promise(r => setTimeout(r, 50));
+
+            const mountEl = document.getElementById('register-stripe-card-element');
+            if (!mountEl) {
+                console.error('Stripe: mount element #register-stripe-card-element not found');
+                return;
+            }
+
+            registerStripeCard.mount(mountEl);
             registerStripeCard.on('change', (event) => {
                 const errEl = document.getElementById('register-stripe-card-errors');
                 if (!errEl) return;
@@ -432,9 +453,10 @@
                 errEl.classList.toggle('hidden', !event.error);
             });
 
-            container.dataset.initialized = '1';
             return;
         }
+
+        if (container.dataset.initialized) return;
 
         if (gateway === 'authorize_net') {
             const sandbox = container.dataset.sandbox === '1';
@@ -480,16 +502,13 @@
     Livewire.on('registerPaymentMethodChanged', () => {
         registerStripe = null;
         registerStripeCard = null;
-        setTimeout(initRegisterPaymentForms, 50);
+        setTimeout(initRegisterPaymentForms, 150);
     });
 
     document.addEventListener('livewire:updated', () => {
-        const container = document.getElementById('register-inline-card-form');
-        if (container && !container.dataset.initialized) {
-            registerStripe = null;
-            registerStripeCard = null;
-        }
-        setTimeout(initRegisterPaymentForms, 50);
+        registerStripe = null;
+        registerStripeCard = null;
+        setTimeout(initRegisterPaymentForms, 100);
     });
 
     // Intercept the Proceed to Payment button to tokenize inline card gateways
@@ -661,9 +680,10 @@
     };
 
     window.addEventListener('message', function (event) {
-        const expectedOrigin = @json(config('app.url'));
-
-        if (event.origin !== expectedOrigin && event.origin !== window.location.origin) {
+        // Accept messages from same host only — validate by message type below
+        const msgHost = new URL(event.origin).hostname;
+        const pageHost = window.location.hostname;
+        if (msgHost !== pageHost) {
             return;
         }
 

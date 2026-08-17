@@ -35,10 +35,9 @@
     <script>
         (function () {
             var payload = {!! $payload !!};
-            var origin  = {{ json_encode(config('app.url')) }};
 
             if (window.opener && !window.opener.closed) {
-                window.opener.postMessage(payload, origin);
+                window.opener.postMessage(payload, '*');
             }
 
             setTimeout(function () { window.close(); }, 300);

@@ -29,6 +29,7 @@ use App\Observers\TenantTransactionObserver;
 use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -52,6 +53,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         $this->configureSessionDomain();
 
         Event::listen(SocialiteWasCalled::class, [AppleExtendSocialite::class, 'handle']);
