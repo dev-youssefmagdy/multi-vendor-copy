@@ -354,10 +354,10 @@
             @endforeach
         </div>
 
-        @if ($themes)
+        @if ($variantCards)
             <section class="theme-grid">
-                @foreach ($themes as $theme)
-                    <article wire:key="theme-card-{{ $theme['id'] }}"
+                @foreach ($variantCards as $theme)
+                    <article wire:key="variant-card-{{ $theme['theme_id'] }}-{{ $theme['variant_id'] }}"
                         class="theme-card {{ $theme['is_active'] ? 'is-active' : '' }} fu d{{ ($loop->index % 6) + 1 }}">
                         <div class="theme-card-preview">
                             @if ($theme['preview_path'])
@@ -376,7 +376,7 @@
                         <div class="theme-card-body">
                             <div class="theme-card-copy">
                                 <h3 class="theme-card-title">{{ $theme['name'] }}</h3>
-                                <div class="theme-card-subtitle">{{ $theme['slug'] }}</div>
+                                <div class="theme-card-subtitle">{{ $theme['theme_name'] }}</div>
                                 <div class="theme-card-subtitle">
                                     <span class="theme-scope-badge theme-scope-{{ $theme['is_universal'] ? 'universal' : 'specific' }}">
                                         {{ $theme['scope_label'] }}
@@ -386,11 +386,18 @@
                             </div>
 
                             <div class="theme-card-actions">
-                                @if ($theme['action_method'])
+                                @if ($theme['action_method'] === 'activateVariant')
                                     <button type="button" class="{{ $theme['action_class'] }}"
-                                        wire:click="{{ $theme['action_method'] }}({{ $theme['id'] }})"
+                                        wire:click="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})"
                                         wire:loading.attr="disabled"
-                                        wire:target="{{ $theme['action_method'] }}({{ $theme['id'] }})">
+                                        wire:target="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})">
+                                        {{ $theme['action_label'] }}
+                                    </button>
+                                @elseif ($theme['action_method'])
+                                    <button type="button" class="{{ $theme['action_class'] }}"
+                                        wire:click="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})">
                                         {{ $theme['action_label'] }}
                                     </button>
                                 @else
@@ -408,7 +415,7 @@
 
                                 @if ($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"
-                                        wire:click="openCountries({{ $theme['id'] }})">
+                                        wire:click="openCountries({{ $theme['theme_id'] }})">
                                         Countries
                                     </button>
                                 @endif
@@ -419,8 +426,8 @@
             </section>
         @else
             <div class="theme-empty-state">
-                <div class="empty-state-title">No themes available</div>
-                <p class="empty-state-copy">Theme cards will appear here after tenant theme records are synced.</p>
+                <div class="empty-state-title">No variants available</div>
+                <p class="empty-state-copy">Variant cards will appear here after home page variants are published for your themes.</p>
             </div>
         @endif
     </div>

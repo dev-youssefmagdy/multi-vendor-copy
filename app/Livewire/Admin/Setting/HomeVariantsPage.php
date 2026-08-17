@@ -7,12 +7,15 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\HomeVariant;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use App\Services\Tenant\TemplateRegistryService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Livewire\WithFileUploads;
 
 class HomeVariantsPage extends AdminPage
 {
     use InteractsWithAdminUi;
+    use WithFileUploads;
 
     public bool $modalOpen = false;
     public ?int $editingId = null;
@@ -26,6 +29,8 @@ class HomeVariantsPage extends AdminPage
     public string $view = '';
     public bool $isDefault = false;
     public bool $isActive = true;
+    public $previewImageFile = null;
+    public string $previewImageUrl = '';
 
     protected function pageMeta(): array
     {
@@ -58,6 +63,7 @@ class HomeVariantsPage extends AdminPage
                 'is_default' => $v->is_default,
                 'is_active' => $v->is_active,
                 'section_count' => $v->sections ? count($v->sections) : null,
+                'preview_image' => $v->preview_image,
             ]);
 
         return array_merge($this->pageMeta(), [
@@ -98,6 +104,8 @@ class HomeVariantsPage extends AdminPage
         $this->view = (string) $variant->view;
         $this->isDefault = $variant->is_default;
         $this->isActive = $variant->is_active;
+        $this->previewImageFile = null;
+        $this->previewImageUrl = (string) $variant->preview_image;
 
         $labels = SectionRegistry::labelsFor($this->themeSlug, 'home');
         $this->sections = $variant->sections ?? array_keys($labels);
@@ -135,6 +143,8 @@ class HomeVariantsPage extends AdminPage
         $this->view = '';
         $this->isDefault = false;
         $this->isActive = true;
+        $this->previewImageFile = null;
+        $this->previewImageUrl = '';
         $this->sections = $this->themeSlug ? array_keys(SectionRegistry::labelsFor($this->themeSlug, 'home')) : [];
         $this->resetErrorBag();
     }
@@ -154,6 +164,7 @@ class HomeVariantsPage extends AdminPage
             ],
             'description' => ['nullable', 'string', 'max:500'],
             'view' => ['nullable', 'string', 'max:150'],
+            'previewImageFile' => ['nullable', 'image', 'max:4096'],
         ];
         $this->validate($rules);
 
@@ -181,9 +192,15 @@ class HomeVariantsPage extends AdminPage
         }
 
         if ($this->editingId) {
-            HomeVariant::query()->findOrFail($this->editingId)->update($payload);
+            $variant = HomeVariant::query()->findOrFail($this->editingId);
+            $variant->update($payload);
         } else {
-            HomeVariant::query()->create($payload);
+            $variant = HomeVariant::query()->create($payload);
+        }
+
+        if ($this->previewImageFile) {
+            $path = $this->previewImageFile->store('home-variants/previews', 'public');
+            $variant->update(['preview_image' => Storage::url($path)]);
         }
 
         $this->closeModal();

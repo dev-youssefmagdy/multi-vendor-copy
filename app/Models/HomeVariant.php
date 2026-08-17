@@ -19,6 +19,7 @@ class HomeVariant extends Model
         'key',
         'name',
         'description',
+        'preview_image',
         'sections',
         'colors',
         'view',

@@ -4,8 +4,10 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
+use App\Models\HomeVariant;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\ThemeCountry;
+use App\Models\Tenant\TenantHomeVariant;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Support\Str;
@@ -38,57 +40,102 @@ class ThemesPage extends ListPage
     protected function pageData(): array
     {
         $themes = app(TenantPanelRepository::class)->themes();
-        $activeUniversal = $themes->first(fn(Theme $t) => $t->is_universal && $t->is_active);
+
+        // Load all HomeVariants for all tenant themes from central DB
+        $slugs = $themes->pluck('slug')->map(fn($s) => strtolower($s))->all();
+        $allVariants = tenancy()->central(fn() => HomeVariant::query()
+            ->whereIn('theme_slug', $slugs)
+            ->where('is_active', true)
+            ->orderBy('theme_slug')
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get()
+        );
+
+        // Find the currently active universal variant:
+        // The active universal Theme is the one with is_universal=true and is_active=true.
+        // The active variant is the TenantHomeVariant with country_id=null for that theme.
+        $activeUniversalTheme = $themes->first(fn(Theme $t) => $t->is_universal && $t->is_active);
+        $activeVariantId = null;
+        if ($activeUniversalTheme) {
+            $activeVariantId = TenantHomeVariant::query()
+                ->where('theme_id', $activeUniversalTheme->id)
+                ->whereNull('country_id')
+                ->value('home_variant_id');
+        }
+
+        $variantCards = $allVariants->map(function (HomeVariant $variant) use ($themes, $activeVariantId) {
+            $theme = $themes->first(fn(Theme $t) => strtolower($t->slug) === strtolower($variant->theme_slug));
+            if (!$theme) {
+                return null;
+            }
+
+            $isUniversal = (bool) $theme->is_universal;
+            $enabledCount = $theme->countries->where('is_enabled', true)->count();
+            $totalCount = $theme->countries->count();
+
+            // A variant is "active" when:
+            // - Universal theme: this variant is the TenantHomeVariant default (country_id=null)
+            // - Country-specific theme: theme is_active=true (variant concept doesn't apply)
+            $isActive = $isUniversal
+                ? ($activeVariantId !== null && (int) $activeVariantId === (int) $variant->id)
+                : (bool) $theme->is_active;
+
+            // Action logic mirrors existing theme page behaviour exactly:
+            // Universal variant: radio — "Set Active" / "Active" (disabled)
+            // Country-specific variant: toggle — "Activate" / "Deactivate"
+            if ($isUniversal) {
+                $actionLabel = $isActive ? 'Active' : 'Set Active';
+                $actionMethod = $isActive ? null : 'activateVariant';
+                $actionClass = $isActive
+                    ? 'theme-pill-btn is-disabled'
+                    : 'theme-pill-btn is-primary';
+            } else {
+                $actionLabel = $isActive ? 'Deactivate' : 'Activate';
+                $actionMethod = $isActive ? 'deactivateTheme' : 'activateTheme';
+                $actionClass = $isActive
+                    ? 'theme-pill-btn is-danger'
+                    : 'theme-pill-btn is-primary';
+            }
+
+            // Preview: use variant's own preview_image if set, else fall back to theme preview_path
+            $previewPath = ($variant->preview_image && trim((string) $variant->preview_image) !== '')
+                ? trim((string) $variant->preview_image)
+                : ($theme->preview_path ? trim((string) $theme->preview_path) : null);
+
+            return [
+                'theme_id' => $theme->id,
+                'variant_id' => $variant->id,
+                'name' => $variant->name,
+                'description' => $variant->description ?? $theme->slug,
+                'theme_name' => $theme->name ?? $theme->slug,
+                'theme_slug' => $theme->slug,
+                'is_active' => $isActive,
+                'is_universal' => $isUniversal,
+                'scope_label' => $isUniversal ? 'Universal' : 'Country-specific',
+                'action_label' => $actionLabel,
+                'action_method' => $actionMethod,
+                'action_class' => $actionClass,
+                'preview_path' => $previewPath,
+                'preview_label' => $previewPath ? 'Preview' : 'No Preview',
+                'initials' => Str::upper(Str::substr((string) $variant->name, 0, 2)),
+                'countries_label' => $isUniversal
+                    ? 'All countries'
+                    : sprintf('%d of %d countries', $enabledCount, $totalCount),
+                'has_countries' => $totalCount > 0,
+            ];
+        })->filter()->values()->all();
+
+        $activeVariantName = $allVariants->firstWhere('id', $activeVariantId)?->name
+            ?? ($activeUniversalTheme?->name ?? 'No theme active');
 
         return array_merge(parent::pageData(), [
-            'activeThemeName' => $activeUniversal?->name ?? 'No universal theme active',
-            'themes' => $themes->map(function (Theme $theme) {
-                $previewPath = $theme->preview_path ? trim((string) $theme->preview_path) : null;
-                $isActive = (bool) $theme->is_active;
-                $isUniversal = (bool) $theme->is_universal;
-                $enabledCount = $theme->countries->where('is_enabled', true)->count();
-                $totalCount = $theme->countries->count();
-
-                // Activation UX differs between the two theme flavours:
-                //  - Universal: "Set Active" radio — clicking swaps the primary theme.
-                //  - Country-specific: "Activate" / "Deactivate" independent toggle.
-                if ($isUniversal) {
-                    $actionLabel = $isActive ? 'Active' : 'Set Active';
-                    $actionMethod = $isActive ? null : 'activateTheme';
-                    $actionClass = $isActive
-                        ? 'theme-pill-btn is-disabled'
-                        : 'theme-pill-btn is-primary';
-                } else {
-                    $actionLabel = $isActive ? 'Deactivate' : 'Activate';
-                    $actionMethod = $isActive ? 'deactivateTheme' : 'activateTheme';
-                    $actionClass = $isActive
-                        ? 'theme-pill-btn is-danger'
-                        : 'theme-pill-btn is-primary';
-                }
-
-                return [
-                    'id' => $theme->id,
-                    'name' => $theme->name ?? 'Theme #' . $theme->id,
-                    'slug' => $theme->slug ?? 'theme-' . $theme->id,
-                    'is_active' => $isActive,
-                    'is_universal' => $isUniversal,
-                    'scope_label' => $isUniversal ? 'Universal' : 'Country-specific',
-                    'action_label' => $actionLabel,
-                    'action_method' => $actionMethod,
-                    'action_class' => $actionClass,
-                    'preview_path' => $previewPath,
-                    'preview_label' => $previewPath ? 'Preview' : 'No Preview',
-                    'initials' => Str::upper(Str::substr((string) ($theme->name ?? 'TH'), 0, 2)),
-                    'countries_label' => $isUniversal
-                        ? 'All countries'
-                        : sprintf('%d of %d countries', $enabledCount, $totalCount),
-                    'has_countries' => $totalCount > 0,
-                ];
-            })->all(),
+            'activeThemeName' => $activeVariantName,
+            'variantCards' => $variantCards,
             'statistics' => [
-                ['label' => 'Themes', 'value' => number_format($themes->count()), 'caption' => 'Available tenant themes', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format($themes->where('is_active', true)->count()), 'caption' => 'Currently live storefront themes', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Universal', 'value' => number_format($themes->where('is_universal', true)->count()), 'caption' => 'Themes available in every country', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Variants', 'value' => number_format(count($variantCards)), 'caption' => 'Available home page layouts', 'dot' => 'dot-cyan'],
+                ['label' => 'Active', 'value' => number_format(collect($variantCards)->where('is_active', true)->count()), 'caption' => 'Currently live variant', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Themes', 'value' => number_format($themes->count()), 'caption' => 'Base themes available', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
         ]);
     }
@@ -97,6 +144,24 @@ class ThemesPage extends ListPage
     {
         $service->activateTheme(Theme::query()->findOrFail($themeId));
         $this->toast('Theme activated successfully.');
+        $this->dispatch('setup-step-completed');
+    }
+
+    public function activateVariant(int $themeId, int $variantId, TenantPanelService $service): void
+    {
+        $theme = Theme::query()->findOrFail($themeId);
+
+        // Activate the theme itself (same as before — ensures is_active=true,
+        // deactivates other universal themes)
+        $service->activateTheme($theme);
+
+        // Set this variant as the universal (all-countries) TenantHomeVariant
+        TenantHomeVariant::query()->updateOrCreate(
+            ['theme_id' => $themeId, 'country_id' => null],
+            ['home_variant_id' => $variantId]
+        );
+
+        $this->toast('Variant activated successfully.');
         $this->dispatch('setup-step-completed');
     }
 

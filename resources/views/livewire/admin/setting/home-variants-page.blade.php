@@ -104,6 +104,21 @@
                         <label class="field-label">Description</label>
                         <x-input type="text" wire:model.defer="description" :error="$errors->has('description')" />
                     </div>
+                    <div class="span-2">
+                        <label class="field-label">Preview Image</label>
+                        @if ($previewImageUrl)
+                            <div style="margin-bottom:8px;">
+                                <img src="{{ $previewImageUrl }}" alt="Current preview" style="max-width:200px;border-radius:8px;border:1px solid var(--border2);">
+                            </div>
+                        @endif
+                        <input type="file" wire:model="previewImageFile" accept="image/*" class="field-control">
+                        @error('previewImageFile')<div class="field-error">{{ $message }}</div>@enderror
+                        @if ($previewImageFile)
+                            <div style="margin-top:8px;">
+                                <img src="{{ $previewImageFile->temporaryUrl() }}" alt="New preview" style="max-width:200px;border-radius:8px;border:1px solid var(--border2);">
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="form-grid form-grid-2">
