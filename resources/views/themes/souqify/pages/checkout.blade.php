@@ -428,6 +428,11 @@
                                         @if($item['display_variant'])
                                             <p class="text-neutral-400 text-xs mt-0.5">{{ $item['display_variant'] }}</p>
                                         @endif
+                                        @if($item['is_out_of_stock'] ?? false)
+                                            <span class="text-red-500 text-xs font-medium block mt-0.5">
+                                                {{ __('Out of stock') }}
+                                            </span>
+                                        @endif
                                         @if(!empty($shippingEstimate['estimated_arrival']))
                                             <p class="text-neutral-400 text-xs mt-0.5">
                                                 {{ __('Delivery by :date', ['date' => $shippingEstimate['estimated_arrival']->format('d M')]) }}

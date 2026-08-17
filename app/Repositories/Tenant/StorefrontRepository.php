@@ -135,7 +135,7 @@ class StorefrontRepository
         return $relations;
     }
 
-    protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = true): Builder
+    protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
     {
         $query = Product::query()
             ->where('active', true)
@@ -316,7 +316,7 @@ class StorefrontRepository
         return $query->whereHas('categories', fn(Builder $categoryQuery) => $categoryQuery->where('categories.id', (int) $categoryId));
     }
 
-    protected function productsByBadgeQuery(string $badgeText, bool $excludeOutOfStock = true): Builder
+    protected function productsByBadgeQuery(string $badgeText, bool $excludeOutOfStock = false): Builder
     {
         return $this->productBaseQuery(excludeOutOfStock: $excludeOutOfStock)
             ->whereHas('badges', fn(Builder $badgeQuery) => $badgeQuery->where('text', $badgeText)->where('active', true));
@@ -1098,10 +1098,33 @@ class StorefrontRepository
                 'is_flash_sale' => $pricing['is_flash_sale'],
                 'flash_sale_percentage' => $pricing['flash_sale_percentage'],
                 'subtotal' => $price * $qty,
+                'is_out_of_stock' => $this->isCartItemOutOfStock($product, $variant),
             ];
         }
 
         return $items;
+    }
+
+    private function isCartItemOutOfStock(Product $product, ?ProductVariant $variant): bool
+    {
+        $central = $product->centralProduct;
+
+        if (!$central) {
+            $stock = $variant ? ($variant->stock ?? $product->stock ?? null) : $product->stock;
+            return $stock !== null && (int) $stock <= 0;
+        }
+
+        if (!($central->manage_stock ?? false)) {
+            return false;
+        }
+
+        if ($variant) {
+            $stock = (int) ($variant->stock ?? $variant->centralVariant?->stock ?? 0);
+        } else {
+            $stock = (int) ($product->stock ?? 0);
+        }
+
+        return $stock <= 0;
     }
 
     public function cartCount(): int

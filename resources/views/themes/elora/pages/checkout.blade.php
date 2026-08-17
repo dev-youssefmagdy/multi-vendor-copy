@@ -380,6 +380,11 @@
                                     <p class="text-[#171717] text-xs font-normal font-['Outfit'] tracking-[0.5px] line-clamp-1">
                                         {{ $item['display_name'] }}@if($coVariant) <span class="text-[#ADADAD]"> – {{ $coVariant }}</span>@endif
                                     </p>
+                                    @if($item['is_out_of_stock'] ?? false)
+                                    <span class="text-red-500 text-xs font-medium block mt-0.5">
+                                        {{ __('Out of stock') }}
+                                    </span>
+                                    @endif
                                     <p class="text-[#FF4D00] text-sm font-normal font-['Outfit'] tracking-[0.5px]">
                                         {{ __('Estimated delivery') }}: {{ $coDeliveryFrom }} - {{ $coDeliveryTo }}
                                     </p>

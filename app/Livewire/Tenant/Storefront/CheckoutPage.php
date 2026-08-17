@@ -363,7 +363,8 @@ class CheckoutPage extends Component
             return;
         }
 
-        // ── Stock validation ──────────────────────────────────────────────────
+        // ── Stock validation (warn only — OOS items no longer block submission) ──
+        $stockWarnings = [];
         foreach ($cartItems as $item) {
             $product = $item['product'] ?? null;
             $variant = $item['variant'] ?? null;
@@ -372,9 +373,11 @@ class CheckoutPage extends Component
             }
             $stockError = $this->checkProductStock($product, $variant, (int) $item['qty'], 0);
             if ($stockError !== null) {
-                $this->toast($stockError, 'error');
-                return;
+                $stockWarnings[] = $stockError;
             }
+        }
+        foreach ($stockWarnings as $warning) {
+            $this->dispatch('storefront-toast', message: $warning, type: 'warning');
         }
         // ─────────────────────────────────────────────────────────────────────
 

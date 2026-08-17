@@ -362,6 +362,11 @@
                                     @if ($item['display_variant'])
                                         <p class="text-[11px] text-[#888] mt-0.5">{{ $item['display_variant'] }}</p>
                                     @endif
+                                    @if ($item['is_out_of_stock'] ?? false)
+                                        <span class="text-red-500 text-xs font-medium block mt-0.5">
+                                            {{ __('Out of stock') }}
+                                        </span>
+                                    @endif
                                     <div class="flex items-center justify-between mt-1.5">
                                         <span class="text-[12px] text-[#888]">{{ __('Qty: :qty', ['qty' => $item['qty']]) }}</span>
                                         <span class="text-[13px] font-[500] text-[#242424]">{{ $item['formatted_subtotal'] }}</span>
