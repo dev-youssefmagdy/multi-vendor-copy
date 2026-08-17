@@ -47,6 +47,24 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     ];
 
 
+    public function setCategoryIdsAttribute($value): void
+    {
+        // Some legacy code paths re-saved an already-encoded JSON string back onto
+        // this attribute, compounding json_encode() on every save. Unwrap any
+        // nested JSON-encoded strings here so the column always ends up holding
+        // a plain array (or null).
+        while (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $value = null;
+                break;
+            }
+            $value = $decoded;
+        }
+
+        $this->attributes['category_ids'] = filled($value) ? json_encode(array_values((array) $value)) : null;
+    }
+
     public function primaryLanguage(): BelongsTo
     {
         return $this->belongsTo(Language::class, 'primary_language_id');

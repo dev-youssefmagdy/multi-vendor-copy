@@ -114,13 +114,32 @@ class TenantCatalogSyncService
             'themes' => $this->syncThemes(),
             'email-templates' => $this->syncEmailTemplates(),
             'pages' => $this->syncPages(),
-            'categories' => $this->syncCategories($tenant->category_ids ?? []),
-            'products' => $this->syncProducts($tenant->category_ids ?? []),
+            'categories' => $this->syncCategories($this->normalizeCategoryIds($tenant->category_ids)),
+            'products' => $this->syncProducts($this->normalizeCategoryIds($tenant->category_ids)),
             'badges' => $this->syncBadges(),
             'flash-sales' => $this->syncFlashSales(),
             'coupons' => $this->syncCoupons(),
             default => throw new InvalidArgumentException("Unsupported sync section: {$section}"),
         };
+    }
+
+    /**
+     * Legacy data may hold category_ids as a (possibly multiply) JSON-encoded
+     * string instead of an array; unwrap it defensively before use.
+     *
+     * @return int[]
+     */
+    protected function normalizeCategoryIds(mixed $value): array
+    {
+        while (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return [];
+            }
+            $value = $decoded;
+        }
+
+        return is_array($value) ? array_values(array_map('intval', $value)) : [];
     }
 
     public function normalizeSections(?array $sections): array
