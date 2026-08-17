@@ -129,7 +129,11 @@ class PaymentManager
     {
 
         if (!$this->inTenantContext()) {
-            return $this->centrallyActiveGateways()
+            return PaymentGateway::query()
+                ->where('status', 'active')
+                ->where('type', PaymentGatewayType::Orders->value)
+                ->with('logoFile')
+                ->get()
                 ->map(fn(PaymentGateway $gateway) => [
                     'source' => 'central',
                     'id' => $gateway->id,
@@ -137,12 +141,13 @@ class PaymentManager
                     'name' => $gateway->name,
                     'mode' => $gateway->mode?->value ?? PaymentGatewayMode::Test->value,
                     'creds' => (array) ($gateway->credentials ?? []),
+                    'logo_url' => $gateway->logoFile?->full_path,
                 ])
                 ->values();
         }
 
         return TenantPaymentGateway::query()
-            ->with('centralPaymentGateway')
+            ->with('centralPaymentGateway.logoFile')
             ->where('is_active', true)
             ->where('hide', false)
             ->where('type', PaymentGatewayType::Orders->value)
@@ -164,6 +169,7 @@ class PaymentManager
                     'mode' => $mode instanceof PaymentGatewayMode ? $mode->value : (string) $mode,
                     'creds' => $gateway->effective_credentials,
                     'use_own' => $useOwn,
+                    'logo_url' => $gateway->centralPaymentGateway?->logoFile?->full_path,
                 ];
             })
             ->values();
@@ -390,6 +396,5 @@ class PaymentManager
     private function inTenantContext(): bool
     {
         return !empty(tenant('id') ?? null);
-        return app()->bound('tenancy') && tenancy()->initialized;
     }
 }

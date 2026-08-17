@@ -63,10 +63,15 @@ class PaytmGateway extends AbstractPaymentGateway
 
     public function verify(Request $request): PaymentResult
     {
-        $orderId   = $request->input('ORDERID') ?? Session::get('paytm_order_id');
         $txnId     = $request->input('TXNID');
         $status    = $request->input('STATUS');
         $respMsg   = $request->input('RESPMSG');
+        $checksum  = $request->input('CHECKSUMHASH');
+        $params    = $request->except('CHECKSUMHASH');
+
+        if (!$checksum || !$this->verifyChecksum($params, $checksum)) {
+            return PaymentResult::failure('Paytm checksum verification failed.');
+        }
 
         if ($status === 'TXN_SUCCESS') {
             Session::forget('paytm_order_id');
@@ -74,5 +79,29 @@ class PaytmGateway extends AbstractPaymentGateway
         }
 
         return PaymentResult::failure("Paytm transaction failed: {$respMsg}");
+    }
+
+    /**
+     * Verify Paytm's CHECKSUMHASH using their documented AES-128-CBC scheme.
+     * https://developer.paytm.com/docs/checksum/
+     */
+    private function verifyChecksum(array $params, string $checksum): bool
+    {
+        $key = (string) $this->cfg('merchant_key');
+        $iv  = '@@@@&&&&####$$$$';
+
+        $decrypted = openssl_decrypt(base64_decode($checksum), 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
+        if ($decrypted === false || strlen($decrypted) <= 4) {
+            return false;
+        }
+
+        $salt = substr($decrypted, -4);
+        $hash = substr($decrypted, 0, -4);
+
+        ksort($params);
+        $string = implode('|', array_map('strval', $params)) . '|' . $salt;
+
+        return hash_equals(hash('sha256', $string), $hash);
     }
 }

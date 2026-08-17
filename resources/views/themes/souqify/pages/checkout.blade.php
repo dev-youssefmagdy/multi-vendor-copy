@@ -293,6 +293,10 @@
                                             </svg>
                                         </div>
                                         <span class="font-medium text-slate-900">{{ $gw['name'] }}</span>
+                                        @if(isset($gw['logo_url']) && $gw['logo_url'])
+                                            <img src="{{ $gw['logo_url'] }}" alt="{{ $gw['name'] }}"
+                                                 class="h-6 object-contain ml-auto">
+                                        @endif
                                     </div>
                                 </label>
                             @endforeach

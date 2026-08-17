@@ -67,15 +67,36 @@ class PaytabsGateway extends AbstractPaymentGateway
 
     public function verify(Request $request): PaymentResult
     {
-        $status  = $request->input('respStatus');
-        $message = $request->input('respMessage');
-        $tranRef = $request->input('tranRef');
+        $tranRef = $request->input('tranRef') ?? $request->input('tran_ref');
 
-        if ($status === 'A' && strtolower($message ?? '') === 'authorised') {
-            return PaymentResult::success((string) $tranRef);
+        if (!$tranRef) {
+            return PaymentResult::failure('Missing PayTabs tranRef in callback.');
         }
 
-        return PaymentResult::failure("PayTabs response: {$status} — {$message}");
+        $endpoint = rtrim($this->cfg('region_url'), '/') . '/payment/query';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $this->cfg('server_key'),
+                'Content-Type'  => 'application/json',
+            ])->post($endpoint, [
+                'profile_id' => $this->cfg('profile_id'),
+                'tran_ref'   => $tranRef,
+            ]);
+
+            $data = $response->json();
+            $status = $data['payment_result']['response_status'] ?? null;
+
+            if ($response->successful() && $status === 'A') {
+                return PaymentResult::success((string) ($data['tran_ref'] ?? $tranRef), json_encode($data));
+            }
+
+            $message = $data['payment_result']['response_message'] ?? ($data['message'] ?? 'unknown');
+
+            return PaymentResult::failure("PayTabs response: {$status} — {$message}");
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
     }
 
     public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
