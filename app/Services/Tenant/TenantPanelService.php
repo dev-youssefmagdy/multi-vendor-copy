@@ -555,8 +555,6 @@ class TenantPanelService
             return;
         }
 
-        $data = $tenant->data ?? [];
-
         $fieldMap = [
             // Business Info
             'business_name' => 'compliance_business_name',
@@ -596,11 +594,7 @@ class TenantPanelService
             }
         }
 
-        // Must run in central context (tenant request switches default DB to tenant DB)
-        tenancy()->central(function () use ($tenant, $data, $updates) {
-            $tenant->fill($updates);
-            $tenant->save();
-        });
+        \App\Models\Tenant::saveData($tenant->id, $updates);
     }
 
     /**

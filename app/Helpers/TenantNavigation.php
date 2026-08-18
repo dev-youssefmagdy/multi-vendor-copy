@@ -303,7 +303,10 @@ class TenantNavigation
 
         $filledCount = 0;
         foreach ($fields as $field) {
-            if (filled(data_get($tenant, "data.{$field}"))) {
+            // $tenant is a Tenant model instance whose `data` JSON is decoded
+            // straight onto its own attributes (VirtualColumn), so read the
+            // attribute directly rather than via data_get($tenant, "data.$field").
+            if (filled(is_object($tenant) ? ($tenant->{$field} ?? null) : data_get($tenant, "data.{$field}"))) {
                 $filledCount++;
             }
         }

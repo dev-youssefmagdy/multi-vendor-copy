@@ -15,25 +15,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
 
-    protected $fillable = [
-        'id',
-        'name',
-        'slug',
-        'email',
-        'phone',
-        'status',
-        'category_ids',
-        'primary_language_id',
-        'package_id',
-        'trial_ends_at',
-        'activated_at',
-        'profit_percentage',
-        'data',
-        'compliance_status',
-        'compliance_admin_note',
-        'compliance_reviewed_by',
-        'compliance_reviewed_at',
-    ];
+    // No physical columns other than `id`/`data` exist on this table (see
+    // vendor/stancl/virtualcolumn) — every other attribute, including the
+    // many dynamic `compliance_*`/`shop_name`/etc keys saved via saveData(),
+    // is redirected into the `data` JSON column regardless of name. A fixed
+    // $fillable allowlist here would silently drop any key not listed, so
+    // mass assignment stays wide open like the base Stancl\Tenancy model.
+    protected $guarded = [];
 
     protected $casts = [
         'status' => TenantStatus::class,
@@ -46,24 +34,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'data' => 'array',
     ];
 
-
-    public function setCategoryIdsAttribute($value): void
-    {
-        // Some legacy code paths re-saved an already-encoded JSON string back onto
-        // this attribute, compounding json_encode() on every save. Unwrap any
-        // nested JSON-encoded strings here so the column always ends up holding
-        // a plain array (or null).
-        while (is_string($value)) {
-            $decoded = json_decode($value, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $value = null;
-                break;
-            }
-            $value = $decoded;
-        }
-
-        $this->attributes['category_ids'] = filled($value) ? json_encode(array_values((array) $value)) : null;
-    }
 
     public function primaryLanguage(): BelongsTo
     {

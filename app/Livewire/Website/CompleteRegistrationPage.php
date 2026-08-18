@@ -172,7 +172,7 @@ class CompleteRegistrationPage extends Component
             return;
         }
 
-        $this->shopNameTaken = Tenant::query()->where('slug', $slug)->exists()
+        $this->shopNameTaken = Tenant::query()->where('data->slug', $slug)->exists()
             || DB::table('domains')->where('domain', 'like', $slug . '.%')->exists();
     }
 

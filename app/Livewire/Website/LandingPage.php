@@ -118,7 +118,7 @@ class LandingPage extends Component
                 'description' => 'Ready for your store.',
             ],
             [
-                'value' => number_format(Tenant::query()->where('status', TenantStatus::Active->value)->count()) . '+',
+                'value' => number_format(Tenant::query()->where('data->status', TenantStatus::Active->value)->count()) . '+',
                 'label' => 'Daily Transactions',
                 'description' => 'Processed through our platform.',
             ],

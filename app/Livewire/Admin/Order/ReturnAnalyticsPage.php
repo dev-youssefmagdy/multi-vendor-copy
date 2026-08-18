@@ -82,7 +82,7 @@ class ReturnAnalyticsPage extends ContentPage
             ])
             ->all();
 
-        $tenantOptions = ['' => 'All Tenants'] + Tenant::query()->orderBy('name')->pluck('name', 'id')->all();
+        $tenantOptions = ['' => 'All Tenants'] + Tenant::query()->orderBy('data->name')->get(['id', 'data->name as name'])->pluck('name', 'id')->all();
 
         return array_merge(parent::pageData(), [
             'secondaryActions' => [
@@ -180,7 +180,7 @@ class ReturnAnalyticsPage extends ContentPage
         }
 
         $records = $query->get();
-        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->pluck('name', 'id');
+        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->get(['id', 'data->name as name'])->pluck('name', 'id');
 
         return $records->map(fn (ReturnRequest $r) => [
             $tenantNames[$r->tenant_id] ?? $r->tenant_id,

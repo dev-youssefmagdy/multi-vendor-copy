@@ -54,8 +54,8 @@ class TenantRepository
     {
         return [
             'total' => Tenant::query()->count(),
-            'active' => Tenant::query()->where('status', TenantStatus::Active->value)->count(),
-            'onboarding' => Tenant::query()->where('status', TenantStatus::Onboarding->value)->count(),
+            'active' => Tenant::query()->where('data->status', TenantStatus::Active->value)->count(),
+            'onboarding' => Tenant::query()->where('data->status', TenantStatus::Onboarding->value)->count(),
         ];
     }
 

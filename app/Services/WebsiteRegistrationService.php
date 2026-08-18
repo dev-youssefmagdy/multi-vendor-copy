@@ -52,7 +52,7 @@ class WebsiteRegistrationService
         $candidate = $base;
         $counter = 2;
 
-        while (Tenant::query()->where('slug', $candidate)->exists()) {
+        while (Tenant::query()->where('data->slug', $candidate)->exists()) {
             $candidate = $base . '-' . $counter;
             $counter++;
         }

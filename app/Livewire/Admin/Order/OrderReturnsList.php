@@ -49,7 +49,7 @@ class OrderReturnsList extends ListPage
 
         $records = $query->paginate(20);
 
-        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->pluck('name', 'id');
+        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->get(['id', 'data->name as name'])->pluck('name', 'id');
 
         $stats = [
             'total'    => ReturnRequest::count(),
@@ -108,7 +108,7 @@ class OrderReturnsList extends ListPage
     protected function exportRows(): array
     {
         $records = ReturnRequest::query()->latest()->get();
-        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->pluck('name', 'id');
+        $tenantNames = Tenant::whereIn('id', $records->pluck('tenant_id')->unique())->get(['id', 'data->name as name'])->pluck('name', 'id');
 
         return $records->map(fn(ReturnRequest $r) => [
             $r->id,

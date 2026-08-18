@@ -536,7 +536,7 @@ class AddEditProduct extends Component
             'deliveryScopes' => DeliveryScope::cases(),
             'existingImage' => $this->productId ? Product::query()->with('files')->find($this->productId)?->primary_image_url : null,
             'existingGallery' => $existingGallery,
-            'tenants' => Tenant::query()->orderBy('name')->get(),
+            'tenants' => Tenant::query()->orderBy('data->name')->get(),
             'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
         ]);
     }

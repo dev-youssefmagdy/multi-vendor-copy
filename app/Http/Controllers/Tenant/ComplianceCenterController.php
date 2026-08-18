@@ -19,37 +19,41 @@ class ComplianceCenterController extends Controller
     {
         $tenant = tenant();
 
-        $rawPhone = (string) data_get($tenant, 'data.compliance_phone', $tenant?->phone ?? '');
+        // $tenant is a Tenant model instance: VirtualColumn decodes `data`
+        // straight onto the model's own attributes on retrieval and nulls
+        // out ->data itself, so reads must go through the attribute
+        // directly ($tenant->compliance_x), not data_get($tenant, 'data.x').
+        $rawPhone = (string) ($tenant?->compliance_phone ?? $tenant?->phone ?? '');
 
         return view('tenant.setting.compliance-center', [
-            'businessName' => (string) data_get($tenant, 'data.compliance_business_name', ''),
-            'storeName' => (string) data_get($tenant, 'data.compliance_store_name', data_get($tenant, 'data.shop_name', '')),
-            'countryId' => data_get($tenant, 'data.compliance_country') ?: null,
-            'city' => (string) data_get($tenant, 'data.compliance_city', ''),
+            'businessName' => (string) ($tenant?->compliance_business_name ?? ''),
+            'storeName' => (string) ($tenant?->compliance_store_name ?? $tenant?->shop_name ?? ''),
+            'countryId' => $tenant?->compliance_country ?: null,
+            'city' => (string) ($tenant?->compliance_city ?? ''),
             'phone' => str_contains($rawPhone, 'object') ? '' : $rawPhone,
-            'email' => (string) data_get($tenant, 'data.compliance_email', $tenant?->email ?? ''),
+            'email' => (string) ($tenant?->compliance_email ?? $tenant?->email ?? ''),
 
-            'ownerName' => (string) data_get($tenant, 'data.compliance_owner_name', ''),
-            'ownerIdNumber' => (string) data_get($tenant, 'data.compliance_owner_id_number', ''),
-            'ownerDob' => data_get($tenant, 'data.compliance_owner_dob') ?: null,
-            'ownerContact' => (string) data_get($tenant, 'data.compliance_owner_contact', ''),
+            'ownerName' => (string) ($tenant?->compliance_owner_name ?? ''),
+            'ownerIdNumber' => (string) ($tenant?->compliance_owner_id_number ?? ''),
+            'ownerDob' => $tenant?->compliance_owner_dob ?: null,
+            'ownerContact' => (string) ($tenant?->compliance_owner_contact ?? ''),
 
-            'companyName' => (string) data_get($tenant, 'data.compliance_company_name', ''),
-            'registrationNumber' => (string) data_get($tenant, 'data.compliance_registration_number', ''),
-            'registrationExpiry' => data_get($tenant, 'data.compliance_registration_expiry') ?: null,
-            'vatNumber' => (string) data_get($tenant, 'data.compliance_vat_number', ''),
-            'registrationDocumentPath' => data_get($tenant, 'data.compliance_registration_document_path') ?: null,
+            'companyName' => (string) ($tenant?->compliance_company_name ?? ''),
+            'registrationNumber' => (string) ($tenant?->compliance_registration_number ?? ''),
+            'registrationExpiry' => $tenant?->compliance_registration_expiry ?: null,
+            'vatNumber' => (string) ($tenant?->compliance_vat_number ?? ''),
+            'registrationDocumentPath' => $tenant?->compliance_registration_document_path ?: null,
 
-            'bankName' => (string) data_get($tenant, 'data.compliance_bank_name', ''),
-            'bankHolderName' => (string) data_get($tenant, 'data.compliance_bank_holder_name', ''),
-            'bankAccountNumber' => (string) data_get($tenant, 'data.compliance_bank_account_number', ''),
-            'bankIban' => (string) data_get($tenant, 'data.compliance_bank_iban', ''),
-            'bankCurrency' => (string) data_get($tenant, 'data.compliance_bank_currency', ''),
+            'bankName' => (string) ($tenant?->compliance_bank_name ?? ''),
+            'bankHolderName' => (string) ($tenant?->compliance_bank_holder_name ?? ''),
+            'bankAccountNumber' => (string) ($tenant?->compliance_bank_account_number ?? ''),
+            'bankIban' => (string) ($tenant?->compliance_bank_iban ?? ''),
+            'bankCurrency' => (string) ($tenant?->compliance_bank_currency ?? ''),
 
-            'docNationalIdPath' => data_get($tenant, 'data.compliance_doc_national_id_path') ?: null,
-            'docCommercialRegistrationPath' => data_get($tenant, 'data.compliance_doc_commercial_registration_path') ?: null,
-            'docTaxCertificatePath' => data_get($tenant, 'data.compliance_doc_tax_certificate_path') ?: null,
-            'docAdditionalPaths' => (array) data_get($tenant, 'data.compliance_doc_additional_paths', []),
+            'docNationalIdPath' => $tenant?->compliance_doc_national_id_path ?: null,
+            'docCommercialRegistrationPath' => $tenant?->compliance_doc_commercial_registration_path ?: null,
+            'docTaxCertificatePath' => $tenant?->compliance_doc_tax_certificate_path ?: null,
+            'docAdditionalPaths' => (array) ($tenant?->compliance_doc_additional_paths ?? []),
 
             'countries' => Country::query()->orderBy('name')->get(['id', 'name']),
             'policyPages' => $this->policyPages(),

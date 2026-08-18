@@ -389,7 +389,7 @@ class ProductController extends Controller
             'statusOptions' => ProductStatus::cases(),
             'existingImage' => $existingImage,
             'existingGallery' => $existingGallery,
-            'tenants' => Tenant::query()->orderBy('name')->get(),
+            'tenants' => Tenant::query()->orderBy('data->name')->get(),
             'translations' => $translations,
             'variants' => $variants,
             'assignedTenantIds' => $assignedTenantIds,

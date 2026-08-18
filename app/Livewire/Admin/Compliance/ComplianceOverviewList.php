@@ -44,8 +44,8 @@ class ComplianceOverviewList extends ListPage
             ],
             'statistics' => $this->presentMetricCards([
                 ['label' => 'Total Tenants', 'value' => Tenant::query()->count(), 'caption' => 'Registered tenants', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Verified', 'value' => Tenant::query()->where('compliance_status', 'verified')->count(), 'caption' => 'Compliance approved', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Needs Action', 'value' => Tenant::query()->where('compliance_status', 'needs_action')->count(), 'caption' => 'Flagged by compliance team', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Verified', 'value' => Tenant::query()->where('data->compliance_status', 'verified')->count(), 'caption' => 'Compliance approved', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Needs Action', 'value' => Tenant::query()->where('data->compliance_status', 'needs_action')->count(), 'caption' => 'Flagged by compliance team', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'rows' => collect($records->items())->map(fn(Tenant $tenant) => $this->row($tenant))->all(),
             'tableDescription' => $records->total() . ' tenants matched the current filters.',
@@ -80,9 +80,9 @@ class ComplianceOverviewList extends ListPage
 
         return Tenant::query()
             ->when($search !== '', fn($q) => $q->where(fn($qq) => $qq
-                ->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")))
-            ->when($this->statusFilter !== '', fn($q) => $q->where('compliance_status', $this->statusFilter))
+                ->where('data->name', 'like', "%{$search}%")
+                ->orWhere('data->email', 'like', "%{$search}%")))
+            ->when($this->statusFilter !== '', fn($q) => $q->where('data->compliance_status', $this->statusFilter))
             ->orderByDesc('created_at');
     }
 
