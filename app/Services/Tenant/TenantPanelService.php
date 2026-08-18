@@ -527,17 +527,10 @@ class TenantPanelService
         // JSON column on save, so these must be set as top-level attributes
         // (not nested under `data`) or they'll be discarded on save.
         tenancy()->central(function () use ($tenant, $phone, $shopName, $address, $description) {
-            $tenant->fill([
-                'phone' => $phone,
-                'shop_name' => $shopName,
-                'address' => $address,
-                'description' => $description,
-            ]);
-            $tenant->data = array_merge($tenant->data ?? [], [
-                'shop_name' => $shopName,
-                'address' => $address,
-                'description' => $description,
-            ]);
+            $tenant->phone = $phone;
+            $tenant->description = $description;
+            $tenant->address = $address;
+            $tenant->shop_name = $shopName;
             $tenant->save();
         });
 
