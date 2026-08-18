@@ -5004,23 +5004,23 @@ details[open] .filters-chevron {
 
 /* ── intl-tel-input dark / light theme overrides ───────────────────────── */
 [data-theme="dark"] {
-    --iti-hover-color:           rgba(99, 130, 179, 0.12);
-    --iti-border-color:          rgba(99, 130, 179, 0.24);
-    --iti-country-selector-bg:   #141f30;
-    --iti-text-color:            #ffffff;
-    --iti-dialcode-color:        #e8edf7;
-    --iti-icon-color:            #c7d1e6;
-    --iti-input-bg:              rgba(17, 27, 42, 1);
+    --iti-hover-color:           rgba(99, 130, 179, 0.12) !important;
+    --iti-border-color:          rgba(99, 130, 179, 0.24) !important;
+    --iti-country-selector-bg:   #141f30 !important;
+    --iti-text-color:            #ffffff !important;
+    --iti-dialcode-color:        #e8edf7 !important;
+    --iti-icon-color:            #c7d1e6 !important;
+    --iti-input-bg:              rgba(17, 27, 42, 1) !important;
 }
 
 [data-theme="light"] {
-    --iti-hover-color:           rgba(30, 60, 120, 0.07);
-    --iti-border-color:          rgba(30, 60, 120, 0.22);
-    --iti-country-selector-bg:   #ffffff;
-    --iti-text-color:            #0a0e17;
-    --iti-dialcode-color:        #2d3748;
-    --iti-icon-color:            #6b7280;
-    --iti-input-bg:              #eef2f9;
+    --iti-hover-color:           rgba(30, 60, 120, 0.07) !important;
+    --iti-border-color:          rgba(30, 60, 120, 0.22) !important;
+    --iti-country-selector-bg:   #ffffff !important;
+    --iti-text-color:            #0a0e17 !important;
+    --iti-dialcode-color:        #2d3748 !important;
+    --iti-icon-color:            #6b7280 !important;
+    --iti-input-bg:              #eef2f9 !important;
 }
 
 /* Escape stacking context created by .fu animation on .card */
