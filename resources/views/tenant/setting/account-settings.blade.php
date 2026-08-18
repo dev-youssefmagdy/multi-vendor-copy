@@ -1,8 +1,13 @@
+@extends('layouts.tenant')
+
+@section('content')
+@php
+    $initials = strtoupper(substr($adminName ?: 'A', 0, 1))
+              . strtoupper(substr(strstr($adminName ?: '', ' ') ?: '', 1, 1));
+@endphp
+
 <main id="mn">
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         Page header
-    ══════════════════════════════════════════════════════════════════════ --}}
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
@@ -16,19 +21,19 @@
         </div>
     </div>
 
-    <form id="account-settings-form" wire:submit="save" class="acct-layout">
+    <form id="account-settings-form"
+          method="POST"
+          action="{{ route('tenant.settings.account.update') }}"
+          class="acct-layout">
+        @csrf
+        @method('PUT')
 
-        {{-- ══════════════════════════════════════════════════════════════════
-             Left column — Avatar card
-        ══════════════════════════════════════════════════════════════════ --}}
+        {{-- ── Left column — Avatar card ─────────────────────────────── --}}
         <aside class="acct-sidebar">
-
             <div class="card acct-avatar-card fu d1">
                 <div class="acct-avatar-wrap">
                     <div class="acct-avatar">
-                        <span class="acct-avatar-initials">
-                            {{ strtoupper(substr($adminName ?: 'A', 0, 1)) }}{{ strtoupper(substr(strstr($adminName ?: '', ' ') ?: '', 1, 1)) }}
-                        </span>
+                        <span class="acct-avatar-initials">{{ $initials }}</span>
                     </div>
                 </div>
                 <div class="acct-avatar-meta">
@@ -55,15 +60,12 @@
                     @endif
                 </div>
             </div>
-
         </aside>
 
-        {{-- ══════════════════════════════════════════════════════════════════
-             Right column — Form sections
-        ══════════════════════════════════════════════════════════════════ --}}
+        {{-- ── Right column — Form sections ─────────────────────────── --}}
         <div class="acct-form-col">
 
-            {{-- Identity section --}}
+            {{-- Profile & Store Identity --}}
             <section class="card form-card fu d2 section-gap">
                 <div class="acct-section-head">
                     <div class="acct-section-icon-wrap">
@@ -80,28 +82,36 @@
                 <div class="form-grid form-grid-2">
                     <div>
                         <label class="field-label">Admin Name</label>
-                        <x-input type="text" wire:model.defer="adminName" :error="$errors->has('adminName')" />
+                        <x-input type="text" name="adminName"
+                                 value="{{ old('adminName', $adminName) }}"
+                                 :error="$errors->has('adminName')" />
                         @error('adminName')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
                         <label class="field-label">Admin Email</label>
-                        <x-input type="email" wire:model.defer="adminEmail" :error="$errors->has('adminEmail')" />
+                        <x-input type="email" name="adminEmail"
+                                 value="{{ old('adminEmail', $adminEmail) }}"
+                                 :error="$errors->has('adminEmail')" />
                         @error('adminEmail')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
                         <label class="field-label">Store Phone</label>
-                        <x-input type="tel" data-phone-input wire:model.defer="phone" :error="$errors->has('phone')" />
+                        <x-input type="tel" name="phone" data-phone-input
+                                 value="{{ old('phone', $phone) }}"
+                                 :error="$errors->has('phone')" />
                         @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
                         <label class="field-label">Shop Name</label>
-                        <x-input type="text" wire:model.defer="shopName" :error="$errors->has('shopName')" />
+                        <x-input type="text" name="shopName"
+                                 value="{{ old('shopName', $shopName) }}"
+                                 :error="$errors->has('shopName')" />
                         @error('shopName')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                 </div>
             </section>
 
-            {{-- Store details section --}}
+            {{-- Store Details --}}
             <section class="card form-card fu d3 section-gap" id="store-details">
                 <div class="acct-section-head">
                     <div class="acct-section-icon-wrap">
@@ -118,19 +128,23 @@
                 <div class="form-grid form-grid-2">
                     <div class="acct-span-full">
                         <label class="field-label">Store Description</label>
-                        <x-input type="text" wire:model.defer="description" :error="$errors->has('description')" />
+                        <x-input type="text" name="description"
+                                 value="{{ old('description', $description) }}"
+                                 :error="$errors->has('description')" />
                         @error('description')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="acct-span-full">
                         <label class="field-label">Address</label>
-                        <x-input type="text" wire:model.defer="address" :error="$errors->has('address')" />
+                        <x-input type="text" name="address"
+                                 value="{{ old('address', $address) }}"
+                                 :error="$errors->has('address')" />
                         @error('address')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                 </div>
             </section>
 
-            {{-- Security section --}}
-            <section class="card form-card fu d3">
+            {{-- Password & Security --}}
+            <section class="card form-card fu d4">
                 <div class="acct-section-head">
                     <div class="acct-section-icon-wrap">
                         <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,237 +160,61 @@
                 <div class="form-grid form-grid-2">
                     <div class="acct-span-full">
                         <label class="field-label">New Password</label>
-                        <x-input type="password" wire:model.defer="password" :error="$errors->has('password')" />
+                        <x-input type="password" name="password"
+                                 :error="$errors->has('password')" />
                         @error('password')<div class="field-error">{{ $message }}</div>@enderror
                         <p class="acct-hint">Minimum 6 characters. Leave empty to keep your current password.</p>
                     </div>
                 </div>
             </section>
 
-            {{-- Mobile save button --}}
             <div class="acct-mobile-save">
                 <x-btn type="submit" form="account-settings-form">Save Changes</x-btn>
             </div>
 
         </div>
-
     </form>
 
 </main>
 
 <style>
-/* ── Account Settings Layout ─────────────────────────────────────────────── */
-.acct-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 16px;
-    align-items: start;
-}
-
-.acct-sidebar {
-    position: sticky;
-    top: 76px;
-}
-
-.acct-avatar-card {
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    text-align: center;
-}
-
-.acct-avatar-wrap {
-    margin-bottom: 14px;
-}
-
-.acct-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(162,89,255,0.22));
-    border: 2px solid rgba(0,229,255,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-.acct-avatar-initials {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--cyan);
-    letter-spacing: 0.03em;
-    line-height: 1;
-}
-
-.acct-avatar-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 16px;
-}
-
-.acct-avatar-name {
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.acct-avatar-email {
-    font-size: 12px;
-    color: var(--t3);
-    word-break: break-all;
-}
-
-.acct-info-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    text-align: left;
-}
-
-.acct-info-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.acct-info-icon {
-    width: 14px;
-    height: 14px;
-    color: var(--t3);
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.acct-info-text {
-    font-size: 12.5px;
-    color: var(--t2);
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-.acct-form-col {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.acct-section-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.acct-section-icon-wrap {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: rgba(0,229,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.acct-section-icon {
-    width: 18px;
-    height: 18px;
-    color: var(--cyan);
-}
-
-.acct-span-full {
-    grid-column: 1 / -1;
-}
-
-.acct-hint {
-    font-size: 11.5px;
-    color: var(--t3);
-    margin-top: 5px;
-    line-height: 1.4;
-}
-
-.acct-mobile-save {
-    display: none;
-}
-
-/* ── Tablet (≤ 1023px) ───────────────────────────────────────────────────── */
+.acct-layout { display: grid; grid-template-columns: 260px 1fr; gap: 16px; align-items: start; }
+.acct-sidebar { position: sticky; top: 76px; }
+.acct-avatar-card { padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
+.acct-avatar-wrap { margin-bottom: 14px; }
+.acct-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(162,89,255,0.22)); border: 2px solid rgba(0,229,255,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.acct-avatar-initials { font-size: 22px; font-weight: 800; color: var(--cyan); letter-spacing: 0.03em; line-height: 1; }
+.acct-avatar-meta { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 16px; }
+.acct-avatar-name { font-size: 15px; font-weight: 700; }
+.acct-avatar-email { font-size: 12px; color: var(--t3); word-break: break-all; }
+.acct-info-list { width: 100%; display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); text-align: left; }
+.acct-info-row { display: flex; align-items: flex-start; gap: 8px; }
+.acct-info-icon { width: 14px; height: 14px; color: var(--t3); flex-shrink: 0; margin-top: 2px; }
+.acct-info-text { font-size: 12.5px; color: var(--t2); line-height: 1.4; word-break: break-word; }
+.acct-form-col { display: flex; flex-direction: column; min-width: 0; }
+.acct-section-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.acct-section-icon-wrap { width: 36px; height: 36px; border-radius: 10px; background: rgba(0,229,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.acct-section-icon { width: 18px; height: 18px; color: var(--cyan); }
+.acct-span-full { grid-column: 1 / -1; }
+.acct-hint { font-size: 11.5px; color: var(--t3); margin-top: 5px; line-height: 1.4; }
+.acct-mobile-save { display: none; }
 @media (max-width: 1023px) {
-    .acct-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .acct-sidebar {
-        position: static;
-    }
-
-    .acct-avatar-card {
-        flex-direction: row;
-        text-align: left;
-        align-items: center;
-        gap: 16px;
-        padding: 18px 20px;
-    }
-
-    .acct-avatar-wrap {
-        margin-bottom: 0;
-        flex-shrink: 0;
-    }
-
-    .acct-avatar {
-        width: 56px;
-        height: 56px;
-    }
-
-    .acct-avatar-initials {
-        font-size: 18px;
-    }
-
-    .acct-avatar-meta {
-        flex: 1;
-        align-items: flex-start;
-        gap: 3px;
-        margin-bottom: 0;
-    }
-
-    .acct-info-list {
-        display: none;
-    }
+    .acct-layout { grid-template-columns: 1fr; }
+    .acct-sidebar { position: static; }
+    .acct-avatar-card { flex-direction: row; text-align: left; align-items: center; gap: 16px; padding: 18px 20px; }
+    .acct-avatar-wrap { margin-bottom: 0; flex-shrink: 0; }
+    .acct-avatar { width: 56px; height: 56px; }
+    .acct-avatar-initials { font-size: 18px; }
+    .acct-avatar-meta { flex: 1; align-items: flex-start; gap: 3px; margin-bottom: 0; }
+    .acct-info-list { display: none; }
 }
-
-/* ── Mobile (≤ 639px) ────────────────────────────────────────────────────── */
 @media (max-width: 639px) {
-    .acct-avatar-card {
-        padding: 14px 16px;
-    }
-
-    .acct-avatar {
-        width: 48px;
-        height: 48px;
-    }
-
-    .acct-avatar-initials {
-        font-size: 16px;
-    }
-
-    .acct-avatar-name {
-        font-size: 14px;
-    }
-
-    .page-actions {
-        display: none;
-    }
-
-    .acct-mobile-save {
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 4px;
-    }
+    .acct-avatar-card { padding: 14px 16px; }
+    .acct-avatar { width: 48px; height: 48px; }
+    .acct-avatar-initials { font-size: 16px; }
+    .acct-avatar-name { font-size: 14px; }
+    .page-actions { display: none; }
+    .acct-mobile-save { display: flex; justify-content: flex-end; padding-top: 4px; }
 }
 </style>
+@endsection

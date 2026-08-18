@@ -49,7 +49,7 @@ use App\Http\Controllers\Tenant\ManufacturingPaymentController;
 use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
-use App\Livewire\Tenant\Setting\AccountSettingsPage;
+use App\Http\Controllers\Tenant\AccountSettingsController;
 use App\Livewire\Tenant\Setting\ComplianceCenterPage;
 use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
 use App\Livewire\Tenant\Setting\AdminsList;
@@ -558,9 +558,12 @@ Route::middleware([
                 Route::get('/mail', MailConfigurationsPage::class)
                     ->middleware('tenant.permission:settings.mail.manage')
                     ->name('mail');
-                Route::get('/account', AccountSettingsPage::class)
+                Route::get('/account', [AccountSettingsController::class, 'show'])
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('account');
+                Route::put('/account', [AccountSettingsController::class, 'update'])
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('account.update');
                 Route::get('/general', GeneralSettingsPage::class)
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('general');
