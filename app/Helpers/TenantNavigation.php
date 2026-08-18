@@ -259,7 +259,7 @@ class TenantNavigation
 
         return self::logoIsConfigured()
             && filled($tenant?->phone)
-            && filled(data_get($tenant, 'data.shop_name'));
+            && filled($tenant?->shop_name);
     }
 
     /** Store-details step: store name, description, and address set. */
@@ -267,9 +267,9 @@ class TenantNavigation
     {
         $tenant = tenant();
 
-        return filled(data_get($tenant, 'data.shop_name'))
-            && filled(data_get($tenant, 'data.description'))
-            && filled(data_get($tenant, 'data.address'));
+        return filled($tenant?->shop_name)
+            && filled($tenant?->description)
+            && filled($tenant?->address);
     }
 
     /** Compliance step: owner details, business registration, and bank info set. */

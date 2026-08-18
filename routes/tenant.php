@@ -50,7 +50,7 @@ use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
 use App\Http\Controllers\Tenant\AccountSettingsController;
-use App\Livewire\Tenant\Setting\ComplianceCenterPage;
+use App\Http\Controllers\Tenant\ComplianceCenterController;
 use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
 use App\Livewire\Tenant\Setting\AdminsList;
 use App\Livewire\Tenant\Setting\CurrenciesPage;
@@ -567,9 +567,12 @@ Route::middleware([
                 Route::get('/general', GeneralSettingsPage::class)
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('general');
-                Route::get('/compliance', ComplianceCenterPage::class)
+                Route::get('/compliance', [ComplianceCenterController::class, 'show'])
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('compliance');
+                Route::post('/compliance', [ComplianceCenterController::class, 'update'])
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('compliance.update');
                 Route::get('/return-policy', \App\Livewire\Tenant\Setting\ReturnPolicyPage::class)
                     ->middleware('tenant.permission:sales.returns.manage')
                     ->name('return-policy');
