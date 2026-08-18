@@ -1,5 +1,7 @@
+@extends('layouts.tenant')
+
+@section('content')
 <style>
-/* ── Shared section-head pattern (mirrors account-settings.blade.php) ─── */
 .acct-section-head {
     display: flex;
     align-items: flex-start;
@@ -28,7 +30,6 @@
     grid-column: 1 / -1;
 }
 
-/* File input */
 .compliance-file {
     width: 100%;
     padding: 8px 12px;
@@ -56,6 +57,15 @@
 .compliance-file::file-selector-button:hover {
     background: rgba(0, 229, 255, 0.15);
 }
+
+.compliance-remove-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--t2);
+    cursor: pointer;
+}
 </style>
 
 <main id="mn">
@@ -74,7 +84,8 @@
         </div>
     </div>
 
-    <form id="compliance-center-form" wire:submit="save" enctype="multipart/form-data">
+    <form id="compliance-center-form" method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+        @csrf
 
         {{-- ── Business Info ──────────────────────────────────────────────── --}}
         <section class="card form-card fu d1 section-gap">
@@ -92,37 +103,37 @@
             <div class="form-grid form-grid-2">
                 <div>
                     <label class="field-label">Business Name</label>
-                    <x-input type="text" wire:model.defer="businessName" :error="$errors->has('businessName')" />
+                    <x-input type="text" name="businessName" value="{{ old('businessName', $businessName) }}" :error="$errors->has('businessName')" />
                     @error('businessName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Store Name</label>
-                    <x-input type="text" wire:model.defer="storeName" :error="$errors->has('storeName')" />
+                    <x-input type="text" name="storeName" value="{{ old('storeName', $storeName) }}" :error="$errors->has('storeName')" />
                     @error('storeName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Country</label>
-                    <x-select wire:model.defer="countryId" placeholder="Select country" :error="$errors->has('countryId')">
+                    <x-select name="countryId" placeholder="Select country" :error="$errors->has('countryId')">
                         <option value="">Select country</option>
                         @foreach ($countries as $country)
-                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            <option value="{{ $country->id }}" @selected(old('countryId', $countryId) == $country->id)>{{ $country->name }}</option>
                         @endforeach
                     </x-select>
                     @error('countryId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">City</label>
-                    <x-input type="text" wire:model.defer="city" :error="$errors->has('city')" />
+                    <x-input type="text" name="city" value="{{ old('city', $city) }}" :error="$errors->has('city')" />
                     @error('city')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Phone</label>
-                    <x-input type="tel" data-phone-input wire:model.defer="phone" :error="$errors->has('phone')" />
+                    <x-input type="tel" data-phone-input name="phone" value="{{ old('phone', $phone) }}" :error="$errors->has('phone')" />
                     @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Email</label>
-                    <x-input type="email" wire:model.defer="email" :error="$errors->has('email')" />
+                    <x-input type="email" name="email" value="{{ old('email', $email) }}" :error="$errors->has('email')" />
                     @error('email')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -144,22 +155,22 @@
             <div class="form-grid form-grid-2">
                 <div>
                     <label class="field-label">Owner Full Name</label>
-                    <x-input type="text" wire:model.defer="ownerName" :error="$errors->has('ownerName')" />
+                    <x-input type="text" name="ownerName" value="{{ old('ownerName', $ownerName) }}" :error="$errors->has('ownerName')" />
                     @error('ownerName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Owner ID / Passport Number</label>
-                    <x-input type="text" wire:model.defer="ownerIdNumber" :error="$errors->has('ownerIdNumber')" />
+                    <x-input type="text" name="ownerIdNumber" value="{{ old('ownerIdNumber', $ownerIdNumber) }}" :error="$errors->has('ownerIdNumber')" />
                     @error('ownerIdNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Date of Birth (optional)</label>
-                    <x-input type="date" wire:model.defer="ownerDob" :error="$errors->has('ownerDob')" />
+                    <x-input type="date" name="ownerDob" value="{{ old('ownerDob', $ownerDob) }}" :error="$errors->has('ownerDob')" />
                     @error('ownerDob')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Owner Contact Details</label>
-                    <x-input type="text" wire:model.defer="ownerContact" placeholder="Phone or alternate email" :error="$errors->has('ownerContact')" />
+                    <x-input type="text" name="ownerContact" placeholder="Phone or alternate email" value="{{ old('ownerContact', $ownerContact) }}" :error="$errors->has('ownerContact')" />
                     @error('ownerContact')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -181,33 +192,36 @@
             <div class="form-grid form-grid-2">
                 <div>
                     <label class="field-label">Company Name</label>
-                    <x-input type="text" wire:model.defer="companyName" :error="$errors->has('companyName')" />
+                    <x-input type="text" name="companyName" value="{{ old('companyName', $companyName) }}" :error="$errors->has('companyName')" />
                     @error('companyName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Commercial Registration Number</label>
-                    <x-input type="text" wire:model.defer="registrationNumber" :error="$errors->has('registrationNumber')" />
+                    <x-input type="text" name="registrationNumber" value="{{ old('registrationNumber', $registrationNumber) }}" :error="$errors->has('registrationNumber')" />
                     @error('registrationNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Registration Expiry Date</label>
-                    <x-input type="date" wire:model.defer="registrationExpiry" :error="$errors->has('registrationExpiry')" />
+                    <x-input type="date" name="registrationExpiry" value="{{ old('registrationExpiry', $registrationExpiry) }}" :error="$errors->has('registrationExpiry')" />
                     @error('registrationExpiry')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">VAT / Tax Registration Number</label>
-                    <x-input type="text" wire:model.defer="vatNumber" :error="$errors->has('vatNumber')" />
+                    <x-input type="text" name="vatNumber" value="{{ old('vatNumber', $vatNumber) }}" :error="$errors->has('vatNumber')" />
                     @error('vatNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="acct-span-full">
                     <label class="field-label">Commercial Registration Document</label>
+                    <input type="hidden" name="existing_registration_document_path" value="{{ $registrationDocumentPath }}">
                     @if ($registrationDocumentPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
                             <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">View uploaded document</a>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('registration')">Remove</button>
+                            <label class="compliance-remove-label">
+                                <input type="checkbox" name="remove_registration_document" value="1"> Remove
+                            </label>
                         </div>
                     @endif
-                    <input type="file" wire:model="registrationDocumentUpload" class="compliance-file" />
+                    <input type="file" name="registrationDocumentUpload" class="compliance-file" />
                     @error('registrationDocumentUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -229,27 +243,27 @@
             <div class="form-grid form-grid-2">
                 <div>
                     <label class="field-label">Bank Name</label>
-                    <x-input type="text" wire:model.defer="bankName" :error="$errors->has('bankName')" />
+                    <x-input type="text" name="bankName" value="{{ old('bankName', $bankName) }}" :error="$errors->has('bankName')" />
                     @error('bankName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Account Holder Name</label>
-                    <x-input type="text" wire:model.defer="bankHolderName" :error="$errors->has('bankHolderName')" />
+                    <x-input type="text" name="bankHolderName" value="{{ old('bankHolderName', $bankHolderName) }}" :error="$errors->has('bankHolderName')" />
                     @error('bankHolderName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">IBAN</label>
-                    <x-input type="text" wire:model.defer="bankIban" :error="$errors->has('bankIban')" />
+                    <x-input type="text" name="bankIban" value="{{ old('bankIban', $bankIban) }}" :error="$errors->has('bankIban')" />
                     @error('bankIban')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Account Number</label>
-                    <x-input type="text" wire:model.defer="bankAccountNumber" :error="$errors->has('bankAccountNumber')" />
+                    <x-input type="text" name="bankAccountNumber" value="{{ old('bankAccountNumber', $bankAccountNumber) }}" :error="$errors->has('bankAccountNumber')" />
                     @error('bankAccountNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Currency</label>
-                    <x-input type="text" wire:model.defer="bankCurrency" placeholder="e.g. USD" :error="$errors->has('bankCurrency')" />
+                    <x-input type="text" name="bankCurrency" placeholder="e.g. USD" value="{{ old('bankCurrency', $bankCurrency) }}" :error="$errors->has('bankCurrency')" />
                     @error('bankCurrency')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -271,35 +285,44 @@
             <div class="form-grid form-grid-2">
                 <div>
                     <label class="field-label">National ID</label>
+                    <input type="hidden" name="existing_doc_national_id_path" value="{{ $docNationalIdPath }}">
                     @if ($docNationalIdPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
                             <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('national_id')">Remove</button>
+                            <label class="compliance-remove-label">
+                                <input type="checkbox" name="remove_doc_national_id" value="1"> Remove
+                            </label>
                         </div>
                     @endif
-                    <input type="file" wire:model="docNationalIdUpload" class="compliance-file" />
+                    <input type="file" name="docNationalIdUpload" class="compliance-file" />
                     @error('docNationalIdUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Commercial Registration</label>
+                    <input type="hidden" name="existing_doc_commercial_registration_path" value="{{ $docCommercialRegistrationPath }}">
                     @if ($docCommercialRegistrationPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
                             <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('commercial_registration')">Remove</button>
+                            <label class="compliance-remove-label">
+                                <input type="checkbox" name="remove_doc_commercial_registration" value="1"> Remove
+                            </label>
                         </div>
                     @endif
-                    <input type="file" wire:model="docCommercialRegistrationUpload" class="compliance-file" />
+                    <input type="file" name="docCommercialRegistrationUpload" class="compliance-file" />
                     @error('docCommercialRegistrationUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Tax Certificate</label>
+                    <input type="hidden" name="existing_doc_tax_certificate_path" value="{{ $docTaxCertificatePath }}">
                     @if ($docTaxCertificatePath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
                             <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
-                            <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('tax_certificate')">Remove</button>
+                            <label class="compliance-remove-label">
+                                <input type="checkbox" name="remove_doc_tax_certificate" value="1"> Remove
+                            </label>
                         </div>
                     @endif
-                    <input type="file" wire:model="docTaxCertificateUpload" class="compliance-file" />
+                    <input type="file" name="docTaxCertificateUpload" class="compliance-file" />
                     @error('docTaxCertificateUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="acct-span-full">
@@ -308,13 +331,16 @@
                         <div class="flex flex-wrap gap-2" style="margin-bottom:8px;">
                             @foreach ($docAdditionalPaths as $i => $path)
                                 <span class="flex items-center gap-2">
+                                    <input type="hidden" name="existing_doc_additional_paths[]" value="{{ $path }}">
                                     <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">Document {{ $i + 1 }}</a>
-                                    <button type="button" class="btn btn-secondary btn-sm" wire:click="removeAdditionalDocument({{ $i }})">Remove</button>
+                                    <label class="compliance-remove-label">
+                                        <input type="checkbox" name="remove_doc_additional_paths[]" value="{{ $path }}"> Remove
+                                    </label>
                                 </span>
                             @endforeach
                         </div>
                     @endif
-                    <input type="file" wire:model="docAdditionalUploads" multiple class="compliance-file" />
+                    <input type="file" name="docAdditionalUploads[]" multiple class="compliance-file" />
                     @error('docAdditionalUploads.*')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -350,3 +376,4 @@
     </form>
 
 </main>
+@endsection

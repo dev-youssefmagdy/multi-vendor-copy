@@ -595,10 +595,10 @@ class TenantPanelService
                 $updates[$dataKey] = $attributes[$attributeKey];
             }
         }
-
+        dd($updates);
         // Must run in central context (tenant request switches default DB to tenant DB)
         tenancy()->central(function () use ($tenant, $data, $updates) {
-            $tenant->fill(['data' => array_merge($data, $updates)]);
+            $tenant->fill($updates);
             $tenant->save();
         });
     }
