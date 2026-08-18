@@ -516,15 +516,30 @@ class TenantPanelService
         }
 
         $incomingPhone = (string) ($attributes['phone'] ?? $tenant->phone ?? '');
-        $tenant->fill([
-            'phone' => str_contains($incomingPhone, 'object') ? null : ($incomingPhone ?: null),
-            'data' => array_merge($data, [
-                'shop_name' => $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name),
-                'address' => $attributes['address'] ?? ($data['address'] ?? null),
-                'description' => $attributes['description'] ?? ($data['description'] ?? null),
-            ]),
-        ]);
-        $tenant->save();
+        $phone = str_contains($incomingPhone, 'object') ? null : ($incomingPhone ?: null);
+        $shopName = $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name);
+        $address = $attributes['address'] ?? ($data['address'] ?? null);
+        $description = $attributes['description'] ?? ($data['description'] ?? null);
+
+        // Must run in central context: inside a tenant request the default DB
+        // connection is switched to the tenant DB; Tenant model lives in central.
+        // The Tenant model virtualizes non-column attributes into the `data`
+        // JSON column on save, so these must be set as top-level attributes
+        // (not nested under `data`) or they'll be discarded on save.
+        tenancy()->central(function () use ($tenant, $phone, $shopName, $address, $description) {
+            $tenant->fill([
+                'phone' => $phone,
+                'shop_name' => $shopName,
+                'address' => $address,
+                'description' => $description,
+            ]);
+            $tenant->data = array_merge($tenant->data ?? [], [
+                'shop_name' => $shopName,
+                'address' => $address,
+                'description' => $description,
+            ]);
+            $tenant->save();
+        });
 
         if (array_key_exists('shop_name', $attributes)) {
             Setting::query()->updateOrCreate(

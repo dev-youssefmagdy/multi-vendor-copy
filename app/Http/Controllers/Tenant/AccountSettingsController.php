@@ -23,9 +23,9 @@ class AccountSettingsController extends Controller
             'adminName' => (string) ($admin?->name ?? ''),
             'adminEmail' => (string) ($admin?->email ?? ''),
             'phone' => str_contains($rawPhone, 'object') ? '' : $rawPhone,
-            'shopName' => (string) data_get($tenant, 'data.shop_name', $tenant->name ?? ''),
-            'description' => (string) data_get($tenant, 'data.description', ''),
-            'address' => (string) data_get($tenant, 'data.address', ''),
+            'shopName' => (string) $tenant->shop_name ?? $tenant->name ?? '',
+            'description' => (string) $tenant->description ?? '',
+            'address' => (string) $tenant->address ?? '',
         ]);
     }
 
