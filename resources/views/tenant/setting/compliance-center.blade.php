@@ -5,8 +5,18 @@
 .acct-section-head {
     display: flex;
     align-items: flex-start;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 16px;
+}
+
+.acct-section-head > div:nth-child(2) {
+    flex: 1 1 auto;
+}
+
+.acct-section-save {
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .acct-section-icon-wrap {
@@ -77,17 +87,14 @@
                 <span class="page-badge">Compliance</span>
                 <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ $completionPercent }}% Complete</span>
             </div>
-            <p class="page-copy">Business, owner, company, banking, and verification details required to keep your store in good standing.</p>
-        </div>
-        <div class="page-actions">
-            <x-btn type="submit" form="compliance-center-form">Save Changes</x-btn>
+            <p class="page-copy">Business, owner, company, banking, and verification details required to keep your store in good standing. Each section below saves independently.</p>
         </div>
     </div>
 
-    <form id="compliance-center-form" method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+    {{-- ── Business Info ──────────────────────────────────────────────── --}}
+    <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
-
-        {{-- ── Business Info ──────────────────────────────────────────────── --}}
+        <input type="hidden" name="section" value="business">
         <section class="card form-card fu d1 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -98,6 +105,9 @@
                 <div>
                     <h3 class="panel-title">Business Info</h3>
                     <p class="panel-copy">Where your business legally operates from.</p>
+                </div>
+                <div class="acct-section-save">
+                    <x-btn type="submit">Save Changes</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -138,8 +148,12 @@
                 </div>
             </div>
         </section>
+    </form>
 
-        {{-- ── Owner Info ──────────────────────────────────────────────────── --}}
+    {{-- ── Owner Info ──────────────────────────────────────────────────── --}}
+    <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="section" value="owner">
         <section class="card form-card fu d2 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -150,6 +164,9 @@
                 <div>
                     <h3 class="panel-title">Owner Info</h3>
                     <p class="panel-copy">The legal owner or representative of this store.</p>
+                </div>
+                <div class="acct-section-save">
+                    <x-btn type="submit">Save Changes</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -175,8 +192,12 @@
                 </div>
             </div>
         </section>
+    </form>
 
-        {{-- ── Company Info ────────────────────────────────────────────────── --}}
+    {{-- ── Company Info ────────────────────────────────────────────────── --}}
+    <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="section" value="company">
         <section class="card form-card fu d3 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -187,6 +208,9 @@
                 <div>
                     <h3 class="panel-title">Company Info (if applicable)</h3>
                     <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
+                </div>
+                <div class="acct-section-save">
+                    <x-btn type="submit">Save Changes</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -226,8 +250,12 @@
                 </div>
             </div>
         </section>
+    </form>
 
-        {{-- ── Bank Account ────────────────────────────────────────────────── --}}
+    {{-- ── Bank Account ────────────────────────────────────────────────── --}}
+    <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="section" value="bank">
         <section class="card form-card fu d4 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -238,6 +266,9 @@
                 <div>
                     <h3 class="panel-title">Bank Account</h3>
                     <p class="panel-copy">Used to process payouts for your store's earnings.</p>
+                </div>
+                <div class="acct-section-save">
+                    <x-btn type="submit">Save Changes</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -268,8 +299,12 @@
                 </div>
             </div>
         </section>
+    </form>
 
-        {{-- ── Verification Documents ──────────────────────────────────────── --}}
+    {{-- ── Verification Documents ──────────────────────────────────────── --}}
+    <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="section" value="documents">
         <section class="card form-card fu d5 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -280,6 +315,9 @@
                 <div>
                     <h3 class="panel-title">Verification Documents</h3>
                     <p class="panel-copy">Upload the documents our compliance team needs to verify your store.</p>
+                </div>
+                <div class="acct-section-save">
+                    <x-btn type="submit">Save Changes</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -345,35 +383,34 @@
                 </div>
             </div>
         </section>
-
-        {{-- ── Store Policies ──────────────────────────────────────────────── --}}
-        <section class="card form-card fu d6">
-            <div class="acct-section-head">
-                <div class="acct-section-icon-wrap">
-                    <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s4.332.477 5.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="panel-title">Store Policies</h3>
-                    <p class="panel-copy">Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.</p>
-                </div>
-            </div>
-            <div class="form-grid form-grid-2">
-                @foreach ($policyPages as $entry)
-                    <div class="flex items-center justify-between" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;">
-                        <span class="field-label" style="margin:0;">{{ $entry['label'] }}</span>
-                        @if ($entry['page'])
-                            <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">Edit page</a>
-                        @else
-                            <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">Create page</a>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        </section>
-
     </form>
+
+    {{-- ── Store Policies ──────────────────────────────────────────────── --}}
+    <section class="card form-card fu d6">
+        <div class="acct-section-head">
+            <div class="acct-section-icon-wrap">
+                <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s4.332.477 5.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="panel-title">Store Policies</h3>
+                <p class="panel-copy">Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.</p>
+            </div>
+        </div>
+        <div class="form-grid form-grid-2">
+            @foreach ($policyPages as $entry)
+                <div class="flex items-center justify-between" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;">
+                    <span class="field-label" style="margin:0;">{{ $entry['label'] }}</span>
+                    @if ($entry['page'])
+                        <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">Edit page</a>
+                    @else
+                        <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">Create page</a>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </section>
 
 </main>
 @endsection
