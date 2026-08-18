@@ -66,6 +66,25 @@ function syncFullNumber(input, iti) {
     }
 }
 
+// Fires before Livewire serialises ANY component's state, so wire:model.defer
+// fields get the E.164 value even if the field never blurred.
+let livewireHookBound = false;
+function ensureLivewireHook() {
+    if (livewireHookBound) {
+        return;
+    }
+    livewireHookBound = true;
+
+    document.addEventListener("livewire:before-send", () => {
+        document.querySelectorAll("[data-phone-input]").forEach((input) => {
+            const iti = instances.get(input);
+            if (iti) {
+                syncFullNumber(input, iti);
+            }
+        });
+    });
+}
+
 function validate(input, iti) {
     if (!input.value.trim()) {
         clearError(input);
@@ -82,6 +101,8 @@ function validate(input, iti) {
 }
 
 export function initPhoneInputs(root = document) {
+    ensureLivewireHook();
+
     const inputs =
         root instanceof Element && root.matches("[data-phone-input]")
             ? [root]
@@ -127,6 +148,10 @@ export function initPhoneInputs(root = document) {
             if (input.classList.contains("border-red-500")) {
                 validate(input, iti);
             }
+            // Sync after the digit has been processed by ITI so wire:model
+            // (live mode) always reads the full E.164 number, not just the
+            // national portion typed so far.
+            requestAnimationFrame(() => syncFullNumber(input, iti));
         });
 
         // Livewire's wire:submit handler is a bubble-phase listener (bound via

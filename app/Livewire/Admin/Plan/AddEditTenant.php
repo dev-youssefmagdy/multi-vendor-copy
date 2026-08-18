@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Plan;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\PaymentLogStatus;
 use App\Enums\TenantStatus;
 use App\Models\Category;
@@ -20,6 +21,7 @@ use Livewire\WithFileUploads;
 class AddEditTenant extends Component
 {
     use WithFileUploads;
+    use SanitizesPhoneNumber;
 
     public ?string $tenantId = null;
 
@@ -213,7 +215,7 @@ class AddEditTenant extends Component
             'name' => $validated['name'],
             'slug' => $validated['slug'] ?? null,
             'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
+            'phone' => $this->sanitizePhone($validated['phone'] ?? null),
             'status' => $validated['status'],
             'category_ids' => !empty($this->categoryIds) ? array_map('intval', $this->categoryIds) : null,
             'primary_language_id' => $validated['primaryLanguageId'] ?? null,

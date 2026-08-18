@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\DeliveryScope;
 use App\Enums\OrderStatus;
 use App\Enums\ShippingZoneStatus;
@@ -29,6 +30,7 @@ class CheckoutPage extends Component
 {
     use HasStorefrontLayout;
     use ChecksCartStock;
+    use SanitizesPhoneNumber;
     use CalculatesFreeShipping;
 
     // ─── All mutable form state under a single structured property ───────────
@@ -198,7 +200,7 @@ class CheckoutPage extends Component
             'customer_id' => $customer->id,
             'full_name' => $this->data['modal']['full_name'],
             'email' => $this->data['modal']['email'] ?: null,
-            'phone' => $this->data['modal']['phone'] ?: null,
+            'phone' => $this->sanitizePhone($this->data['modal']['phone']),
             'address_line_1' => $this->data['modal']['line1'],
             'city' => $this->data['modal']['city'] ?: null,
             'state' => $this->data['modal']['state'] ?: null,
@@ -495,7 +497,7 @@ class CheckoutPage extends Component
         $shippingAddress = [
             'name' => $this->data['shipping']['name'],
             'email' => $this->data['shipping']['email'],
-            'phone' => $this->data['shipping']['phone'],
+            'phone' => $this->sanitizePhone($this->data['shipping']['phone']),
             'address' => $this->data['shipping']['address'],
             'country' => $this->resolveShippingCountry(),
             'country_id' => $this->resolveShippingCountryId(),

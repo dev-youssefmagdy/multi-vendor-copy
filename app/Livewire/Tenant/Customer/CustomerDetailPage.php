@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Customer;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\City;
@@ -15,6 +16,7 @@ use Livewire\Attributes\Computed;
 class CustomerDetailPage extends TenantPage
 {
     use InteractsWithTenantUi;
+    use SanitizesPhoneNumber;
 
     public int $customerId = 0;
     public string $activeTab = 'profile';
@@ -108,7 +110,7 @@ class CustomerDetailPage extends TenantPage
         $payload = [
             'full_name'  => $this->fullName,
             'email'      => $this->email,
-            'phone'      => $this->phone,
+            'phone'      => $this->sanitizePhone($this->phone),
             'address'    => $this->address,
             'country_id' => filled($this->countryId) ? (int) $this->countryId : null,
             'city_id'    => filled($this->cityId) ? (int) $this->cityId : null,
@@ -185,7 +187,7 @@ class CustomerDetailPage extends TenantPage
             'label' => $this->addrLabel ?: null,
             'full_name' => $this->addrFullName ?: null,
             'email' => $this->addrEmail ?: null,
-            'phone' => $this->addrPhone ?: null,
+            'phone' => $this->sanitizePhone($this->addrPhone),
             'address_line_1' => $this->addrLine1,
             'city' => $this->addrCity ?: null,
             'state' => $this->addrState ?: null,

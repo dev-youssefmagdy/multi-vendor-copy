@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Branch;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\ShippingZoneStatus;
 use App\Models\Branch;
 use App\Models\Country;
@@ -12,6 +13,8 @@ use Livewire\Component;
 
 class AddEditBranch extends Component
 {
+    use SanitizesPhoneNumber;
+
     public ?int $branchId = null;
     public string $name = '';
     public string $code = '';
@@ -115,7 +118,7 @@ class AddEditBranch extends Component
         $branch = $service->save([
             'name' => $validated['name'],
             'code' => $validated['code'],
-            'phone' => $validated['phone'],
+            'phone' => $this->sanitizePhone($validated['phone']),
             'email' => $validated['email'],
             'address' => $validated['address'],
             'city' => $validated['city'],

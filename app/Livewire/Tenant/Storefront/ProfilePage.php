@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\OrderStatus;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Country;
@@ -17,6 +18,7 @@ use Livewire\Component;
 class ProfilePage extends Component
 {
     use HasStorefrontLayout;
+    use SanitizesPhoneNumber;
 
     public string $activeTab = 'orders';
     public ?string $statusFilter = null;
@@ -93,7 +95,7 @@ class ProfilePage extends Component
             'customer_id'    => $customer->id,
             'label'          => $this->addrLabel ?: null,
             'full_name'      => $this->addrFullName,
-            'phone'          => $this->addrPhone ?: null,
+            'phone'          => $this->sanitizePhone($this->addrPhone),
             'address_line_1' => $this->addrLine1,
             'city'           => $this->addrCity,
             'state'          => $this->addrState ?: null,
