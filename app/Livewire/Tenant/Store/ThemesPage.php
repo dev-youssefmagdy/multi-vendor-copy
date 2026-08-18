@@ -8,6 +8,7 @@ use App\Models\HomeVariant;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\ThemeCountry;
 use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantPageSection;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Support\Str;
@@ -35,6 +36,35 @@ class ThemesPage extends ListPage
             'badge' => 'Storefront',
             'description' => 'Switch the active storefront theme for the current tenant.',
         ];
+    }
+
+    protected function buildPreviewUrl(string $themeSlug, int $themeId, ?string $variantKey): string
+    {
+        $query = ['theme' => $themeSlug];
+
+        if ($variantKey !== null) {
+            $query['homepage_variant'] = $variantKey;
+        }
+
+        // Encode the tenant's current Page Builder section order for this theme.
+        // The preview tenant has its own isolated DB so we pass it as a URL param.
+        $sectionKeys = TenantPageSection::query()
+            ->where('theme_id', $themeId)
+            ->where('page', 'home')
+            ->where('is_visible', true)
+            ->orderBy('sort_order')
+            ->pluck('section_key')
+            ->all();
+
+        if (!empty($sectionKeys)) {
+            $query['sections'] = implode(',', $sectionKeys);
+        }
+
+        $centralDomain = config('tenancy.central_domains.0')
+            ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
+        $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
+
+        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
     }
 
     protected function pageData(): array
@@ -98,10 +128,10 @@ class ThemesPage extends ListPage
                     : 'theme-pill-btn is-primary';
             }
 
-            // Preview: use variant's own preview_image if set, else fall back to theme preview_path
-            $previewPath = ($variant->preview_image && trim((string) $variant->preview_image) !== '')
-                ? trim((string) $variant->preview_image)
-                : ($theme->preview_path ? trim((string) $theme->preview_path) : null);
+            // Always build a live preview URL pointing at the preview tenant.
+            // theme + homepage_variant + sections order are encoded as query params.
+            $variantKey = tenancy()->central(fn() => $variant->key ?? null);
+            $previewUrl = $this->buildPreviewUrl(strtolower($theme->slug), $theme->id, $variantKey ?: null);
 
             return [
                 'theme_id' => $theme->id,
@@ -116,8 +146,8 @@ class ThemesPage extends ListPage
                 'action_label' => $actionLabel,
                 'action_method' => $actionMethod,
                 'action_class' => $actionClass,
-                'preview_path' => $previewPath,
-                'preview_label' => $previewPath ? 'Preview' : 'No Preview',
+                'preview_path' => $previewUrl,
+                'preview_label' => 'Preview',
                 'initials' => Str::upper(Str::substr((string) $variant->name, 0, 2)),
                 'countries_label' => $isUniversal
                     ? 'All countries'

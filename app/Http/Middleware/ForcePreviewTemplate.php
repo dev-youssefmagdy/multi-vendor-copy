@@ -46,6 +46,14 @@ class ForcePreviewTemplate
             PreviewOverrides::setHomepageVariantKey((string) $variant);
         }
 
+        $sectionsRaw = $request->query('sections');
+        if (filled($sectionsRaw)) {
+            $keys = array_values(array_filter(array_map('trim', explode(',', (string) $sectionsRaw))));
+            if (!empty($keys)) {
+                PreviewOverrides::setSections($keys);
+            }
+        }
+
         return $next($request);
     }
 

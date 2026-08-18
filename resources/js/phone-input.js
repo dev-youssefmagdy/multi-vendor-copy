@@ -97,10 +97,19 @@ export function initPhoneInputs(root = document) {
             initialCountry: "auto",
             initialCountryLookup: lookupCountry,
             separateDialCode: true,
-            loadUtils: () => Promise.resolve(intlTelInputUtils),
+            loadUtils: () => Promise.resolve({ default: intlTelInputUtils }),
         });
 
         instances.set(input, iti);
+
+        if (input.value && input.value.trim() !== "") {
+            const currentVal = input.value.trim();
+            if (currentVal.includes("[object") || currentVal.includes("Object]")) {
+                input.value = "";
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }
 
         input.addEventListener("countrychange", () => {
             if (validate(input, iti)) {
@@ -120,16 +129,25 @@ export function initPhoneInputs(root = document) {
             }
         });
 
-        form?.addEventListener("submit", (event) => {
-            if (!validate(input, iti)) {
-                event.preventDefault();
-                event.stopPropagation();
-                input.focus();
-                return;
-            }
+        // Livewire's wire:submit handler is a bubble-phase listener (bound via
+        // Alpine's x-on:submit.prevent) that reads component properties before
+        // dispatching to the server. Registering our sync in the capture phase
+        // guarantees it runs before Livewire's handler regardless of DOM
+        // registration order, so wire:model.defer picks up the full E.164 number.
+        form?.addEventListener(
+            "submit",
+            (event) => {
+                if (!validate(input, iti)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    input.focus();
+                    return;
+                }
 
-            syncFullNumber(input, iti);
-        });
+                syncFullNumber(input, iti);
+            },
+            { capture: true }
+        );
     });
 }
 

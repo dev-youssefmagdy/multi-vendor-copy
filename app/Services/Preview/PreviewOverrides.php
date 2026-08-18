@@ -16,6 +16,8 @@ class PreviewOverrides
 
     private static ?string $homepageVariantKey = null;
 
+    private static ?array $sections = null;
+
     public static function activate(): void
     {
         static::$active = true;
@@ -48,11 +50,22 @@ class PreviewOverrides
         return static::$homepageVariantKey;
     }
 
+    public static function setSections(?array $sections): void
+    {
+        static::$sections = $sections;
+    }
+
+    public static function sections(): ?array
+    {
+        return static::$sections;
+    }
+
     /** Clear all overrides (useful in tests). */
     public static function clear(): void
     {
         static::$active = false;
         static::$colors = [];
         static::$homepageVariantKey = null;
+        static::$sections = null;
     }
 }

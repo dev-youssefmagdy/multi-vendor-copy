@@ -30,7 +30,8 @@ class AccountSettingsPage extends ContentPage
 
         $this->adminName = (string) ($admin?->name ?? '');
         $this->adminEmail = (string) ($admin?->email ?? '');
-        $this->phone = (string) ($tenant->phone ?? '');
+        $rawPhone = (string) ($tenant->phone ?? '');
+        $this->phone = str_contains($rawPhone, 'object') ? '' : $rawPhone;
         $this->shopName = (string) data_get($tenant, 'data.shop_name', $tenant->name ?? '');
         $this->description = (string) data_get($tenant, 'data.description', '');
         $this->address = (string) data_get($tenant, 'data.address', '');

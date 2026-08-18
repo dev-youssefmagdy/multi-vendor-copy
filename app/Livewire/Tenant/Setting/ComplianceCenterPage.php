@@ -66,7 +66,8 @@ class ComplianceCenterPage extends ContentPage
         $this->storeName = (string) data_get($tenant, 'data.compliance_store_name', data_get($tenant, 'data.shop_name', ''));
         $this->countryId = data_get($tenant, 'data.compliance_country') ?: null;
         $this->city = (string) data_get($tenant, 'data.compliance_city', '');
-        $this->phone = (string) data_get($tenant, 'data.compliance_phone', $tenant?->phone ?? '');
+        $rawPhone = (string) data_get($tenant, 'data.compliance_phone', $tenant?->phone ?? '');
+        $this->phone = str_contains($rawPhone, 'object') ? '' : $rawPhone;
         $this->email = (string) data_get($tenant, 'data.compliance_email', $tenant?->email ?? '');
 
         $this->ownerName = (string) data_get($tenant, 'data.compliance_owner_name', '');

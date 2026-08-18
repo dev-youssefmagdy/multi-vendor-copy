@@ -515,8 +515,9 @@ class TenantPanelService
             $admin->save();
         }
 
+        $incomingPhone = (string) ($attributes['phone'] ?? $tenant->phone ?? '');
         $tenant->fill([
-            'phone' => $attributes['phone'] ?? $tenant->phone,
+            'phone' => str_contains($incomingPhone, 'object') ? null : ($incomingPhone ?: null),
             'data' => array_merge($data, [
                 'shop_name' => $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name),
                 'address' => $attributes['address'] ?? ($data['address'] ?? null),

@@ -3,8 +3,8 @@
     "file": "assets/bootstrap-DmTjhYCz.js",
     "name": "bootstrap"
   },
-  "_phone-input-Brz2Uu3J.js": {
-    "file": "assets/phone-input-Brz2Uu3J.js",
+  "_phone-input-Cf9uRKMz.js": {
+    "file": "assets/phone-input-Cf9uRKMz.js",
     "name": "phone-input",
     "css": [
       "assets/phone-input-DynWKaYt.css"
@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CY-AZLsR.css",
+    "file": "assets/app-BzCkXf7h.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-BnBCs9xF.css",
+    "file": "assets/ecommet-CE990YtQ.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -72,7 +72,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-BYUa6BK8.css",
+    "file": "assets/souqify-BPXH3Ggd.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -90,13 +90,13 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-D5oM1IAj.js",
+    "file": "assets/app-D83by6lf.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "_bootstrap-DmTjhYCz.js",
-      "_phone-input-Brz2Uu3J.js"
+      "_phone-input-Cf9uRKMz.js"
     ]
   },
   "resources/js/ecommet.js": {
@@ -166,22 +166,22 @@
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-C3jgPUIs.js",
+    "file": "assets/storefront-cart-BfzsflTT.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-Brz2Uu3J.js"
+      "_phone-input-Cf9uRKMz.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-wCAE2Pf0.js",
+    "file": "assets/website-CGEw7ITL.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
       "_bootstrap-DmTjhYCz.js",
-      "_phone-input-Brz2Uu3J.js"
+      "_phone-input-Cf9uRKMz.js"
     ]
   }
 }

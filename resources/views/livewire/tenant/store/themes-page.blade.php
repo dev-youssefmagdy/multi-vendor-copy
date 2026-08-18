@@ -360,13 +360,9 @@
                     <article wire:key="variant-card-{{ $theme['theme_id'] }}-{{ $theme['variant_id'] }}"
                         class="theme-card {{ $theme['is_active'] ? 'is-active' : '' }} fu d{{ ($loop->index % 6) + 1 }}">
                         <div class="theme-card-preview">
-                            @if ($theme['preview_path'])
-                                <img src="{{ $theme['preview_path'] }}" alt="{{ $theme['name'] }} preview">
-                            @else
-                                <div class="theme-card-fallback">
-                                    <span>{{ $theme['initials'] }}</span>
-                                </div>
-                            @endif
+                            <div class="theme-card-fallback">
+                                <span>{{ $theme['initials'] }}</span>
+                            </div>
 
                             @if ($theme['is_active'])
                                 <div class="theme-card-status">Live Theme</div>
@@ -406,12 +402,8 @@
                                     </button>
                                 @endif
 
-                                @if ($theme['preview_path'])
-                                    <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
-                                        class="theme-pill-btn">Preview</a>
-                                @else
-                                    <button type="button" class="theme-pill-btn is-disabled" disabled>No Preview</button>
-                                @endif
+                                <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
+                                    class="theme-pill-btn">Preview</a>
 
                                 @if ($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"

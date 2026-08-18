@@ -72,6 +72,10 @@ class HomeVariantResolver
      */
     public function sectionsFor(?HomeVariant $variant, string $themeSlug, ?array $fallback): array
     {
+        if (PreviewOverrides::active() && PreviewOverrides::sections() !== null) {
+            return PreviewOverrides::sections();
+        }
+
         if ($variant && $variant->sections) {
             return $variant->sections;
         }

@@ -1,3 +1,63 @@
+<style>
+/* ── Shared section-head pattern (mirrors account-settings.blade.php) ─── */
+.acct-section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.acct-section-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0, 229, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.acct-section-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--cyan);
+}
+
+.acct-span-full {
+    grid-column: 1 / -1;
+}
+
+/* File input */
+.compliance-file {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--t1);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.compliance-file::file-selector-button {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: rgba(0, 229, 255, 0.08);
+    color: var(--cyan);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background 0.15s;
+}
+
+.compliance-file::file-selector-button:hover {
+    background: rgba(0, 229, 255, 0.15);
+}
+</style>
+
 <main id="mn">
 
     <div class="page-head fu d0">
@@ -42,12 +102,12 @@
                 </div>
                 <div>
                     <label class="field-label">Country</label>
-                    <select class="input" wire:model.defer="countryId">
+                    <x-select wire:model.defer="countryId" placeholder="Select country" :error="$errors->has('countryId')">
                         <option value="">Select country</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}">{{ $country->name }}</option>
                         @endforeach
-                    </select>
+                    </x-select>
                     @error('countryId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
@@ -57,7 +117,7 @@
                 </div>
                 <div>
                     <label class="field-label">Phone</label>
-                    <x-input type="text" wire:model.defer="phone" :error="$errors->has('phone')" />
+                    <x-input type="tel" data-phone-input wire:model.defer="phone" :error="$errors->has('phone')" />
                     @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
@@ -147,7 +207,7 @@
                             <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('registration')">Remove</button>
                         </div>
                     @endif
-                    <input type="file" wire:model="registrationDocumentUpload" class="input" />
+                    <input type="file" wire:model="registrationDocumentUpload" class="compliance-file" />
                     @error('registrationDocumentUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -217,7 +277,7 @@
                             <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('national_id')">Remove</button>
                         </div>
                     @endif
-                    <input type="file" wire:model="docNationalIdUpload" class="input" />
+                    <input type="file" wire:model="docNationalIdUpload" class="compliance-file" />
                     @error('docNationalIdUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
@@ -228,7 +288,7 @@
                             <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('commercial_registration')">Remove</button>
                         </div>
                     @endif
-                    <input type="file" wire:model="docCommercialRegistrationUpload" class="input" />
+                    <input type="file" wire:model="docCommercialRegistrationUpload" class="compliance-file" />
                     @error('docCommercialRegistrationUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
@@ -239,7 +299,7 @@
                             <button type="button" class="btn btn-secondary btn-sm" wire:click="removeDocument('tax_certificate')">Remove</button>
                         </div>
                     @endif
-                    <input type="file" wire:model="docTaxCertificateUpload" class="input" />
+                    <input type="file" wire:model="docTaxCertificateUpload" class="compliance-file" />
                     @error('docTaxCertificateUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="acct-span-full">
@@ -254,7 +314,7 @@
                             @endforeach
                         </div>
                     @endif
-                    <input type="file" wire:model="docAdditionalUploads" multiple class="input" />
+                    <input type="file" wire:model="docAdditionalUploads" multiple class="compliance-file" />
                     @error('docAdditionalUploads.*')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
