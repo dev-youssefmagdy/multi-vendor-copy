@@ -118,6 +118,7 @@ export function initPhoneInputs(root = document) {
             initialCountry: "auto",
             initialCountryLookup: lookupCountry,
             separateDialCode: true,
+            dropdownParent: document.body,
             loadUtils: () => Promise.resolve({ default: intlTelInputUtils }),
         });
 
