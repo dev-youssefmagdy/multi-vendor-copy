@@ -96,8 +96,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             $tenant = self::query()
                 ->where('id', $tenantId)->first();
 
-            $tenant->compliance_version = $data['compliance_version'] ?? null;
-            $tenant->compliance_accepted_at = $data['compliance_accepted_at'] ?? null;
+            $tenant->fill($data);
             $tenant->save();
         });
     }
