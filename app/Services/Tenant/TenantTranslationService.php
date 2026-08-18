@@ -7,13 +7,11 @@ use App\Models\Tenant\TranslationOverride;
 use App\Repositories\AppSettingRepository;
 use App\Services\OpenAiTranslationService;
 use App\Services\TranslationFileService;
+use App\Translation\TenantTranslator;
 use RuntimeException;
 
 class TenantTranslationService
 {
-    /** Per-request memoization of resolved values, keyed by "locale:key". */
-    private static array $resolveCache = [];
-
     /** Per-request memoization of the locked-keys list (rarely changes). */
     private static ?array $lockedKeysCache = null;
 
@@ -24,32 +22,17 @@ class TenantTranslationService
 
     /**
      * Resolve a static UI-string key using: tenant DB override ?? __($key).
-     * Memoized per request to avoid repeated DB lookups in Blade loops.
+     *
+     * The override lookup itself now happens inside App\Translation\TenantTranslator
+     * (the app's 'translator' binding), so plain __($key, [], $locale) already
+     * applies tenant overrides everywhere — this method is kept as a thin,
+     * explicitly-named wrapper for call sites that prefer the `tt()`-style API.
      */
     public function resolve(string $key, ?string $locale = null): string
     {
         $locale ??= app()->getLocale();
-        $cacheKey = "{$locale}:{$key}";
 
-        if (array_key_exists($cacheKey, self::$resolveCache)) {
-            return self::$resolveCache[$cacheKey];
-        }
-
-        $default = (string) __($key, [], $locale);
-        $override = null;
-
-        $language = Language::query()->where('code', $locale)->first();
-
-        if ($language) {
-            $override = TranslationOverride::query()
-                ->where('language_id', $language->id)
-                ->where('key', $key)
-                ->value('value');
-        }
-
-        $value = $override ?? $default;
-
-        return self::$resolveCache[$cacheKey] = $value;
+        return (string) __($key, [], $locale);
     }
 
     /**
@@ -108,7 +91,7 @@ class TenantTranslationService
             ['value' => $value],
         );
 
-        self::$resolveCache = [];
+        TenantTranslator::flushCache();
     }
 
     public function translateKeyWithAi(Language $language, string $key, OpenAiTranslationService $ai): string

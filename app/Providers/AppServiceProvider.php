@@ -28,6 +28,7 @@ use App\Observers\TenantOrderObserver;
 use App\Observers\TenantTransactionObserver;
 use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
+use App\Translation\TenantTranslator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -46,6 +47,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(TemplateRegistryService::class);
+
+        // Swap Laravel's default translator for one that resolves tenant DB
+        // overrides (Settings > Translations) before falling back to the lang
+        // files, so every __()/@lang() call across the storefront and tenant
+        // panel picks up AI/manual overrides with no per-call-site changes.
+        $this->app->extend('translator', function ($translator, $app) {
+            $tenantTranslator = new TenantTranslator($translator->getLoader(), $translator->getLocale());
+            $tenantTranslator->setFallback($translator->getFallback());
+
+            return $tenantTranslator;
+        });
     }
 
     /**
