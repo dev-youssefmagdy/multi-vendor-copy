@@ -110,7 +110,7 @@
                 <div class="vgroup-list">
                     <template x-for="(zone, zi) in zones" :key="zi">
                         <div class="vgroup-card">
-                            <input type="hidden" :name="`shippingZones[${zi}][id]`" :value="zone.id" x-show="zone.id">
+                            <input type="hidden" :name="'shippingZones[' + zi + '][id]'" :value="zone.id" x-show="zone.id">
 
                             <div class="vgroup-header">
                                 <span class="vgroup-title">
@@ -135,7 +135,7 @@
                                 <div class="form-grid form-grid-2" style="margin-bottom:12px">
                                     <div>
                                         <label class="field-label">Country *</label>
-                                        <select class="field-control" :name="`shippingZones[${zi}][country_id]`" x-model="zone.country_id">
+                                        <select class="field-control" :name="'shippingZones[' + zi + '][country_id]'" x-model="zone.country_id">
                                             <option value="">— Select country —</option>
                                             @foreach ($countries as $c)
                                                 <option value="{{ $c->id }}">
@@ -147,30 +147,30 @@
 
                                     <div>
                                         <label class="field-label">Zone Name *</label>
-                                        <x-input type="text" :name="`shippingZones[${zi}][name]`" x-model="zone.name"
-                                            placeholder="e.g. Egypt Delivery" />
+                                        <input class="field-control" type="text" :name="'shippingZones[' + zi + '][name]'" x-model="zone.name"
+                                            placeholder="e.g. Egypt Delivery">
                                     </div>
 
                                     <div>
                                         <label class="field-label">Code</label>
-                                        <x-input type="text" :name="`shippingZones[${zi}][code]`" x-model="zone.code"
-                                            placeholder="auto-generated from name" />
+                                        <input class="field-control" type="text" :name="'shippingZones[' + zi + '][code]'" x-model="zone.code"
+                                            placeholder="auto-generated from name">
                                     </div>
 
                                     <div>
                                         <label class="field-label">Currency Code *</label>
-                                        <x-input type="text" :name="`shippingZones[${zi}][currency_code]`" x-model="zone.currency_code"
-                                            placeholder="USD" maxlength="3" style="text-transform:uppercase" />
+                                        <input class="field-control" type="text" :name="'shippingZones[' + zi + '][currency_code]'" x-model="zone.currency_code"
+                                            placeholder="USD" maxlength="3" style="text-transform:uppercase">
                                     </div>
 
                                     <div>
                                         <label class="field-label">Status</label>
-                                        <x-select :name="`shippingZones[${zi}][status]`" x-model="zone.status">
+                                        <select class="field-control" :name="'shippingZones[' + zi + '][status]'" x-model="zone.status">
                                             @foreach ($statusOptions as $statusOption)
                                                 <option value="{{ $statusOption->value }}">{{ ucfirst($statusOption->value) }}
                                                 </option>
                                             @endforeach
-                                        </x-select>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -183,7 +183,7 @@
                                 <div class="vgroup-list">
                                     <template x-for="(rate, ri) in zone.rates" :key="ri">
                                         <div class="vgroup-card" style="background:var(--surface-2)">
-                                            <input type="hidden" :name="`shippingZones[${zi}][rates][${ri}][id]`" :value="rate.id" x-show="rate.id">
+                                            <input type="hidden" :name="'shippingZones[' + zi + '][rates][' + ri + '][id]'" :value="rate.id" x-show="rate.id">
 
                                             <div class="vgroup-header">
                                                 <span class="vgroup-title" style="font-size:12px" x-text="`Rate ${ri + 1}`"></span>
@@ -194,34 +194,34 @@
                                                 <div class="form-grid form-grid-2" style="margin-bottom:8px">
                                                     <div class="span-2">
                                                         <label class="field-label">Name *</label>
-                                                        <x-input type="text" :name="`shippingZones[${zi}][rates][${ri}][name]`"
-                                                            x-model="rate.name" placeholder="e.g. Standard, Express" />
+                                                        <input class="field-control" type="text" :name="'shippingZones[' + zi + '][rates][' + ri + '][name]'"
+                                                            x-model="rate.name" placeholder="e.g. Standard, Express">
                                                     </div>
                                                 </div>
                                                 <div class="form-grid form-grid-3">
                                                     <div>
                                                         <label class="field-label">Min Weight (Grams)</label>
-                                                        <x-input type="number" step="0.01" min="0"
-                                                            :name="`shippingZones[${zi}][rates][${ri}][min_weight]`"
-                                                            x-model="rate.min_weight" placeholder="0.00" />
+                                                        <input class="field-control" type="number" step="0.01" min="0"
+                                                            :name="'shippingZones[' + zi + '][rates][' + ri + '][min_weight]'"
+                                                            x-model="rate.min_weight" placeholder="0.00">
                                                     </div>
                                                     <div>
                                                         <label class="field-label">Max Weight (Grams)</label>
-                                                        <x-input type="number" step="0.01" min="0"
-                                                            :name="`shippingZones[${zi}][rates][${ri}][max_weight]`"
-                                                            x-model="rate.max_weight" placeholder="∞" />
+                                                        <input class="field-control" type="number" step="0.01" min="0"
+                                                            :name="'shippingZones[' + zi + '][rates][' + ri + '][max_weight]'"
+                                                            x-model="rate.max_weight" placeholder="∞">
                                                     </div>
                                                     <div>
                                                         <label class="field-label">Price *</label>
-                                                        <x-input type="number" step="0.01" min="0"
-                                                            :name="`shippingZones[${zi}][rates][${ri}][price]`"
-                                                            x-model="rate.price" placeholder="0.00" />
+                                                        <input class="field-control" type="number" step="0.01" min="0"
+                                                            :name="'shippingZones[' + zi + '][rates][' + ri + '][price]'"
+                                                            x-model="rate.price" placeholder="0.00">
                                                     </div>
                                                 </div>
                                                 <div class="field-flag-grid" style="margin-top:8px">
                                                     <label class="toggle-field">
-                                                        <input type="hidden" :name="`shippingZones[${zi}][rates][${ri}][is_active]`" value="0">
-                                                        <input type="checkbox" :name="`shippingZones[${zi}][rates][${ri}][is_active]`"
+                                                        <input type="hidden" :name="'shippingZones[' + zi + '][rates][' + ri + '][is_active]'" value="0">
+                                                        <input type="checkbox" :name="'shippingZones[' + zi + '][rates][' + ri + '][is_active]'"
                                                             value="1" x-model="rate.is_active">
                                                         <span>Rate Active</span>
                                                     </label>
