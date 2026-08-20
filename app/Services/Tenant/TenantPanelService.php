@@ -542,59 +542,75 @@ class TenantPanelService
         }
     }
 
+    private const COMPLIANCE_FIELD_MAP = [
+        'business_name' => 'compliance_business_name',
+        'store_name' => 'compliance_store_name',
+        'country' => 'compliance_country',
+        'city' => 'compliance_city',
+        'phone' => 'compliance_phone',
+        'email' => 'compliance_email',
+        'owner_name' => 'compliance_owner_name',
+        'owner_id_number' => 'compliance_owner_id_number',
+        'owner_dob' => 'compliance_owner_dob',
+        'owner_contact' => 'compliance_owner_contact',
+        'company_name' => 'compliance_company_name',
+        'registration_number' => 'compliance_registration_number',
+        'registration_expiry' => 'compliance_registration_expiry',
+        'vat_number' => 'compliance_vat_number',
+        'registration_document_path' => 'compliance_registration_document_path',
+        'bank_name' => 'compliance_bank_name',
+        'bank_holder_name' => 'compliance_bank_holder_name',
+        'bank_iban' => 'compliance_bank_iban',
+        'bank_account_number' => 'compliance_bank_account_number',
+        'bank_currency' => 'compliance_bank_currency',
+        'doc_national_id_path' => 'compliance_doc_national_id_path',
+        'doc_commercial_registration_path' => 'compliance_doc_commercial_registration_path',
+        'doc_tax_certificate_path' => 'compliance_doc_tax_certificate_path',
+        'doc_additional_paths' => 'compliance_doc_additional_paths',
+    ];
+
+    private const COMPLIANCE_JSON_FIELDS = ['compliance_doc_additional_paths'];
+
     /**
-     * Persist the full Compliance Center form. `$attributes` keys are the plain
-     * field names (see ComplianceCenterPage); this maps them to `compliance_*`
-     * keys inside the tenant's `data` JSON column, keeping anything not passed.
+     * Persist the full Compliance Center form into the tenant's own `settings`
+     * table (group = 'compliance'), rather than the central `tenants.data` JSON.
      */
     public function updateCompliance(array $attributes): void
     {
-        $tenant = tenant();
+        foreach (self::COMPLIANCE_FIELD_MAP as $attributeKey => $settingName) {
+            if (!array_key_exists($attributeKey, $attributes)) {
+                continue;
+            }
 
-        if (!$tenant) {
-            return;
+            $raw = $attributes[$attributeKey];
+            $value = in_array($settingName, self::COMPLIANCE_JSON_FIELDS, true)
+                ? json_encode((array) $raw)
+                : (string) ($raw ?? '');
+
+            Setting::query()->updateOrCreate(
+                ['name' => $settingName],
+                ['value' => $value, 'type' => 'string', 'group' => 'compliance'],
+            );
         }
+    }
 
-        $fieldMap = [
-            // Business Info
-            'business_name' => 'compliance_business_name',
-            'store_name' => 'compliance_store_name',
-            'country' => 'compliance_country',
-            'city' => 'compliance_city',
-            'phone' => 'compliance_phone',
-            'email' => 'compliance_email',
-            // Owner Info
-            'owner_name' => 'compliance_owner_name',
-            'owner_id_number' => 'compliance_owner_id_number',
-            'owner_dob' => 'compliance_owner_dob',
-            'owner_contact' => 'compliance_owner_contact',
-            // Company Info
-            'company_name' => 'compliance_company_name',
-            'registration_number' => 'compliance_registration_number',
-            'registration_expiry' => 'compliance_registration_expiry',
-            'vat_number' => 'compliance_vat_number',
-            'registration_document_path' => 'compliance_registration_document_path',
-            // Bank Account
-            'bank_name' => 'compliance_bank_name',
-            'bank_holder_name' => 'compliance_bank_holder_name',
-            'bank_iban' => 'compliance_bank_iban',
-            'bank_account_number' => 'compliance_bank_account_number',
-            'bank_currency' => 'compliance_bank_currency',
-            // Verification Documents
-            'doc_national_id_path' => 'compliance_doc_national_id_path',
-            'doc_commercial_registration_path' => 'compliance_doc_commercial_registration_path',
-            'doc_tax_certificate_path' => 'compliance_doc_tax_certificate_path',
-            'doc_additional_paths' => 'compliance_doc_additional_paths',
-        ];
+    /** Reads all Compliance Center fields from the tenant's `settings` table. */
+    public function complianceSettings(): array
+    {
+        $names = array_values(self::COMPLIANCE_FIELD_MAP);
 
-        $updates = [];
-        foreach ($fieldMap as $attributeKey => $dataKey) {
-            if (array_key_exists($attributeKey, $attributes)) {
-                $updates[$dataKey] = $attributes[$attributeKey];
+        $raw = Setting::query()
+            ->whereIn('name', $names)
+            ->pluck('value', 'name')
+            ->all();
+
+        foreach (self::COMPLIANCE_JSON_FIELDS as $jsonField) {
+            if (isset($raw[$jsonField])) {
+                $raw[$jsonField] = json_decode((string) $raw[$jsonField], true) ?? [];
             }
         }
 
-        \App\Models\Tenant::saveData($tenant->id, $updates);
+        return $raw;
     }
 
     /**

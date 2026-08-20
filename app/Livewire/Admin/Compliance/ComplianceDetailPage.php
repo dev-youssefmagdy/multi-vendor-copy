@@ -40,10 +40,32 @@ class ComplianceDetailPage extends AdminPage
     protected function pageData(): array
     {
         $tenant = $this->tenant();
+        $complianceSettings = [];
+        $completionPercent = 0;
+
+        if ($tenant) {
+            tenancy()->initialize($tenant);
+
+            $complianceSettings = \App\Models\Tenant\Setting::query()
+                ->where('group', 'compliance')
+                ->pluck('value', 'name')
+                ->all();
+
+            foreach (['compliance_doc_additional_paths'] as $jsonField) {
+                if (isset($complianceSettings[$jsonField])) {
+                    $complianceSettings[$jsonField] = json_decode($complianceSettings[$jsonField], true) ?? [];
+                }
+            }
+
+            $completionPercent = TenantNavigation::complianceCompletionPercent();
+
+            tenancy()->end();
+        }
 
         return array_merge(parent::pageData(), [
             'tenant' => $tenant,
-            'completionPercent' => $tenant ? TenantNavigation::complianceCompletionPercent($tenant) : 0,
+            'complianceSettings' => $complianceSettings,
+            'completionPercent' => $completionPercent,
         ]);
     }
 

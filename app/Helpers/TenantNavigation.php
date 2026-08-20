@@ -275,14 +275,16 @@ class TenantNavigation
     /** Compliance step: owner details, business registration, and bank info set. */
     public static function complianceComplete(): bool
     {
-        return self::complianceCompletionPercent(tenant()) === 100;
+        return self::complianceCompletionPercent() === 100;
     }
 
     /**
      * Weighted percentage across the Compliance Center's required fields, used both
      * for the Account Setup Progress "compliance info" step and the admin overview.
+     * Reads from the tenant's own `settings` table (group = 'compliance'); the
+     * caller is responsible for tenancy being initialized for the tenant in question.
      */
-    public static function complianceCompletionPercent(mixed $tenant): int
+    public static function complianceCompletionPercent(mixed $tenant = null): int
     {
         $fields = [
             'compliance_business_name',
@@ -301,12 +303,14 @@ class TenantNavigation
             'compliance_doc_national_id_path',
         ];
 
+        $values = Setting::query()
+            ->whereIn('name', $fields)
+            ->pluck('value', 'name')
+            ->all();
+
         $filledCount = 0;
         foreach ($fields as $field) {
-            // $tenant is a Tenant model instance whose `data` JSON is decoded
-            // straight onto its own attributes (VirtualColumn), so read the
-            // attribute directly rather than via data_get($tenant, "data.$field").
-            if (filled(is_object($tenant) ? ($tenant->{$field} ?? null) : data_get($tenant, "data.{$field}"))) {
+            if (filled($values[$field] ?? null)) {
                 $filledCount++;
             }
         }

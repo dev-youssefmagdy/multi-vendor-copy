@@ -1,6 +1,7 @@
 @php
-    $data = fn(string $key, $default = '—') => filled(data_get($tenant, "data.{$key}")) ? data_get($tenant, "data.{$key}") : $default;
-    $doc = fn(string $key) => data_get($tenant, "data.{$key}");
+    $cs = $complianceSettings ?? [];
+    $data = fn(string $key, $default = '—') => filled($cs[$key] ?? null) ? $cs[$key] : $default;
+    $doc = fn(string $key) => ($cs[$key] ?? null) ?: null;
     $status = (string) ($tenant?->compliance_status ?: 'pending');
     $canManage = $this->hasPermission('compliance.tenants.manage');
 @endphp

@@ -54,7 +54,10 @@ class ComplianceOverviewList extends ListPage
 
     protected function row(Tenant $tenant): array
     {
-        $percent = TenantNavigation::complianceCompletionPercent($tenant);
+        tenancy()->initialize($tenant);
+        $percent = TenantNavigation::complianceCompletionPercent();
+        tenancy()->end();
+
         $status = (string) ($tenant->compliance_status ?: 'pending');
 
         $statusBadge = match ($status) {
