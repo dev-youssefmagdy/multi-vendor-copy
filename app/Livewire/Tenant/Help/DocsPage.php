@@ -10,11 +10,9 @@ class DocsPage extends TenantPage
     #[Url(as: 'slug')]
     public string $slug = 'getting-started';
 
-    public function mount(string $slug = ''): void
+    public function mount(): void
     {
-        if ($slug && array_key_exists($slug, self::articles())) {
-            $this->slug = $slug;
-        } else {
+        if (!array_key_exists($this->slug, self::articles())) {
             $this->slug = 'getting-started';
         }
     }
