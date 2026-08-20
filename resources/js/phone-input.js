@@ -119,6 +119,13 @@ export function initPhoneInputs(root = document) {
             initialCountryLookup: lookupCountry,
             separateDialCode: true,
             dropdownParent: document.body,
+            // "polite"/"aggressive" ask the bundled utils for a per-country
+            // example number to show as a placeholder; when that lookup
+            // fails it falls back to stringifying its error object, which
+            // renders as the literal text "[object Object]" in the field.
+            // We always pass an explicit placeholder from the blade markup,
+            // so auto-generating one here is unnecessary and unsafe.
+            autoPlaceholder: "off",
             loadUtils: () => Promise.resolve({ default: intlTelInputUtils }),
         });
 
@@ -131,6 +138,10 @@ export function initPhoneInputs(root = document) {
                 input.dispatchEvent(new Event("input", { bubbles: true }));
                 input.dispatchEvent(new Event("change", { bubbles: true }));
             }
+        }
+
+        if (input.placeholder && input.placeholder.includes("[object")) {
+            input.placeholder = "";
         }
 
         input.addEventListener("countrychange", () => {
