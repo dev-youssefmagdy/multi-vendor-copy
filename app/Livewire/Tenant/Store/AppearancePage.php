@@ -72,6 +72,13 @@ class AppearancePage extends TenantPage
     public string $socialUrl = '';
     public int $socialSerial = 0;
 
+    // ── Promo Banner ──────────────────────────────────────────────────────────
+    public string $promoBannerTitle = '';
+    public string $promoBannerSubtitle = '';
+    public string $promoBannerLink = '';
+    public string $promoBannerCtaText = '';
+    public string $promoBannerImageUrl = '';
+
     // ── Footer ────────────────────────────────────────────────────────────────
     public string $footerText = '';
     public string $footerCopyright = '';
@@ -106,6 +113,12 @@ class AppearancePage extends TenantPage
         $this->logoPathEn = ($settings['logo_path_en'] ?? '') ?: null;
         $this->footerText = $settings['footer_text'] ?? '';
         $this->footerCopyright = $settings['footer_copyright'] ?? '';
+
+        $this->promoBannerTitle = $settings['promo_banner_title'] ?? '';
+        $this->promoBannerSubtitle = $settings['promo_banner_subtitle'] ?? '';
+        $this->promoBannerLink = $settings['promo_banner_link'] ?? '';
+        $this->promoBannerCtaText = $settings['promo_banner_cta_text'] ?? '';
+        $this->promoBannerImageUrl = $settings['promo_banner_image_url'] ?? '';
 
         // Build the per-locale matrix then overlay any saved translations.
         $this->footerTranslations = $languages->mapWithKeys(fn($l) => [
@@ -437,6 +450,29 @@ class AppearancePage extends TenantPage
         $this->socialUrl = '';
         $this->socialSerial = 0;
         $this->resetErrorBag();
+    }
+
+    // ── Promo Banner ──────────────────────────────────────────────────────────
+
+    public function savePromoBanner(TenantPanelService $service): void
+    {
+        $this->validate([
+            'promoBannerTitle' => ['nullable', 'string', 'max:120'],
+            'promoBannerSubtitle' => ['nullable', 'string', 'max:255'],
+            'promoBannerLink' => ['nullable', 'url', 'max:500'],
+            'promoBannerCtaText' => ['nullable', 'string', 'max:40'],
+            'promoBannerImageUrl' => ['nullable', 'url', 'max:1000'],
+        ]);
+
+        $service->savePromoBannerSettings([
+            'promo_banner_title' => $this->promoBannerTitle,
+            'promo_banner_subtitle' => $this->promoBannerSubtitle,
+            'promo_banner_link' => $this->promoBannerLink,
+            'promo_banner_cta_text' => $this->promoBannerCtaText,
+            'promo_banner_image_url' => $this->promoBannerImageUrl,
+        ]);
+
+        $this->toast('Promotional banner updated.');
     }
 
     // ── Footer ────────────────────────────────────────────────────────────────

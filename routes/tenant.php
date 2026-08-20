@@ -38,6 +38,7 @@ use App\Livewire\Tenant\Order\OrdersList;
 use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
 use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
 use App\Livewire\Tenant\Return\ReturnDetailPage as TenantReturnDetailPage;
+use App\Livewire\Tenant\Help\DocsPage;
 use App\Livewire\Tenant\Storefront\RequestReturnForm;
 use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
@@ -545,6 +546,11 @@ Route::middleware([
                 Route::get('/home-variants', HomeVariantsPage::class)
                     ->middleware('tenant.permission:store.home-variants.manage')
                     ->name('home-variants');
+            });
+
+            Route::prefix('help')->name('tenant.help.')->group(function () {
+                Route::get('/', DocsPage::class)->name('index');
+                Route::get('/{slug}', DocsPage::class)->name('article');
             });
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {

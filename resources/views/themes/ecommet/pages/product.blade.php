@@ -404,6 +404,18 @@
     <script>
         // ── Variant selection – no Livewire re-render ─────────────────────────────
         const ECOMMET_VARIANTS = @json($variantData ?? []);
+
+        // ── Tracking: ViewContent ─────────────────────────────────────────────
+        (function () {
+            if (typeof window.trackViewContent !== 'function') return;
+            window.trackViewContent({
+                content_ids:  [@json($activeVariant?->id ?? $product->id)],
+                content_type: 'product',
+                content_name: @json($product->translationValue('name') ?? $product->slug),
+                value:        parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+                currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+            });
+        })();
         const ECOMMET_CART_ADD_URL = @json($cartAddUrl);
         const ECOMMET_PRODUCT_SLUG = @json($product->slug);
         let ecommetSelectedVariantId = @json($activeVariant?->id);
@@ -457,6 +469,18 @@
                 slug: ECOMMET_PRODUCT_SLUG,
                 variantId: ecommetSelectedVariantId,
                 qty: ecommetQty,
+            }).then(function () {
+                if (typeof window.trackAddToCart === 'function') {
+                    var variant = ecommetSelectedVariantId ? ECOMMET_VARIANTS[ecommetSelectedVariantId] : null;
+                    window.trackAddToCart({
+                        content_ids:  [ecommetSelectedVariantId || @json($product->id)],
+                        content_type: 'product',
+                        content_name: @json($product->translationValue('name') ?? $product->slug),
+                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+                        currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                        num_items:    ecommetQty,
+                    });
+                }
             }).finally(function () {
                 if (btn) { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); }
                 if (label) label.textContent = @json(__('Add to Cart'));

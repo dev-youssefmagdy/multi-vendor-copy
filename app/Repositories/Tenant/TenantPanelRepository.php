@@ -1738,6 +1738,11 @@ class TenantPanelRepository
                 'logo_font_en',
                 'logo_path_ar',
                 'logo_path_en',
+                'promo_banner_title',
+                'promo_banner_subtitle',
+                'promo_banner_link',
+                'promo_banner_cta_text',
+                'promo_banner_image_url',
             ])
             ->get()
             ->pluck('value', 'name')

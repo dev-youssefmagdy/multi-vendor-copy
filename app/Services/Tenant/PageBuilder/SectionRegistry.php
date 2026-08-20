@@ -21,6 +21,7 @@ class SectionRegistry
                 'new_year_sale' => 'Category Pills + Product Grid',
                 'flash_sale_strip' => 'Flash Sale Banner Strip',
                 'best_selling' => 'Best-Selling Items',
+                'promo_banner' => 'Promotional Banner',
             ],
         ],
         'elora' => [
@@ -36,6 +37,7 @@ class SectionRegistry
                 'new_arrivals' => 'New Arrivals',
                 'shop_by_category' => 'Shop by Category',
                 'recommended_for_you' => 'Recommended For You',
+                'promo_banner' => 'Promotional Banner',
             ],
         ],
         'souqify' => [
@@ -54,6 +56,19 @@ class SectionRegistry
                 'special_offers' => 'Special Offers',
                 'top_rated_products' => 'Top Rated Products',
                 'recommended_products' => 'Recommended Products',
+                'promo_banner' => 'Promotional Banner',
+            ],
+        ],
+        'nexo' => [
+            'home' => [
+                'hero_banner' => 'Hero Banner',
+                'trust_bar' => 'Trust Bar',
+                'featured_products' => 'Featured Products',
+                'categories' => 'Shop by Category',
+                'flash_sale' => 'Flash Sale',
+                'new_arrivals' => 'New Arrivals',
+                'best_sellers' => 'Best Sellers',
+                'promo_banner' => 'Promotional Banner',
             ],
         ],
     ];

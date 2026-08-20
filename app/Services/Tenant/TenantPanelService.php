@@ -690,6 +690,16 @@ class TenantPanelService
         }
     }
 
+    public function savePromoBannerSettings(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'promo_banner']
+            );
+        }
+    }
+
     public function saveAppearanceSettings(array $data): void
     {
         $pathKeys = ['logo_path_ar', 'logo_path_en'];

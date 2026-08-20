@@ -105,6 +105,7 @@
             'general'      => 'General',
             'banners'      => 'Banners',
             'social_links' => 'Social Links',
+            'promo_banner' => 'Promo Banner',
             'footer'       => 'Footer',
         ] as $key => $label)
             <button type="button"
@@ -432,6 +433,56 @@
                 </div>
             </form>
         </x-modal>
+    @endif
+
+    {{-- ─────────────────────────────────── TAB: PROMO BANNER ─────────────────────────────────── --}}
+    @if ($activeTab === 'promo_banner')
+        <div class="appearance-tab-panel fu d2">
+            <form wire:submit="savePromoBanner" class="page-stack">
+                <section class="card form-card">
+                    <div class="panel-head mb-5">
+                        <div>
+                            <h3 class="panel-title">Promotional Banner</h3>
+                            <p class="panel-copy">Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.</p>
+                        </div>
+                        <x-btn type="submit">Save Promo Banner</x-btn>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div>
+                            <label class="field-label">Title</label>
+                            <x-input type="text" wire:model.defer="promoBannerTitle"
+                                placeholder="Summer Sale" :error="$errors->has('promoBannerTitle')" />
+                            @error('promoBannerTitle')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Call-to-Action Text</label>
+                            <x-input type="text" wire:model.defer="promoBannerCtaText"
+                                placeholder="Shop Now" :error="$errors->has('promoBannerCtaText')" />
+                            @error('promoBannerCtaText')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="span-2">
+                            <label class="field-label">Subtitle</label>
+                            <x-input type="text" wire:model.defer="promoBannerSubtitle"
+                                placeholder="Up to 50% off selected items" :error="$errors->has('promoBannerSubtitle')" />
+                            @error('promoBannerSubtitle')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Link URL</label>
+                            <x-input type="url" wire:model.defer="promoBannerLink"
+                                placeholder="https://" :error="$errors->has('promoBannerLink')" />
+                            @error('promoBannerLink')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Image URL</label>
+                            <x-input type="url" wire:model.defer="promoBannerImageUrl"
+                                placeholder="https://" :error="$errors->has('promoBannerImageUrl')" />
+                            @error('promoBannerImageUrl')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
     @endif
 
     {{-- ──────────────────────────────────── TAB: FOOTER ────────────────────────────────── --}}

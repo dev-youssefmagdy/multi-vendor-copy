@@ -381,6 +381,7 @@ class CentralAdminSeeder extends Seeder
         $this->seedTemplateEcommet();
         $this->seedTemplateElora();
         $this->seedTemplateSouqify();
+        $this->seedTemplateNexo();
     }
 
     protected function seedTemplateEcommet(): Template
@@ -396,6 +397,11 @@ class CentralAdminSeeder extends Seeder
     protected function seedTemplateSouqify(): Template
     {
         return Template::query()->firstOrCreate(['slug' => 'souqify'], ['name' => 'Souqify', 'version' => '1.0.0', 'author' => 'Internal Team', 'is_active' => true]);
+    }
+
+    protected function seedTemplateNexo(): Template
+    {
+        return Template::query()->firstOrCreate(['slug' => 'nexo'], ['name' => 'Nexo', 'version' => '1.0.0', 'author' => 'Internal Team', 'is_active' => true]);
     }
 
     protected function seedMaintenanceWindow(): void

@@ -1418,6 +1418,18 @@
 <script>
     // ── Variant selection, qty, and add-to-cart – no Livewire re-render ────────
     const SQ_VARIANTS = @json($variantData ?? []);
+
+    // ── Tracking: ViewContent ─────────────────────────────────────────────
+    (function () {
+        if (typeof window.trackViewContent !== 'function') return;
+        window.trackViewContent({
+            content_ids:  [@json($activeVariant?->id ?? $product->id)],
+            content_type: 'product',
+            content_name: @json($product->translationValue('name') ?? $product->slug),
+            value:        parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+            currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+        });
+    })();
     const SQ_CART_ADD_URL = @json($cartAddUrl);
     const SQ_PRODUCT_SLUG = @json($product->slug);
     let SQ_UNIT_PRICE = @json($sellPrice * $rate);
@@ -1485,6 +1497,18 @@
             slug: SQ_PRODUCT_SLUG,
             variantId: sqSelectedVariantId,
             qty: sqQty,
+        }).then(function () {
+            if (typeof window.trackAddToCart === 'function') {
+                var variant = sqSelectedVariantId ? SQ_VARIANTS[sqSelectedVariantId] : null;
+                window.trackAddToCart({
+                    content_ids:  [sqSelectedVariantId || @json($product->id)],
+                    content_type: 'product',
+                    content_name: @json($product->translationValue('name') ?? $product->slug),
+                    value:        variant ? parseFloat(variant.price || 0) : parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+                    currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                    num_items:    sqQty,
+                });
+            }
         }).finally(function () {
             if (btn) { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); }
             if (label) label.innerHTML = prevLabel;

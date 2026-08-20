@@ -1409,6 +1409,19 @@ We are committed to maintaining transparency and reducing permission requests wi
     <script>
         // ── Variant selection – no Livewire re-render ─────────────────────────────
         const ELORA_VARIANTS = @json($variantData ?? []);
+
+        // ── Tracking: ViewContent ─────────────────────────────────────────────
+        (function () {
+            if (typeof window.trackViewContent !== 'function') return;
+            window.trackViewContent({
+                content_ids:  [@json($activeVariant?->id ?? $product->id)],
+                content_type: 'product',
+                content_name: @json($product->translationValue('name') ?? $product->slug),
+                value:        parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+                currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+            });
+        })();
+
         const ELORA_CART_ADD_URL = @json($cartAddUrl);
         const ELORA_PRODUCT_SLUG = @json($product->slug);
         let eloraSelectedVariantId = @json($activeVariant?->id);
@@ -1476,6 +1489,19 @@ We are committed to maintaining transparency and reducing permission requests wi
                 slug: ELORA_PRODUCT_SLUG,
                 variantId: eloraSelectedVariantId,
                 qty: eloraQty,
+            }).then(function () {
+                // ── Tracking: AddToCart ───────────────────────────────────────────
+                if (typeof window.trackAddToCart === 'function') {
+                    var variant = eloraSelectedVariantId ? ELORA_VARIANTS[eloraSelectedVariantId] : null;
+                    window.trackAddToCart({
+                        content_ids:  [eloraSelectedVariantId || @json($product->id)],
+                        content_type: 'product',
+                        content_name: @json($product->translationValue('name') ?? $product->slug),
+                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
+                        currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                        num_items:    eloraQty,
+                    });
+                }
             }).finally(function () {
                 buttons.forEach((btn) => { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); });
                 labels.forEach((el) => { el.textContent = @json(__('Add to Cart')); });

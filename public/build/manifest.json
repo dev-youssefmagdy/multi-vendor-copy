@@ -1,10 +1,10 @@
 {
-  "_bootstrap-DmTjhYCz.js": {
-    "file": "assets/bootstrap-DmTjhYCz.js",
+  "_bootstrap-xWJW1-7o.js": {
+    "file": "assets/bootstrap-xWJW1-7o.js",
     "name": "bootstrap"
   },
-  "_phone-input-Bq0tqoiq.js": {
-    "file": "assets/phone-input-Bq0tqoiq.js",
+  "_phone-input-D2LA2zKh.js": {
+    "file": "assets/phone-input-D2LA2zKh.js",
     "name": "phone-input",
     "css": [
       "assets/phone-input-DynWKaYt.css"
@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-3Gb-l6Et.css",
+    "file": "assets/app-D5Qhwo-E.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-wXHQwKeT.css",
+    "file": "assets/ecommet-BQq9UvdB.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -55,24 +55,47 @@
   },
   "resources/css/elora/category.css": {
     "file": "assets/category-hppsyjQ7.css",
+    "src": "resources/css/elora/category.css"
+  },
+  "resources/css/elora/home.css": {
+    "file": "assets/home-C3vL_iQ6.css",
+    "src": "resources/css/elora/home.css"
+  },
+  "resources/css/nexo.css": {
+    "file": "assets/nexo-BalBbvPG.css",
+    "name": "nexo",
+    "names": [
+      "nexo.css"
+    ],
+    "src": "resources/css/nexo.css",
+    "isEntry": true
+  },
+  "resources/css/nexo/category.css": {
+    "file": "assets/category-bFfyppFo.css",
     "name": "category",
     "names": [
       "category.css"
     ],
-    "src": "resources/css/elora/category.css",
-    "isEntry": true
+    "src": "resources/css/nexo/category.css",
+    "isEntry": true,
+    "css": [
+      "assets/category-hppsyjQ7.css"
+    ]
   },
-  "resources/css/elora/home.css": {
-    "file": "assets/home-C3vL_iQ6.css",
+  "resources/css/nexo/home.css": {
+    "file": "assets/home-8v8uG7Ky.css",
     "name": "home",
     "names": [
       "home.css"
     ],
-    "src": "resources/css/elora/home.css",
-    "isEntry": true
+    "src": "resources/css/nexo/home.css",
+    "isEntry": true,
+    "css": [
+      "assets/home-C3vL_iQ6.css"
+    ]
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CkNhFvwJ.css",
+    "file": "assets/souqify-BNRwr-gm.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -90,98 +113,128 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Ceqa16Mr.js",
+    "file": "assets/app-DxS0pkS1.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-DmTjhYCz.js",
-      "_phone-input-Bq0tqoiq.js"
+      "_bootstrap-xWJW1-7o.js",
+      "_phone-input-D2LA2zKh.js"
     ]
   },
   "resources/js/ecommet.js": {
-    "file": "assets/ecommet-lhMg1DoU.js",
+    "file": "assets/ecommet-dh1RhDH5.js",
     "name": "ecommet",
     "src": "resources/js/ecommet.js",
     "isEntry": true
   },
   "resources/js/ecommet/cart.js": {
-    "file": "assets/cart-b9081b7a.js",
+    "file": "assets/cart-fRhw0qm3.js",
     "name": "cart",
     "src": "resources/js/ecommet/cart.js",
     "isEntry": true
   },
   "resources/js/ecommet/home.js": {
-    "file": "assets/home-CS8rIjLt.js",
+    "file": "assets/home-GVVQhBL2.js",
     "name": "home",
     "src": "resources/js/ecommet/home.js",
     "isEntry": true
   },
   "resources/js/ecommet/product.js": {
-    "file": "assets/product-COb6PNRo.js",
+    "file": "assets/product-CNiYw3c9.js",
     "name": "product",
     "src": "resources/js/ecommet/product.js",
     "isEntry": true
   },
   "resources/js/elora.js": {
-    "file": "assets/elora-0sJfK46T.js",
+    "file": "assets/elora-D-cZpouT.js",
     "name": "elora",
     "src": "resources/js/elora.js",
     "isEntry": true
   },
   "resources/js/elora/cart.js": {
-    "file": "assets/cart-BEAhvMrj.js",
+    "file": "assets/cart-CK5npYTW.js",
     "name": "cart",
     "src": "resources/js/elora/cart.js",
     "isEntry": true
   },
   "resources/js/elora/category.js": {
-    "file": "assets/category-Dlom0tL5.js",
+    "file": "assets/category-HoW1OjJN.js",
     "name": "category",
     "src": "resources/js/elora/category.js",
     "isEntry": true
   },
   "resources/js/elora/home.js": {
-    "file": "assets/home-nGeOURzL.js",
+    "file": "assets/home-D9gq0P7I.js",
     "name": "home",
     "src": "resources/js/elora/home.js",
     "isEntry": true
   },
   "resources/js/elora/product.js": {
-    "file": "assets/product-mu4YZGrg.js",
+    "file": "assets/product-CdPo06sw.js",
     "name": "product",
     "src": "resources/js/elora/product.js",
     "isEntry": true
   },
   "resources/js/image-search.js": {
-    "file": "assets/image-search-BVhbV0_l.js",
+    "file": "assets/image-search-C2iFgan3.js",
     "name": "image-search",
     "src": "resources/js/image-search.js",
     "isEntry": true
   },
+  "resources/js/nexo.js": {
+    "file": "assets/nexo-MkKUZNT1.js",
+    "name": "nexo",
+    "src": "resources/js/nexo.js",
+    "isEntry": true
+  },
+  "resources/js/nexo/cart.js": {
+    "file": "assets/cart-D3hOA7nV.js",
+    "name": "cart",
+    "src": "resources/js/nexo/cart.js",
+    "isEntry": true
+  },
+  "resources/js/nexo/category.js": {
+    "file": "assets/category-BwVweqYw.js",
+    "name": "category",
+    "src": "resources/js/nexo/category.js",
+    "isEntry": true
+  },
+  "resources/js/nexo/home.js": {
+    "file": "assets/home-DyRIFZVA.js",
+    "name": "home",
+    "src": "resources/js/nexo/home.js",
+    "isEntry": true
+  },
+  "resources/js/nexo/product.js": {
+    "file": "assets/product-BDq-HLjX.js",
+    "name": "product",
+    "src": "resources/js/nexo/product.js",
+    "isEntry": true
+  },
   "resources/js/souqify.js": {
-    "file": "assets/souqify-emDl5Iw-.js",
+    "file": "assets/souqify-D0QUn2Mc.js",
     "name": "souqify",
     "src": "resources/js/souqify.js",
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-YhgWicjP.js",
+    "file": "assets/storefront-cart-w9PCOAkN.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-Bq0tqoiq.js"
+      "_phone-input-D2LA2zKh.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-BNzAaXWf.js",
+    "file": "assets/website-BlPCaecn.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-DmTjhYCz.js",
-      "_phone-input-Bq0tqoiq.js"
+      "_bootstrap-xWJW1-7o.js",
+      "_phone-input-D2LA2zKh.js"
     ]
   }
 }

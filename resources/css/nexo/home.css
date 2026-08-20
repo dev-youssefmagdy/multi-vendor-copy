@@ -1,0 +1,47 @@
+        /* ── Responsive category cards ── */
+        .nexo-cats-section { padding: 24px 0; gap: 20px; }
+        .nexo-cats-swiper  { padding: 0 12px; overflow: hidden; }
+        .nexo-cats-slide   { width: 140px; }
+        .nexo-cat-card {
+            display: block; width: 140px; height: 196px;
+            position: relative; border-radius: 16px; overflow: hidden;
+            background: #fff; border: 1px solid #DFDFDF; text-decoration: none;
+        }
+        .nexo-cat-label {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+            background: #FFFFFF;
+            display: flex; flex-direction: row; justify-content: center; align-items: center;
+            padding: 6px 8px; box-sizing: border-box;
+        }
+        .nexo-cat-label span {
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 13px;
+            line-height: 1.3; color: #121212;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+        }
+        @media (min-width: 390px) {
+            .nexo-cats-slide { width: 158px; }
+            .nexo-cat-card   { width: 158px; height: 221px; }
+            .nexo-cat-label span { font-size: 14px; }
+        }
+        @media (min-width: 560px) {
+            .nexo-cats-swiper { padding: 0 16px; }
+            .nexo-cats-slide  { width: 180px; }
+            .nexo-cat-card    { width: 180px; height: 252px; }
+            .nexo-cat-label   { height: 44px; }
+            .nexo-cat-label span { font-size: 15px; }
+        }
+        @media (min-width: 768px) {
+            .nexo-cats-swiper { padding: 0 20px; }
+            .nexo-cats-slide  { width: 205px; }
+            .nexo-cat-card    { width: 205px; height: 287px; }
+            .nexo-cat-label   { height: 47px; }
+            .nexo-cat-label span { font-size: 16px; }
+        }
+        @media (min-width: 1024px) {
+            .nexo-cats-section { padding: 40px 0; gap: 32px; }
+            .nexo-cats-swiper  { padding: 0 24px; }
+            .nexo-cats-slide   { width: 231px; }
+            .nexo-cat-card     { width: 231px; height: 324px; }
+            .nexo-cat-label    { height: 51px; padding: 8px; }
+            .nexo-cat-label span { font-size: 18px; line-height: 23px; }
+        }

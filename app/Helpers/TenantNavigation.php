@@ -143,6 +143,12 @@ class TenantNavigation
                     ],
                 ],
             ],
+            [
+                'label' => 'Help',
+                'items' => [
+                    ['type' => 'link', 'label' => 'Documentation', 'route' => 'tenant.help.index', 'icon' => 'faq', 'permission' => null],
+                ],
+            ],
         ];
     }
 
