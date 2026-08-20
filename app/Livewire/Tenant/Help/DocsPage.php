@@ -3,16 +3,25 @@
 namespace App\Livewire\Tenant\Help;
 
 use App\Livewire\Tenant\Base\TenantPage;
+use Livewire\Attributes\Url;
 
 class DocsPage extends TenantPage
 {
-    public string $slug = '';
+    #[Url(as: 'slug')]
+    public string $slug = 'getting-started';
 
     public function mount(string $slug = ''): void
     {
-        $this->slug = $slug ?: 'getting-started';
+        if ($slug && array_key_exists($slug, self::articles())) {
+            $this->slug = $slug;
+        } else {
+            $this->slug = 'getting-started';
+        }
+    }
 
-        if (!array_key_exists($this->slug, self::articles())) {
+    public function updatedSlug(string $value): void
+    {
+        if (!array_key_exists($value, self::articles())) {
             $this->slug = 'getting-started';
         }
     }
@@ -60,6 +69,12 @@ class DocsPage extends TenantPage
                 'icon'     => 'upload',
                 'category' => 'Storefront',
                 'view'     => 'livewire.tenant.help.articles.custom-template',
+            ],
+            'custom-template-guide' => [
+                'title'    => 'Building a Custom Template',
+                'icon'     => 'code',
+                'category' => 'Storefront',
+                'view'     => 'livewire.tenant.help.articles.custom-template-guide',
             ],
             'page-builder' => [
                 'title'    => 'Page Builder',

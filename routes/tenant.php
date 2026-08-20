@@ -548,10 +548,7 @@ Route::middleware([
                     ->name('home-variants');
             });
 
-            Route::prefix('help')->name('tenant.help.')->group(function () {
-                Route::get('/', DocsPage::class)->name('index');
-                Route::get('/{slug}', DocsPage::class)->name('article');
-            });
+            Route::get('/help', DocsPage::class)->name('tenant.help.index');
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {
                 Route::get('/tracking', TrackingSettingsPage::class)

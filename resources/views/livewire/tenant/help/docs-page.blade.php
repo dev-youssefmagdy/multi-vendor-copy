@@ -17,7 +17,8 @@
                 <div class="docs-nav-group">
                     <div class="docs-nav-label">{{ $cat }}</div>
                     @foreach ($items as $slug => $article)
-                        <a href="{{ route('tenant.help.article', $slug) }}"
+                        <a href="{{ route('tenant.help.index', ['slug' => $slug]) }}"
+                           wire:navigate
                            class="docs-nav-link {{ $currentSlug === $slug ? 'docs-nav-link--active' : '' }}">
                             {{ $article['title'] }}
                         </a>
@@ -60,4 +61,20 @@
 .docs-badge-pending  { background: rgba(245,158,11,0.15); color: #f59e0b; }
 .docs-badge-approved { background: rgba(34,197,94,0.15);  color: #22c55e; }
 .docs-badge-rejected { background: rgba(239,68,68,0.15);  color: #ef4444; }
+.docs-code-block {
+    background: var(--surface-2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 0 0 16px;
+    overflow-x: auto;
+}
+.docs-code-block pre {
+    margin: 0;
+    font-size: 12px;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--t1);
+    line-height: 1.6;
+    white-space: pre;
+}
 </style>
