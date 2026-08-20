@@ -7,7 +7,6 @@ use App\Enums\PackageTerm;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class Package extends Model
@@ -55,10 +54,8 @@ class Package extends Model
         ];
     }
 
-    public function tenants(): HasMany
-    {
-        return $this->hasMany(Tenant::class);
-    }
+    // tenants.package_id was moved into tenants.data JSON column (migration 2026_08_18_000001);
+    // use DB::table('tenants')->whereRaw(...) instead of a relationship.
 
 
 }

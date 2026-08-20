@@ -73,7 +73,7 @@ use App\Livewire\Admin\Store\CouponsPage as AdminCouponsPage;
 use App\Livewire\Admin\Store\FlashSalesPage as AdminFlashSalesPage;
 use App\Livewire\Admin\Store\TenantSyncPage as AdminTenantSyncPage;
 use App\Livewire\Admin\Branch\BranchesList;
-use App\Livewire\Admin\Branch\AddEditBranch;
+use App\Http\Controllers\Admin\AddEditBranchController;
 use App\Livewire\Admin\Manufacturing\ManufacturingRequestsList;
 use App\Livewire\Admin\Manufacturing\ManufacturingRequestDetail;
 use App\Livewire\Admin\Variation\AddEditVariation;
@@ -286,8 +286,12 @@ Route::group([
 
     Route::prefix('branches')->name('branches.')->group(function () {
         Route::get('/', BranchesList::class)->middleware('admin.permission:branches.view,branches.manage')->name('index');
-        Route::get('/create', AddEditBranch::class)->middleware('admin.permission:branches.manage')->name('create');
-        Route::get('/{branch}/edit', AddEditBranch::class)->middleware('admin.permission:branches.manage')->name('edit');
+
+        Route::get('/create', [AddEditBranchController::class, 'create'])->middleware('admin.permission:branches.manage')->name('create');
+        Route::post('/create', [AddEditBranchController::class, 'store'])->middleware('admin.permission:branches.manage')->name('store');
+
+        Route::get('/{branch}/edit', [AddEditBranchController::class, 'edit'])->middleware('admin.permission:branches.manage')->name('edit');
+        Route::put('/{branch}/edit', [AddEditBranchController::class, 'update'])->middleware('admin.permission:branches.manage')->name('update');
     });
 
     Route::prefix('manufacturing')->name('manufacturing.')->group(function () {
