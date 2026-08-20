@@ -12,16 +12,16 @@
     <div class="docs-layout">
         {{-- Sidebar nav --}}
         <nav class="docs-sidebar card">
-            @php $categories = collect($articles)->groupBy('category'); @endphp
+            @php $categories = collect($articles)->map(fn($q,$key)=>['id'=>$key,...$q])->groupBy('category'); @endphp
             @foreach ($categories as $cat => $items)
                 <div class="docs-nav-group">
                     <div class="docs-nav-label">{{ $cat }}</div>
                     @foreach ($items as $slug => $article)
-                        <a href="{{ route('tenant.help.index', ['slug' => $slug]) }}"
-                           wire:navigate
-                           class="docs-nav-link {{ $currentSlug === $slug ? 'docs-nav-link--active' : '' }}">
+                        <button type="button"
+                           wire:click="showArticle('{{ $article['id'] }}')"
+                           class="docs-nav-link {{ $currentSlug === $article['id'] ? 'docs-nav-link--active' : '' }}">
                             {{ $article['title'] }}
-                        </a>
+                        </button>
                     @endforeach
                 </div>
             @endforeach
@@ -44,7 +44,7 @@
 .docs-sidebar { padding: 16px; }
 .docs-nav-group { margin-bottom: 20px; }
 .docs-nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--t3); padding: 0 8px 6px; }
-.docs-nav-link { display: block; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: var(--t2); text-decoration: none; transition: background 0.15s; }
+.docs-nav-link { display: block; width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: var(--t2); background: none; border: none; cursor: pointer; transition: background 0.15s; }
 .docs-nav-link:hover { background: var(--surface-2); color: var(--t1); }
 .docs-nav-link--active { background: var(--primary-faint, rgba(99,102,241,0.12)); color: var(--primary, #6366f1); font-weight: 600; }
 .docs-content { padding: 32px; max-width: 760px; }

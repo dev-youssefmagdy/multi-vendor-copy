@@ -3,24 +3,15 @@
 namespace App\Livewire\Tenant\Help;
 
 use App\Livewire\Tenant\Base\TenantPage;
-use Livewire\Attributes\Url;
 
 class DocsPage extends TenantPage
 {
-    #[Url(as: 'slug')]
-    public string $slug = 'getting-started';
+    public string $currentSlug = 'getting-started';
 
-    public function mount(): void
+    public function showArticle(string $slug): void
     {
-        if (!array_key_exists($this->slug, self::articles())) {
-            $this->slug = 'getting-started';
-        }
-    }
-
-    public function updatedSlug(string $value): void
-    {
-        if (!array_key_exists($value, self::articles())) {
-            $this->slug = 'getting-started';
+        if (array_key_exists($slug, self::articles())) {
+            $this->currentSlug = $slug;
         }
     }
 
@@ -40,10 +31,12 @@ class DocsPage extends TenantPage
 
     protected function pageData(): array
     {
+        $articles = self::articles();
+
         return array_merge(parent::pageData(), [
-            'articles'       => self::articles(),
-            'currentSlug'    => $this->slug,
-            'currentArticle' => self::articles()[$this->slug] ?? null,
+            'articles'       => $articles,
+            'currentSlug'    => $this->currentSlug,
+            'currentArticle' => $articles[$this->currentSlug] ?? $articles['getting-started'],
         ]);
     }
 
