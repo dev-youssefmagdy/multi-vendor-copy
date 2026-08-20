@@ -348,50 +348,55 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
 
                     {{-- Address Modal --}}
                     @if ($showAddressModal)
-                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" wire:click.self="closeAddressModal">
-                        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-                            <div class="flex items-center justify-between mb-5">
-                                <h3 class="text-base font-bold text-[#171717]">
-                                    {{ $editingAddressId ? __('Edit Address') : __('New Address') }}
-                                </h3>
-                                <button type="button" wire:click="closeAddressModal" class="text-[#ADADAD] hover:text-[#171717]">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-8" wire:click.self="closeAddressModal">
+                        <div class="bg-white rounded-[20px] shadow-2xl ring-1 ring-black/5 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+                            <div class="flex items-center justify-between px-6 py-5 border-b border-[#F0F0F0] shrink-0">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-9 h-9 rounded-full bg-[#F5F5F5] flex items-center justify-center text-[#171717] shrink-0">
+                                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    </span>
+                                    <h3 class="text-[17px] font-bold text-[#171717] tracking-tight">
+                                        {{ $editingAddressId ? __('Edit Address') : __('New Address') }}
+                                    </h3>
+                                </div>
+                                <button type="button" wire:click="closeAddressModal" class="w-8 h-8 rounded-full flex items-center justify-center text-[#ADADAD] hover:text-[#171717] hover:bg-[#F5F5F5] transition">
+                                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
-                            <div class="space-y-3">
+                            <div class="px-6 py-5 space-y-4 overflow-y-auto">
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
-                                        <input wire:model="addrFullName" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('Full Name') }}" />
+                                        <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
+                                        <input wire:model="addrFullName" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Full Name') }}" />
                                         @error('addrFullName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
-                                        <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Label') }}</label>
-                                        <input wire:model="addrLabel" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('e.g. Home, Work') }}" />
+                                        <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('Label') }}</label>
+                                        <input wire:model="addrLabel" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('e.g. Home, Work') }}" />
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Phone') }}</label>
-                                    <input wire:model="addrPhone" type="tel" data-phone-input class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('Phone') }}" />
+                                <div wire:ignore>
+                                    <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('Phone') }}</label>
+                                    <input wire-event="addrPhone" value="{{$addrPhone ?? ''}}" type="tel" data-phone-input class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Phone') }}" />
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Address') }} <span class="text-red-500">*</span></label>
-                                    <input wire:model="addrLine1" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('Street address') }}" />
+                                    <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('Address') }} <span class="text-red-500">*</span></label>
+                                    <input wire:model="addrLine1" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Street address') }}" />
                                     @error('addrLine1') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('City') }} <span class="text-red-500">*</span></label>
-                                        <input wire:model="addrCity" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('City') }}" />
+                                        <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('City') }} <span class="text-red-500">*</span></label>
+                                        <input wire:model="addrCity" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('City') }}" />
                                         @error('addrCity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
-                                        <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('State / Region') }}</label>
-                                        <input wire:model="addrState" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#ADADAD]" placeholder="{{ __('State') }}" />
+                                        <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('State / Region') }}</label>
+                                        <input wire:model="addrState" type="text" class="w-full border border-[#E0E0E0] rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[#171717] focus:ring-4 focus:ring-black/5" placeholder="{{ __('State') }}" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold text-[#666] block mb-1">{{ __('Country') }} <span class="text-red-500">*</span></label>
+                                    <label class="text-xs font-semibold text-[#666] block mb-1.5">{{ __('Country') }} <span class="text-red-500">*</span></label>
                                     @include('themes.elora.sections.country-select', [
                                         'wireModel' => 'addrCountryId',
                                         'countries' => $countries,
@@ -399,19 +404,19 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                                     ])
                                     @error('addrCountryId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
-                                <label class="flex items-center gap-2 cursor-pointer select-none">
-                                    <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#171717]" />
-                                    <span class="text-sm text-[#171717]">{{ __('Set as default address') }}</span>
+                                <label class="flex items-center gap-2.5 cursor-pointer select-none bg-[#FAFAFA] rounded-xl px-3.5 py-3 border border-[#F0F0F0]">
+                                    <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#171717] rounded" />
+                                    <span class="text-[13.5px] font-medium text-[#171717]">{{ __('Set as default address') }}</span>
                                 </label>
                             </div>
-                            <div class="flex gap-2 mt-5">
-                                <button type="button" wire:click="saveAddress"
-                                    class="flex-1 py-2.5 bg-[#171717] hover:bg-black text-white text-sm font-semibold rounded-full transition">
-                                    {{ __('Save') }}
-                                </button>
+                            <div class="flex gap-2.5 px-6 py-5 border-t border-[#F0F0F0] shrink-0">
                                 <button type="button" wire:click="closeAddressModal"
                                     class="flex-1 py-2.5 border border-[#E0E0E0] text-[#171717] text-sm font-semibold rounded-full hover:bg-[#F5F5F5] transition">
                                     {{ __('Cancel') }}
+                                </button>
+                                <button type="button" wire:click="saveAddress"
+                                    class="flex-1 py-2.5 bg-[#171717] hover:bg-black text-white text-sm font-semibold rounded-full transition shadow-sm">
+                                    {{ __('Save') }}
                                 </button>
                             </div>
                         </div>
@@ -819,3 +824,10 @@ window.swalCancelOrder = function (uuid) {
 </script>
 @endscript
 
+@push('scripts')
+    <script>
+        document.addEventListener('storefront-open-address-modal-changed', function (event) {
+            window.bootPhoneInputs();
+        });
+    </script>
+@endpush

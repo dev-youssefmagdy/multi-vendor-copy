@@ -68,6 +68,7 @@ class ProfilePage extends Component
             $this->addrIsDefault = (bool) $addr->is_default;
         }
         $this->showAddressModal = true;
+        $this->dispatch('storefront-open-address-modal-changed', $this->showAddressModal);
     }
 
     public function closeAddressModal(): void
