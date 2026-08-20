@@ -14,6 +14,7 @@
             'id' => $v->id,
             'label' => $v->centralVariant?->title ?? __('Variant #:id', ['id' => $v->id]),
             'price' => $symbol . number_format((float) $product->storefrontPricing($v)['current_price'] * $rate, 2),
+            'inStock' => (int) $v->stock > 0,
         ])->values()->all();
     }
 
