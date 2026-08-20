@@ -23,7 +23,7 @@ use App\Livewire\Tenant\Category\CategoriesList;
 use App\Livewire\Tenant\Category\CategoryProducts;
 use App\Livewire\Tenant\Category\SortCategories;
 use App\Livewire\Tenant\Customer\CustomersList;
-use App\Livewire\Tenant\Customer\CustomerDetailPage;
+use App\Http\Controllers\Tenant\CustomerDetailController;
 use App\Livewire\Tenant\Dashboard;
 use App\Livewire\Tenant\Finance\BillingPage;
 use App\Livewire\Tenant\Finance\BillingDetailPage;
@@ -416,9 +416,29 @@ Route::middleware([
                 ->middleware('tenant.permission:sales.customers.manage')
                 ->name('tenant.customers.index');
 
-            Route::get('/customers/{customerId}', CustomerDetailPage::class)
+            Route::get('/customers/{customerId}', [CustomerDetailController::class, 'show'])
                 ->middleware('tenant.permission:sales.customers.manage')
                 ->name('tenant.customers.show');
+
+            Route::put('/customers/{customerId}', [CustomerDetailController::class, 'updateProfile'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.update');
+
+            Route::post('/customers/{customerId}/addresses', [CustomerDetailController::class, 'storeAddress'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.addresses.store');
+
+            Route::put('/customers/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'updateAddress'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.addresses.update');
+
+            Route::delete('/customers/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'destroyAddress'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.addresses.destroy');
+
+            Route::get('/cities-by-country/{countryId}', [CustomerDetailController::class, 'citiesByCountry'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.cities.by-country');
 
             Route::prefix('analytics')->name('tenant.analytics.')->middleware('tenant.permission:analytics.view')->group(function () {
                 Route::get('/orders', OrderAnalyticsPage::class)->name('orders');

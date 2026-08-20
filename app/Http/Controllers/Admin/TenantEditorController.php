@@ -69,7 +69,18 @@ class TenantEditorController extends Controller
             'name'              => ['required', 'string', 'max:255'],
             'slug'              => [
                 'nullable', 'string', 'max:255',
-                Rule::unique('tenants', 'slug')->ignore($tenant?->id),
+                function (string $attribute, mixed $value, \Closure $fail) use ($tenant) {
+                    if (blank($value)) {
+                        return;
+                    }
+                    $exists = \Illuminate\Support\Facades\DB::table('tenants')
+                        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.slug')) = ?", [$value])
+                        ->when($tenant?->id, fn ($q) => $q->where('id', '!=', $tenant->id))
+                        ->exists();
+                    if ($exists) {
+                        $fail('The slug has already been taken.');
+                    }
+                },
                 function (string $attribute, mixed $value, \Closure $fail) use ($centralDomain, $tenant) {
                     if (blank($value) || !$centralDomain) {
                         return;
