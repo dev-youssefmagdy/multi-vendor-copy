@@ -597,32 +597,32 @@
     <!-- add address modal -->
     @if ($data['modal']['show'])
     {{-- Backdrop --}}
-    <div class="fixed inset-0 bg-black/50 z-[1040]" wire:click="closeAddressModal"></div>
+    <div class="fixed inset-0 bg-[#0c0c0e]/60 backdrop-blur-[2px] z-[1040]" wire:click="closeAddressModal"></div>
 
     {{-- Dialog --}}
-    <div class="fixed inset-0 z-[1050] flex items-center justify-center px-4 py-8 overflow-y-auto">
-        <div class="relative w-full max-w-[600px] bg-white rounded-[16px] shadow-2xl ring-1 ring-black/5" wire:click.stop>
+    <div class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-8 overflow-y-auto">
+        <div class="relative w-full max-w-[620px] my-auto bg-white rounded-[20px] shadow-[0_24px_60px_-12px_rgba(16,24,40,0.25)] ring-1 ring-black/[0.06]" wire:click.stop>
 
             {{-- Header --}}
-            <div class="flex items-start gap-3.5 px-6 sm:px-7 py-5 border-b border-[#ececec]">
-                <div class="shrink-0 w-10 h-10 rounded-full bg-main/10 flex items-center justify-center">
+            <div class="flex items-start gap-4 px-7 sm:px-8 pt-7 pb-5 border-b border-[#eeeeee]">
+                <div class="shrink-0 w-11 h-11 rounded-[12px] bg-main/10 flex items-center justify-center">
                     <svg class="w-5 h-5 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                 </div>
-                <div class="flex-1 min-w-0 pt-0.5">
-                    <h5 class="text-[17px] font-[600] text-[#101828] leading-tight">
+                <div class="flex-1 min-w-0 pt-1">
+                    <h5 class="text-[18px] font-[700] text-[#101828] leading-tight">
                         @if ($data['modal']['address_id'])
                             {{ $data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address') }}
                         @else
                             {{ $data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address') }}
                         @endif
                     </h5>
-                    <p class="text-[12.5px] text-[#8a8a8a] mt-0.5">{{ __('Fill in the details below to save this address.') }}</p>
+                    <p class="text-[13px] text-[#8a8a8a] mt-1">{{ __('Fill in the details below to save this address.') }}</p>
                 </div>
                 <button type="button" wire:click="closeAddressModal"
-                    class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#999] hover:text-[#242424] hover:bg-[#f5f5f5] transition">
+                    class="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[#999] hover:text-[#242424] hover:bg-[#f5f5f5] transition">
                     <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M6 18L18 6M6 6l12 12" />
@@ -631,31 +631,31 @@
             </div>
 
             {{-- Body --}}
-            <div class="px-6 sm:px-7 py-5 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div class="px-7 sm:px-8 py-6 space-y-7 max-h-[65vh] overflow-y-auto">
 
                 {{-- Contact section --}}
                 <div class="space-y-4">
-                    <p class="text-[11px] font-semibold tracking-wide uppercase text-[#9a9a9a]">{{ __('Contact') }}</p>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-[#a3a3a3]">{{ __('Contact') }}</p>
                     <div>
-                        <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Full name') }} <span
+                        <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Full name') }} <span
                                 class="text-[#dc2626]">*</span></label>
                         <input wire:model="data.modal.full_name" type="text" placeholder="{{ __('Full name') }}"
-                            class="w-full border @error('data.modal.full_name') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        @error('data.modal.full_name')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>
+                            class="w-full border @error('data.modal.full_name') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                        @error('data.modal.full_name')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div wire:ignore>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Phone') }}</label>
+                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Phone') }}</label>
                             <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
-                                class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                            @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
+                                class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                            @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Email address') }}</label>
+                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Email address') }}</label>
                             <input wire:model="data.modal.email" type="email" placeholder="{{ __('Email address') }}"
-                                class="w-full border @error('data.modal.email') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                            @error('data.modal.email')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
+                                class="w-full border @error('data.modal.email') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                            @error('data.modal.email')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </div>
@@ -664,43 +664,43 @@
 
                 {{-- Address section --}}
                 <div class="space-y-4">
-                    <p class="text-[11px] font-semibold tracking-wide uppercase text-[#9a9a9a]">{{ __('Address') }}</p>
+                    <p class="text-[11px] font-bold tracking-wider uppercase text-[#a3a3a3]">{{ __('Address') }}</p>
                     <div>
-                        <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Street Address') }} <span
+                        <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Street Address') }} <span
                                 class="text-[#dc2626]">*</span></label>
                         <input wire:model="data.modal.line1" type="text"
                             placeholder="{{ __('Street, building, apartment') }}"
-                            class="w-full border @error('data.modal.line1') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        @error('data.modal.line1')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
+                            class="w-full border @error('data.modal.line1') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                        @error('data.modal.line1')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('City') }}</label>
+                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('City') }}</label>
                             <input wire:model="data.modal.city" type="text" placeholder="{{ __('City') }}"
-                                class="w-full border border-[#dcdcdc] rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                                class="w-full border border-[#e0e0e0] rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
                         </div>
                         <div>
                             <label
-                                class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('State / Region') }}</label>
+                                class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('State / Region') }}</label>
                             <input wire:model="data.modal.state" type="text" placeholder="{{ __('State') }}"
-                                class="w-full border border-[#dcdcdc] rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
+                                class="w-full border border-[#e0e0e0] rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
                         </div>
                         <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Country') }} *</label>
+                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Country') }} *</label>
                             @include('themes.elora.sections.country-select', [
                                 'wireModel' => 'data.modal.country_id',
                                 'countries' => $countries,
                                 'currentId' => $data['modal']['country_id'],
                             ])
-                            @error('data.modal.country_id') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p>
+                            @error('data.modal.country_id') <p class="text-red-500 text-[11px] mt-1.5">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                 </div>
 
-                <label class="flex items-center justify-between gap-3 cursor-pointer rounded-[10px] border border-[#ececec] px-4 py-3 hover:border-[#dcdcdc] transition">
-                    <span class="text-[12.5px] text-[#333] font-medium">{{ __('Set as default address') }}</span>
+                <label class="flex items-center justify-between gap-3 cursor-pointer rounded-[12px] border border-[#ececec] px-4 py-3.5 hover:border-main/40 hover:bg-main/[0.03] transition">
+                    <span class="text-[13px] text-[#333] font-medium">{{ __('Set as default address') }}</span>
                     <span class="relative inline-flex shrink-0">
                         <input wire:model="data.modal.is_default" type="checkbox" class="peer sr-only">
                         <span class="w-9 h-5 rounded-full bg-[#dcdcdc] peer-checked:bg-main transition-colors"></span>
@@ -711,14 +711,14 @@
             </div>
 
             {{-- Footer --}}
-            <div class="px-6 sm:px-7 py-4 border-t border-[#ececec] flex flex-col-reverse sm:flex-row justify-end gap-3 bg-[#fdfdfd] rounded-b-[16px]">
+            <div class="px-7 sm:px-8 py-5 border-t border-[#eeeeee] flex flex-col-reverse sm:flex-row justify-end gap-3 bg-[#fafafa] rounded-b-[20px]">
                 <button type="button" wire:click="closeAddressModal"
-                    class="px-5 py-2.5 bg-[#f5f5f5] text-[#555] rounded-[10px] text-[13px] font-[500] hover:bg-[#e8e8e8] transition">
+                    class="px-5 py-2.5 bg-white border border-[#e0e0e0] text-[#555] rounded-[10px] text-[13px] font-[600] hover:bg-[#f5f5f5] hover:border-[#d4d4d4] transition">
                     {{ __('Cancel') }}
                 </button>
                 <button type="button" wire:click="saveNewAddress" wire:loading.attr="disabled"
                     wire:target="saveNewAddress"
-                    class="px-5 py-2.5 bg-main text-white rounded-[10px] text-[13px] font-[500] hover:bg-orange-600 transition disabled:opacity-60">
+                    class="px-6 py-2.5 bg-main text-white rounded-[10px] text-[13px] font-[600] shadow-sm hover:bg-orange-600 transition disabled:opacity-60">
                     <span wire:loading.remove wire:target="saveNewAddress">{{ $data['modal']['address_id'] ? __('Update Address') : __('Save Address') }}</span>
                     <span wire:loading wire:target="saveNewAddress">{{ __('Saving...') }}</span>
                 </button>
