@@ -117,7 +117,6 @@ class TenantEditorController extends Controller
 
         $validated['slug']  = $slug;
         $validated['phone'] = $this->sanitizePhone($validated['phone'] ?? null);
-
         $saved = $service->save([
             'name'                 => $validated['name'],
             'slug'                 => $validated['slug'] ?? null,

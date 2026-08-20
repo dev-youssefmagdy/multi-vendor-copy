@@ -23,6 +23,7 @@ use App\Livewire\Tenant\Category\CategoriesList;
 use App\Livewire\Tenant\Category\CategoryProducts;
 use App\Livewire\Tenant\Category\SortCategories;
 use App\Livewire\Tenant\Customer\CustomersList;
+use App\Http\Controllers\Tenant\CustomerCreateController;
 use App\Http\Controllers\Tenant\CustomerDetailController;
 use App\Livewire\Tenant\Dashboard;
 use App\Livewire\Tenant\Finance\BillingPage;
@@ -415,6 +416,14 @@ Route::middleware([
             Route::get('/customers', CustomersList::class)
                 ->middleware('tenant.permission:sales.customers.manage')
                 ->name('tenant.customers.index');
+
+            Route::get('/customers/create', [CustomerCreateController::class, 'create'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.create');
+
+            Route::post('/customers', [CustomerCreateController::class, 'store'])
+                ->middleware('tenant.permission:sales.customers.manage')
+                ->name('tenant.customers.store');
 
             Route::get('/customers/{customerId}', [CustomerDetailController::class, 'show'])
                 ->middleware('tenant.permission:sales.customers.manage')

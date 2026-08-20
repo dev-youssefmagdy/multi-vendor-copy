@@ -176,12 +176,12 @@
                         </div>
                         <div>
                             <label class="field-label">Profit Percentage (%)</label>
-                            <x-input type="number" step="0.01" min="0" max="1000" name="profitPercentage"
-                                class="{{ $errors->has('profitPercentage') ? 'is-invalid' : '' }}"
-                                value="{{ $f('profitPercentage', 0) }}" placeholder="0" />
+                            <x-input type="number" step="0.01" min="0" max="1000" name="profit_percentage"
+                                class="{{ $errors->has('profit_percentage') ? 'is-invalid' : '' }}"
+                                value="{{ $f('profit_percentage', 0) }}" placeholder="0" />
                             <p class="field-hint" style="font-size:11px;color:var(--t3);margin-top:4px">Applied to central
                                 product prices when syncing the catalog to this tenant.</p>
-                            @error('profitPercentage') <div class="field-error">{{ $message }}</div> @enderror
+                            @error('profit_percentage') <div class="field-error">{{ $message }}</div> @enderror
                         </div>
                         <div>
                             <label class="field-label">Primary Domain</label>
