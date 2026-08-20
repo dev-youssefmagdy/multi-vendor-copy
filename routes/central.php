@@ -31,7 +31,7 @@ use App\Livewire\Admin\Plan\PlansList;
 use App\Livewire\Admin\Plan\RegisteredUsersList;
 use App\Livewire\Admin\Plan\PendingRegistrationsList;
 use App\Livewire\Admin\Plan\AddEditPackage;
-use App\Livewire\Admin\Plan\AddEditTenant;
+use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
 use App\Http\Controllers\Admin\TenantImpersonateController;
 use App\Http\Controllers\Admin\BadgeProductsController;
@@ -310,8 +310,10 @@ Route::group([
 
     Route::prefix('plans')->name('plans.')->group(function () {
         Route::get('/registered-users', RegisteredUsersList::class)->middleware('admin.permission:plans.tenants.view,plans.tenants.manage')->name('users');
-        Route::get('/registered-users/create', AddEditTenant::class)->middleware('admin.permission:plans.tenants.manage')->name('users.create');
-        Route::get('/registered-users/{tenant}/edit', AddEditTenant::class)->middleware('admin.permission:plans.tenants.manage')->name('users.edit');
+        Route::get('/registered-users/create', [TenantEditorController::class, 'create'])->middleware('admin.permission:plans.tenants.manage')->name('users.create');
+        Route::post('/registered-users', [TenantEditorController::class, 'store'])->middleware('admin.permission:plans.tenants.manage')->name('users.store');
+        Route::get('/registered-users/{tenant}/edit', [TenantEditorController::class, 'edit'])->middleware('admin.permission:plans.tenants.manage')->name('users.edit');
+        Route::put('/registered-users/{tenant}', [TenantEditorController::class, 'update'])->middleware('admin.permission:plans.tenants.manage')->name('users.update');
         // Central admin → Tenant admin panel (token-based impersonation login)
         Route::get('/registered-users/{tenantId}/impersonate', [TenantImpersonateController::class, 'generate'])
             ->middleware('admin.permission:plans.tenants.manage')
