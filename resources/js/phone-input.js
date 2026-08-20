@@ -72,6 +72,8 @@ function syncLivewireProperty(input, value) {
     component?.set(property, value);
 }
 
+const syncing = new WeakSet();
+
 function syncFullNumber(input, iti) {
     if (!input.value.trim()) {
         return;
@@ -80,9 +82,11 @@ function syncFullNumber(input, iti) {
     const full = iti.getNumber();
 
     if (full && full !== input.value) {
+        syncing.add(input);
         input.value = full;
         input.dispatchEvent(new Event("input", { bubbles: true }));
         input.dispatchEvent(new Event("change", { bubbles: true }));
+        syncing.delete(input);
     }
 
     syncLivewireProperty(input, input.value);
@@ -182,6 +186,10 @@ export function initPhoneInputs(root = document) {
         });
 
         input.addEventListener("input", () => {
+            if (syncing.has(input)) {
+                return;
+            }
+
             if (input.classList.contains("border-red-500")) {
                 validate(input, iti);
             }

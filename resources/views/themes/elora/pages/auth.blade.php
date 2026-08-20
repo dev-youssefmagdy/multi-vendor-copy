@@ -82,7 +82,7 @@ $tab 'login' | 'register'
                     @error('regEmail') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div wire:ignore>
-                    <input type="tel" value="{{ $regPhone }}" data-phone-input wire-event="regPhone" placeholder="{{ __('Phone (optional)') }}"
+                    <input type="tel" value="" data-phone-input wire-event="regPhone" placeholder="{{ __('Phone (optional)') }}"
                         class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999]">
                 </div>
                 <div>
