@@ -165,6 +165,7 @@ class CheckoutPage extends Component
         }
 
         $this->data['modal']['show'] = true;
+        $this->dispatch('storefront-open-address-modal-changed');
     }
 
     public function closeAddressModal(): void

@@ -561,91 +561,110 @@
     @if($data['modal']['show'])
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
             wire:click.self="closeAddressModal()">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 w-full max-w-lg mx-4 flex flex-col gap-5 max-h-[90vh] overflow-y-auto shadow-2xl"
+            <div class="bg-white rounded-3xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh] overflow-hidden shadow-2xl ring-1 ring-black/5"
                 wire:click.stop>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-slate-900">
-                        @if($data['modal']['address_id'])
-                            {{ $data['modal']['context'] === 'billing' ? __('Edit Billing Address') : __('Edit Shipping Address') }}
-                        @else
-                            {{ $data['modal']['context'] === 'billing' ? __('Add Billing Address') : __('Add Shipping Address') }}
-                        @endif
-                    </h3>
+                <div class="flex items-start gap-3.5 px-6 sm:px-8 pt-6 sm:pt-7 pb-5">
+                    <div class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0 pt-0.5">
+                        <h3 class="text-lg font-semibold text-slate-900 leading-tight">
+                            @if($data['modal']['address_id'])
+                                {{ $data['modal']['context'] === 'billing' ? __('Edit Billing Address') : __('Edit Shipping Address') }}
+                            @else
+                                {{ $data['modal']['context'] === 'billing' ? __('Add Billing Address') : __('Add Shipping Address') }}
+                            @endif
+                        </h3>
+                        <p class="text-[12.5px] text-slate-400 mt-0.5">{{ __('Fill in the details below to save this address.') }}</p>
+                    </div>
                     <button type="button" wire:click="closeAddressModal()" aria-label="{{ __('Close') }}"
-                        class="text-neutral-400 hover:text-neutral-700 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Full name -->
-                    <div class="sm:col-span-2 flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('Full Name') }}</label>
-                        <input type="text" wire:model="data.modal.full_name" placeholder="{{ __('Full Name') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.full_name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                <div class="px-6 sm:px-8 pb-6 sm:pb-7 space-y-6 overflow-y-auto">
+
+                    {{-- Contact section --}}
+                    <div class="space-y-4">
+                        <p class="text-[11px] font-semibold tracking-wide uppercase text-slate-400">{{ __('Contact') }}</p>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-slate-700">{{ __('Full Name') }}</label>
+                            <input type="text" wire:model="data.modal.full_name" placeholder="{{ __('Full Name') }}"
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                            @error('data.modal.full_name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
+                                <input type="tel" data-phone-input wire:model="data.modal.phone" placeholder="{{ __('Phone') }}"
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                @error('data.modal.phone') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
+                                <input type="email" wire:model="data.modal.email" placeholder="{{ __('Email') }}"
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                @error('data.modal.email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
                     </div>
-                    <!-- Email -->
-                    <div class="flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
-                        <input type="email" wire:model="data.modal.email" placeholder="{{ __('Email') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+
+                    <div class="h-px bg-neutral-100"></div>
+
+                    {{-- Address section --}}
+                    <div class="space-y-4">
+                        <p class="text-[11px] font-semibold tracking-wide uppercase text-slate-400">{{ __('Address') }}</p>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-slate-700">{{ __('Address') }}</label>
+                            <input type="text" wire:model="data.modal.line1" placeholder="{{ __('Street address, P.O. box') }}"
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                            @error('data.modal.line1') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-slate-700">{{ __('City') }}</label>
+                                <input type="text" wire:model="data.modal.city" placeholder="{{ __('City') }}"
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                @error('data.modal.city') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-sm font-medium text-slate-700">{{ __('State / Province') }}</label>
+                                <input type="text" wire:model="data.modal.state" placeholder="{{ __('State or province') }}"
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                @error('data.modal.state') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-slate-700">{{ __('Country') }}</label>
+                            @include('themes.souqify.sections.country-select', [
+                                'wireModel' => 'data.modal.country_id',
+                                'countries' => $countries,
+                                'currentId' => $data['modal']['country_id'],
+                            ])
+                            @error('data.modal.country_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        </div>
                     </div>
-                    <!-- Phone -->
-                    <div class="flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
-                        <input type="tel" data-phone-input wire:model="data.modal.phone" placeholder="{{ __('Phone') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.phone') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                    </div>
-                    <!-- Address line 1 -->
-                    <div class="sm:col-span-2 flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('Address') }}</label>
-                        <input type="text" wire:model="data.modal.line1" placeholder="{{ __('Street address, P.O. box') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.line1') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                    </div>
-                    <!-- City -->
-                    <div class="flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('City') }}</label>
-                        <input type="text" wire:model="data.modal.city" placeholder="{{ __('City') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.city') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                    </div>
-                    <!-- State -->
-                    <div class="flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('State / Province') }}</label>
-                        <input type="text" wire:model="data.modal.state" placeholder="{{ __('State or province') }}"
-                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
-                        @error('data.modal.state') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                    </div>
-                    <!-- Country -->
-                    <div class="sm:col-span-2 flex flex-col gap-1">
-                        <label class="text-sm font-medium text-slate-700">{{ __('Country') }}</label>
-                        @include('themes.souqify.sections.country-select', [
-                            'wireModel' => 'data.modal.country_id',
-                            'countries' => $countries,
-                            'currentId' => $data['modal']['country_id'],
-                        ])
-                        @error('data.modal.country_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                    </div>
-                    <!-- Default -->
-                    <div class="sm:col-span-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" wire:model="data.modal.is_default"
-                                class="rounded border-neutral-300 text-blue-700 focus:ring-blue-300">
-                            <span class="text-sm text-slate-700">{{ __('Set as default address') }}</span>
-                        </label>
-                    </div>
+
+                    <label class="flex items-center justify-between gap-3 cursor-pointer rounded-xl border border-neutral-200 px-4 py-3 hover:border-neutral-300 transition">
+                        <span class="text-sm text-slate-700 font-medium">{{ __('Set as default address') }}</span>
+                        <span class="relative inline-flex shrink-0">
+                            <input type="checkbox" wire:model="data.modal.is_default" class="peer sr-only">
+                            <span class="w-9 h-5 rounded-full bg-neutral-300 peer-checked:bg-blue-700 transition-colors"></span>
+                            <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></span>
+                        </span>
+                    </label>
                 </div>
 
-                <div class="flex gap-3 mt-2">
+                <div class="flex gap-3 px-6 sm:px-8 py-5 border-t border-neutral-100 bg-neutral-50/60">
                     <button type="button" wire:click="closeAddressModal()"
-                        class="flex-1 h-12 border border-neutral-300 rounded-full text-neutral-600 hover:bg-neutral-50 transition font-medium text-sm">
+                        class="flex-1 h-12 border border-neutral-300 rounded-full text-neutral-600 hover:bg-neutral-100 transition font-medium text-sm">
                         {{ __('Cancel') }}
                     </button>
                     <button type="button" wire:click="saveNewAddress()" wire:loading.attr="disabled"
