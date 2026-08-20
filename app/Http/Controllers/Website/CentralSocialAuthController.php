@@ -84,6 +84,8 @@ class CentralSocialAuthController extends Controller
                 name: $socialUser->getName() ?: $socialUser->getNickname() ?: Str::before($email, '@'),
                 provider: $provider,
                 existingAccount: TenantOwner::query()->where('email', $email)->exists(),
+                providerId: $socialUser->getId(),
+                avatar: $socialUser->getAvatar(),
             );
         }
 
@@ -159,13 +161,15 @@ class CentralSocialAuthController extends Controller
         return redirect()->route('website.register.complete', ['token' => $token]);
     }
 
-    private function popupSuccess(string $email, string $name, string $provider, bool $existingAccount = false): \Illuminate\Http\Response
+    private function popupSuccess(string $email, string $name, string $provider, bool $existingAccount = false, ?string $providerId = null, ?string $avatar = null): \Illuminate\Http\Response
     {
         $payload = json_encode([
             'type' => 'social_auth_success',
             'email' => $email,
             'name' => $name,
             'provider' => $provider,
+            'provider_id' => $providerId,
+            'avatar' => $avatar,
             'existing_account' => $existingAccount,
         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 

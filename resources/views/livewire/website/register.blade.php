@@ -717,7 +717,7 @@
             }
         }
 
-        $wire.call('socialAuthComplete', data.email, data.name, data.provider);
+        $wire.call('socialAuthComplete', data.email, data.name, data.provider, data.provider_id || '', data.avatar || '');
     });
 </script>
 @endscript

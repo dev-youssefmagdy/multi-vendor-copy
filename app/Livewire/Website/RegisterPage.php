@@ -43,6 +43,12 @@ class RegisterPage extends Component
     public bool $emailSent = false;
     public ?string $resendStatus = null;
 
+    // OAuth state (set by socialAuthComplete, consumed by createPendingAndSendEmail)
+    public string $oauthProvider = '';
+    public string $oauthProviderId = '';
+    public string $oauthName = '';
+    public string $oauthAvatar = '';
+
     // Internal
     public string $centralDomain = '';
 
@@ -140,21 +146,56 @@ class RegisterPage extends Component
         $this->createPendingAndSendEmail(planName: __('Free Plan'));
     }
 
-    public function socialAuthComplete(string $email, string $name, string $provider): void
-    {
+    public function socialAuthComplete(
+        string $email,
+        string $name,
+        string $provider,
+        string $providerId = '',
+        string $avatar = '',
+    ): void {
         $this->email = strtolower(trim($email));
+        $this->oauthName = $name;
+        $this->oauthProvider = $provider;
+        $this->oauthProviderId = $providerId;
+        $this->oauthAvatar = $avatar;
 
         if ($this->requiresPayment()) {
+            // Paid plan: go to payment step. OAuth info is already stored in
+            // Livewire properties so it survives to the payment/pending creation step.
             $this->step = 3;
 
             return;
         }
 
+        // Free plan: OAuth has verified the email — skip the verification email
+        // and go straight to register.complete, same as the direct (non-popup) flow.
+        $token = Str::random(64);
+
         $package = filled($this->packageId)
             ? Package::query()->find((int) $this->packageId)
             : null;
 
-        $this->createPendingAndSendEmail(planName: $package?->name ?? __('Free Plan'));
+        PendingRegistration::create([
+            'token' => $token,
+            'email' => $this->email,
+            'phone' => $this->phone ?: null,
+            'locale' => app()->getLocale(),
+            'package_id' => $package?->id,
+            'payment_data' => null,
+            'expires_at' => now()->addHours(48),
+        ]);
+
+        session([
+            'website.register.oauth' => [
+                'email' => $this->email,
+                'name' => $this->oauthName,
+                'provider' => $this->oauthProvider,
+                'provider_id' => $this->oauthProviderId,
+                'avatar' => $this->oauthAvatar ?: null,
+            ],
+        ]);
+
+        $this->redirect(route('website.register.complete', ['token' => $token]));
     }
 
     protected function startPayment(): void
@@ -200,6 +241,18 @@ class RegisterPage extends Component
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
         ]);
+
+        if ($this->oauthProvider && $this->email) {
+            session([
+                'website.register.oauth' => [
+                    'email' => $this->email,
+                    'name' => $this->oauthName,
+                    'provider' => $this->oauthProvider,
+                    'provider_id' => $this->oauthProviderId,
+                    'avatar' => $this->oauthAvatar ?: null,
+                ],
+            ]);
+        }
 
         $completeUrl = route('website.register.complete', ['token' => $token]);
         $expiresAt = now()->addHours(48)->format('M d, Y H:i') . ' UTC';
