@@ -49,6 +49,17 @@ $orders Collection<Order>
                         <img loading="lazy" src="{{ asset('ecommet/assets/images/home/user-2.png') }}" class="w-[20px] ml-6" alt="">
                         {{ __('Your Profile') }}
                     </button>
+                    <button wire:click="setTab('returns')"
+                        class="flex items-center gap-4 px-4 py-3 text-[15px] transition-colors rounded-md relative
+                               {{ $activeTab === 'returns' ? 'bg-[#f7f7f7] text-[#111] font-semibold' : 'hover:bg-gray-50 text-[#333] font-medium' }}">
+                        @if ($activeTab === 'returns')
+                            <div
+                                class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-[#242424] rounded-r-full">
+                            </div>
+                        @endif
+                        <img loading="lazy" src="{{ asset('ecommet/assets/images/home/document.png') }}" class="w-[20px] ml-6" alt="">
+                        {{ __('Returns') }}
+                    </button>
                     <button wire:click="logout"
                         class="flex items-center gap-4 px-4 py-3 text-[15px] font-medium text-red-600 hover:bg-red-50 transition-colors rounded-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] ml-6" fill="none" viewBox="0 0 24 24"
@@ -75,9 +86,63 @@ $orders Collection<Order>
                                    {{ $activeTab === 'profile' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
                             {{ __('Profile & Addresses') }}
                         </button>
+                        <button wire:click="setTab('returns')"
+                            class="flex-1 py-2.5 text-[13px] font-semibold rounded-full border transition
+                                   {{ $activeTab === 'returns' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
+                            {{ __('Returns') }}
+                        </button>
                     </div>
 
-                    @if ($activeTab === 'orders')
+                    @if ($activeTab === 'returns')
+                        <div class="max-w-[700px]">
+                            <h2 class="text-[20px] font-bold text-[#242424] mb-6">{{ __('Return Requests') }}</h2>
+
+                            @if ($returnRequests->isEmpty())
+                                <div class="text-center py-12 text-[13px] text-[#808080]">
+                                    {{ __('You have no return requests.') }}
+                                </div>
+                            @else
+                                <div class="flex flex-col gap-3">
+                                    @foreach ($returnRequests as $ret)
+                                    @php
+                                        $statusColor = match($ret->status->color()) {
+                                            'green' => '#16a34a', 'blue'  => '#2563eb',
+                                            'red'   => '#dc2626', 'gray'  => '#6b7280',
+                                            default => '#d97706',
+                                        };
+                                    @endphp
+                                    <div class="border border-[#eee] rounded-lg p-4">
+                                        <div class="flex items-center justify-between flex-wrap gap-3">
+                                            <div>
+                                                <div class="text-[14px] font-semibold text-[#242424]">
+                                                    {{ __('Order') }} #{{ $ret->order_number }}
+                                                </div>
+                                                <div class="text-xs text-[#808080] mt-0.5">
+                                                    {{ $ret->reason->label() }} · {{ $ret->created_at?->format('M d, Y') }}
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                                style="background:{{ $statusColor }}22;color:{{ $statusColor }}">
+                                                {{ $ret->status->label() }}
+                                            </span>
+                                        </div>
+                                        @if ($ret->refund_amount)
+                                            <div class="text-xs text-[#555] mt-2">
+                                                {{ __('Refund') }}: {{ number_format((float)$ret->refund_amount, 2) }}
+                                            </div>
+                                        @endif
+                                        <div class="mt-3">
+                                            <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
+                                                class="text-xs font-medium underline text-[#555] hover:text-[#242424]">
+                                                {{ __('View Order') }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @elseif ($activeTab === 'orders')
                         {{-- Status filter pills --}}
                         <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1 no-scrollbar">
                             @foreach ([null => __('All'), 'pending' => __('Pending'), 'processing' => __('Processing'), 'shipped' => __('Shipped'), 'delivered' => __('Delivered'), 'cancelled' => __('Cancelled')] as $val => $label)

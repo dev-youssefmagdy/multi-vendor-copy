@@ -47,6 +47,15 @@
                                 </svg>
                                 {{ __('Wishlist') }}
                             </button>
+                            <button type="button" wire:click="setTab('returns')"
+                                class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-3
+                                    {{ $activeTab === 'returns' ? 'bg-blue-700 text-white' : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                </svg>
+                                {{ __('Returns') }}
+                            </button>
                             <button type="button" wire:click="logout"
                                 wire:confirm="{{ __('Are you sure you want to log out?') }}"
                                 class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition flex items-center gap-3">
@@ -111,6 +120,15 @@
                                         d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
                                 {{ __('Wishlist') }}
+                            </button>
+                            <button wire:click="setTab('returns')"
+                                class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition
+                                    {{ $activeTab === 'returns' ? 'bg-blue-700 text-white shadow-sm' : 'text-neutral-500 hover:text-blue-700 hover:bg-blue-50' }}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                </svg>
+                                {{ __('Returns') }}
                             </button>
                         </div>
                     </div>
@@ -356,6 +374,58 @@
                             {{ __('Start Shopping') }}
                         </a>
                     </div>
+                    @endif
+@elseif ($activeTab === 'returns')
+                    {{-- Returns tab --}}
+                    <div class="mb-6">
+                        <h1 class="text-[40px] leading-[50px] font-medium text-[#242424] font-['Outfit']">
+                            {{ __('Return Requests') }}
+                        </h1>
+                    </div>
+
+                    @if ($returnRequests->isEmpty())
+                        <div class="text-center py-12 text-sm text-neutral-500">
+                            {{ __('You have no return requests.') }}
+                        </div>
+                    @else
+                        <div class="flex flex-col gap-3">
+                            @foreach ($returnRequests as $ret)
+                            @php
+                                $statusColor = match($ret->status->color()) {
+                                    'green' => '#16a34a', 'blue'  => '#2563eb',
+                                    'red'   => '#dc2626', 'gray'  => '#6b7280',
+                                    default => '#d97706',
+                                };
+                            @endphp
+                            <div class="bg-white border border-neutral-200 rounded-xl p-4">
+                                <div class="flex items-center justify-between flex-wrap gap-3">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-900">
+                                            {{ __('Order') }} #{{ $ret->order_number }}
+                                        </div>
+                                        <div class="text-xs text-neutral-500 mt-0.5">
+                                            {{ $ret->reason->label() }} · {{ $ret->created_at?->format('M d, Y') }}
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                        style="background:{{ $statusColor }}22;color:{{ $statusColor }}">
+                                        {{ $ret->status->label() }}
+                                    </span>
+                                </div>
+                                @if ($ret->refund_amount)
+                                    <div class="text-xs text-neutral-600 mt-2">
+                                        {{ __('Refund') }}: {{ number_format((float)$ret->refund_amount, 2) }}
+                                    </div>
+                                @endif
+                                <div class="mt-3">
+                                    <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
+                                        class="text-xs font-medium underline text-neutral-500 hover:text-blue-700">
+                                        {{ __('View Order') }}
+                                    </a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     @endif
 @elseif ($activeTab === 'wishlist')
                     {{-- Wishlist tab --}}

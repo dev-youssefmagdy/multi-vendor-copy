@@ -97,7 +97,7 @@ class OrderDetailPage extends AdminPage
             'tenant_id' => $this->tenantId,
             'order_number' => $this->orderNumber,
             'customer_id' => 0,
-            'status' => ReturnStatus::Pending,
+            'status' => ReturnStatus::AwaitingMerchantReview,
             'reason' => ReturnReason::Other,
             'description' => trim($this->returnReason . ($this->returnNotes ? "\n\n" . $this->returnNotes : '')),
         ]);

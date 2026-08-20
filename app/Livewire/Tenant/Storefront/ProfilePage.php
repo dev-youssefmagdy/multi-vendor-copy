@@ -45,7 +45,7 @@ class ProfilePage extends Component
 
     public function setTab(string $tab): void
     {
-        $this->activeTab = in_array($tab, ['orders', 'profile', 'wishlist']) ? $tab : 'orders';
+        $this->activeTab = in_array($tab, ['orders', 'profile', 'wishlist', 'returns']) ? $tab : 'orders';
     }
 
     public function openAddressModal(?int $id = null): void
@@ -288,9 +288,17 @@ class ProfilePage extends Component
             ->orderBy('id')
             ->get();
 
+        $returnRequests = $customer
+            ? \App\Models\ReturnRequest::where('tenant_id', tenant()->id)
+                ->where('customer_id', $customer->id)
+                ->latest()
+                ->get()
+            : collect();
+
         $data = array_merge($this->sharedData(), [
             'customer' => $customer,
             'orders' => $orders,
+            'returnRequests' => $returnRequests,
             'activeTab' => $this->activeTab,
             'statusFilter' => $this->statusFilter,
             'reviewedProductIds' => $reviewedProductIds,

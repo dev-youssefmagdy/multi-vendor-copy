@@ -28,6 +28,10 @@ class ReturnRequestMedia extends Model
 
     public function url(): string
     {
-        return asset('storage/' . $this->file_path);
+        // file_path stores a full URL (tenant_asset) for new records.
+        // Fall back to asset('storage/...') for any legacy records stored as a path.
+        return str_starts_with((string) $this->file_path, 'http')
+            ? $this->file_path
+            : asset('storage/' . $this->file_path);
     }
 }

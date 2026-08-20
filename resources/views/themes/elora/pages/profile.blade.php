@@ -75,6 +75,10 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                     class="sidebar-settings-item">
                     {{ __('My personal details') }}
                 </div>
+                <div wire:click="setTab('returns')" onclick="eloraProfileDrawerClose()"
+                    class="sidebar-settings-item">
+                    {{ __('Returns') }}
+                </div>
                 <div wire:click="logout" onclick="eloraProfileDrawerClose()"
                     class="sidebar-settings-item" style="color:#dc2626">
                     {{ __('Sign out') }}
@@ -93,7 +97,7 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="m9 18 6-6-6-6" />
                 </svg>
-                <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : __('Orders') }}</span>
+                <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : ($activeTab === 'returns' ? __('Returns') : __('Orders')) }}</span>
             </div>
             {{-- Hamburger: only on mobile --}}
             <button id="elora-profile-menu-btn" type="button"
@@ -157,6 +161,8 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
 
                         <div wire:click="setTab('profile')" class="sidebar-settings-item">
                             {{ __('My personal details') }}</div>
+                        <div wire:click="setTab('returns')" class="sidebar-settings-item">
+                            {{ __('Returns') }}</div>
                         <div wire:click="logout" class="sidebar-settings-item" style="color:#dc2626">
                             {{ __('Sign out') }}</div>
                     </nav>
@@ -178,9 +184,74 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                                {{ $activeTab === 'profile' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('Profile & Addresses') }}
                     </button>
+                    <button wire:click="setTab('returns')"
+                        class="flex-1 py-2.5 text-sm font-semibold rounded-full border transition
+                               {{ $activeTab === 'returns' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
+                        {{ __('Returns') }}
+                    </button>
                 </div>
 
-                @if ($activeTab === 'profile')
+                @if ($activeTab === 'returns')
+
+                <div class="max-w-[700px]">
+                    <div class="flex items-center gap-3 mb-6">
+                        <button wire:click="setTab('orders')"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors">
+                            <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="m15 18-6-6 6-6" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                        <h2 class="text-xl font-bold text-[#171717]">{{ __('Return Requests') }}</h2>
+                    </div>
+
+                    @if ($returnRequests->isEmpty())
+                        <div class="text-center py-12 text-sm text-gray-500">
+                            {{ __('You have no return requests.') }}
+                        </div>
+                    @else
+                        <div class="flex flex-col gap-3">
+                            @foreach ($returnRequests as $ret)
+                            @php
+                                $statusColor = match($ret->status->color()) {
+                                    'green' => '#16a34a', 'blue'  => '#2563eb',
+                                    'red'   => '#dc2626', 'gray'  => '#6b7280',
+                                    default => '#d97706',
+                                };
+                            @endphp
+                            <div class="border border-[#F0F0F0] rounded-xl p-4">
+                                <div class="flex items-center justify-between flex-wrap gap-3">
+                                    <div>
+                                        <div class="text-sm font-semibold text-[#171717]">
+                                            {{ __('Order') }} #{{ $ret->order_number }}
+                                        </div>
+                                        <div class="text-xs text-[#808080] mt-0.5">
+                                            {{ $ret->reason->label() }} · {{ $ret->created_at?->format('M d, Y') }}
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                        style="background:{{ $statusColor }}22;color:{{ $statusColor }}">
+                                        {{ $ret->status->label() }}
+                                    </span>
+                                </div>
+                                @if ($ret->refund_amount)
+                                    <div class="text-xs text-[#555] mt-2">
+                                        {{ __('Refund') }}: {{ number_format((float)$ret->refund_amount, 2) }}
+                                    </div>
+                                @endif
+                                <div class="mt-3">
+                                    <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
+                                        class="text-xs font-medium underline text-[#555] hover:text-[#171717]">
+                                        {{ __('View Order') }}
+                                    </a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                @elseif ($activeTab === 'profile')
 
                 {{-- Profile Info --}}
                 <div class="max-w-[500px]">

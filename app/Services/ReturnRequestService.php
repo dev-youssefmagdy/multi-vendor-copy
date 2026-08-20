@@ -131,6 +131,24 @@ class ReturnRequestService
         return $returnRequest->fresh();
     }
 
+    public function markAwaitingMerchantReview(ReturnRequest $returnRequest, ?int $adminId = null): ReturnRequest
+    {
+        $returnRequest->update([
+            'status'               => ReturnStatus::AwaitingMerchantReview,
+            'reviewed_by_admin_id' => $adminId ?? $returnRequest->reviewed_by_admin_id,
+            'reviewed_at'          => $returnRequest->reviewed_at ?? now(),
+        ]);
+
+        $this->notify(
+            $returnRequest,
+            'Return request awaiting your review',
+            'A return request for your store is awaiting your decision.',
+            false,
+        );
+
+        return $returnRequest->fresh();
+    }
+
     public function markRefunded(ReturnRequest $returnRequest, float $amount, ?int $adminId = null): ReturnRequest
     {
         $returnRequest->update([
@@ -223,10 +241,12 @@ class ReturnRequestService
     {
         $path = $file->store('return-evidence', 'public');
 
+        // Store the full tenant_asset() URL so ReturnRequestMedia::url() works
+        // regardless of which tenant's storage the file was written to.
         return ReturnRequestMedia::create([
             'return_request_id' => $returnRequest->id,
-            'file_path' => $path,
-            'type' => $type,
+            'file_path'         => tenant_asset($path),
+            'type'              => $type,
         ]);
     }
 
