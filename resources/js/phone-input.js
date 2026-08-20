@@ -52,6 +52,26 @@ function clearError(input) {
     }
 }
 
+// `wire-event` is not a real Livewire binding directive (unlike wire:model),
+// so Livewire never sees the DOM input/change events we dispatch below on
+// its own. When present, push the value into that Livewire component
+// property directly so fields using wire-event (instead of wire:model) stay
+// in sync the same way wire:model-bound fields do.
+function syncLivewireProperty(input, value) {
+    const property = input.getAttribute("wire-event");
+    if (!property || !window.Livewire) {
+        return;
+    }
+
+    const el = input.closest("[wire\\:id]");
+    if (!el) {
+        return;
+    }
+
+    const component = window.Livewire.find(el.getAttribute("wire:id"));
+    component?.set(property, value);
+}
+
 function syncFullNumber(input, iti) {
     if (!input.value.trim()) {
         return;
@@ -64,6 +84,8 @@ function syncFullNumber(input, iti) {
         input.dispatchEvent(new Event("input", { bubbles: true }));
         input.dispatchEvent(new Event("change", { bubbles: true }));
     }
+
+    syncLivewireProperty(input, input.value);
 }
 
 // Fires before Livewire serialises ANY component's state, so wire:model.defer
@@ -115,17 +137,20 @@ export function initPhoneInputs(root = document) {
 
         const form = input.closest("form");
         const iti = intlTelInput(input, {
-            initialCountry: "auto",
+            // v29's API dropped the "auto" literal for initialCountry — leave
+            // it unset and resolve the country asynchronously via
+            // initialCountryLookup instead.
+            initialCountry: "",
             initialCountryLookup: lookupCountry,
             separateDialCode: true,
             dropdownParent: document.body,
-            // "polite"/"aggressive" ask the bundled utils for a per-country
+            // POLITE/AGGRESSIVE ask the bundled utils for a per-country
             // example number to show as a placeholder; when that lookup
             // fails it falls back to stringifying its error object, which
             // renders as the literal text "[object Object]" in the field.
             // We always pass an explicit placeholder from the blade markup,
             // so auto-generating one here is unnecessary and unsafe.
-            autoPlaceholder: "off",
+            placeholderNumberPolicy: "OFF",
             loadUtils: () => Promise.resolve({ default: intlTelInputUtils }),
         });
 
