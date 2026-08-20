@@ -245,9 +245,9 @@
                                         @error('data.billing.email') <p class="text-red-500 text-xs">{{ $message }}</p>
                                         @enderror
                                     </div>
-                                    <div class="flex flex-col gap-1">
+                                    <div class="flex flex-col gap-1" wire:ignore>
                                         <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
-                                        <input type="tel" data-phone-input wire:model="data.billing.phone" placeholder="{{ __('Phone') }}"
+                                        <input type="tel" data-phone-input wire-event="data.billing.phone" value="{{ $data['billing']['phone'] ?? '' }}" placeholder="{{ __('Phone') }}"
                                             class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
                                         @error('data.billing.phone') <p class="text-red-500 text-xs">{{ $message }}</p>
                                         @enderror
@@ -600,19 +600,17 @@
                                 class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
                             @error('data.modal.full_name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
-                                <input type="tel" data-phone-input wire:model="data.modal.phone" placeholder="{{ __('Phone') }}"
-                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
-                                @error('data.modal.phone') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
-                                <input type="email" wire:model="data.modal.email" placeholder="{{ __('Email') }}"
-                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
-                                @error('data.modal.email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
-                            </div>
+                        <div class="flex flex-col gap-1" wire:ignore>
+                            <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
+                            <input type="tel" data-phone-input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" placeholder="{{ __('Phone') }}"
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                            @error('data.modal.phone') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
+                            <input type="email" wire:model="data.modal.email" placeholder="{{ __('Email') }}"
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                            @error('data.modal.email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
@@ -886,3 +884,10 @@
     </script>
     @endscript
 </div>
+@push('scripts')
+    <script>
+        document.addEventListener('storefront-open-address-modal-changed', function (event) {
+            window.bootPhoneInputs();
+        });
+    </script>
+@endpush

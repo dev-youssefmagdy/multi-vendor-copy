@@ -537,9 +537,9 @@
                         @error('data.modal.full_name')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
+                        <div wire:ignore>
                             <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Phone') }}</label>
-                            <input wire:model="data.modal.phone" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
+                            <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
                                 class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
                             @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
                         </div>

@@ -178,7 +178,7 @@
                                         {{ $message }}</p>@enderror
                                 </div>
                                 <div>
-                                    <input wire:model="data.billing.phone" type="tel" data-phone-input
+                                    <input wire-event="data.billing.phone" value="{{ $data['billing']['phone'] ?? '' }}" type="tel" data-phone-input
                                         placeholder="{{ __('Phone number') }}"
                                         class="w-full border @error('data.billing.phone') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[6px] px-4 py-2.5 outline-none text-[13px] text-[#333] placeholder-[#aaa] bg-white focus:border-[#242424] transition">
                                     @error('data.billing.phone')<p class="text-[11px] text-[#dc2626] mt-1">
@@ -645,9 +645,9 @@
                         @enderror
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
+                        <div wire:ignore>
                             <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Phone') }}</label>
-                            <input wire:model="data.modal.phone" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
+                            <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
                                 class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
                             @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -949,3 +949,11 @@
     @endscript
 
 </main>
+
+@push('scripts')
+    <script>
+        document.addEventListener('storefront-open-address-modal-changed', function (event) {
+            window.bootPhoneInputs();
+        });
+    </script>
+@endpush
