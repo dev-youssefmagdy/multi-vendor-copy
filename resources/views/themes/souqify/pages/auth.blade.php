@@ -141,3 +141,11 @@ $tab 'login' | 'register'
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        document.addEventListener('storefront-auth-tab-changed', function (event) {
+            window.bootPhoneInputs();
+        });
+    </script>
+@endpush
