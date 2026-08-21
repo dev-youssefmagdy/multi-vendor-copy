@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
+            'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
         ]);
 
         $middleware->web([
@@ -34,6 +36,15 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\CheckMaintenanceWindow::class,
             // \Stancl\Tenancy\Middleware\PreventAccessFromTenantDomains::class,
 
+        ]);
+
+        // The storefront JSON API is stateless-first (bearer tenant token), but
+        // /favorites/* still authenticates the shopper via the existing
+        // session-based "storefront" guard, so cookies must be decrypted and a
+        // session started for API requests too.
+        $middleware->api(prepend: [
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Session\Middleware\StartSession::class,
         ]);
 
         $middleware->trustHosts(at: fn() => ['.*']);
