@@ -392,6 +392,11 @@ class TenantPanelService
 
     public function activateTheme(Theme $theme): void
     {
+        $previouslyActiveSlug = Theme::query()
+            ->where('is_universal', true)
+            ->where('is_active', true)
+            ->value('slug');
+
         DB::transaction(function () use ($theme) {
             if ($theme->is_universal) {
                 // Universal themes (no country restrictions) behave like a radio button —
@@ -406,6 +411,23 @@ class TenantPanelService
             // Country-specific themes just toggle on independently.
             $theme->update(['is_active' => true]);
         });
+
+        // The generic Themes page can toggle the tenant-local 'custom' Theme row
+        // (created by BladeThemeService::syncThemeRow()) without going through
+        // BladeThemeService::activate()/deactivate(), so the live-views symlink
+        // must be kept in sync here too or IdentifyTenantTheme silently falls
+        // back to the default (non-existent) view paths.
+        $tenant = tenant();
+        if ($tenant) {
+            $tenantId = (string) $tenant->getTenantKey();
+            $bladeThemeService = app(BladeThemeService::class);
+
+            if ($theme->slug === 'custom') {
+                $bladeThemeService->relinkLiveViewsForCurrentTenant($tenantId);
+            } elseif ($previouslyActiveSlug === 'custom') {
+                $bladeThemeService->unlinkLiveViewsForCurrentTenant($tenantId);
+            }
+        }
     }
 
     public function deactivateTheme(Theme $theme): void

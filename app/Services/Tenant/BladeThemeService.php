@@ -256,6 +256,26 @@ class BladeThemeService
         ]);
     }
 
+    /**
+     * Re-syncs the live-views symlink to whatever BladeTheme is currently flagged
+     * is_active for the tenant. Used by TenantPanelService::activateTheme() when the
+     * generic 'custom' Theme card is toggled from Store → Appearance → Themes,
+     * which flips Theme.is_active without going through activate()/deactivate().
+     */
+    public function relinkLiveViewsForCurrentTenant(string $tenantId): void
+    {
+        $this->relinkLiveViews($tenantId);
+    }
+
+    /** Removes the live-views symlink without touching the underlying BladeTheme's is_active flag. */
+    public function unlinkLiveViewsForCurrentTenant(string $tenantId): void
+    {
+        $liveLink = $this->liveViewsPath($tenantId);
+        if (is_link($liveLink)) {
+            @unlink($liveLink);
+        }
+    }
+
     /** Symlinks the active theme's storage_path into the private path IdentifyTenantTheme looks for. */
     private function relinkLiveViews(string $tenantId): void
     {

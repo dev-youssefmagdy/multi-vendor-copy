@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Tenant\CartController;
+use App\Http\Controllers\Tenant\FavoriteController;
 use App\Http\Controllers\Tenant\EmailVerificationController;
 use App\Http\Controllers\Tenant\StorefrontInvoiceController;
 use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
@@ -223,8 +224,15 @@ Route::middleware([
         })->name('tenant.storefront.category.products.json');
         Route::get('/products/{slug}', ProductPage::class)->name('tenant.storefront.product');
         Route::post('/cart/add', [CartController::class, 'add'])->name('tenant.storefront.cart.add');
+        Route::post('/cart/remove', [CartController::class, 'remove'])->name('tenant.storefront.cart.remove');
+        Route::post('/cart/update', [CartController::class, 'update'])->name('tenant.storefront.cart.update');
         Route::get('/cart', CartPage::class)->name('tenant.storefront.cart');
         Route::get('/favorites', FavoritesPage::class)->name('tenant.storefront.favorites')->middleware('auth:storefront');
+        Route::middleware('auth:storefront')->group(function () {
+            Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('tenant.storefront.favorites.toggle');
+            Route::get('/favorites/list', [FavoriteController::class, 'list'])->name('tenant.storefront.favorites.list');
+            Route::get('/favorites/ids', [FavoriteController::class, 'ids'])->name('tenant.storefront.favorites.ids');
+        });
         Route::get('/checkout', CheckoutPage::class)
             ->name('tenant.storefront.checkout');
         Route::get('/orders/{uuid}/status', OrderStatusPage::class)->name('tenant.storefront.order-status');

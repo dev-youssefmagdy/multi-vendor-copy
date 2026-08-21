@@ -73,6 +73,18 @@ class DocsPage extends TenantPage
                 'category' => 'Account',
                 'view'     => 'livewire.tenant.help.articles.compliance',
             ],
+            'variable-reference' => [
+                'title'    => 'Theme Variable Reference',
+                'icon'     => 'code',
+                'category' => 'Storefront',
+                'view'     => 'livewire.tenant.help.articles.variable-reference',
+            ],
+            'theme-apis' => [
+                'title'    => 'Theme Action APIs',
+                'icon'     => 'code',
+                'category' => 'Storefront',
+                'view'     => 'livewire.tenant.help.articles.theme-apis',
+            ],
         ];
     }
 }

@@ -129,7 +129,7 @@ class TenancyServiceProvider extends ServiceProvider
             // same instance is shared across all themes.* view-composer calls on that request.
             app()->singleton(StorefrontRepository::class);
 
-            View::composer('themes.*', StorefrontComposer::class);
+            View::composer(['themes.*', 'layout.*', 'pages.*'], StorefrontComposer::class);
         });
     }
 
