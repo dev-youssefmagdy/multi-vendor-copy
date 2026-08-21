@@ -58,6 +58,7 @@ use App\Livewire\Admin\Setting\PaymentGatewaysPage;
 use App\Livewire\Admin\Setting\AddEditTemplatePart;
 use App\Livewire\Admin\Setting\TemplateControlPage;
 use App\Livewire\Admin\Setting\CustomTemplateQueuePage;
+use App\Livewire\Admin\Setting\BladeThemeQueuePage;
 use App\Livewire\Admin\Setting\TemplatePartsPage;
 use App\Livewire\Admin\Setting\TranslationsPage;
 use App\Livewire\Admin\Setting\LanguagePurchasesPage;
@@ -384,6 +385,7 @@ Route::group([
         Route::get('/home-variants', HomeVariantsPage::class)->middleware('admin.permission:settings.home-variants.manage')->name('home-variants');
         Route::get('/templates', TemplateControlPage::class)->middleware('admin.permission:settings.templates.manage')->name('templates');
         Route::get('/custom-templates', CustomTemplateQueuePage::class)->middleware('admin.permission:settings.templates.manage')->name('custom-templates');
+        Route::get('/blade-themes', BladeThemeQueuePage::class)->middleware('admin.permission:settings.templates.manage')->name('blade-themes');
         Route::get('/template-parts', TemplatePartsPage::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts');
         Route::get('/template-parts/create/{templateId?}', AddEditTemplatePart::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.create');
         Route::get('/template-parts/{partId}/edit', AddEditTemplatePart::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.edit');

@@ -68,6 +68,7 @@ use App\Livewire\Tenant\Setting\RolesPermissionsList;
 use App\Livewire\Tenant\Setting\SubscribersPage;
 use App\Livewire\Tenant\Store\AppearancePage;
 use App\Livewire\Tenant\Store\CustomTemplatePage;
+use App\Livewire\Tenant\Store\BladeThemePage;
 use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
@@ -132,7 +133,7 @@ Route::middleware([
         ->middleware('tenant.storefront.context')
         ->name('tenant.custom-template.asset');
 
-    Route::middleware(['tenant.storefront.context', 'tenant.gateway.blocked', 'preview.template', 'custom.template.home'])->group(function () {
+    Route::middleware(['tenant.storefront.context', 'identify.tenant.theme', 'tenant.gateway.blocked', 'preview.template', 'custom.template.home', 'blade.theme.home'])->group(function () {
         Route::get('/', HomePage::class)->name('tenant.home');
         Route::get('/best-selling', BestSellingPage::class)->name('tenant.storefront.best-selling');
         Route::get('/full-star', FullStarPage::class)->name('tenant.storefront.full-star');
@@ -540,6 +541,9 @@ Route::middleware([
                     ->where('file', '.*')
                     ->middleware('tenant.permission:store.custom-template.manage')
                     ->name('custom-template.preview');
+                Route::get('/blade-theme', BladeThemePage::class)
+                    ->middleware('tenant.permission:store.blade-theme.manage')
+                    ->name('blade-theme');
                 Route::get('/page-builder', PageBuilderPage::class)
                     ->middleware('tenant.permission:store.page-builder.manage')
                     ->name('page-builder');

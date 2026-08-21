@@ -73,6 +73,9 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(SocialiteWasCalled::class, [AppleExtendSocialite::class, 'handle']);
 
+        Livewire::component('storefront.add-to-cart-button', \App\Livewire\Tenant\Storefront\ThemeKit\AddToCartButton::class);
+        Livewire::component('storefront.cart-icon', \App\Livewire\Tenant\Storefront\ThemeKit\CartIcon::class);
+
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
