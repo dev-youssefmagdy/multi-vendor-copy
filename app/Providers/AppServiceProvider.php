@@ -28,6 +28,7 @@ use App\Observers\TenantOrderObserver;
 use App\Observers\TenantTransactionObserver;
 use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
+use App\Services\Tenant\Templates\UploadedBladeTemplateStrategy;
 use App\Translation\TenantTranslator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
@@ -70,6 +71,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->configureSessionDomain();
+
+        TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
 
         Event::listen(SocialiteWasCalled::class, [AppleExtendSocialite::class, 'handle']);
 

@@ -49,7 +49,7 @@ class BladeThemePage extends TenantPage
         ]);
     }
 
-    public function upload(BladeThemeService $service): void
+    public function submitUpload(BladeThemeService $service): void
     {
         $this->validate([
             'themeZip' => ['required', 'file', 'mimes:zip', 'max:20480'],

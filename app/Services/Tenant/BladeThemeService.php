@@ -41,6 +41,7 @@ class BladeThemeService
 
     private const ALLOWED_EXTENSIONS = [
         'blade.php', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'woff', 'woff2',
+        'md', 'txt', 'json', 'ico', 'webmanifest',
     ];
 
     private const BASE_DIR = 'tenant-blade-themes';
@@ -184,6 +185,7 @@ class BladeThemeService
         });
 
         $this->relinkLiveViews($tenantId);
+        $this->syncThemeRow(activate: true);
     }
 
     public function deactivate(string $tenantId): void
@@ -195,6 +197,40 @@ class BladeThemeService
         $liveLink = $this->liveViewsPath($tenantId);
         if (is_link($liveLink)) {
             @unlink($liveLink);
+        }
+
+        $this->syncThemeRow(activate: false);
+    }
+
+    /**
+     * Upsert the tenant-local 'custom' Theme row so the vendor's approved Blade
+     * theme shows up in Store → Appearance → Themes like any system theme, and
+     * follows the same is_active radio-button semantics via
+     * TenantPanelService::activateTheme() / deactivateTheme().
+     *
+     * Runs in the tenant DB context — the Theme model lives per-tenant, unlike
+     * BladeTheme which is central. activate()/deactivate() are called from
+     * BladeThemePage, a tenant-panel Livewire component already running
+     * inside tenant context, so this is safe as written.
+     */
+    private function syncThemeRow(bool $activate): void
+    {
+        $theme = \App\Models\Tenant\Theme::query()->firstOrCreate(
+            ['slug' => 'custom'],
+            ['name' => 'Custom Theme', 'is_universal' => true, 'is_active' => false]
+        );
+
+        if ($activate) {
+            app(TenantPanelService::class)->activateTheme($theme);
+        } elseif ($theme->is_active) {
+            $fallback = \App\Models\Tenant\Theme::query()
+                ->where('slug', '!=', 'custom')
+                ->where('is_universal', true)
+                ->first();
+
+            if ($fallback) {
+                app(TenantPanelService::class)->activateTheme($fallback);
+            }
         }
     }
 

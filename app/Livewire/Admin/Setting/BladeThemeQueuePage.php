@@ -51,7 +51,21 @@ class BladeThemeQueuePage extends Component
             'reviewed_by' => auth('admin')->user()?->name ?? auth('admin')->user()?->email,
         ]);
 
-        $this->toast('Theme approved.');
+        // Create the 'custom' Theme variant row in THIS tenant's own DB only —
+        // Theme is per-tenant, so no other tenant ever sees it. Lets the
+        // variant card show up on Store → Appearance → Themes immediately,
+        // without requiring the tenant to visit /store/blade-theme first.
+        $tenantModel = \App\Models\Tenant::query()->find($theme->tenant_id);
+        if ($tenantModel) {
+            tenancy()->initialize($tenantModel);
+            \App\Models\Tenant\Theme::query()->firstOrCreate(
+                ['slug' => 'custom'],
+                ['name' => 'Custom Theme', 'is_universal' => true, 'is_active' => false]
+            );
+            tenancy()->end();
+        }
+
+        $this->toast('Theme approved. The tenant can now activate it as a variant.');
     }
 
     public function openReject(int $id): void

@@ -45,7 +45,7 @@
             </div>
 
             <div class="gs-actions">
-                <x-btn type="button" wire:click="upload" wire:loading.attr="disabled" wire:target="upload">
+                <x-btn type="button" wire:click="submitUpload" wire:loading.attr="disabled" wire:target="submitUpload">
                     Upload theme
                 </x-btn>
             </div>
