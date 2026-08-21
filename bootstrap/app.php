@@ -25,7 +25,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'preview.init' => \App\Http\Middleware\InitializeTenancyForPreview::class,
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
             'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
-            'custom.template.home' => \App\Http\Middleware\ServeCustomTemplateHome::class,
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
         ]);

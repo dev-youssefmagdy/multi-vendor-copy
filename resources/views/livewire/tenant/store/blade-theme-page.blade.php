@@ -10,6 +10,19 @@
         </div>
     </div>
 
+    <div class="card section-gap" style="padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <div>
+            <h3 class="panel-title" style="font-size:14px;margin-bottom:4px">New to Blade themes?</h3>
+            <p class="panel-copy" style="font-size:13px">
+                Download the starter kit — a working theme with header, footer, and all
+                home sections wired to real store data — and customize it as your own.
+            </p>
+        </div>
+        <a href="{{ route('tenant.store.blade-theme.starter-kit') }}" class="btn btn-secondary" style="flex-shrink:0">
+            Download Starter Kit
+        </a>
+    </div>
+
     <section class="card form-card fu d1 ct-card">
         <div class="gs-section-head">
             <h3 class="panel-title">Upload a Theme ZIP</h3>

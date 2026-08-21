@@ -55,18 +55,6 @@ class DocsPage extends TenantPage
                 'category' => 'Storefront',
                 'view'     => 'livewire.tenant.help.articles.themes',
             ],
-            'custom-template' => [
-                'title'    => 'Custom Template Upload',
-                'icon'     => 'upload',
-                'category' => 'Storefront',
-                'view'     => 'livewire.tenant.help.articles.custom-template',
-            ],
-            'custom-template-guide' => [
-                'title'    => 'Building a Custom Template',
-                'icon'     => 'code',
-                'category' => 'Storefront',
-                'view'     => 'livewire.tenant.help.articles.custom-template-guide',
-            ],
             'page-builder' => [
                 'title'    => 'Page Builder',
                 'icon'     => 'grid',

@@ -15,9 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  * storefront home page through StorefrontHomeController (which renders the
  * vendor's `pages.home.index` view, resolved via the prepended theme path)
  * instead of falling through to the default Livewire HomePage. Only
- * intercepts the storefront home route, and only when no static
- * CustomTemplate is already active for this tenant (that check happens
- * earlier in the middleware chain, in ServeCustomTemplateHome).
+ * intercepts the storefront home route.
  */
 class ServeBladeThemeHome
 {

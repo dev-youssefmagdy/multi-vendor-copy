@@ -13,13 +13,16 @@ use ZipArchive;
  * Handles secure upload, admin review, and activation of vendor-authored
  * Blade storefront themes.
  *
- * SECURITY NOTE: unlike CustomTemplateService (static HTML, never executed
- * as PHP), Blade themes ARE compiled and executed by Laravel's view engine.
- * The extension/pattern checks below are a first-pass filter only — Blade's
- * `{{ }}` syntax compiles to a full PHP echo of any expression, which a text
- * denylist cannot fully close off. A theme is never live until an admin
- * explicitly reviews it and calls approveAndActivate() — uploads always land
- * as `pending` and are never auto-approved or auto-activated.
+ * SECURITY NOTE: Blade themes ARE compiled and executed by Laravel's view engine.
+ * @php blocks are permitted (they're needed for trivial local variable
+ * assignment in section templates) — the denylist instead targets the
+ * actual dangerous primitives: shell execution, eval, and dynamic function
+ * calls. This is still a first-pass filter only, not a substitute for
+ * admin review — Blade's `{{ }}` compiles to a full PHP echo of any
+ * expression, which a text denylist cannot fully close off. A theme is
+ * never live until an admin explicitly reviews it and calls
+ * approveAndActivate() — uploads always land as `pending` and are never
+ * auto-approved or auto-activated.
  */
 class BladeThemeService
 {
@@ -31,7 +34,9 @@ class BladeThemeService
 
     /** Denylist scan — blocks the literal patterns; NOT a substitute for admin review. */
     private const BLOCKED_PATTERNS = [
-        '<?php', '<?=', '@php', 'system(', 'exec(', 'shell_exec(', 'passthru(', 'eval(', 'proc_open(', 'popen(',
+        '<?php', '<?=', 'system(', 'exec(', 'shell_exec(', 'passthru(', 'eval(',
+        'proc_open(', 'popen(', 'assert(', 'call_user_func(', 'call_user_func_array(',
+        '`', // backtick shell execution operator
     ];
 
     private const ALLOWED_EXTENSIONS = [
