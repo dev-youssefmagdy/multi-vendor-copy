@@ -70,20 +70,6 @@ class BladeThemePage extends TenantPage
         $this->toast('Theme uploaded and queued for admin review.');
     }
 
-    public function activate(int $themeId, BladeThemeService $service): void
-    {
-        $tenantId = (string) tenant()->getTenantKey();
-
-        try {
-            $service->activate($tenantId, $themeId);
-        } catch (Throwable $e) {
-            $this->dispatch('admin-toast', message: 'Only approved themes can be activated.', type: 'error');
-            return;
-        }
-
-        $this->toast('Blade theme activated. Your storefront now uses your uploaded theme.');
-    }
-
     public function deactivate(BladeThemeService $service): void
     {
         $service->deactivate((string) tenant()->getTenantKey());

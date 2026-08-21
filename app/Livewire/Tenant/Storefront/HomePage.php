@@ -212,7 +212,6 @@ class HomePage extends Component
         $storeDesc = mb_substr(strip_tags($repo->footerText()), 0, 160);
 
         $homeView = app(HomeVariantResolver::class)->viewFor($activeVariant, $this->resolveStrategy());
-
         return view($homeView, $data)
             ->layout($this->storefrontLayout(), [
                 'title' => $storeName,

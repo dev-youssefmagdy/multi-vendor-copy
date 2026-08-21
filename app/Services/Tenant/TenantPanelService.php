@@ -412,20 +412,19 @@ class TenantPanelService
             $theme->update(['is_active' => true]);
         });
 
-        // The generic Themes page can toggle the tenant-local 'custom' Theme row
-        // (created by BladeThemeService::syncThemeRow()) without going through
-        // BladeThemeService::activate()/deactivate(), so the live-views symlink
-        // must be kept in sync here too or IdentifyTenantTheme silently falls
-        // back to the default (non-existent) view paths.
+        // Activating/deactivating the tenant-local 'custom' Theme row from the
+        // generic Themes page is the only way vendors activate their uploaded Blade
+        // theme (the Blade Theme upload page no longer has its own Activate action),
+        // so drive the actual BladeTheme.is_active flag and live-views symlink here.
         $tenant = tenant();
         if ($tenant) {
             $tenantId = (string) $tenant->getTenantKey();
             $bladeThemeService = app(BladeThemeService::class);
 
             if ($theme->slug === 'custom') {
-                $bladeThemeService->relinkLiveViewsForCurrentTenant($tenantId);
+                $bladeThemeService->activateLatestApprovedForCurrentTenant($tenantId);
             } elseif ($previouslyActiveSlug === 'custom') {
-                $bladeThemeService->unlinkLiveViewsForCurrentTenant($tenantId);
+                $bladeThemeService->deactivateAllForCurrentTenant($tenantId);
             }
         }
     }

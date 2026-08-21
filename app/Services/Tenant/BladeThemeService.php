@@ -20,9 +20,9 @@ use ZipArchive;
  * calls. This is still a first-pass filter only, not a substitute for
  * admin review — Blade's `{{ }}` compiles to a full PHP echo of any
  * expression, which a text denylist cannot fully close off. A theme is
- * never live until an admin explicitly reviews it and calls
- * approveAndActivate() — uploads always land as `pending` and are never
- * auto-approved or auto-activated.
+ * never live until an admin explicitly approves it, and the vendor then
+ * activates it from Store → Themes — uploads always land as `pending` and
+ * are never auto-approved or auto-activated.
  */
 class BladeThemeService
 {
@@ -171,23 +171,6 @@ class BladeThemeService
             ->first());
     }
 
-    /** Vendor-triggered: only an already-approved theme may be activated. Never bypasses admin review. */
-    public function activate(string $tenantId, int $themeId): void
-    {
-        tenancy()->central(function () use ($tenantId, $themeId) {
-            $theme = BladeTheme::query()
-                ->where('tenant_id', $tenantId)
-                ->where('status', BladeTheme::STATUS_APPROVED)
-                ->findOrFail($themeId);
-
-            BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
-            $theme->update(['is_active' => true]);
-        });
-
-        $this->relinkLiveViews($tenantId);
-        $this->syncThemeRow(activate: true);
-    }
-
     public function deactivate(string $tenantId): void
     {
         tenancy()->central(function () use ($tenantId) {
@@ -200,6 +183,49 @@ class BladeThemeService
         }
 
         $this->syncThemeRow(activate: false);
+    }
+
+    /**
+     * Called from TenantPanelService::activateTheme() when the vendor activates the
+     * generic 'custom' theme card on Store → Themes. Activation of a specific Blade
+     * theme version is no longer chosen from the Blade Theme upload page — the most
+     * recently approved version is used. No-op if the tenant has no approved theme.
+     */
+    public function activateLatestApprovedForCurrentTenant(string $tenantId): void
+    {
+        $activated = tenancy()->central(function () use ($tenantId) {
+            $theme = BladeTheme::query()
+                ->where('tenant_id', $tenantId)
+                ->where('status', BladeTheme::STATUS_APPROVED)
+                ->latest('id')
+                ->first();
+
+            if (!$theme) {
+                return false;
+            }
+
+            BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
+            $theme->update(['is_active' => true]);
+
+            return true;
+        });
+
+        if ($activated) {
+            $this->relinkLiveViews($tenantId);
+        }
+    }
+
+    /** Called from TenantPanelService::activateTheme() when the vendor switches away from the 'custom' theme. */
+    public function deactivateAllForCurrentTenant(string $tenantId): void
+    {
+        tenancy()->central(function () use ($tenantId) {
+            BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
+        });
+
+        $liveLink = $this->liveViewsPath($tenantId);
+        if (is_link($liveLink)) {
+            @unlink($liveLink);
+        }
     }
 
     /**
@@ -234,7 +260,7 @@ class BladeThemeService
         }
     }
 
-    /** Admin-only: approve a pending theme. Does NOT activate it — the vendor still has to activate() it. */
+    /** Admin-only: approve a pending theme. Does NOT activate it — the vendor still has to activate it from Store → Themes. */
     public function approve(int $themeId, string $reviewerName): void
     {
         BladeTheme::query()->findOrFail($themeId)->update([
@@ -256,25 +282,6 @@ class BladeThemeService
         ]);
     }
 
-    /**
-     * Re-syncs the live-views symlink to whatever BladeTheme is currently flagged
-     * is_active for the tenant. Used by TenantPanelService::activateTheme() when the
-     * generic 'custom' Theme card is toggled from Store → Appearance → Themes,
-     * which flips Theme.is_active without going through activate()/deactivate().
-     */
-    public function relinkLiveViewsForCurrentTenant(string $tenantId): void
-    {
-        $this->relinkLiveViews($tenantId);
-    }
-
-    /** Removes the live-views symlink without touching the underlying BladeTheme's is_active flag. */
-    public function unlinkLiveViewsForCurrentTenant(string $tenantId): void
-    {
-        $liveLink = $this->liveViewsPath($tenantId);
-        if (is_link($liveLink)) {
-            @unlink($liveLink);
-        }
-    }
 
     /** Symlinks the active theme's storage_path into the private path IdentifyTenantTheme looks for. */
     private function relinkLiveViews(string $tenantId): void

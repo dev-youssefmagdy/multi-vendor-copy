@@ -34,6 +34,8 @@ class ServeBladeThemeHome
             return $next($request);
         }
 
-        return app(StorefrontHomeController::class)->__invoke(app(\App\Repositories\Tenant\StorefrontRepository::class));
+        $view = app(StorefrontHomeController::class)->__invoke(app(\App\Repositories\Tenant\StorefrontRepository::class));
+
+        return response($view);
     }
 }

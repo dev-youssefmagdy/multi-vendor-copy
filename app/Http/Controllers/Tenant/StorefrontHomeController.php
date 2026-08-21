@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Tenant;
 use App\Http\Controllers\Controller;
 use App\Repositories\Tenant\StorefrontRepository;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Renders the storefront home page for a tenant with an active, admin-approved

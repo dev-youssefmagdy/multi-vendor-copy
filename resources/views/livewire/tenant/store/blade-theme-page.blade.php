@@ -55,7 +55,7 @@
     <section class="card form-card fu d2 ct-card">
         <div class="gs-section-head">
             <h3 class="panel-title">Uploaded Themes</h3>
-            <p class="panel-copy">Only themes approved by our team can be activated on your storefront.</p>
+            <p class="panel-copy">Approved themes are activated from Storefront → Online Store → Themes, alongside your other storefront theme options.</p>
         </div>
 
         @if($themes->isEmpty())
@@ -85,10 +85,6 @@
                                 </td>
                                 <td>{{ $theme->is_active ? 'Yes' : 'No' }}</td>
                                 <td class="ct-actions">
-                                    @if($theme->status === 'approved' && !$theme->is_active)
-                                        <button type="button" wire:click="activate({{ $theme->id }})" class="ct-link">Activate</button>
-                                    @endif
-
                                     @if($theme->is_active)
                                         <button type="button" wire:click="deactivate" class="ct-link">Deactivate</button>
                                     @endif
