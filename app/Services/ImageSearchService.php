@@ -42,7 +42,10 @@ class ImageSearchService
             throw new \RuntimeException('The uploaded image could not be read.');
         }
 
-        return $this->callEndpoint('/image-search', ['image_path' => $tempPath]);
+        $mime = $file->getMimeType() ?: 'image/jpeg';
+        $dataUrl = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($tempPath));
+
+        return $this->callEndpoint('/image-search', ['image_path' => $dataUrl]);
     }
 
     /**

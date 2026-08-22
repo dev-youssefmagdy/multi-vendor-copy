@@ -97,7 +97,7 @@ class SocialPostRequest(BaseModel):
 
 
 class ImageSearchRequest(BaseModel):
-    image_path: str = Field(..., min_length=1, max_length=2000, description="Absolute local file path or public URL of the query image.")
+    image_path: str = Field(..., min_length=1, max_length=15_000_000, description="Absolute local file path, public URL, or base64 data URL of the query image.")
 
 
 class LogoGenerateRequest(BaseModel):

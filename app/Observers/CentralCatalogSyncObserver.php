@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\EmbedProductImagesJob;
 use App\Jobs\SyncCentralProductPriceToTenantsJob;
 use App\Jobs\SyncCentralProductWeightToTenantsJob;
 use App\Jobs\SyncProductFixedShippingCosts;
@@ -14,6 +15,11 @@ use App\Services\Tenant\CentralCatalogTenantSyncService;
 
 class CentralCatalogSyncObserver
 {
+    public function created(Product $model): void
+    {
+        EmbedProductImagesJob::dispatch($model->id);
+    }
+
     public function updated(Product|ProductVariant $model): void
     {
         if ($model->wasChanged('weight_grams')) {

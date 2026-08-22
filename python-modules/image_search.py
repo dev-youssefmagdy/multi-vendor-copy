@@ -22,6 +22,7 @@ from __future__ import annotations
 import base64
 import mimetypes
 import os
+import urllib.request
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -46,9 +47,25 @@ def _image_to_data_url(image_path: str) -> str:
     return f"data:{mime};base64,{encoded}"
 
 
+def _url_to_data_url(url: str) -> str:
+    with urllib.request.urlopen(url, timeout=15) as resp:
+        content = resp.read()
+        mime = resp.headers.get_content_type() or mimetypes.guess_type(url)[0] or "image/jpeg"
+    encoded = base64.b64encode(content).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
 def _resolve_image_url(image_path: str) -> str:
-    if image_path.startswith("http://") or image_path.startswith("https://"):
+    if image_path.startswith("data:"):
         return image_path
+    if image_path.startswith(("http://", "https://")):
+        # Fetch and inline the bytes ourselves: OpenAI's vision endpoint can
+        # only reach publicly resolvable URLs, but callers here also pass
+        # local/dev-only storage URLs that OpenAI's servers can't download.
+        try:
+            return _url_to_data_url(image_path)
+        except Exception as exc:
+            raise ValueError(f"Could not download image: {image_path} ({exc})") from exc
     if os.path.isfile(image_path):
         return _image_to_data_url(image_path)
     raise ValueError(f"Image not found: {image_path}")
