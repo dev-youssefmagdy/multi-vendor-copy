@@ -20,8 +20,8 @@ depend on this module returning a list[float] embedding.
 from __future__ import annotations
 
 import base64
+import io
 import logging
-import mimetypes
 import os
 import time
 import urllib.request
@@ -29,8 +29,30 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from openai import APIStatusError, OpenAI, RateLimitError
+from PIL import Image
 
 logger = logging.getLogger(__name__)
+
+# OpenAI's vision endpoint only accepts these image types.
+_SUPPORTED_MIME_TYPES = {"image/png", "image/jpeg", "image/webp", "image/gif"}
+_PIL_FORMAT_TO_MIME = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp", "GIF": "image/gif"}
+
+
+def _sniff_image_mime(content: bytes, label: str) -> str:
+    """Detect the real image format from file bytes (extensions/headers lie)."""
+    try:
+        with Image.open(io.BytesIO(content)) as img:
+            fmt = img.format
+    except Exception as exc:
+        raise ValueError(f"Not a readable image: {label} ({exc})") from exc
+
+    mime = _PIL_FORMAT_TO_MIME.get(fmt or "")
+    if mime is None:
+        raise ValueError(
+            f"Unsupported image format '{fmt}' for {label}. "
+            f"Only PNG, JPEG, WEBP, and GIF are supported."
+        )
+    return mime
 
 EMBEDDING_MODEL = os.getenv("OPENAI_IMAGE_EMBEDDING_MODEL", "text-embedding-3-small")
 VISION_MODEL = os.getenv("OPENAI_VISION_MODEL", "gpt-4o-mini")
@@ -44,17 +66,17 @@ class ImageEmbeddingResult:
 
 
 def _image_to_data_url(image_path: str) -> str:
-    mime, _ = mimetypes.guess_type(image_path)
-    mime = mime or "image/jpeg"
     with open(image_path, "rb") as fh:
-        encoded = base64.b64encode(fh.read()).decode("ascii")
+        content = fh.read()
+    mime = _sniff_image_mime(content, image_path)
+    encoded = base64.b64encode(content).decode("ascii")
     return f"data:{mime};base64,{encoded}"
 
 
 def _url_to_data_url(url: str) -> str:
     with urllib.request.urlopen(url, timeout=15) as resp:
         content = resp.read()
-        mime = resp.headers.get_content_type() or mimetypes.guess_type(url)[0] or "image/jpeg"
+    mime = _sniff_image_mime(content, url)
     encoded = base64.b64encode(content).decode("ascii")
     return f"data:{mime};base64,{encoded}"
 

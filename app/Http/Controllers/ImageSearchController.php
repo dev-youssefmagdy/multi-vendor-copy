@@ -37,6 +37,8 @@ class ImageSearchController extends Controller
         try {
             $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
         } catch (\RuntimeException $e) {
+            session()->forget('image_search_product_ids');
+
             return redirect()->route($routeName, ['mode' => 'image'])->withErrors(['image' => $e->getMessage()]);
         }
 

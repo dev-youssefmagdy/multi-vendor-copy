@@ -800,3 +800,6 @@ pa db:seed --class=WorldCountriesSeeder
 ----------------------------------------------------
 
 php artisan db:seed --class=EmailTemplateTranslationSeeder
+
+php artisan image-search:backfill
+php artisan queue:work --queue=default --stop-when-empty --tries=1 --timeout=120
