@@ -3,16 +3,26 @@
 namespace App\Livewire\Admin\Setting;
 
 use App\Enums\ActivationStatus;
-use App\Livewire\Admin\Base\ContentPage;
+use App\Enums\PaymentGatewayType;
+use App\Livewire\Admin\Base\AdminPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\PaymentGateway;
 use App\PaymentGateway\PaymentManager;
 use App\Repositories\PaymentGatewayRepository;
 use App\Services\PaymentGatewayService;
 
-class PaymentGatewaysPage extends ContentPage
+class PaymentGatewaysPage extends AdminPage
 {
     use InteractsWithAdminUi;
+
+    public string $typeFilter = '';
+
+    public string $statusFilter = '';
+
+    protected function pageView(): string
+    {
+        return 'livewire.admin.setting.payment-gateways-page';
+    }
 
     protected function pageMeta(): array
     {
@@ -20,12 +30,22 @@ class PaymentGatewaysPage extends ContentPage
             'title' => 'Payment Gateways',
             'badge' => 'Strategy Pattern',
             'description' => 'Configure owner-level gateway credentials and required key or value mappings.',
-            'bullets' => [
-                'Store gateway configuration in the central payment_gateways table.',
-                'Use strategy classes to handle gateway-specific payment operations.',
-                'Support activation toggles, key validation, and owner or tenant gateway modes.',
-            ],
         ];
+    }
+
+    public function updatedTypeFilter(): void
+    {
+        //
+    }
+
+    public function updatedStatusFilter(): void
+    {
+        //
+    }
+
+    public function clearFilters(): void
+    {
+        $this->reset(['typeFilter', 'statusFilter']);
     }
 
     public function requestToggle(int $gatewayId): void
@@ -52,14 +72,20 @@ class PaymentGatewaysPage extends ContentPage
         $repository = app(PaymentGatewayRepository::class);
         $service = app(PaymentGatewayService::class);
         $manager = app(PaymentManager::class);
-        $gateways = $repository->all();
+
+        $gateways = $repository->all([
+            'type' => $this->typeFilter,
+            'status' => $this->statusFilter,
+        ]);
         $stats = $repository->stats();
 
-        return array_merge(parent::pageData(), [
+        return array_merge($this->pageMeta(), [
             'cards' => [
                 ['label' => 'Gateways', 'value' => number_format($stats['total']), 'caption' => 'Owner payment strategies', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Available for payment capture', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ],
+            'typeOptions' => PaymentGatewayType::cases(),
+            'statusOptions' => ActivationStatus::cases(),
             'tableHeaders' => ['Gateway', 'Code', 'Type', 'Mode', 'Status', 'Credentials', 'Marketplace', 'Actions'],
             'tableRows' => $gateways->map(function ($gateway) use ($service, $manager) {
                 $descriptor = $service->descriptor($gateway);

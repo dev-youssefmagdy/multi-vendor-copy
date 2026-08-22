@@ -10,7 +10,6 @@ use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Theme;
-use App\Models\TenantCountry;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -374,13 +373,6 @@ class TenantNavigation
                 'action_route' => 'tenant.settings.payment-gateways',
             ],
             [
-                'key' => 'target_countries',
-                'label' => 'Target countries set',
-                'done' => self::targetCountriesSet(),
-                'action_label' => 'Manage Countries',
-                'action_route' => 'tenant.settings.currencies',
-            ],
-            [
                 'key' => 'compliance_info',
                 'label' => 'Compliance info completed',
                 'done' => self::complianceComplete(),
@@ -444,17 +436,6 @@ class TenantNavigation
     public static function paymentGatewayIsConfigured(): bool
     {
         return PaymentGateway::query()->where('is_active', true)->whereNotNull('connection_status')->exists();
-    }
-
-    public static function targetCountriesSet(): bool
-    {
-        $tenantId = tenant('id');
-
-        if (!$tenantId) {
-            return false;
-        }
-
-        return TenantCountry::query()->where('tenant_id', $tenantId)->where('is_active', true)->exists();
     }
 
     public static function defaultPagesReviewed(): bool
