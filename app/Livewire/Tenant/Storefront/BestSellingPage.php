@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Http\Controllers\ImageSearchController;
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Repositories\Tenant\StorefrontRepository;
@@ -22,6 +23,9 @@ class BestSellingPage extends Component
     #[Url(as: 'category_id', except: '')]
     public string $categoryId = '';
 
+    #[Url(as: 'iid', except: '')]
+    public string $imageSearchId = '';
+
     public bool $isSearchRoute = false;
     public bool $isImageSearch = false;
     public int $perPage = 20;
@@ -32,9 +36,13 @@ class BestSellingPage extends Component
         $this->isSearchRoute = request()->routeIs('tenant.storefront.search') || request()->routeIs('tenant.path.storefront.search');
 
         // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
-        // ImageSearchController stashes the ranked central product IDs in the
-        // session, then redirects here with ?mode=image.
-        $this->isImageSearch = $this->isSearchRoute && request('mode') === 'image' && session()->has('image_search_product_ids');
+        // ImageSearchController stashes the ranked central product IDs in
+        // cache keyed by a UUID, then redirects here with ?mode=image&iid=...
+        // so results are addressable/shareable by URL instead of session.
+        $this->isImageSearch = $this->isSearchRoute
+            && request('mode') === 'image'
+            && $this->imageSearchId !== ''
+            && !empty(ImageSearchController::resultsFor($this->imageSearchId));
 
         // Bootstrap from URL on first load (Livewire #[Url] handles subsequent updates)
         if ($this->isSearchRoute && request()->has('q') && $this->search === '') {
@@ -115,7 +123,7 @@ class BestSellingPage extends Component
 
         $products = match (true) {
             $this->isImageSearch => $repo->imageSearchProducts(
-                (array) session('image_search_product_ids', []),
+                ImageSearchController::resultsFor($this->imageSearchId),
                 $this->perPage,
             ),
             $this->isSearchRoute => $repo->paginatedSearchProducts([

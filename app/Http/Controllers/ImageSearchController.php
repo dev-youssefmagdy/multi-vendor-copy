@@ -7,6 +7,8 @@ use App\Services\ImageSearchService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
 // Thin controller: validate the query image, embed it, rank candidate
@@ -14,6 +16,8 @@ use Illuminate\Http\RedirectResponse;
 // ranked IDs to the surface-appropriate results view.
 class ImageSearchController extends Controller
 {
+    private const RESULTS_TTL_MINUTES = 30;
+
     public function __construct(private readonly ImageSearchService $imageSearchService)
     {
     }
@@ -21,6 +25,34 @@ class ImageSearchController extends Controller
     private function rules(): array
     {
         return ['image' => ['required', 'image', 'max:8192']];
+    }
+
+    /**
+     * @param array<int> $rankedCentralIds
+     */
+    private function stashResults(array $rankedCentralIds): string
+    {
+        $uuid = (string) Str::uuid();
+
+        // Cache::store(...) is a real method (not proxied through Stancl
+        // Tenancy's CacheManager::__call), so it bypasses the per-tenant
+        // ->tags() wrapping that CacheTenancyBootstrapper forces onto the
+        // bare Cache facade — tags aren't supported by the file cache driver.
+        Cache::store(config('cache.default'))->put(
+            "image_search_results:{$uuid}",
+            $rankedCentralIds,
+            now()->addMinutes(self::RESULTS_TTL_MINUTES),
+        );
+
+        return $uuid;
+    }
+
+    /**
+     * @return array<int>
+     */
+    public static function resultsFor(string $uuid): array
+    {
+        return (array) Cache::store(config('cache.default'))->get("image_search_results:{$uuid}", []);
     }
 
     /**
@@ -37,8 +69,6 @@ class ImageSearchController extends Controller
         try {
             $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
         } catch (\RuntimeException $e) {
-            session()->forget('image_search_product_ids');
-
             return redirect()->route($routeName, ['mode' => 'image'])->withErrors(['image' => $e->getMessage()]);
         }
 
@@ -52,9 +82,9 @@ class ImageSearchController extends Controller
 
         $rankedCentralIds = $this->imageSearchService->search($embedding, $centralIds, 60);
 
-        session(['image_search_product_ids' => $rankedCentralIds]);
+        $uuid = $this->stashResults($rankedCentralIds);
 
-        return redirect()->route($routeName, ['mode' => 'image']);
+        return redirect()->route($routeName, ['mode' => 'image', 'iid' => $uuid]);
     }
 
     /**
