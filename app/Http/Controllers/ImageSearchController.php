@@ -94,7 +94,11 @@ class ImageSearchController extends Controller
             return [];
         }
 
-        $products = Product::query()->whereIn('id', $rankedIds)->get()->keyBy('id');
+        $products = Product::query()
+            ->with(['files', 'variants.files', 'translations.language'])
+            ->whereIn('id', $rankedIds)
+            ->get()
+            ->keyBy('id');
 
         return collect($rankedIds)
             ->map(fn(int $id) => $products->get($id))
@@ -102,9 +106,17 @@ class ImageSearchController extends Controller
             ->map(fn(Product $product) => [
                 'id' => $product->id,
                 'name' => $product->translationValue('name') ?? $product->slug,
+                'names' => collect($product->translationsByLocale(['name']))
+                    ->map(fn(array $fields) => $fields['name'] ?? ''),
                 'sku' => $product->sku,
                 'slug' => $product->slug,
                 'image' => $product->primary_image_url,
+                'images' => collect([$product->primary_image_url])
+                    ->merge($product->files->where('key', 'gallery')->pluck('full_path'))
+                    ->merge($product->variants->pluck('files')->flatten()->where('key', 'variant_thumb')->pluck('full_path'))
+                    ->filter()
+                    ->unique()
+                    ->values(),
             ])
             ->values()
             ->all();

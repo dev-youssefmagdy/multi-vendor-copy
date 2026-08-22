@@ -46,12 +46,48 @@ class ImageSearchService
     }
 
     /**
-     * Embed a product's primary image and upsert it into the embeddings table.
+     * Embed a product's primary image, gallery images, and any per-variant
+     * images, upserting each into the embeddings table so image search can
+     * match on any photo of the product, not just the primary one.
      */
     public function backfillForProduct(Product $product): void
     {
-        $imageUrl = $product->primary_image_url;
+        $product->loadMissing(['files', 'variants.files']);
 
+        $this->embedOne($product->id, null, 'primary', $product->primary_image_url);
+
+        $galleryFiles = $product->files->where('key', 'gallery');
+        foreach ($galleryFiles as $file) {
+            $this->embedOne($product->id, null, 'gallery-' . $file->id, $file->full_path);
+        }
+
+        $variantIds = [];
+        foreach ($product->variants as $variant) {
+            $variantIds[] = $variant->id;
+            $variantImage = $variant->files->firstWhere('key', 'variant_thumb');
+            $this->embedOne($product->id, $variant->id, 'variant', $variantImage?->full_path);
+        }
+
+        // Drop embeddings for gallery images / variants that no longer exist,
+        // so deleted photos can't linger as false matches.
+        $keepGallerySources = $galleryFiles->map(fn($f) => 'gallery-' . $f->id)->all();
+
+        ProductImageEmbedding::query()
+            ->where('product_id', $product->id)
+            ->whereNull('variant_id')
+            ->where('source', 'like', 'gallery-%')
+            ->whereNotIn('source', $keepGallerySources ?: [''])
+            ->delete();
+
+        ProductImageEmbedding::query()
+            ->where('product_id', $product->id)
+            ->where('source', 'variant')
+            ->whereNotIn('variant_id', $variantIds ?: [0])
+            ->delete();
+    }
+
+    private function embedOne(int $productId, ?int $variantId, string $source, ?string $imageUrl): void
+    {
         if (!$imageUrl) {
             return;
         }
@@ -59,15 +95,17 @@ class ImageSearchService
         try {
             $result = $this->callEndpoint('/image-search', ['image_path' => $imageUrl]);
         } catch (\RuntimeException $e) {
-            Log::warning('[ImageSearchService] Skipped embedding for product.', [
-                'product_id' => $product->id,
+            Log::warning('[ImageSearchService] Skipped embedding for product image.', [
+                'product_id' => $productId,
+                'variant_id' => $variantId,
+                'source' => $source,
                 'message' => $e->getMessage(),
             ]);
             return;
         }
 
         ProductImageEmbedding::updateOrCreate(
-            ['product_id' => $product->id, 'variant_id' => null, 'source' => 'primary'],
+            ['product_id' => $productId, 'variant_id' => $variantId, 'source' => $source],
             ['embedding' => $result['embedding'], 'dims' => $result['dims']],
         );
     }
