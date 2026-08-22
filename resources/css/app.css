@@ -3735,21 +3735,35 @@ details[open] .filters-chevron {
     cursor: grabbing;
 }
 
-/* ── Variant rows (drag-sortable) ──────────────────────────────────────── */
+/* ── Variant rows (drag-sortable, 3-column layout) ─────────────────────── */
 .vrow-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .vrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 76px minmax(240px, 340px) 1fr auto;
+    gap: 16px;
+    align-items: start;
+    padding: 14px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--elevated);
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.vrow:hover {
+    border-color: var(--border2);
+}
+
+/* ── Column 1: handle, number, thumbnail ─────────────────────────────── */
+.vrow-lead {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
 .vrow-handle {
@@ -3757,62 +3771,158 @@ details[open] .filters-chevron {
     align-items: center;
     justify-content: center;
     width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+    height: 20px;
     color: var(--t3);
     cursor: grab;
+    transition: color .15s;
 }
 
+.vrow-handle:hover { color: var(--t1); }
+
+.vrow-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--t3);
+    letter-spacing: .02em;
+}
+
+.vrow-thumb-wrap { position: relative; }
+
 .vrow-thumb {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
     object-fit: cover;
-    flex-shrink: 0;
     border: 1px solid var(--border);
     background: var(--surface);
+    display: block;
 }
 
 .vrow-thumb-placeholder {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    border: 1px dashed var(--border2);
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    border: 1.5px dashed var(--border2);
     background: var(--surface);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--t3);
     font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
 }
 
-.vrow-fields {
+.vrow-thumb-placeholder:hover {
+    border-color: var(--cyan, #22d3ee);
+    color: var(--cyan, #22d3ee);
+}
+
+.vrow-img-remove-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--danger, #e11d48);
+    color: #fff;
+    border: 2px solid var(--elevated);
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
-    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.vrow-fields .field-control {
-    min-width: 100px;
+/* ── Column 2: variation pairs, stacked vertically ───────────────────── */
+.vrow-pairs-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
 }
 
-.vrow-num {
-    font-size: 11px;
+.vrow-pairs-label {
+    font-size: 10px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
     color: var(--t3);
-    width: 20px;
-    flex-shrink: 0;
+    margin-bottom: 2px;
 }
 
-.vrow.sortable-ghost { opacity: 0.4; }
-.vrow.sortable-drag { cursor: grabbing; }
+.v-pairs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
 
-@media (max-width: 900px) {
-    .vrow { flex-wrap: wrap; }
-    .vrow-fields { width: 100%; }
+.variant-pair-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+}
+
+.variant-pair-row .field-control {
+    max-width: none;
+    width: 100%;
+}
+
+.vrow-add-pair-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    margin-top: 2px;
+}
+
+/* ── Column 3: meta fields, compact 2-up grid ────────────────────────── */
+.vrow-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    min-width: 0;
+}
+
+.vrow-meta .field-control { width: 100%; }
+
+.vrow-meta-name {
+    grid-column: 1 / -1;
+}
+
+/* ── Column 4: remove-variant button ─────────────────────────────────── */
+.vrow-remove {
+    align-self: start;
+    margin-top: 2px;
+}
+
+.vrow.sortable-ghost { opacity: .4; }
+.vrow.sortable-drag { cursor: grabbing; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+
+@media (max-width: 1100px) {
+    .vrow {
+        grid-template-columns: 76px 1fr;
+        grid-template-areas:
+            "lead   meta"
+            "pairs  pairs";
+    }
+    .vrow-lead   { grid-area: lead; }
+    .vrow-meta   { grid-area: meta; grid-template-columns: 1fr 1fr; }
+    .vrow-pairs-col { grid-area: pairs; margin-top: 10px; }
+    .vrow-remove { grid-area: meta; justify-self: end; }
+}
+
+@media (max-width: 560px) {
+    .vrow-meta { grid-template-columns: 1fr; }
+    .variant-pair-row { grid-template-columns: 1fr; }
 }
 
 /* ── Products list page – responsive ───────────────────────────────────── */
