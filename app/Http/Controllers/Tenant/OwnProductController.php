@@ -167,6 +167,18 @@ class OwnProductController extends Controller
             ]);
         }
 
+        // Gallery: persist drag-and-drop order
+        if ($request->filled('gallery_order')) {
+            $orderedIds = array_filter(explode(',', (string) $request->input('gallery_order')));
+            if (!empty($orderedIds)) {
+                $galleryFiles = $savedProduct->files()->where('key', 'gallery')->whereIn('id', $orderedIds)->get();
+                foreach ($orderedIds as $index => $fileId) {
+                    $file = $galleryFiles->firstWhere('id', (int) $fileId);
+                    $file?->update(['sort_order' => $index + 1]);
+                }
+            }
+        }
+
         session()->flash('status', $product ? 'Product updated successfully.' : 'Product created successfully.');
         return redirect()->route('tenant.own-products.edit', $savedProduct);
     }

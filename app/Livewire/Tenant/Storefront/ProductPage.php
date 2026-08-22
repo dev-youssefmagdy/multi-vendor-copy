@@ -122,8 +122,8 @@ class ProductPage extends Component
             ]);
         }
 
-        // Active variants, in-stock first
-        $variants = $product->variants->where('active', true)->sortByDesc('stock')->values();
+        // Active variants, in the order set by the vendor's drag-and-drop arrangement
+        $variants = $product->variants->where('active', true)->values();
 
         // Resolve the active variant for display
         $activeVariant = $this->selectedVariantId

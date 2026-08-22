@@ -128,7 +128,7 @@ class Product extends Model
 
     public function variants(): HasMany
     {
-        return $this->hasMany(ProductVariant::class)->orderBy('id');
+        return $this->hasMany(ProductVariant::class)->orderBy('position')->orderBy('id');
     }
 
     public function files(): MorphMany

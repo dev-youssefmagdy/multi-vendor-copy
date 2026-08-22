@@ -101,6 +101,14 @@ class ProductController extends Controller
             'remove_gallery_ids' => $request->input('remove_gallery_ids', []),
         ], $product);
 
+        if ($request->filled('gallery_order')) {
+            $orderedIds = array_filter(explode(',', (string) $request->input('gallery_order')));
+            if (!empty($orderedIds)) {
+                app(\App\Services\ProductMediaService::class)
+                    ->reorderGalleryFiles($savedProduct, array_map('intval', $orderedIds));
+            }
+        }
+
         $savedProduct->badges()->sync(array_filter((array) $request->input('badge_ids', []), fn($id) => filled($id)));
         $tenantSyncService->syncAllTenants(['badges']);
 
