@@ -3329,16 +3329,19 @@ details[open] .filters-chevron {
 }
 
 .tb tr.row-new-customer td {
-    background: #fffde7;
+    background: rgba(250, 204, 21, 0.08);
 }
 
 .customer-new-badge {
     margin-inline-start: 8px;
+    background: rgba(250, 204, 21, 0.16);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.3);
 }
 
 @media print {
     .tb tr.row-new-customer td {
-        background: #ffffff !important;
+        background: transparent !important;
     }
 
     .customer-new-badge {
