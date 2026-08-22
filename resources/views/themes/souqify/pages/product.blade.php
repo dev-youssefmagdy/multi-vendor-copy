@@ -577,63 +577,86 @@
 
     <!-- =========== DESCRIPTION + WARRANTY =========== -->
     <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <!-- Tabs -->
-        <div class="flex items-center gap-6 border-b border-neutral-300 mb-6">
-            <button class="tab-btn pb-3 text-sm sm:text-base font-medium border-b-2 border-blue-700 text-blue-700"
-                data-tab="desc">{{ __('Description') }}</button>
-            <button
-                class="tab-btn pb-3 text-sm sm:text-base font-medium border-b-2 border-transparent text-neutral-600 hover:text-blue-700 transition"
-                data-tab="specs">{{ __('Technical Specs') }}</button>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
-            <!-- Description card -->
-            <div class="lg:col-span-3 bg-white rounded-[40px] p-6 sm:p-8">
-                <div id="tab-desc" class="tab-content">
-                    <h2 class="text-xl sm:text-2xl font-medium text-zinc-900 mb-3">
-                        {{ $product->translationValue('name') ?? $product->slug }}
-                    </h2>
-                    @if($product->translationValue('description'))
-                    <div class="text-neutral-700 leading-7">
-                        {!! $product->translationValue('description') !!}
+            <!-- Description + Specs accordion -->
+            <div class="lg:col-span-3 flex flex-col gap-4">
+                <!-- Description row -->
+                <div class="sq-accordion bg-white rounded-[40px] p-6 sm:p-8">
+                    <button type="button" class="sq-accordion-toggle w-full flex items-center justify-between gap-3 text-left" data-target="acc-desc">
+                        <h2 class="text-xl sm:text-2xl font-medium text-zinc-900">{{ __('Description') }}</h2>
+                        <svg class="sq-accordion-icon w-5 h-5 shrink-0 text-neutral-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="acc-desc" class="sq-accordion-content">
+                        <div class="sq-accordion-inner pt-4">
+                            <h3 class="text-base font-medium text-zinc-900 mb-3">
+                                {{ $product->translationValue('name') ?? $product->slug }}
+                            </h3>
+                            @if($product->translationValue('description'))
+                            <div class="text-neutral-700 leading-7">
+                                {!! $product->translationValue('description') !!}
+                            </div>
+                            @else
+                            <p class="text-neutral-500">{{ __('No description available.') }}</p>
+                            @endif
+                        </div>
                     </div>
-                    @else
-                    <p class="text-neutral-500">{{ __('No description available.') }}</p>
-                    @endif
                 </div>
-                <div id="tab-specs" class="tab-content hidden">
-                    <h2 class="text-xl sm:text-2xl font-medium text-zinc-900 mb-4">{{ __('Technical Specifications') }}
-                    </h2>
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-                        @if($central?->sku)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('SKU') }}</dt>
-                            <dd class="font-medium">{{ $central->sku }}</dd>
+
+                <!-- Technical specs row -->
+                <div class="sq-accordion bg-white rounded-[40px] p-6 sm:p-8">
+                    <button type="button" class="sq-accordion-toggle w-full flex items-center justify-between gap-3 text-left" data-target="acc-specs">
+                        <h2 class="text-xl sm:text-2xl font-medium text-zinc-900">{{ __('Technical Specs') }}</h2>
+                        <svg class="sq-accordion-icon w-5 h-5 shrink-0 text-neutral-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="acc-specs" class="sq-accordion-content" style="max-height:0">
+                        <div class="sq-accordion-inner pt-4">
+                            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                                @if($central?->sku)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('SKU') }}</dt>
+                                    <dd class="font-medium">{{ $central->sku }}</dd>
+                                </div>
+                                @endif
+                                @if($weightDisplay)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('Weight') }}</dt>
+                                    <dd class="font-medium">{{ $weightDisplay }}</dd>
+                                </div>
+                                @endif
+                                @foreach($variants as $v)
+                                @if($v->display_label)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('Variant') }}</dt>
+                                    <dd class="font-medium">{{ $v->display_label }}</dd>
+                                </div>
+                                @endif
+                                @endforeach
+                                @if(
+                                !$central?->sku && !$weightDisplay &&
+                                $variants->every(fn($v) => blank($v->display_label))
+                                )
+                                <div class="col-span-2 text-neutral-500">{{ __('No specifications available.') }}</div>
+                                @endif
+                            </dl>
                         </div>
-                        @endif
-                        @if($weightDisplay)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('Weight') }}</dt>
-                            <dd class="font-medium">{{ $weightDisplay }}</dd>
-                        </div>
-                        @endif
-                        @foreach($variants as $v)
-                        @if($v->display_label)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('Variant') }}</dt>
-                            <dd class="font-medium">{{ $v->display_label }}</dd>
-                        </div>
-                        @endif
-                        @endforeach
-                        @if(
-                        !$central?->sku && !$weightDisplay &&
-                        $variants->every(fn($v) => blank($v->display_label))
-                        )
-                        <div class="col-span-2 text-neutral-500">{{ __('No specifications available.') }}</div>
-                        @endif
-                    </dl>
+                    </div>
                 </div>
             </div>
+
+            <style>
+                .sq-accordion-content {
+                    overflow: hidden;
+                    max-height: 0;
+                    transition: max-height 0.3s ease;
+                }
+                .sq-accordion.is-open .sq-accordion-icon {
+                    transform: rotate(180deg);
+                }
+            </style>
 
             <!-- Warranty + delivery card -->
             <aside class="bg-amber-400 rounded-[40px] p-6 flex flex-col gap-5">
@@ -1382,17 +1405,27 @@
     // ── Souqify Product Gallery ──────────────────────────────────
 
 
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('border-blue-700', 'text-blue-700');
-                b.classList.add('border-transparent', 'text-neutral-600');
-            });
-            btn.classList.remove('border-transparent', 'text-neutral-600');
-            btn.classList.add('border-blue-700', 'text-blue-700');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+    // Description / Technical Specs accordion
+    document.querySelectorAll('.sq-accordion').forEach(acc => {
+        const toggle = acc.querySelector('.sq-accordion-toggle');
+        const content = acc.querySelector('.sq-accordion-content');
+        if (!toggle || !content) return;
+
+        if (acc.classList.contains('is-open')) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+        } else {
+            content.style.maxHeight = '0px';
+        }
+
+        toggle.addEventListener('click', () => {
+            const isOpen = acc.classList.contains('is-open');
+            if (isOpen) {
+                content.style.maxHeight = '0px';
+                acc.classList.remove('is-open');
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                acc.classList.add('is-open');
+            }
         });
     });
 
