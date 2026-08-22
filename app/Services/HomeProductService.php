@@ -81,7 +81,7 @@ class HomeProductService
                     ->where('product_badges.text', $badgeText)
                     ->where('product_badges.active', true);
             })
-            ->orderBy('product_badge_product.created_at')
+            ->orderBy('product_badge_product.sort_order')
             ->select('products.*')
             ->limit($limit)
             ->get();

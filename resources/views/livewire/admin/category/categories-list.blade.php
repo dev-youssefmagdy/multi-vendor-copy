@@ -7,6 +7,7 @@
         </div>
         <div class="page-actions">
             @if ($canManageCategories)
+                <a href="{{ route('admin.categories.sort') }}" class="btn btn-secondary">Sort Categories</a>
                 <a href="{{ route('admin.categories.create') }}"  class="btn btn-primary">Add Category</a>
             @endif
         </div>

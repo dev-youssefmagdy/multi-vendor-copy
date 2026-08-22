@@ -13,6 +13,7 @@
             </p>
         </div>
         <div class="page-actions">
+            <a href="{{ route('admin.badges.sort', $badge) }}" class="btn btn-secondary">Sort Order</a>
             <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Back to Products</a>
         </div>
     </div>

@@ -586,6 +586,10 @@ class TenantCatalogSyncService
                 ]
             );
 
+            if ($tenantCategory->wasRecentlyCreated) {
+                $tenantCategory->update(['order_number' => $category->order_number]);
+            }
+
             $tenantCategory->syncTranslations($this->mergeTranslatedFields(
                 $tenantCategory,
                 $category->translationsByLocale(['name', 'slug', 'description']),
@@ -666,6 +670,7 @@ class TenantCatalogSyncService
                 'central_visible' => $product->isVisibleToTenants(),
                 'featured' => $isNewProduct ? false : $tenantProduct->featured,
                 'is_tenant_owned' => $isTenantOwned,
+                'order_number' => $isNewProduct ? $product->order_number : $tenantProduct->order_number,
             ]);
             $tenantProduct->save();
 
@@ -966,7 +971,7 @@ class TenantCatalogSyncService
     protected function syncBadges(): int
     {
         $centralBadges = tenancy()->central(
-            fn() => CentralProductBadge::query()->with('products:id')->get()
+            fn() => CentralProductBadge::query()->with('products')->get()
         );
 
         $tenantProductIds = Product::withoutGlobalScope("centralVisible")
@@ -979,14 +984,22 @@ class TenantCatalogSyncService
                 ['active' => $centralBadge->active]
             );
 
-            $tenantBadge->products()->sync(
-                collect($centralBadge->products)
-                    ->pluck('id')
-                    ->map(fn($centralProductId) => $tenantProductIds[$centralProductId] ?? null)
-                    ->filter()
-                    ->values()
-                    ->all()
-            );
+            // Preserve the tenant's own manual reordering (set via SortBadgeProducts)
+            // across re-syncs — only newly-attached products get a fresh order,
+            // appended after whatever the tenant already arranged.
+            $existingOrder = $tenantBadge->products()->pluck('product_badge_product.sort_order', 'products.id');
+            $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
+
+            $syncData = [];
+            foreach ($centralBadge->products as $centralProduct) {
+                $tenantProductId = $tenantProductIds[$centralProduct->id] ?? null;
+                if (!$tenantProductId) {
+                    continue;
+                }
+                $syncData[$tenantProductId] = ['sort_order' => $existingOrder[$tenantProductId] ?? $nextOrder++];
+            }
+
+            $tenantBadge->products()->sync($syncData);
         }
 
         ProductBadge::query()

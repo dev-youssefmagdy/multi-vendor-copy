@@ -724,6 +724,7 @@ class StorefrontRepository
     public function latestProducts(int $limit = 20): Collection
     {
         return $this->productBaseQuery()
+            ->orderBy('order_number')
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -733,9 +734,14 @@ class StorefrontRepository
     public function productsByCategory(Category $category, int $limit = 20): Collection
     {
         return $this->productBaseQuery()
-            ->whereHas('categories', fn($q) => $q->where('categories.id', $category->id))
+            ->join('category_product', function ($join) use ($category) {
+                $join->on('category_product.product_id', '=', 'products.id')
+                    ->where('category_product.category_id', $category->id);
+            })
+            ->orderBy('category_product.sort_order', 'asc')
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
+            ->orderByDesc('products.created_at')
+            ->select('products.*')
             ->limit($limit)
             ->get();
     }

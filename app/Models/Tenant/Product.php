@@ -60,6 +60,7 @@ class Product extends Model
         'ai_price_data',
         'fixed_shipping_costs',
         'profit',
+        'order_number',
     ];
 
     protected $appends = ['primary_image_url', 'average_rating'];

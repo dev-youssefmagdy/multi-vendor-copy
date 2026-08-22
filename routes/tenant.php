@@ -23,6 +23,8 @@ use App\Livewire\Tenant\Category\AddEditCategory;
 use App\Livewire\Tenant\Category\CategoriesList;
 use App\Livewire\Tenant\Category\CategoryProducts;
 use App\Livewire\Tenant\Category\SortCategories;
+use App\Livewire\Tenant\Product\SortProducts as TenantSortProducts;
+use App\Livewire\Tenant\Badge\SortBadgeProducts as TenantSortBadgeProducts;
 use App\Livewire\Tenant\Customer\CustomersList;
 use App\Http\Controllers\Tenant\CustomerCreateController;
 use App\Http\Controllers\Tenant\CustomerDetailController;
@@ -352,10 +354,9 @@ Route::middleware([
 
             Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
                 Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
+                Route::get('/sort', TenantSortProducts::class)->name('sort');
                 Route::get('/create', AddEditProduct::class)->name('create');
                 Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
-                // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
-                Route::post('/search-image', [\App\Http\Controllers\ImageSearchController::class, 'tenant'])->name('search-image');
             });
 
             Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
@@ -390,6 +391,7 @@ Route::middleware([
                 })->name('index');
                 Route::get('/{badge}', [TenantBadgeProductsController::class, 'show'])->name('show');
                 Route::get('/{badge}/search', [TenantBadgeProductsController::class, 'searchProducts'])->name('search');
+                Route::get('/{badge}/sort', TenantSortBadgeProducts::class)->name('sort');
                 Route::post('/{badge}/assign-category', [TenantBadgeProductsController::class, 'assignCategory'])->name('assign-category');
                 Route::post('/{badge}/save', [TenantBadgeProductsController::class, 'save'])->name('save');
             });

@@ -23,6 +23,6 @@ class ProductBadge extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'product_badge_product')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'product_badge_product')->withPivot('sort_order')->withTimestamps()->orderByPivot('sort_order');
     }
 }

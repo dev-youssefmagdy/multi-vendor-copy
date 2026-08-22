@@ -26,6 +26,7 @@ class Category extends Model
         'parent_id',
         'status',
         'is_featured',
+        'order_number',
     ];
 
     protected $appends = ['thumb_url'];
@@ -45,7 +46,7 @@ class Category extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_id');
+        return $this->hasMany(self::class, 'parent_id')->orderBy('order_number');
     }
 
     public function products(): BelongsToMany

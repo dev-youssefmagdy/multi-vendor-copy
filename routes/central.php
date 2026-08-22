@@ -14,6 +14,7 @@ use App\Livewire\Admin\Cache\TenantsCachePage;
 use App\Livewire\Admin\Category\AddEditCategory;
 use App\Livewire\Admin\Category\CategoriesList;
 use App\Livewire\Admin\Category\CategoryProducts;
+use App\Livewire\Admin\Category\SortCategories;
 use App\Livewire\Admin\Domain\DnsRecordsList;
 use App\Livewire\Admin\Domain\DomainRequestsList;
 use App\Livewire\Admin\Faq\AddEditFaq;
@@ -39,6 +40,8 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Livewire\Admin\Product\AddEditProduct;
 use App\Livewire\Admin\Product\ProductEditRequestsList;
 use App\Livewire\Admin\Product\ProductsList;
+use App\Livewire\Admin\Product\SortProducts;
+use App\Livewire\Admin\Product\SortBadgeProducts;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Livewire\Admin\Setting\AddEditCurrency;
 use App\Livewire\Admin\Setting\AddEditEmailTemplate;
@@ -215,6 +218,7 @@ Route::group([
 
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', ProductsList::class)->middleware('admin.permission:catalog.products.view,catalog.products.manage')->name('index');
+        Route::get('/sort', SortProducts::class)->middleware('admin.permission:catalog.products.manage')->name('sort');
         Route::get('/create', [ProductController::class, 'create'])->middleware('admin.permission:catalog.products.manage')->name('create');
         Route::post('/create', [ProductController::class, 'store'])->middleware('admin.permission:catalog.products.manage')->name('store');
         Route::post('/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate');
@@ -222,13 +226,12 @@ Route::group([
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
-        // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
-        Route::post('/search-image', [\App\Http\Controllers\ImageSearchController::class, 'admin'])->middleware('admin.permission:catalog.products.view,catalog.products.manage')->name('search-image');
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {
         Route::get('/', CategoriesList::class)->middleware('admin.permission:catalog.categories.view,catalog.categories.manage')->name('index');
         Route::get('/create', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('create');
+        Route::get('/sort', SortCategories::class)->middleware('admin.permission:catalog.categories.manage')->name('sort');
         Route::get('/{category}/edit', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('edit');
         Route::get('/{category}/products', CategoryProducts::class)->middleware('admin.permission:catalog.categories.manage')->name('products');
     });
@@ -246,6 +249,7 @@ Route::group([
         Route::get('/featured', [BadgeProductsController::class, 'show'])->name('featured');
         Route::get('/recommended', [BadgeProductsController::class, 'show'])->name('recommended');
         Route::get('/{badge}/search', [BadgeProductsController::class, 'searchProducts'])->name('search');
+        Route::get('/{badge}/sort', SortBadgeProducts::class)->name('sort');
         Route::post('/{badge}/assign-category', [BadgeProductsController::class, 'assignCategory'])->name('assign-category');
         Route::post('/{badge}/save', [BadgeProductsController::class, 'save'])->name('save');
     });

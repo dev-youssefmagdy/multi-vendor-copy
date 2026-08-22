@@ -82,7 +82,14 @@ class BadgeProductsController extends Controller
     {
         $ids = array_filter(array_map('intval', $request->input('product_ids', [])));
 
-        $badge->products()->sync($ids);
+        $existingOrder = $badge->products()->pluck('product_badge_product.sort_order', 'products.id');
+        $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
+
+        $syncData = [];
+        foreach ($ids as $id) {
+            $syncData[$id] = ['sort_order' => $existingOrder[$id] ?? $nextOrder++];
+        }
+        $badge->products()->sync($syncData);
 
         return back()->with('status', 'Badge assignment saved — ' . count($ids) . ' products assigned.');
     }

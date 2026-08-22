@@ -7,14 +7,8 @@
                 coverage.</p>
         </div>
         <div class="page-actions" style="flex-shrink:0; display:flex; gap:8px;">
-            <button type="button" class="btn" data-image-search-trigger="admin-image-search-modal">
-                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
-                    <circle cx="12" cy="13" r="3.2" />
-                </svg>
-                <span>Image Search</span>
-            </button>
             @if ($canManageProducts)
+                <a href="{{ route('admin.products.sort') }}" class="btn btn-secondary" style="width:100%;justify-content:center">Sort Products</a>
                 <a href="{{ route('admin.products.create') }}" class="btn btn-primary"
                     style="width:100%;justify-content:center">
                     <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -26,37 +20,6 @@
             @endif
         </div>
     </div>
-
-    {{-- Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.). --}}
-    <x-image-search-modal id="admin-image-search-modal" :action="route('admin.products.search-image')" onResults="__adminImageSearchResults" />
-    <div id="admin-image-search-results" class="card section-gap" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <h2 class="D" style="font-size:16px">Products similar to your image</h2>
-            <button type="button" class="btn" onclick="document.getElementById('admin-image-search-results').style.display='none'">Clear</button>
-        </div>
-        <div id="admin-image-search-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px"></div>
-    </div>
-    <script>
-        function __adminImageSearchResults(json) {
-            var products = json.products || [];
-            var grid = document.getElementById('admin-image-search-grid');
-            var panel = document.getElementById('admin-image-search-results');
-            grid.innerHTML = '';
-            if (!products.length) {
-                grid.innerHTML = '<p>No similar products found.</p>';
-            }
-            products.forEach(function (p) {
-                var a = document.createElement('a');
-                a.href = '{{ url('admin/products') }}/' + p.id + '/edit';
-                a.style.cssText = 'display:block;border:1px solid #eee;border-radius:8px;overflow:hidden;text-decoration:none;color:inherit';
-                a.innerHTML = '<img src="' + (p.image || '') + '" style="width:100%;height:120px;object-fit:cover;background:#f5f5f5" onerror="this.style.display=\'none\'">' +
-                    '<div style="padding:8px;font-size:12px"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (p.name || '') + '</div><div style="color:#888">' + (p.sku || '') + '</div></div>';
-                grid.appendChild(a);
-            });
-            panel.style.display = 'block';
-            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    </script>
 
     @if (session('status'))
         <div class="card section-gap notice-success">{{ session('status') }}</div>

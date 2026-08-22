@@ -156,7 +156,7 @@ class TenantPanelRepository
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
                 $this->applyProductStockFilter($query, $filters['stock']);
             })
-            ->latest('updated_at')
+            ->orderBy('order_number')
             ->paginate($perPage);
     }
 

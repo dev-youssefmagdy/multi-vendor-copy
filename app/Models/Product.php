@@ -42,6 +42,7 @@ class Product extends Model
         'fixed_shipping_costs',
         'factory',
         'published_at',
+        'order_number',
     ];
 
     protected $appends = [
