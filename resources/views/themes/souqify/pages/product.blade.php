@@ -1415,9 +1415,12 @@
     }
 </script>
 
+<?php $currencyData = data_get($currentCurrency ?? null, 'code', 'USD'); ?>
 <script>
     // ── Variant selection, qty, and add-to-cart – no Livewire re-render ────────
     const SQ_VARIANTS = @json($variantData ?? []);
+    const CURRENCY_DATA = @json($currencyData);
+    const SELL_PRICE_DATA = "{{ number_format($sellPrice * $rate, 2, '.', '') }}";
 
     // ── Tracking: ViewContent ─────────────────────────────────────────────
     (function () {
@@ -1426,8 +1429,8 @@
             content_ids:  [@json($activeVariant?->id ?? $product->id)],
             content_type: 'product',
             content_name: @json($product->translationValue('name') ?? $product->slug),
-            value:        parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
-            currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+            value:        parseFloat(SELL_PRICE_DATA),
+            currency:     CURRENCY_DATA,
         });
     })();
     const SQ_CART_ADD_URL = @json($cartAddUrl);
@@ -1504,8 +1507,8 @@
                     content_ids:  [sqSelectedVariantId || @json($product->id)],
                     content_type: 'product',
                     content_name: @json($product->translationValue('name') ?? $product->slug),
-                    value:        variant ? parseFloat(variant.price || 0) : parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
-                    currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                    value:        variant ? parseFloat(variant.price || 0) : parseFloat(SELL_PRICE_DATA),
+                    currency:     CURRENCY_DATA,
                     num_items:    sqQty,
                 });
             }

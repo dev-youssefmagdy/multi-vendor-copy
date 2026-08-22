@@ -1406,9 +1406,12 @@ We are committed to maintaining transparency and reducing permission requests wi
             shareUrl: @json(route('tenant.storefront.product', $product->slug)),
         };
     </script>
+    <?php $currencyData = data_get($currentCurrency ?? null, 'code', 'USD'); ?>
     <script>
         // ── Variant selection – no Livewire re-render ─────────────────────────────
         const NEXO_VARIANTS = @json($variantData ?? []);
+        const CURRENCY_DATA = @json($currencyData);
+        const SELL_PRICE_DATA = "{{ number_format($sellPrice * $rate, 2, '.', '') }}";
 
         // ── Tracking: ViewContent ─────────────────────────────────────────────
         (function () {
@@ -1417,8 +1420,8 @@ We are committed to maintaining transparency and reducing permission requests wi
                 content_ids:  [@json($activeVariant?->id ?? $product->id)],
                 content_type: 'product',
                 content_name: @json($product->translationValue('name') ?? $product->slug),
-                value:        parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
-                currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                value:        parseFloat(SELL_PRICE_DATA),
+                currency:     CURRENCY_DATA,
             });
         })();
 
@@ -1497,8 +1500,8 @@ We are committed to maintaining transparency and reducing permission requests wi
                         content_ids:  [nexoSelectedVariantId || @json($product->id)],
                         content_type: 'product',
                         content_name: @json($product->translationValue('name') ?? $product->slug),
-                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(@json(number_format($sellPrice * $rate, 2, '.', ''))),
-                        currency:     @json(data_get($currentCurrency ?? null, 'code', 'USD')),
+                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(SELL_PRICE_DATA),
+                        currency:     CURRENCY_DATA,
                         num_items:    nexoQty,
                     });
                 }
