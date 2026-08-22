@@ -41,6 +41,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from openai import RateLimitError
 from pydantic import BaseModel, Field
 
 from price_finder import find_average_price
@@ -180,6 +181,9 @@ def image_search(req: ImageSearchRequest, x_service_token: Optional[str] = Heade
         raise HTTPException(status_code=422, detail=str(exc))
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+    except RateLimitError as exc:
+        logger.warning("image-search rate limited: %s", exc)
+        raise HTTPException(status_code=429, detail="The AI provider is rate-limiting requests. Please try again shortly.")
     except Exception as exc:
         logger.exception("image-search endpoint failed")
         raise HTTPException(status_code=500, detail=f"Image search failed: {exc}")

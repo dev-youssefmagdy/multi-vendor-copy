@@ -20,13 +20,17 @@ depend on this module returning a list[float] embedding.
 from __future__ import annotations
 
 import base64
+import logging
 import mimetypes
 import os
+import time
 import urllib.request
 from dataclasses import dataclass
 from typing import List, Optional
 
-from openai import OpenAI
+from openai import APIStatusError, OpenAI, RateLimitError
+
+logger = logging.getLogger(__name__)
 
 EMBEDDING_MODEL = os.getenv("OPENAI_IMAGE_EMBEDDING_MODEL", "text-embedding-3-small")
 VISION_MODEL = os.getenv("OPENAI_VISION_MODEL", "gpt-4o-mini")
@@ -71,6 +75,23 @@ def _resolve_image_url(image_path: str) -> str:
     raise ValueError(f"Image not found: {image_path}")
 
 
+def _with_retry(fn, *, attempts: int = 3):
+    """Retry an OpenAI call on rate limits / transient 5xx errors with backoff."""
+    for attempt in range(1, attempts + 1):
+        try:
+            return fn()
+        except RateLimitError:
+            if attempt == attempts:
+                raise
+            logger.warning("OpenAI rate limited (attempt %d/%d), backing off.", attempt, attempts)
+            time.sleep(2 ** attempt)
+        except APIStatusError as exc:
+            if exc.status_code < 500 or attempt == attempts:
+                raise
+            logger.warning("OpenAI transient error %s (attempt %d/%d), retrying.", exc.status_code, attempt, attempts)
+            time.sleep(2 ** attempt)
+
+
 def _describe_image(image_url: str) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
@@ -83,7 +104,7 @@ def _describe_image(image_url: str) -> str:
         "and any distinguishing visual features. Be dense and factual, no "
         "preamble, 1-2 sentences."
     )
-    resp = client.chat.completions.create(
+    resp = _with_retry(lambda: client.chat.completions.create(
         model=VISION_MODEL,
         messages=[
             {
@@ -96,7 +117,7 @@ def _describe_image(image_url: str) -> str:
         ],
         temperature=0.1,
         max_tokens=120,
-    )
+    ))
     description = (resp.choices[0].message.content or "").strip()
     if not description:
         raise RuntimeError("Could not derive a visual description from the supplied image.")
@@ -113,7 +134,7 @@ def embed_image(image_path: str) -> ImageEmbeddingResult:
     description = _describe_image(image_url)
 
     client = OpenAI(api_key=api_key)
-    resp = client.embeddings.create(model=EMBEDDING_MODEL, input=description)
+    resp = _with_retry(lambda: client.embeddings.create(model=EMBEDDING_MODEL, input=description))
     vector = resp.data[0].embedding
 
     return ImageEmbeddingResult(embedding=vector, dims=len(vector), description=description)

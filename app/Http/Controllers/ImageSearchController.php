@@ -32,7 +32,13 @@ class ImageSearchController extends Controller
     {
         $request->validate($this->rules());
 
-        $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        $routeName = $request->routeIs('tenant.path.*') ? 'tenant.path.storefront.search' : 'tenant.storefront.search';
+
+        try {
+            $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        } catch (\RuntimeException $e) {
+            return redirect()->route($routeName, ['mode' => 'image'])->withErrors(['image' => $e->getMessage()]);
+        }
 
         $centralIds = \App\Models\Tenant\Product::query()
             ->where('active', true)
@@ -46,8 +52,6 @@ class ImageSearchController extends Controller
 
         session(['image_search_product_ids' => $rankedCentralIds]);
 
-        $routeName = $request->routeIs('tenant.path.*') ? 'tenant.path.storefront.search' : 'tenant.storefront.search';
-
         return redirect()->route($routeName, ['mode' => 'image']);
     }
 
@@ -58,7 +62,11 @@ class ImageSearchController extends Controller
     {
         $request->validate($this->rules());
 
-        $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        try {
+            $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         $candidateIds = Product::query()->pluck('id')->all();
         $rankedIds = $this->imageSearchService->search($embedding, $candidateIds, 40);
@@ -74,7 +82,11 @@ class ImageSearchController extends Controller
     {
         $request->validate($this->rules());
 
-        $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        try {
+            $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         $candidateIds = Product::query()
             ->where('status', \App\Enums\ProductStatus::Published->value)
