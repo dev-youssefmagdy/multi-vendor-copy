@@ -446,7 +446,6 @@
                     :threshold="$shippingThreshold"
                     :weight="$shippingProgressWeight"
                     :item-weight="$weightGrams" />
-                @endif
                 <!-- Shipping countries -->
                 @if($shippingCountries->isNotEmpty())
                 <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
