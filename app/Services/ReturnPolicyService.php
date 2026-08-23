@@ -92,6 +92,59 @@ class ReturnPolicyService
         return $isCentralProduct ? $this->getAdminPolicy() : $this->getTenantPolicy($tenantId);
     }
 
+    /**
+     * Resolve the effective return policy for a specific product, layering a tenant's own
+     * per-product override (if enabled) on top of the store/admin policy resolved by
+     * resolvePolicy(). Central-catalog products stay fully admin-controlled — no per-product
+     * override is possible for those, since the tenant doesn't own the product record.
+     *
+     * @return array{window_days:int, non_returnable_ids:int[], fee:float, conditions:string, video_required_reasons:array, is_returnable:bool, video_required:bool}
+     */
+    public function resolveProductPolicy(string $tenantId, ?int $productId = null): array
+    {
+        $basePolicy = $this->resolvePolicy($tenantId, $productId);
+
+        if (!$productId) {
+            return $this->mergeDefaults($basePolicy);
+        }
+
+        $tenant = Tenant::find($tenantId);
+
+        if (!$tenant) {
+            return $this->mergeDefaults($basePolicy);
+        }
+
+        tenancy()->initialize($tenant);
+
+        $product = TenantProduct::withoutGlobalScopes()->find($productId);
+
+        $isOwnProduct = $product && $product->central_product_id === null;
+
+        if (!$isOwnProduct || !$product->return_policy_override) {
+            return $this->mergeDefaults($basePolicy, [
+                'is_returnable' => !in_array($productId, $basePolicy['non_returnable_ids'], true),
+            ]);
+        }
+
+        return [
+            'window_days' => $product->return_window_days ?? $basePolicy['window_days'],
+            'non_returnable_ids' => $basePolicy['non_returnable_ids'],
+            'fee' => $product->return_fee !== null ? (float) $product->return_fee : $basePolicy['fee'],
+            'conditions' => $product->return_conditions ?: $basePolicy['conditions'],
+            'video_required_reasons' => $basePolicy['video_required_reasons'],
+            'is_returnable' => (bool) $product->is_returnable,
+            'video_required' => (bool) $product->return_video_required,
+        ];
+    }
+
+    private function mergeDefaults(array $basePolicy, array $extras = []): array
+    {
+        return array_merge($basePolicy, [
+            'is_returnable' => $extras['is_returnable'] ?? true,
+            'video_required' => $extras['video_required'] ?? false,
+        ]);
+    }
+
     private function buildPolicy(\Closure $read): array
     {
         return [

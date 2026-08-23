@@ -469,6 +469,33 @@
                 </div>
                 @endif
 
+                {{-- Return & refund policy --}}
+                @if(isset($returnPolicy))
+                <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                        <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
+                        </svg>
+                        <span>{{ __('Return & Refund Policy') }}</span>
+                    </div>
+                    @if(!$returnPolicy['is_returnable'])
+                    <p class="text-sm text-red-600">{{ __('This product is not eligible for returns.') }}</p>
+                    @else
+                    <p class="text-sm text-neutral-600">
+                        {{ __('Returns accepted within :days days of delivery.', ['days' => $returnPolicy['window_days']]) }}
+                        @if(($returnPolicy['fee'] ?? 0) > 0)
+                            {{ __('A return fee of :fee applies.', ['fee' => number_format($returnPolicy['fee'], 2)]) }}
+                        @else
+                            {{ __('Free returns.') }}
+                        @endif
+                    </p>
+                    @if(!empty($returnPolicy['conditions']))
+                    <p class="text-xs text-neutral-500">{{ $returnPolicy['conditions'] }}</p>
+                    @endif
+                    @endif
+                </div>
+                @endif
+
                 <!-- features badges -->
                 <!-- <div class="grid grid-cols-4 gap-3 items-center">
                     <div

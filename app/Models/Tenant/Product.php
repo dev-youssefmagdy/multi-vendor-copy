@@ -61,6 +61,12 @@ class Product extends Model
         'fixed_shipping_costs',
         'profit',
         'order_number',
+        'return_policy_override',
+        'is_returnable',
+        'return_window_days',
+        'return_fee',
+        'return_video_required',
+        'return_conditions',
     ];
 
     protected $appends = ['primary_image_url', 'average_rating'];
@@ -87,6 +93,11 @@ class Product extends Model
             'ai_price_data' => 'array',
             'fixed_shipping_costs' => 'array',
             'profit' => 'array',
+            'return_policy_override' => 'boolean',
+            'is_returnable' => 'boolean',
+            'return_window_days' => 'integer',
+            'return_fee' => 'decimal:2',
+            'return_video_required' => 'boolean',
         ];
     }
 

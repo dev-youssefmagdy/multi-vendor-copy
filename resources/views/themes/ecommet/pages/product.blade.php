@@ -334,6 +334,33 @@
                     </div>
                 </div>
                 @endif
+
+                {{-- Return & refund policy --}}
+                @if(isset($returnPolicy))
+                <div class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5 flex flex-col gap-2 shadow-sm">
+                    <div class="flex items-center gap-2 text-[13px] font-bold text-[#222]">
+                        <svg class="w-4 h-4 text-[#d9a036] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
+                        </svg>
+                        <span>{{ __('Return & Refund Policy') }}</span>
+                    </div>
+                    @if(!$returnPolicy['is_returnable'])
+                    <p class="text-sm text-red-600">{{ __('This product is not eligible for returns.') }}</p>
+                    @else
+                    <p class="text-sm text-[#555]">
+                        {{ __('Returns accepted within :days days of delivery.', ['days' => $returnPolicy['window_days']]) }}
+                        @if(($returnPolicy['fee'] ?? 0) > 0)
+                            {{ __('A return fee of :fee applies.', ['fee' => number_format($returnPolicy['fee'], 2)]) }}
+                        @else
+                            {{ __('Free returns.') }}
+                        @endif
+                    </p>
+                    @if(!empty($returnPolicy['conditions']))
+                    <p class="text-xs text-[#8a8a8a]">{{ $returnPolicy['conditions'] }}</p>
+                    @endif
+                    @endif
+                </div>
+                @endif
             </div>
         </div>
 

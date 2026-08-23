@@ -23,6 +23,12 @@ class AddEditOwnProduct extends Component
     public bool $stockUnlimited = true;
     public bool $active = true;
     public bool $featured = false;
+    public bool $returnPolicyOverride = false;
+    public bool $isReturnable = true;
+    public ?int $returnWindowDays = null;
+    public ?float $returnFee = null;
+    public bool $returnVideoRequired = false;
+    public string $returnConditions = '';
     public array $categoryIds = [];
     public array $translations = [];
     public string $activeLocale = 'en';
@@ -54,6 +60,12 @@ class AddEditOwnProduct extends Component
         $this->stockUnlimited = $product->stock === null;
         $this->active = $product->active;
         $this->featured = $product->featured;
+        $this->returnPolicyOverride = (bool) $product->return_policy_override;
+        $this->isReturnable = (bool) ($product->is_returnable ?? true);
+        $this->returnWindowDays = $product->return_window_days;
+        $this->returnFee = $product->return_fee !== null ? (float) $product->return_fee : null;
+        $this->returnVideoRequired = (bool) $product->return_video_required;
+        $this->returnConditions = $product->return_conditions ?? '';
         $this->categoryIds = $product->categories->pluck('id')->all();
         $this->translations = array_replace_recursive(
             $this->translations,
@@ -225,6 +237,14 @@ class AddEditOwnProduct extends Component
             'price' => $validated['price'],
             'active' => $validated['active'],
             'featured' => $validated['featured'],
+            'return_policy_override' => $validated['returnPolicyOverride'],
+            'is_returnable' => $validated['returnPolicyOverride'] ? $validated['isReturnable'] : true,
+            'return_window_days' => $validated['returnPolicyOverride'] && $validated['returnWindowDays'] !== null
+                ? (int) $validated['returnWindowDays'] : null,
+            'return_fee' => $validated['returnPolicyOverride'] && $validated['returnFee'] !== null
+                ? (float) $validated['returnFee'] : null,
+            'return_video_required' => $validated['returnPolicyOverride'] && $validated['returnVideoRequired'],
+            'return_conditions' => $validated['returnPolicyOverride'] ? $validated['returnConditions'] : null,
             'category_ids' => $validated['categoryIds'] ?? [],
             'translations' => $validated['translations'],
             'default_locale' => $this->activeLocale,
@@ -254,6 +274,12 @@ class AddEditOwnProduct extends Component
             'stock' => ['nullable', 'integer', 'min:0'],
             'active' => ['boolean'],
             'featured' => ['boolean'],
+            'returnPolicyOverride' => ['boolean'],
+            'isReturnable' => ['boolean'],
+            'returnWindowDays' => ['nullable', 'integer', 'min:1', 'max:365'],
+            'returnFee' => ['nullable', 'numeric', 'min:0'],
+            'returnVideoRequired' => ['boolean'],
+            'returnConditions' => ['nullable', 'string', 'max:2000'],
             'categoryIds' => ['array'],
             'categoryIds.*' => ['integer', 'exists:categories,id'],
             'imageFile' => ['nullable', 'image', 'max:5120'],

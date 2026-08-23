@@ -125,6 +125,24 @@ class TenantPanelService
             if (array_key_exists('weight_grams', $attributes)) {
                 $productFill['weight_grams'] = $attributes['weight_grams'] !== '' && $attributes['weight_grams'] !== null ? (int) $attributes['weight_grams'] : null;
             }
+            if (array_key_exists('return_policy_override', $attributes)) {
+                $productFill['return_policy_override'] = (bool) $attributes['return_policy_override'];
+            }
+            if (array_key_exists('is_returnable', $attributes)) {
+                $productFill['is_returnable'] = (bool) $attributes['is_returnable'];
+            }
+            if (array_key_exists('return_window_days', $attributes)) {
+                $productFill['return_window_days'] = $attributes['return_window_days'] !== '' && $attributes['return_window_days'] !== null ? (int) $attributes['return_window_days'] : null;
+            }
+            if (array_key_exists('return_fee', $attributes)) {
+                $productFill['return_fee'] = $attributes['return_fee'] !== '' && $attributes['return_fee'] !== null ? (float) $attributes['return_fee'] : null;
+            }
+            if (array_key_exists('return_video_required', $attributes)) {
+                $productFill['return_video_required'] = (bool) $attributes['return_video_required'];
+            }
+            if (array_key_exists('return_conditions', $attributes)) {
+                $productFill['return_conditions'] = $attributes['return_conditions'] ?: null;
+            }
 
             $product->fill($productFill);
             $product->save();

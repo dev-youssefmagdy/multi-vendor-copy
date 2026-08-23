@@ -42,7 +42,17 @@ class ReturnRequestService
             throw new RuntimeException('Order not found.');
         }
 
-        $windowDays = $this->getReturnWindowDays($data['tenant_id'], $data['product_id'] ?? null);
+        $policy = $this->returnPolicyService->resolveProductPolicy($data['tenant_id'], $data['product_id'] ?? null);
+
+        if (isset($policy['is_returnable']) && !$policy['is_returnable']) {
+            throw new RuntimeException('This product is not eligible for return.');
+        }
+
+        if (!empty($data['product_id']) && in_array($data['product_id'], $policy['non_returnable_ids'] ?? [], true)) {
+            throw new RuntimeException('This product is not eligible for return.');
+        }
+
+        $windowDays = $policy['window_days'];
 
         if (!$this->isWithinReturnWindow($data['tenant_id'], $data['order_number'], $windowDays)) {
             throw new RuntimeException("This order is outside the {$windowDays}-day return window.");
@@ -207,7 +217,7 @@ class ReturnRequestService
      */
     public function getReturnWindowDays(string $tenantId, ?int $productId = null): int
     {
-        return $this->returnPolicyService->resolvePolicy($tenantId, $productId)['window_days'];
+        return $this->returnPolicyService->resolveProductPolicy($tenantId, $productId)['window_days'];
     }
 
     public function deliveredAt(string $tenantId, string $orderNumber): ?Carbon

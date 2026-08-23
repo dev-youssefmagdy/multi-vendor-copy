@@ -13,6 +13,7 @@ use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\CountryDetectorService;
+use App\Services\ReturnPolicyService;
 use App\Services\Tenant\CustomerCountryResolver;
 use App\Services\Tenant\ShippingEstimateService;
 use Livewire\Component;
@@ -390,8 +391,11 @@ class ProductPage extends Component
         $rawDesc = strip_tags($product->translationValue('description') ?? $product->centralProduct?->translationValue('description') ?? '');
         $seoDesc = $seoCaption ? mb_substr(strip_tags($seoCaption), 0, 200) : mb_substr($rawDesc, 0, 200);
 
+        $returnPolicy = app(ReturnPolicyService::class)->resolveProductPolicy(tenant()->getTenantKey(), $product->id);
+
         $data = array_merge($shared, [
             'product' => $product,
+            'returnPolicy' => $returnPolicy,
             'seoDesc' => $seoDesc,
             'variants' => $variants,
             'activeVariant' => $activeVariant,
