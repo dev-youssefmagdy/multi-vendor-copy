@@ -204,6 +204,13 @@ Route::middleware('guest:admin')->group(function () {
     Route::get('/admin/login', LoginPage::class)->name('admin.login');
 });
 
+// Default /broadcasting/auth endpoint, used by the admin panel's Echo client
+// (see resources/js/bootstrap.js) to authorize private/presence channels
+// under the 'admin' guard.
+Route::post('/broadcasting/auth', function (Request $request) {
+    return \Illuminate\Support\Facades\Broadcast::auth($request);
+})->middleware(AdminAuth::class)->name('broadcasting.auth');
+
 Route::post('/admin/logout', function (Request $request) {
     Auth::guard('admin')->logout();
     $request->session()->invalidate();

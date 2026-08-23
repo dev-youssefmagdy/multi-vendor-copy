@@ -2,8 +2,9 @@
     $sections = \App\Helpers\TenantNavigation::visibleSections();
     $currentRoute = request()->route()?->getName();
     $childDotClasses = ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'];
-    $supportUnreadCount = tenant()
-        ? tenancy()->central(fn () => \App\Models\SupportTicket::forTenant(tenant()->getTenantKey())->where('tenant_has_unread', true)->count())
+    $currentTenantKey = tenant()?->getTenantKey();
+    $supportUnreadCount = $currentTenantKey
+        ? tenancy()->central(fn () => \App\Models\SupportTicket::forTenant($currentTenantKey)->where('tenant_has_unread', true)->count())
         : 0;
 @endphp
 

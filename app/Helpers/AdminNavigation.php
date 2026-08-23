@@ -100,6 +100,13 @@ class AdminNavigation
                     ],
                     [
                         'type' => 'link',
+                        'label' => 'Notifications',
+                        'route' => 'admin.notifications.index',
+                        'icon' => 'notifications',
+                        'permission' => 'dashboard.view',
+                    ],
+                    [
+                        'type' => 'link',
                         'label' => 'Support',
                         'route' => 'admin.support.index',
                         'icon' => 'admins',
