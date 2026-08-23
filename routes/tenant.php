@@ -122,6 +122,13 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
 
+    // Tenancy-aware broadcasting auth endpoint. The default /broadcasting/auth
+    // route (registered on the central router) never initializes tenancy, so
+    // private channels scoped to a tenant subdomain authorize here instead.
+    Route::post('/tenant/broadcasting/auth', function (Request $request) {
+        return \Illuminate\Support\Facades\Broadcast::auth($request);
+    })->middleware('auth:tenant')->name('tenant.broadcasting.auth');
+
     // ─── Storefront (public) ─────────────────────────────────────────────────
 
     Route::get('/robots.txt', RobotsController::class)->middleware('tenant.storefront.context')->name('tenant.robots');

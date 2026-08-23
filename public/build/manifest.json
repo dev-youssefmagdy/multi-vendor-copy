@@ -1,6 +1,6 @@
 {
-  "_bootstrap-xWJW1-7o.js": {
-    "file": "assets/bootstrap-xWJW1-7o.js",
+  "_bootstrap-ZuQhFzwg.js": {
+    "file": "assets/bootstrap-ZuQhFzwg.js",
     "name": "bootstrap"
   },
   "_phone-input-D2LA2zKh.js": {
@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DUdIqgDx.css",
+    "file": "assets/app-NdwdekkR.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-BcWBOJoF.css",
+    "file": "assets/ecommet-Bcf4Hc83.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -95,7 +95,7 @@
     ]
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-51zzQXa_.css",
+    "file": "assets/souqify-Bw0X1S_2.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -113,12 +113,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DxS0pkS1.js",
+    "file": "assets/app-CjmPceSe.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-xWJW1-7o.js",
+      "_bootstrap-ZuQhFzwg.js",
       "_phone-input-D2LA2zKh.js"
     ]
   },
@@ -228,12 +228,12 @@
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-BlPCaecn.js",
+    "file": "assets/website-DNMe2fZS.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-xWJW1-7o.js",
+      "_bootstrap-ZuQhFzwg.js",
       "_phone-input-D2LA2zKh.js"
     ]
   }
