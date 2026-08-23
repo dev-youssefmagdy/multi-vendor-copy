@@ -98,7 +98,22 @@ class StorefrontRepository
 
     protected function activeFlashDiscountExpression(): string
     {
-        return "COALESCE((SELECT MAX(flash_sales.discount_percentage) FROM flash_sale_product INNER JOIN flash_sales ON flash_sales.id = flash_sale_product.flash_sale_id WHERE flash_sale_product.product_id = products.id AND flash_sales.active = 1 AND (flash_sales.start_date IS NULL OR flash_sales.start_date <= CURRENT_TIMESTAMP) AND (flash_sales.end_date IS NULL OR flash_sales.end_date >= CURRENT_TIMESTAMP)), 0)";
+        // $countryId is cast to int from the resolved central country id — safe to interpolate.
+        $countryId = $this->customerCountryId();
+
+        $windowClause = "flash_sales.active = 1 AND (flash_sales.start_date IS NULL OR flash_sales.start_date <= CURRENT_TIMESTAMP) AND (flash_sales.end_date IS NULL OR flash_sales.end_date >= CURRENT_TIMESTAMP)";
+        $baseFrom = "FROM flash_sale_product INNER JOIN flash_sales ON flash_sales.id = flash_sale_product.flash_sale_id WHERE flash_sale_product.product_id = products.id AND {$windowClause}";
+
+        // Priority: country-specific discount first; fall back to the default
+        // (country_id IS NULL) discount only when no country-specific sale applies.
+        if ($countryId) {
+            return "COALESCE("
+                . "(SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id = " . (int) $countryId . "), "
+                . "(SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id IS NULL), "
+                . "0)";
+        }
+
+        return "COALESCE((SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id IS NULL), 0)";
     }
 
     protected function effectivePriceExpression(): string
@@ -1028,8 +1043,33 @@ class StorefrontRepository
 
     public function activeFlashSales(): Collection
     {
-        return $this->memo['active_flash_sales'] ??= FlashSale::query()
+        if (array_key_exists('active_flash_sales', $this->memo)) {
+            return $this->memo['active_flash_sales'];
+        }
+
+        $countryId = $this->customerCountryId();
+
+        // Priority: country-specific flash sales first, fall back to the default
+        // (country_id IS NULL) set only when no country-specific sale applies.
+        if ($countryId) {
+            $countrySpecific = FlashSale::query()
+                ->activeWindow()
+                ->where('country_id', $countryId)
+                ->with([
+                    'files',
+                    'products' => fn($query) => $query->with($this->productRelations()),
+                ])
+                ->orderByDesc('created_at')
+                ->get();
+
+            if ($countrySpecific->isNotEmpty()) {
+                return $this->memo['active_flash_sales'] = $countrySpecific;
+            }
+        }
+
+        return $this->memo['active_flash_sales'] = FlashSale::query()
             ->activeWindow()
+            ->whereNull('country_id')
             ->with([
                 'files',
                 'products' => fn($query) => $query->with($this->productRelations()),

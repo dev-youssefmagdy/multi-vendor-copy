@@ -587,21 +587,27 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateFlashSales(int $perPage = 10): LengthAwarePaginator
+    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
         return FlashSale::query()
             ->with(['product.translations.language', 'products.translations.language', 'files'])
+            ->where('country_id', $countryId)
             ->latest()
             ->paginate($perPage);
     }
 
-    public function flashSaleStats(): array
+    public function flashSaleStats(?int $countryId = null): array
     {
-        $row = DB::table('flash_sales')->selectRaw(
-            'COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount'
-        )->first();
+        $row = DB::table('flash_sales')
+            ->where('country_id', $countryId)
+            ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
+            ->first();
 
-        $productCount = DB::table('flash_sale_product')->distinct('product_id')->count('product_id');
+        $productCount = DB::table('flash_sale_product')
+            ->join('flash_sales', 'flash_sales.id', '=', 'flash_sale_product.flash_sale_id')
+            ->where('flash_sales.country_id', $countryId)
+            ->distinct('flash_sale_product.product_id')
+            ->count('flash_sale_product.product_id');
 
         return [
             'total' => (int) ($row->total ?? 0),

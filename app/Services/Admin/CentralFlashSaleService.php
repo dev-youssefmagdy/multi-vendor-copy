@@ -24,6 +24,7 @@ class CentralFlashSaleService
                 'start_date' => $attributes['start_date'] ?? null,
                 'end_date' => $attributes['end_date'] ?? null,
                 'active' => (bool) ($attributes['active'] ?? true),
+                'country_id' => $attributes['country_id'] ?? $flashSale->country_id,
             ]);
 
             $flashSale->save();

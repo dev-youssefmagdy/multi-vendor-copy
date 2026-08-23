@@ -80,6 +80,7 @@ use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
 use App\Livewire\Tenant\Store\CouponsPage;
+use App\Livewire\Tenant\Store\FlashSalesIndexPage;
 use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
 use App\Livewire\Tenant\Store\PagesList;
@@ -547,7 +548,10 @@ Route::middleware([
                 Route::get('/coupons', CouponsPage::class)
                     ->middleware('tenant.permission:store.coupons.manage')
                     ->name('coupons');
-                Route::get('/flash-sales', FlashSalesPage::class)
+                Route::get('/flash-sales', FlashSalesIndexPage::class)
+                    ->middleware('tenant.permission:store.flash-sales.manage')
+                    ->name('flash-sales.index');
+                Route::get('/flash-sales/list/{countryId?}', FlashSalesPage::class)
                     ->middleware('tenant.permission:store.flash-sales.manage')
                     ->name('flash-sales');
                 Route::get('/appearance', AppearancePage::class)

@@ -364,6 +364,7 @@ class TenantPanelService
                 'end_date' => $attributes['end_date'] ?? null,
                 'active' => (bool) ($attributes['active'] ?? true),
                 'banner_image' => $attributes['banner_image'] ?? $flashSale->banner_image,
+                'country_id' => $attributes['country_id'] ?? $flashSale->country_id,
             ]);
             $flashSale->save();
 

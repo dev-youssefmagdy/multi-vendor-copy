@@ -953,6 +953,7 @@ class TenantCatalogSyncService
                     'end_date' => $centralSale->end_date,
                     'active' => $centralSale->active,
                     'banner_image' => $centralSale->getBannerUrlAttribute(),
+                    'country_id' => $centralSale->country_id,
                 ]
             );
 

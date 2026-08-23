@@ -74,6 +74,7 @@ use App\Livewire\Admin\Shipping\DeliveryPopupPage;
 use App\Livewire\Admin\Shipping\ShippingDaysPage;
 use App\Livewire\Admin\Shipping\ShippingSettingsPage;
 use App\Livewire\Admin\Store\CouponsPage as AdminCouponsPage;
+use App\Livewire\Admin\Store\FlashSalesIndexPage as AdminFlashSalesIndexPage;
 use App\Livewire\Admin\Store\FlashSalesPage as AdminFlashSalesPage;
 use App\Livewire\Admin\Store\TenantSyncPage as AdminTenantSyncPage;
 use App\Livewire\Admin\Branch\BranchesList;
@@ -296,7 +297,8 @@ Route::group([
     });
 
     Route::prefix('store')->name('store.')->group(function () {
-        Route::get('/flash-sales', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
+        Route::get('/flash-sales', AdminFlashSalesIndexPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
+        Route::get('/flash-sales/list/{countryId?}', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.list');
         Route::get('/coupons', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
         Route::get('/tenant-sync', AdminTenantSyncPage::class)->middleware('admin.permission:store.sync.manage')->name('tenant-sync.index');
     });

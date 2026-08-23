@@ -94,7 +94,7 @@ class TenantNavigation
                         ]
                     ],
                     ['type' => 'link', 'label' => 'Coupons', 'route' => 'tenant.store.coupons', 'icon' => 'payments', 'permission' => 'store.coupons.manage'],
-                    ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
+                    ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
                     ['type' => 'link', 'label' => 'Appearance', 'route' => 'tenant.store.appearance', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
                     ['type' => 'link', 'label' => 'Banners', 'route' => 'tenant.store.banners.index', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
                     ['type' => 'link', 'label' => 'Blade Theme', 'route' => 'tenant.store.blade-theme', 'icon' => 'code', 'permission' => 'store.blade-theme.manage'],
