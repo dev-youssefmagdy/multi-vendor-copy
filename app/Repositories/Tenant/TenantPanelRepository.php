@@ -1191,7 +1191,6 @@ class TenantPanelRepository
             'top_customers' => $topCustomers,
             'top_products' => $topProducts,
             'latest_orders' => $this->latestOrders(8),
-            'payment_readiness' => $this->paymentReadiness(),
             'chart_payload' => [
                 'revenueLabels' => $series->pluck('label')->values()->all(),
                 'revenueDatasets' => [

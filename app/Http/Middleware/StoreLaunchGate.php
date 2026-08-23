@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\TenantNavigation;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,12 @@ class StoreLaunchGate
         $tenant = tenant();
 
         if (!$tenant || (bool) ($tenant->launch_ready ?? false)) {
+            return $next($request);
+        }
+
+        // Auto-pass: all 8 setup prerequisites are satisfied — treat the store
+        // as launched without requiring the wizard flag to have been set.
+        if (TenantNavigation::allSetupStepsDone()) {
             return $next($request);
         }
 

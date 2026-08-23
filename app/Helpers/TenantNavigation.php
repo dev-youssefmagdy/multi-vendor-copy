@@ -461,7 +461,31 @@ class TenantNavigation
 
     public static function storefrontLaunched(): bool
     {
-        return (bool) (tenant()?->launch_ready ?? false);
+        // Consider the storefront "launched" once it is actually live
+        // (launch_ready flag set by the registration wizard), OR once
+        // all other 8 setup steps are complete — whichever comes first.
+        if ((bool) (tenant()?->launch_ready ?? false)) {
+            return true;
+        }
+
+        return self::allSetupStepsDone();
+    }
+
+    /**
+     * Returns true when all 8 non-launch prerequisites are satisfied.
+     * Used by StoreLaunchGate and storefrontLaunched() to auto-unlock stores
+     * that completed setup inside the panel without going through the wizard.
+     */
+    public static function allSetupStepsDone(): bool
+    {
+        return self::emailVerified()
+            && self::profileComplete()
+            && self::categorySelected()
+            && self::productSynced()
+            && self::themeSelected()
+            && self::paymentGatewayIsConfigured()
+            && self::complianceComplete()
+            && self::defaultPagesReviewed();
     }
 
     /** A logo counts as configured once a text wordmark is chosen or any image is uploaded. */

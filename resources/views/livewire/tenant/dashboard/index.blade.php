@@ -5,7 +5,6 @@
     $latestOrders = $overview['latest_orders'] ?? [];
     $topCustomers = $overview['top_customers'] ?? [];
     $topProducts = $overview['top_products'] ?? [];
-    $paymentReadiness = $overview['payment_readiness'] ?? [];
 
     $formatCardValue = function (array $card): string {
       $value = (float) ($card['value'] ?? 0);
@@ -109,31 +108,6 @@
       <canvas id="radarChart"></canvas>
     </section>
   </div>
-
-  @if (!empty($paymentReadiness))
-    <section class="card section-gap fu d2">
-      <div class="panel-head">
-        <div>
-          <h3 class="D panel-title">Payment Readiness</h3>
-          <p class="panel-copy">Whether your storefront is set up to actually get paid, based on connected gateways and your target countries/currencies.</p>
-        </div>
-      </div>
-      <div class="legend-list">
-        @foreach ($paymentReadiness as $item)
-          <div class="legend-row">
-            <div class="legend-meta">
-              <span class="dot {{ $item['ready'] ? 'dot-green' : 'dot-amber' }}"></span>
-              <span class="text-t2">{{ $item['label'] }}</span>
-            </div>
-            <span class="legend-value">
-              <span class="badge {{ $item['ready'] ? 'badge-green' : 'badge-amber' }}">{{ $item['ready'] ? 'Ready' : 'Needs setup' }}</span>
-            </span>
-          </div>
-          <p class="panel-copy" style="margin:2px 0 8px;">{{ $item['caption'] }}</p>
-        @endforeach
-      </div>
-    </section>
-  @endif
 
   <div class="g-r2 section-gap">
     <section class="card table-card-shell">

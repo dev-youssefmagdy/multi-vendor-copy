@@ -22,6 +22,7 @@ class AdminUser extends Authenticatable
         'last_login_at',
         'tour_seen_at',
         'setup_dismissed_at',
+        'payment_readiness_skipped_at',
         'email_verified_at',
     ];
 
@@ -37,6 +38,7 @@ class AdminUser extends Authenticatable
             'last_login_at' => 'datetime',
             'tour_seen_at' => 'datetime',
             'setup_dismissed_at' => 'datetime',
+            'payment_readiness_skipped_at' => 'datetime',
             'email_verified_at' => 'datetime',
         ];
     }
