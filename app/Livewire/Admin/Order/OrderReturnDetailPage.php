@@ -125,6 +125,19 @@ class OrderReturnDetailPage extends AdminPage
         $this->toast('Requested more information from the customer.');
     }
 
+    public function markAwaitingMerchantReview(): void
+    {
+        $record = ReturnRequest::findOrFail($this->returnId);
+
+        /** @var AdminUser|null $admin */
+        $admin = Auth::guard('admin')->user();
+
+        app(ReturnRequestService::class)->markAwaitingMerchantReview($record, $admin?->id);
+
+        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
+        $this->toast('Request forwarded to merchant for review.');
+    }
+
     public function markItemReceived(): void
     {
         $record = ReturnRequest::findOrFail($this->returnId);

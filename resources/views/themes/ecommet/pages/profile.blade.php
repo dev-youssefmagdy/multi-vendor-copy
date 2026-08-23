@@ -131,10 +131,19 @@ $orders Collection<Order>
                                                 {{ __('Refund') }}: {{ number_format((float)$ret->refund_amount, 2) }}
                                             </div>
                                         @endif
-                                        <div class="mt-3">
+                                        @if ($ret->notes->isNotEmpty())
+                                            <div class="text-xs text-[#808080] mt-2 italic">
+                                                {{ \Illuminate\Support\Str::limit($ret->notes->first()->note, 60) }}
+                                            </div>
+                                        @endif
+                                        <div class="mt-3 flex items-center gap-4">
                                             <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
                                                 class="text-xs font-medium underline text-[#555] hover:text-[#242424]">
                                                 {{ __('View Order') }}
+                                            </a>
+                                            <a href="{{ route('tenant.storefront.return-detail', $ret->id) }}"
+                                                class="text-xs font-medium underline text-[#242424] hover:opacity-75">
+                                                {{ __('View Details') }}
                                             </a>
                                         </div>
                                     </div>

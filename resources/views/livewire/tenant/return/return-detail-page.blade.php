@@ -32,15 +32,26 @@
                 };
                 $status = $returnRecord['status'] ?? null;
                 $isOpen = $status?->isOpen() ?? false;
+                $value  = $status?->value;
             @endphp
             <span class="badge {{ $badgeClass }}" style="font-size:14px;padding:6px 14px">
                 {{ $returnRecord['status_label'] ?? '-' }}
             </span>
 
             @if($isOpen)
-                <x-btn type="button" wire:click="approve" style="background:var(--blue);color:#fff">Approve</x-btn>
-                <x-btn type="button" wire:click="$set('showRejectModal', true)" style="background:var(--red);color:#fff">Reject</x-btn>
-                <x-btn type="button" wire:click="$set('showInfoModal', true)" variant="secondary">Request More Info</x-btn>
+                @if(in_array($value, ['pending', 'awaiting_merchant_review', 'awaiting_info']))
+                    <x-btn type="button" wire:click="approve" style="background:var(--blue);color:#fff">Approve</x-btn>
+                    <x-btn type="button" wire:click="$set('showRejectModal', true)" style="background:var(--red);color:#fff">Reject</x-btn>
+                    <x-btn type="button" wire:click="$set('showInfoModal', true)" variant="secondary">Request More Info</x-btn>
+                @endif
+
+                @if($value === 'approved')
+                    <x-btn type="button" wire:click="markItemReceived" style="background:var(--blue);color:#fff">Mark Item Received</x-btn>
+                @endif
+
+                @if(in_array($value, ['approved', 'item_received']))
+                    <x-btn type="button" wire:click="$set('showRefundModal', true)" style="background:var(--green);color:#fff">Mark as Refunded</x-btn>
+                @endif
             @endif
         </div>
     </div>
@@ -146,6 +157,25 @@
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
                 <x-btn type="button" wire:click="$set('showInfoModal', false)" variant="secondary">Cancel</x-btn>
                 <x-btn type="button" wire:click="requestMoreInfo">Send Request</x-btn>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($showRefundModal)
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center">
+        <div class="card" style="width:420px;max-width:95vw;padding:24px">
+            <h3 class="D" style="font-size:16px;margin-bottom:8px">Mark as Refunded</h3>
+            <p style="color:var(--muted);margin-bottom:16px;font-size:13px">
+                Enter the refund amount issued to the customer and confirm.
+            </p>
+            <div style="margin-bottom:16px">
+                <label class="field-label">Refund Amount ($)</label>
+                <input type="number" wire:model.defer="refundAmount" class="input" placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+                <x-btn type="button" wire:click="$set('showRefundModal', false)" variant="secondary">Cancel</x-btn>
+                <x-btn type="button" wire:click="markRefunded" style="background:var(--green);color:#fff">Confirm Refund</x-btn>
             </div>
         </div>
     </div>

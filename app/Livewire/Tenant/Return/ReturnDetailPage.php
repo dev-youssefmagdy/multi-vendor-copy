@@ -23,8 +23,10 @@ class ReturnDetailPage extends TenantPage
     public string $noteText = '';
     public string $rejectReason = '';
     public string $infoMessage = '';
+    public string $refundAmount = '';
     public bool $showRejectModal = false;
     public bool $showInfoModal = false;
+    public bool $showRefundModal = false;
 
     public function mount(int $id): void
     {
@@ -103,6 +105,31 @@ class ReturnDetailPage extends TenantPage
         $this->infoMessage = '';
         $this->refresh();
         $this->toast('Requested more information from the customer.');
+    }
+
+    public function markItemReceived(): void
+    {
+        $record = ReturnRequest::findOrFail($this->returnId);
+        $this->guardTenant($record);
+
+        app(ReturnRequestService::class)->markItemReceived($record);
+        $this->refresh();
+        $this->toast('Item marked as received.');
+    }
+
+    public function markRefunded(): void
+    {
+        $this->validate(['refundAmount' => ['required', 'numeric', 'min:0']]);
+
+        $record = ReturnRequest::findOrFail($this->returnId);
+        $this->guardTenant($record);
+
+        app(ReturnRequestService::class)->markRefunded($record, (float) $this->refundAmount);
+
+        $this->showRefundModal = false;
+        $this->refundAmount = '';
+        $this->refresh();
+        $this->toast('Return marked as refunded.');
     }
 
     public function addNote(): void

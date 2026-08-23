@@ -43,6 +43,7 @@ use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
 use App\Livewire\Tenant\Return\ReturnDetailPage as TenantReturnDetailPage;
 use App\Livewire\Tenant\Help\DocsPage;
 use App\Livewire\Tenant\Storefront\RequestReturnForm;
+use App\Livewire\Tenant\Storefront\ReturnDetailPage as StorefrontReturnDetailPage;
 use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
 use App\Livewire\Tenant\Product\OwnProductsList;
@@ -256,6 +257,9 @@ Route::middleware([
         Route::get('/orders/{uuid}/return', RequestReturnForm::class)
             ->middleware('auth:storefront')
             ->name('tenant.storefront.order-return');
+        Route::get('/account/returns/{id}', StorefrontReturnDetailPage::class)
+            ->middleware('auth:storefront')
+            ->name('tenant.storefront.return-detail');
         Route::get('/orders/{uuid}/invoice', [StorefrontInvoiceController::class, 'show'])
             ->middleware('auth:storefront')
             ->name('tenant.storefront.order-invoice');

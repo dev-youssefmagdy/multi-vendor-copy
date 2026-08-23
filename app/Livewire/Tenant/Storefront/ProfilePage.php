@@ -41,6 +41,11 @@ class ProfilePage extends Component
         if (!Auth::guard('storefront')->check()) {
             $this->redirect(route('tenant.storefront.login'));
         }
+
+        $tab = request()->query('tab');
+        if (is_string($tab)) {
+            $this->setTab($tab);
+        }
     }
 
     public function setTab(string $tab): void
@@ -292,6 +297,7 @@ class ProfilePage extends Component
         $returnRequests = $customer
             ? \App\Models\ReturnRequest::where('tenant_id', tenant()->id)
                 ->where('customer_id', $customer->id)
+                ->with(['notes' => fn($q) => $q->where('customer_visible', true)->latest()->limit(1)])
                 ->latest()
                 ->get()
             : collect();

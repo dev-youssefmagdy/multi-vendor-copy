@@ -48,6 +48,10 @@
                     <x-btn type="button" wire:click="$set('showInfoModal', true)" variant="secondary">Request More Info</x-btn>
                 @endif
 
+                @if(in_array($value, ['pending', 'approved']))
+                    <x-btn type="button" wire:click="markAwaitingMerchantReview" variant="secondary">Forward to Merchant</x-btn>
+                @endif
+
                 @if($value === 'approved')
                     <x-btn type="button" wire:click="markItemReceived" style="background:var(--blue);color:#fff">Mark Item Received</x-btn>
                 @endif

@@ -13,6 +13,7 @@ class ReturnRequestNote extends Model
     public const AUTHOR_ADMIN = 'admin';
     public const AUTHOR_TENANT = 'tenant';
     public const AUTHOR_SYSTEM = 'system';
+    public const AUTHOR_CUSTOMER = 'customer';
 
     protected $fillable = [
         'return_request_id',
