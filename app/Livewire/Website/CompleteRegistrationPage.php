@@ -57,6 +57,7 @@ class CompleteRegistrationPage extends Component
     public bool $invalid = false;
     public bool $registered = false;
     public bool $hasDomainRequest = false;
+    public string $registeredTenantId = '';
     public string $tenantDomain = '';
     public string $centralDomain = '';
 
@@ -444,6 +445,26 @@ class CompleteRegistrationPage extends Component
         $this->hasDomainRequest = $this->domainType === 'custom';
         $this->registered = true;
         $this->dispatch('scrollToTop');
+
+        if (!$this->hasDomainRequest) {
+            $this->redirect(route('website.store.onboarding', [
+                'tenantId' => $tenant->getTenantKey(),
+            ]));
+            return;
+        }
+
+        $this->registeredTenantId = (string) $tenant->getTenantKey();
+    }
+
+    public function continueToOnboarding(): void
+    {
+        if (blank($this->registeredTenantId)) {
+            return;
+        }
+
+        $this->redirect(route('website.store.onboarding', [
+            'tenantId' => $this->registeredTenantId,
+        ]));
     }
 
     private function pruneEmptyCategories(\Illuminate\Database\Eloquent\Collection $categories): \Illuminate\Support\Collection

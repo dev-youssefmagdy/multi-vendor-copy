@@ -112,6 +112,7 @@ use App\Livewire\Website\TemplatesPage;
 use App\Livewire\Website\PricingPage;
 use App\Livewire\Website\RegisterPage;
 use App\Livewire\Website\CompleteRegistrationPage;
+use App\Livewire\Website\StoreOnboardingWizard;
 use App\Livewire\Website\TermsPage;
 use App\Livewire\Website\PrivacyPage;
 use App\Livewire\Website\StaticPageView;
@@ -151,6 +152,7 @@ Route::get('/about', AboutPage::class)->name('website.about');
 Route::get('/contact', ContactPage::class)->name('website.contact');
 Route::get('/register', RegisterPage::class)->name('website.register');
 Route::get('/register/complete', CompleteRegistrationPage::class)->name('website.register.complete');
+Route::get('/register/setup/{tenantId}', StoreOnboardingWizard::class)->name('website.store.onboarding');
 Route::prefix('register/payment')->name('website.register.payment.')->group(function () {
     Route::get('{gateway}/{registration}/charge', [RegistrationPaymentController::class, 'charge'])->name('charge');
     Route::match(['get', 'post'], '{gateway}/{registration}/success', [RegistrationPaymentController::class, 'success'])->name('success');

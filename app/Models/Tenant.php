@@ -32,7 +32,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'profit_percentage' => 'decimal:2',
         'category_ids' => 'array',
         'data' => 'array',
+        'launch_ready' => 'boolean',
     ];
+
+    public function isLaunchReady(): bool
+    {
+        return (bool) ($this->launch_ready ?? false);
+    }
 
 
     public function primaryLanguage(): BelongsTo

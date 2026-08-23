@@ -137,7 +137,7 @@ Route::middleware([
     Route::get('/robots.txt', RobotsController::class)->middleware('tenant.storefront.context')->name('tenant.robots');
     Route::get('/sitemap.xml', SitemapController::class)->middleware('tenant.storefront.context')->name('tenant.sitemap');
 
-    Route::middleware(['tenant.storefront.context', 'identify.tenant.theme', 'tenant.gateway.blocked', 'preview.template', 'blade.theme.home'])->group(function () {
+    Route::middleware(['tenant.storefront.context', 'identify.tenant.theme', 'tenant.gateway.blocked', 'preview.template', 'blade.theme.home', 'store.launch.gate'])->group(function () {
         Route::get('/', HomePage::class)->name('tenant.home');
         Route::get('/best-selling', BestSellingPage::class)->name('tenant.storefront.best-selling');
         Route::get('/full-star', FullStarPage::class)->name('tenant.storefront.full-star');

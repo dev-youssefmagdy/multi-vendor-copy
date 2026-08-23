@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Enums\TenantStatus;
 use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
@@ -446,7 +445,7 @@ class TenantNavigation
 
     public static function storefrontLaunched(): bool
     {
-        return tenant()?->status === TenantStatus::Active;
+        return (bool) (tenant()?->launch_ready ?? false);
     }
 
     /** A logo counts as configured once a text wordmark is chosen or any image is uploaded. */

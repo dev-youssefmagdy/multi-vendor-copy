@@ -128,15 +128,15 @@
                     {{ $tenantDomain }}
                 </div>
                 <div class="flex flex-col gap-3">
-                    <a href="http://{{ $tenantDomain }}/admin/login"
-                        @if($hasDomainRequest && !$dnsConnected) style="pointer-events:none;opacity:0.5;" aria-disabled="true" @endif
+                    <button wire:click="continueToOnboarding" type="button"
+                        @if($hasDomainRequest && !$dnsConnected) disabled @endif
                         class="btn-primary block text-center py-3 font-bold text-sm rounded-xl {{ $hasDomainRequest && !$dnsConnected ? 'opacity-50 cursor-not-allowed' : '' }}">
-                        {{ __('Go to My Dashboard') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                    </a>
+                        {{ __('Continue to Store Setup') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                    </button>
                     @if($hasDomainRequest && !$dnsConnected)
                         <p class="text-xs text-gray-400 text-center">
                             <i class="fas fa-info-circle me-1"></i>
-                            {{ __('Verify your DNS connection above to enable dashboard access via your custom domain.') }}
+                            {{ __('Verify your DNS connection above to continue.') }}
                         </p>
                     @endif
                     <a href="{{ route('website.home') }}"
