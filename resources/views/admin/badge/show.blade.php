@@ -46,6 +46,35 @@
         </div>
     </div>
 
+    {{-- Country Tabs --}}
+    <div class="card section-gap" style="padding:0;overflow:hidden">
+        <div style="display:flex;border-bottom:1px solid var(--border-color);overflow-x:auto">
+            <a href="{{ route('admin.badges.show', $badge) }}"
+                style="padding:12px 20px;font-size:13px;font-weight:600;white-space:nowrap;border-bottom:2px solid {{ $activeCountryId === null ? 'var(--primary)' : 'transparent' }};color:{{ $activeCountryId === null ? 'var(--primary)' : 'var(--t2)' }};text-decoration:none">
+                🌍 Default (All Countries)
+            </a>
+            @foreach($countries as $country)
+                <a href="{{ route('admin.badges.show', ['badge' => $badge, 'country_id' => $country->id]) }}"
+                    style="padding:12px 20px;font-size:13px;font-weight:600;white-space:nowrap;border-bottom:2px solid {{ $activeCountryId === $country->id ? 'var(--primary)' : 'transparent' }};color:{{ $activeCountryId === $country->id ? 'var(--primary)' : 'var(--t2)' }};text-decoration:none">
+                    {{ $country->flag_emoji }} {{ $country->name }}
+                </a>
+            @endforeach
+        </div>
+        <div style="padding:16px 20px">
+            @if($activeCountryId === null)
+                <p class="panel-copy" style="margin:0">
+                    <strong>Default</strong> products are shown to visitors from countries with no country-specific badge assignment.
+                </p>
+            @else
+                @php $activeCountry = $countries->firstWhere('id', $activeCountryId); @endphp
+                <p class="panel-copy" style="margin:0">
+                    Products in <strong>{{ $activeCountry?->flag_emoji }} {{ $activeCountry?->name }}</strong> override the Default list for visitors from this country.
+                    Leave empty to inherit the Default assignment.
+                </p>
+            @endif
+        </div>
+    </div>
+
     {{-- Assignment card --}}
     <section class="card section-gap">
         <div class="table-header-shell" style="margin-bottom:1.25rem">
@@ -151,6 +180,7 @@
     const CAT_URL     = @json(route('admin.badges.assign-category', $badge));
     const SAVE_URL    = @json(route('admin.badges.save', $badge));
     const CSRF        = @json(csrf_token());
+    const COUNTRY_ID  = @json($activeCountryId);
 
     // ── State ────────────────────────────────────────────────────────────
     const selected = new Map({!! $json !!});
@@ -332,6 +362,14 @@
         csrfInput.name = '_token';
         csrfInput.value = CSRF;
         form.appendChild(csrfInput);
+
+        if (COUNTRY_ID) {
+            const countryInput = document.createElement('input');
+            countryInput.type = 'hidden';
+            countryInput.name = 'country_id';
+            countryInput.value = COUNTRY_ID;
+            form.appendChild(countryInput);
+        }
 
         selected.forEach((_, id) => {
             const input = document.createElement('input');

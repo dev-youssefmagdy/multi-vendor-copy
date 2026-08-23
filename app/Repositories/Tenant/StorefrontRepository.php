@@ -718,7 +718,7 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
-        return app(\App\Services\HomeProductService::class)->getFeatured($limit);
+        return app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId());
     }
 
     public function latestProducts(int $limit = 20): Collection
@@ -966,7 +966,7 @@ class StorefrontRepository
     public function bestSellingProducts(int $perPage = 12, int $page = 1): LengthAwarePaginator
     {
         return $this->paginateFromService(
-            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit),
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->customerCountryId()),
             $perPage,
             $page,
         );
@@ -975,7 +975,7 @@ class StorefrontRepository
     public function newInProducts(int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
         return $this->paginateFromService(
-            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit),
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit, $this->customerCountryId()),
             $perPage,
             $page,
         );
@@ -997,7 +997,7 @@ class StorefrontRepository
 
     public function recommendedProducts(int $limit = 10): Collection
     {
-        return $this->memo['recommended_' . $limit] ??= app(\App\Services\HomeProductService::class)->getRecommended($limit);
+        return $this->memo['recommended_' . $limit . '_' . ($this->customerCountryId() ?? 'def')] ??= app(\App\Services\HomeProductService::class)->getRecommended($limit, $this->customerCountryId());
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator

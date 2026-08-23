@@ -971,7 +971,13 @@ class TenantCatalogSyncService
     protected function syncBadges(): int
     {
         $centralBadges = tenancy()->central(
-            fn() => CentralProductBadge::query()->with('products')->get()
+            fn() => CentralProductBadge::query()->get()
+        );
+
+        $centralPivotRows = tenancy()->central(
+            fn() => \DB::table('product_badge_product')
+                ->whereIn('product_badge_id', $centralBadges->pluck('id'))
+                ->get()
         );
 
         $tenantProductIds = Product::withoutGlobalScope("centralVisible")
@@ -984,22 +990,44 @@ class TenantCatalogSyncService
                 ['active' => $centralBadge->active]
             );
 
-            // Preserve the tenant's own manual reordering (set via SortBadgeProducts)
-            // across re-syncs — only newly-attached products get a fresh order,
-            // appended after whatever the tenant already arranged.
-            $existingOrder = $tenantBadge->products()->pluck('product_badge_product.sort_order', 'products.id');
-            $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
+            $rowsForBadge = $centralPivotRows->where('product_badge_id', $centralBadge->id);
+            $countryIds = $rowsForBadge->pluck('country_id')->unique()->all();
 
-            $syncData = [];
-            foreach ($centralBadge->products as $centralProduct) {
-                $tenantProductId = $tenantProductIds[$centralProduct->id] ?? null;
-                if (!$tenantProductId) {
-                    continue;
+            foreach ($countryIds as $countryId) {
+                $rowsForCountry = $rowsForBadge->filter(fn($r) => $r->country_id === $countryId);
+
+                // Preserve the tenant's own manual reordering (set via SortBadgeProducts)
+                // across re-syncs — only newly-attached products get a fresh order,
+                // appended after whatever the tenant already arranged.
+                $existingOrder = \DB::table('product_badge_product')
+                    ->where('product_badge_id', $tenantBadge->id)
+                    ->when($countryId === null, fn($q) => $q->whereNull('country_id'), fn($q) => $q->where('country_id', $countryId))
+                    ->pluck('sort_order', 'product_id');
+
+                $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
+
+                \DB::table('product_badge_product')
+                    ->where('product_badge_id', $tenantBadge->id)
+                    ->when($countryId === null, fn($q) => $q->whereNull('country_id'), fn($q) => $q->where('country_id', $countryId))
+                    ->delete();
+
+                $now = now();
+                foreach ($rowsForCountry as $centralRow) {
+                    $tenantProductId = $tenantProductIds[$centralRow->product_id] ?? null;
+                    if (!$tenantProductId) {
+                        continue;
+                    }
+
+                    \DB::table('product_badge_product')->insert([
+                        'product_badge_id' => $tenantBadge->id,
+                        'product_id'       => $tenantProductId,
+                        'country_id'       => $countryId,
+                        'sort_order'       => $existingOrder[$tenantProductId] ?? $nextOrder++,
+                        'created_at'       => $now,
+                        'updated_at'       => $now,
+                    ]);
                 }
-                $syncData[$tenantProductId] = ['sort_order' => $existingOrder[$tenantProductId] ?? $nextOrder++];
             }
-
-            $tenantBadge->products()->sync($syncData);
         }
 
         ProductBadge::query()

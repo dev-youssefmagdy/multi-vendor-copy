@@ -7,9 +7,9 @@ use Illuminate\Support\Collection;
 
 class HomeProductService
 {
-    public function getNewIn(int $limit): Collection
+    public function getNewIn(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('new-in', $limit);
+        $badged = $this->byBadge('new-in', $limit, $countryId);
 
         if ($badged->isNotEmpty()) {
             return $badged;
@@ -21,9 +21,9 @@ class HomeProductService
             ->get();
     }
 
-    public function getBestSelling(int $limit): Collection
+    public function getBestSelling(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('best-selling', $limit);
+        $badged = $this->byBadge('best-selling', $limit, $countryId);
 
         if ($badged->isNotEmpty()) {
             return $badged;
@@ -36,15 +36,15 @@ class HomeProductService
             ->get();
     }
 
-    public function getFeatured(int $limit): Collection
+    public function getFeatured(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('featured', $limit);
+        $badged = $this->byBadge('featured', $limit, $countryId);
 
         if ($badged->isNotEmpty()) {
             return $badged;
         }
 
-        $excludeIds = $this->getNewIn($limit)->pluck('id');
+        $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
 
         return $this->baseQuery()
             ->whereNotIn('products.id', $excludeIds)
@@ -53,17 +53,17 @@ class HomeProductService
             ->get();
     }
 
-    public function getRecommended(int $limit): Collection
+    public function getRecommended(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('recommended', $limit);
+        $badged = $this->byBadge('recommended', $limit, $countryId);
 
         if ($badged->isNotEmpty()) {
             return $badged;
         }
 
-        $excludeIds = $this->getNewIn($limit)
+        $excludeIds = $this->getNewIn($limit, $countryId)
             ->pluck('id')
-            ->merge($this->getFeatured($limit)->pluck('id'));
+            ->merge($this->getFeatured($limit, $countryId)->pluck('id'));
 
         return $this->baseQuery()
             ->whereNotIn('products.id', $excludeIds)
@@ -72,7 +72,25 @@ class HomeProductService
             ->get();
     }
 
-    protected function byBadge(string $badgeText, int $limit): Collection
+    /**
+     * Country-aware badge product query.
+     *
+     * Priority: country-specific rows if $countryId is given and any exist,
+     * otherwise the default rows (country_id IS NULL).
+     */
+    protected function byBadge(string $badgeText, int $limit, ?int $countryId = null): Collection
+    {
+        if ($countryId !== null) {
+            $results = $this->queryBadge($badgeText, $limit, $countryId);
+            if ($results->isNotEmpty()) {
+                return $results;
+            }
+        }
+
+        return $this->queryBadge($badgeText, $limit, null);
+    }
+
+    private function queryBadge(string $badgeText, int $limit, ?int $countryId): Collection
     {
         return $this->baseQuery()
             ->join('product_badge_product', 'product_badge_product.product_id', '=', 'products.id')
@@ -81,6 +99,11 @@ class HomeProductService
                     ->where('product_badges.text', $badgeText)
                     ->where('product_badges.active', true);
             })
+            ->when(
+                $countryId === null,
+                fn($q) => $q->whereNull('product_badge_product.country_id'),
+                fn($q) => $q->where('product_badge_product.country_id', $countryId),
+            )
             ->orderBy('product_badge_product.sort_order')
             ->select('products.*')
             ->limit($limit)

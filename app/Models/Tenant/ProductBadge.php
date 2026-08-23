@@ -23,6 +23,19 @@ class ProductBadge extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'product_badge_product')->withPivot('sort_order')->withTimestamps()->orderByPivot('sort_order');
+        return $this->belongsToMany(Product::class, 'product_badge_product')
+            ->withPivot('sort_order', 'country_id')
+            ->withTimestamps()
+            ->orderByPivot('sort_order');
+    }
+
+    /** Products assigned for a specific country (or the default null-country rows). */
+    public function productsForCountry(?int $countryId): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_badge_product')
+            ->withPivot('sort_order', 'country_id')
+            ->withTimestamps()
+            ->wherePivot('country_id', $countryId)
+            ->orderByPivot('sort_order');
     }
 }
