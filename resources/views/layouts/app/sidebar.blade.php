@@ -4,6 +4,9 @@
   $sections = AdminNavigation::visibleSections();
   $currentRoute = request()->route()?->getName();
   $childDotClasses = ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'];
+  $supportUnreadCount = auth('admin')->user()?->hasAnyPermission(['support.tickets.view', 'support.tickets.manage'])
+      ? \App\Models\SupportTicket::where('admin_has_unread', true)->count()
+      : 0;
 @endphp
 
 <aside id="sb">
@@ -39,6 +42,9 @@
         @endif
         @include('layouts.app.icon', ['name' => $item['icon']])
         {{ $item['label'] }}
+        @if (($item['route'] ?? null) === 'admin.support.index' && ($supportUnreadCount ?? 0) > 0)
+          <span class="ni-badge">{{ $supportUnreadCount }}</span>
+        @endif
       </a>
     @else
     @php($groupOpen = AdminNavigation::groupIsActive($item, $currentRoute))

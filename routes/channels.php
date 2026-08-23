@@ -12,7 +12,7 @@ Broadcast::channel('admin.notifications', function ($user) {
 }, ['guards' => ['admin']]);
 
 Broadcast::channel('admin.support.{ticketId}', function ($user, int $ticketId) {
-    return true;
+    return $user->hasAnyPermission(['support.tickets.view', 'support.tickets.manage']);
 }, ['guards' => ['admin']]);
 
 // Tenant panel — tenant subdomain, 'tenant' guard. The tenant is already

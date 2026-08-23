@@ -2,6 +2,9 @@
     $sections = \App\Helpers\TenantNavigation::visibleSections();
     $currentRoute = request()->route()?->getName();
     $childDotClasses = ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'];
+    $supportUnreadCount = tenant()
+        ? tenancy()->central(fn () => \App\Models\SupportTicket::forTenant(tenant()->getTenantKey())->where('tenant_has_unread', true)->count())
+        : 0;
 @endphp
 
 <aside id="sb">
@@ -50,6 +53,9 @@
                 @if (($item['route'] ?? null) === 'tenant.onboarding')
                     @php($progress = \App\Helpers\TenantNavigation::onboardingSetupProgress())
                     <span class="ni-badge {{ $progress['done'] === $progress['total'] ? 'ni-badge-done' : '' }}">{{ $progress['done'] }}/{{ $progress['total'] }}</span>
+                @endif
+                @if (($item['route'] ?? null) === 'tenant.support.index' && ($supportUnreadCount ?? 0) > 0)
+                    <span class="ni-badge">{{ $supportUnreadCount }}</span>
                 @endif
             </a>
         @else

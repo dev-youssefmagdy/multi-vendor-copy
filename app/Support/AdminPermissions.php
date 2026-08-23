@@ -92,6 +92,9 @@ class AdminPermissions
             'admins.roles.manage' => 'Manage roles and permissions',
 
             'system.cache.manage' => 'Manage cache tools',
+
+            'support.tickets.view' => 'View support tickets',
+            'support.tickets.manage' => 'Manage support tickets',
         ];
     }
 

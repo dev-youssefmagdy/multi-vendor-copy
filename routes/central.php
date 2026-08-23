@@ -99,6 +99,8 @@ use App\Livewire\Admin\Wallet\TransactionsList;
 use App\Livewire\Admin\Wallet\WalletsList;
 use App\Livewire\Admin\Newsletter\NewsletterSubscribersList;
 use App\Livewire\Admin\Notifications\NotificationsPage;
+use App\Livewire\Admin\Support\TicketsList as AdminTicketsList;
+use App\Livewire\Admin\Support\TicketDetail as AdminTicketDetail;
 use App\Livewire\Website\AboutPage;
 use App\Livewire\Website\BlogDetailPage;
 use App\Livewire\Website\BlogListPage;
@@ -439,6 +441,11 @@ Route::group([
     });
 
     Route::get('/notifications', NotificationsPage::class)->name('notifications.index');
+
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', AdminTicketsList::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('index');
+        Route::get('/{ticketId}', AdminTicketDetail::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('show');
+    });
 });
 
 Route::fallback(NotFoundPage::class)->name('website.not-found');

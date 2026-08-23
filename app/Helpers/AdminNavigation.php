@@ -99,6 +99,13 @@ class AdminNavigation
                         'permission' => 'sales.customers.view',
                     ],
                     [
+                        'type' => 'link',
+                        'label' => 'Support',
+                        'route' => 'admin.support.index',
+                        'icon' => 'admins',
+                        'permission' => 'support.tickets.view',
+                    ],
+                    [
                         'type' => 'group',
                         'label' => 'Plans',
                         'icon' => 'plans',

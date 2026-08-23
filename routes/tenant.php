@@ -53,6 +53,9 @@ use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufa
 use App\Http\Controllers\Tenant\ManufacturingPaymentController;
 use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
+use App\Livewire\Tenant\Support\TicketsList;
+use App\Livewire\Tenant\Support\CreateTicket;
+use App\Livewire\Tenant\Support\TicketDetail;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
 use App\Http\Controllers\Tenant\AccountSettingsController;
 use App\Http\Controllers\Tenant\ComplianceCenterController;
@@ -383,6 +386,12 @@ Route::middleware([
             });
 
             Route::get('/notifications', NotificationsPage::class)->name('tenant.notifications.index');
+
+            Route::prefix('support')->name('tenant.support.')->group(function () {
+                Route::get('/', TicketsList::class)->name('index');
+                Route::get('/new', CreateTicket::class)->name('create');
+                Route::get('/{ticketId}', TicketDetail::class)->name('show');
+            });
 
             Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
                 Route::get('/', CategoriesList::class)->name('index');
