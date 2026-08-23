@@ -133,6 +133,11 @@ class ThemesPage extends ListPage
             $variantKey = tenancy()->central(fn() => $variant->key ?? null);
             $previewUrl = $this->buildPreviewUrl(strtolower($theme->slug), $theme->id, $variantKey ?: null);
 
+            $domain = tenant()?->domains()->first()?->domain;
+            $storefrontUrl = $isActive && $domain
+                ? ((str_starts_with($domain, 'http') ? '' : 'https://') . $domain)
+                : null;
+
             return [
                 'theme_id' => $theme->id,
                 'variant_id' => $variant->id,
@@ -148,6 +153,7 @@ class ThemesPage extends ListPage
                 'action_class' => $actionClass,
                 'preview_path' => $previewUrl,
                 'preview_label' => 'Preview',
+                'storefront_url' => $storefrontUrl,
                 'initials' => Str::upper(Str::substr((string) $variant->name, 0, 2)),
                 'countries_label' => $isUniversal
                     ? 'All countries'

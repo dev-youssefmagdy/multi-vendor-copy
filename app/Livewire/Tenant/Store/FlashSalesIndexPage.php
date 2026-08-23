@@ -40,10 +40,16 @@ class FlashSalesIndexPage extends TenantPage
             ->orderBy('name')
             ->get();
 
+        $domain = tenant()?->domains()->first()?->domain;
+        $storefrontBase = $domain
+            ? ((str_starts_with($domain, 'http') ? '' : 'https://') . $domain)
+            : null;
+
         return array_merge(parent::pageData(), [
             'countries' => $countries,
             'defaultCount' => (int) ($counts[null] ?? 0),
             'countryCounts' => $counts,
+            'storefrontBase' => $storefrontBase,
         ]);
     }
 }

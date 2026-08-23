@@ -93,6 +93,7 @@ class TenantNavigation
                             ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
                         ]
                     ],
+                    ['type' => 'link', 'label' => 'Target Countries', 'route' => 'tenant.store.target-countries', 'icon' => 'storefront', 'permission' => 'store.appearance.manage'],
                     ['type' => 'link', 'label' => 'Coupons', 'route' => 'tenant.store.coupons', 'icon' => 'payments', 'permission' => 'store.coupons.manage'],
                     ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
                     ['type' => 'link', 'label' => 'Appearance', 'route' => 'tenant.store.appearance', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],

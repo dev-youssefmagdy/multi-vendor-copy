@@ -84,6 +84,7 @@ use App\Livewire\Tenant\Store\FlashSalesIndexPage;
 use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
 use App\Livewire\Tenant\Store\PagesList;
+use App\Livewire\Tenant\Store\TargetCountriesPage;
 use App\Livewire\Tenant\Store\ThemesPage;
 use App\Livewire\Tenant\Storefront\AuthPage;
 use App\Livewire\Tenant\Storefront\BestSellingPage;
@@ -575,6 +576,9 @@ Route::middleware([
                 Route::get('/home-variants', HomeVariantsPage::class)
                     ->middleware('tenant.permission:store.home-variants.manage')
                     ->name('home-variants');
+                Route::get('/target-countries', TargetCountriesPage::class)
+                    ->middleware('tenant.permission:store.appearance.manage')
+                    ->name('target-countries');
             });
 
             Route::get('/help', DocsPage::class)->name('tenant.help.index');

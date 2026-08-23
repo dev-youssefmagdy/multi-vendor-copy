@@ -405,6 +405,13 @@
                                 <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
                                     class="theme-pill-btn">Preview</a>
 
+                                @if (!empty($theme['storefront_url']))
+                                    <a href="{{ $theme['storefront_url'] }}" target="_blank" rel="noopener noreferrer"
+                                        class="theme-pill-btn" style="border-color:var(--color-green,#22c55e);color:var(--color-green,#22c55e)">
+                                        View Live
+                                    </a>
+                                @endif
+
                                 @if ($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"
                                         wire:click="openCountries({{ $theme['theme_id'] }})">
