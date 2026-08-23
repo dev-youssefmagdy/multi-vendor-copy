@@ -98,6 +98,7 @@ use App\Livewire\Admin\Finance\VendorSettlementsPage;
 use App\Livewire\Admin\Wallet\TransactionsList;
 use App\Livewire\Admin\Wallet\WalletsList;
 use App\Livewire\Admin\Newsletter\NewsletterSubscribersList;
+use App\Livewire\Admin\Notifications\NotificationsPage;
 use App\Livewire\Website\AboutPage;
 use App\Livewire\Website\BlogDetailPage;
 use App\Livewire\Website\BlogListPage;
@@ -436,6 +437,8 @@ Route::group([
         Route::get('/tenants', TenantsCachePage::class)->middleware('admin.permission:system.cache.manage')->name('tenants');
         Route::get('/main', MainCachePage::class)->middleware('admin.permission:system.cache.manage')->name('main');
     });
+
+    Route::get('/notifications', NotificationsPage::class)->name('notifications.index');
 });
 
 Route::fallback(NotFoundPage::class)->name('website.not-found');
