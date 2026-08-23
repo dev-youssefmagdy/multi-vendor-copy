@@ -46,6 +46,7 @@ class CompleteRegistrationPage extends Component
 
     // Step 2 – Category selection
     public array $selectedCategoryIds = [];
+    public array $categoryPreviewTree = [];
 
     // Step 3 – Target countries selection
     public array $selectedCountryIds = [];
@@ -139,6 +140,7 @@ class CompleteRegistrationPage extends Component
         }
 
         $this->loadDnsRecords();
+        $this->buildCategoryPreview();
 
         $oauth = session('website.register.oauth');
 
@@ -156,6 +158,80 @@ class CompleteRegistrationPage extends Component
     public function updatedShopName(): void
     {
         $this->checkShopNameAvailability();
+    }
+
+    public function updatedSelectedCategoryIds(): void
+    {
+        $this->buildCategoryPreview();
+    }
+
+    public function buildCategoryPreview(): void
+    {
+        if (empty($this->selectedCategoryIds)) {
+            $this->categoryPreviewTree = [];
+            return;
+        }
+
+        $rootIds = array_map('intval', $this->selectedCategoryIds);
+
+        $allIds = $rootIds;
+        $check = $rootIds;
+
+        while (!empty($check)) {
+            $children = Category::whereIn('parent_id', $check)
+                ->where('status', 'published')
+                ->pluck('id')
+                ->toArray();
+            $new = array_diff($children, $allIds);
+            $allIds = array_merge($allIds, $new);
+            $check = $new;
+        }
+
+        $all = Category::query()
+            ->with('translations.language')
+            ->whereIn('id', $allIds)
+            ->orderBy('parent_id')
+            ->orderBy('order_number')
+            ->get()
+            ->keyBy('id');
+
+        $tree = [];
+        foreach ($all as $cat) {
+            if (in_array($cat->id, $rootIds, true)) {
+                $tree[$cat->id] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => [],
+                ];
+            }
+        }
+
+        foreach ($all as $cat) {
+            if ($cat->parent_id && isset($tree[$cat->parent_id])) {
+                $tree[$cat->parent_id]['children'][] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+
+        $this->categoryPreviewTree = array_values($tree);
+    }
+
+    private function buildSubTree(int $parentId, $all, array $rootIds): array
+    {
+        $children = [];
+        foreach ($all as $cat) {
+            if ($cat->parent_id === $parentId && !in_array($cat->id, $rootIds, true)) {
+                $children[] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+        return $children;
     }
 
     private function checkShopNameAvailability(): void
@@ -432,6 +508,7 @@ class CompleteRegistrationPage extends Component
             'rootCategories' => $rootCategories,
             'countries' => $countries,
             'requiredDnsRecords' => $requiredDnsRecords,
+            'categoryPreviewTree' => $this->categoryPreviewTree,
         ])->layout('layouts.website', ['title' => __('Complete Your Registration') . ' — Ecommet']);
     }
 }

@@ -155,10 +155,16 @@ class TenantEditorController extends Controller
         return [
             'statusOptions'  => TenantStatus::cases(),
             'rootCategories' => Category::query()
-                ->with('translations.language')
+                ->with([
+                    'translations.language',
+                    'children' => fn ($q) => $q->where('status', 'published')->orderBy('order_number'),
+                    'children.translations.language',
+                    'children.children' => fn ($q) => $q->where('status', 'published')->orderBy('order_number'),
+                    'children.children.translations.language',
+                ])
                 ->whereNull('parent_id')
                 ->where('status', 'published')
-                ->orderBy('id')
+                ->orderBy('order_number')
                 ->get(),
             'languages'      => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'packages'       => Package::query()->with('translations.language')->get(),

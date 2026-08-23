@@ -125,19 +125,83 @@
                             @if ($rootCategories->isEmpty())
                                 <p class="field-hint" style="color:var(--warning);">No published root categories found.</p>
                             @else
-                                <div
-                                    style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;">
-                                    @foreach ($rootCategories as $category)
-                                        <label
-                                            style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;background:{{ in_array((string) $category->id, $currentCategoryIds) ? 'var(--primary-50,#fff7ed)' : 'transparent' }};">
-                                            <input type="checkbox" name="categoryIds[]" value="{{ $category->id }}"
-                                                class="field-checkbox"
-                                                {{ in_array((string) $category->id, $currentCategoryIds) ? 'checked' : '' }}>
-                                            <span
-                                                style="font-size:13px;color:var(--t1);">{{ $category->translationValue('name') ?: $category->id }}</span>
-                                        </label>
+                                <div style="border:1px solid var(--border);border-radius:8px;padding:12px;max-height:360px;overflow-y:auto">
+                                    @foreach ($rootCategories as $root)
+                                        @php $hasChildren = $root->children->isNotEmpty(); @endphp
+                                        <div x-data="{ open: {{ in_array((string) $root->id, $currentCategoryIds) ? 'true' : 'false' }} }"
+                                             style="margin-bottom:4px;border:1px solid var(--border-subtle,rgba(255,255,255,.06));border-radius:6px;overflow:hidden">
+
+                                            <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;background:{{ in_array((string) $root->id, $currentCategoryIds) ? 'var(--primary-50,#fff7ed)' : 'transparent' }}">
+                                                <input type="checkbox"
+                                                    name="categoryIds[]"
+                                                    value="{{ $root->id }}"
+                                                    class="field-checkbox"
+                                                    {{ in_array((string) $root->id, $currentCategoryIds) ? 'checked' : '' }}
+                                                    style="width:15px;height:15px;flex-shrink:0">
+                                                <span style="flex:1;font-size:13px;color:var(--t1)">
+                                                    {{ $root->translationValue('name') ?: $root->id }}
+                                                </span>
+                                                @if($hasChildren)
+                                                    <button type="button" @click.prevent="open = !open"
+                                                        style="background:none;border:none;cursor:pointer;color:var(--t3);padding:2px">
+                                                        <svg style="width:14px;height:14px;transition:transform .2s"
+                                                            :style="open ? 'transform:rotate(90deg)' : ''"
+                                                            viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                clip-rule="evenodd"/>
+                                                        </svg>
+                                                    </button>
+                                                @endif
+                                            </label>
+
+                                            @if($hasChildren)
+                                                <div x-show="open" x-cloak
+                                                    style="background:var(--bg-subtle,rgba(255,255,255,.02));border-top:1px solid var(--border-subtle);padding:6px 12px 6px 28px">
+                                                    @foreach($root->children as $child)
+                                                        @php $hasGrandchildren = $child->children->isNotEmpty(); @endphp
+                                                        <div x-data="{ open2: false }" style="margin-bottom:2px">
+                                                            <div style="display:flex;align-items:center;gap:8px;padding:4px 0">
+                                                                <span style="width:12px;border-top:1px solid var(--border-subtle);flex-shrink:0"></span>
+                                                                <span style="font-size:12px;color:var(--t2);flex:1">
+                                                                    {{ $child->translationValue('name') ?: $child->id }}
+                                                                </span>
+                                                                @if($hasGrandchildren)
+                                                                    <button type="button" @click.prevent="open2 = !open2"
+                                                                        style="background:none;border:none;cursor:pointer;color:var(--t3);padding:2px">
+                                                                        <svg style="width:12px;height:12px;transition:transform .2s"
+                                                                            :style="open2 ? 'transform:rotate(90deg)' : ''"
+                                                                            viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fill-rule="evenodd"
+                                                                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                                clip-rule="evenodd"/>
+                                                                        </svg>
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+
+                                                            @if($hasGrandchildren)
+                                                                <div x-show="open2" x-cloak style="margin-left:20px">
+                                                                    @foreach($child->children as $grand)
+                                                                        <div style="display:flex;align-items:center;gap:8px;padding:3px 0">
+                                                                            <span style="width:10px;border-top:1px solid var(--border-subtle);flex-shrink:0"></span>
+                                                                            <span style="font-size:11px;color:var(--t3)">
+                                                                                {{ $grand->translationValue('name') ?: $grand->id }}
+                                                                            </span>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
                                     @endforeach
                                 </div>
+                                <p style="font-size:11px;color:var(--t3);margin-top:6px">
+                                    Check root categories. Sub-categories are synced automatically.
+                                </p>
                             @endif
                             @error('categoryIds') <div class="field-error">{{ $message }}</div> @enderror
                             @error('categoryIds.*') <div class="field-error">{{ $message }}</div> @enderror

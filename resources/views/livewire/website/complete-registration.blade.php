@@ -413,32 +413,135 @@
                                 {{ __('No categories are available yet.') }}
                             </div>
                         @else
-                            <div wire:ignore
-                                x-data="{
-                                    init() {
-                                        const el = $(this.$refs.categorySelect);
-                                        el.select2({
-                                            width: '100%',
-                                            placeholder: @js(__('Search and select categories...')),
-                                            maximumSelectionLength: {{ $categoriesCount }},
-                                        });
-                                        el.on('change', () => {
-                                            $wire.set('selectedCategoryIds', el.val() ?? []);
-                                        });
-                                    }
-                                }">
-                                <select multiple x-ref="categorySelect" class="w-full">
-                                    @foreach($rootCategories as $category)
-                                        <option value="{{ $category->id }}"
-                                            @selected(in_array((string) $category->id, $selectedCategoryIds))>
-                                            {{ $category->translationValue('name') ?: $category->id }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            {{-- Category tree selector --}}
+                            <div class="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded-xl p-3">
+                                @foreach($rootCategories as $root)
+                                    @php
+                                        $rootSelected = in_array((string) $root->id, $selectedCategoryIds);
+                                        $hasChildren = $root->children->isNotEmpty();
+                                    @endphp
+                                    <div x-data="{ open: {{ $rootSelected ? 'true' : 'false' }} }"
+                                         class="border border-gray-100 rounded-lg overflow-hidden">
+
+                                        {{-- Root row --}}
+                                        <label class="flex items-center gap-3 p-3 cursor-pointer
+                                               {{ $rootSelected ? 'bg-primary/5' : 'hover:bg-gray-50' }} transition-colors">
+                                            <input
+                                                type="checkbox"
+                                                value="{{ $root->id }}"
+                                                class="w-4 h-4 rounded text-primary"
+                                                wire:model.live="selectedCategoryIds"
+                                                @if(!$rootSelected && count($selectedCategoryIds) >= $categoriesCount)
+                                                    disabled title="{{ __('Maximum categories reached') }}"
+                                                @endif
+                                            >
+                                            <span class="flex-1 font-medium text-sm text-gray-900">
+                                                {{ $root->translationValue('name') ?: $root->id }}
+                                            </span>
+                                            @if($hasChildren)
+                                                <button type="button" @click.prevent="open = !open"
+                                                    class="text-gray-400 hover:text-gray-600 transition-colors p-1">
+                                                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                            clip-rule="evenodd"/>
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        </label>
+
+                                        {{-- Level 2 children --}}
+                                        @if($hasChildren)
+                                            <div x-show="open" x-cloak class="bg-gray-50 border-t border-gray-100 px-4 py-2 space-y-1">
+                                                @foreach($root->children as $child)
+                                                    @php $hasGrandchildren = $child->children->isNotEmpty(); @endphp
+                                                    <div x-data="{ open2: false }">
+                                                        <div class="flex items-center gap-2 py-1.5">
+                                                            <span class="w-3 border-t border-gray-300 flex-shrink-0"></span>
+                                                            <span class="text-sm text-gray-600 flex-1">
+                                                                {{ $child->translationValue('name') ?: $child->id }}
+                                                            </span>
+                                                            @if($hasGrandchildren)
+                                                                <button type="button" @click.prevent="open2 = !open2"
+                                                                    class="text-gray-400 hover:text-gray-600 p-0.5">
+                                                                    <svg class="w-3.5 h-3.5 transition-transform" :class="open2 ? 'rotate-90' : ''"
+                                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                            clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+
+                                                        {{-- Level 3 grandchildren --}}
+                                                        @if($hasGrandchildren)
+                                                            <div x-show="open2" x-cloak class="ml-5 space-y-1">
+                                                                @foreach($child->children as $grandchild)
+                                                                    <div class="flex items-center gap-2 py-1">
+                                                                        <span class="w-3 border-t border-gray-200 flex-shrink-0"></span>
+                                                                        <span class="text-xs text-gray-500">
+                                                                            {{ $grandchild->translationValue('name') ?: $grandchild->id }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">
-                                {{ __(':selected / :max selected', ['selected' => count($selectedCategoryIds), 'max' => $categoriesCount]) }}
+
+                            <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
+                                <i class="fas fa-info-circle"></i>
+                                {{ __(':selected / :max root categories selected. Sub-categories are included automatically.', [
+                                    'selected' => count($selectedCategoryIds),
+                                    'max' => $categoriesCount,
+                                ]) }}
                             </p>
+
+                            {{-- Preview of what will be synced --}}
+                            @if(!empty($categoryPreviewTree))
+                                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                                    <p class="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1.5">
+                                        <i class="fas fa-layer-group"></i>
+                                        {{ __('Categories that will be available in your store:') }}
+                                    </p>
+                                    <div class="space-y-1">
+                                        @foreach($categoryPreviewTree as $root)
+                                            <div>
+                                                <span class="text-xs font-medium text-blue-900">
+                                                    <i class="fas fa-folder text-blue-400 me-1"></i>{{ $root['name'] }}
+                                                </span>
+                                                @if(!empty($root['children']))
+                                                    <div class="ml-4 mt-0.5 space-y-0.5">
+                                                        @foreach($root['children'] as $child)
+                                                            <div>
+                                                                <span class="text-xs text-blue-700">
+                                                                    <i class="fas fa-folder-open text-blue-300 me-1"></i>{{ $child['name'] }}
+                                                                </span>
+                                                                @if(!empty($child['children']))
+                                                                    <div class="ml-4 mt-0.5">
+                                                                        @foreach($child['children'] as $grand)
+                                                                            <span class="text-xs text-blue-500 block">
+                                                                                <i class="fas fa-tag text-blue-200 me-1"></i>{{ $grand['name'] }}
+                                                                            </span>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         @error('selectedCategoryIds')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
