@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/elora.css',
                 'resources/css/elora/category.css',
                 'resources/css/elora/home.css',
+                'resources/css/elora/home-v2.css',
                 'resources/css/ecommet.css',
                 'resources/css/souqify.css',
                 'resources/css/nexo.css',

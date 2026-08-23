@@ -1,0 +1,12 @@
+/* Elora V2 (Purple / Dark) home variant overrides */
+
+.countdown-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1ch;
+}
+
+.countdown-sep {
+    opacity: 0.7;
+}
