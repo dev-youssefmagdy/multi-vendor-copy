@@ -12,6 +12,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
     @vite(['resources/css/elora/home.css', 'resources/css/elora/home-v2.css'])
 @endpush
 
+<div>
 <div class="sm:hidden mb-14" style="background:#121212;">
     <div class="px-4 pt-3 pb-0 flex flex-col gap-3">
         <!-- User info row -->
@@ -136,6 +137,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
     @endforeach
 
 </main>
+</div>
 
 @push('scripts')
 <script>
