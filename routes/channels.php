@@ -26,6 +26,13 @@ Broadcast::channel('tenant.{tenantId}.support', function ($user, string $tenantI
     return tenant('id') === $tenantId;
 }, ['guards' => ['tenant']]);
 
+// Shared by both panels: the admin side authorizes via the 'admin' guard on
+// the central /broadcasting/auth endpoint, the tenant side via the 'tenant'
+// guard on the tenancy-aware endpoint (see resources/js/bootstrap.js).
 Broadcast::channel('tenant.{tenantId}.manufacturing.{requestId}', function ($user, string $tenantId, int $requestId) {
+    if (auth('admin')->check()) {
+        return true;
+    }
+
     return tenant('id') === $tenantId;
-}, ['guards' => ['tenant']]);
+}, ['guards' => ['tenant', 'admin']]);

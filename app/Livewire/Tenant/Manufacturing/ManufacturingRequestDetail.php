@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenant\Manufacturing;
 
 use App\Enums\ManufacturingPaymentRequestStatus;
+use App\Events\ManufacturingMessageSent;
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\ManufacturingPaymentRequest;
@@ -70,13 +71,27 @@ class ManufacturingRequestDetail extends TenantPage
         $this->validate(['chatMessage' => 'required|string|max:2000']);
 
         $tenantUser = auth('tenant')->user();
+        $senderName = $tenantUser?->name ?? tenant('name') ?? 'Vendor';
+        $body = trim($this->chatMessage);
 
         ManufacturingRequestMessage::create([
             'manufacturing_request_id' => $this->requestId,
             'sender_type' => 'tenant',
-            'sender_name' => $tenantUser?->name ?? tenant('name') ?? 'Vendor',
-            'message' => trim($this->chatMessage),
+            'sender_name' => $senderName,
+            'message' => $body,
         ]);
+
+        try {
+            event(new ManufacturingMessageSent(
+                requestId: $this->requestId,
+                tenantId: tenant('id'),
+                senderType: 'tenant',
+                senderName: $senderName,
+                body: $body,
+                sentAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->chatMessage = '';
         $this->dispatch('chat-scrolled');
