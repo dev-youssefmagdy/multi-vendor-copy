@@ -13,6 +13,7 @@ use App\PaymentGateway\DTOs\PaymentResult;
 use App\PaymentGateway\Exceptions\PaymentException;
 use App\PaymentGateway\GatewayConnectionChecker;
 use App\PaymentGateway\PaymentManager;
+use App\Services\AdminNotificationService;
 use App\Services\Tenant\OrderLifecycleService;
 use App\Services\Tenant\StockService;
 use App\Services\TenantNotificationService;
@@ -42,6 +43,7 @@ class PaymentController extends Controller
         private readonly StockService $stockService,
         private readonly GatewayConnectionChecker $connectionChecker,
         private readonly TenantNotificationService $tenantNotificationService,
+        private readonly AdminNotificationService $adminNotificationService,
     ) {
     }
 
@@ -106,6 +108,7 @@ class PaymentController extends Controller
             $freshOrder = $order->fresh();
             $this->stockService->decrementForOrder($freshOrder);
             $this->orderLifecycleService->recordProcessing($freshOrder);
+            $this->notifyAdminPaymentReceived($freshOrder, $gateway);
 
             $this->markCompanionOrderPaid($result->transactionId, $gateway, $result->rawResponse);
 
@@ -118,6 +121,21 @@ class PaymentController extends Controller
 
         return redirect()->route('tenant.storefront.checkout')
             ->withErrors(['payment' => $this->customerFacingError($gateway, $result)]);
+    }
+
+    private function notifyAdminPaymentReceived(Order $order, string $gateway): void
+    {
+        $this->adminNotificationService->notify(
+            type: 'payment',
+            title: 'Plan Payment Received',
+            message: sprintf(
+                'Tenant "%s" received a payment for order #%s (%s gateway).',
+                tenant()?->getTenantKey() ?? 'unknown',
+                $order->uuid,
+                $gateway,
+            ),
+            data: ['tenant_id' => tenant()?->getTenantKey(), 'order_number' => $order->uuid, 'gateway' => $gateway],
+        );
     }
 
     /**
@@ -213,6 +231,7 @@ class PaymentController extends Controller
                     $freshOrder = $order->fresh();
                     $this->stockService->decrementForOrder($freshOrder);
                     $this->orderLifecycleService->recordProcessing($freshOrder);
+                    $this->notifyAdminPaymentReceived($freshOrder, $gateway);
                 }
 
                 $this->markCompanionOrderPaid($result->transactionId, $gateway, $result->rawResponse);

@@ -260,7 +260,7 @@ class ReturnRequestService
         if ($tenant) {
             $this->tenantNotificationService->notify(
                 $tenant,
-                'return_request',
+                'return',
                 $title,
                 $message,
                 ['return_request_id' => $returnRequest->id, 'order_number' => $returnRequest->order_number],
@@ -268,10 +268,10 @@ class ReturnRequestService
         }
 
         $this->adminNotificationService->notify(
-            'return_request',
+            'return',
             $title,
             sprintf('%s (Order %s, Tenant %s)', $message, $returnRequest->order_number, $tenant?->name ?? $returnRequest->tenant_id),
-            ['return_request_id' => $returnRequest->id],
+            ['return_request_id' => $returnRequest->id, 'tenant_id' => $returnRequest->tenant_id, 'order_number' => $returnRequest->order_number],
         );
 
         if ($emailCustomer && $tenant) {

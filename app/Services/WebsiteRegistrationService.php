@@ -18,6 +18,7 @@ use App\Models\TenantCountry;
 use App\Models\TenantOwner;
 use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Language;
+use App\Services\AdminNotificationService;
 use App\Services\Mail\TemplateMailService;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -27,6 +28,7 @@ class WebsiteRegistrationService
     public function __construct(
         protected TenantService $tenantService,
         protected TemplateMailService $templateMailService,
+        protected AdminNotificationService $adminNotifier,
     ) {
     }
 
@@ -164,6 +166,13 @@ class WebsiteRegistrationService
         $adminLoginUrl = 'https://' . $subdomain . '/admin/login';
         $storeUrl = $customDomain ? 'https://' . $customDomain : $subdomainUrl;
         $this->templateMailService->sendTenantWelcome($tenant, $storeUrl, $adminLoginUrl, $customDomain ? $subdomainUrl : null, $locale);
+
+        $this->adminNotifier->notify(
+            type: 'tenant',
+            title: 'New Tenant Registered',
+            message: sprintf('A new store "%s" has registered and is awaiting activation.', $tenant->shop_name ?? $tenant->id),
+            data: ['tenant_id' => $tenant->getTenantKey(), 'email' => $tenant->email ?? null],
+        );
 
         return $tenant;
     }
