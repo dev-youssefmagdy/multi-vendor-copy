@@ -25,6 +25,8 @@ class AddEditLanguage extends Component
     public bool $isActive = true;
     public bool $isFree = true;
     public ?float $price = null;
+    public ?float $aiTranslationPrice = null;
+    public bool $offersAiTranslation = false;
     public bool $autoTranslateCatalog = true;
     public array $countries = [];
     public ?string $existingImageUrl = null;
@@ -48,6 +50,8 @@ class AddEditLanguage extends Component
         $this->isActive = $language->is_active;
         $this->isFree = $language->is_free;
         $this->price = $language->price ? (float) $language->price : null;
+        $this->offersAiTranslation = $language->ai_translation_price !== null;
+        $this->aiTranslationPrice = $language->ai_translation_price !== null ? (float) $language->ai_translation_price : null;
         $this->countries = $language->countries ?? [];
         $language->loadMissing('imageFile');
         $this->existingImageUrl = $language->imageFile?->full_path;
@@ -67,6 +71,8 @@ class AddEditLanguage extends Component
             'isActive' => ['boolean'],
             'isFree' => ['boolean'],
             'price' => ['nullable', 'numeric', 'min:0.01', 'required_if:isFree,false'],
+            'offersAiTranslation' => ['boolean'],
+            'aiTranslationPrice' => ['nullable', 'numeric', 'min:0', 'required_if:offersAiTranslation,true'],
             'autoTranslateCatalog' => ['boolean'],
             'countries' => ['nullable', 'array'],
             'countries.*' => ['string', 'size:2'],
@@ -82,6 +88,7 @@ class AddEditLanguage extends Component
             'is_active' => $validated['isActive'],
             'is_free' => $validated['isFree'],
             'price' => $validated['isFree'] ? null : $validated['price'],
+            'ai_translation_price' => $validated['offersAiTranslation'] ? (float) $validated['aiTranslationPrice'] : null,
             'countries' => $validated['countries'] ?? [],
             'auto_translate_catalog' => $validated['autoTranslateCatalog'],
             'image' => $this->image,

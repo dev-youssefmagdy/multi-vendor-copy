@@ -4,6 +4,7 @@ namespace App\Jobs\Tenant;
 
 use App\Models\Tenant as TenantModel;
 use App\Models\Tenant\Language;
+use App\Services\AiTranslationPurchaseService;
 use App\Services\Tenant\StoreTranslatorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,7 +48,17 @@ class TranslateStoreJob implements ShouldQueue
             }
 
             app(StoreTranslatorService::class)->translateStore($language, $this->sourceLocale);
+
+            if ($language->central_language_id) {
+                app(AiTranslationPurchaseService::class)->markCompleted($this->tenantId, $language->central_language_id);
+            }
         } catch (\Throwable $e) {
+            $language ??= Language::query()->find($this->languageId);
+
+            if ($language?->central_language_id) {
+                app(AiTranslationPurchaseService::class)->markFailed($this->tenantId, $language->central_language_id);
+            }
+
             Log::error("TranslateStoreJob: failed for tenant [{$this->tenantId}] language [{$this->languageId}]: " . $e->getMessage());
             throw $e;
         } finally {

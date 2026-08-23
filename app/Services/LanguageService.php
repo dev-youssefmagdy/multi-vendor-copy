@@ -35,6 +35,9 @@ class LanguageService
                 'is_active' => (bool) ($attributes['is_active'] ?? true),
                 'is_free' => (bool) ($attributes['is_free'] ?? true),
                 'price' => ($attributes['is_free'] ?? true) ? null : (float) ($attributes['price'] ?? 0),
+                'ai_translation_price' => array_key_exists('ai_translation_price', $attributes) && $attributes['ai_translation_price'] !== null
+                    ? (float) $attributes['ai_translation_price']
+                    : null,
                 'countries' => array_values(array_unique(array_filter($countries))),
             ]);
 

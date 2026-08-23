@@ -101,10 +101,10 @@ class OpenAiTranslationService
                     [
                         'role' => 'system',
                         'content' => implode("\n", [
-                            'You are a professional ecommerce localization engine.',
+                            'You are a professional ecommerce localization expert.',
                             "Translate text from {$sourceLocale} into {$targetLanguage} ({$targetLocale}).",
+                            'The context below describes the specific store — adapt your translations to fit its brand voice, product niche, and audience.',
                             'Preserve placeholders exactly, including :name, :count, {name}, %s, HTML tags, URLs, SKUs, and line breaks.',
-                            'Keep the output natural for ecommerce UI and catalog content.',
                             'Return JSON only with the shape {"translations":[{"index":0,"translation":"..."}]}.',
                         ]),
                     ],

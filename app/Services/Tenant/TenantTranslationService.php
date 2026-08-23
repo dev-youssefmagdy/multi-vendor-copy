@@ -17,6 +17,7 @@ class TenantTranslationService
 
     public function __construct(
         protected TranslationFileService $translationFiles,
+        protected StoreContextService $storeContext,
     ) {
     }
 
@@ -111,7 +112,7 @@ class TenantTranslationService
             config('app.fallback_locale', 'en'),
             strtolower((string) $language->code),
             $language->name,
-            'Tenant storefront UI label',
+            $this->storeContext->build($language->name),
         );
 
         $value = trim((string) ($translated[0] ?? $default));
@@ -154,7 +155,7 @@ class TenantTranslationService
             $defaultLocale,
             strtolower((string) $language->code),
             $language->name,
-            'Tenant storefront UI labels (batch)',
+            $this->storeContext->build($language->name),
         );
 
         $count = 0;

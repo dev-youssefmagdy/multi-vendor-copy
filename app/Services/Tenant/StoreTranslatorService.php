@@ -35,6 +35,7 @@ class StoreTranslatorService
 
     public function __construct(
         protected OpenAiTranslationService $openAi,
+        protected StoreContextService $storeContext,
     ) {
     }
 
@@ -58,22 +59,23 @@ class StoreTranslatorService
         }
 
         $itemsTranslated = 0;
+        $brandContext = $this->storeContext->build($language->name);
 
         try {
             $language->forceFill(['translation_status' => 'running', 'translation_progress' => 0])->save();
 
             // Weight: settings/custom labels 10%, categories 20%, products 50%, pages/banners 20%.
-            $itemsTranslated += $this->translateSettings($sourceLocale, $targetLocale, $language->name);
+            $itemsTranslated += $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 10])->save();
 
-            $itemsTranslated += $this->translateModel(Category::class, $sourceLocale, $targetLocale, $language->name);
+            $itemsTranslated += $this->translateModel(Category::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 30])->save();
 
-            $itemsTranslated += $this->translateModel(Product::class, $sourceLocale, $targetLocale, $language->name);
+            $itemsTranslated += $this->translateModel(Product::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 80])->save();
 
-            $itemsTranslated += $this->translateModel(Page::class, $sourceLocale, $targetLocale, $language->name);
-            $itemsTranslated += $this->translateModel(Banner::class, $sourceLocale, $targetLocale, $language->name);
+            $itemsTranslated += $this->translateModel(Page::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
+            $itemsTranslated += $this->translateModel(Banner::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 100])->save();
 
             $language->forceFill([
@@ -86,13 +88,13 @@ class StoreTranslatorService
         }
     }
 
-    protected function translateSettings(string $sourceLocale, string $targetLocale, string $targetLanguage): int
+    protected function translateSettings(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
     {
         $count = 0;
 
         Setting::query()
             ->with('translations.language')
-            ->chunkById(50, function ($settings) use (&$count, $sourceLocale, $targetLocale, $targetLanguage) {
+            ->chunkById(50, function ($settings) use (&$count, $sourceLocale, $targetLocale, $targetLanguage, $brandContext) {
                 $pending = [];
                 $states = [];
 
@@ -122,7 +124,7 @@ class StoreTranslatorService
                     $sourceLocale,
                     $targetLocale,
                     $targetLanguage,
-                    'Tenant custom label setting',
+                    $brandContext ?: 'Tenant custom label setting',
                 );
 
                 foreach ($pending as $offset => $item) {
@@ -138,14 +140,14 @@ class StoreTranslatorService
         return $count;
     }
 
-    protected function translateModel(string $modelClass, string $sourceLocale, string $targetLocale, string $targetLanguage): int
+    protected function translateModel(string $modelClass, string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
     {
         $fields = self::MODEL_FIELDS[$modelClass];
         $count = 0;
 
         $modelClass::query()
             ->with('translations.language')
-            ->chunkById(50, function ($models) use (&$count, $fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
+            ->chunkById(50, function ($models) use (&$count, $fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage, $brandContext) {
                 $pending = [];
                 $states = [];
 
@@ -175,7 +177,7 @@ class StoreTranslatorService
                     $sourceLocale,
                     $targetLocale,
                     $targetLanguage,
-                    'Tenant store model: ' . class_basename($modelClass),
+                    $brandContext ?: ('Tenant store content: ' . class_basename($modelClass)),
                 );
 
                 foreach ($pending as $offset => $item) {

@@ -11,6 +11,7 @@ use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsCo
 use App\Http\Controllers\Tenant\HomePageController;
 use App\Http\Controllers\Tenant\PaymentController;
 use App\Http\Controllers\Tenant\PaymentWebhookController;
+use App\Http\Controllers\Tenant\AiTranslationPaymentController;
 use App\Http\Controllers\Tenant\LanguagePaymentController;
 use App\Http\Controllers\Tenant\SubscriptionPaymentController;
 use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
@@ -67,6 +68,7 @@ use App\Livewire\Tenant\Setting\DomainsList;
 use App\Livewire\Tenant\Setting\EmailTemplatesPage;
 use App\Livewire\Tenant\Setting\GeneralSettingsPage;
 use App\Livewire\Tenant\Setting\LanguagesManagePage;
+use App\Livewire\Tenant\Setting\AiTranslationPage;
 use App\Livewire\Tenant\Setting\TranslationsPage;
 use App\Livewire\Tenant\Setting\LanguagesPage;
 use App\Livewire\Tenant\Setting\MailConfigurationsPage;
@@ -525,6 +527,12 @@ Route::middleware([
                 Route::get('{gateway}/cancel', [LanguagePaymentController::class, 'cancel'])->name('cancel');
             });
 
+            Route::prefix('ai-translation-purchase')->name('tenant.ai-translation-purchase.')->group(function () {
+                Route::get('{gateway}/{languageId}', [AiTranslationPaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [AiTranslationPaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [AiTranslationPaymentController::class, 'cancel'])->name('cancel');
+            });
+
             Route::prefix('manufacturing-payment')->name('tenant.manufacturing-payment.')->group(function () {
                 Route::get('{gateway}/{paymentRequestId}', [ManufacturingPaymentController::class, 'charge'])->name('charge');
                 Route::match(['get', 'post'], '{gateway}/success', [ManufacturingPaymentController::class, 'success'])->name('success');
@@ -607,6 +615,9 @@ Route::middleware([
                 Route::get('/languages-manage', LanguagesManagePage::class)
                     ->middleware('tenant.permission:settings.regional.manage')
                     ->name('languages-manage');
+                Route::get('/ai-translation', AiTranslationPage::class)
+                    ->middleware('tenant.permission:settings.translations.manage')
+                    ->name('ai-translation');
                 Route::get('/translations', TranslationsPage::class)
                     ->middleware('tenant.permission:settings.translations.manage')
                     ->name('translations');
