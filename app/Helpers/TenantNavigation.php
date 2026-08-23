@@ -35,6 +35,7 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'Products', 'route' => 'tenant.products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Own Products', 'route' => 'tenant.own-products.index', 'permission' => 'catalog.products.manage'],
+                            ['label' => 'Edit Requests', 'route' => 'tenant.products.edit-requests', 'permission' => 'catalog.products.manage', 'badge' => self::pendingEditRequestsCount() ?: null],
                             ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
                             ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
@@ -428,6 +429,18 @@ class TenantNavigation
     public static function productSynced(): bool
     {
         return Product::query()->exists();
+    }
+
+    /** Count of the tenant's pending product name/description edit requests, shown as a nav badge. */
+    public static function pendingEditRequestsCount(): int
+    {
+        $tenantId = tenant()?->getTenantKey();
+
+        if (!$tenantId) {
+            return 0;
+        }
+
+        return tenancy()->central(fn() => \App\Models\ProductEditRequest::forTenant($tenantId)->where('status', 'pending')->count());
     }
 
     public static function themeSelected(): bool

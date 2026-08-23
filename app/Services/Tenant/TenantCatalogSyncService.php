@@ -674,10 +674,12 @@ class TenantCatalogSyncService
             ]);
             $tenantProduct->save();
 
+            // A tenant's admin-approved name/description must survive future syncs;
+            // only meta_keywords (never approval-gated) and new locales still sync in.
             $tenantProduct->syncTranslations($this->mergeTranslatedFields(
                 $tenantProduct,
-                $product->translationsByLocale(['name', 'description']),
-                ['name', 'description'],
+                $tenantProduct->has_custom_translations ? [] : $product->translationsByLocale(['name', 'description']),
+                $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
                 ['name', 'description', 'meta_keywords']
             ));
             $tenantProduct->categories()->sync(Category::query()->whereIn('central_category_id', $product->categories->pluck('id'))->pluck('id')->all());
@@ -773,8 +775,8 @@ class TenantCatalogSyncService
 
         $tenantProduct->syncTranslations($this->mergeTranslatedFields(
             $tenantProduct,
-            $centralProduct->translationsByLocale(['name', 'description']),
-            ['name', 'description'],
+            $tenantProduct->has_custom_translations ? [] : $centralProduct->translationsByLocale(['name', 'description']),
+            $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
             ['name', 'description', 'meta_keywords']
         ));
         $tenantProduct->categories()->sync(

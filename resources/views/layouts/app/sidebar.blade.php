@@ -7,6 +7,9 @@
   $supportUnreadCount = auth('admin')->user()?->hasAnyPermission(['support.tickets.view', 'support.tickets.manage'])
       ? \App\Models\SupportTicket::where('admin_has_unread', true)->count()
       : 0;
+  $pendingEditRequestsCount = auth('admin')->user()?->hasPermission('catalog.product-edit-requests.manage')
+      ? \App\Models\ProductEditRequest::where('status', 'pending')->count()
+      : 0;
 @endphp
 
 <aside id="sb">
@@ -63,6 +66,9 @@
             data-action="set-sub-active">
             <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
             {{ $child['label'] }}
+            @if (($child['route'] ?? null) === 'admin.products.edit-requests' && $pendingEditRequestsCount > 0)
+              <span class="ni-badge">{{ $pendingEditRequestsCount }}</span>
+            @endif
           </a>
         @endforeach
       </div>

@@ -10,6 +10,20 @@
             <div class="page-actions"><x-btn type="submit">Save Product</x-btn></div>
         </div>
 
+        @if ($pendingEditRequest)
+            <div class="card section-gap" style="padding:12px 16px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;display:flex;align-items:center;gap:10px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-amber,#f59e0b)" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div style="flex:1;font-size:13px">
+                    <strong>Edit request pending review.</strong>
+                    Your requested changes to the product name/description are awaiting admin approval.
+                    The fields below show your current live values.
+                </div>
+                <a href="{{ route('tenant.products.edit-requests') }}" style="font-size:12px;color:var(--primary);text-decoration:none">View requests &rarr;</a>
+            </div>
+        @endif
+
         <x-card-collapse title="Core Details" subtitle="Vendor pricing and assignment details."
             class="form-card section-gap" :start-open="true">
             <div class="form-grid form-grid-1">

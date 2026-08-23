@@ -23,6 +23,7 @@ class AddEditProduct extends Component
     public array $translations = [];
     public array $variants = [];
     public string $activeLocale = 'en';
+    public ?array $pendingEditRequest = null;
 
     public function mount(?Product $product = null): void
     {
@@ -45,6 +46,12 @@ class AddEditProduct extends Component
         $this->badgeIds = $product->badges->pluck('id')->all();
         $this->translations = array_replace_recursive($this->translations, $product->translationsByLocale(['name', 'description', 'meta_keywords', 'meta_description']));
         $this->syncVariantsFromCentral($this->centralProductId, $product);
+
+        $this->pendingEditRequest = tenancy()->central(fn() => \App\Models\ProductEditRequest::where('tenant_id', tenant()->getTenantKey())
+            ->where('product_id', $this->productId)
+            ->where('status', 'pending')
+            ->first(['id', 'requested_translations', 'created_at'])
+            ?->toArray());
     }
 
     public function setActiveLocale(string $locale): void

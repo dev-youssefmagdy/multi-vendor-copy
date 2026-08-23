@@ -177,6 +177,13 @@
                                                     Reject
                                                 </button>
                                             </div>
+                                        @elseif ($record->status->value === 'approved')
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                wire:click="resetToCentral({{ $record->id }})"
+                                                wire:loading.attr="disabled"
+                                                wire:confirm="Reset this product's translations back to central values?">
+                                                Reset to Central
+                                            </button>
                                         @else
                                             @if ($record->admin_note)
                                                 <div class="entity-subtitle" title="{{ $record->admin_note }}">

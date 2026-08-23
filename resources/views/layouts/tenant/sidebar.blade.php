@@ -77,6 +77,9 @@
                         data-action="set-sub-active">
                         <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
                         {{ $child['label'] }}
+                        @if (!empty($child['badge']))
+                            <span class="ni-badge">{{ $child['badge'] }}</span>
+                        @endif
                     </a>
                 @endforeach
             </div>

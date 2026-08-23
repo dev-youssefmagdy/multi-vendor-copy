@@ -86,6 +86,7 @@ class ProductEditRequestsList extends Component
                 }
 
                 $product->syncTranslations($fullTranslations);
+                $product->update(['has_custom_translations' => true]);
             }
         } catch (Throwable $e) {
             tenancy()->end();
@@ -110,6 +111,60 @@ class ProductEditRequestsList extends Component
         );
 
         $this->dispatch('admin-toast', message: 'Request approved and product updated.', type: 'success');
+    }
+
+    public function resetToCentral(int $id): void
+    {
+        $this->authorizePermission('catalog.product-edit-requests.manage');
+
+        /** @var ProductEditRequest $request */
+        $request = ProductEditRequest::query()->findOrFail($id);
+
+        if ($request->status !== ProductEditRequestStatus::Approved) {
+            $this->dispatch('admin-toast', message: 'Only approved requests can be reset.', type: 'warning');
+            return;
+        }
+
+        $tenant = Tenant::query()->find($request->tenant_id);
+        if (!$tenant) {
+            $this->dispatch('admin-toast', message: 'Tenant not found.', type: 'error');
+            return;
+        }
+
+        try {
+            tenancy()->initialize($tenant);
+
+            $product = Product::query()->find($request->product_id);
+
+            if ($product) {
+                $fullTranslations = $product->translationsByLocale(
+                    ['name', 'description', 'meta_keywords', 'meta_description', 'slug']
+                );
+
+                foreach ($request->current_translations as $locale => $fields) {
+                    if (!isset($fullTranslations[$locale])) {
+                        $fullTranslations[$locale] = [];
+                    }
+                    if (array_key_exists('name', $fields)) {
+                        $fullTranslations[$locale]['name'] = $fields['name'];
+                    }
+                    if (array_key_exists('description', $fields)) {
+                        $fullTranslations[$locale]['description'] = $fields['description'];
+                    }
+                }
+
+                $product->syncTranslations($fullTranslations);
+                $product->update(['has_custom_translations' => false]);
+            }
+        } catch (Throwable $e) {
+            tenancy()->end();
+            $this->dispatch('admin-toast', message: 'Failed to reset translations: ' . $e->getMessage(), type: 'error');
+            return;
+        } finally {
+            tenancy()->end();
+        }
+
+        $this->dispatch('admin-toast', message: 'Product translations reset to central values.', type: 'success');
     }
 
     public function openRejectModal(int $id): void

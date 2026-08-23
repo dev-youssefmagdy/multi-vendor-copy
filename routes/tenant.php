@@ -369,6 +369,7 @@ Route::middleware([
             Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
                 Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
                 Route::get('/sort', TenantSortProducts::class)->name('sort');
+                Route::get('/edit-requests', \App\Livewire\Tenant\Product\EditRequestsPage::class)->name('edit-requests');
                 Route::get('/create', AddEditProduct::class)->name('create');
                 Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
             });
