@@ -1,6 +1,6 @@
 {{-- ── Hero Banner V2 (purple gradient background, yellow CTA) ──────────────── --}}
 <section class="hero-wrapper" wire:ignore>
-    <div class="swiper hero-slider w-full overflow-hidden" style="max-height:580px; position:relative;">
+    <div class="swiper hero-slider w-full overflow-hidden" style="position:relative;">
         <div class="swiper-wrapper">
             @foreach ($banners as $idx => $banner)
             @php
