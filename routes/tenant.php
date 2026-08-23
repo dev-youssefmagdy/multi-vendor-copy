@@ -73,6 +73,8 @@ use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
 use App\Livewire\Tenant\Setting\RolesPermissionsList;
 use App\Livewire\Tenant\Setting\SubscribersPage;
 use App\Livewire\Tenant\Store\AppearancePage;
+use App\Livewire\Tenant\Store\BannersIndexPage;
+use App\Livewire\Tenant\Store\BannersPage;
 use App\Livewire\Tenant\Store\BladeThemePage;
 use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
@@ -551,6 +553,12 @@ Route::middleware([
                 Route::get('/appearance', AppearancePage::class)
                     ->middleware('tenant.permission:store.appearance.manage')
                     ->name('appearance');
+                Route::get('/banners', BannersIndexPage::class)
+                    ->middleware('tenant.permission:store.appearance.manage')
+                    ->name('banners.index');
+                Route::get('/banners/list/{countryId?}', BannersPage::class)
+                    ->middleware('tenant.permission:store.appearance.manage')
+                    ->name('banners');
                 Route::get('/blade-theme', BladeThemePage::class)
                     ->middleware('tenant.permission:store.blade-theme.manage')
                     ->name('blade-theme');

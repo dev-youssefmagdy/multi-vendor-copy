@@ -2,10 +2,17 @@
     <div class="page-head fu d0">
         <div>
             <div class="eyebrow">Settings</div>
-            <h1 class="D page-title">Default Banners</h1>
-            <p class="page-copy">Define default storefront banners that are automatically synced to every new tenant on registration.</p>
+            <h1 class="D page-title">{{ $title }}</h1>
+            <p class="page-copy">
+                @if ($country)
+                    Default banners synced to new tenants targeting {{ $country->flag_emoji }} {{ $country->name }}.
+                @else
+                    Default banners synced to every new tenant that has no country-specific default banners.
+                @endif
+            </p>
         </div>
         <div class="page-actions">
+            <a href="{{ route('admin.settings.default-banners') }}" class="btn btn-secondary">Back to countries</a>
             <button type="button" class="btn btn-primary" wire:click="openModal()">
                 Add Banner
             </button>
@@ -80,7 +87,7 @@
         <div class="card section-gap">
             <div class="empty-state">
                 <h3 class="panel-title">No default banners yet</h3>
-                <p class="panel-copy">Add banners here and they will be automatically created in every new tenant store upon registration.</p>
+                <p class="panel-copy">Add banners here and they will be automatically created in every matching new tenant store upon registration.</p>
                 <button type="button" class="btn btn-primary mt-4" wire:click="openModal()">Add First Banner</button>
             </div>
         </div>
@@ -94,14 +101,14 @@
             <div>
                 <label class="field-label">Banner Image</label>
                 <p class="dimension-hint">
-                    This banner syncs to every tenant's storefront — required size varies by theme:
+                    This banner syncs to matching tenants' storefronts — required size varies by theme:
                     @foreach (config('image_dimensions.themes') as $theme)
                         <strong>{{ $theme['label'] }} {{ $theme['width'] }}×{{ $theme['height'] }}px</strong>@if (!$loop->last), @endif
                     @endforeach
                 </p>
-                @if ($bannerId && DefaultBanner::find($bannerId)?->image_path)
+                @if ($bannerId && \App\Models\DefaultBanner::find($bannerId)?->image_path)
                     <div class="mb-2">
-                        <img src="{{ DefaultBanner::find($bannerId)->image_path }}" alt="" style="max-height:120px;border-radius:6px;object-fit:cover;">
+                        <img src="{{ \App\Models\DefaultBanner::find($bannerId)->image_path }}" alt="" style="max-height:120px;border-radius:6px;object-fit:cover;">
                     </div>
                 @endif
                 <div class="file-input-wrap">

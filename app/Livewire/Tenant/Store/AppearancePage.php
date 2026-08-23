@@ -4,17 +4,13 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
-use App\Models\Country;
 use App\Models\HomeVariant;
-use App\Models\Tenant\Banner;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
-use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
 
@@ -56,15 +52,6 @@ class AppearancePage extends TenantPage
         $this->logoBgColor = $value;
     }
 
-    // ── Banners ───────────────────────────────────────────────────────────────
-    public bool $bannerModalOpen = false;
-    public ?int $bannerId = null;
-    public string $bannerUrl = '';
-    public int $bannerSerial = 0;
-    public $bannerImage = null;
-    public ?int $bannerCountryId = null;
-    public array $bannerTranslations = [];
-
     // ── Social Links ──────────────────────────────────────────────────────────
     public bool $socialModalOpen = false;
     public ?int $socialId = null;
@@ -93,11 +80,6 @@ class AppearancePage extends TenantPage
     {
         $repo = app(TenantPanelRepository::class);
         $languages = $repo->activeLanguages();
-
-        $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
-            $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
-        ])->all();
-
 
         $settings = $repo->appearanceSettings();
         $this->logoMode = ($settings['logo_mode'] ?? '') === 'text' ? 'text' : 'image';
@@ -183,12 +165,7 @@ class AppearancePage extends TenantPage
 
         return array_merge(parent::pageData(), [
             'languages' => $repo->activeLanguages(),
-            'banners' => $repo->banners(),
             'socialLinks' => $repo->socialLinks(),
-            'countries' => Country::query()
-                ->where('is_active_for_tenants', true)
-                ->orderBy('name')
-                ->get(),
             'colorThemes' => $repo->themes(),
             'previewUrl' => $this->previewUrl($storefrontRepo),
             'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
@@ -274,117 +251,6 @@ class AppearancePage extends TenantPage
         $this->logoUploadAr = null;
         $this->logoUploadEn = null;
         $this->toast('General settings saved successfully.');
-    }
-
-    // ── Banners ───────────────────────────────────────────────────────────────
-
-    public function openBannerModal(?int $id = null): void
-    {
-        $this->resetBannerForm();
-
-        if ($id) {
-            $banner = Banner::query()->with('translations.language')->findOrFail($id);
-            $this->bannerId = $banner->id;
-            $this->bannerUrl = (string) ($banner->url ?? '');
-            $this->bannerSerial = (int) $banner->serial_number;
-            $this->bannerCountryId = $banner->country_id;
-            $this->bannerTranslations = array_replace_recursive(
-                $this->bannerTranslations,
-                $banner->translationsByLocale(['title', 'subtitle', 'button_text'])
-            );
-        }
-
-        $this->bannerModalOpen = true;
-    }
-
-    public function saveBanner(TenantPanelService $service): void
-    {
-        if (!$this->bannerId) {
-            $limitService = app(PlanLimitService::class);
-            if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_BANNERS)) {
-                $message = $limitService->errorMessage(PlanLimitService::FEATURE_BANNERS);
-                $this->dispatch('admin-toast', message: $message, type: 'error');
-                $this->addError('bannerUrl', $message);
-
-                return;
-            }
-        }
-
-        $rules = [
-            'bannerUrl' => ['nullable', 'url', 'max:500'],
-            'bannerSerial' => ['required', 'integer', 'min:0'],
-            'bannerImage' => ['nullable', 'image', 'max:2048'],
-            'bannerCountryId' => ['nullable', 'integer', Rule::exists('countries', 'id')->where('is_active_for_tenants', true)],
-        ];
-        foreach (array_keys($this->bannerTranslations) as $locale) {
-            $rules["bannerTranslations.{$locale}.title"] = ['nullable', 'string', 'max:255'];
-            $rules["bannerTranslations.{$locale}.subtitle"] = ['nullable', 'string', 'max:500'];
-            $rules["bannerTranslations.{$locale}.button_text"] = ['nullable', 'string', 'max:100'];
-        }
-        $this->validate($rules);
-
-        $imagePath = $this->bannerId ? Banner::query()->find($this->bannerId)?->image_path : null;
-        if ($this->bannerImage) {
-            $imagePath = $this->bannerImage->store('appearances/banners', 'public');
-            $imagePath = tenant_asset($imagePath);
-        }
-
-        $service->saveBanner([
-            'url' => $this->bannerUrl ?: null,
-            'image_path' => $imagePath,
-            'serial_number' => $this->bannerSerial,
-            'country_id' => $this->bannerCountryId,
-            'translations' => $this->bannerTranslations,
-        ], $this->bannerId ? Banner::query()->findOrFail($this->bannerId) : null);
-
-        $this->bannerModalOpen = false;
-        $this->resetBannerForm();
-        $this->toast('Banner saved successfully.');
-    }
-
-    public function confirmDeleteBanner(int $id): void
-    {
-        $this->confirmAction('deleteBanner', [$id], [
-            'title' => 'Delete banner?',
-            'confirmButtonText' => 'Delete banner',
-        ]);
-    }
-
-    public function deleteBanner(int $id): void
-    {
-        Banner::query()->findOrFail($id)->delete();
-        $this->toast('Banner deleted.');
-    }
-
-    public function updateBannerOrder(array $orderedIds): void
-    {
-        foreach ($orderedIds as $index => $id) {
-            Banner::query()->where('id', (int) $id)->update(['serial_number' => $index]);
-        }
-
-        $this->toast('Banner order saved.');
-    }
-
-    public function closeBannerModal(): void
-    {
-        $this->bannerModalOpen = false;
-        $this->resetBannerForm();
-    }
-
-    protected function resetBannerForm(): void
-    {
-        $this->bannerId = null;
-        $this->bannerUrl = '';
-        $this->bannerSerial = 0;
-        $this->bannerImage = null;
-        $this->bannerCountryId = null;
-
-        $languages = app(TenantPanelRepository::class)->activeLanguages();
-        $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
-            $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
-        ])->all();
-
-        $this->resetErrorBag();
     }
 
     // ── Social Links ──────────────────────────────────────────────────────────

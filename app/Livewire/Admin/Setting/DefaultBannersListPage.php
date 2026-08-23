@@ -2,17 +2,20 @@
 
 namespace App\Livewire\Admin\Setting;
 
-use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
+use App\Livewire\Admin\Base\AdminPage;
+use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
+use App\Models\Country;
 use App\Models\DefaultBanner;
 use App\Models\Language;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class DefaultBannersPage extends Component
+class DefaultBannersListPage extends AdminPage
 {
-    use AuthorizesAdminPermissions;
+    use InteractsWithAdminUi;
     use WithFileUploads;
+
+    public ?int $countryId = null;
 
     // ── Modal state ────────────────────────────────────────────────────────
     public bool $modalOpen = false;
@@ -24,10 +27,39 @@ class DefaultBannersPage extends Component
     public $bannerImage = null;
     public array $bannerTranslations = [];
 
-    public function mount(): void
+    public function mount(?int $countryId = null): void
     {
         $this->authorizePermission('settings.default-banners.manage');
+        $this->countryId = $countryId;
         $this->initTranslations();
+    }
+
+    protected function pageMeta(): array
+    {
+        return [
+            'title' => 'Default Banners',
+            'badge' => 'Settings',
+            'description' => 'Define default storefront banners that are automatically synced to every new tenant on registration.',
+        ];
+    }
+
+    protected function pageView(): string
+    {
+        return 'livewire.admin.setting.default-banners-list';
+    }
+
+    protected function pageData(): array
+    {
+        return array_merge($this->pageMeta(), [
+            'country' => $this->countryId ? Country::query()->find($this->countryId) : null,
+            'banners' => DefaultBanner::query()
+                ->with('translations.language')
+                ->where('country_id', $this->countryId)
+                ->orderBy('serial_number')
+                ->orderBy('id')
+                ->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
+        ]);
     }
 
     // ── Open / close ───────────────────────────────────────────────────────
@@ -91,6 +123,7 @@ class DefaultBannersPage extends Component
             'url' => $this->bannerUrl ?: null,
             'image_path' => $imagePath,
             'serial_number' => $this->bannerSerial,
+            'country_id' => $this->countryId,
         ])->save();
 
         $banner->syncTranslations($this->bannerTranslations);
@@ -140,19 +173,5 @@ class DefaultBannersPage extends Component
         $this->bannerImage = null;
         $this->initTranslations();
         $this->resetErrorBag();
-    }
-
-    // ── Render ─────────────────────────────────────────────────────────────
-
-    public function render()
-    {
-        return view('livewire.admin.setting.default-banners-page', [
-            'banners' => DefaultBanner::query()
-                ->with('translations.language')
-                ->orderBy('serial_number')
-                ->orderBy('id')
-                ->get(),
-            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
-        ]);
     }
 }

@@ -593,15 +593,21 @@ class StorefrontRepository
 
         $countryId = $this->detectedCountry()?->id;
 
+        if ($countryId) {
+            $countryBanners = Banner::query()
+                ->with('translations.language')
+                ->where('country_id', $countryId)
+                ->orderBy('serial_number')
+                ->get();
+
+            if ($countryBanners->isNotEmpty()) {
+                return $this->memo['active_banners'] = $countryBanners;
+            }
+        }
+
         return $this->memo['active_banners'] = Banner::query()
             ->with('translations.language')
-            ->where(function (Builder $query) use ($countryId) {
-                $query->whereNull('country_id');
-
-                if ($countryId) {
-                    $query->orWhere('country_id', $countryId);
-                }
-            })
+            ->whereNull('country_id')
             ->orderBy('serial_number')
             ->get();
     }
