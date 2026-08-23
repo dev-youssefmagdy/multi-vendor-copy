@@ -44,6 +44,7 @@
                             'payment' => 'badge-green',
                             'return'  => 'badge-amber',
                             'tenant'  => 'badge-violet',
+                            'product', 'product_assigned' => 'badge-violet',
                             default   => '',
                         } }}" style="font-size:10px;text-transform:uppercase">{{ $notification->type }}</span>
                         <div class="entity-title">{{ $notification->title }}</div>

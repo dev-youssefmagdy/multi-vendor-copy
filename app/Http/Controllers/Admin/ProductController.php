@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
+use App\Jobs\NotifyTenantsForProductCategories;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
@@ -76,6 +77,12 @@ class ProductController extends Controller
                 ->withErrors(['variants' => 'Duplicate variant combination — each variant must be unique.'])
                 ->withInput();
         }
+
+        $isNew = $product === null;
+        $previousCatIds = $product
+            ? $product->categories()->pluck('categories.id')->map(fn ($id) => (int) $id)->all()
+            : [];
+        $prevVariantCount = $product ? $product->variants()->count() : 0;
 
         $savedProduct = $service->save([
             'sku' => $request->input('sku'),
@@ -158,6 +165,16 @@ class ProductController extends Controller
 
         $affectedTenantIds = array_unique(array_merge($previousAssignedIds, array_values($newTenantIds)));
         $tenantSyncService->syncProductToAssignedTenants($savedProduct, $affectedTenantIds);
+
+        // Notify tenants whose category tree covers this product, even without
+        // an explicit assignment (skip tenants already notified above).
+        NotifyTenantsForProductCategories::dispatch(
+            productId: $savedProduct->id,
+            isNew: $isNew,
+            previousCatIds: $previousCatIds,
+            prevVariantCount: $prevVariantCount,
+            alreadyNotifiedIds: array_values($newTenantIds),
+        );
 
         session()->flash('status', $product ? 'Product updated successfully.' : 'Product created successfully.');
 

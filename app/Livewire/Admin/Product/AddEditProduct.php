@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Product;
 
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
+use App\Jobs\NotifyTenantsForProductCategories;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
@@ -294,6 +295,12 @@ class AddEditProduct extends Component
 
         $existingProduct = $this->productId ? Product::query()->findOrFail($this->productId) : null;
 
+        $isNew = $existingProduct === null;
+        $previousCatIds = $existingProduct
+            ? $existingProduct->categories()->pluck('categories.id')->map(fn ($id) => (int) $id)->all()
+            : [];
+        $prevVariantCount = $existingProduct ? $existingProduct->variants()->count() : 0;
+
         $product = $service->save([
             'sku' => $validated['sku'],
             'slug' => $validated['slug'] ?? null,
@@ -361,6 +368,16 @@ class AddEditProduct extends Component
         // Removed tenants: syncProducts() will delete the record since the assignment was removed.
         $affectedTenantIds = array_unique(array_merge($previousAssignedTenantIds, array_values($newTenantIds)));
         $tenantSyncService->syncProductToAssignedTenants($product, $affectedTenantIds);
+
+        // Notify tenants whose category tree covers this product, even without
+        // an explicit assignment (skip tenants already notified above).
+        NotifyTenantsForProductCategories::dispatch(
+            productId: $product->id,
+            isNew: $isNew,
+            previousCatIds: $previousCatIds,
+            prevVariantCount: $prevVariantCount,
+            alreadyNotifiedIds: array_values($newTenantIds),
+        );
 
         session()->flash('status', $this->productId ? 'Product updated successfully.' : 'Product created successfully.');
 
