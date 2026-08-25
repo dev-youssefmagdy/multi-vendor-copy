@@ -226,7 +226,12 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                         </svg>
-                                        <span class="text-[14px] font-medium text-[#242424]">{{ $gateway['name'] }}</span>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-[14px] font-medium text-[#242424]">{{ $gateway['name'] }}</span>
+                                            @if(!empty($gateway['payment_methods']))
+                                                <x-payment-method-badges :methods="$gateway['payment_methods']" size="xs" />
+                                            @endif
+                                        </div>
                                         @if(isset($gateway['logo_url']) && $gateway['logo_url'])
                                             <img src="{{ $gateway['logo_url'] }}" alt="{{ $gateway['name'] }}"
                                                  class="h-6 object-contain ml-auto">

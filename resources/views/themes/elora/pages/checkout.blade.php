@@ -218,7 +218,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                     </svg>
-                                    <span class="text-[14px] font-medium text-[#242424]">{{ $gateway['name'] }}</span>
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-[14px] font-medium text-[#242424]">{{ $gateway['name'] }}</span>
+                                        @if(!empty($gateway['payment_methods']))
+                                            <x-payment-method-badges :methods="$gateway['payment_methods']" size="xs" />
+                                        @endif
+                                    </div>
                                     @if(isset($gateway['logo_url']) && $gateway['logo_url'])
                                         <img src="{{ $gateway['logo_url'] }}" alt="{{ $gateway['name'] }}"
                                              class="h-6 object-contain ml-auto">
@@ -517,12 +522,16 @@
                                 <span class="text-black text-base font-normal font-['Outfit'] text-center">{{ __('Payment methods:') }}</span>
                             </div>
                             <div class="px-4 py-2 flex items-center justify-center gap-4">
-                                <!-- mastercard -->
-                                <img src="{{ asset('elora/assets/images/pay-mastercard.svg') }}" alt="Mastercard" width="37" height="25">
-                                <!-- visa -->
-                                <img src="{{ asset('elora/assets/images/pay-visa.svg') }}" alt="Visa" width="56" height="24">
-                                <!-- apple pay -->
-                                <img src="{{ asset('elora/assets/images/pay-applepay.svg') }}" alt="Apple Pay" width="54" height="22">
+                                @php
+                                    $allMethods = collect($gateways)->pluck('payment_methods')->flatten()->unique()->values()->all();
+                                @endphp
+                                @if(!empty($allMethods))
+                                    <x-payment-method-badges :methods="$allMethods" size="sm" />
+                                @else
+                                    <img src="{{ asset('elora/assets/images/pay-mastercard.svg') }}" alt="Mastercard" width="37" height="25">
+                                    <img src="{{ asset('elora/assets/images/pay-visa.svg') }}" alt="Visa" width="56" height="24">
+                                    <img src="{{ asset('elora/assets/images/pay-applepay.svg') }}" alt="Apple Pay" width="54" height="22">
+                                @endif
                             </div>
                         </div>
 

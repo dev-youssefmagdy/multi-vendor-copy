@@ -84,4 +84,54 @@ class ImageSearchController extends Controller
 
         return redirect()->route($routeName, ['mode' => 'image', 'iid' => $uuid]);
     }
+
+    /**
+     * Admin panel: search the full central catalog, return ranked IDs as JSON.
+     */
+    public function adminPanel(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate($this->rules());
+
+        try {
+            $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        } catch (\RuntimeException $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        $candidateIds = \App\Models\Product::query()
+            ->whereNull('deleted_at')
+            ->pluck('id')
+            ->all();
+
+        $rankedIds = $this->imageSearchService->search($embedding, $candidateIds, 60);
+
+        return response()->json(['ids' => $rankedIds]);
+    }
+
+    /**
+     * Tenant panel: search only this tenant's catalog (own + assigned products),
+     * return ranked central_product_ids as JSON.
+     */
+    public function tenantPanel(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate($this->rules());
+
+        try {
+            $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
+        } catch (\RuntimeException $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        $candidateIds = \App\Models\Tenant\Product::query()
+            ->whereNotNull('central_product_id')
+            ->pluck('central_product_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $rankedIds = $this->imageSearchService->search($embedding, $candidateIds, 60);
+
+        return response()->json(['ids' => $rankedIds]);
+    }
 }

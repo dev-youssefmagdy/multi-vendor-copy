@@ -104,4 +104,14 @@ class PaytmGateway extends AbstractPaymentGateway
 
         return hash_equals(hash('sha256', $string), $hash);
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['INR'],
+            'merchant_countries' => ['IN'],
+            'customer_countries' => ['IN'],
+            'payment_methods' => ['card', 'upi', 'netbanking', 'wallet', 'paytm_wallet'],
+        ];
+    }
 }

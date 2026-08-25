@@ -292,7 +292,12 @@
                                                     d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                             </svg>
                                         </div>
-                                        <span class="font-medium text-slate-900">{{ $gw['name'] }}</span>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="font-medium text-slate-900">{{ $gw['name'] }}</span>
+                                            @if(!empty($gw['payment_methods']))
+                                                <x-payment-method-badges :methods="$gw['payment_methods']" size="xs" />
+                                            @endif
+                                        </div>
                                         @if(isset($gw['logo_url']) && $gw['logo_url'])
                                             <img src="{{ $gw['logo_url'] }}" alt="{{ $gw['name'] }}"
                                                  class="h-6 object-contain ml-auto">
@@ -545,9 +550,16 @@
 
                         <!-- Payment chips -->
                         <div class="flex items-center justify-center gap-3 flex-wrap">
-                            <img loading="lazy" src="{{ asset('souqify/assets/images/pay-visa.svg') }}" alt="">
-                            <img loading="lazy" src="{{ asset('souqify/assets/images/pay-tabby.svg') }}" alt="">
-                            <img loading="lazy" src="{{ asset('souqify/assets/images/pay-tamara.svg') }}" alt="">
+                            @php
+                                $allMethods = collect($gateways)->pluck('payment_methods')->flatten()->unique()->values()->all();
+                            @endphp
+                            @if(!empty($allMethods))
+                                <x-payment-method-badges :methods="$allMethods" size="sm" />
+                            @else
+                                <img loading="lazy" src="{{ asset('souqify/assets/images/pay-visa.svg') }}" alt="">
+                                <img loading="lazy" src="{{ asset('souqify/assets/images/pay-tabby.svg') }}" alt="">
+                                <img loading="lazy" src="{{ asset('souqify/assets/images/pay-tamara.svg') }}" alt="">
+                            @endif
                         </div>
                     </div>
                 </aside>

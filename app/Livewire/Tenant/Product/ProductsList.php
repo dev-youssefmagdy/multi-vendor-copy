@@ -22,6 +22,8 @@ class ProductsList extends ListPage
     public string $search = '';
     public string $statusFilter = '';
     public string $stockFilter = '';
+    public array $imageSearchIds = [];
+    public bool $imageSearchActive = false;
 
     // ── Social-post modal state ────────────────────────────────────────────
     public bool $socialModalOpen = false;
@@ -98,7 +100,12 @@ class ProductsList extends ListPage
     protected function pageData(): array
     {
         $repository = app(TenantPanelRepository::class);
-        $records = $repository->paginateProducts(['search' => $this->search, 'status' => $this->statusFilter, 'stock' => $this->stockFilter]);
+        $records = $repository->paginateProducts([
+            'search' => $this->search,
+            'status' => $this->statusFilter,
+            'stock' => $this->stockFilter,
+            'image_search_ids' => $this->imageSearchIds,
+        ]);
         $stats = $repository->productStats();
         $centralProducts = $repository->centralProductSnapshots(
             collect($records->items())->pluck('central_product_id')->all()
@@ -107,6 +114,9 @@ class ProductsList extends ListPage
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
             'records' => $records,
+            'imageSearchModal' => true,
+            'imageSearchIds' => $this->imageSearchIds,
+            'imageSearchActive' => $this->imageSearchActive,
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
@@ -533,6 +543,21 @@ class ProductsList extends ListPage
     public function clearFilters(): void
     {
         $this->reset(['search', 'statusFilter', 'stockFilter']);
+        $this->clearImageSearch();
+        $this->resetPage();
+    }
+
+    public function applyImageSearch(array $ids): void
+    {
+        $this->imageSearchIds = array_values(array_map('intval', $ids));
+        $this->imageSearchActive = !empty($this->imageSearchIds);
+        $this->resetPage();
+    }
+
+    public function clearImageSearch(): void
+    {
+        $this->imageSearchIds = [];
+        $this->imageSearchActive = false;
         $this->resetPage();
     }
 

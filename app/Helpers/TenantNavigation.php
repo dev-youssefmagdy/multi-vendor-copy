@@ -134,6 +134,7 @@ class TenantNavigation
                         'icon' => 'settings',
                         'children' => [
                             ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Payment Readiness', 'route' => 'tenant.settings.payment-readiness', 'permission' => 'settings.payment-gateways.manage'],
                             ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
                             ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],

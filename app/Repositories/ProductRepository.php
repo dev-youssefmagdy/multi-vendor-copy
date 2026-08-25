@@ -38,6 +38,9 @@ class ProductRepository
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
                 $this->applyStockFilter($query, $filters['stock']);
             })
+            ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
+                $query->whereIn('id', $filters['image_search_ids']);
+            })
             ->orderBy('order_number')
             ->paginate($perPage);
     }

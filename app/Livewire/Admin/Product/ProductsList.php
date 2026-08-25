@@ -26,6 +26,8 @@ class ProductsList extends Component
     public string $deliveryScopeFilter = '';
     public string $stockFilter = '';
     public bool $showDeleted = false;
+    public array $imageSearchIds = [];
+    public bool $imageSearchActive = false;
 
     // ── Price list modal ───────────────────────────────────────────────────
     public bool $priceListOpen = false;
@@ -66,6 +68,21 @@ class ProductsList extends Component
     public function clearFilters(): void
     {
         $this->reset(['search', 'statusFilter', 'categoryFilter', 'deliveryScopeFilter', 'stockFilter', 'showDeleted']);
+        $this->clearImageSearch();
+        $this->resetPage();
+    }
+
+    public function applyImageSearch(array $ids): void
+    {
+        $this->imageSearchIds = array_values(array_map('intval', $ids));
+        $this->imageSearchActive = !empty($this->imageSearchIds);
+        $this->resetPage();
+    }
+
+    public function clearImageSearch(): void
+    {
+        $this->imageSearchIds = [];
+        $this->imageSearchActive = false;
         $this->resetPage();
     }
 
@@ -150,6 +167,7 @@ class ProductsList extends Component
             'delivery_scope' => $this->deliveryScopeFilter,
             'stock' => $this->stockFilter,
             'show_deleted' => $this->showDeleted,
+            'image_search_ids' => $this->imageSearchIds,
         ]);
 
         return view('livewire.admin.product.products-list', [
@@ -159,6 +177,8 @@ class ProductsList extends Component
             'statusOptions' => ProductStatus::cases(),
             'deliveryScopes' => DeliveryScope::cases(),
             'canManageProducts' => $this->hasPermission('catalog.products.manage'),
+            'imageSearchIds' => $this->imageSearchIds,
+            'imageSearchActive' => $this->imageSearchActive,
             'priceListOpen' => $this->priceListOpen,
             'priceListProductName' => $this->priceListProductName,
             'priceListRows' => $this->priceListRows,

@@ -131,8 +131,26 @@
         <div class="filters-grid">
             <div>
                 <label class="field-label" for="product-search">Search</label>
-                <input id="product-search" type="text" class="field-control" wire:model.live.debounce.300ms="search"
-                    placeholder="SKU or product name">
+                <div style="position:relative;display:flex;align-items:center;">
+                    <input id="product-search" type="text" class="field-control" wire:model.live.debounce.300ms="search"
+                        placeholder="SKU or product name" style="padding-right:38px;">
+                    <button type="button" data-image-search-trigger="admin-image-search-modal"
+                        title="Search by image"
+                        style="position:absolute;right:6px;width:26px;height:26px;border-radius:6px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text-muted,#94a3b8);cursor:pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+                            <circle cx="12" cy="13" r="3.2"/>
+                        </svg>
+                    </button>
+                </div>
+                @if ($imageSearchActive)
+                    <div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;font-size:11.5px;font-weight:600;color:#4338ca;">
+                        Visual match &mdash; {{ count($imageSearchIds) }} results
+                        <button type="button" wire:click="clearImageSearch" style="border:none;background:transparent;padding:0;margin-left:2px;cursor:pointer;color:#6366f1;display:flex;align-items:center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <div>
@@ -508,5 +526,17 @@
             </div>
         </div>
     @endif
+
+    <x-image-search-modal
+        id="admin-image-search-modal"
+        :action="route('admin.products.image-search')"
+        on-results="adminImageSearchResults" />
+
+    <script>
+        window.adminImageSearchResults = function (json) {
+            var ids = (json && Array.isArray(json.ids)) ? json.ids : [];
+            @this.call('applyImageSearch', ids);
+        };
+    </script>
 
 </main>

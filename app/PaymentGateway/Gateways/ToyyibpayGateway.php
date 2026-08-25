@@ -75,4 +75,14 @@ class ToyyibpayGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('ToyyibPay payment status_id: ' . $statusId);
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['MYR'],
+            'merchant_countries' => ['MY'],
+            'customer_countries' => ['MY'],
+            'payment_methods' => ['fpx', 'card'],
+        ];
+    }
 }

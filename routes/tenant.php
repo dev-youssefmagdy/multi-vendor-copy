@@ -378,6 +378,7 @@ Route::middleware([
                 Route::get('/edit-requests', \App\Livewire\Tenant\Product\EditRequestsPage::class)->name('edit-requests');
                 Route::get('/create', AddEditProduct::class)->name('create');
                 Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
+                Route::post('/image-search', [\App\Http\Controllers\ImageSearchController::class, 'tenantPanel'])->name('image-search');
             });
 
             Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
@@ -630,6 +631,9 @@ Route::middleware([
                 Route::get('/payment-gateways', PaymentGatewaysPage::class)
                     ->middleware('tenant.permission:settings.payment-gateways.manage')
                     ->name('payment-gateways');
+                Route::get('/payment-readiness', \App\Livewire\Tenant\Setting\PaymentReadinessPage::class)
+                    ->middleware('tenant.permission:settings.payment-gateways.manage')
+                    ->name('payment-readiness');
                 Route::get('/email-templates', EmailTemplatesPage::class)
                     ->middleware('tenant.permission:settings.mail.manage')
                     ->name('email-templates');

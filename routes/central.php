@@ -240,6 +240,9 @@ Route::group([
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
+        Route::post('/image-search', [\App\Http\Controllers\ImageSearchController::class, 'adminPanel'])
+            ->middleware('admin.permission:catalog.products.view,catalog.products.manage')
+            ->name('image-search');
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {

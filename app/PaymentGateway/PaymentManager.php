@@ -142,6 +142,7 @@ class PaymentManager
                     'mode' => $gateway->mode?->value ?? PaymentGatewayMode::Test->value,
                     'creds' => (array) ($gateway->credentials ?? []),
                     'logo_url' => $gateway->logoFile?->full_path,
+                    'payment_methods' => $this->meta($gateway->code)['payment_methods'] ?? [],
                 ])
                 ->values();
         }
@@ -170,6 +171,7 @@ class PaymentManager
                     'creds' => $gateway->effective_credentials,
                     'use_own' => $useOwn,
                     'logo_url' => $gateway->centralPaymentGateway?->logoFile?->full_path,
+                    'payment_methods' => $this->meta($gateway->code)['payment_methods'] ?? [],
                 ];
             })
             ->values();

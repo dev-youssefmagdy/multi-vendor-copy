@@ -69,4 +69,14 @@ class MollieGateway extends AbstractPaymentGateway
             return PaymentResult::failure($e->getMessage());
         }
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['EUR', 'GBP', 'USD', 'DKK', 'NOK', 'SEK', 'CHF', 'CZK', 'PLN'],
+            'merchant_countries' => ['NL', 'BE', 'DE', 'FR', 'GB', 'ES', 'IT', 'AT', 'CH', 'DK', 'SE', 'NO', 'FI', 'PL', 'PT', 'CZ'],
+            'customer_countries' => ['NL', 'BE', 'DE', 'FR', 'GB', 'ES', 'IT', 'AT', 'CH', 'DK', 'SE', 'NO', 'FI', 'PL', 'PT', 'CZ'],
+            'payment_methods' => ['card', 'ideal', 'bancontact', 'sepa', 'apple_pay', 'google_pay', 'klarna', 'paypal'],
+        ];
+    }
 }
