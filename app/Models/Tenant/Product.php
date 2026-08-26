@@ -39,6 +39,8 @@ class Product extends Model
     protected $fillable = [
         'central_product_id',
         'has_custom_translations',
+        'needs_ai_translation',
+        'ai_translated_at',
         'sku',
         'slug',
         'price',
@@ -80,6 +82,8 @@ class Product extends Model
             'default_price' => 'decimal:2',
             'active' => 'boolean',
             'has_custom_translations' => 'boolean',
+            'needs_ai_translation' => 'boolean',
+            'ai_translated_at' => 'datetime',
             'central_visible' => 'boolean',
             'allowed_country_ids' => 'array',
             'featured' => 'boolean',

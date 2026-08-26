@@ -2,6 +2,7 @@
 
 use App\Console\Commands\ArchiveOutOfStockProductsCommand;
 use App\Console\Commands\CleanupAiGeneratedLogosCommand;
+use App\Console\Commands\TranslateNewProductsCommand;
 use App\Console\Commands\UpdateCurrencyRatesCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -21,6 +22,10 @@ Artisan::command('logos:cleanup-ai-generated', function () {
 Artisan::command('products:archive-out-of-stock', function () {
     $this->call(ArchiveOutOfStockProductsCommand::class);
 })->daily();
+
+Artisan::command('products:translate-new-schedule', function () {
+    $this->call(TranslateNewProductsCommand::class);
+})->weekly()->description('Auto-translate new catalog products into tenant AI-translation languages (Neozena pays)');
 
 Artisan::command('queue:retry-all', function () {
     Artisan::call('queue:retry', ['id' => 'all']);

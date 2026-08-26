@@ -9,9 +9,26 @@ class OpenAiTranslationService
 {
     protected array $cache = [];
 
+    protected int $totalTokensUsed = 0;
+
     public function configured(): bool
     {
         return filled(config('services.openai.api_key'));
+    }
+
+    /**
+     * Reset the running token-usage counter. Call before a batch of related
+     * translateBatch() calls (e.g. at the start of a full-store translation)
+     * so totalTokensUsed() reflects just that run.
+     */
+    public function resetUsage(): void
+    {
+        $this->totalTokensUsed = 0;
+    }
+
+    public function totalTokensUsed(): int
+    {
+        return $this->totalTokensUsed;
     }
 
     public function translateBatch(
@@ -118,6 +135,8 @@ class OpenAiTranslationService
                 ],
             ])
             ->throw();
+
+        $this->totalTokensUsed += (int) data_get($response->json(), 'usage.total_tokens', 0);
 
         $content = data_get($response->json(), 'choices.0.message.content');
 

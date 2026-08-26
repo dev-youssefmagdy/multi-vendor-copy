@@ -23,6 +23,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use App\Models\Tenant\Category;
 use App\Models\TenantLanguagePurchase;
+use App\Services\TenantNotificationService;
 use App\Models\Tenant\Currency;
 use App\Models\Tenant\EmailTemplate;
 use App\Models\Tenant\EmailTemplateTranslation;
@@ -650,6 +651,15 @@ class TenantCatalogSyncService
         $assignedProductIds = $assignedProducts->pluck('id')->flip();
 
         $variantIds = [];
+        $newlyFlaggedProductIds = [];
+
+        // Neozena covers AI translation for new products only when the tenant
+        // has at least one active language it has already paid to AI-translate.
+        $hasPaidTranslation = Language::query()
+            ->where('is_active', true)
+            ->where('translation_status', 'completed')
+            ->whereNotNull('central_language_id')
+            ->exists();
 
         foreach ($products as $product) {
             /** @var CentralProduct $product */
@@ -683,6 +693,11 @@ class TenantCatalogSyncService
                 ['name', 'description', 'meta_keywords']
             ));
             $tenantProduct->categories()->sync(Category::query()->whereIn('central_category_id', $product->categories->pluck('id'))->pluck('id')->all());
+
+            if ($isNewProduct && $hasPaidTranslation) {
+                $tenantProduct->update(['needs_ai_translation' => true]);
+                $newlyFlaggedProductIds[] = $tenantProduct->id;
+            }
 
             foreach ($product->variants as $variant) {
                 $variantIds[] = $variant->id;
@@ -737,7 +752,26 @@ class TenantCatalogSyncService
             ->whereNotIn('central_product_id', $allProductIds)
             ->delete();
 
+        if ($newlyFlaggedProductIds !== [] && $currentTenant = tenant()) {
+            $this->notifyNewCatalogProducts($currentTenant, $newlyFlaggedProductIds);
+        }
+
         return $products->count();
+    }
+
+    protected function notifyNewCatalogProducts(Tenant $tenant, array $productIds): void
+    {
+        $count = count($productIds);
+
+        app(TenantNotificationService::class)->notify(
+            $tenant,
+            'new_catalog_products',
+            __('New Products Available'),
+            $count === 1
+                ? __(':count new product has been added to your catalog — ready in your translated languages.', ['count' => $count])
+                : __(':count new products have been added to your catalog — ready in your translated languages.', ['count' => $count]),
+            ['product_ids' => $productIds],
+        );
     }
 
     public function syncProductToTenant(CentralProduct $centralProduct, Tenant $tenant): void
@@ -787,6 +821,19 @@ class TenantCatalogSyncService
         $tenantProduct->categories()->sync(
             Category::query()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->all()
         );
+
+        if ($isNewProduct) {
+            $hasPaidTranslation = Language::query()
+                ->where('is_active', true)
+                ->where('translation_status', 'completed')
+                ->whereNotNull('central_language_id')
+                ->exists();
+
+            if ($hasPaidTranslation) {
+                $tenantProduct->update(['needs_ai_translation' => true]);
+                $this->notifyNewCatalogProducts($tenant, [$tenantProduct->id]);
+            }
+        }
 
         $existingVariants = ProductVariant::query()
             ->where('product_id', $tenantProduct->id)

@@ -8,7 +8,9 @@ use App\Models\Tenant\Language;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
+use App\Models\Tenant\TranslationOverride;
 use App\Services\OpenAiTranslationService;
+use App\Translation\TenantTranslator;
 use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Throwable;
@@ -36,6 +38,7 @@ class StoreTranslatorService
     public function __construct(
         protected OpenAiTranslationService $openAi,
         protected StoreContextService $storeContext,
+        protected TenantTranslationService $translationService,
     ) {
     }
 
@@ -47,6 +50,9 @@ class StoreTranslatorService
 
         $targetLocale = strtolower((string) $language->code);
         $sourceLocale = $this->resolveSourceLocale($targetLocale, $sourceLocale);
+        $sourceLang = $sourceLocale
+            ? Language::query()->where('code', $sourceLocale)->first()
+            : null;
 
         if ($sourceLocale === null || $sourceLocale === $targetLocale) {
             $language->forceFill([
@@ -59,12 +65,17 @@ class StoreTranslatorService
         }
 
         $itemsTranslated = 0;
-        $brandContext = $this->storeContext->build($language->name);
+        $brandContext = $this->storeContext->build(
+            targetLanguageName: $language->name,
+            sourceLanguageName: $sourceLang?->name ?? $sourceLocale,
+        );
+
+        $this->openAi->resetUsage();
 
         try {
             $language->forceFill(['translation_status' => 'running', 'translation_progress' => 0])->save();
 
-            // Weight: settings/custom labels 10%, categories 20%, products 50%, pages/banners 20%.
+            // Weight: settings/custom labels 10%, categories 30%, products 80%, pages/banners 90%, static keys 95%, done 100%.
             $itemsTranslated += $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 10])->save();
 
@@ -76,11 +87,24 @@ class StoreTranslatorService
 
             $itemsTranslated += $this->translateModel(Page::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
             $itemsTranslated += $this->translateModel(Banner::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
-            $language->forceFill(['translation_progress' => 100])->save();
+            $language->forceFill(['translation_progress' => 90])->save();
+
+            $staticKeyCount = $this->translateStaticKeys($sourceLocale, $targetLocale, $language, $brandContext);
+            $itemsTranslated += $staticKeyCount;
+            $language->forceFill(['translation_progress' => 95])->save();
+
+            $tokensUsed = $this->openAi->totalTokensUsed();
+            $pricePer1k = (float) config('services.openai.translation_price_per_1k_tokens', 0);
 
             $language->forceFill([
                 'translation_status' => 'completed',
-                'translation_summary' => json_encode(['items_translated' => $itemsTranslated]),
+                'translation_progress' => 100,
+                'translation_summary' => json_encode([
+                    'items_translated' => $itemsTranslated,
+                    'static_keys_translated' => $staticKeyCount,
+                ]),
+                'last_translation_token_count' => $tokensUsed,
+                'last_translation_cost_usd' => round($tokensUsed / 1000 * $pricePer1k, 4),
             ])->save();
         } catch (Throwable $e) {
             $language->forceFill(['translation_status' => 'failed'])->save();
@@ -189,6 +213,82 @@ class StoreTranslatorService
                     $count++;
                 }
             });
+
+        return $count;
+    }
+
+    /**
+     * Translate all static UI keys (lang file defaults, minus tenant overrides)
+     * into TranslationOverride rows for the target language. Skips keys that
+     * are already translated (i.e. have a target override that differs from
+     * the source text) and keys locked by the marketplace admin.
+     */
+    protected function translateStaticKeys(
+        string $sourceLocale,
+        string $targetLocale,
+        Language $language,
+        string $brandContext = ''
+    ): int {
+        $rows = $this->translationService->keysForLocale($sourceLocale);
+
+        if (empty($rows)) {
+            return 0;
+        }
+
+        $targetOverrides = TranslationOverride::query()
+            ->where('language_id', $language->id)
+            ->pluck('value', 'key')
+            ->all();
+
+        $pending = [];
+
+        foreach ($rows as $row) {
+            $sourceValue = trim((string) ($row['value'] ?? $row['default'] ?? ''));
+            $existingOverride = $targetOverrides[$row['key']] ?? null;
+
+            if ($sourceValue === '') {
+                continue;
+            }
+
+            if ($row['locked'] ?? false) {
+                continue;
+            }
+
+            if ($existingOverride !== null && $existingOverride !== $sourceValue) {
+                continue;
+            }
+
+            $pending[] = ['key' => $row['key'], 'text' => $sourceValue];
+        }
+
+        if (empty($pending)) {
+            return 0;
+        }
+
+        $translated = $this->openAi->translateBatch(
+            array_map(fn(array $item) => $item['text'], $pending),
+            $sourceLocale,
+            $targetLocale,
+            $language->name,
+            $brandContext ?: 'Ecommerce store UI labels and navigation text',
+        );
+
+        $count = 0;
+        foreach ($pending as $offset => $item) {
+            $value = trim((string) ($translated[$offset] ?? ''));
+
+            if ($value === '' || $value === $item['text']) {
+                continue;
+            }
+
+            TranslationOverride::query()->updateOrCreate(
+                ['language_id' => $language->id, 'key' => $item['key']],
+                ['value' => $value],
+            );
+            $count++;
+        }
+
+        TenantTranslator::flushCache();
 
         return $count;
     }
