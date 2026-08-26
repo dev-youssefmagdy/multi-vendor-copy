@@ -27,6 +27,7 @@ class ReturnPolicySettingsPage extends ContentPage
     public string $fee = '0';
     public string $conditions = '';
     public string $videoRequiredReasons = '';
+    public array $videoRequiredReasonsArray = [];
 
     public function mount(): void
     {
@@ -36,7 +37,20 @@ class ReturnPolicySettingsPage extends ContentPage
         $this->nonReturnableIds = implode(',', json_decode($settings->get(self::KEYS['non_returnable_ids'])?->value ?: '[]', true) ?: []);
         $this->fee = $settings->get(self::KEYS['fee'])?->value ?: '0';
         $this->conditions = $settings->get(self::KEYS['conditions'])?->value ?: '';
-        $this->videoRequiredReasons = implode(',', json_decode($settings->get(self::KEYS['video_required_reasons'])?->value ?: '[]', true) ?: []);
+
+        $raw = json_decode($settings->get(self::KEYS['video_required_reasons'])?->value ?: '[]', true) ?: [];
+        $this->videoRequiredReasons      = implode(',', $raw);
+        $this->videoRequiredReasonsArray = $raw;
+    }
+
+    public function updatedVideoRequiredReasonsArray(): void
+    {
+        $this->videoRequiredReasons = implode(',', $this->videoRequiredReasonsArray);
+    }
+
+    protected function pageView(): string
+    {
+        return 'livewire.admin.setting.return-policy-page';
     }
 
     protected function pageMeta(): array
