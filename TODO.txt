@@ -810,3 +810,5 @@ Start php artisan reverb:start and a queue worker (php artisan queue:work) — s
 pa db:seed --class=AdminPermissionSeeder
 
 pa products:backfill-country-ids
+
+php artisan tenants:run tenant:permission-seed

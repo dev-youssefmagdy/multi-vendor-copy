@@ -61,7 +61,7 @@
                         adapted to your store brand.
                     </p>
 
-                    <x-btn type="button" wire:click="openModal({{ $card['id'] }})" @disabled(!$card['is_active'])>
+                    <x-btn type="button" wire:click="openModal({{ $card['id'] }})" :disabled="!$card['is_active']">
                         @if ($card['is_free'])
                             Run AI Translation
                         @else
