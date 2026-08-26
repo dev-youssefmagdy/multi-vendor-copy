@@ -412,7 +412,7 @@ Route::group([
         Route::get('/template-parts/{templateId}', TemplatePartsPage::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.show');
         Route::get('/payment-gateways', PaymentGatewaysPage::class)->middleware('admin.permission:settings.payment-gateways.manage')->name('payment-gateways');
         Route::get('/payment-gateways/{gateway}/edit', AddEditPaymentGateway::class)->middleware('admin.permission:settings.payment-gateways.manage')->name('payment-gateways.edit');
-        Route::get('/payment-gateway-limits', PaymentGatewayLimitsPage::class)->middleware('admin.permission:settings.general.manage')->name('payment-gateway-limits');
+        Route::get('/payment-gateway-limits', PaymentGatewayLimitsPage::class)->middleware('admin.permission:settings.payment-gateway-limits.manage')->name('payment-gateway-limits');
         Route::get('/email-templates', EmailTemplatesPage::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates');
         Route::get('/email-templates/create', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.create');
         Route::get('/email-templates/{emailTemplate}/edit', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.edit');

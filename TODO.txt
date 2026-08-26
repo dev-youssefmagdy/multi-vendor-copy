@@ -807,4 +807,4 @@ php artisan queue:work --queue=default --stop-when-empty --tries=1 --timeout=120
 
 Start php artisan reverb:start and a queue worker (php artisan queue:work) — supervisor config from the prompt is a good template for the VPS.
 
-pa db:seed --class=AddReturnPolicyPermissionSeeder
+pa db:seed --class=AdminPermissionSeeder

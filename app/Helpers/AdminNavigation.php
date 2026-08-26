@@ -59,7 +59,7 @@ class AdminNavigation
                         'children' => [
                             ['label' => 'In Delivery Orders', 'route' => 'admin.shipping.in-delivery', 'permission' => 'shipping.delivery.view'],
                             ['label' => 'Fixed Shipping Costs', 'route' => 'admin.shipping.fixed-costs', 'permission' => 'shipping.delivery.view'],
-                            // ['label' => 'Delivery Charges', 'route' => 'admin.shipping.delivery-charges', 'permission' => 'shipping.delivery.view'],
+                            ['label' => 'Delivery Charges', 'route' => 'admin.shipping.delivery-charges', 'permission' => 'shipping.delivery.view'],
                             ['label' => 'Branches', 'route' => 'admin.branches.index', 'permission' => 'branches.view'],
                             ['label' => 'Shipping Settings', 'route' => 'admin.shipping.settings', 'permission' => 'shipping.settings.view'],
                             ['label' => 'Default Shipping Days', 'route' => 'admin.shipping.shipping-days.index', 'permission' => 'shipping.settings.view'],
@@ -138,7 +138,7 @@ class AdminNavigation
                             ['label' => 'Finance Reports', 'route' => 'admin.finance.reports', 'permission' => 'billing.reports.view'],
                             ['label' => 'Vendor Settlements', 'route' => 'admin.vendor-settlements.index', 'permission' => 'billing.vendor-settlements.view'],
                             ['label' => 'Tenant Payouts', 'route' => 'admin.finance.payouts.index', 'permission' => 'billing.payouts.manage'],
-                            // ['label' => 'Transactions', 'route' => 'admin.wallet-transactions.index', 'permission' => 'billing.transactions.view'],
+                            ['label' => 'Transactions', 'route' => 'admin.wallet-transactions.index', 'permission' => 'billing.transactions.view'],
                             ['label' => 'Invoices', 'route' => 'admin.invoices.index', 'permission' => 'billing.invoices.view'],
                         ],
                     ],

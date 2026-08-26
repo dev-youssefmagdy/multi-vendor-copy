@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             WorldCountriesSeeder::class,
             WorldCitiesSeeder::class,
             CentralAdminSeeder::class,
+            AdminPermissionSeeder::class,
             CentralCatalogSeeder::class,
                 // TenantDemoSeeder::class,
             CentralPaymentGatewaySeeder::class,
