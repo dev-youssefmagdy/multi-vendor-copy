@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\ArchiveOutOfStockProductsCommand;
 use App\Console\Commands\CleanupAiGeneratedLogosCommand;
 use App\Console\Commands\UpdateCurrencyRatesCommand;
 use Illuminate\Foundation\Inspiring;
@@ -15,6 +16,10 @@ Artisan::command('currencies:update-rates', function () {
 
 Artisan::command('logos:cleanup-ai-generated', function () {
     $this->call(CleanupAiGeneratedLogosCommand::class);
+})->daily();
+
+Artisan::command('products:archive-out-of-stock', function () {
+    $this->call(ArchiveOutOfStockProductsCommand::class);
 })->daily();
 
 Artisan::command('queue:retry-all', function () {

@@ -35,6 +35,7 @@ class Product extends Model
         'stock',
         'min_stock',
         'manage_stock',
+        'out_of_stock_at',
         'sold_count',
         'is_taxable',
         'requires_shipping',
@@ -60,6 +61,7 @@ class Product extends Model
             'stock' => 'integer',
             'min_stock' => 'integer',
             'manage_stock' => 'boolean',
+            'out_of_stock_at' => 'datetime',
             'sold_count' => 'integer',
             'is_taxable' => 'boolean',
             'requires_shipping' => 'boolean',
@@ -184,5 +186,21 @@ class Product extends Model
         }
 
         return $outCount === $variants->count() ? 'out_of_stock' : 'partial';
+    }
+
+    /**
+     * Keep out_of_stock_at in sync with the current stock status: set once
+     * when the product becomes fully out of stock, cleared once stock is
+     * replenished. Uses a quiet save so it does not re-trigger observers.
+     */
+    public function syncOutOfStockAt(): void
+    {
+        $isOutOfStock = $this->stockStatus() === 'out_of_stock';
+
+        if ($isOutOfStock && $this->out_of_stock_at === null) {
+            $this->forceFill(['out_of_stock_at' => now()])->saveQuietly();
+        } elseif (!$isOutOfStock && $this->out_of_stock_at !== null) {
+            $this->forceFill(['out_of_stock_at' => null])->saveQuietly();
+        }
     }
 }
