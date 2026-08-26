@@ -96,6 +96,16 @@ class Product extends Model
         return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
     }
 
+    /**
+     * Countries this product is explicitly targeted at.
+     * An empty relation means "no country preference" — the product is
+     * available everywhere and is never demoted in storefront sorting.
+     */
+    public function countries(): BelongsToMany
+    {
+        return $this->belongsToMany(Country::class, 'product_country');
+    }
+
     public function shippingZones(): BelongsToMany
     {
         return $this->belongsToMany(ShippingZone::class)->withTimestamps();

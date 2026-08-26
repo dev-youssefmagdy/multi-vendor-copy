@@ -325,8 +325,35 @@ class StorefrontRepository
         return $query;
     }
 
+    /**
+     * Primary sort key that floats products targeted at the visitor's country to
+     * the top. Products with no country preference (NULL / empty allowed_country_ids)
+     * rank alongside matches; products targeted only at other countries sink.
+     *
+     * Nothing is filtered out — every product stays browsable in every storefront.
+     */
+    protected function countryPriorityExpression(): ?string
+    {
+        $countryId = $this->customerCountryId();
+
+        if (!$countryId) {
+            return null;
+        }
+
+        // $countryId is an int cast from the resolved central country id — safe to interpolate.
+        return "CASE WHEN (products.allowed_country_ids IS NULL"
+            . " OR JSON_LENGTH(products.allowed_country_ids) = 0"
+            . " OR JSON_CONTAINS(products.allowed_country_ids, '" . (int) $countryId . "')) THEN 1 ELSE 0 END DESC";
+    }
+
     protected function applyProductSort($query, string $sort): Builder
     {
+        // Applied first so it becomes the leading ORDER BY term; the sort chosen
+        // by the visitor then breaks ties within each country-priority group.
+        if ($countryPriority = $this->countryPriorityExpression()) {
+            $query->orderByRaw($countryPriority);
+        }
+
         return match ($sort) {
             'old' => $query->orderBy('created_at'),
             'ascending' => $query->orderByRaw($this->effectivePriceExpression() . ' asc')->orderByDesc('created_at'),

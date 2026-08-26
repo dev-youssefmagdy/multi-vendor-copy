@@ -179,6 +179,7 @@ class ProductRepository
             'categories.parent.translations.language',
             'categories.parent.parent.translations.language',
             'shippingZones',
+            'countries',
             'variations.translations.language',
             'variants.options.translations.language',
             'variants.files',

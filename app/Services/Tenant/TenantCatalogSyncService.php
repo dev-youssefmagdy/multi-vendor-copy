@@ -752,7 +752,7 @@ class TenantCatalogSyncService
 
         tenancy()->initialize($tenant);
 
-        $centralProduct->load(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files']);
+        $centralProduct->load(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files', 'countries']);
 
         $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $centralProduct->id]);
         $isNewProduct = !$tenantProduct->exists;
@@ -768,6 +768,11 @@ class TenantCatalogSyncService
             'weight_grams' => $tenantProduct->weight_grams ?? $centralProduct->weight_grams,
             'active' => $isNewProduct ? ($centralProduct->status->value === 'published') : $tenantProduct->active,
             'central_visible' => $centralProduct->isVisibleToTenants(),
+            // Denormalized from the central product_country pivot so the storefront
+            // can rank by country without a cross-database join. Empty = no preference.
+            'allowed_country_ids' => $centralProduct->countries->isEmpty()
+                ? null
+                : $centralProduct->countries->pluck('id')->map(fn ($id) => (int) $id)->values()->all(),
             'featured' => $isNewProduct ? false : $tenantProduct->featured,
             'is_tenant_owned' => true,
         ]);

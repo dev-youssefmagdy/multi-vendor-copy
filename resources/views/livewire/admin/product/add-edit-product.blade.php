@@ -587,6 +587,29 @@
                 @endif
             </x-card-collapse>
 
+            {{-- ── Country Targeting ────────────────────────────────────────── --}}
+            <x-card-collapse title="Country Targeting" description="Choose which countries this product is aimed at. It stays visible everywhere — targeted countries simply rank it higher on their storefront." :start-open="true">
+                @if ($countries->isEmpty())
+                    <div class="notice-muted">No countries are enabled for tenants yet.</div>
+                @else
+                    <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
+                        <input type="checkbox" wire:model.live="allCountries" style="width:16px;height:16px;">
+                        <span style="font-weight:500;">No country preference (rank equally everywhere)</span>
+                    </label>
+                    @if (!$allCountries)
+                        <x-select multiple searchable wire:model.defer="assignedCountryIds" placeholder="Search and select countries">
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->flag_emoji }} {{ $country->name }}</option>
+                            @endforeach
+                        </x-select>
+                        @error('assignedCountryIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                        <div class="notice-muted" style="margin-top:8px">Visitors from the selected countries see this product first. Visitors elsewhere still see it, ranked below their own country's products.</div>
+                    @else
+                        <div class="notice-muted">This product ranks equally in every storefront.</div>
+                    @endif
+                @endif
+            </x-card-collapse>
+
             {{-- ── Tenant Assignments ──────────────────────────────────────── --}}
             <x-card-collapse title="Tenant Assignments" description="Assign this product to specific tenants — they will be notified and the product will appear in their catalog." :start-open="true">
                 @if ($tenants->isEmpty())

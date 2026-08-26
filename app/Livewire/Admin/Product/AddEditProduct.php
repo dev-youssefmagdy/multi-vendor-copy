@@ -6,6 +6,7 @@ use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
 use App\Jobs\NotifyTenantsForProductCategories;
 use App\Models\Category;
+use App\Models\Country;
 use App\Models\Language;
 use App\Models\Product;
 use App\Models\ProductBadge;
@@ -42,6 +43,10 @@ class AddEditProduct extends Component
     public bool $isTaxable = true;
     public string $factory = '';
     public ?int $weightGrams = null;
+
+    /** Country targeting — independent of $deliveryScope, which governs shipping zones. */
+    public array $assignedCountryIds = [];
+    public bool $allCountries = true;
 
     public array $categoryIds = [];
     public array $shippingZoneIds = [];
@@ -120,6 +125,8 @@ class AddEditProduct extends Component
         $this->weightGrams = $loaded->weight_grams;
         $this->categoryIds = $loaded->categories->pluck('id')->all();
         $this->shippingZoneIds = $loaded->shippingZones->pluck('id')->all();
+        $this->assignedCountryIds = $loaded->countries()->pluck('countries.id')->map(fn ($id) => (int) $id)->all();
+        $this->allCountries = $this->assignedCountryIds === [];
         $this->badgeIds = $loaded->badges->pluck('id')->all();
 
         $this->translations = array_replace_recursive(
@@ -327,6 +334,15 @@ class AddEditProduct extends Component
 
         $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
 
+        // Country targeting — empty pivot means "no preference / available everywhere".
+        // Synced before the tenant push so syncProductToTenant() denormalizes the new list.
+        $product->countries()->sync(
+            $this->allCountries
+                ? []
+                : array_values(array_filter(array_map('intval', (array) $this->assignedCountryIds)))
+        );
+        $product->load('countries');
+
         $tenantSyncService->syncProduct($product);
         $tenantSyncService->syncAllTenants(['badges']);
 
@@ -406,6 +422,9 @@ class AddEditProduct extends Component
             'categoryIds.*' => ['integer', 'exists:categories,id'],
             'shippingZoneIds' => ['array'],
             'shippingZoneIds.*' => ['integer', 'exists:shipping_zones,id'],
+            'allCountries' => ['boolean'],
+            'assignedCountryIds' => ['array'],
+            'assignedCountryIds.*' => ['integer', 'exists:countries,id'],
             'badgeIds' => ['array'],
             'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'assignedTenantIds' => ['array'],
@@ -548,6 +567,10 @@ class AddEditProduct extends Component
 
                 ->get(),
             'shippingZones' => ShippingZone::query()->orderBy('name')->get(),
+            'countries' => Country::query()
+                ->where('is_active_for_tenants', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'iso2', 'flag_emoji']),
             'variations' => Variation::query()->with(['translations.language', 'options.translations.language'])->get(),
             'statusOptions' => ProductStatus::cases(),
             'deliveryScopes' => DeliveryScope::cases(),

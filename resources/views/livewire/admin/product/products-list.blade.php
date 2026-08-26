@@ -243,6 +243,7 @@
                             <th>Categories</th>
                             <th>Stock</th>
                             <th>Status</th>
+                            <th>Countries</th>
                             <th class="ta-r">Actions</th>
                         </tr>
                     </thead>
@@ -424,6 +425,17 @@
                                         <span class="badge badge-red">Deleted</span>
                                     @else
                                         <span class="{{ $statusTone }}">{{ $product->status->label() }}</span>
+                                    @endif
+                                </td>
+
+                                {{-- Country targeting --}}
+                                <td>
+                                    @if ($product->countries->isEmpty())
+                                        <span class="badge" title="No country preference — ranks equally everywhere">Global</span>
+                                    @else
+                                        <span class="badge badge-green" title="{{ $product->countries->pluck('name')->join(', ') }}">
+                                            {{ $product->countries->count() }} {{ Str::plural('country', $product->countries->count()) }}
+                                        </span>
                                     @endif
                                 </td>
 
