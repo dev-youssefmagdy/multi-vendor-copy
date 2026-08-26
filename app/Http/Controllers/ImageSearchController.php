@@ -64,6 +64,13 @@ class ImageSearchController extends Controller
 
         $routeName = $request->routeIs('tenant.path.*') ? 'tenant.path.storefront.search' : 'tenant.storefront.search';
 
+        $limitService = app(\App\Services\Tenant\PlanLimitService::class);
+        $tenant = tenant();
+
+        if (!$limitService->canPerform($tenant, \App\Services\Tenant\PlanLimitService::FEATURE_IMAGE_SEARCHES)) {
+            return redirect()->route($routeName, ['mode' => 'image'])->withErrors(['image' => 'You have reached your image search limit for this period. Please upgrade your plan.']);
+        }
+
         try {
             $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
         } catch (\RuntimeException $e) {
@@ -81,6 +88,8 @@ class ImageSearchController extends Controller
         $rankedCentralIds = $this->imageSearchService->search($embedding, $centralIds, 60);
 
         $uuid = $this->stashResults($rankedCentralIds);
+
+        $limitService->incrementCounter($tenant, 'image_searches_count');
 
         return redirect()->route($routeName, ['mode' => 'image', 'iid' => $uuid]);
     }
@@ -116,6 +125,13 @@ class ImageSearchController extends Controller
     {
         $request->validate($this->rules());
 
+        $limitService = app(\App\Services\Tenant\PlanLimitService::class);
+        $tenant = tenant();
+
+        if (!$limitService->canPerform($tenant, \App\Services\Tenant\PlanLimitService::FEATURE_IMAGE_SEARCHES)) {
+            return response()->json(['error' => 'Image search limit reached. Please upgrade your plan.'], 422);
+        }
+
         try {
             $embedding = $this->imageSearchService->embedFromUploadedFile($request->file('image'))['embedding'];
         } catch (\RuntimeException $e) {
@@ -131,6 +147,8 @@ class ImageSearchController extends Controller
             ->all();
 
         $rankedIds = $this->imageSearchService->search($embedding, $candidateIds, 60);
+
+        $limitService->incrementCounter($tenant, 'image_searches_count');
 
         return response()->json(['ids' => $rankedIds]);
     }

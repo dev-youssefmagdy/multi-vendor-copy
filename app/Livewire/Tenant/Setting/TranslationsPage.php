@@ -83,6 +83,12 @@ class TranslationsPage extends TenantPage
             return;
         }
 
+        $limitService = app(PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
+            $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_AI_CALLS), 'error');
+            return;
+        }
+
         $language = Language::query()->find($this->selectedLanguageId);
 
         if (!$language) {
@@ -91,6 +97,7 @@ class TranslationsPage extends TenantPage
 
         try {
             $service->translateKeyWithAi($language, $key, $ai);
+            $limitService->incrementCounter(tenant(), 'ai_calls_count');
             $this->toast('Key translated with AI successfully.');
         } catch (RuntimeException $e) {
             $this->toast($e->getMessage(), 'error');
@@ -108,6 +115,12 @@ class TranslationsPage extends TenantPage
             return;
         }
 
+        $limitService = app(PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
+            $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_AI_CALLS), 'error');
+            return;
+        }
+
         $language = Language::query()->find($this->selectedLanguageId);
 
         if (!$language) {
@@ -115,6 +128,7 @@ class TranslationsPage extends TenantPage
         }
 
         $count = $service->translateKeysWithAi($language, $this->selectedKeys, $ai);
+        $limitService->incrementCounter(tenant(), 'ai_calls_count');
         $this->selectedKeys = [];
         $this->toast("{$count} key(s) translated with AI successfully.");
     }
@@ -122,6 +136,12 @@ class TranslationsPage extends TenantPage
     public function translateStore(): void
     {
         if (!$this->aiTranslationAllowed()) {
+            return;
+        }
+
+        $limitService = app(PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
+            $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_AI_CALLS), 'error');
             return;
         }
 
@@ -137,6 +157,7 @@ class TranslationsPage extends TenantPage
         ])->save();
 
         TranslateStoreJob::dispatch(tenant()->getTenantKey(), $language->id);
+        $limitService->incrementCounter(tenant(), 'ai_calls_count');
 
         $this->toast('Store translation queued. This may take a while.');
     }

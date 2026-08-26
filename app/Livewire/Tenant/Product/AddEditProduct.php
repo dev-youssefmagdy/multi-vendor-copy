@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Tenant\Product;
 
+use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -12,6 +14,8 @@ use Livewire\Component;
 
 class AddEditProduct extends Component
 {
+    use InteractsWithTenantUi;
+
     public ?int $productId = null;
     public ?int $centralProductId = null;
     public string $slug = '';
@@ -82,6 +86,14 @@ class AddEditProduct extends Component
 
     public function save(TenantPanelService $service)
     {
+        if (!$this->productId) {
+            $limitService = app(PlanLimitService::class);
+            if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_PRODUCTS)) {
+                $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_PRODUCTS), 'error');
+                return null;
+            }
+        }
+
         $validated = $this->validate($this->rules());
 
         if ($validated['centralProductId'] ?? null) {

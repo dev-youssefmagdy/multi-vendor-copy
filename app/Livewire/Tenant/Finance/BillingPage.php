@@ -92,6 +92,8 @@ class BillingPage extends ListPage
             PlanLimitService::FEATURE_BANNERS => ['label' => 'Banners', 'dot' => 'dot-amber'],
             PlanLimitService::FEATURE_LANGUAGES => ['label' => 'Languages', 'dot' => 'dot-violet'],
             PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => 'Orders this month', 'dot' => 'dot-cyan'],
+            PlanLimitService::FEATURE_AI_CALLS => ['label' => 'AI calls', 'dot' => 'dot-violet'],
+            PlanLimitService::FEATURE_IMAGE_SEARCHES => ['label' => 'Image searches', 'dot' => 'dot-amber'],
         ];
 
         return $this->presentMetricCards(collect($features)->map(function (array $meta, string $feature) use ($limitService, $tenant) {

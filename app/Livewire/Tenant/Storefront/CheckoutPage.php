@@ -334,6 +334,12 @@ class CheckoutPage extends Component
 
     public function placeOrder(): void
     {
+        $limitService = app(\App\Services\Tenant\PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), \App\Services\Tenant\PlanLimitService::FEATURE_ORDERS_PER_MONTH)) {
+            $this->addError('order', __('This store cannot accept new orders at this time. Please try again next month.'));
+            return;
+        }
+
         $billingRequired = !$this->data['billing']['same_as_shipping'];
 
         $this->validate([

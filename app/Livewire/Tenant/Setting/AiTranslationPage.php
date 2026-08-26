@@ -70,7 +70,15 @@ class AiTranslationPage extends TenantPage
             return;
         }
 
+        $limitService = app(PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
+            $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_AI_CALLS), 'error');
+            $this->closeModal();
+            return;
+        }
+
         $service->completePurchase(tenant(), $language, []);
+        $limitService->incrementCounter(tenant(), 'ai_calls_count');
         $this->closeModal();
         $this->toast('AI translation started. This may take a few minutes.');
     }
@@ -90,6 +98,13 @@ class AiTranslationPage extends TenantPage
 
         if ((float) $language->ai_translation_price <= 0) {
             $this->toast('This language is free — no payment required.', 'error');
+            $this->closeModal();
+            return;
+        }
+
+        $limitService = app(PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
+            $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_AI_CALLS), 'error');
             $this->closeModal();
             return;
         }
