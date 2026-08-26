@@ -59,18 +59,6 @@ class SectionRegistry
                 'promo_banner' => 'Promotional Banner',
             ],
         ],
-        'nexo' => [
-            'home' => [
-                'hero_banner' => 'Hero Banner',
-                'trust_bar' => 'Trust Bar',
-                'featured_products' => 'Featured Products',
-                'categories' => 'Shop by Category',
-                'flash_sale' => 'Flash Sale',
-                'new_arrivals' => 'New Arrivals',
-                'best_sellers' => 'Best Sellers',
-                'promo_banner' => 'Promotional Banner',
-            ],
-        ],
     ];
 
     /** @return string[] section keys in default order */

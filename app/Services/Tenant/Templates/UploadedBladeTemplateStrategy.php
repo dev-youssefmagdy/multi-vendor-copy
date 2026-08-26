@@ -7,7 +7,7 @@ use App\Contracts\TemplateStrategy;
 /**
  * Strategy for a vendor's admin-approved, uploaded Blade theme.
  *
- * Unlike the code-shipped strategies (Elora/Souqify/Ecommet/Nexo), this one
+ * Unlike the code-shipped strategies (Elora/Souqify/Ecommet), this one
  * doesn't point at resources/views/themes/{slug} — it relies on
  * IdentifyTenantTheme middleware having already prepended the tenant's live
  * theme directory (storage/app/tenants/{id}/theme/views/) to the view

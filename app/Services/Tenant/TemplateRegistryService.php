@@ -6,7 +6,6 @@ use App\Contracts\TemplateStrategy;
 use App\Models\Tenant\Theme;
 use App\Services\Tenant\Templates\EcommetTemplateStrategy;
 use App\Services\Tenant\Templates\EloraTemplateStrategy;
-use App\Services\Tenant\Templates\NexoTemplateStrategy;
 use App\Services\Tenant\Templates\SouqifyTemplateStrategy;
 
 /**
@@ -24,7 +23,6 @@ class TemplateRegistryService
         'ecommet' => EcommetTemplateStrategy::class,
         'elora' => EloraTemplateStrategy::class,
         'souqify' => SouqifyTemplateStrategy::class,
-        'nexo' => NexoTemplateStrategy::class,
     ];
 
     private static string $fallback = 'ecommet';

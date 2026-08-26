@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             EmailTemplateTranslationSeeder::class,
             AddPaymentGatewayLimitPermissionSeeder::class,
+            AddReturnPolicyPermissionSeeder::class,
         ]);
 
         Artisan::call('currencies:update-rates');
