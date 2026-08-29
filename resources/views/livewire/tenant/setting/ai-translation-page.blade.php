@@ -26,7 +26,7 @@
             AI translation is not enabled on your current plan. Upgrade to access this feature.
         </div>
     @else
-        <div class="section-gap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+        <div class="section-gap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px" @if($polling) wire:poll.3s="$refresh" @endif>
             @foreach ($cards as $card)
                 <div class="card fu d2" style="padding:20px;display:flex;flex-direction:column;gap:12px" wire:key="ai-lang-{{ $card['id'] }}">
                     <div style="display:flex;align-items:center;gap:10px">
@@ -61,8 +61,27 @@
                         adapted to your store brand.
                     </p>
 
-                    <x-btn type="button" wire:click="openModal({{ $card['id'] }})" :disabled="!$card['is_active']">
-                        @if ($card['is_free'])
+                    @if (in_array($card['translation_status'], ['queued', 'running']))
+                        <div>
+                            <div class="progress-track" style="height:8px;border-radius:999px;background:var(--border);overflow:hidden;">
+                                <div style="height:100%;width:{{ $card['translation_progress'] }}%;background:var(--primary,#FF4B2B);transition:width .3s;"></div>
+                            </div>
+                            <p class="panel-copy" style="margin:4px 0 0;font-size:11px;">
+                                {{ ucfirst($card['translation_status']) }} — {{ $card['translation_progress'] }}%
+                            </p>
+                        </div>
+                    @elseif ($card['translation_status'] === 'completed')
+                        @php $summary = json_decode((string) $card['translation_summary'], true); @endphp
+                        <span class="badge badge-green" style="font-size:10px">Completed — {{ $summary['items_translated'] ?? 0 }} items translated</span>
+                    @elseif ($card['translation_status'] === 'failed')
+                        <span class="badge badge-red" style="font-size:10px">Translation failed</span>
+                    @endif
+
+                    <x-btn type="button" wire:click="openModal({{ $card['id'] }})"
+                           :disabled="!$card['is_active'] || in_array($card['translation_status'], ['queued', 'running'])">
+                        @if (in_array($card['translation_status'], ['queued', 'running']))
+                            Translating…
+                        @elseif ($card['is_free'])
                             Run AI Translation
                         @else
                             Buy AI Translation (${{ number_format((float) $card['price'], 2) }})

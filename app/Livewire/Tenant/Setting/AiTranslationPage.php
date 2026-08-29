@@ -134,16 +134,21 @@ class AiTranslationPage extends TenantPage
 
         $languages = $service->availableLanguages($tenant);
 
-        $activeTenantCentralIds = TenantLanguage::query()
-            ->where('is_active', true)
+        $tenantLanguages = TenantLanguage::query()
             ->whereNotNull('central_language_id')
-            ->pluck('central_language_id')
+            ->get()
+            ->keyBy('central_language_id');
+
+        $activeTenantCentralIds = $tenantLanguages
+            ->filter(fn (TenantLanguage $lang) => $lang->is_active)
+            ->keys()
             ->all();
 
         $history = $service->history($tenant->id);
 
-        $cards = $languages->map(function (CentralLanguage $lang) use ($activeTenantCentralIds, $history) {
+        $cards = $languages->map(function (CentralLanguage $lang) use ($activeTenantCentralIds, $history, $tenantLanguages) {
             $lastRun = $history->where('central_language_id', $lang->id)->sortByDesc('created_at')->first();
+            $tenantLanguage = $tenantLanguages->get($lang->id);
 
             return [
                 'id' => $lang->id,
@@ -155,8 +160,13 @@ class AiTranslationPage extends TenantPage
                 'is_active' => in_array($lang->id, $activeTenantCentralIds, true),
                 'last_run' => $lastRun?->translated_at?->format('M d, Y H:i'),
                 'last_status' => $lastRun?->status,
+                'translation_status' => $tenantLanguage?->translation_status,
+                'translation_progress' => $tenantLanguage?->translation_progress ?? 0,
+                'translation_summary' => $tenantLanguage?->translation_summary,
             ];
         });
+
+        $polling = $cards->contains(fn (array $card) => in_array($card['translation_status'], ['queued', 'running'], true));
 
         $gateways = $canUseAi
             ? app(\App\PaymentGateway\PaymentManager::class)->vendorPaymentGateways()
@@ -196,6 +206,7 @@ class AiTranslationPage extends TenantPage
         return array_merge(parent::pageData(), [
             'canUseAi' => $canUseAi,
             'cards' => $cards,
+            'polling' => $polling,
             'history' => $history,
             'gateways' => $gateways,
             'showPaymentModal' => $this->showPaymentModal,

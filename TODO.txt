@@ -812,3 +812,5 @@ pa db:seed --class=AdminPermissionSeeder
 pa products:backfill-country-ids
 
 php artisan tenants:run tenant:permission-seed
+
+pa queue:work --queue=translations
