@@ -1,0 +1,172 @@
+/* Section-specific overrides for the ELORA "v6 — New In" home variant, ported
+   from public/elora-2/styles.css and scoped under .elora-v6-root. */
+
+.elora-v6-root .no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.elora-v6-root .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending / Best Seller / Recommended) */
+.elora-v6-root .card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+/* Trending Now: fractional slidesPerView (2.5) needs its own clipped container. */
+.elora-v6-root .trending-swiper {
+  overflow: hidden;
+}
+
+/* Flash Sale: Swiper Grid module — 3 columns x 3 rows per view. The wrapper
+   needs an explicit height for the Grid module's per-slide height:calc(33.33%)
+   math to resolve against. */
+.elora-v6-root .flash-swiper {
+  overflow: hidden;
+}
+.elora-v6-root .flash-swiper .swiper-wrapper {
+  height: 336px;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .flash-swiper .swiper-wrapper {
+    height: 396px;
+  }
+}
+.elora-v6-root .card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.elora-v6-root .swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .swiper-nav-btn {
+    display: flex;
+  }
+}
+.elora-v6-root .swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.elora-v6-root .swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.elora-v6-root .swiper-nav-prev {
+  left: -8px;
+}
+.elora-v6-root .swiper-nav-next {
+  right: -8px;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.elora-v6-root .hero-swiper {
+  overflow: hidden;
+}
+.elora-v6-root .hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .hero-pagination {
+    gap: 5px;
+  }
+}
+.elora-v6-root .hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.elora-v6-root .hero-dot.is-active {
+  width: 24px;
+  background: var(--color-accent-green);
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .elora-v6-root .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* "Shop by Category" vertical rotated heading (desktop) */
+.elora-v6-root .vertical-heading {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Flash Sale section diagonal stripe background */
+.elora-v6-root .flash-sale-stripes {
+  background-color: var(--color-accent-green);
+  background-image: repeating-linear-gradient(
+    65deg,
+    var(--color-flash-stripe) 0px,
+    var(--color-flash-stripe) 18px,
+    transparent 18px,
+    transparent 90px
+  );
+}
+
+/* Tabbed Products (invented section) */
+.elora-v6-root .tabbed-tab-btn {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid var(--color-stroke);
+  background: var(--color-bg-main);
+  color: var(--color-text-primary);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.elora-v6-root .tabbed-tab-btn.is-active {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+  color: #fff;
+}

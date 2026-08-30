@@ -43,7 +43,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     @switch($storefrontThemeVariant?->key)
-        @case('v2')
+        @case('v2') <!-- Purple Edition -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v2';
@@ -52,7 +52,7 @@
                 $scriptsKey = 'scripts-v2';
             @endphp
             @break
-        @case('v3')
+        @case('v3') <!-- Fresh Edition -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v3';
@@ -61,7 +61,7 @@
                 $scriptsKey = 'scripts-v3';
             @endphp
             @break
-        @case('v4')
+        @case('v4') <!-- Bold Edition -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v4';
@@ -70,13 +70,22 @@
                 $scriptsKey = 'scripts-v4';
             @endphp
             @break
-        @case('v5')
+        @case('v5') <!-- Minimal Edition -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v5';
                 $footerKey = 'footer-v5';
                 $stylesKey = 'styles-v5';
                 $scriptsKey = 'scripts-v5';
+            @endphp
+            @break
+        @case('v6') <!-- New In Edition -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v6';
+                $footerKey = 'footer-v6';
+                $stylesKey = 'styles-v6';
+                $scriptsKey = 'scripts-v6';
             @endphp
             @break
         @default

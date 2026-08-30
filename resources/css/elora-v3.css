@@ -1,77 +1,274 @@
-/* ================================================================
-   ELORA V3 — Pink / "New User Exclusive" color overrides
-   Primary accent: #FE3A6A  |  Cart badge: #019842
-   Extracted from public/elora-3/styles.css
-   ================================================================ */
-
 :root {
-    --color-brand-pink: #fe3a6a;
-    --color-badge-green: #019842;
-    --color-progress-track: #d9d9d9;
-    --color-progress-fill: #e40307;
-    --color-text-slate: #555555;
-    --color-text-faint-alt: #999999;
-    --color-hero-subtitle: rgba(255, 255, 255, 0.8);
-    --color-hero-dot-inactive: rgba(255, 255, 255, 0.5);
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #ff4d00; /* ELORA/MAin */
+  --color-secondary: #ff522c; /* Main Website/Main-clr */
+  --color-bg-main: #fdfdfd; /* ELORA/fill */
+  --color-text-primary: #121212; /* ELORA/Black */
+  --color-text-subtitle: #adadad; /* ELORA/Subttitle */
+  --color-gray: #8f8f8f; /* ELORA/GRAY */
+  --color-stroke: #d4d4d4; /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424; /* Black / Manti/Black */
+  --color-black-alt: #1b1b1b; /* black */
+  --color-white: #ffffff; /* Manti/White */
+  --color-success: #2aaf2f; /* Manti/Green */
+  --color-error: #de1709; /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8a38f5;
+  --color-accent-purple-dark: #51218f;
+  --color-accent-purple-light: #b57dff;
+  --color-accent-yellow: #ffd428;
+  --color-badge-purple: #9d00ff;
+  --color-surface: #f6f5f5;
+  --color-page-bg: #f4f4f4;
+  --color-footer-bg: #3b3b3b;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5b5b5b;
+  --color-footer-text-muted: #f2f2f2;
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4b4b4b;
+  --color-text-placeholder: #4c4c4c;
+  --color-hero-placeholder: #c3accf;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ============ New tokens for Screen 3 ("Theme #4") ============ */
+  --color-brand-pink: #fe3a6a; /* Screen 3 primary accent: hero badge/CTA, feature strip bg, category chip bg, flash-sale section bg, best-seller section bg, shop-by-category buttons, price accents */
+  --color-badge-green: #019842; /* navbar cart-count badge, active mobile-drawer category link (matches green "O" in this screen's ELORA logo mark) */
+  --color-progress-track: #d9d9d9; /* "ordered in last 30 min" progress bar track (Trending Now cards) */
+  --color-progress-fill: #e40307; /* "ordered in last 30 min" progress bar fill + label text */
+  --color-text-slate: #555555; /* flash-sale card product-name text */
+  --color-text-faint-alt: #999999; /* flash-sale card strikethrough old-price text */
+  --color-hero-subtitle: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* hero slide subtitle copy over photo */
+  --color-hero-dot-inactive: rgba(
+    255,
+    255,
+    255,
+    0.5
+  ); /* hero pagination inactive dot fill */
 }
 
-/* ── Section heading accent color ──────────────────────────────── */
-.elora-v3-root .text-gradient-main,
-.elora-v3-root h2.text-gradient-main {
-    background: linear-gradient(90deg, #fe3a6a, #ff6f91, #c81d4f);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
 }
 
-/* ── "See all" links ─────────────────────────────────────────────── */
-.elora-v3-root .text-main,
-.elora-v3-root a.text-main {
-    color: #fe3a6a !important;
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-/* ── Buttons / pills ─────────────────────────────────────────────── */
-.elora-v3-root .bg-main {
-    background-color: #fe3a6a !important;
+/* Swiper carousel arrows (New In / Trending Now / Flash Sale / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
 }
-.elora-v3-root .border-main {
-    border-color: #fe3a6a !important;
+/* New In: real Swiper carousel using the Grid module — slidesPerView columns x
+   3 rows per view. The wrapper needs an explicit height for the Grid module's
+   per-slide height:calc(33.33%) math to resolve against (percentages need a
+   definite reference, not "auto"). Height tuned to the card's own natural
+   height x 3 rows + row gaps. */
+.newin-swiper {
+  overflow: hidden;
 }
-
-/* ── Tabbed pills active state ───────────────────────────────────── */
-.elora-v3-root .tabbed-pill.active {
-    background: #fe3a6a !important;
-    border-color: #fe3a6a !important;
-    color: #fff !important;
+.newin-swiper .swiper-wrapper {
+  height: 419px;
 }
-.elora-v3-root .tabbed-pill:not(.active) {
-    border-color: #fe3a6a !important;
-    color: #fe3a6a !important;
-}
-
-/* ── Swiper pagination bullets ───────────────────────────────────── */
-.elora-v3-root .swiper-pagination-bullet-active {
-    background: #fe3a6a !important;
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
 }
 
-/* ── Infinite scroll spinner ─────────────────────────────────────── */
-.elora-v3-root #all-products-spinner {
-    color: #fe3a6a !important;
+/* Best Seller row: alternating cards sit slightly lower, matching the Figma layout */
+.bestseller-swiper {
+  padding-bottom: 24px;
+}
+.bestseller-swiper .swiper-slide:nth-child(even) {
+  transform: translateY(20px);
+}
+@media (min-width: 1024px) {
+  .bestseller-swiper {
+    padding-bottom: 40px;
+  }
+  .bestseller-swiper .swiper-slide:nth-child(even) {
+    transform: translateY(34px);
+  }
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
 }
 
-/* ── Countdown separator opacity ─────────────────────────────────── */
-.countdown-sep {
-    opacity: 0.7;
+/* Flash-sale / best-seller nav buttons need a light variant over the pink section bg */
+.swiper-nav-btn-light {
+  background: rgba(255, 255, 255, 0.9);
+}
+.swiper-nav-btn-light:hover {
+  background: var(--color-white);
 }
 
-/* ── Bottom nav safe-area padding for iOS ────────────────────────── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .elora-v3-root .sm\:hidden[style*="position:fixed"] {
-        padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    }
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* ── Hide standard elora desktop mobile header on v3 ─────────────── */
-[data-variant="v3"] body > .sm\:hidden.mb-14:not(.elora-v3-mobile-header) {
-    display: none !important;
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-radius: 9999px;
+  background: var(--color-hero-dot-inactive);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 18px;
+  background: var(--color-brand-pink);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 10px;
+    width: 10px;
+  }
+  .hero-dot.is-active {
+    width: 32px;
+  }
+}
+
+/* Categories horizontal scroll row */
+.categories-row {
+  overflow-x: auto;
+}
+
+/* Flash-sale product-ordered progress bar */
+.ordered-progress-track {
+  background: var(--color-progress-track);
+}
+.ordered-progress-fill {
+  background: var(--color-progress-fill);
+}
+
+/* Decorative section background patterns (from Figma) */
+.pattern-flash-sale {
+  background-color: var(--color-brand-pink);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 1px,
+    transparent 1.5px
+  );
+  background-size: 26px 26px;
+}
+.pattern-newin {
+  background-color: var(--color-bg-main);
+  background-image: url("assets/images/pattern-newin.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: plus-lighter;
+}
+.pattern-bestseller {
+  background-color: var(--color-brand-pink);
+  background-image:
+    linear-gradient(to bottom, transparent 55%, var(--color-brand-pink) 100%),
+    url("assets/images/pattern-bestseller.png");
+  background-size:
+    100% 100%,
+    cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: normal, hard-light;
 }
