@@ -17,11 +17,6 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
      ============================================================ --}}
 <div class="elora-v2-root">
 
-    {{-- ============================================================
-         MOBILE HEADER  (dark #121212 bg, purple accent)
-         Hidden on sm+ — desktop uses the standard navbar partial
-         Matches Figma node 1-299
-         ============================================================ --}}
     <div class="sm:hidden elora-v2-mobile-header" style="position:relative;background:#121212;padding:12px 16px 0;">
         <!-- Top row: menu + logo + bell -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -73,12 +68,10 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
             </form>
         </div>
     </div>
-    {{-- spacer so hero doesn't get eaten by search overlap on mobile --}}
+
     <div class="sm:hidden" style="height:28px;background:#121212;"></div>
 
-    {{-- ============================================================
-         PAGE SECTIONS
-         ============================================================ --}}
+
     <main class="w-full" style="padding-bottom:80px;" class="sm:pb-0">
 
         @php
@@ -90,11 +83,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
 
     </main>
 
-    {{-- ============================================================
-         MOBILE BOTTOM NAV  (floating pill, purple cart)
-         Matches Figma node 1-626
-         Only visible on mobile (sm:hidden)
-         ============================================================ --}}
+
     <div class="sm:hidden" style="position:fixed;bottom:16px;left:0;right:0;z-index:100;padding:0 16px;">
         <div style="background:#FDFDFD;border-radius:129px;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 0 10px rgba(0,0,0,.08);position:relative;">
 
@@ -159,7 +148,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
         </div>
     </div>
 
-</div>{{-- /elora-v2-root --}}
+</div>
 
 @push('scripts')
 <script>

@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ELORA — New User Exclusive Deal</title>
+
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-[var(--color-bg-main)]">
+    <!-- ============ NAVBAR ============ -->
+    <header>
+      <!-- Mobile: greeting bar (avatar / hi / location) + search + camera -->
+      <div
+        class="lg:hidden flex flex-col gap-[12px] px-[16px] pt-[14px] pb-[12px]"
+        style="background: var(--color-bg-main)"
+      >
+        <div class="flex items-center justify-between gap-[8px]">
+          <div class="flex items-center gap-[7px] flex-1 min-w-0">
+            <button
+              type="button"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="mobileDrawer"
+              class="flex items-center justify-center shrink-0 size-[32px] rounded-full cursor-pointer"
+              style="background: var(--color-surface)"
+            >
+              <img src="assets/icons/menu.svg" alt="" class="size-[16px]" />
+            </button>
+            <img
+              src="assets/images/avatar-user.png"
+              alt=""
+              class="size-[44px] rounded-full object-cover shrink-0"
+            />
+            <div class="flex flex-col gap-[3px] min-w-0">
+              <p
+                class="font-medium text-[18px] truncate"
+                style="color: var(--color-text-primary)"
+              >
+                Hi, Abdullah &#128075;
+              </p>
+              <div class="flex items-center gap-[4px]">
+                <span
+                  class="font-medium text-[12px] tracking-[0.5px] whitespace-nowrap"
+                  style="color: var(--color-greeting-muted)"
+                  >15 st. cairo, Egypt</span
+                >
+                <img
+                  src="assets/icons/icon-chevron-down.svg"
+                  class="size-[16px]"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            aria-label="Notifications"
+            class="flex items-center justify-center rounded-full size-[40px] shrink-0"
+            style="background: var(--color-surface)"
+          >
+            <img
+              src="assets/icons/icon-bell-outline.svg"
+              alt=""
+              class="size-[20px]"
+            />
+          </button>
+        </div>
+        <div class="flex items-center gap-[8px]">
+          <div
+            class="flex items-center gap-[8px] flex-1 h-[44px] rounded-[32px] px-[18px] border"
+            style="
+              background: var(--color-surface);
+              border-color: var(--color-stroke);
+            "
+          >
+            <img
+              src="assets/icons/search.svg"
+              alt=""
+              class="size-[18px] opacity-70"
+            />
+            <input
+              type="search"
+              placeholder="Search..."
+              class="bg-transparent outline-none text-[16px] w-full"
+              style="color: var(--color-gray)"
+            />
+          </div>
+          <button type="button" aria-label="Search by camera" class="shrink-0">
+            <img
+              src="assets/icons/icon-camera.svg"
+              alt=""
+              class="size-[44px]"
+            />
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop -->
+      <div
+        class="hidden lg:flex items-center gap-[18px] px-[48px] py-[18px] bg-white"
+      >
+        <button
+          type="button"
+          aria-label="Open menu"
+          class="flex flex-col items-center justify-center cursor-pointer"
+        >
+          <img src="assets/icons/menu.svg" alt="" class="size-[38px] -mb-1" />
+          <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
+        </button>
+        <img
+          src="assets/icons/logo-elora.svg"
+          alt="ELORA"
+          class="h-[38px] w-auto"
+        />
+        <div
+          class="flex flex-1 items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
+          style="background: var(--color-surface)"
+        >
+          <img
+            src="assets/icons/search.svg"
+            alt=""
+            class="size-[22px] opacity-70"
+          />
+          <input
+            type="search"
+            placeholder="Search..."
+            class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full"
+          />
+        </div>
+        <div class="flex items-center gap-[38px] shrink-0">
+          <div class="flex items-center gap-[6px]">
+            <img
+              src="assets/icons/flag-en.png"
+              alt="EN"
+              class="h-[25px] w-[40px] object-cover rounded-[2px]"
+            />
+            <div class="flex flex-col">
+              <span
+                class="font-light text-[12px] tracking-[0.5px] text-[var(--color-black)]"
+                >En/</span
+              >
+              <span
+                class="font-medium text-[12px] tracking-[0.5px] text-[var(--color-black)] flex items-center gap-[2px]"
+                >SAR
+                <img
+                  src="assets/icons/arrow-down.svg"
+                  class="size-[12px]"
+                  alt=""
+              /></span>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="flex items-center gap-[8px] cursor-pointer"
+            aria-label="Favorites"
+          >
+            <img src="assets/icons/heart.svg" class="size-[24px]" alt="" />
+            <span
+              class="text-[14px] tracking-[0.5px]"
+              style="color: var(--color-black-alt)"
+              >Favorite</span
+            >
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-[8px] cursor-pointer"
+            aria-label="Cart"
+          >
+            <img src="assets/icons/cart.svg" class="size-[24px]" alt="" />
+            <span class="flex flex-col items-center">
+              <span
+                class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center"
+                style="background: var(--color-brand-orange-bright)"
+                >0</span
+              >
+              <span
+                class="text-[14px] tracking-[0.5px]"
+                style="color: var(--color-black-alt)"
+                >Cart</span
+              >
+            </span>
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-[8px] cursor-pointer"
+            aria-label="Account"
+          >
+            <img src="assets/icons/user.svg" class="size-[24px]" alt="" />
+            <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
+              <span class="block text-[var(--color-text-faint)]">Welcome</span>
+              <span class="block" style="color: var(--color-black-alt)"
+                >Sign in / Register</span
+              >
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ MOBILE DRAWER MENU ============ -->
+    <div
+      id="mobileDrawerOverlay"
+      class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"
+    ></div>
+    <aside
+      id="mobileDrawer"
+      class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white"
+      style="box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15)"
+    >
+      <div
+        class="flex items-center justify-between px-[20px] py-[16px] border-b"
+        style="border-color: var(--color-page-bg)"
+      >
+        <img
+          src="assets/icons/logo-elora.svg"
+          alt="ELORA"
+          class="h-[26px] w-auto"
+        />
+        <button
+          type="button"
+          id="drawerCloseBtn"
+          aria-label="Close menu"
+          class="flex items-center justify-center size-[32px] rounded-full cursor-pointer"
+          style="background: var(--color-page-bg)"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            class="size-[16px]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]"
+        style="background: var(--color-surface)"
+      >
+        <img
+          src="assets/icons/search.svg"
+          alt=""
+          class="size-[18px] opacity-70"
+        />
+        <input
+          type="search"
+          placeholder="Search..."
+          class="bg-transparent outline-none text-[14px] text-[var(--color-text-placeholder)] w-full"
+        />
+      </div>
+      <nav
+        class="flex flex-col px-[16px] py-[12px] overflow-y-auto no-scrollbar"
+      >
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] font-medium tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-brand-orange-bright);
+          "
+          >Men's Clothing
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-60"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Women's Clothing
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Kid's Fashion
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Electronics
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Gaming
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Cameras
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+          style="
+            border-color: var(--color-page-bg);
+            color: var(--color-text-primary);
+          "
+          >Bags
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+        <a
+          href="#"
+          class="flex items-center justify-between py-[12px] text-[15px] tracking-[0.3px]"
+          style="color: var(--color-text-primary)"
+          >Home & Kitchen
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90 opacity-40"
+            alt=""
+          />
+        </a>
+      </nav>
+      <div
+        class="mt-auto flex flex-col gap-[16px] px-[20px] py-[20px] border-t"
+        style="border-color: var(--color-page-bg)"
+      >
+        <a href="#" class="flex items-center gap-[10px]">
+          <img src="assets/icons/user.svg" class="size-[20px]" alt="" />
+          <span
+            class="text-[14px] tracking-[0.5px]"
+            style="color: var(--color-black-alt)"
+            >Sign in / Register</span
+          >
+        </a>
+        <a href="#" class="flex items-center gap-[10px]">
+          <img src="assets/icons/heart.svg" class="size-[20px]" alt="" />
+          <span
+            class="text-[14px] tracking-[0.5px]"
+            style="color: var(--color-black-alt)"
+            >Favorite</span
+          >
+        </a>
+        <a href="#" class="flex items-center gap-[10px]">
+          <img src="assets/icons/cart.svg" class="size-[20px]" alt="" />
+          <span
+            class="text-[14px] tracking-[0.5px]"
+            style="color: var(--color-black-alt)"
+            >Cart</span
+          >
+          <span
+            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center"
+            style="background: var(--color-brand-orange-bright)"
+            >0</span
+          >
+        </a>
+      </div>
+    </aside>
+
+    <!-- ============ HERO ("NEW USER" promo) ============ -->
+    <section class="relative">
+      <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div
+              class="relative flex items-end lg:items-center h-[321px] lg:h-[527px] overflow-hidden"
+              style="background: var(--color-brand-orange-bright)"
+            >
+              <div
+                class="flex flex-col gap-[18px] lg:gap-[24px] items-start justify-center px-[20px] lg:px-[74px] py-[24px] lg:py-0 w-[70%] lg:w-[548px] shrink-0"
+              >
+                <div
+                  class="bg-white rounded-[8px] px-[14px] lg:px-[18px] py-[3px] lg:py-[4px]"
+                >
+                  <p
+                    class="font-black text-[16px] lg:text-[26px] tracking-[1.3px] lg:tracking-[2.2px]"
+                    style="color: var(--color-brand-orange)"
+                  >
+                    NEW USER
+                  </p>
+                </div>
+                <h1
+                  class="font-black text-[28px] lg:text-[57px] leading-[1.05] text-white"
+                >
+                  Explore New<br />Products
+                </h1>
+                <p
+                  class="font-normal text-[14px] lg:text-[24px]"
+                  style="color: var(--color-hero-subtitle)"
+                >
+                  New user exclusive deal
+                </p>
+                <button
+                  type="button"
+                  class="bg-white flex h-[38px] lg:h-[70px] items-center justify-center rounded-full px-[24px] lg:px-[44px] cursor-pointer"
+                >
+                  <span
+                    class="font-bold text-[14px] lg:text-[26px]"
+                    style="color: var(--color-brand-orange)"
+                    >Shop Now</span
+                  >
+                </button>
+              </div>
+              <div
+                class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
+              >
+                <img
+                  src="assets/images/hero-woman.png"
+                  alt="New user exclusive deal"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div
+              class="relative flex items-end lg:items-center h-[321px] lg:h-[527px] overflow-hidden"
+              style="background: var(--color-brand-orange-bright)"
+            >
+              <div
+                class="flex flex-col gap-[18px] lg:gap-[24px] items-start justify-center px-[20px] lg:px-[74px] py-[24px] lg:py-0 w-[70%] lg:w-[548px] shrink-0"
+              >
+                <div
+                  class="bg-white rounded-[8px] px-[14px] lg:px-[18px] py-[3px] lg:py-[4px]"
+                >
+                  <p
+                    class="font-black text-[16px] lg:text-[26px] tracking-[1.3px] lg:tracking-[2.2px]"
+                    style="color: var(--color-brand-orange)"
+                  >
+                    20% OFF
+                  </p>
+                </div>
+                <h1
+                  class="font-black text-[28px] lg:text-[57px] leading-[1.05] text-white"
+                >
+                  Flash Sale<br />Up To 50%
+                </h1>
+                <p
+                  class="font-normal text-[14px] lg:text-[24px]"
+                  style="color: var(--color-hero-subtitle)"
+                >
+                  For a limited time only
+                </p>
+                <button
+                  type="button"
+                  class="bg-white flex h-[38px] lg:h-[70px] items-center justify-center rounded-full px-[24px] lg:px-[44px] cursor-pointer"
+                >
+                  <span
+                    class="font-bold text-[14px] lg:text-[26px]"
+                    style="color: var(--color-brand-orange)"
+                    >Shop Deals</span
+                  >
+                </button>
+              </div>
+              <div
+                class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
+              >
+                <img
+                  src="assets/images/hero-woman.png"
+                  alt="Flash sale up to 50%"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="swiper-slide">
+            <div
+              class="relative flex items-end lg:items-center h-[321px] lg:h-[527px] overflow-hidden"
+              style="background: var(--color-brand-orange-bright)"
+            >
+              <div
+                class="flex flex-col gap-[18px] lg:gap-[24px] items-start justify-center px-[20px] lg:px-[74px] py-[24px] lg:py-0 w-[70%] lg:w-[548px] shrink-0"
+              >
+                <div
+                  class="bg-white rounded-[8px] px-[14px] lg:px-[18px] py-[3px] lg:py-[4px]"
+                >
+                  <p
+                    class="font-black text-[16px] lg:text-[26px] tracking-[1.3px] lg:tracking-[2.2px]"
+                    style="color: var(--color-brand-orange)"
+                  >
+                    BEST SELLER
+                  </p>
+                </div>
+                <h1
+                  class="font-black text-[28px] lg:text-[57px] leading-[1.05] text-white"
+                >
+                  New Season<br />Arrivals
+                </h1>
+                <p
+                  class="font-normal text-[14px] lg:text-[24px]"
+                  style="color: var(--color-hero-subtitle)"
+                >
+                  Discover what's trending
+                </p>
+                <button
+                  type="button"
+                  class="bg-white flex h-[38px] lg:h-[70px] items-center justify-center rounded-full px-[24px] lg:px-[44px] cursor-pointer"
+                >
+                  <span
+                    class="font-bold text-[14px] lg:text-[26px]"
+                    style="color: var(--color-brand-orange)"
+                    >Discover More</span
+                  >
+                </button>
+              </div>
+              <div
+                class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
+              >
+                <img
+                  src="assets/images/hero-woman.png"
+                  alt="New season arrivals"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-pagination"></div>
+      </div>
+    </section>
+
+    <!-- ============ FEATURE STRIP ============ -->
+    <section
+      class="flex items-center justify-center px-[16px] py-[12px] lg:py-[8px]"
+      style="background: var(--color-brand-orange)"
+    >
+      <div class="flex items-center gap-[12px] lg:gap-[19px]">
+        <img
+          src="assets/icons/icon-package.svg"
+          alt=""
+          class="size-[24px] lg:size-[35px]"
+        />
+        <p
+          class="font-normal text-[14px] lg:text-[18px] tracking-[0.4px] lg:tracking-[0.7px] text-white whitespace-nowrap"
+        >
+          Money-Back Guarantee
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ CATEGORIES ============ -->
+    <section
+      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[57px] flex flex-col gap-[16px] lg:gap-[34px]"
+      style="background: var(--color-bg-main)"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
+          Categories
+        </h2>
+        <a
+          href="#"
+          class="font-normal text-[14px] lg:text-[20px] tracking-[0.5px]"
+          style="color: var(--color-brand-orange-bright)"
+          >see all</a
+        >
+      </div>
+      <div
+        class="grid grid-cols-4 gap-[8px] lg:flex lg:items-start lg:gap-[32px]"
+      >
+        <div
+          class="flex flex-col items-center gap-[4px] lg:gap-[4px] lg:flex-1"
+        >
+          <div
+            class="relative flex items-center justify-center overflow-hidden w-full h-[64px] lg:h-[72px] rounded-bl-[28px] rounded-tr-[28px] lg:rounded-bl-[62px] lg:rounded-tr-[62px]"
+            style="background: var(--color-brand-orange)"
+          >
+            <img
+              src="assets/images/cat-gaming.png"
+              alt="Gaming"
+              class="h-[68px] lg:h-[105px] w-auto -mt-[10px] lg:-mt-[16px]"
+            />
+          </div>
+          <p
+            class="font-semibold text-[12px] lg:text-[23px] tracking-[0.4px] lg:tracking-[1px] text-black text-center"
+          >
+            Gaming
+          </p>
+        </div>
+        <div class="flex flex-col items-center gap-[4px] lg:flex-1">
+          <div
+            class="relative flex items-center justify-center overflow-hidden w-full h-[64px] lg:h-[72px] rounded-bl-[28px] rounded-tr-[28px] lg:rounded-bl-[62px] lg:rounded-tr-[62px]"
+            style="background: var(--color-brand-orange)"
+          >
+            <img
+              src="assets/images/cat-bag.png"
+              alt="Women bags"
+              class="h-[48px] lg:h-[80px] w-auto -mt-[6px] lg:-mt-[10px]"
+            />
+          </div>
+          <p
+            class="font-semibold text-[12px] lg:text-[23px] tracking-[0.4px] lg:tracking-[1px] text-black text-center"
+          >
+            Women bags
+          </p>
+        </div>
+        <div class="flex flex-col items-center gap-[4px] lg:flex-1">
+          <div
+            class="relative flex items-center justify-center overflow-hidden w-full h-[64px] lg:h-[72px] rounded-bl-[28px] rounded-tr-[28px] lg:rounded-bl-[62px] lg:rounded-tr-[62px]"
+            style="background: var(--color-brand-orange)"
+          >
+            <img
+              src="assets/images/cat-electronics.png"
+              alt="Electronics"
+              class="h-[54px] lg:h-[88px] w-auto -mt-[8px] lg:-mt-[12px]"
+            />
+          </div>
+          <p
+            class="font-semibold text-[12px] lg:text-[23px] tracking-[0.4px] lg:tracking-[1px] text-black text-center"
+          >
+            Electronics
+          </p>
+        </div>
+        <div class="flex flex-col items-center gap-[4px] lg:flex-1">
+          <div
+            class="relative flex items-center justify-center overflow-hidden w-full h-[64px] lg:h-[72px] rounded-bl-[28px] rounded-tr-[28px] lg:rounded-bl-[62px] lg:rounded-tr-[62px]"
+            style="background: var(--color-brand-orange)"
+          >
+            <img
+              src="assets/images/cat-accessories.png"
+              alt="Accessories"
+              class="h-[54px] lg:h-[88px] w-auto -mt-[8px] lg:-mt-[12px]"
+            />
+          </div>
+          <p
+            class="font-semibold text-[12px] lg:text-[23px] tracking-[0.4px] lg:tracking-[1px] text-black text-center"
+          >
+            Accessories
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FLASH SALE ============ -->
+    <section
+      class="texture-bg texture-hard px-[16px] lg:px-[56px] py-[24px] lg:py-[16px] flex flex-col items-center gap-[24px]"
+    >
+      <img
+        src="assets/images/flash-sale-texture.png"
+        alt=""
+        class="texture-overlay"
+      />
+      <div
+        class="relative flex flex-col lg:flex-row items-center gap-[16px] lg:gap-[20px] w-full"
+      >
+        <div class="relative flex flex-col items-start gap-[16px] shrink-0">
+          <div class="relative">
+            <img
+              src="assets/images/flash-sale-illustration.png"
+              alt="Flash Sale"
+              class="w-[180px] lg:w-[283px] h-auto"
+            />
+            <div
+              class="absolute top-[6px] left-[4px] lg:top-[14px] lg:left-[10px] flex items-center justify-center h-[38px] w-[80px] lg:h-[62px] lg:w-[130px] rounded-full border-2 border-white"
+              style="background: var(--color-brand-orange)"
+            >
+              <span
+                class="font-normal text-[14px] lg:text-[22px] text-white tracking-[0.5px]"
+                >20% Off</span
+              >
+            </div>
+          </div>
+          <!-- timer wrapper -->
+          <div class="flex items-center gap-[8px]">
+            <span
+              class="-rotate-90 w-auto text-[13px] lg:text-[20px] text-white tracking-[0.8px] w-0 whitespace-nowrap"
+              >Ends in</span
+            >
+            <div class="flex items-center gap-[8px] translate-x-[-20px]">
+              <div
+                class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white"
+                style="background: var(--color-brand-orange-bright)"
+              >
+                <span
+                  class="font-semibold text-[26px] lg:text-[40px] text-white"
+                  data-flash-timer
+                  >03</span
+                >
+              </div>
+              <div
+                class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white"
+                style="background: var(--color-brand-orange-bright)"
+              >
+                <span
+                  class="font-semibold text-[26px] lg:text-[40px] text-white"
+                  data-flash-timer
+                  >06</span
+                >
+              </div>
+              <div
+                class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white"
+                style="background: var(--color-brand-orange-bright)"
+              >
+                <span
+                  class="font-semibold text-[26px] lg:text-[40px] text-white"
+                  data-flash-timer
+                  >25</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- swiper -->
+        <div class="relative flex-1 min-w-0 w-full">
+          <div class="swiper card-swiper flash-sale-grid">
+            <div class="swiper-wrapper" id="flashSaleWrapper"></div>
+          </div>
+
+          <div
+            class="absolute bottom-[-25px] z-50 -left-[50px] -translate-x-1/2 bg-white border-2 border-black rounded-full h-[42px] lg:h-[48px] flex items-center justify-center px-[20px] lg:px-[24px]"
+          >
+            <p
+              class="font-bold text-[14px] lg:text-[21px] whitespace-nowrap"
+              style="color: var(--color-brand-orange)"
+            >
+              Only $129.00
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="relative flex flex-col items-center pb-[8px]">
+        <button
+          type="button"
+          class="border border-white rounded-full h-[48px] lg:h-[64px] px-[32px] flex items-center justify-center cursor-pointer"
+          style="background: var(--color-brand-orange)"
+        >
+          <span
+            class="font-medium text-white text-[16px] lg:text-[20px] tracking-[0.5px]"
+            >Explore all</span
+          >
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ NEW IN ============ -->
+    <section
+      class="pattern-newin mt-[64px] px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
+          New In
+        </h2>
+        <a
+          href="#"
+          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
+          style="color: var(--color-brand-orange-bright)"
+          >see all</a
+        >
+      </div>
+      <div class="relative">
+        <div class="swiper card-swiper newin-swiper">
+          <div class="swiper-wrapper" id="newInWrapper"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TRENDING NOW ============ -->
+    <section
+      class="pattern-trending px-[16px] lg:px-[56px] py-[24px] flex flex-col gap-[16px] lg:gap-[34px]"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
+          Trending Now
+        </h2>
+        <a
+          href="#"
+          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
+          style="color: var(--color-brand-orange-bright)"
+          >see all</a
+        >
+      </div>
+      <div class="relative">
+        <div class="swiper card-swiper trending-swiper">
+          <div class="swiper-wrapper" id="trendingWrapper"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SHOP BY CATEGORY ============ -->
+    <section
+      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
+      style="background: var(--color-bg-main)"
+    >
+      <h2
+        class="font-semibold text-[22px] lg:text-[32px] text-black text-center tracking-[0.5px]"
+      >
+        Shop by Category
+      </h2>
+      <div class="grid grid-cols-2 lg:flex gap-[12px] lg:gap-[24px] w-full">
+        <a
+          href="#"
+          class="relative rounded-[16px] lg:rounded-[20px] overflow-hidden flex flex-col justify-between p-[10px] lg:p-[12px] h-[100px] lg:h-[128px] lg:flex-1"
+          style="background: var(--color-tile-outerwear)"
+        >
+          <img
+            src="assets/images/tile-outerwear.png"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover opacity-90"
+          />
+          <div
+            class="absolute inset-0"
+            style="
+              background: linear-gradient(
+                110deg,
+                var(--color-tile-outerwear) 42%,
+                rgba(0, 0, 0, 0) 43%
+              );
+            "
+          ></div>
+          <span
+            class="relative text-white text-[9px] lg:text-[10px] tracking-[1px] uppercase"
+            style="opacity: 0.75"
+            >Explore</span
+          >
+          <div class="relative flex flex-col gap-[6px] lg:gap-[8px]">
+            <span class="text-white font-extrabold text-[14px] lg:text-[18px]"
+              >Outerwear</span
+            >
+            <span
+              class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
+              ><img
+                src="assets/icons/icon-explore-arrow.svg"
+                class="size-[10px] lg:size-[12px]"
+                alt=""
+            /></span>
+          </div>
+        </a>
+        <a
+          href="#"
+          class="relative rounded-[16px] lg:rounded-[20px] overflow-hidden flex flex-col justify-between p-[10px] lg:p-[12px] h-[100px] lg:h-[128px] lg:flex-1"
+          style="background: var(--color-tile-footwear)"
+        >
+          <img
+            src="assets/images/tile-footwear.png"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover opacity-90"
+          />
+          <div
+            class="absolute inset-0"
+            style="
+              background: linear-gradient(
+                110deg,
+                var(--color-tile-footwear) 42%,
+                rgba(0, 0, 0, 0) 43%
+              );
+            "
+          ></div>
+          <span
+            class="relative text-white text-[9px] lg:text-[10px] tracking-[1px] uppercase"
+            style="opacity: 0.75"
+            >Explore</span
+          >
+          <div class="relative flex flex-col gap-[6px] lg:gap-[8px]">
+            <span class="text-white font-extrabold text-[14px] lg:text-[18px]"
+              >Footwear</span
+            >
+            <span
+              class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
+              ><img
+                src="assets/icons/icon-explore-arrow.svg"
+                class="size-[10px] lg:size-[12px]"
+                alt=""
+            /></span>
+          </div>
+        </a>
+        <a
+          href="#"
+          class="relative rounded-[16px] lg:rounded-[20px] overflow-hidden flex flex-col justify-between p-[10px] lg:p-[12px] h-[100px] lg:h-[128px] lg:flex-1"
+          style="background: var(--color-tile-bags)"
+        >
+          <img
+            src="assets/images/tile-bags.png"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover opacity-90"
+          />
+          <div
+            class="absolute inset-0"
+            style="
+              background: linear-gradient(
+                110deg,
+                var(--color-tile-bags) 42%,
+                rgba(0, 0, 0, 0) 43%
+              );
+            "
+          ></div>
+          <span
+            class="relative text-white text-[9px] lg:text-[10px] tracking-[1px] uppercase"
+            style="opacity: 0.75"
+            >Explore</span
+          >
+          <div class="relative flex flex-col gap-[6px] lg:gap-[8px]">
+            <span class="text-white font-extrabold text-[14px] lg:text-[18px]"
+              >Bags</span
+            >
+            <span
+              class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
+              ><img
+                src="assets/icons/icon-explore-arrow.svg"
+                class="size-[10px] lg:size-[12px]"
+                alt=""
+            /></span>
+          </div>
+        </a>
+        <a
+          href="#"
+          class="relative rounded-[16px] lg:rounded-[20px] overflow-hidden flex flex-col justify-between p-[10px] lg:p-[12px] h-[100px] lg:h-[128px] lg:flex-1"
+          style="background: var(--color-tile-watches)"
+        >
+          <img
+            src="assets/images/tile-watches.png"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover opacity-90"
+          />
+          <div
+            class="absolute inset-0"
+            style="
+              background: linear-gradient(
+                110deg,
+                var(--color-tile-watches) 42%,
+                rgba(0, 0, 0, 0) 43%
+              );
+            "
+          ></div>
+          <span
+            class="relative text-white text-[9px] lg:text-[10px] tracking-[1px] uppercase"
+            style="opacity: 0.75"
+            >Explore</span
+          >
+          <div class="relative flex flex-col gap-[6px] lg:gap-[8px]">
+            <span class="text-white font-extrabold text-[14px] lg:text-[18px]"
+              >Watches</span
+            >
+            <span
+              class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
+              ><img
+                src="assets/icons/icon-explore-arrow.svg"
+                class="size-[10px] lg:size-[12px]"
+                alt=""
+            /></span>
+          </div>
+        </a>
+      </div>
+      <button
+        type="button"
+        class="border rounded-full px-[32px] py-[16px] text-[14px] lg:text-[16px] font-medium cursor-pointer"
+        style="
+          border-color: var(--color-text-primary);
+          color: var(--color-text-primary);
+        "
+      >
+        Explore all
+      </button>
+    </section>
+
+    <!-- ============ BEST SELLER ============ -->
+    <section
+      class="texture-bg px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
+    >
+      <img
+        src="assets/images/best-seller-texture.png"
+        alt=""
+        class="texture-overlay"
+      />
+      <h2 class="relative font-bold text-[24px] lg:text-[36px] text-white">
+        Best Seller
+      </h2>
+      <div class="relative w-full">
+        <div class="swiper card-swiper">
+          <div class="swiper-wrapper" id="bestSellerWrapper"></div>
+        </div>
+        <button
+          id="bestSellerPrev"
+          type="button"
+          aria-label="Previous"
+          class="swiper-nav-btn swiper-nav-prev"
+        >
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] rotate-90"
+            alt=""
+          />
+        </button>
+        <button
+          id="bestSellerNext"
+          type="button"
+          aria-label="Next"
+          class="swiper-nav-btn swiper-nav-next"
+        >
+          <img
+            src="assets/icons/arrow-down.svg"
+            class="size-[14px] -rotate-90"
+            alt=""
+          />
+        </button>
+      </div>
+      <button
+        type="button"
+        class="relative border border-white rounded-full h-[48px] lg:h-[64px] px-[32px] flex items-center justify-center cursor-pointer"
+      >
+        <span
+          class="font-medium text-white text-[16px] lg:text-[20px] tracking-[0.5px]"
+          >Explore all</span
+        >
+      </button>
+    </section>
+
+    <!-- ============ RECOMMENDED FOR YOU ============ -->
+    <section
+      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
+          Recommended For You
+        </h2>
+        <a
+          href="#"
+          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
+          style="color: var(--color-brand-orange-bright)"
+          >see all</a
+        >
+      </div>
+      <div
+        id="recommendedWrapper"
+        class="grid grid-cols-2 lg:grid-cols-5 gap-[12px] lg:gap-[16px]"
+      ></div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer style="background: var(--color-footer-bg)">
+      <div
+        class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto"
+      >
+        <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
+          <div class="flex flex-col gap-[32px]">
+            <img
+              src="assets/icons/logo-elora-white.svg"
+              alt="ELORA"
+              class="h-[32px] w-auto"
+            />
+            <div class="flex flex-col gap-[16px]">
+              <p class="font-medium text-[16px] text-white">
+                Connect with ELORA
+              </p>
+              <div class="flex gap-[16px] items-center">
+                <img
+                  src="assets/icons/social-facebook.svg"
+                  alt="Facebook"
+                  class="size-[24px]"
+                />
+                <img
+                  src="assets/icons/social-twitter.svg"
+                  alt="Twitter"
+                  class="size-[24px]"
+                />
+                <img
+                  src="assets/icons/social-instagram.svg"
+                  alt="Instagram"
+                  class="size-[24px]"
+                />
+                <img
+                  src="assets/icons/social-youtube.svg"
+                  alt="YouTube"
+                  class="size-[32px]"
+                />
+                <img
+                  src="assets/icons/social-linkedin.svg"
+                  alt="LinkedIn"
+                  class="size-[24px]"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[12px]">
+            <p class="font-semibold text-[16px] text-white">We accept</p>
+            <div class="flex gap-[12px]">
+              <img
+                src="assets/icons/pay-visa.png"
+                alt="Visa"
+                class="h-[37px] w-[56px] object-cover rounded"
+              />
+              <img
+                src="assets/icons/pay-mastercard.png"
+                alt="Mastercard"
+                class="h-[37px] w-[56px] object-cover rounded"
+              />
+              <img
+                src="assets/icons/pay-applepay.png"
+                alt="Apple Pay"
+                class="h-[37px] w-[56px] object-cover rounded"
+              />
+              <img
+                src="assets/icons/pay-fawry.png"
+                alt="Fawry Pay"
+                class="h-[38px] w-[56px] object-cover rounded"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col sm:flex-row gap-[32px] sm:gap-[60px] lg:gap-[0] lg:justify-between lg:flex-1"
+        >
+          <div class="flex flex-col gap-[26px]">
+            <p class="font-medium text-[20px] text-white">Customer service</p>
+            <div
+              class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
+              style="color: var(--color-footer-text-muted)"
+            >
+              <p>Return and refund policy</p>
+              <p>Intellectual property policy</p>
+              <p>Shipping info</p>
+              <p>Report suspicious activity</p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[26px]">
+            <p class="font-medium text-[20px] text-white">Policies</p>
+            <div
+              class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
+              style="color: var(--color-footer-text-muted)"
+            >
+              <p>Shipping</p>
+              <p>Payment</p>
+              <p>Privacy</p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[26px]">
+            <p class="font-medium text-[20px] text-white">Company info</p>
+            <div
+              class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px] text-white"
+            >
+              <p>About ELORA</p>
+              <p>Contact us</p>
+              <p>FAQs</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-wrap items-center justify-center gap-[24px] lg:gap-[88px] py-[15px] text-[14px] tracking-[0.5px] text-white"
+        style="background: var(--color-footer-subbar)"
+      >
+        <p>Terms of use</p>
+        <p>Privacy policy</p>
+        <p>Your privacy choices</p>
+        <p>Support</p>
+        <p>FAQ</p>
+      </div>
+      <div
+        class="flex items-center justify-center py-[18px] text-[14px] tracking-[0.5px] text-white text-center"
+        style="background: var(--color-footer-bar)"
+      >
+        Copyright &copy;2026 ELORA. All Rights Reserved.
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="interactions.js"></script>
+    <script src="carousels.js"></script>
+  </body>
+</html>
