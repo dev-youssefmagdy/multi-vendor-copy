@@ -1,3 +1,20 @@
+    @php
+      $flashSaleImg = asset('elora-4/assets/images/product-placeholder.svg');
+      $flashSaleProducts = [
+        ['image' => $flashSaleImg, 'name' => 'Wireless Headphones', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Smartphone Pro', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Wireless Earbuds', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Volt Running Sneakers', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Mechanical Keyboard', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Potted Plant', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Wireless Headphones', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Smartphone Pro', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Wireless Earbuds', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Volt Running Sneakers', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Mechanical Keyboard', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $flashSaleImg, 'name' => 'Potted Plant', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+      ];
+    @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
       class="texture-bg texture-hard px-[16px] lg:px-[56px] py-[24px] lg:py-[16px] flex flex-col items-center gap-[24px]"
@@ -71,7 +88,11 @@
         <!-- swiper -->
         <div class="relative flex-1 min-w-0 w-full">
           <div class="swiper card-swiper flash-sale-grid">
-            <div class="swiper-wrapper" id="flashSaleWrapper"></div>
+            <div class="swiper-wrapper" id="flashSaleWrapper">
+              @foreach ($flashSaleProducts as $p)
+                @include('themes.elora.pages.home-v4.sections.partials.flash_card', ['p' => $p])
+              @endforeach
+            </div>
           </div>
 
           <div

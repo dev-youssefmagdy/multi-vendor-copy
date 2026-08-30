@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-C7KUQfB2.css",
+    "file": "assets/app-DfAI7i2d.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-B5Mtb-wi.css",
+    "file": "assets/ecommet-1T2avlYx.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -162,7 +162,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-B2BioiBn.css",
+    "file": "assets/souqify-CnwKd0T9.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -226,7 +226,7 @@
     "isEntry": true
   },
   "resources/js/elora-v3-carousels.js": {
-    "file": "assets/elora-v3-carousels-D60sEPFt.js",
+    "file": "assets/elora-v3-carousels-bAzeXwr1.js",
     "name": "elora-v3-carousels",
     "src": "resources/js/elora-v3-carousels.js",
     "isEntry": true
@@ -238,13 +238,13 @@
     "isEntry": true
   },
   "resources/js/elora-v4-carousels.js": {
-    "file": "assets/elora-v4-carousels-B5zBKQZp.js",
+    "file": "assets/elora-v4-carousels-Dhlmfo5e.js",
     "name": "elora-v4-carousels",
     "src": "resources/js/elora-v4-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v4-interactions.js": {
-    "file": "assets/elora-v4-interactions-JZBg6X5Y.js",
+    "file": "assets/elora-v4-interactions-itHcBVlJ.js",
     "name": "elora-v4-interactions",
     "src": "resources/js/elora-v4-interactions.js",
     "isEntry": true

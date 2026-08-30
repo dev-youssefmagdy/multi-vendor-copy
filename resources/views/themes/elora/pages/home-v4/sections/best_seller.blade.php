@@ -1,3 +1,14 @@
+    @php
+      $bestSellerImg = asset('elora-4/assets/images/product-placeholder.svg');
+      $bestSellerProducts = [
+        ['image' => $bestSellerImg, 'name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $bestSellerImg, 'name' => 'Retro Sneakers', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $bestSellerImg, 'name' => 'Studio Headphones', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $bestSellerImg, 'name' => 'Wireless Mouse', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $bestSellerImg, 'name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => $bestSellerImg, 'name' => 'Retro Sneakers', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+      ];
+    @endphp
     <!-- ============ BEST SELLER ============ -->
     <section
       class="texture-bg px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
@@ -12,7 +23,11 @@
       </h2>
       <div class="relative w-full">
         <div class="swiper card-swiper">
-          <div class="swiper-wrapper" id="bestSellerWrapper"></div>
+          <div class="swiper-wrapper" id="bestSellerWrapper">
+            @foreach ($bestSellerProducts as $p)
+              @include('themes.elora.pages.home-v4.sections.partials.best_seller_card', ['p' => $p])
+            @endforeach
+          </div>
         </div>
         <button
           id="bestSellerPrev"
