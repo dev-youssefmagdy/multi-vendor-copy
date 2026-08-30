@@ -52,6 +52,33 @@
                 $scriptsKey = 'scripts-v2';
             @endphp
             @break
+        @case('v3')
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v3';
+                $footerKey = 'footer-v3';
+                $stylesKey = 'styles-v3';
+                $scriptsKey = 'scripts-v3';
+            @endphp
+            @break
+        @case('v4')
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v4';
+                $footerKey = 'footer-v4';
+                $stylesKey = 'styles-v4';
+                $scriptsKey = 'scripts-v4';
+            @endphp
+            @break
+        @case('v5')
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v5';
+                $footerKey = 'footer-v5';
+                $stylesKey = 'styles-v5';
+                $scriptsKey = 'scripts-v5';
+            @endphp
+            @break
         @default
             @php
                 $bodyClass= 'bg-gray-50';

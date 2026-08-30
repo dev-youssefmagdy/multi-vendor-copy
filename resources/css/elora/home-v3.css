@@ -1,0 +1,186 @@
+/* ================================================================
+   ELORA V3 home page — section-level overrides
+   Ported from public/elora-3/styles.css, scoped under .elora-v3-root
+   ================================================================ */
+
+.elora-v3-root .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.elora-v3-root .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending Now / Flash Sale / Best Seller) */
+.elora-v3-root .card-swiper {
+    overflow: visible;
+    padding-bottom: 4px;
+}
+.elora-v3-root .newin-swiper {
+    overflow: hidden;
+}
+.elora-v3-root .newin-swiper .swiper-wrapper {
+    height: 419px;
+}
+.elora-v3-root .card-swiper .swiper-wrapper {
+    align-items: stretch;
+}
+
+/* Best Seller row: alternating cards sit slightly lower */
+.elora-v3-root .bestseller-swiper {
+    padding-bottom: 24px;
+}
+.elora-v3-root .bestseller-swiper .swiper-slide:nth-child(even) {
+    transform: translateY(20px);
+}
+@media (min-width: 1024px) {
+    .elora-v3-root .bestseller-swiper {
+        padding-bottom: 40px;
+    }
+    .elora-v3-root .bestseller-swiper .swiper-slide:nth-child(even) {
+        transform: translateY(34px);
+    }
+}
+
+.elora-v3-root .swiper-nav-btn {
+    display: none;
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: var(--color-white);
+    box-shadow: var(--shadow-card, 0 4px 7px 0 rgba(0, 0, 0, 0.1));
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+    .elora-v3-root .swiper-nav-btn {
+        display: flex;
+    }
+}
+.elora-v3-root .swiper-nav-btn:hover {
+    background: var(--color-page-bg);
+}
+.elora-v3-root .swiper-nav-btn.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+.elora-v3-root .swiper-nav-prev {
+    left: -8px;
+}
+.elora-v3-root .swiper-nav-next {
+    right: -8px;
+}
+
+/* Flash-sale / best-seller nav buttons need a light variant over the pink section bg */
+.elora-v3-root .swiper-nav-btn-light {
+    background: rgba(255, 255, 255, 0.9);
+}
+.elora-v3-root .swiper-nav-btn-light:hover {
+    background: var(--color-white);
+}
+
+/* Mobile drawer menu */
+.elora-v3-root .mobile-drawer {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+.elora-v3-root .mobile-drawer.is-open {
+    transform: translateX(0);
+}
+.elora-v3-root .mobile-drawer-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.elora-v3-root .mobile-drawer-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Hero carousel */
+.elora-v3-root .hero-swiper {
+    overflow: hidden;
+}
+.elora-v3-root .hero-pagination {
+    position: static !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 12px 0;
+}
+@media (min-width: 1024px) {
+    .elora-v3-root .hero-pagination {
+        gap: 5px;
+    }
+}
+.elora-v3-root .hero-dot {
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-radius: 9999px;
+    background: var(--color-hero-dot-inactive);
+    cursor: pointer;
+    transition:
+        width 0.2s ease,
+        background 0.2s ease;
+}
+.elora-v3-root .hero-dot.is-active {
+    width: 18px;
+    background: var(--color-brand-pink);
+}
+@media (min-width: 1024px) {
+    .elora-v3-root .hero-dot {
+        height: 10px;
+        width: 10px;
+    }
+    .elora-v3-root .hero-dot.is-active {
+        width: 32px;
+    }
+}
+
+/* Categories horizontal scroll row */
+.elora-v3-root .categories-row {
+    overflow-x: auto;
+}
+
+/* Flash-sale / trending product-ordered progress bar */
+.elora-v3-root .ordered-progress-track {
+    background: var(--color-progress-track);
+}
+.elora-v3-root .ordered-progress-fill {
+    background: var(--color-progress-fill);
+}
+
+/* Decorative section background patterns */
+.elora-v3-root .pattern-flash-sale {
+    background-color: var(--color-brand-pink);
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1.5px);
+    background-size: 26px 26px;
+}
+.elora-v3-root .pattern-newin {
+    background-color: var(--color-bg-main);
+    background-image: url("/elora-3/assets/images/pattern-newin.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-blend-mode: plus-lighter;
+}
+.elora-v3-root .pattern-bestseller {
+    background-color: var(--color-brand-pink);
+    background-image:
+        linear-gradient(to bottom, transparent 55%, var(--color-brand-pink) 100%),
+        url("/elora-3/assets/images/pattern-bestseller.png");
+    background-size:
+        100% 100%,
+        cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-blend-mode: normal, hard-light;
+}

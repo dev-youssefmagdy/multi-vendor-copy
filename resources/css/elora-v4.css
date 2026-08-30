@@ -1,0 +1,276 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #ff4d00; /* ELORA/MAin */
+  --color-secondary: #ff522c; /* Main Website/Main-clr */
+  --color-bg-main: #fdfdfd; /* ELORA/fill */
+  --color-text-primary: #121212; /* ELORA/Black */
+  --color-text-subtitle: #adadad; /* ELORA/Subttitle */
+  --color-gray: #8f8f8f; /* ELORA/GRAY */
+  --color-stroke: #d4d4d4; /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens) */
+  --color-black: #242424;
+  --color-black-alt: #1b1b1b;
+  --color-white: #ffffff;
+  --color-success: #2aaf2f;
+  --color-error: #de1709;
+
+  /* Accent palette */
+  --color-accent-purple: #8a38f5;
+  --color-accent-purple-dark: #51218f;
+  --color-accent-purple-light: #b57dff;
+  --color-accent-yellow: #ffd428;
+  --color-badge-purple: #9d00ff;
+  --color-surface: #f6f5f5;
+  --color-page-bg: #f4f4f4;
+  --color-footer-bg: #3b3b3b;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5b5b5b;
+  --color-footer-text-muted: #f2f2f2;
+
+  /* Additional raw-hex UI colors */
+  --color-text-muted: #636363;
+  --color-text-faint: #4b4b4b;
+  --color-text-placeholder: #4c4c4c;
+  --color-hero-placeholder: #c3accf;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ---- ELORA V4 ("New User" promo homepage) tokens ---- */
+  --color-brand-orange: #fb7701; /* feature bar bg, category pill bg, flash-sale/best-seller section fill */
+  --color-brand-orange-bright: #ff6a00; /* hero bg, "see all" links, cart badge, hero active dot */
+  --color-badge-pink: #fe3a6a; /* Best Seller card weight text color */
+  --color-progress-red: #e40307; /* "ordered last 30 min" progress bar fill + label */
+  --color-tile-outerwear: #d95f2b;
+  --color-tile-footwear: #2c7a6e;
+  --color-tile-bags: #e8a838;
+  --color-tile-watches: #2c1a0e;
+  --color-hero-subtitle: rgba(255, 255, 255, 0.8);
+  --color-icon-chip-bg: rgba(255, 255, 255, 0.25);
+  --color-greeting-muted: #777777;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.newin-swiper,
+.trending-swiper {
+  overflow: hidden;
+}
+
+/* Flash Sale grid carousel */
+.flash-sale-grid {
+  height: 476px;
+  overflow: hidden;
+  width: 100% !important;
+}
+.flash-sale-grid .swiper-wrapper {
+  width: 100%;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px 0;
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-brand-orange-bright);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Textured section backgrounds (Flash Sale / Best Seller) */
+.texture-bg {
+  position: relative;
+  background-color: var(--color-brand-orange);
+}
+.texture-bg > .texture-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.58;
+}
+.texture-bg.texture-hard > .texture-overlay {
+  mix-blend-mode: hard-light;
+  opacity: 1;
+}
+
+/* Best Seller fanned/rotated card stack */
+#bestSellerWrapper.swiper-wrapper {
+  padding: 24px 0 32px;
+}
+#bestSellerWrapper .swiper-slide {
+  transition: transform 0.2s ease;
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 1) {
+  transform: rotate(-6deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 2) {
+  transform: rotate(4deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 3) {
+  transform: rotate(-3deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 4) {
+  transform: rotate(5deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 5) {
+  transform: rotate(-5deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 6) {
+  transform: rotate(3deg);
+}
+#bestSellerWrapper .swiper-slide:hover {
+  transform: rotate(0deg);
+}
+
+/* Shop by Category tile hover chip */
+.category-tile-chip {
+  background: var(--color-icon-chip-bg);
+}
+
+/* New In: orange fill with concentric sunburst rings radiating from the heading corner */
+.pattern-newin {
+  background-color: var(--color-brand-orange);
+  background-image: repeating-radial-gradient(
+    circle at 0% 0%,
+    rgba(255, 255, 255, 0.14) 0px,
+    rgba(255, 255, 255, 0.14) 2px,
+    transparent 2px,
+    transparent 46px
+  );
+}
+
+/* Trending Now: flat light-gray section fill */
+.pattern-trending {
+  background-color: var(--color-page-bg);
+}
+
+/* Tabbed products pills */
+.tabbed-pill.active {
+  background: var(--color-brand-orange-bright) !important;
+  border-color: var(--color-brand-orange-bright) !important;
+  color: #fff !important;
+}

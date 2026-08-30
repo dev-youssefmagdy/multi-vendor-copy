@@ -1,10 +1,10 @@
 {
-  "_bootstrap-D2kTsLqX.js": {
-    "file": "assets/bootstrap-D2kTsLqX.js",
+  "_bootstrap-V_7-28Mu.js": {
+    "file": "assets/bootstrap-V_7-28Mu.js",
     "name": "bootstrap"
   },
-  "_phone-input-CMzZTSWI.js": {
-    "file": "assets/phone-input-CMzZTSWI.js",
+  "_phone-input-CjV_F3Tb.js": {
+    "file": "assets/phone-input-CjV_F3Tb.js",
     "name": "phone-input",
     "css": [
       "assets/phone-input-DynWKaYt.css"
@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CsI4ULe1.css",
+    "file": "assets/app-C7KUQfB2.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-CIhnw6_q.css",
+    "file": "assets/ecommet-B5Mtb-wi.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -51,6 +51,33 @@
       "elora-v2.css"
     ],
     "src": "resources/css/elora-v2.css",
+    "isEntry": true
+  },
+  "resources/css/elora-v3.css": {
+    "file": "assets/elora-v3-CKhCCw3F.css",
+    "name": "elora-v3",
+    "names": [
+      "elora-v3.css"
+    ],
+    "src": "resources/css/elora-v3.css",
+    "isEntry": true
+  },
+  "resources/css/elora-v4.css": {
+    "file": "assets/elora-v4-C09G_TJo.css",
+    "name": "elora-v4",
+    "names": [
+      "elora-v4.css"
+    ],
+    "src": "resources/css/elora-v4.css",
+    "isEntry": true
+  },
+  "resources/css/elora-v5.css": {
+    "file": "assets/elora-v5-DnCsbaWL.css",
+    "name": "elora-v5",
+    "names": [
+      "elora-v5.css"
+    ],
+    "src": "resources/css/elora-v5.css",
     "isEntry": true
   },
   "resources/css/elora.css": {
@@ -80,6 +107,33 @@
     "src": "resources/css/elora/home-v2.css",
     "isEntry": true
   },
+  "resources/css/elora/home-v3.css": {
+    "file": "assets/home-v3-BEETgul5.css",
+    "name": "home-v3",
+    "names": [
+      "home-v3.css"
+    ],
+    "src": "resources/css/elora/home-v3.css",
+    "isEntry": true
+  },
+  "resources/css/elora/home-v4.css": {
+    "file": "assets/home-v4-MHAQtOEf.css",
+    "name": "home-v4",
+    "names": [
+      "home-v4.css"
+    ],
+    "src": "resources/css/elora/home-v4.css",
+    "isEntry": true
+  },
+  "resources/css/elora/home-v5.css": {
+    "file": "assets/home-v5-DcI969Y-.css",
+    "name": "home-v5",
+    "names": [
+      "home-v5.css"
+    ],
+    "src": "resources/css/elora/home-v5.css",
+    "isEntry": true
+  },
   "resources/css/elora/home.css": {
     "file": "assets/home-C3vL_iQ6.css",
     "name": "home",
@@ -90,7 +144,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-B-JGV33a.css",
+    "file": "assets/souqify-B2BioiBn.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -108,110 +162,146 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Dkf-Hs-H.js",
+    "file": "assets/app-J25PJIAT.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-D2kTsLqX.js",
-      "_phone-input-CMzZTSWI.js"
+      "_bootstrap-V_7-28Mu.js",
+      "_phone-input-CjV_F3Tb.js"
     ]
   },
   "resources/js/ecommet.js": {
-    "file": "assets/ecommet-DATbg7-J.js",
+    "file": "assets/ecommet-B5-WJ_GU.js",
     "name": "ecommet",
     "src": "resources/js/ecommet.js",
     "isEntry": true
   },
   "resources/js/ecommet/cart.js": {
-    "file": "assets/cart-3EZArLtq.js",
+    "file": "assets/cart-DAcNrYd2.js",
     "name": "cart",
     "src": "resources/js/ecommet/cart.js",
     "isEntry": true
   },
   "resources/js/ecommet/home.js": {
-    "file": "assets/home-DplLdcKS.js",
+    "file": "assets/home-BXXyzD7q.js",
     "name": "home",
     "src": "resources/js/ecommet/home.js",
     "isEntry": true
   },
   "resources/js/ecommet/product.js": {
-    "file": "assets/product-B71z1zTy.js",
+    "file": "assets/product-DzeGegIl.js",
     "name": "product",
     "src": "resources/js/ecommet/product.js",
     "isEntry": true
   },
   "resources/js/elora-v2-carousels.js": {
-    "file": "assets/elora-v2-carousels-BbsIW9qU.js",
+    "file": "assets/elora-v2-carousels-ly2ZBrJQ.js",
     "name": "elora-v2-carousels",
     "src": "resources/js/elora-v2-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v2-interactions.js": {
-    "file": "assets/elora-v2-interactions-Bxc9f5sD.js",
+    "file": "assets/elora-v2-interactions-j16-_8EW.js",
     "name": "elora-v2-interactions",
     "src": "resources/js/elora-v2-interactions.js",
     "isEntry": true
   },
+  "resources/js/elora-v3-carousels.js": {
+    "file": "assets/elora-v3-carousels-aN4Tfhfr.js",
+    "name": "elora-v3-carousels",
+    "src": "resources/js/elora-v3-carousels.js",
+    "isEntry": true
+  },
+  "resources/js/elora-v3-interactions.js": {
+    "file": "assets/elora-v3-interactions-CX8LZG3c.js",
+    "name": "elora-v3-interactions",
+    "src": "resources/js/elora-v3-interactions.js",
+    "isEntry": true
+  },
+  "resources/js/elora-v4-carousels.js": {
+    "file": "assets/elora-v4-carousels-C8DlUZhq.js",
+    "name": "elora-v4-carousels",
+    "src": "resources/js/elora-v4-carousels.js",
+    "isEntry": true
+  },
+  "resources/js/elora-v4-interactions.js": {
+    "file": "assets/elora-v4-interactions-CR_mi36m.js",
+    "name": "elora-v4-interactions",
+    "src": "resources/js/elora-v4-interactions.js",
+    "isEntry": true
+  },
+  "resources/js/elora-v5-carousels.js": {
+    "file": "assets/elora-v5-carousels-BPUARw7S.js",
+    "name": "elora-v5-carousels",
+    "src": "resources/js/elora-v5-carousels.js",
+    "isEntry": true
+  },
+  "resources/js/elora-v5-interactions.js": {
+    "file": "assets/elora-v5-interactions-BC40-s1y.js",
+    "name": "elora-v5-interactions",
+    "src": "resources/js/elora-v5-interactions.js",
+    "isEntry": true
+  },
   "resources/js/elora.js": {
-    "file": "assets/elora-Ba7gFNCJ.js",
+    "file": "assets/elora-ClRmhF4Q.js",
     "name": "elora",
     "src": "resources/js/elora.js",
     "isEntry": true
   },
   "resources/js/elora/cart.js": {
-    "file": "assets/cart-BfSMgBUo.js",
+    "file": "assets/cart-DbdKyGuA.js",
     "name": "cart",
     "src": "resources/js/elora/cart.js",
     "isEntry": true
   },
   "resources/js/elora/category.js": {
-    "file": "assets/category-DxMsQw6i.js",
+    "file": "assets/category-DJK51dqI.js",
     "name": "category",
     "src": "resources/js/elora/category.js",
     "isEntry": true
   },
   "resources/js/elora/home.js": {
-    "file": "assets/home-DesW62jo.js",
+    "file": "assets/home-2qHvQ9DE.js",
     "name": "home",
     "src": "resources/js/elora/home.js",
     "isEntry": true
   },
   "resources/js/elora/product.js": {
-    "file": "assets/product-C0mwU9ZJ.js",
+    "file": "assets/product-DpnUOLch.js",
     "name": "product",
     "src": "resources/js/elora/product.js",
     "isEntry": true
   },
   "resources/js/image-search.js": {
-    "file": "assets/image-search-BT5VWG0s.js",
+    "file": "assets/image-search-B72dcb_l.js",
     "name": "image-search",
     "src": "resources/js/image-search.js",
     "isEntry": true
   },
   "resources/js/souqify.js": {
-    "file": "assets/souqify-BYf5MM_6.js",
+    "file": "assets/souqify-BaW3EEf4.js",
     "name": "souqify",
     "src": "resources/js/souqify.js",
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-DoN1NOPz.js",
+    "file": "assets/storefront-cart-7KtNoR8q.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-CMzZTSWI.js"
+      "_phone-input-CjV_F3Tb.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-BREA2Syf.js",
+    "file": "assets/website-CoKJyamb.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-D2kTsLqX.js",
-      "_phone-input-CMzZTSWI.js"
+      "_bootstrap-V_7-28Mu.js",
+      "_phone-input-CjV_F3Tb.js"
     ]
   }
 }

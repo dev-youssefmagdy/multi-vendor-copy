@@ -1,0 +1,80 @@
+:root {
+  /* Brand / primary palette (ELORA — Theme #2 "Home", v5) */
+  --color-primary: #132092; /* ELORA/Main-2 — headline accent, CTA text, active dot, featured bar */
+  --color-price-blue: #0018e8; /* Price text + New In progress bar fill */
+  --color-black: #121212; /* ELORA/Black — product titles */
+  --color-black-alt: #242424; /* Manti/Black — badge text on yellow badges */
+  --color-white: #ffffff;
+  --color-bg-main: #fdfdfd; /* ELORA/fill — card bg */
+  --color-subtitle: #adadad; /* ELORA/Subttitle — description / rating text */
+  --color-gray: #8f8f8f;
+  --color-stroke: #d4d4d4;
+
+  --color-secondary: #ff522c; /* Main Website/Main-clr — discount text */
+  --color-success: #2aaf2f; /* Manti/Green — delivery text */
+  --color-error: #de1709; /* Manti/Red — Best Seller alt delivery/stock state */
+  --color-yellow: #ffd428; /* Sale badge bg + Best Seller section bg */
+  --color-badge-orange: #ff4d00; /* ELORA/MAin — Best Seller alt "30% OFF" badge */
+
+  /* Section-specific fills */
+  --color-page-bg: #f4f4f4; /* Categories section bg */
+  --color-blob-blue: #0066ff; /* Category circle blob bg */
+  --color-newin-gold: #d7ad43; /* New In section bg */
+  --color-flash-from: #3949db;
+  --color-flash-via: #4d5fff;
+  --color-flash-to: #1f31c9;
+  --color-flash-rainbow-pink: #fa6a6f; /* Flash Sale section bg gradient — left edge */
+  --color-flash-rainbow-orange: #fa9a6d;
+  --color-flash-rainbow-yellow: #f9cf64;
+  --color-flash-rainbow-teal: #429fa0;
+  --color-flash-rainbow-purple: #6d77b0; /* Flash Sale section bg gradient — right edge */
+
+  /* Footer (shared across ELORA screens) */
+  --color-footer-bg: #3b3b3b;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5b5b5b;
+  --color-footer-text-muted: #f2f2f2;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 20px 40px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
