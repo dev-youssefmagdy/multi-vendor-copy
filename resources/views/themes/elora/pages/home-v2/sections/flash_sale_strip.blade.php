@@ -1,3 +1,16 @@
+    @php
+      $flashProducts = [
+        ['image' => 'assets/images/flash-sneaker.png', 'name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-black)', 'deliveredColor' => 'var(--color-success)'],
+        ['image' => 'assets/images/flash-hoodie.png', 'name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-black)', 'deliveredColor' => 'var(--color-success)', 'desc' => 'Premium cotton blend'],
+        ['image' => 'assets/images/flash-pants.png', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '30% OFF', 'badgeBg' => 'var(--color-primary)', 'badgeText' => 'var(--color-white)', 'deliveredColor' => 'var(--color-error)'],
+      ];
+      $flashStackLayout = [
+        ['rotate' => -4, 'translateY' => 20, 'scale' => 0.86, 'z' => 1],
+        ['rotate' => 0, 'translateY' => -8, 'scale' => 1, 'z' => 3],
+        ['rotate' => 4, 'translateY' => 18, 'scale' => 0.85, 'z' => 1],
+      ];
+      $flashStackTotal = 9;
+    @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
       style="
@@ -59,7 +72,14 @@
         <div
           class="swiper card-swiper flash-swiper w-full lg:flex-1 max-w-[700px]! pt-[20px]!"
         >
-          <div class="swiper-wrapper" id="flashStackWrapper"></div>
+          <div class="swiper-wrapper" id="flashStackWrapper">
+            @for ($i = 0; $i < $flashStackTotal; $i++)
+              @include('themes.elora.pages.home-v2.sections.partials.flash_stack_card', [
+                'p' => $flashProducts[$i % count($flashProducts)],
+                'layout' => $flashStackLayout[$i % count($flashStackLayout)],
+              ])
+            @endfor
+          </div>
         </div>
       </div>
     </section>

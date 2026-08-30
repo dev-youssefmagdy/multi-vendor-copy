@@ -1,3 +1,10 @@
+    @php
+      $trendingProducts = [
+        ['image' => 'assets/images/product-sneaker.png', 'name' => 'Essential Shoes', 'weight' => '250g', 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-black)', 'progress' => 83, 'ordered' => '5 ordered last 30 min', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off'],
+        ['image' => 'assets/images/product-hoodie.png', 'name' => 'Essential Hoodie', 'weight' => '200g', 'badge' => 'Best Seller', 'badgeBg' => 'var(--color-primary)', 'badgeText' => 'var(--color-white)', 'progress' => 65, 'ordered' => '3 ordered last 30 min', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => null, 'discount' => null],
+        ['image' => 'assets/images/flash-pants.png', 'name' => 'Classic Pants', 'weight' => '300g', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'badgeText' => 'var(--color-white)', 'progress' => 45, 'ordered' => '2 ordered last 30 min', 'rating' => '4.1 (+430)', 'price' => '$79.00', 'oldPrice' => '$99.00', 'discount' => '20% Off'],
+      ];
+    @endphp
     <section
       class="px-[16px] lg:px-[56px] py-12 flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
@@ -15,7 +22,11 @@
       </div>
       <div class="relative">
         <div class="swiper card-swiper">
-          <div class="swiper-wrapper" id="trendingWrapper"></div>
+          <div class="swiper-wrapper" id="trendingWrapper">
+            @foreach ($trendingProducts as $product)
+              @include('themes.elora.pages.home-v2.sections.partials.trending_card', ['p' => $product])
+            @endforeach
+          </div>
         </div>
         <button
           id="trendingPrev"
