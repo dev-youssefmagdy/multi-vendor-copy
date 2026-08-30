@@ -1,3 +1,19 @@
+    @php
+      $bestSellerDesktop = [
+        // Back-to-front stacking order (matches the Figma fan: smallest/rightmost is drawn first, largest/frontmost last)
+        ['name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'alt' => true, 'stock' => 'Only 5 left'],
+        ['name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'alt' => true, 'stock' => 'Only 5 left'],
+      ];
+      $bestSellerMobile = [
+        ['name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'alt' => true, 'stock' => 'Only 5 left'],
+      ];
+    @endphp
     <!-- ============ BEST SELLER ============ -->
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
@@ -19,10 +35,22 @@
       </div>
       <!-- Mobile -->
       <div class="swiper bestseller-swiper lg:!hidden w-full">
-        <div class="swiper-wrapper" id="bestSellerMobileWrapper"></div>
+        <div class="swiper-wrapper" id="bestSellerMobileWrapper">
+          @foreach ($bestSellerMobile as $p)
+            <div class="swiper-slide bestseller-slide" style="position:absolute; top:0; left:0;">
+              @include('themes.elora.pages.home-v5.sections.partials.fan_card', ['p' => $p])
+            </div>
+          @endforeach
+        </div>
       </div>
       <!-- Desktop: 6 per view -->
       <div class="swiper bestseller-swiper !hidden lg:!block w-full max-w-[1183px] mx-auto">
-        <div class="swiper-wrapper" id="bestSellerDesktopWrapper"></div>
+        <div class="swiper-wrapper" id="bestSellerDesktopWrapper">
+          @foreach ($bestSellerDesktop as $p)
+            <div class="swiper-slide bestseller-slide" style="position:absolute; top:0; left:0;">
+              @include('themes.elora.pages.home-v5.sections.partials.fan_card', ['p' => $p])
+            </div>
+          @endforeach
+        </div>
       </div>
     </section>

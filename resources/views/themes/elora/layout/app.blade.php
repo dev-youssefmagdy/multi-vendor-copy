@@ -81,7 +81,7 @@
             @break
         @case('v6') <!-- New In Edition -->
             @php
-                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
                 $headerKey = 'header-v6';
                 $footerKey = 'footer-v6';
                 $stylesKey = 'styles-v6';

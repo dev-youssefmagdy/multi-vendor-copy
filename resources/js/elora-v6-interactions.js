@@ -1,5 +1,4 @@
-// Hero carousel + mobile off-canvas drawer menu + tabbed-products tab switching
-// for the ELORA "v6 — New In" home screen (ported from public/elora-2/interactions.js).
+// Hero carousel + mobile off-canvas drawer menu for the ELORA "New In" home screen (Screen 2).
 
 function initHomeUI() {
   // ---- Hero carousel ----
@@ -46,28 +45,6 @@ function initHomeUI() {
       if (e.key === "Escape") closeDrawer();
     });
   }
-
-  // ---- Tabbed Products (invented v6 section) ----
-  document.querySelectorAll(".tabbed-tabs").forEach((tabs) => {
-    const buttons = tabs.querySelectorAll(".tabbed-tab-btn");
-    const section = tabs.closest("section");
-    if (!section) return;
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const targetId = btn.getAttribute("data-tab-target");
-        buttons.forEach((b) => {
-          b.classList.remove("is-active");
-          b.setAttribute("aria-selected", "false");
-        });
-        btn.classList.add("is-active");
-        btn.setAttribute("aria-selected", "true");
-        section.querySelectorAll(".tabbed-panel-v6").forEach((panel) => {
-          panel.hidden = panel.id !== targetId;
-          panel.classList.toggle("hidden", panel.id !== targetId);
-        });
-      });
-    });
-  });
 }
 
 let homeUIInitialized = false;
