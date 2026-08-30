@@ -6,7 +6,7 @@
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[130px] lg:h-[238px] w-full object-cover" />
       <span class="absolute top-0 left-0 text-[11px] lg:text-[16px] font-normal tracking-[0.3px] px-[7px] py-[5px] rounded-tl-[6px] rounded-br-[9px]" style="background:{{ $p['badgeBg'] }}; color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</span>
       <button type="button" aria-label="Add to favorites" class="absolute top-[6px] right-[6px] bg-white rounded-full p-[6px] shadow">
-        <img src="assets/icons/heart.svg" class="size-[14px] lg:size-[20px]" alt="" />
+        <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" class="size-[14px] lg:size-[20px]" alt="" />
       </button>
     </div>
     <div class="p-[8px] lg:p-[12px] flex flex-col gap-[4px]">

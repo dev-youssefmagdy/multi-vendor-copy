@@ -47,7 +47,7 @@
             class="bg-white flex items-center justify-center gap-[10px] lg:gap-[25px] rounded-full h-[48px] lg:h-[78px] w-full max-w-[217px] lg:max-w-[446px]"
           >
             <img
-              src="assets/icons/alarm-clock.svg"
+              src="{{ asset('elora-1/assets/icons/alarm-clock.svg') }}"
               class="size-[32px] lg:size-[66px]"
               alt=""
             />

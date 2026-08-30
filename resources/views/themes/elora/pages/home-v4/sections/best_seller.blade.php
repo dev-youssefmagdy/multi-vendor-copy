@@ -14,7 +14,7 @@
       class="texture-bg px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
     >
       <img
-        src="assets/images/best-seller-texture.png"
+        src="{{ asset('elora-4/assets/images/best-seller-texture.png') }}"
         alt=""
         class="texture-overlay"
       />
@@ -36,7 +36,7 @@
           class="swiper-nav-btn swiper-nav-prev"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-4/assets/icons/arrow-down.svg') }}"
             class="size-[14px] rotate-90"
             alt=""
           />
@@ -48,7 +48,7 @@
           class="swiper-nav-btn swiper-nav-next"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-4/assets/icons/arrow-down.svg') }}"
             class="size-[14px] -rotate-90"
             alt=""
           />

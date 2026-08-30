@@ -10,7 +10,7 @@
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
-            src="assets/icons/feature-truck.svg"
+            src="{{ asset('elora-3/assets/icons/feature-truck.svg') }}"
             alt=""
             class="size-[24px] lg:size-[36px]"
           />
@@ -24,7 +24,7 @@
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
-            src="assets/icons/feature-headphones.svg"
+            src="{{ asset('elora-3/assets/icons/feature-headphones.svg') }}"
             alt=""
             class="size-[24px] lg:size-[36px]"
           />
@@ -38,7 +38,7 @@
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
-            src="assets/icons/feature-package.svg"
+            src="{{ asset('elora-3/assets/icons/feature-package.svg') }}"
             alt=""
             class="size-[24px] lg:size-[36px]"
           />
@@ -51,7 +51,7 @@
           class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:pl-[26px]"
         >
           <img
-            src="assets/icons/feature-bag.svg"
+            src="{{ asset('elora-3/assets/icons/feature-bag.svg') }}"
             alt=""
             class="size-[24px] lg:size-[36px]"
           />

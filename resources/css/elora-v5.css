@@ -229,7 +229,7 @@ body {
 
 /* Category circle blob background */
 .category-blob {
-  background-image: url("assets/icons/cat-blob-1.svg");
+  background-image: url("/elora-5/assets/icons/cat-blob-1.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 92% 92%;

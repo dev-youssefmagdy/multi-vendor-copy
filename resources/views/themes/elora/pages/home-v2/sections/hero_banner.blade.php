@@ -6,13 +6,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[238px] lg:h-[543px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.png"
+                src="{{ asset('elora-1/assets/images/hero-mobile.png') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-1/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
@@ -53,13 +53,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[238px] lg:h-[543px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.png"
+                src="{{ asset('elora-1/assets/images/hero-mobile.png') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-1/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
@@ -100,13 +100,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[238px] lg:h-[543px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.png"
+                src="{{ asset('elora-1/assets/images/hero-mobile.png') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-1/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
@@ -147,13 +147,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[238px] lg:h-[543px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.png"
+                src="{{ asset('elora-1/assets/images/hero-mobile.png') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-1/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"

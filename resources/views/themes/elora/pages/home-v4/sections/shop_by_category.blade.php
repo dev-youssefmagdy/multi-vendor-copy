@@ -15,7 +15,7 @@
           style="background: var(--color-tile-outerwear)"
         >
           <img
-            src="assets/images/tile-outerwear.png"
+            src="{{ asset('elora-4/assets/images/tile-outerwear.png') }}"
             alt=""
             class="absolute inset-0 h-full w-full object-cover opacity-90"
           />
@@ -41,7 +41,7 @@
             <span
               class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
               ><img
-                src="assets/icons/icon-explore-arrow.svg"
+                src="{{ asset('elora-4/assets/icons/icon-explore-arrow.svg') }}"
                 class="size-[10px] lg:size-[12px]"
                 alt=""
             /></span>
@@ -53,7 +53,7 @@
           style="background: var(--color-tile-footwear)"
         >
           <img
-            src="assets/images/tile-footwear.png"
+            src="{{ asset('elora-4/assets/images/tile-footwear.png') }}"
             alt=""
             class="absolute inset-0 h-full w-full object-cover opacity-90"
           />
@@ -79,7 +79,7 @@
             <span
               class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
               ><img
-                src="assets/icons/icon-explore-arrow.svg"
+                src="{{ asset('elora-4/assets/icons/icon-explore-arrow.svg') }}"
                 class="size-[10px] lg:size-[12px]"
                 alt=""
             /></span>
@@ -91,7 +91,7 @@
           style="background: var(--color-tile-bags)"
         >
           <img
-            src="assets/images/tile-bags.png"
+            src="{{ asset('elora-4/assets/images/tile-bags.png') }}"
             alt=""
             class="absolute inset-0 h-full w-full object-cover opacity-90"
           />
@@ -117,7 +117,7 @@
             <span
               class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
               ><img
-                src="assets/icons/icon-explore-arrow.svg"
+                src="{{ asset('elora-4/assets/icons/icon-explore-arrow.svg') }}"
                 class="size-[10px] lg:size-[12px]"
                 alt=""
             /></span>
@@ -129,7 +129,7 @@
           style="background: var(--color-tile-watches)"
         >
           <img
-            src="assets/images/tile-watches.png"
+            src="{{ asset('elora-4/assets/images/tile-watches.png') }}"
             alt=""
             class="absolute inset-0 h-full w-full object-cover opacity-90"
           />
@@ -155,7 +155,7 @@
             <span
               class="category-tile-chip flex items-center justify-center rounded-full size-[20px] lg:size-[24px]"
               ><img
-                src="assets/icons/icon-explore-arrow.svg"
+                src="{{ asset('elora-4/assets/icons/icon-explore-arrow.svg') }}"
                 class="size-[10px] lg:size-[12px]"
                 alt=""
             /></span>

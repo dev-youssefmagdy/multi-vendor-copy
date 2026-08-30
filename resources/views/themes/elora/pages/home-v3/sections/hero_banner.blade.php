@@ -7,13 +7,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.jpg"
+                src="{{ asset('elora-3/assets/images/hero-mobile.jpg') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.jpg"
+                src="{{ asset('elora-3/assets/images/hero-desktop.jpg') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
@@ -65,13 +65,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.jpg"
+                src="{{ asset('elora-3/assets/images/hero-mobile.jpg') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.jpg"
+                src="{{ asset('elora-3/assets/images/hero-desktop.jpg') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
@@ -123,13 +123,13 @@
               class="relative flex flex-col items-center lg:items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
             >
               <img
-                src="assets/images/hero-mobile.jpg"
+                src="{{ asset('elora-3/assets/images/hero-mobile.jpg') }}"
                 alt=""
                 class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"
               />
               <img
-                src="assets/images/hero-desktop.jpg"
+                src="{{ asset('elora-3/assets/images/hero-desktop.jpg') }}"
                 alt=""
                 class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 style="background: var(--color-hero-placeholder)"

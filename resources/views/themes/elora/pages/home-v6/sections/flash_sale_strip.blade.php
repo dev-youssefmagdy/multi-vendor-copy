@@ -18,7 +18,7 @@
             Flash Sale
           </h2>
           <img
-            src="assets/icons/oi-flash.svg"
+            src="{{ asset('elora-2/assets/icons/oi-flash.svg') }}"
             alt=""
             class="size-[26px] lg:size-[41px]"
           />

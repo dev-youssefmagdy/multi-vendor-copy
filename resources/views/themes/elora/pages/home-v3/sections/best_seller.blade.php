@@ -30,7 +30,7 @@
           class="swiper-nav-btn swiper-nav-prev swiper-nav-btn-light"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
             class="size-[14px] rotate-90"
             alt=""
           />
@@ -42,7 +42,7 @@
           class="swiper-nav-btn swiper-nav-next swiper-nav-btn-light"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
             class="size-[14px] -rotate-90"
             alt=""
           />

@@ -46,7 +46,7 @@
                 class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
               >
                 <img
-                  src="assets/images/hero-woman.png"
+                  src="{{ asset('elora-4/assets/images/hero-woman.png') }}"
                   alt="New user exclusive deal"
                   class="h-full w-full object-cover"
                 />
@@ -97,7 +97,7 @@
                 class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
               >
                 <img
-                  src="assets/images/hero-woman.png"
+                  src="{{ asset('elora-4/assets/images/hero-woman.png') }}"
                   alt="Flash sale up to 50%"
                   class="h-full w-full object-cover"
                 />
@@ -148,7 +148,7 @@
                 class="absolute right-0 top-0 h-full w-[45%] lg:w-[892px] lg:static lg:flex-1"
               >
                 <img
-                  src="assets/images/hero-woman.png"
+                  src="{{ asset('elora-4/assets/images/hero-woman.png') }}"
                   alt="New season arrivals"
                   class="h-full w-full object-cover"
                 />

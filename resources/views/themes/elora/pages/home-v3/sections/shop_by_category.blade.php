@@ -15,7 +15,7 @@
           class="relative shrink-0 rounded-[16px] lg:rounded-[25px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19px] h-[220px] lg:h-[382px] w-[145px] lg:w-[240px]"
         >
           <img
-            src="assets/images/shop-womens-fashion.jpg"
+            src="{{ asset('elora-3/assets/images/shop-womens-fashion.jpg') }}"
             alt="Women's Fashion"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -50,7 +50,7 @@
           class="relative shrink-0 rounded-[16px] lg:rounded-[25px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19px] h-[220px] lg:h-[382px] w-[145px] lg:w-[240px]"
         >
           <img
-            src="assets/images/shop-mens-fashion.jpg"
+            src="{{ asset('elora-3/assets/images/shop-mens-fashion.jpg') }}"
             alt="Men's Fashion"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -85,7 +85,7 @@
           class="relative shrink-0 rounded-[16px] lg:rounded-[25px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19px] h-[220px] lg:h-[382px] w-[145px] lg:w-[240px]"
         >
           <img
-            src="assets/images/shop-coastal-chic.jpg"
+            src="{{ asset('elora-3/assets/images/shop-coastal-chic.jpg') }}"
             alt="Coastal Chic"
             class="absolute inset-0 h-full w-full object-cover"
           />

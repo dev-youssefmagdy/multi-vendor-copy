@@ -13,7 +13,7 @@
         class="grid grid-cols-2 lg:flex gap-[10px] lg:gap-[16px] w-full lg:w-auto lg:max-w-[790px]"
       >
         <a href="#" class="shop-cat-tile h-[200px] lg:h-[310px] lg:w-[253px]">
-          <img src="assets/images/shop-cat-accessories.png" alt="Accessories" />
+          <img src="{{ asset('elora-5/assets/images/shop-cat-accessories.png') }}" alt="Accessories" />
           <div
             class="absolute inset-0"
             style="
@@ -30,7 +30,7 @@
         </a>
         <div class="flex flex-col gap-[10px] lg:gap-[16px]">
           <a href="#" class="shop-cat-tile h-[95px] lg:h-[147px] lg:w-[253px]">
-            <img src="assets/images/shop-cat-fashion.png" alt="Fashion" />
+            <img src="{{ asset('elora-5/assets/images/shop-cat-fashion.png') }}" alt="Fashion" />
             <div
               class="absolute inset-0"
               style="
@@ -47,7 +47,7 @@
           </a>
           <a href="#" class="shop-cat-tile h-[95px] lg:h-[147px] lg:w-[253px]">
             <img
-              src="assets/images/shop-cat-electronics.png"
+              src="{{ asset('elora-5/assets/images/shop-cat-electronics.png') }}"
               alt="Electronics"
             />
             <div

@@ -20,7 +20,7 @@
       class="texture-bg texture-hard px-[16px] lg:px-[56px] py-[24px] lg:py-[16px] flex flex-col items-center gap-[24px]"
     >
       <img
-        src="assets/images/flash-sale-texture.png"
+        src="{{ asset('elora-4/assets/images/flash-sale-texture.png') }}"
         alt=""
         class="texture-overlay"
       />
@@ -30,7 +30,7 @@
         <div class="relative flex flex-col items-start gap-[16px] shrink-0">
           <div class="relative">
             <img
-              src="assets/images/flash-sale-illustration.png"
+              src="{{ asset('elora-4/assets/images/flash-sale-illustration.png') }}"
               alt="Flash Sale"
               class="w-[180px] lg:w-[283px] h-auto"
             />

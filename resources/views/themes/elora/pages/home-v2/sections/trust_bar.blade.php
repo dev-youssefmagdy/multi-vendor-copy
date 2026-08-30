@@ -7,7 +7,7 @@
       >
         <div class="flex items-center gap-[12px] lg:gap-[26px] shrink-0">
           <img
-            src="assets/icons/feature-truck.svg"
+            src="{{ asset('elora-1/assets/icons/feature-truck.svg') }}"
             alt=""
             class="size-[28px] lg:size-[39px]"
           />
@@ -22,7 +22,7 @@
         </div>
         <div class="flex items-center gap-[12px] lg:gap-[26px] shrink-0">
           <img
-            src="assets/icons/feature-headphones.svg"
+            src="{{ asset('elora-1/assets/icons/feature-headphones.svg') }}"
             alt=""
             class="size-[28px] lg:size-[39px]"
           />
@@ -37,7 +37,7 @@
         </div>
         <div class="flex items-center gap-[12px] lg:gap-[26px] shrink-0">
           <img
-            src="assets/icons/feature-bag.svg"
+            src="{{ asset('elora-1/assets/icons/feature-bag.svg') }}"
             alt=""
             class="size-[28px] lg:size-[39px]"
           />
@@ -52,7 +52,7 @@
         </div>
         <div class="flex items-center gap-[12px] lg:gap-[26px] shrink-0">
           <img
-            src="assets/icons/feature-package.svg"
+            src="{{ asset('elora-1/assets/icons/feature-package.svg') }}"
             alt=""
             class="size-[28px] lg:size-[39px]"
           />

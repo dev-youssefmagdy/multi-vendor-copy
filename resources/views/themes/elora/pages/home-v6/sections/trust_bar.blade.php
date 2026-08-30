@@ -5,7 +5,7 @@
       >
         <div class="flex items-center gap-[12px] lg:gap-[26px]">
           <img
-            src="assets/icons/feature-truck.svg"
+            src="{{ asset('elora-2/assets/icons/feature-truck.svg') }}"
             alt=""
             class="size-[28px] lg:size-[33px]"
           />
@@ -17,7 +17,7 @@
         </div>
         <div class="flex items-center gap-[12px] lg:gap-[26px]">
           <img
-            src="assets/icons/feature-headphones.svg"
+            src="{{ asset('elora-2/assets/icons/feature-headphones.svg') }}"
             alt=""
             class="size-[28px] lg:size-[33px]"
           />

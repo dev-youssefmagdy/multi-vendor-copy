@@ -24,7 +24,7 @@
     >
       <div class="relative flex items-center gap-[10px]">
         <img
-          src="assets/icons/icon-flash.svg"
+          src="{{ asset('elora-5/assets/icons/icon-flash.svg') }}"
           alt=""
           class="size-[28px] lg:size-[40px]"
         />
@@ -34,7 +34,7 @@
           Flash Sale
         </h2>
         <img
-          src="assets/icons/icon-flash.svg"
+          src="{{ asset('elora-5/assets/icons/icon-flash.svg') }}"
           alt=""
           class="size-[28px] lg:size-[40px]"
         />
@@ -77,7 +77,7 @@
           class="swiper-nav-btn swiper-nav-prev"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-5/assets/icons/arrow-down.svg') }}"
             class="size-[14px] rotate-90"
             alt=""
           />
@@ -89,7 +89,7 @@
           class="swiper-nav-btn swiper-nav-next"
         >
           <img
-            src="assets/icons/arrow-down.svg"
+            src="{{ asset('elora-5/assets/icons/arrow-down.svg') }}"
             class="size-[14px] -rotate-90"
             alt=""
           />

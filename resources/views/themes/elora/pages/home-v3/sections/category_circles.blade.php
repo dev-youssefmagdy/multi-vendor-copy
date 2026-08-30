@@ -35,7 +35,7 @@
             </p>
           </div>
           <img
-            src="assets/images/cat-bag.png"
+            src="{{ asset('elora-3/assets/images/cat-bag.png') }}"
             alt="Women bags"
             class="absolute right-[4px] lg:right-[8px] top-1/2 -translate-y-1/2 h-[45px] lg:h-[67px] w-auto"
           />
@@ -57,7 +57,7 @@
             </p>
           </div>
           <img
-            src="assets/images/cat-gaming.png"
+            src="{{ asset('elora-3/assets/images/cat-gaming.png') }}"
             alt="Gaming"
             class="absolute right-[2px] lg:right-[4px] top-1/2 -translate-y-1/2 h-[48px] lg:h-[78px] w-auto -rotate-[15deg]"
           />
@@ -79,7 +79,7 @@
             </p>
           </div>
           <img
-            src="assets/images/cat-electronics.png"
+            src="{{ asset('elora-3/assets/images/cat-electronics.png') }}"
             alt="Electronics"
             class="absolute right-[4px] lg:right-[6px] top-1/2 -translate-y-1/2 h-[42px] lg:h-[68px] w-auto"
           />
@@ -101,7 +101,7 @@
             </p>
           </div>
           <img
-            src="assets/images/cat-accessories.png"
+            src="{{ asset('elora-3/assets/images/cat-accessories.png') }}"
             alt="Accessories"
             class="absolute right-[6px] lg:right-[10px] top-1/2 -translate-y-1/2 h-[40px] lg:h-[62px] w-auto"
           />

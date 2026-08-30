@@ -4,7 +4,7 @@
     >
       <div class="flex items-center gap-[12px] lg:gap-[19px]">
         <img
-          src="assets/icons/icon-package.svg"
+          src="{{ asset('elora-4/assets/icons/icon-package.svg') }}"
           alt=""
           class="size-[24px] lg:size-[35px]"
         />

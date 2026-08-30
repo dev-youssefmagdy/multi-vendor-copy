@@ -26,7 +26,7 @@
             Women bags
           </p>
           <img
-            src="assets/images/cat-bag.png"
+            src="{{ asset('elora-1/assets/images/cat-bag.png') }}"
             alt="Women bags"
             class="w-[55px] lg:w-[140px] h-auto"
           />
@@ -42,7 +42,7 @@
               Home Accessories
             </p>
             <img
-              src="assets/images/cat-lamp.png"
+              src="{{ asset('elora-1/assets/images/cat-lamp.png') }}"
               alt="Home Accessories"
               class="absolute right-[-10px] lg:right-[-4px] top-[-8px] lg:top-[-22px] w-[46px] lg:w-[79px] h-auto"
             />
@@ -57,7 +57,7 @@
               Electronics
             </p>
             <img
-              src="assets/images/cat-laptop.png"
+              src="{{ asset('elora-1/assets/images/cat-laptop.png') }}"
               alt="Electronics"
               class="absolute right-[0px] lg:right-[-4px] top-[-2px] lg:top-[-6px] w-[56px] lg:w-[105px] h-auto"
             />
@@ -73,7 +73,7 @@
             Gaming
           </p>
           <img
-            src="assets/images/cat-controller.png"
+            src="{{ asset('elora-1/assets/images/cat-controller.png') }}"
             alt="Gaming"
             class="w-[64px] lg:w-[179px] h-auto -rotate-[10deg]"
           />

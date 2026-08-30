@@ -6,7 +6,7 @@
         <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
           <div class="flex flex-col gap-[32px]">
             <img
-              src="assets/icons/logo-elora-white.svg"
+              src="{{ asset('elora-2/assets/icons/logo-elora-white.svg') }}"
               alt="ELORA"
               class="h-[32px] w-auto"
             />
@@ -16,27 +16,27 @@
               </p>
               <div class="flex gap-[16px] items-center">
                 <img
-                  src="assets/icons/social-facebook.svg"
+                  src="{{ asset('elora-2/assets/icons/social-facebook.svg') }}"
                   alt="Facebook"
                   class="size-[24px]"
                 />
                 <img
-                  src="assets/icons/social-twitter.svg"
+                  src="{{ asset('elora-2/assets/icons/social-twitter.svg') }}"
                   alt="Twitter"
                   class="size-[24px]"
                 />
                 <img
-                  src="assets/icons/social-instagram.svg"
+                  src="{{ asset('elora-2/assets/icons/social-instagram.svg') }}"
                   alt="Instagram"
                   class="size-[24px]"
                 />
                 <img
-                  src="assets/icons/social-youtube.svg"
+                  src="{{ asset('elora-2/assets/icons/social-youtube.svg') }}"
                   alt="YouTube"
                   class="size-[32px]"
                 />
                 <img
-                  src="assets/icons/social-linkedin.svg"
+                  src="{{ asset('elora-2/assets/icons/social-linkedin.svg') }}"
                   alt="LinkedIn"
                   class="size-[24px]"
                 />
@@ -47,22 +47,22 @@
             <p class="font-semibold text-[16px] text-white">We accept</p>
             <div class="flex gap-[12px]">
               <img
-                src="assets/icons/pay-visa.png"
+                src="{{ asset('elora-2/assets/icons/pay-visa.png') }}"
                 alt="Visa"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
-                src="assets/icons/pay-mastercard.png"
+                src="{{ asset('elora-2/assets/icons/pay-mastercard.png') }}"
                 alt="Mastercard"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
-                src="assets/icons/pay-applepay.png"
+                src="{{ asset('elora-2/assets/icons/pay-applepay.png') }}"
                 alt="Apple Pay"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
-                src="assets/icons/pay-fawry.png"
+                src="{{ asset('elora-2/assets/icons/pay-fawry.png') }}"
                 alt="Fawry Pay"
                 class="h-[38px] w-[56px] object-cover rounded"
               />

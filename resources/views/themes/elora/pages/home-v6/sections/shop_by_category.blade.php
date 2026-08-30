@@ -28,7 +28,7 @@
             class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-end justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto lg:row-span-2"
           >
             <img
-              src="assets/images/shop-accessories.png"
+              src="{{ asset('elora-2/assets/images/shop-accessories.png') }}"
               alt="Accessories"
               class="absolute inset-0 h-full w-full object-cover"
             />
@@ -52,7 +52,7 @@
             class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
           >
             <img
-              src="assets/images/shop-fashion.png"
+              src="{{ asset('elora-2/assets/images/shop-fashion.png') }}"
               alt="Fashion"
               class="absolute inset-0 h-full w-full object-cover"
             />
@@ -76,7 +76,7 @@
             class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
           >
             <img
-              src="assets/images/shop-electronics.png"
+              src="{{ asset('elora-2/assets/images/shop-electronics.png') }}"
               alt="Electronics"
               class="absolute inset-0 h-full w-full object-cover"
             />
@@ -100,7 +100,7 @@
             class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
           >
             <img
-              src="assets/images/shop-fashion.png"
+              src="{{ asset('elora-2/assets/images/shop-fashion.png') }}"
               alt="Fashion"
               class="absolute inset-0 h-full w-full object-cover"
             />
@@ -124,7 +124,7 @@
             class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
           >
             <img
-              src="assets/images/shop-electronics.png"
+              src="{{ asset('elora-2/assets/images/shop-electronics.png') }}"
               alt="Electronics"
               class="absolute inset-0 h-full w-full object-cover"
             />

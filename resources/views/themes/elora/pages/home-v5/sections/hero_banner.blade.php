@@ -7,7 +7,7 @@
               class="relative flex items-center h-[254px] lg:h-[537px] overflow-hidden px-[18px] lg:px-[56px] py-[22px]"
             >
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-5/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="absolute inset-0 h-full w-full object-cover"
               />
@@ -48,7 +48,7 @@
               class="relative flex items-center h-[254px] lg:h-[537px] overflow-hidden px-[18px] lg:px-[56px] py-[22px]"
             >
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-5/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="absolute inset-0 h-full w-full object-cover"
               />
@@ -89,7 +89,7 @@
               class="relative flex items-center h-[254px] lg:h-[537px] overflow-hidden px-[18px] lg:px-[56px] py-[22px]"
             >
               <img
-                src="assets/images/hero-desktop.png"
+                src="{{ asset('elora-5/assets/images/hero-desktop.png') }}"
                 alt=""
                 class="absolute inset-0 h-full w-full object-cover"
               />

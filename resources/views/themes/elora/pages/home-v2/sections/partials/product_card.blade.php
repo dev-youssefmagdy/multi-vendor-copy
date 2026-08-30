@@ -11,11 +11,11 @@
         </div>
       </div>
       <button type="button" aria-label="Add to favorites" class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px]">
-        <img src="assets/icons/heart.svg" alt="" class="size-[20px]" />
+        <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="size-[20px]" />
       </button>
     </div>
     <div class="bg-[var(--color-bg-main)] flex h-[45px] items-center justify-center px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[57px]" style="background:var(--color-text-primary)">
-      <img src="assets/icons/cart.svg" alt="Add to cart" class="size-[24px]" />
+      <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" alt="Add to cart" class="size-[24px]" />
     </div>
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">
@@ -28,7 +28,7 @@
     </div>
     <div class="flex flex-col gap-[4px] items-start">
       <div class="flex gap-[8px] items-center justify-center">
-        <img src="assets/icons/star-rating.svg" alt="" class="h-[10px] w-[69px]" />
+        <img src="{{ asset('elora-1/assets/icons/star-rating.svg') }}" alt="" class="h-[10px] w-[69px]" />
         <p class="font-normal text-[var(--color-text-subtitle)] text-[12px] tracking-[0.5px] whitespace-nowrap">{{ $p['rating'] }}</p>
       </div>
       <div class="flex gap-[8px] items-end">
@@ -43,7 +43,7 @@
     </div>
     <div class="flex flex-col gap-[4px] items-start w-full">
       <div class="flex gap-[4px] items-center w-full">
-        <img src="assets/icons/truck-delivery.svg" alt="" class="size-[18px]" />
+        <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px]" />
         <p class="font-medium text-[var(--color-success)] text-[12px] whitespace-nowrap">Delivered by 24 March</p>
       </div>
     </div>

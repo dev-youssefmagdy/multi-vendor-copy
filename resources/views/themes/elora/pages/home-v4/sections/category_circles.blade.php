@@ -25,7 +25,7 @@
             style="background: var(--color-brand-orange)"
           >
             <img
-              src="assets/images/cat-gaming.png"
+              src="{{ asset('elora-4/assets/images/cat-gaming.png') }}"
               alt="Gaming"
               class="h-[68px] lg:h-[105px] w-auto -mt-[10px] lg:-mt-[16px]"
             />
@@ -42,7 +42,7 @@
             style="background: var(--color-brand-orange)"
           >
             <img
-              src="assets/images/cat-bag.png"
+              src="{{ asset('elora-4/assets/images/cat-bag.png') }}"
               alt="Women bags"
               class="h-[48px] lg:h-[80px] w-auto -mt-[6px] lg:-mt-[10px]"
             />
@@ -59,7 +59,7 @@
             style="background: var(--color-brand-orange)"
           >
             <img
-              src="assets/images/cat-electronics.png"
+              src="{{ asset('elora-4/assets/images/cat-electronics.png') }}"
               alt="Electronics"
               class="h-[54px] lg:h-[88px] w-auto -mt-[8px] lg:-mt-[12px]"
             />
@@ -76,7 +76,7 @@
             style="background: var(--color-brand-orange)"
           >
             <img
-              src="assets/images/cat-accessories.png"
+              src="{{ asset('elora-4/assets/images/cat-accessories.png') }}"
               alt="Accessories"
               class="h-[54px] lg:h-[88px] w-auto -mt-[8px] lg:-mt-[12px]"
             />

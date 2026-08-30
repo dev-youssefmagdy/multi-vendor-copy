@@ -25,7 +25,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-bag.png"
+            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
             alt="Women bags"
             class="w-[39px] lg:w-[73px] h-auto"
           />
@@ -41,7 +41,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-lamp.png"
+            src="{{ asset('elora-2/assets/icons/cat-lamp.png') }}"
             alt="Accessories"
             class="w-[28px] lg:w-[52px] h-auto"
           />
@@ -57,7 +57,7 @@
           style="background: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-controller.png"
+            src="{{ asset('elora-2/assets/icons/cat-controller.png') }}"
             alt="Gaming"
             class="w-[47px] lg:w-[88px] h-auto -rotate-[15deg]"
           />
@@ -72,7 +72,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-laptop.png"
+            src="{{ asset('elora-2/assets/icons/cat-laptop.png') }}"
             alt="Women bags"
             class="w-[53px] lg:w-[98px] h-auto"
           />
@@ -88,7 +88,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-bag.png"
+            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
             alt="Women bags"
             class="w-[39px] lg:w-[73px] h-auto"
           />
@@ -104,7 +104,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-lamp.png"
+            src="{{ asset('elora-2/assets/icons/cat-lamp.png') }}"
             alt="Accessories"
             class="w-[28px] lg:w-[52px] h-auto"
           />
@@ -120,7 +120,7 @@
           style="border-color: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-laptop.png"
+            src="{{ asset('elora-2/assets/icons/cat-laptop.png') }}"
             alt="Women bags"
             class="w-[53px] lg:w-[98px] h-auto"
           />
@@ -136,7 +136,7 @@
           style="background: var(--color-accent-green)"
         >
           <img
-            src="assets/icons/cat-bag.png"
+            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
             alt="Electronics"
             class="w-[39px] lg:w-[73px] h-auto"
           />

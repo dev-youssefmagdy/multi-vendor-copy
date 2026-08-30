@@ -8,7 +8,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-[7px]">
             <img
-              src="assets/icons/avatar.png"
+              src="{{ asset('elora-2/assets/icons/avatar.png') }}"
               alt=""
               class="size-[44px] rounded-full object-cover"
             />
@@ -26,7 +26,7 @@
                   >15 st. cairo, Egypt</span
                 >
                 <img
-                  src="assets/icons/chevron-down-small.svg"
+                  src="{{ asset('elora-2/assets/icons/chevron-down-small.svg') }}"
                   alt=""
                   class="size-[16px]"
                 />
@@ -41,7 +41,7 @@
             aria-controls="mobileDrawer"
             class="flex flex-col items-center justify-center cursor-pointer"
           >
-            <img src="assets/icons/menu.svg" alt="" class="size-[38px] -mb-1" />
+            <img src="{{ asset('elora-2/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
             <span
               class="text-[10px] tracking-[0.5px]"
               style="color: var(--color-text-primary)"
@@ -57,7 +57,7 @@
           "
         >
           <img
-            src="assets/icons/search.svg"
+            src="{{ asset('elora-2/assets/icons/search.svg') }}"
             alt=""
             class="size-[20px] opacity-70"
           />
@@ -67,7 +67,7 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
-          <img src="assets/icons/camera.svg" alt="" class="h-[24px] w-[33px]" />
+          <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" />
         </div>
       </div>
 
@@ -80,11 +80,11 @@
           aria-label="Open menu"
           class="flex flex-col items-center justify-center cursor-pointer"
         >
-          <img src="assets/icons/menu.svg" alt="" class="size-[38px] -mb-1" />
+          <img src="{{ asset('elora-2/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
           <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
         </button>
         <img
-          src="assets/icons/logo-elora.svg"
+          src="{{ asset('elora-2/assets/icons/logo-elora.svg') }}"
           alt="ELORA"
           class="h-[38px] w-auto"
         />
@@ -93,7 +93,7 @@
           style="background: var(--color-surface)"
         >
           <img
-            src="assets/icons/search.svg"
+            src="{{ asset('elora-2/assets/icons/search.svg') }}"
             alt=""
             class="size-[22px] opacity-70"
           />
@@ -107,7 +107,7 @@
         <div class="flex items-center gap-[38px] shrink-0">
           <div class="flex items-center gap-[6px]">
             <img
-              src="assets/icons/flag-en.png"
+              src="{{ asset('elora-2/assets/icons/flag-en.png') }}"
               alt="EN"
               class="h-[25px] w-[40px] object-cover rounded-[2px]"
             />
@@ -122,7 +122,7 @@
                 style="color: var(--color-black)"
                 >SAR
                 <img
-                  src="assets/icons/arrow-down.svg"
+                  src="{{ asset('elora-2/assets/icons/arrow-down.svg') }}"
                   class="size-[12px]"
                   alt=""
               /></span>
@@ -133,7 +133,7 @@
             class="flex items-center gap-[8px] cursor-pointer"
             aria-label="Favorites"
           >
-            <img src="assets/icons/heart.svg" class="size-[24px]" alt="" />
+            <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[24px]" alt="" />
             <span
               class="text-[14px] tracking-[0.5px]"
               style="color: var(--color-black-alt)"
@@ -145,7 +145,7 @@
             class="flex items-center gap-[8px] cursor-pointer"
             aria-label="Cart"
           >
-            <img src="assets/icons/cart.svg" class="size-[24px]" alt="" />
+            <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" class="size-[24px]" alt="" />
             <span class="flex flex-col items-center">
               <span
                 class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center"
@@ -164,7 +164,7 @@
             class="flex items-center gap-[8px] cursor-pointer"
             aria-label="Account"
           >
-            <img src="assets/icons/user.svg" class="size-[24px]" alt="" />
+            <img src="{{ asset('elora-2/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
             <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
               <span class="block" style="color: var(--color-text-faint)"
                 >Welcome</span
@@ -193,7 +193,7 @@
         style="border-color: var(--color-page-bg)"
       >
         <img
-          src="assets/icons/logo-elora.svg"
+          src="{{ asset('elora-2/assets/icons/logo-elora.svg') }}"
           alt="ELORA"
           class="h-[26px] w-auto"
         />
@@ -221,7 +221,7 @@
         style="background: var(--color-surface)"
       >
         <img
-          src="assets/icons/search.svg"
+          src="{{ asset('elora-2/assets/icons/search.svg') }}"
           alt=""
           class="size-[18px] opacity-70"
         />
@@ -244,7 +244,7 @@
           "
           >Men's Clothing
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-60"
             alt=""
           />
@@ -258,7 +258,7 @@
           "
           >Food & Grocery
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -272,7 +272,7 @@
           "
           >Featured
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -286,7 +286,7 @@
           "
           >Home & Kitchen
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -300,7 +300,7 @@
           "
           >Women's Clothing
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -314,7 +314,7 @@
           "
           >Gaming
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -328,7 +328,7 @@
           "
           >Cameras
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -342,7 +342,7 @@
           "
           >Home Decor
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -356,7 +356,7 @@
           "
           >Kid's Fashion
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -370,7 +370,7 @@
           "
           >Electronics
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -384,7 +384,7 @@
           "
           >Bags
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -395,7 +395,7 @@
           style="color: var(--color-text-primary)"
           >Sports
           <img
-            src="assets/icons/arrow-down-bold.svg"
+            src="{{ asset('elora-2/assets/icons/arrow-down-bold.svg') }}"
             class="size-[14px] -rotate-90 opacity-40"
             alt=""
           />
@@ -406,7 +406,7 @@
         style="border-color: var(--color-page-bg)"
       >
         <a href="#" class="flex items-center gap-[10px]">
-          <img src="assets/icons/user.svg" class="size-[20px]" alt="" />
+          <img src="{{ asset('elora-2/assets/icons/user.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
@@ -414,7 +414,7 @@
           >
         </a>
         <a href="#" class="flex items-center gap-[10px]">
-          <img src="assets/icons/heart.svg" class="size-[20px]" alt="" />
+          <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
@@ -422,7 +422,7 @@
           >
         </a>
         <a href="#" class="flex items-center gap-[10px]">
-          <img src="assets/icons/cart.svg" class="size-[20px]" alt="" />
+          <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
@@ -448,7 +448,7 @@
         class="flex items-center gap-[4px] px-[16px] py-[8px] rounded-[33px]"
         style="background: var(--color-accent-green)"
       >
-        <img src="assets/icons/nav-home.svg" alt="" class="size-[20px]" />
+        <img src="{{ asset('elora-2/assets/icons/nav-home.svg') }}" alt="" class="size-[20px]" />
         <span class="font-medium text-[14px] tracking-[0.5px] text-white"
           >Home</span
         >
@@ -459,7 +459,7 @@
         class="flex items-center justify-center w-[40px]"
       >
         <img
-          src="assets/icons/heart.svg"
+          src="{{ asset('elora-2/assets/icons/heart.svg') }}"
           alt=""
           class="size-[22px] opacity-70"
         />
@@ -469,7 +469,7 @@
         aria-label="Cart"
         class="relative flex items-center justify-center w-[40px]"
       >
-        <img src="assets/icons/nav-cart.svg" alt="" class="size-[24px]" />
+        <img src="{{ asset('elora-2/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px]" />
         <span
           class="absolute -top-[4px] right-[2px] flex items-center justify-center h-[16px] w-[18px] rounded-full text-white text-[11px]"
           style="background: var(--color-accent-green)"
@@ -481,7 +481,7 @@
         aria-label="Orders"
         class="flex items-center justify-center w-[40px]"
       >
-        <img src="assets/icons/nav-box.svg" alt="" class="size-[22px]" />
+        <img src="{{ asset('elora-2/assets/icons/nav-box.svg') }}" alt="" class="size-[22px]" />
       </a>
       <a
         href="#"
@@ -489,7 +489,7 @@
         class="flex items-center justify-center w-[40px]"
       >
         <img
-          src="assets/icons/user.svg"
+          src="{{ asset('elora-2/assets/icons/user.svg') }}"
           alt=""
           class="size-[22px] opacity-70"
         />

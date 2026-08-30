@@ -12,7 +12,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-end justify-center p-[16px] h-[150px] lg:h-auto lg:row-span-2"
         >
           <img
-            src="assets/images/shop-accessories.png"
+            src="{{ asset('elora-1/assets/images/shop-accessories.png') }}"
             alt="Accessories"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -36,7 +36,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-center justify-center p-[16px] h-[150px] lg:h-auto"
         >
           <img
-            src="assets/images/shop-fashion.png"
+            src="{{ asset('elora-1/assets/images/shop-fashion.png') }}"
             alt="Fashion"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -60,7 +60,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-center justify-center p-[16px] h-[150px] lg:h-auto"
         >
           <img
-            src="assets/images/shop-electronics.png"
+            src="{{ asset('elora-1/assets/images/shop-electronics.png') }}"
             alt="Electronics"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -84,7 +84,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-end justify-center p-[16px] h-[150px] lg:h-auto lg:row-span-2"
         >
           <img
-            src="assets/images/shop-furniture.png"
+            src="{{ asset('elora-1/assets/images/shop-furniture.png') }}"
             alt="Furniture"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -108,7 +108,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-center justify-center p-[16px] h-[150px] lg:h-auto"
         >
           <img
-            src="assets/images/shop-presents.png"
+            src="{{ asset('elora-1/assets/images/shop-presents.png') }}"
             alt="Presents"
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -132,7 +132,7 @@
           class="relative rounded-[8px] overflow-hidden flex items-center justify-center p-[16px] h-[150px] lg:h-auto"
         >
           <img
-            src="assets/images/shop-decor.png"
+            src="{{ asset('elora-1/assets/images/shop-decor.png') }}"
             alt="Decor"
             class="absolute inset-0 h-full w-full object-cover"
           />
