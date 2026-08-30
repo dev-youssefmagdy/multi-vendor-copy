@@ -54,7 +54,7 @@
     "isEntry": true
   },
   "resources/css/elora-v3.css": {
-    "file": "assets/elora-v3-CKhCCw3F.css",
+    "file": "assets/elora-v3-DO_G69UJ.css",
     "name": "elora-v3",
     "names": [
       "elora-v3.css"
@@ -226,13 +226,13 @@
     "isEntry": true
   },
   "resources/js/elora-v3-carousels.js": {
-    "file": "assets/elora-v3-carousels-DGO3851L.js",
+    "file": "assets/elora-v3-carousels-D60sEPFt.js",
     "name": "elora-v3-carousels",
     "src": "resources/js/elora-v3-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v3-interactions.js": {
-    "file": "assets/elora-v3-interactions-gBV5_fX6.js",
+    "file": "assets/elora-v3-interactions-DCqQnVRG.js",
     "name": "elora-v3-interactions",
     "src": "resources/js/elora-v3-interactions.js",
     "isEntry": true
