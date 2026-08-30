@@ -1,5 +1,5 @@
 :root {
-  /* Brand / primary palette (ELORA — Theme #2 "Home", v5) */
+  /* Brand / primary palette (ELORA — Theme #2 "Home") */
   --color-primary: #132092; /* ELORA/Main-2 — headline accent, CTA text, active dot, featured bar */
   --color-price-blue: #0018e8; /* Price text + New In progress bar fill */
   --color-black: #121212; /* ELORA/Black — product titles */
@@ -61,6 +61,100 @@ body {
   display: none;
 }
 
+/* Swiper carousel arrows (Flash Sale / New In / Recommended / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+/* New In / Trending: the nav buttons peek via their own negative left/right
+   offset on siblings outside .swiper, not through .card-swiper's shared
+   overflow:visible — so that visible overflow was serving no purpose here,
+   while letting the wrapper's un-clipped scrollable width (wider than the
+   container once several fixed-width wide cards are laid out) bleed out and
+   inflate the whole page's scroll width. Clip to the container instead. */
+.newin-swiper,
+.trending-swiper {
+  overflow: hidden;
+}
+
+/* Trending: Swiper's Grid module (2 rows) needs an explicit wrapper height
+   for its per-slide height:calc(50% - gap) math — without a definite
+   height to resolve the percentage against, the two rows fell out of
+   alignment with each other by a few pixels. */
+.trending-swiper .swiper-wrapper {
+  height: 378px;
+}
+@media (min-width: 1024px) {
+  .trending-swiper .swiper-wrapper {
+    height: 370px;
+  }
+}
+
+/* Best Seller: draggable fan cascade — every slide is absolutely positioned
+   by carousels.js (mountBestSellerCarousel) from a fixed geometry table
+   indexed by distance-from-activeIndex, so dragging shifts which product
+   sits in the biggest/leftmost slot while the rest cascade down in size.
+   overflow:visible lets the fan's cards bleed past the swiper's own (much
+   smaller) auto-width box; the padding leaves breathing room below the row
+   and above it for the tallest (leftmost) card. */
+.bestseller-swiper {
+  overflow: visible;
+  padding: 0 0 24px;
+  cursor: grab;
+  width: 100% !important;
+}
+/* Every slide is position:absolute (taken out of normal flow) for the fan
+   cascade, so the wrapper has no in-flow content to size itself against and
+   collapses to width:0 without this. */
+.bestseller-swiper .swiper-wrapper {
+  width: 100%;
+}
+.bestseller-slide {
+  transition-property: left, top, width, height;
+}
+.js-fan-imgband {
+  transition-property: height;
+}
+
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
 /* Mobile drawer menu */
 .mobile-drawer {
   transform: translateX(-100%);
@@ -77,4 +171,89 @@ body {
 .mobile-drawer-overlay.is-open {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0;
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: #d9d9d9;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-primary);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* New In textured gold section background */
+.newin-bg {
+  position: relative;
+  background-color: var(--color-newin-gold);
+}
+.newin-bg > .newin-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.21;
+}
+
+/* Category circle blob background */
+.category-blob {
+  background-image: url("assets/icons/cat-blob-1.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 92% 92%;
+}
+
+/* Shop by Category tile image */
+.shop-cat-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.shop-cat-tile img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.shop-cat-tile .shop-cat-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  text-align: center;
+  color: var(--color-white);
+  font-weight: 600;
 }

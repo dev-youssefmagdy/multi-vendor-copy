@@ -1,7 +1,4 @@
-// Hero carousel + off-canvas drawer menu + tabbed-products switcher for the
-// ELORA "Home v5" screen. Product card markup is rendered server-side in the
-// Blade sections (resources/views/themes/elora/pages/home-v5/sections/*.blade.php
-// and their partials/ subfolder).
+// Hero carousel + off-canvas drawer menu for the ELORA "Home" screen (Theme #2).
 
 function initHomeUI() {
   // ---- Hero carousel ----
@@ -50,21 +47,6 @@ function initHomeUI() {
       if (e.key === "Escape") closeDrawer();
     });
   }
-
-  // ---- Tabbed Products pill switcher ----
-  document.querySelectorAll("[data-v5-tabs]").forEach((tabsEl) => {
-    const buttons = tabsEl.querySelectorAll("[data-v5-tab-target]");
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const targetId = btn.getAttribute("data-v5-tab-target");
-        buttons.forEach((b) => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        document.querySelectorAll(".v5-tab-panel").forEach((panel) => {
-          panel.hidden = panel.id !== targetId;
-        });
-      });
-    });
-  });
 }
 
 let homeUIInitialized = false;
