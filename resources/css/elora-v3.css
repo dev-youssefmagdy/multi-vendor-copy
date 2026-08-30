@@ -254,7 +254,7 @@ body {
 }
 .pattern-newin {
   background-color: var(--color-bg-main);
-  background-image: url("assets/images/pattern-newin.png");
+  background-image: url("elora-3/assets/images/pattern-newin.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -264,7 +264,7 @@ body {
   background-color: var(--color-brand-pink);
   background-image:
     linear-gradient(to bottom, transparent 55%, var(--color-brand-pink) 100%),
-    url("assets/images/pattern-bestseller.png");
+    url("elora-3/assets/images/pattern-bestseller.png");
   background-size:
     100% 100%,
     cover;

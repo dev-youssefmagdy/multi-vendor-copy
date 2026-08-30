@@ -43,7 +43,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     @switch($storefrontThemeVariant?->key)
-        @case('v2') <!-- Purple Edition -->
+        @case('v2') <!-- Purple Edition || public/elora-1 -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v2';
@@ -52,7 +52,7 @@
                 $scriptsKey = 'scripts-v2';
             @endphp
             @break
-        @case('v3') <!-- Fresh Edition -->
+        @case('v3') <!-- Fresh Edition || public/elora-3 -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v3';
@@ -61,7 +61,7 @@
                 $scriptsKey = 'scripts-v3';
             @endphp
             @break
-        @case('v4') <!-- Bold Edition -->
+        @case('v4') <!-- Bold Edition || public/elora-4 -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v4';
@@ -70,7 +70,7 @@
                 $scriptsKey = 'scripts-v4';
             @endphp
             @break
-        @case('v5') <!-- Minimal Edition -->
+        @case('v5') <!-- Minimal Edition || public/elora-5 -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v5';
@@ -79,7 +79,7 @@
                 $scriptsKey = 'scripts-v5';
             @endphp
             @break
-        @case('v6') <!-- New In Edition -->
+        @case('v6') <!-- New In Edition || public/elora-2 -->
             @php
                 $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
                 $headerKey = 'header-v6';

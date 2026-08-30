@@ -1,3 +1,11 @@
+    @php
+      $flashProducts = array_fill(0, 18, [
+        'name' => 'Essential Shoes',
+        'price' => '$89.00',
+        'oldPrice' => '$89.00',
+        'discount' => '20% Off',
+      ]);
+    @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
       class="flash-sale-stripes py-[24px] lg:py-[32px] flex flex-col gap-[24px]"
@@ -23,7 +31,13 @@
       </div>
 
       <div class="swiper flash-swiper w-full ps-[16px]! lg:ps-[56px]!">
-        <div class="swiper-wrapper" id="flashGrid"></div>
+        <div class="swiper-wrapper" id="flashGrid">
+          @foreach ($flashProducts as $p)
+            <div class="swiper-slide">
+              @include('themes.elora.pages.home-v6.sections.partials.flash_card', ['p' => $p])
+            </div>
+          @endforeach
+        </div>
       </div>
 
       <div

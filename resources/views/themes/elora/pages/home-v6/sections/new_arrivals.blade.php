@@ -1,3 +1,15 @@
+    @php
+      $newInProducts = [
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Street Sneakers', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Runner Sneakers', 'weight' => '260g', 'price' => '$110.00', 'oldPrice' => '$130.00', 'discount' => '15% Off', 'rating' => '4.6 (+1.2k)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Oversized Hoodie', 'weight' => '210g', 'price' => '$95.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.5 (+620)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Pullover Hoodie', 'weight' => '220g', 'price' => '$91.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.6 (+890)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Court Sneakers', 'weight' => '255g', 'price' => '$92.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.3 (+390)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Zip Hoodie', 'weight' => '225g', 'price' => '$97.00', 'oldPrice' => '$115.00', 'discount' => '15% Off', 'rating' => '4.4 (+640)'],
+        ['image' => 'images/product-placeholder.svg', 'name' => 'Trail Sneakers', 'weight' => '270g', 'price' => '$115.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.4 (+560)'],
+      ];
+    @endphp
     <!-- ============ NEW IN ============ -->
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
@@ -19,7 +31,13 @@
       </div>
       <div class="relative">
         <div class="swiper card-swiper">
-          <div class="swiper-wrapper" id="newInWrapper"></div>
+          <div class="swiper-wrapper" id="newInWrapper">
+            @foreach ($newInProducts as $p)
+              <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
+                @include('themes.elora.pages.home-v6.sections.partials.product_card', ['p' => $p])
+              </div>
+            @endforeach
+          </div>
         </div>
       </div>
     </section>
