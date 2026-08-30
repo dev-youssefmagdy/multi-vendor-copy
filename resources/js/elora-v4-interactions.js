@@ -1,4 +1,4 @@
-// Hero carousel + mobile off-canvas drawer menu for the ELORA v4 ("New User" promo) home screen.
+// Hero carousel + mobile off-canvas drawer menu for the ELORA "New User" home screen (Theme #5).
 
 function initHomeUI() {
   // ---- Hero carousel ----
@@ -44,21 +44,6 @@ function initHomeUI() {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeDrawer();
     });
-  }
-
-  // ---- Flash-sale countdown (starts from the design's captured 03:06:25 and ticks down) ----
-  let remaining = 3 * 3600 + 6 * 60 + 25;
-  const timerEls = document.querySelectorAll("[data-flash-timer]");
-  if (timerEls.length) {
-    setInterval(() => {
-      remaining = Math.max(0, remaining - 1);
-      const h = String(Math.floor(remaining / 3600)).padStart(2, "0");
-      const m = String(Math.floor((remaining % 3600) / 60)).padStart(2, "0");
-      const s = String(remaining % 60).padStart(2, "0");
-      timerEls.forEach((el, i) => {
-        el.textContent = [h, m, s][i];
-      });
-    }, 1000);
   }
 }
 
