@@ -1,0 +1,215 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #ff4d00; /* ELORA/MAin */
+  --color-secondary: #ff522c; /* Main Website/Main-clr */
+  --color-bg-main: #fdfdfd; /* ELORA/fill */
+  --color-text-primary: #121212; /* ELORA/Black */
+  --color-text-subtitle: #adadad; /* ELORA/Subttitle */
+  --color-gray: #8f8f8f; /* ELORA/GRAY */
+  --color-stroke: #d4d4d4; /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424; /* Black / Manti/Black */
+  --color-black-alt: #1b1b1b; /* black */
+  --color-white: #ffffff; /* Manti/White */
+  --color-success: #2aaf2f; /* Manti/Green */
+  --color-error: #de1709; /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8a38f5;
+  --color-accent-purple-dark: #51218f;
+  --color-accent-purple-light: #b57dff;
+  --color-accent-yellow: #ffd428;
+  --color-badge-purple: #9d00ff;
+  --color-surface: #f6f5f5;
+  --color-page-bg: #f4f4f4;
+  --color-footer-bg: #3b3b3b;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5b5b5b;
+  --color-footer-text-muted: #f2f2f2;
+  --color-yellow-bright: #ffe100; /* New In section glow (fades to transparent) + Best Seller section bg */
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4b4b4b;
+  --color-text-placeholder: #4c4c4c;
+  --color-hero-placeholder: #c3accf;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Recommended / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Flash Sale: fixed 3-per-view carousel — clipped to exactly 3 slides wide.
+   Center card stays upright/full size; scale never exceeds 1 so nothing needs
+   vertical clipping room. */
+.flash-swiper {
+  overflow: hidden;
+}
+.flash-swiper .swiper-wrapper {
+  align-items: center;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-accent-purple);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Best Seller: centered/focus carousel — the active (centered) slide is full
+   size, overlapping neighbors that shrink symmetrically the further they are
+   from center. Same opacity/background as the active slide throughout; only
+   size (and stacking order) changes. Scale/z-index are set per-slide in JS
+   (carousels.js) based on live distance from the active slide, not by CSS
+   classes, so it stays correct as the centered slide changes. */
+.best-seller-swiper {
+  width: 100% !important;
+  max-width: 999.24px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 24px 0 8px;
+}
+.best-seller-swiper .swiper-wrapper {
+  position: relative;
+  width: 100%;
+  height: 448.72px;
+}
+.best-seller-slide {
+  width: 296.11px;
+  height: 448.72px;
+  border-radius: 13.46px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.best-seller-slide > div {
+  border-radius: 13.46px;
+}

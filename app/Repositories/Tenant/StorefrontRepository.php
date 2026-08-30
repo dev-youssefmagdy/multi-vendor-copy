@@ -16,7 +16,9 @@ use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Theme;
+use App\Models\Tenant\TenantHomeVariant;
 use App\Models\DeliveryPopupDay;
+use App\Models\HomeVariant;
 use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -637,6 +639,52 @@ class StorefrontRepository
             ->orderBy('id')
             ->first()
             ?? Theme::query()->where('is_universal', true)->orderBy('id')->first();
+    }
+
+    /**
+     * Resolve the home page layout variant the tenant picked for the current
+     * theme, preferring a country-specific pick over the tenant-wide default,
+     * and falling back to the theme's default catalog entry.
+     */
+    public function currentHomeVariant(): ?HomeVariant
+    {
+        if (\array_key_exists('current_home_variant', $this->memo)) {
+            return $this->memo['current_home_variant'];
+        }
+
+        $theme = $this->currentTheme();
+
+        if (!$theme) {
+            return $this->memo['current_home_variant'] = null;
+        }
+
+        $country = $this->detectedCountry();
+        $tenantChoice = null;
+
+        if ($country) {
+            $tenantChoice = TenantHomeVariant::query()
+                ->where('theme_id', $theme->id)
+                ->where('country_id', $country->id)
+                ->first();
+        }
+
+        $tenantChoice ??= TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->first();
+
+        if ($tenantChoice) {
+            $variant = tenancy()->central(fn() => HomeVariant::query()->find($tenantChoice->home_variant_id));
+
+            if ($variant) {
+                return $this->memo['current_home_variant'] = $variant;
+            }
+        }
+
+        return $this->memo['current_home_variant'] = tenancy()->central(fn() => HomeVariant::forTheme($theme->slug)
+            ->where('is_default', true)
+            ->where('is_active', true)
+            ->first());
     }
 
 

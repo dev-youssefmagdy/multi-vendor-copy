@@ -40,17 +40,35 @@
     <meta name="twitter:image" content="{{ $ogImage }}" />
     <meta name="twitter:image:alt" content="{{ $title ?? $storeName ?? config('app.name') }}" />
     @endif
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+    @switch($storefrontThemeVariant?->key)
+        @case('v2')
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v2';
+                $footerKey = 'footer-v2';
+                $stylesKey = 'styles-v2';
+                $scriptsKey = 'scripts-v2';
+            @endphp
+            @break
+        @default
+            @php
+                $bodyClass= 'bg-gray-50';
+                $headerKey = 'header';
+                $footerKey = 'footer';
+                $stylesKey = 'styles';
+                $scriptsKey = 'scripts';
+            @endphp
+    @endswitch
+
     @livewireStyles
-    @include('themes.elora.layout.styles')
+    @include('themes.elora.layout.' . $stylesKey)
     @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>
 
-
-<body @stack('body-attrs') data-page="index" class="bg-gray-50">
+<body @stack('body-attrs') data-page="index" class="{{ $bodyClass }}">
 
     @if (\App\Services\Preview\PreviewOverrides::active())
         <x-preview-banner />
@@ -70,6 +88,20 @@
             }
         }
     </style>
+    <script>
+        (function () {
+            function revealPage() {
+                var el = document.getElementById('page-preloader');
+                if (el) { el.style.opacity = '0'; setTimeout(function () { el.style.display = 'none'; }, 320); }
+            }
+            if (document.readyState === 'complete') {
+                revealPage();
+            } else {
+                window.addEventListener('load', revealPage);
+                setTimeout(revealPage, 6000);
+            }
+        })();
+    </script>
 
     @php
         $storefrontFlashMessages = [];
@@ -118,12 +150,12 @@
         </script>
     @endif
 
-    @include('themes.elora.partials.header', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
+
+    @include('themes.elora.partials.' . $headerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
 
     {{ $slot }}
 
-    @include('themes.elora.partials.footer', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks, 'cartCount' => $cartCount])
-    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    @include('themes.elora.partials.' . $footerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks, 'cartCount' => $cartCount])
     {{-- Path-based tenancy: override Livewire's update URI so component updates
     are routed through InitializeTenancyBySlug on the central domain.
     The hidden element must appear before @livewireScripts in the DOM so
@@ -133,7 +165,7 @@
             style="display:none" aria-hidden="true"></div>
     @endif
     @livewireScripts
-    @include('themes.elora.layout.scripts')
+    @include('themes.elora.layout.' . $scriptsKey)
     @stack('scripts')
 
     {{-- Variant selection modal --}}

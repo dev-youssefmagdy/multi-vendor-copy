@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/elora.css',
+                'resources/css/elora-v2.css',
                 'resources/css/elora/category.css',
                 'resources/css/elora/home.css',
                 'resources/css/elora/home-v2.css',
@@ -28,6 +29,8 @@ export default defineConfig({
                 'resources/js/souqify.js',
                 'resources/js/website.js',
                 'resources/css/website.css',
+                'resources/js/elora-v2-interactions.js',
+                'resources/js/elora-v2-carousels.js'
             ],
             refresh: true,
         }),
