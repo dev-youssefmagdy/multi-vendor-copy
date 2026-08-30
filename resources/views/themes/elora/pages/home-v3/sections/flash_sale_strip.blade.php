@@ -1,3 +1,11 @@
+    @php
+      $flashSaleProducts = [
+        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Ribbed Cami Dress', 'price' => '$7.49', 'oldPrice' => '$29.99', 'discount' => '-75%'],
+        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Oversized Graphic Tee', 'price' => '$5.99', 'oldPrice' => '$22.99', 'discount' => '-74%'],
+        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Wide Leg Linen Pants', 'price' => '$9.49', 'oldPrice' => '$39.99', 'discount' => '-76%'],
+        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Y2K Cargo Skirt', 'price' => '$8.99', 'oldPrice' => '$34.99', 'discount' => '-74%'],
+      ];
+    @endphp
     <section
       class="pattern-flash-sale px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
     >
@@ -55,8 +63,12 @@
         </div>
       </div>
       <div class="relative">
-        <div class="swiper card-swiper">
-          <div class="swiper-wrapper" id="flashSaleWrapper"></div>
+        <div class="swiper card-swiper" id="flashSaleSwiper">
+          <div class="swiper-wrapper">
+            @foreach ($flashSaleProducts as $p)
+              @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
+            @endforeach
+          </div>
         </div>
         <button
           id="flashSalePrev"
