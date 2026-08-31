@@ -105,8 +105,9 @@ body {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  /* Mobile: 2-column grid of 148px cards, max 4 visible (2×2) = 312px */
-  height: 312px;
+  align-content: flex-start;
+  /* Mobile: 2 cols × 2 rows of 148px cards */
+  height: 312px; /* (148 × 2) + (8 × 1 gap) + 8 extra */
   gap: 8px;
   transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
@@ -116,19 +117,21 @@ body {
   /* Mobile: 2 columns */
   width: calc(50% - 4px);
   flex-shrink: 0;
+  height: 148px;
 }
 
 @media (min-width: 1024px) {
   .flash-track {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: auto;
+    /* Desktop: 3 rows × 148px + 2 gaps of 12px = 468px */
+    height: 468px;
     gap: 12px;
-    align-items: stretch;
+    /* flex-direction stays column, flex-wrap stays wrap */
+    /* Cards stack into columns of 3, track scrolls left/right */
   }
   .flash-slide {
+    /* Desktop: 3 cards per column, each card fixed width */
     width: 340px;
-    flex-shrink: 0;
+    height: 148px;
   }
 }
 

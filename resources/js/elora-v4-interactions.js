@@ -24,32 +24,53 @@ function initHomeUI() {
 // ---- Flash sale pure-JS slider ----
 function initFlashSlider() {
   document.querySelectorAll('[data-flash-slider]').forEach(function (wrapper) {
-    var id     = wrapper.getAttribute('data-flash-slider');
-    var track  = document.getElementById(id + '-track');
-    var dotsEl = document.getElementById(id + '-dots');
+    var id      = wrapper.getAttribute('data-flash-slider');
+    var track   = document.getElementById(id + '-track');
+    var dotsEl  = document.getElementById(id + '-dots');
     var prevBtn = wrapper.querySelector('.flash-prev');
     var nextBtn = wrapper.querySelector('.flash-next');
 
     if (!track) return;
 
-    var isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-    var current   = 0;
-    var slides    = Array.from(track.children);
-    var total     = slides.length;
-    var perPage   = isDesktop ? 2 : 4; // desktop: 2 cards wide; mobile: 4 cards (2×2)
-    var pages     = Math.ceil(total / perPage);
+    var isDesktop  = window.matchMedia('(min-width: 1024px)').matches;
+    var current    = 0;
+    var slides     = Array.from(track.children);
+    var total      = slides.length;
 
-    // Build dots
-    if (dotsEl && pages > 1) {
+    /*
+     * Layout model (same axis for both breakpoints):
+     *   flex-direction: column, flex-wrap: wrap
+     *   Cards stack vertically into columns; the track scrolls LEFT/RIGHT.
+     *
+     *   Mobile:  rows = 2, cols = ceil(total / 2)
+     *   Desktop: rows = 3, cols = ceil(total / 3)
+     *
+     *   One "page" = one column width + gap.
+     *   translateX moves the track left by (page × colWidth).
+     */
+    function rows()     { return isDesktop ? 3 : 2; }
+    function gap()      { return isDesktop ? 12 : 8; }
+    function colWidth() { return isDesktop ? 340 : getColWidthMobile(); }
+    function getColWidthMobile() {
+      // Mobile: 2 columns, 8px gap, full viewport width minus section padding (16px×2)
+      var vp = wrapper.offsetWidth || 300;
+      return Math.floor((vp - gap()) / 2);
+    }
+    function totalCols() { return Math.ceil(total / rows()); }
+
+    function buildDots() {
+      if (!dotsEl) return;
       dotsEl.innerHTML = '';
-      for (var i = 0; i < pages; i++) {
+      var cols = totalCols();
+      if (cols <= 1) return;
+      for (var i = 0; i < cols; i++) {
         var dot = document.createElement('button');
         dot.className = 'flash-dot' + (i === 0 ? ' is-active' : '');
-        dot.setAttribute('aria-label', 'Page ' + (i + 1));
-        dot.setAttribute('data-page', i);
-        dot.addEventListener('click', function () {
-          goTo(parseInt(this.getAttribute('data-page'), 10));
-        });
+        dot.setAttribute('aria-label', 'Column ' + (i + 1));
+        dot.setAttribute('data-page', String(i));
+        (function (page) {
+          dot.addEventListener('click', function () { goTo(page); });
+        }(i));
         dotsEl.appendChild(dot);
       }
     }
@@ -63,27 +84,14 @@ function initFlashSlider() {
 
     function updateArrows() {
       if (prevBtn) prevBtn.disabled = current === 0;
-      if (nextBtn) nextBtn.disabled = current >= pages - 1;
+      if (nextBtn) nextBtn.disabled = current >= totalCols() - 1;
     }
 
     function goTo(page) {
-      current = Math.max(0, Math.min(page, pages - 1));
-
-      if (isDesktop) {
-        // Horizontal scroll: each page moves by (perPage × (slideWidth + gap))
-        var slideWidth = slides[0] ? slides[0].offsetWidth : 340;
-        var gap = 12;
-        var offset = current * perPage * (slideWidth + gap);
-        track.style.transform = 'translateX(-' + offset + 'px)';
-      } else {
-        // Mobile: 2-column wrap, scroll vertically by page
-        // Each page = 2 rows × (148px card + 8px gap) = 312px per page
-        var rowH  = 148 + 8;
-        var rows  = 2; // 4 cards per page = 2 rows of 2
-        var vOffset = current * rows * rowH;
-        track.style.transform = 'translateY(-' + vOffset + 'px)';
-      }
-
+      var cols = totalCols();
+      current  = Math.max(0, Math.min(page, cols - 1));
+      var step = colWidth() + gap();
+      track.style.transform = 'translateX(-' + (current * step) + 'px)';
       updateDots();
       updateArrows();
     }
@@ -92,30 +100,30 @@ function initFlashSlider() {
     if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
 
     // Touch swipe
-    var touchStartX = 0, touchStartY = 0;
+    var tx0 = 0, ty0 = 0;
     wrapper.addEventListener('touchstart', function (e) {
-      touchStartX = e.changedTouches[0].clientX;
-      touchStartY = e.changedTouches[0].clientY;
+      tx0 = e.changedTouches[0].clientX;
+      ty0 = e.changedTouches[0].clientY;
     }, { passive: true });
     wrapper.addEventListener('touchend', function (e) {
-      var dx = e.changedTouches[0].clientX - touchStartX;
-      var dy = e.changedTouches[0].clientY - touchStartY;
+      var dx = e.changedTouches[0].clientX - tx0;
+      var dy = e.changedTouches[0].clientY - ty0;
       if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
         goTo(current + (dx < 0 ? 1 : -1));
       }
     }, { passive: true });
 
-    // Respond to viewport resize
+    // Breakpoint change
     window.matchMedia('(min-width: 1024px)').addEventListener('change', function (mq) {
       isDesktop = mq.matches;
-      perPage   = isDesktop ? 2 : 4;
-      pages     = Math.ceil(total / perPage);
       track.style.transform = '';
       current = 0;
-      updateDots();
-      updateArrows();
+      buildDots();
+      goTo(0);
     });
 
+    // Init
+    buildDots();
     goTo(0);
   });
 }
