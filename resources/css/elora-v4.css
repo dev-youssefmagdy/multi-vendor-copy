@@ -130,7 +130,7 @@ body {
   }
   .flash-slide {
     /* Desktop: 3 cards per column, each card fixed width */
-    width: 340px;
+    width: 400px;
     height: 148px;
   }
 }
@@ -180,6 +180,218 @@ body {
   width: 22px;
   background: white;
 }
+
+/* ── Flash sale card ────────────────────────────────────────── */
+.flash-card-wrap {
+  height: 120px;
+  width: 100%;
+}
+
+.flash-card {
+  display: flex;
+  flex-direction: row;
+  height: 120px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-bg-main);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Image section ── */
+.flash-card-img-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 100px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.flash-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flash-card-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--color-accent-yellow);
+  color: var(--color-black);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-bottom-left-radius: 6px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.flash-card-fav {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  width: 26px;
+  height: 26px;
+  background: white;
+  border: none;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* ── Info section ── */
+.flash-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 8px 6px;
+  justify-content: space-between;
+}
+
+.flash-card-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+}
+
+.flash-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.flash-card-weight {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-brand-orange-bright);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.flash-card-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.flash-card-rating-text {
+  font-size: 10px;
+  color: var(--color-text-subtitle);
+  white-space: nowrap;
+}
+
+.flash-card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.flash-card-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.flash-card-old-price {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--color-text-subtitle);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+.flash-card-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-text-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.flash-card-cart-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+/* ── Desktop overrides ── */
+@media (min-width: 1024px) {
+  .flash-card-wrap {
+    height: 148px;
+    width: 400px;
+  }
+
+  .flash-card {
+    height: 148px;
+    width: 400px;
+  }
+
+  .flash-card-img-wrap {
+    width: 156px;
+  }
+
+  .flash-card-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .flash-card-fav {
+    width: 32px;
+    height: 32px;
+  }
+
+  .flash-card-info {
+    padding: 10px 10px 8px;
+    gap: 5px;
+  }
+
+  .flash-card-name {
+    font-size: 14px;
+  }
+
+  .flash-card-weight {
+    font-size: 12px;
+  }
+
+  .flash-card-price {
+    font-size: 17px;
+  }
+
+  .flash-card-old-price {
+    font-size: 13px;
+  }
+
+  .flash-card-cart {
+    padding: 5px 14px;
+    border-radius: 8px;
+    gap: 5px;
+  }
+
+  .flash-card-cart-label {
+    font-size: 13px;
+  }
+}
+
 .swiper-nav-btn {
   display: none;
   position: absolute;
