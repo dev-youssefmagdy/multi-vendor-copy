@@ -1,7 +1,7 @@
 {{-- Expects $p: name, weight, price, oldPrice, discount --}}
-<div class="flex gap-0 h-[110px] lg:h-[169px] items-stretch rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden w-full" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="flex gap-0 h-[110px] lg:h-[169px] items-stretch rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden w-full" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-[42%]">
-    <img src="{{ asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     <div class="absolute top-0 left-0 flex items-center justify-center px-[8px] py-[4px] rounded-br-[6px]" style="background:var(--color-yellow)">
       <p class="font-normal text-[10px] lg:text-[12px] tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black-alt)">70% Sold</p>
     </div>
@@ -28,4 +28,4 @@
       <p class="font-medium text-[9px] lg:text-[11px] whitespace-nowrap" style="color:var(--color-success)">Delivered by 24 March</p>
     </div>
   </div>
-</div>
+</a>

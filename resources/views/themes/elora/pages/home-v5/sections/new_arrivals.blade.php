@@ -1,10 +1,29 @@
     @php
-      $newInProducts = [
-        ['name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'ordered' => '5 ordered last 30 min', 'progress' => 83, 'stock' => 'Only 5 left'],
-        ['name' => 'Court Sneakers', 'weight' => '255g', 'price' => '$92.00', 'oldPrice' => '$110.00', 'discount' => '16% Off', 'rating' => '4.3 (+390)', 'ordered' => '8 ordered last 30 min', 'progress' => 64, 'stock' => 'Only 4 left'],
-        ['name' => 'Wireless Earbuds', 'weight' => '60g', 'price' => '$59.00', 'oldPrice' => '$79.00', 'discount' => '25% Off', 'rating' => '4.5 (+920)', 'ordered' => '12 ordered last 30 min', 'progress' => 72, 'stock' => 'Only 7 left'],
-        ['name' => 'Classic Watch', 'weight' => '90g', 'price' => '$149.00', 'oldPrice' => '$179.00', 'discount' => '17% Off', 'rating' => '4.6 (+1.2k)', 'ordered' => '3 ordered last 30 min', 'progress' => 40, 'stock' => 'Only 9 left'],
-      ];
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $newInCards = $newInProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-5/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'id' => $product->id,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 25),
+              'weight' => $product->centralProduct?->category?->name ?? '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'stock' => '',
+          ];
+      });
     @endphp
     <!-- ============ NEW IN ============ -->
     <section
@@ -20,20 +39,20 @@
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-black)"
         >
-          New In
+          {{ __('New In') }}
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.new-in') }}"
           class="font-normal text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-primary)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div class="relative">
         <div class="swiper card-swiper newin-swiper">
           <div class="swiper-wrapper" id="newInWrapper">
-            @foreach ($newInProducts as $p)
-              <div class="swiper-slide h-auto !w-[280px] lg:!w-[430px]">
+            @foreach ($newInCards as $p)
+              <div class="swiper-slide h-auto !w-[280px] lg:!w-[430px]" wire:key="newin-v5-{{ $p['id'] }}">
                 @include('themes.elora.pages.home-v5.sections.partials.wide_card', ['p' => $p])
               </div>
             @endforeach

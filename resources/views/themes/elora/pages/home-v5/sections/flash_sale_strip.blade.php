@@ -1,12 +1,30 @@
+    @if ($flashProducts->isNotEmpty())
     @php
-      $flashSaleProducts = [
-        ['name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'stock' => 'Only 5 left'],
-        ['name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'stock' => 'Only 5 left'],
-        ['name' => 'Wireless Headphones', 'weight' => '180g', 'price' => '$79.00', 'oldPrice' => '$99.00', 'discount' => '20% Off', 'rating' => '4.4 (+560)', 'stock' => 'Only 3 left'],
-        ['name' => 'Classic Sneakers', 'weight' => '260g', 'price' => '$110.00', 'oldPrice' => '$130.00', 'discount' => '15% Off', 'rating' => '4.6 (+1.4k)', 'stock' => 'Only 5 left'],
-        ['name' => 'Wireless Mouse', 'weight' => '120g', 'price' => '$39.00', 'oldPrice' => '$49.00', 'discount' => '20% Off', 'rating' => '4.1 (+430)', 'stock' => 'Only 8 left'],
-        ['name' => 'Graphic Tee', 'weight' => '150g', 'price' => '$45.00', 'oldPrice' => '$55.00', 'discount' => '18% Off', 'rating' => '4.3 (+390)', 'stock' => 'Only 6 left'],
-      ];
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $flashSaleProducts = $flashProducts->take(6)->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-5/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'id' => $product->id,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => $product->centralProduct?->category?->name ?? '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'stock' => '',
+          ];
+      })->values();
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
@@ -42,29 +60,37 @@
       <div class="relative w-full">
         <div class="swiper card-swiper">
           <div class="swiper-wrapper" id="flashSaleWrapper">
-            <div class="swiper-slide !w-[200px] lg:!w-[298px] !h-[302px] lg:!h-[450px]">
-              @include('themes.elora.pages.home-v5.sections.partials.fan_card', ['p' => $flashSaleProducts[0]])
-            </div>
-            <div class="swiper-slide !w-[362px] lg:!w-[536px] !h-[302px] lg:!h-[450px]">
-              <div class="flex flex-col gap-[10px] lg:gap-[12px] items-start h-full">
-                <div class="flex items-center gap-[6px] lg:gap-[8px]">
-                  <span class="font-semibold text-[12px] lg:text-[16px] tracking-[0.6px] -rotate-90 w-0 whitespace-nowrap" style="color:var(--color-yellow)">Ends in</span>
-                  <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                    <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>03</span>
-                  </div>
-                  <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                    <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>06</span>
-                  </div>
-                  <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                    <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>25</span>
-                  </div>
-                </div>
-                @include('themes.elora.pages.home-v5.sections.partials.flash_mini_card', ['p' => $flashSaleProducts[1]])
-                @include('themes.elora.pages.home-v5.sections.partials.flash_mini_card', ['p' => $flashSaleProducts[2]])
+            @if ($flashSaleProducts->get(0))
+              <div class="swiper-slide !w-[200px] lg:!w-[298px] !h-[302px] lg:!h-[450px]" wire:key="flash-v5-{{ $flashSaleProducts[0]['id'] }}">
+                @include('themes.elora.pages.home-v5.sections.partials.fan_card', ['p' => $flashSaleProducts[0]])
               </div>
-            </div>
-            @foreach ([$flashSaleProducts[3], $flashSaleProducts[4], $flashSaleProducts[5]] as $p)
-              <div class="swiper-slide !w-[200px] lg:!w-[298px] !h-[302px] lg:!h-[450px]">
+            @endif
+            @if ($flashSaleProducts->get(1) || $flashSaleProducts->get(2))
+              <div class="swiper-slide !w-[362px] lg:!w-[536px] !h-[302px] lg:!h-[450px]">
+                <div class="flex flex-col gap-[10px] lg:gap-[12px] items-start h-full">
+                  <div class="flex items-center gap-[6px] lg:gap-[8px]" @if($flashBanner?->end_date ?? null) data-countdown="{{ $flashBanner->end_date->timestamp }}" @endif>
+                    <span class="font-semibold text-[12px] lg:text-[16px] tracking-[0.6px] -rotate-90 w-0 whitespace-nowrap" style="color:var(--color-yellow)">Ends in</span>
+                    <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
+                      <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>03</span>
+                    </div>
+                    <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
+                      <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>06</span>
+                    </div>
+                    <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[52px] lg:w-[54px] rounded-[8px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
+                      <span class="font-semibold text-[18px] lg:text-[26px]" style="color:var(--color-price-blue)" data-flash-timer>25</span>
+                    </div>
+                  </div>
+                  @if ($flashSaleProducts->get(1))
+                    @include('themes.elora.pages.home-v5.sections.partials.flash_mini_card', ['p' => $flashSaleProducts[1]])
+                  @endif
+                  @if ($flashSaleProducts->get(2))
+                    @include('themes.elora.pages.home-v5.sections.partials.flash_mini_card', ['p' => $flashSaleProducts[2]])
+                  @endif
+                </div>
+              </div>
+            @endif
+            @foreach ($flashSaleProducts->slice(3, 3) as $p)
+              <div class="swiper-slide !w-[200px] lg:!w-[298px] !h-[302px] lg:!h-[450px]" wire:key="flash-v5-{{ $p['id'] }}">
                 @include('themes.elora.pages.home-v5.sections.partials.fan_card', ['p' => $p])
               </div>
             @endforeach
@@ -95,13 +121,14 @@
           />
         </button>
       </div>
-      <button
-        type="button"
+      <a
+        href="{{ route('tenant.storefront.best-selling') }}"
         class="relative border border-white rounded-full h-[48px] lg:h-[64px] px-[32px] flex items-center justify-center cursor-pointer"
       >
         <span
           class="font-medium text-white text-[16px] lg:text-[20px] tracking-[0.5px]"
-          >Shop now</span
+          >{{ __('Shop now') }}</span
         >
-      </button>
+      </a>
     </section>
+    @endif

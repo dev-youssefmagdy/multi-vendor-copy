@@ -3,10 +3,10 @@
     $priceColor = !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)';
     $deliveredColor = !empty($p['alt']) ? 'var(--color-error)' : 'var(--color-success)';
 @endphp
-<div class="flex flex-col items-start rounded-[8px] h-full shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="flex flex-col items-start rounded-[8px] h-full shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-full" style="height:55%">
     <div class="absolute inset-0 rounded-t-[8px] overflow-hidden">
-      <img src="{{ asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     </div>
     <div class="absolute top-0 left-0 flex items-center justify-center px-[10px] py-[5px] rounded-bl-[8px] rounded-tr-[8px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
       <p class="font-normal text-[11px] lg:text-[14px] tracking-[0.3px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['alt']) ? '30% OFF' : '70% Sold' }}</p>
@@ -48,4 +48,4 @@
       </div>
     @endif
   </div>
-</div>
+</a>

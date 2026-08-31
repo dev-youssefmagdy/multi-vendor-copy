@@ -1,8 +1,8 @@
 {{-- Expects $p: name, weight, price, oldPrice, discount, rating, stock, ordered (optional), progress (optional) --}}
-<div class="flex gap-0 h-full items-stretch rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="flex gap-0 h-full items-stretch rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden" style="background:var(--color-bg-main)">
   <div class="relative flex flex-col gap-[7px] items-end justify-end px-[5px] py-[4px] shrink-0 w-[42%]">
     <div class="absolute inset-0 overflow-hidden">
-      <img src="{{ asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     </div>
     <div class="relative flex items-center justify-center px-[8px] py-[4px] rounded-bl-[6px] rounded-tr-[6px] shrink-0" style="background:var(--color-yellow)">
       <p class="font-normal text-[10px] lg:text-[12px] tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black-alt)">70% Sold</p>
@@ -56,4 +56,4 @@
       @endif
     </div>
   </div>
-</div>
+</a>
