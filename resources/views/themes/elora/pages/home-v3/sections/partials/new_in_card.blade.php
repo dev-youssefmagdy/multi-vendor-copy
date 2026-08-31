@@ -1,6 +1,6 @@
 {{-- Expects $p: image, badge, badgeBg, badgeText, name, weight, desc, rating, price, oldPrice, discount, urgency --}}
 <div class="swiper-slide">
-  <div class="bg-[var(--color-bg-main)] flex items-stretch rounded-[8px] h-[129px] max-h-[129px] shadow-sm overflow-hidden">
+  <a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex items-stretch rounded-[8px] h-[129px] max-h-[129px] shadow-sm overflow-hidden">
     <div class="relative shrink-0 w-[70px] lg:w-[140px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover bg-[var(--color-page-bg)]" />
       <button type="button" aria-label="Add to favorites" class="absolute top-[4px] left-[4px] lg:top-[6px] lg:left-[6px] bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[3px] lg:p-[5px] rounded-full size-[16px] lg:size-[24px]">
@@ -35,5 +35,5 @@
         <p class="font-medium text-[9px] lg:text-[12px] truncate" style="color:{{ $p['urgency'] ?? 'var(--color-success)' }}">Delivered by 24 March</p>
       </div>
     </div>
-  </div>
+  </a>
 </div>

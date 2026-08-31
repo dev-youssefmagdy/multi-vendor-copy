@@ -1,13 +1,34 @@
+    @if ($flashSales->isNotEmpty())
     @php
-      $flashSaleProducts = [
-        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Ribbed Cami Dress', 'price' => '$7.49', 'oldPrice' => '$29.99', 'discount' => '-75%'],
-        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Oversized Graphic Tee', 'price' => '$5.99', 'oldPrice' => '$22.99', 'discount' => '-74%'],
-        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Wide Leg Linen Pants', 'price' => '$9.49', 'oldPrice' => '$39.99', 'discount' => '-76%'],
-        ['image' => asset('elora-3/assets/images/product-placeholder.svg'), 'name' => 'Y2K Cargo Skirt', 'price' => '$8.99', 'oldPrice' => '$34.99', 'discount' => '-74%'],
-      ];
+      $firstSale = $flashSales->first();
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $flashSaleProducts = $flashProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-3/assets/images/product-placeholder.svg');
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? '-' . (int) round((float) $pricing['discount_percentage']) . '%' : '',
+          ];
+      });
+
+      $countdownRemaining = $firstSale->end_date ? max(0, now()->diffInSeconds($firstSale->end_date, false)) : 0;
+      $countdownH = str_pad((string) intdiv($countdownRemaining, 3600), 2, '0', STR_PAD_LEFT);
+      $countdownM = str_pad((string) intdiv($countdownRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
+      $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <section
       class="pattern-flash-sale px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
+      wire:ignore
     >
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-[8px] lg:gap-[8px]">
@@ -17,14 +38,14 @@
             class="size-[20px] lg:size-[40px]"
           />
           <h2 class="font-semibold text-[20px] lg:text-[32px] text-white">
-            Flash Sale
+            {{ __('Flash Sale') }}
           </h2>
         </div>
-        <div class="flex items-center gap-[8px] lg:gap-[14px]">
+        <div class="flex items-center gap-[8px] lg:gap-[14px]" @if($firstSale->end_date) data-countdown="{{ $firstSale->end_date->timestamp }}" @endif>
           <span
             class="font-semibold text-[13px] lg:text-[20px] tracking-[0.5px] lg:tracking-[0.83px]"
             style="color: var(--color-accent-yellow)"
-            >Ends in</span
+            >{{ __('Ends in') }}</span
           >
           <div class="flex items-center gap-[6px] lg:gap-[8px]">
             <span
@@ -34,7 +55,7 @@
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
               "
-              >03</span
+              >{{ $countdownH }}</span
             >
             <span
               id="flashMinutes"
@@ -43,7 +64,7 @@
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
               "
-              >06</span
+              >{{ $countdownM }}</span
             >
             <span
               id="flashSeconds"
@@ -52,7 +73,7 @@
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
               "
-              >25</span
+              >{{ $countdownS }}</span
             >
           </div>
           <img
@@ -65,9 +86,11 @@
       <div class="relative">
         <div class="swiper card-swiper" id="flashSaleSwiper">
           <div class="swiper-wrapper">
-            @foreach ($flashSaleProducts as $p)
+            @forelse ($flashSaleProducts as $p)
               @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
-            @endforeach
+            @empty
+              <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
+            @endforelse
           </div>
         </div>
         <button
@@ -96,14 +119,15 @@
         </button>
       </div>
       <div class="flex items-center justify-center">
-        <button
-          type="button"
+        <a
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[32px] flex items-center justify-center cursor-pointer"
         >
           <span
             class="font-medium text-white text-[14px] lg:text-[20px] tracking-[0.5px]"
-            >Explore all</span
+            >{{ __('Explore all') }}</span
           >
-        </button>
+        </a>
       </div>
     </section>
+    @endif

@@ -1,39 +1,60 @@
     @php
-      $PLACEHOLDER_IMG = asset('elora-3/assets/images/product-placeholder.svg');
-      $trendingProducts = [
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 83, 'progressLabel' => '5 ordered last 30 min', 'urgency' => 'var(--color-success)'],
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 65, 'progressLabel' => '4 ordered last 30 min', 'urgency' => 'var(--color-error)'],
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 45, 'progressLabel' => '3 ordered last 30 min', 'urgency' => 'var(--color-success)'],
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 72, 'progressLabel' => '5 ordered last 30 min', 'urgency' => 'var(--color-error)'],
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 58, 'progressLabel' => '3 ordered last 30 min', 'urgency' => 'var(--color-success)'],
-        ['image' => $PLACEHOLDER_IMG, 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-text-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'progress' => 90, 'progressLabel' => '6 ordered last 30 min', 'urgency' => 'var(--color-error)'],
-      ];
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $trendingProducts = $trendingNowProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-3/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'badge' => __('Trending'),
+              'badgeBg' => 'var(--color-accent-yellow)',
+              'badgeText' => 'var(--color-text-primary)',
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'weight' => '',
+              'desc' => $product->centralProduct?->category?->name ?? '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+          ];
+      });
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[48px] flex flex-col gap-[16px] lg:gap-[24px] bg-[#F0F0F0]"
+      wire:ignore
     >
       <div class="flex items-center justify-between">
         <h2
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
         >
-          Trending Now
+          {{ __('Trending Now') }}
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.new-in') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-success)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div class="relative">
         <div class="swiper card-swiper" id="trendingSwiper">
           <div class="swiper-wrapper">
-            @foreach ($trendingProducts as $p)
+            @forelse ($trendingProducts as $p)
               <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
                 @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
               </div>
-            @endforeach
+            @empty
+              <p class="text-sm text-gray-500 py-6 w-full">{{ __('No trending products yet.') }}</p>
+            @endforelse
           </div>
         </div>
         <button

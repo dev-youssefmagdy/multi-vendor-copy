@@ -1,6 +1,6 @@
 {{-- Expects $p: image, badge, badgeBg, badgeText, name, weight, desc, rating, price, oldPrice, discount, urgency, progress, progressLabel. Optional $wide: bool --}}
 @php $imgHeight = !empty($wide) ? 'h-[213px] lg:h-[269px]' : 'h-[183px] lg:h-[227px]'; @endphp
-<div class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full shadow-sm">
+<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full shadow-sm">
   <div class="flex flex-col gap-[8px] {{ $imgHeight }} items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] {{ $imgHeight }} items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] {{ $imgHeight }} items-end left-0 top-0 w-full">
@@ -57,4 +57,4 @@
       </div>
     </div>
   </div>
-</div>
+</a>

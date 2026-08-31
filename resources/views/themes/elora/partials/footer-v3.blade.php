@@ -6,40 +6,37 @@
           <div class="flex flex-col gap-[32px]">
             <img
               src="{{ asset('elora-3/assets/icons/logo-elora-white.svg') }}"
-              alt="ELORA"
+              alt="{{ $storeName }}"
               class="h-[32px] w-auto"
             />
             <div class="flex flex-col gap-[16px]">
               <p class="font-medium text-[16px] text-white">
-                Connect with ELORA
+                {{ __('Connect with') }} {{ $storeName }}
               </p>
-              <div class="flex gap-[16px] items-center">
-                <img
-                  src="{{ asset('elora-3/assets/icons/social-facebook.svg') }}"
-                  alt="Facebook"
-                  class="size-[24px]"
-                />
-                <img
-                  src="{{ asset('elora-3/assets/icons/social-twitter.svg') }}"
-                  alt="Twitter"
-                  class="size-[24px]"
-                />
-                <img
-                  src="{{ asset('elora-3/assets/icons/social-instagram.svg') }}"
-                  alt="Instagram"
-                  class="size-[24px]"
-                />
-                <img
-                  src="{{ asset('elora-3/assets/icons/social-youtube.svg') }}"
-                  alt="YouTube"
-                  class="size-[32px]"
-                />
-                <img
-                  src="{{ asset('elora-3/assets/icons/social-linkedin.svg') }}"
-                  alt="LinkedIn"
-                  class="size-[24px]"
-                />
-              </div>
+              @if (isset($socialLinks) && $socialLinks->isNotEmpty())
+                <div class="flex gap-[16px] items-center">
+                  @foreach ($socialLinks as $link)
+                    @php
+                      $iconAsset = match ($link->icon?->name) {
+                          'facebook' => 'social-facebook.svg',
+                          'twitter' => 'social-twitter.svg',
+                          'instagram' => 'social-instagram.svg',
+                          'youtube' => 'social-youtube.svg',
+                          'linkedin' => 'social-linkedin.svg',
+                          default => 'social-facebook.svg',
+                      };
+                    @endphp
+                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
+                        aria-label="{{ ucfirst($link->icon?->name ?? 'social') }}">
+                      <img
+                        src="{{ asset('elora-3/assets/icons/' . $iconAsset) }}"
+                        alt="{{ ucfirst($link->icon?->name ?? 'social') }}"
+                        class="{{ $link->icon?->name === 'youtube' ? 'size-[32px]' : 'size-[24px]' }}"
+                      />
+                    </a>
+                  @endforeach
+                </div>
+              @endif
             </div>
           </div>
           <div class="flex flex-col gap-[12px]">
@@ -73,36 +70,36 @@
           class="flex flex-col sm:flex-row gap-[32px] sm:gap-[60px] lg:gap-[0] lg:justify-between lg:flex-1"
         >
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Customer service</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Customer service') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
               style="color: var(--color-footer-text-muted)"
             >
-              <p>Return and refund policy</p>
-              <p>Intellectual property policy</p>
-              <p>Shipping info</p>
-              <p>Report suspicious activity</p>
+              <a href="{{ route('tenant.storefront.page', 'return-refund-policy') }}">{{ __('Return and refund policy') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'intellectual-property-policy') }}">{{ __('Intellectual property policy') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">{{ __('Shipping info') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'report-suspicious-activity') }}">{{ __('Report suspicious activity') }}</a>
             </div>
           </div>
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Policies</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Policies') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
               style="color: var(--color-footer-text-muted)"
             >
-              <p>Shipping</p>
-              <p>Payment</p>
-              <p>Privacy</p>
+              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">{{ __('Shipping') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'payment-info') }}">{{ __('Payment') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">{{ __('Privacy') }}</a>
             </div>
           </div>
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Company info</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Company info') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px] text-white"
             >
-              <p>About ELORA</p>
-              <p>Contact us</p>
-              <p>FAQs</p>
+              <a href="{{ route('tenant.storefront.page', 'about-us') }}">{{ __('About') }} {{ $storeName }}</a>
+              <a href="{{ route('tenant.storefront.page', 'contact-us') }}">{{ __('Contact us') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'faqs') }}">{{ __('FAQs') }}</a>
             </div>
           </div>
         </div>
@@ -112,17 +109,17 @@
         class="flex flex-wrap items-center justify-center gap-[24px] lg:gap-[88px] py-[15px] text-[14px] tracking-[0.5px] text-white"
         style="background: var(--color-footer-subbar)"
       >
-        <p>Terms of use</p>
-        <p>Privacy policy</p>
-        <p>Your privacy choices</p>
-        <p>Support</p>
-        <p>FAQ</p>
+        <a href="{{ route('tenant.storefront.page', 'terms-of-use') }}">{{ __('Terms of use') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">{{ __('Privacy policy') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'privacy-choices') }}">{{ __('Your privacy choices') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'support') }}">{{ __('Support') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'faqs') }}">{{ __('FAQ') }}</a>
       </div>
       <div
         class="flex items-center justify-center py-[18px] text-[14px] tracking-[0.5px] text-white text-center"
         style="background: var(--color-footer-bar)"
       >
-        Copyright ©2026 ELORA. All Rights Reserved.
+        {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'ELORA') . '. ' . __('All Rights Reserved.')) }}
       </div>
     </footer>
 

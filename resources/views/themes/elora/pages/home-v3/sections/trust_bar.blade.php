@@ -16,7 +16,7 @@
           />
           <span
             class="text-[13px] lg:text-[18px] tracking-[0.5px] lg:tracking-[0.75px] whitespace-nowrap font-normal text-white"
-            >Free Shipping</span
+            >{{ __('Free Shipping') }}</span
           >
         </div>
         <div
@@ -30,7 +30,7 @@
           />
           <span
             class="text-[13px] lg:text-[18px] tracking-[0.5px] lg:tracking-[0.75px] whitespace-nowrap font-normal text-white"
-            >Customer Support 24/7</span
+            >{{ __('Customer Support 24/7') }}</span
           >
         </div>
         <div
@@ -44,7 +44,7 @@
           />
           <span
             class="text-[13px] lg:text-[18px] tracking-[0.5px] lg:tracking-[0.75px] whitespace-nowrap font-normal text-white"
-            >Money-Back Guarantee</span
+            >{{ __('Money-Back Guarantee') }}</span
           >
         </div>
         <div
@@ -57,7 +57,7 @@
           />
           <span
             class="text-[13px] lg:text-[18px] tracking-[0.5px] lg:tracking-[0.75px] whitespace-nowrap font-normal text-white"
-            >100% Secure Payment</span
+            >{{ __('100% Secure Payment') }}</span
           >
         </div>
       </div>
