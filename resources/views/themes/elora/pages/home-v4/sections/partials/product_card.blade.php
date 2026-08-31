@@ -24,11 +24,11 @@
   </div>
   <div class="flex flex-col gap-[4px] lg:gap-[7px] items-start p-[4px] lg:p-[7px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[2px] lg:gap-[4px] items-start w-full">
-      <div class="flex items-center justify-between w-full whitespace-nowrap">
-        <p class="font-medium text-[12px] lg:text-[20px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="font-normal text-[10px] lg:text-[16px]" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] }}</p>
+      <div class="flex items-center justify-between gap-[5px] w-full">
+        <p class="font-medium text-[12px] lg:text-[20px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+        <p class="font-normal text-[10px] lg:text-[16px] shrink-0 whitespace-nowrap" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] }}</p>
       </div>
-      <p class="font-normal text-[10px] lg:text-[16px] w-full" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? 'Premium cotton blend' }}</p>
+      <p class="font-normal text-[10px] lg:text-[16px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? 'Premium cotton blend' }}</p>
     </div>
     <div class="flex flex-col gap-[2px] lg:gap-[4px] items-start">
       <div class="flex gap-[5px] lg:gap-[8px] items-center justify-center">
@@ -46,9 +46,9 @@
       </div>
     </div>
     <div class="flex flex-col gap-[2px] lg:gap-[4px] items-start w-full">
-      <div class="flex gap-[4px] lg:gap-[7px] items-center w-full">
-        <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[12px] lg:size-[20px]" />
-        <p class="font-medium text-[8px] lg:text-[13px] whitespace-nowrap" style="color:var(--color-success)">Delivered by 24 March</p>
+      <div class="flex gap-[4px] lg:gap-[7px] items-center w-full min-w-0">
+        <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[12px] lg:size-[20px] shrink-0" />
+        <p class="font-medium text-[8px] lg:text-[13px] truncate" style="color:var(--color-success)">Delivered by 24 March</p>
       </div>
     </div>
   </div>
