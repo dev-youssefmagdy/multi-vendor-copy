@@ -114,29 +114,7 @@
           />
         </form>
         <div class="flex items-center gap-[38px] shrink-0">
-          <div class="flex items-center gap-[6px]">
-            <img
-              src="{{ asset('elora-2/assets/icons/flag-en.png') }}"
-              alt="{{ strtoupper($currentLanguage->code ?? 'EN') }}"
-              class="h-[25px] w-[40px] object-cover rounded-[2px]"
-            />
-            <div class="flex flex-col">
-              <span
-                class="font-light text-[12px] tracking-[0.5px]"
-                style="color: var(--color-black)"
-                >{{ strtoupper($currentLanguage->code ?? 'EN') }}/</span
-              >
-              <span
-                class="font-medium text-[12px] tracking-[0.5px] flex items-center gap-[2px]"
-                style="color: var(--color-black)"
-                >{{ $currentCurrency->code ?? 'SAR' }}
-                <img
-                  src="{{ asset('elora-2/assets/icons/arrow-down.svg') }}"
-                  class="size-[12px]"
-                  alt=""
-              /></span>
-            </div>
-          </div>
+          <livewire:tenant.storefront.layout.locale-switcher />
           <a
             href="{{ route('tenant.storefront.favorites') }}"
             class="flex items-center gap-[8px] cursor-pointer"
@@ -208,11 +186,11 @@
     <!-- ============ MOBILE DRAWER MENU ============ -->
     <div
       id="mobileDrawerOverlay"
-      class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"
+      class="mobile-drawer-overlay fixed inset-0 bg-black/50 z-40"
     ></div>
     <aside
       id="mobileDrawer"
-      class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white"
+      class="mobile-drawer fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white"
       style="box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15)"
     >
       <div
