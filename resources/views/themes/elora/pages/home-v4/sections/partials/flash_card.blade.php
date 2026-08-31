@@ -1,5 +1,5 @@
 {{-- Expects $p: image, name, weight, price, oldPrice, discount, rating, url --}}
-<div class="swiper-slide h-[148px]">
+<div class="h-[148px]">
   <a href="{{ $p['url'] ?? '#' }}" class="flex gap-[5px] h-[148px] items-start rounded-[10px] shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main); text-decoration:none">
     <div class="flex flex-col gap-[8px] h-full items-end justify-end px-[6px] py-[5px] relative shrink-0 w-[204px]">
       <div class="absolute flex gap-[8px] h-full items-start left-0 p-[6px] top-0 w-full">

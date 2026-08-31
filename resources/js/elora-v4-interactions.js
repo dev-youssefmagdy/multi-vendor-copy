@@ -18,6 +18,106 @@ function initHomeUI() {
   });
 
   initFlashCountdown();
+  initFlashSlider();
+}
+
+// ---- Flash sale pure-JS slider ----
+function initFlashSlider() {
+  document.querySelectorAll('[data-flash-slider]').forEach(function (wrapper) {
+    var id     = wrapper.getAttribute('data-flash-slider');
+    var track  = document.getElementById(id + '-track');
+    var dotsEl = document.getElementById(id + '-dots');
+    var prevBtn = wrapper.querySelector('.flash-prev');
+    var nextBtn = wrapper.querySelector('.flash-next');
+
+    if (!track) return;
+
+    var isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+    var current   = 0;
+    var slides    = Array.from(track.children);
+    var total     = slides.length;
+    var perPage   = isDesktop ? 2 : 4; // desktop: 2 cards wide; mobile: 4 cards (2×2)
+    var pages     = Math.ceil(total / perPage);
+
+    // Build dots
+    if (dotsEl && pages > 1) {
+      dotsEl.innerHTML = '';
+      for (var i = 0; i < pages; i++) {
+        var dot = document.createElement('button');
+        dot.className = 'flash-dot' + (i === 0 ? ' is-active' : '');
+        dot.setAttribute('aria-label', 'Page ' + (i + 1));
+        dot.setAttribute('data-page', i);
+        dot.addEventListener('click', function () {
+          goTo(parseInt(this.getAttribute('data-page'), 10));
+        });
+        dotsEl.appendChild(dot);
+      }
+    }
+
+    function updateDots() {
+      if (!dotsEl) return;
+      dotsEl.querySelectorAll('.flash-dot').forEach(function (d, i) {
+        d.classList.toggle('is-active', i === current);
+      });
+    }
+
+    function updateArrows() {
+      if (prevBtn) prevBtn.disabled = current === 0;
+      if (nextBtn) nextBtn.disabled = current >= pages - 1;
+    }
+
+    function goTo(page) {
+      current = Math.max(0, Math.min(page, pages - 1));
+
+      if (isDesktop) {
+        // Horizontal scroll: each page moves by (perPage × (slideWidth + gap))
+        var slideWidth = slides[0] ? slides[0].offsetWidth : 340;
+        var gap = 12;
+        var offset = current * perPage * (slideWidth + gap);
+        track.style.transform = 'translateX(-' + offset + 'px)';
+      } else {
+        // Mobile: 2-column wrap, scroll vertically by page
+        // Each page = 2 rows × (148px card + 8px gap) = 312px per page
+        var rowH  = 148 + 8;
+        var rows  = 2; // 4 cards per page = 2 rows of 2
+        var vOffset = current * rows * rowH;
+        track.style.transform = 'translateY(-' + vOffset + 'px)';
+      }
+
+      updateDots();
+      updateArrows();
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    // Touch swipe
+    var touchStartX = 0, touchStartY = 0;
+    wrapper.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].clientX;
+      touchStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+    wrapper.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+        goTo(current + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
+
+    // Respond to viewport resize
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', function (mq) {
+      isDesktop = mq.matches;
+      perPage   = isDesktop ? 2 : 4;
+      pages     = Math.ceil(total / perPage);
+      track.style.transform = '';
+      current = 0;
+      updateDots();
+      updateArrows();
+    });
+
+    goTo(0);
+  });
 }
 
 // ---- Flash sale countdown timer ----

@@ -94,14 +94,88 @@ body {
   overflow: hidden;
 }
 
-/* Flash Sale grid carousel */
-.flash-sale-grid {
-  height: 476px;
+/* ── Flash Sale pure-JS slider ─────────────────────────────── */
+.flash-viewport {
   overflow: hidden;
-  width: 100% !important;
-}
-.flash-sale-grid .swiper-wrapper {
   width: 100%;
+  position: relative;
+}
+
+.flash-track {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /* Mobile: 2-column grid of 148px cards, max 4 visible (2×2) = 312px */
+  height: 312px;
+  gap: 8px;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.flash-slide {
+  /* Mobile: 2 columns */
+  width: calc(50% - 4px);
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .flash-track {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: auto;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .flash-slide {
+    width: 340px;
+    flex-shrink: 0;
+  }
+}
+
+/* Arrows */
+.flash-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  transition: background 0.15s, opacity 0.15s;
+}
+.flash-arrow:hover { background: #f5f5f5; }
+.flash-arrow:disabled { opacity: 0.35; cursor: default; }
+.flash-prev { left: -20px; }
+.flash-next { right: -20px; }
+
+/* Dot indicators */
+.flash-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-top: 10px;
+}
+.flash-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.2s, background 0.2s;
+}
+.flash-dot.is-active {
+  width: 22px;
+  background: white;
 }
 .swiper-nav-btn {
   display: none;
