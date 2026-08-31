@@ -356,3 +356,5 @@
         </a>
       </div>
     </aside>
+
+@vite(['resources/css/elora/header-v5.css', 'resources/js/elora/header-v5.js'])

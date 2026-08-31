@@ -495,3 +495,5 @@
         />
       </a>
     </nav>
+
+@vite(['resources/css/elora/header-v6.css', 'resources/js/elora/header-v6.js'])

@@ -12,6 +12,11 @@ class AppSetting extends Model
 
     protected $table = 'app_settings';
 
+    public function getConnectionName(): ?string
+    {
+        return config('tenancy.database.central_connection');
+    }
+
     protected $fillable = [
         'key',
         'value',
