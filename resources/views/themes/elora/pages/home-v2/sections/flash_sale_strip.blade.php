@@ -1,15 +1,38 @@
     @php
-      $flashProducts = [
-        ['image' => 'assets/images/flash-sneaker.png', 'name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-black)', 'deliveredColor' => 'var(--color-success)'],
-        ['image' => 'assets/images/flash-hoodie.png', 'name' => 'Essential Hoodie', 'weight' => '200g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '70% Sold', 'badgeBg' => 'var(--color-accent-yellow)', 'badgeText' => 'var(--color-black)', 'deliveredColor' => 'var(--color-success)', 'desc' => 'Premium cotton blend'],
-        ['image' => 'assets/images/flash-pants.png', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'badge' => '30% OFF', 'badgeBg' => 'var(--color-primary)', 'badgeText' => 'var(--color-white)', 'deliveredColor' => 'var(--color-error)'],
-      ];
+      $flashSaleProducts = $flashProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/flash-sneaker.png');
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'desc' => $product->centralProduct?->category?->name ?? '',
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Flash Sale'),
+              'badgeBg' => 'var(--color-primary)',
+              'badgeText' => 'var(--color-white)',
+              'deliveredColor' => 'var(--color-success)',
+          ];
+      })->values();
+
       $flashStackLayout = [
         ['rotate' => -4, 'translateY' => 20, 'scale' => 0.86, 'z' => 1],
         ['rotate' => 0, 'translateY' => -8, 'scale' => 1, 'z' => 3],
         ['rotate' => 4, 'translateY' => 18, 'scale' => 0.85, 'z' => 1],
       ];
-      $flashStackTotal = 9;
+      $flashStackTotal = $flashSaleProducts->count();
+
+      $firstSale = $flashSales->first();
+      $countdownRemaining = $firstSale && $firstSale->end_date ? max(0, now()->diffInSeconds($firstSale->end_date, false)) : 0;
+      $countdownH = str_pad((string) intdiv($countdownRemaining, 3600), 2, '0', STR_PAD_LEFT);
+      $countdownM = str_pad((string) intdiv($countdownRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
+      $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
@@ -55,30 +78,33 @@
               id="flashTimer"
               class="font-semibold text-[24px] lg:text-[66px] tracking-[1px]"
               style="color: var(--color-accent-purple)"
-              >03:06:25</span
+              @if($firstSale && $firstSale->end_date) data-countdown="{{ $firstSale->end_date->timestamp }}" @endif
+              >{{ $countdownH }}:{{ $countdownM }}:{{ $countdownS }}</span
             >
           </div>
-          <button
-            type="button"
+          <a
+            href="{{ route('tenant.storefront.best-selling') }}"
             class="border-2 border-white rounded-full h-[48px] lg:h-[78px] px-[24px] lg:px-[40px] flex items-center justify-center cursor-pointer"
           >
             <span
               class="font-medium text-white text-[16px] lg:text-[29px] tracking-[1px]"
               >Explore all</span
             >
-          </button>
+          </a>
         </div>
 
         <div
           class="swiper card-swiper flash-swiper w-full lg:flex-1 max-w-[700px]! pt-[20px]!"
         >
           <div class="swiper-wrapper" id="flashStackWrapper">
-            @for ($i = 0; $i < $flashStackTotal; $i++)
+            @forelse ($flashSaleProducts as $i => $p)
               @include('themes.elora.pages.home-v2.sections.partials.flash_stack_card', [
-                'p' => $flashProducts[$i % count($flashProducts)],
+                'p' => $p,
                 'layout' => $flashStackLayout[$i % count($flashStackLayout)],
               ])
-            @endfor
+            @empty
+              <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
+            @endforelse
           </div>
         </div>
       </div>

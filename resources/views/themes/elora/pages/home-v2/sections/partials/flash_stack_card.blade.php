@@ -1,7 +1,7 @@
-{{-- Expects $p: image, name, weight, price, oldPrice, discount, badge, badgeBg, badgeText, deliveredColor, desc (optional)
+{{-- Expects $p: url, image, name, weight, price, oldPrice, discount, badge, badgeBg, badgeText, deliveredColor, desc (optional)
      and $layout: rotate, translateY, scale, z --}}
 <div class="swiper-slide" style="transform:translateY({{ $layout['translateY'] }}px) rotate({{ $layout['rotate'] }}deg) scale({{ $layout['scale'] }}); z-index:{{ $layout['z'] }};">
-  <div class="rounded-[6px] bg-[var(--color-bg-main)] shadow-xl overflow-hidden">
+  <a href="{{ $p['url'] ?? '#' }}" class="block rounded-[6px] bg-[var(--color-bg-main)] shadow-xl overflow-hidden">
     <div class="relative">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[130px] lg:h-[238px] w-full object-cover" />
       <span class="absolute top-0 left-0 text-[11px] lg:text-[16px] font-normal tracking-[0.3px] px-[7px] py-[5px] rounded-tl-[6px] rounded-br-[9px]" style="background:{{ $p['badgeBg'] }}; color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</span>
@@ -10,9 +10,9 @@
       </button>
     </div>
     <div class="p-[8px] lg:p-[12px] flex flex-col gap-[4px]">
-      <div class="flex items-center justify-between">
-        <p class="font-medium text-[12px] lg:text-[19px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="text-[10px] lg:text-[16px]" style="color:var(--color-primary)">{{ $p['weight'] }}</p>
+      <div class="flex items-center justify-between gap-[4px]">
+        <p class="font-medium text-[12px] lg:text-[19px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+        <p class="text-[10px] lg:text-[16px] shrink-0 whitespace-nowrap" style="color:var(--color-primary)">{{ $p['weight'] }}</p>
       </div>
       @if (!empty($p['desc']))
         <p class="text-[10px] lg:text-[15px]" style="color:var(--color-text-subtitle)">{{ $p['desc'] }}</p>
@@ -24,5 +24,5 @@
       </div>
       <p class="text-[9px] lg:text-[13px] font-medium" style="color:{{ $p['deliveredColor'] }}">Delivered by 24 March · Only 5 left</p>
     </div>
-  </div>
+  </a>
 </div>

@@ -1,6 +1,6 @@
-{{-- Expects $p: image, name, weight, badge, badgeBg, badgeText, progress, ordered, rating, price, oldPrice, discount --}}
+{{-- Expects $p: url, image, name, weight, desc, badge, badgeBg, badgeText, progress, ordered, rating, price, oldPrice, discount --}}
 <div class="swiper-slide !h-[175px] lg:!h-[204px] !w-[300px] lg:!w-[461px]">
-  <div class="flex items-center h-full bg-[var(--color-bg-main)] rounded-[10px] shadow-sm overflow-hidden">
+  <a href="{{ $p['url'] ?? '#' }}" class="flex items-center h-full bg-[var(--color-bg-main)] rounded-[10px] shadow-sm overflow-hidden">
     <div class="relative shrink-0 w-[132px] h-[140px] lg:w-[192px] lg:h-[204px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
       <span class="absolute top-0 right-0 text-white text-[12px] font-normal px-[8px] py-[4px] rounded-bl-[8px]" style="background:{{ $p['badgeBg'] }}; color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</span>
@@ -12,11 +12,11 @@
       </div>
     </div>
     <div class="flex-1 p-[12px] flex flex-col gap-[8px]">
-      <div class="flex items-center justify-between">
-        <p class="font-medium text-[16px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="text-[14px]" style="color:var(--color-accent-purple)">{{ $p['weight'] }}</p>
+      <div class="flex items-center justify-between gap-[4px]">
+        <p class="font-medium text-[16px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+        <p class="text-[14px] shrink-0 whitespace-nowrap" style="color:var(--color-accent-purple)">{{ $p['weight'] }}</p>
       </div>
-      <p class="text-[13px]" style="color:var(--color-text-subtitle)">Premium cotton blend</p>
+      <p class="text-[13px]" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? '' }}</p>
       <div class="h-[6px] w-full rounded-full" style="background:var(--color-stroke)">
         <div class="h-full rounded-full" style="background:var(--color-accent-purple); width:{{ $p['progress'] }}%"></div>
       </div>
@@ -35,5 +35,5 @@
         @endif
       </div>
     </div>
-  </div>
+  </a>
 </div>

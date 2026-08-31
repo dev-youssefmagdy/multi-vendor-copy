@@ -1,14 +1,26 @@
     @php
-      $newInProducts = [
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'Best Seller', 'badgeBg' => 'var(--color-primary)', 'name' => 'Essential Hoodie', 'weight' => '200g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => null],
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Essential Shoes', 'weight' => '250g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off'],
-        ['image' => 'assets/images/flash-pants.png', 'badge' => 'Sale', 'badgeBg' => 'var(--color-primary)', 'name' => 'Classic Pants', 'weight' => '300g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+850)', 'price' => '$79.00', 'oldPrice' => '$99.00', 'discount' => '20% Off'],
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Everyday Hoodie', 'weight' => '210g', 'desc' => 'Premium cotton blend', 'rating' => '4.5 (+620)', 'price' => '$95.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'Best Seller', 'badgeBg' => 'var(--color-primary)', 'name' => 'Runner Sneakers', 'weight' => '260g', 'desc' => 'Premium cotton blend', 'rating' => '4.6 (+1.2k)', 'price' => '$110.00', 'oldPrice' => '$130.00', 'discount' => '15% Off'],
-        ['image' => 'assets/images/flash-pants.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Tailored Pants', 'weight' => '310g', 'desc' => 'Premium cotton blend', 'rating' => '4.1 (+430)', 'price' => '$84.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'Sale', 'badgeBg' => 'var(--color-primary)', 'name' => 'Fleece Hoodie', 'weight' => '220g', 'desc' => 'Premium cotton blend', 'rating' => '4.3 (+710)', 'price' => '$99.00', 'oldPrice' => '$120.00', 'discount' => '18% Off'],
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Trail Sneakers', 'weight' => '270g', 'desc' => 'Premium cotton blend', 'rating' => '4.4 (+560)', 'price' => '$115.00', 'oldPrice' => null, 'discount' => null],
-      ];
+      $newInCards = $newInProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-hoodie.png');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New'),
+              'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'desc' => $product->centralProduct?->category?->name ?? '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+          ];
+      });
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] mt-12 flex flex-col gap-[16px] lg:gap-[34px]"
@@ -25,20 +37,22 @@
           New In
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.new-in') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-purple)"
           >see all</a
         >
       </div>
       <div class="relative">
-        <div class="swiper card-swiper">
+        <div class="swiper card-swiper new-in-swiper">
           <div class="swiper-wrapper" id="newInWrapper">
-            @foreach ($newInProducts as $product)
+            @forelse ($newInCards as $product)
               <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
                 @include('themes.elora.pages.home-v2.sections.partials.product_card', ['p' => $product])
               </div>
-            @endforeach
+            @empty
+              <p class="text-sm text-gray-500 py-6 w-full">{{ __('No new arrivals yet.') }}</p>
+            @endforelse
           </div>
         </div>
         <button

@@ -1,37 +1,63 @@
     @php
-      $recommendedProducts = [
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'For You', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Court Sneakers', 'weight' => '255g', 'desc' => 'Premium cotton blend', 'rating' => '4.3 (+390)', 'price' => '$92.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'Sale', 'badgeBg' => 'var(--color-primary)', 'name' => 'Oversized Hoodie', 'weight' => '230g', 'desc' => 'Premium cotton blend', 'rating' => '4.5 (+980)', 'price' => '$88.00', 'oldPrice' => '$105.00', 'discount' => '16% Off'],
-        ['image' => 'assets/images/flash-pants.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Relaxed Pants', 'weight' => '295g', 'desc' => 'Premium cotton blend', 'rating' => '4.0 (+210)', 'price' => '$76.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'For You', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Zip Hoodie', 'weight' => '215g', 'desc' => 'Premium cotton blend', 'rating' => '4.4 (+640)', 'price' => '$97.00', 'oldPrice' => '$115.00', 'discount' => '15% Off'],
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'Sale', 'badgeBg' => 'var(--color-primary)', 'name' => 'Street Sneakers', 'weight' => '265g', 'desc' => 'Premium cotton blend', 'rating' => '4.2 (+505)', 'price' => '$105.00', 'oldPrice' => '$125.00', 'discount' => '16% Off'],
-        ['image' => 'assets/images/flash-pants.png', 'badge' => 'New', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Cargo Pants', 'weight' => '320g', 'desc' => 'Premium cotton blend', 'rating' => '4.1 (+330)', 'price' => '$82.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-hoodie.png', 'badge' => 'For You', 'badgeBg' => 'var(--color-accent-purple)', 'name' => 'Pullover Hoodie', 'weight' => '225g', 'desc' => 'Premium cotton blend', 'rating' => '4.6 (+890)', 'price' => '$91.00', 'oldPrice' => null, 'discount' => null],
-        ['image' => 'assets/images/product-sneaker.png', 'badge' => 'Sale', 'badgeBg' => 'var(--color-primary)', 'name' => 'Classic Sneakers', 'weight' => '250g', 'desc' => 'Premium cotton blend', 'rating' => '4.3 (+700)', 'price' => '$99.00', 'oldPrice' => '$119.00', 'discount' => '17% Off'],
-      ];
+      $recommendedCards = $recommendedProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-sneaker.png');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'id' => $product->id,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New In'),
+              'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'desc' => $product->centralProduct?->category?->name ?? '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+          ];
+      });
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] flex flex-col gap-[16px] lg:gap-[34px]"
     >
       <div class="flex items-center justify-between">
         <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
-          Recommended For You
+          {{ __('Recommended For You') }}
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-purple)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div
         id="recommendedWrapper"
         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[12px] lg:gap-[16px]"
       >
-        @foreach ($recommendedProducts as $product)
-          <div class="h-[380px] lg:h-[440px]">
+        @forelse ($recommendedCards as $product)
+          <div class="h-[380px] lg:h-[440px]" wire:key="recommended-v2-{{ $product['id'] }}">
             @include('themes.elora.pages.home-v2.sections.partials.product_card', ['p' => $product])
           </div>
-        @endforeach
+        @empty
+          <p class="text-sm text-gray-500 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
+        @endforelse
       </div>
+      @if ($hasMoreRecommended ?? false)
+        <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-[8px]">
+          <div wire:loading wire:target="loadMoreRecommended" class="flex items-center gap-2 text-[14px]" style="color: var(--color-text-subtitle)">
+            <svg class="animate-spin size-[18px]" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            {{ __('Loading more...') }}
+          </div>
+        </div>
+      @endif
     </section>

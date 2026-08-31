@@ -1,5 +1,5 @@
-{{-- Expects $p: image, badge, badgeBg, name, weight, desc, rating, price, oldPrice, discount --}}
-<div class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full">
+{{-- Expects $p: url, image, badge, badgeBg, name, weight, desc, rating, price, oldPrice, discount --}}
+<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full">
   <div class="flex flex-col gap-[8px] h-[183px] lg:h-[227px] items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] h-[183px] lg:h-[227px] items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] h-[183px] lg:h-[227px] items-end left-0 top-0 w-full">
@@ -20,9 +20,9 @@
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[4px] items-start tracking-[0.5px] w-full">
-      <div class="flex items-center justify-between w-full whitespace-nowrap">
-        <p class="font-medium text-[var(--color-text-primary)] text-[16px]">{{ $p['name'] }}</p>
-        <p class="font-normal text-[var(--color-primary)] text-[14px] text-center">{{ $p['weight'] }}</p>
+      <div class="flex items-center justify-between gap-[4px] w-full">
+        <p class="font-medium text-[var(--color-text-primary)] text-[16px] truncate min-w-0">{{ $p['name'] }}</p>
+        <p class="font-normal text-[var(--color-primary)] text-[14px] text-center shrink-0 whitespace-nowrap">{{ $p['weight'] }}</p>
       </div>
       <p class="font-normal text-[var(--color-text-subtitle)] text-[14px] w-full">{{ $p['desc'] }}</p>
     </div>
@@ -48,4 +48,4 @@
       </div>
     </div>
   </div>
-</div>
+</a>

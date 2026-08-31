@@ -76,6 +76,14 @@ body {
 .card-swiper .swiper-wrapper {
   align-items: stretch;
 }
+
+/* New In / Trending Now: contained carousels — slides clip cleanly at the
+   row edge instead of bleeding past the section's padding, so they never
+   cause horizontal overflow on narrow viewports. */
+.new-in-swiper,
+.trending-swiper {
+  overflow: hidden;
+}
 .swiper-nav-btn {
   display: none;
   position: absolute;

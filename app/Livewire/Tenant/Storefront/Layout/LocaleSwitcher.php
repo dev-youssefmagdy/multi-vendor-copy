@@ -11,6 +11,7 @@ class LocaleSwitcher extends Component
 {
     public bool $open = false;
     public string $tab = 'currency'; // 'currency' | 'language'
+    public bool $hideTrigger = false;
 
     public function openModal(string $tab = 'currency'): void
     {

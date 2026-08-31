@@ -20,11 +20,7 @@
         />
         <span class="text-white text-[10px] tracking-[0.5px]">menu</span>
         </button>
-        <img
-        src="{{ asset('elora-1/assets/icons/logo-elora.svg') }}"
-        alt="ELORA"
-        class="h-[28px] w-auto"
-        />
+        <x-storefront-logo :storeName="$storeName" class="h-[28px] w-auto" />
     </div>
     <button
         type="button"
@@ -41,17 +37,17 @@
     >
     <button
         type="button"
+        id="desktopMenuBtn"
         aria-label="Open menu"
+        aria-controls="mobileDrawer"
         class="flex flex-col items-center justify-center cursor-pointer"
     >
         <img src="{{ asset('elora-1/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
         <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
     </button>
-    <img
-        src="{{ asset('elora-1/assets/icons/logo-elora.svg') }}"
-        alt="ELORA"
-        class="h-[38px] w-auto"
-    />
+    <a href="{{ route('tenant.home') }}">
+        <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
+    </a>
     <div
         class="flex flex-1 items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
         style="background: var(--color-surface)"
@@ -68,29 +64,36 @@
         />
     </div>
     <div class="flex items-center gap-[38px] shrink-0">
-        <div class="flex items-center gap-[6px]">
-        <img
-            src="{{ asset('elora-1/assets/icons/flag-en.png') }}"
-            alt="EN"
-            class="h-[25px] w-[40px] object-cover rounded-[2px]"
-        />
+        <button
+        type="button"
+        onclick="Livewire.dispatch('open-locale-modal')"
+        class="flex items-center gap-[6px] cursor-pointer"
+        aria-label="{{ __('Currency & Language') }}"
+        >
+        @if ($currentLanguage?->image_url)
+            <img
+                src="{{ $currentLanguage->image_url }}"
+                alt="{{ strtoupper($currentLanguage?->code ?? 'EN') }}"
+                class="h-[25px] w-[40px] object-cover rounded-[2px]"
+            />
+        @endif
         <div class="flex flex-col">
             <span
             class="font-light text-[12px] tracking-[0.5px] text-[var(--color-black)]"
-            >En/</span
+            >{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span
             >
             <span
             class="font-medium text-[12px] tracking-[0.5px] text-[var(--color-black)] flex items-center gap-[2px]"
-            >SAR
+            >{{ $currentCurrency?->code ?? 'SAR' }}
             <img
                 src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
                 class="size-[12px]"
                 alt=""
             /></span>
         </div>
-        </div>
-        <button
-        type="button"
+        </button>
+        <a
+        href="{{ route('tenant.storefront.favorites') }}"
         class="flex items-center gap-[8px] cursor-pointer"
         aria-label="Favorites"
         >
@@ -100,18 +103,19 @@
             style="color: var(--color-black-alt)"
             >Favorite</span
         >
-        </button>
-        <button
-        type="button"
+        </a>
+        <a
+        href="{{ route('tenant.storefront.cart') }}"
         class="flex items-center gap-[8px] cursor-pointer"
         aria-label="Cart"
         >
         <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" class="size-[24px]" alt="" />
         <span class="flex flex-col items-center">
             <span
-            class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center"
+            id="elora-v2-cart-badge"
+            class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-badge-purple)"
-            >0</span
+            >{{ $cartCount }}</span
             >
             <span
             class="text-[14px] tracking-[0.5px]"
@@ -119,9 +123,24 @@
             >Cart</span
             >
         </span>
-        </button>
-        <button
-        type="button"
+        </a>
+        @auth('storefront')
+        <a
+        href="{{ route('tenant.storefront.profile') }}"
+        class="flex items-center gap-[8px] cursor-pointer"
+        aria-label="Account"
+        >
+        <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
+        <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
+            <span class="block text-[var(--color-text-faint)]">Welcome</span>
+            <span class="block" style="color: var(--color-black-alt)"
+            >{{ auth('storefront')->user()->name }}</span
+            >
+        </span>
+        </a>
+        @else
+        <a
+        href="{{ route('tenant.storefront.login') }}"
         class="flex items-center gap-[8px] cursor-pointer"
         aria-label="Account"
         >
@@ -132,7 +151,8 @@
             >Sign in / Register</span
             >
         </span>
-        </button>
+        </a>
+        @endauth
     </div>
     </div>
 </header>
@@ -150,11 +170,7 @@
         class="flex items-center justify-between px-[20px] py-[16px] border-b"
         style="border-color: var(--color-page-bg)"
       >
-        <img
-          src="{{ asset('elora-1/assets/icons/logo-elora.svg') }}"
-          alt="ELORA"
-          class="h-[26px] w-auto"
-        />
+        <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
         <button
           type="button"
           id="drawerCloseBtn"
@@ -192,121 +208,53 @@
       <nav
         class="flex flex-col px-[16px] py-[12px] overflow-y-auto no-scrollbar"
       >
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] font-medium tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-accent-purple);
-          "
-          >Men's Clothing
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-60"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Women's Clothing
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Kid's Fashion
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Electronics
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Gaming
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Home & Kitchen
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
-          style="
-            border-color: var(--color-page-bg);
-            color: var(--color-text-primary);
-          "
-          >Bags
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
-        <a
-          href="#"
-          class="flex items-center justify-between py-[12px] text-[15px] tracking-[0.3px]"
-          style="color: var(--color-text-primary)"
-          >Food & Grocery
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90 opacity-40"
-            alt=""
-          />
-        </a>
+        @forelse ($rootCategories as $category)
+          <a
+            href="{{ route('tenant.storefront.category', $category->slug) }}"
+            @if ($loop->first)
+            class="flex items-center justify-between py-[12px] border-b text-[15px] font-medium tracking-[0.3px]"
+            style="
+              border-color: var(--color-page-bg);
+              color: var(--color-accent-purple);
+            "
+            @else
+            class="flex items-center justify-between py-[12px] border-b text-[15px] tracking-[0.3px]"
+            style="
+              border-color: var(--color-page-bg);
+              color: var(--color-text-primary);
+            "
+            @endif
+            >{{ $category->translationValue('name') ?? $category->slug }}
+            <img
+              src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
+              class="size-[14px] -rotate-90 {{ $loop->first ? 'opacity-60' : 'opacity-40' }}"
+              alt=""
+            />
+          </a>
+        @empty
+          <a
+            href="{{ route('tenant.home') }}"
+            class="flex items-center justify-between py-[12px] text-[15px] tracking-[0.3px]"
+            style="color: var(--color-text-primary)"
+            >{{ __('All Products') }}
+          </a>
+        @endforelse
       </nav>
       <div
         class="mt-auto flex flex-col gap-[16px] px-[20px] py-[20px] border-t"
         style="border-color: var(--color-page-bg)"
       >
-        <a href="#" class="flex items-center gap-[10px]">
+        @auth('storefront')
+        <a href="{{ route('tenant.storefront.profile') }}" class="flex items-center gap-[10px]">
+          <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[20px]" alt="" />
+          <span
+            class="text-[14px] tracking-[0.5px]"
+            style="color: var(--color-black-alt)"
+            >{{ auth('storefront')->user()->name }}</span
+          >
+        </a>
+        @else
+        <a href="{{ route('tenant.storefront.login') }}" class="flex items-center gap-[10px]">
           <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
@@ -314,7 +262,8 @@
             >Sign in / Register</span
           >
         </a>
-        <a href="#" class="flex items-center gap-[10px]">
+        @endauth
+        <a href="{{ route('tenant.storefront.favorites') }}" class="flex items-center gap-[10px]">
           <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
@@ -322,7 +271,7 @@
             >Favorite</span
           >
         </a>
-        <a href="#" class="flex items-center gap-[10px]">
+        <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[10px]">
           <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" class="size-[20px]" alt="" />
           <span
             class="text-[14px] tracking-[0.5px]"
@@ -330,12 +279,15 @@
             >Cart</span
           >
           <span
-            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center"
+            id="elora-v2-mob-cart-badge"
+            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-badge-purple)"
-            >0</span
+            >{{ $cartCount }}</span
           >
         </a>
       </div>
     </aside>
+
+    <livewire:tenant.storefront.layout.locale-switcher :hideTrigger="true" />
 
 @vite(['resources/css/elora/header-v2.css', 'resources/js/elora/header-v2.js'])
