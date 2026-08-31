@@ -13,7 +13,7 @@
 
 /* Swiper carousel arrows (New In / Trending Now / Flash Sale / Best Seller) */
 .elora-v3-root .card-swiper {
-    overflow: visible;
+    overflow: hidden;
     padding-bottom: 4px;
 }
 .elora-v3-root .newin-swiper {

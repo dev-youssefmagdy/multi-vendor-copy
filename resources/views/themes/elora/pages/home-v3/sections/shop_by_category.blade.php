@@ -14,7 +14,10 @@
       >
         @php $shopByCatFallbackImgs = ['shop-womens-fashion.jpg', 'shop-mens-fashion.jpg', 'shop-coastal-chic.jpg']; @endphp
         @foreach ($categories->take(3) as $cat)
-          @php $catName = $cat->translationValue('name') ?? $cat->name; @endphp
+          @php
+            $catName = $cat->translationValue('name') ?? $cat->name;
+            $catNameDisplay = \Illuminate\Support\Str::limit($catName, 20);
+          @endphp
           <a
             href="{{ route('tenant.storefront.category', $cat->slug) }}"
             class="relative shrink-0 rounded-[16px] lg:rounded-[25px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19px] h-[220px] lg:h-[382px] w-[145px] lg:w-[240px]"
@@ -36,7 +39,7 @@
             ></div>
             <div class="relative flex flex-col items-start gap-[4px]">
               <span class="text-white font-bold text-[14px] lg:text-[22px]"
-                >{{ $catName }}</span
+                >{{ $catNameDisplay }}</span
               >
               <span
                 class="mt-[6px] lg:mt-[13px] rounded-full text-white font-bold text-[11px] lg:text-[19px] px-[14px] lg:px-[22px] py-[6px] lg:py-[9px]"

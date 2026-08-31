@@ -63,7 +63,10 @@
       >
         <button
           type="button"
+          id="desktopMenuBtn"
           aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobileDrawer"
           class="flex flex-col items-center justify-center cursor-pointer"
         >
           <img src="{{ asset('elora-3/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
@@ -193,11 +196,11 @@
     <!-- ============ MOBILE DRAWER MENU ============ -->
     <div
       id="mobileDrawerOverlay"
-      class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"
+      class="mobile-drawer-overlay fixed inset-0 bg-black/50 z-40"
     ></div>
     <aside
       id="mobileDrawer"
-      class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white"
+      class="mobile-drawer fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white"
       style="box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15)"
     >
       <div

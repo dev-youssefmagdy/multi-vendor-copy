@@ -17,7 +17,7 @@
               'badge' => __('Best-Selling'),
               'badgeBg' => 'var(--color-accent-yellow)',
               'badgeText' => 'var(--color-text-primary)',
-              'name' => $product->translationValue('name') ?? $product->slug,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'weight' => '',
               'desc' => $product->centralProduct?->category?->name ?? '',
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

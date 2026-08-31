@@ -32,6 +32,7 @@
           @php
             $slot = $catSlotStyles[$loop->index % count($catSlotStyles)];
             $catName = $cat->translationValue('name') ?? $cat->name;
+            $catNameDisplay = \Illuminate\Support\Str::limit($catName, 15);
           @endphp
           <a href="{{ route('tenant.storefront.category', $cat->slug) }}"
             class="relative shrink-0 h-[62px] lg:h-[93px] {{ $slot['w'] }} rounded-[18px] lg:rounded-[28px] bg-white overflow-hidden flex items-center p-[5px] lg:p-[7px]"
@@ -47,7 +48,7 @@
               <p
                 class="font-semibold text-white text-[13px] lg:text-[20.7px] tracking-[0.5px] lg:tracking-[0.86px]"
               >
-                {{ $catName }}
+                {{ $catNameDisplay }}
               </p>
             </div>
             @if ($cat->thumb_url ?? null)

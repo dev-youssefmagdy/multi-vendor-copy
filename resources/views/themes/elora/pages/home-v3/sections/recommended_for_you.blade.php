@@ -17,7 +17,7 @@
               'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New In'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
               'badgeText' => 'var(--color-white)',
-              'name' => $product->translationValue('name') ?? $product->slug,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'weight' => '',
               'desc' => $product->centralProduct?->category?->name ?? '',
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
