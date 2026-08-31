@@ -11,16 +11,16 @@
         aria-label="{{ __('Add to cart') }}"
         class="absolute bottom-[8px] right-[8px] rounded-[8px] p-[6px] shadow cursor-pointer" style="background:var(--color-text-primary)"><img src="{{ asset('elora-4/assets/icons/cart.svg') }}" class="size-[20px] lg:size-[26px] invert" alt="" /></button>
     </div>
-    <div class="flex-1 p-[12px] lg:p-[14px] flex flex-col gap-[8px]">
-      <div class="flex items-center justify-between">
-        <p class="font-medium text-[16px] lg:text-[19px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="text-[14px] lg:text-[16px]" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] ?? '250g' }}</p>
+    <div class="flex-1 min-w-0 p-[12px] lg:p-[14px] flex flex-col gap-[8px]">
+      <div class="flex items-center justify-between gap-[6px]">
+        <p class="font-medium text-[16px] lg:text-[19px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+        <p class="text-[14px] lg:text-[16px] shrink-0 whitespace-nowrap" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] ?? '250g' }}</p>
       </div>
-      <p class="text-[13px] lg:text-[16px]" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
+      <p class="text-[13px] lg:text-[16px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
       <div class="h-[6px] lg:h-[8px] w-full rounded-full" style="background:var(--color-stroke)">
         <div class="h-full rounded-full" style="background:var(--color-error); width:{{ $p['progress'] ?? 83 }}%"></div>
       </div>
-      <p class="text-[11px] lg:text-[13px]" style="color:var(--color-error)">{{ $p['ordered'] ?? __('Trending now') }}</p>
+      <p class="text-[11px] lg:text-[13px] truncate" style="color:var(--color-error)">{{ $p['ordered'] ?? __('Trending now') }}</p>
       <div class="flex items-center gap-[6px]">
         <img src="{{ asset('elora-4/assets/icons/star-rating.svg') }}" alt="" class="h-[8px] lg:h-[10px] w-[56px] lg:w-[70px]" />
         <span class="text-[12px] lg:text-[14px]" style="color:var(--color-text-subtitle)">{{ $p['rating'] }}</span>

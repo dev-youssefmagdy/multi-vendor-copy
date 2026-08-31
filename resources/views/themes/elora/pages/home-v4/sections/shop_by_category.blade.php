@@ -7,9 +7,9 @@
         ['color' => 'var(--color-tile-bags)', 'image' => 'tile-bags.png'],
         ['color' => 'var(--color-tile-watches)', 'image' => 'tile-watches.png'],
       ];
-      $__sbcCategories = $categories->skip(4)->take(4)->values();
+      $__sbcCategories = $categories->skip(4)->take(5)->values();
       if ($__sbcCategories->isEmpty()) {
-          $__sbcCategories = $categories->take(4)->values();
+          $__sbcCategories = $categories->take(5)->values();
       }
     @endphp
     <section
@@ -22,7 +22,7 @@
       >
         {{ __('Shop by Category') }}
       </h2>
-      <div class="grid grid-cols-2 lg:flex gap-[12px] lg:gap-[24px] w-full">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:flex gap-[12px] lg:gap-[24px] w-full">
         @foreach ($__sbcCategories as $i => $cat)
         @php $__tile = $__sbcTiles[$i % count($__sbcTiles)]; @endphp
         <a

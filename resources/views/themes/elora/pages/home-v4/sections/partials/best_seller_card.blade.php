@@ -25,17 +25,17 @@
     </div>
     <div class="flex flex-col gap-[6px] items-start p-[6px] relative shrink-0 w-full">
       <div class="flex flex-col gap-[4px] items-start w-full">
-        <div class="flex items-center justify-between w-full whitespace-nowrap">
-          <p class="font-medium text-[17px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-          <p class="font-normal text-[15px]" style="color:var(--color-badge-pink)">{{ $p['weight'] }}</p>
+        <div class="flex items-center justify-between gap-[6px] w-full">
+          <p class="font-medium text-[17px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+          <p class="font-normal text-[15px] shrink-0 whitespace-nowrap" style="color:var(--color-badge-pink)">{{ $p['weight'] }}</p>
         </div>
-        <p class="font-normal text-[15px] w-full" style="color:var(--color-text-subtitle)">Premium cotton blend</p>
+        <p class="font-normal text-[15px] w-full truncate" style="color:var(--color-text-subtitle)">Premium cotton blend</p>
       </div>
       <div class="flex flex-col gap-[1px] items-start w-full">
         <div class="h-[5px] w-full rounded-full" style="background:var(--color-stroke)">
           <div class="h-full rounded-full" style="background:var(--color-progress-red); width:{{ $p['progress'] ?? 83 }}%"></div>
         </div>
-        <p class="text-[10px] tracking-[0.3px]" style="color:var(--color-progress-red)">{{ $p['ordered'] ?? '5 ordered last 30 min' }}</p>
+        <p class="text-[10px] tracking-[0.3px] w-full truncate" style="color:var(--color-progress-red)">{{ $p['ordered'] ?? '5 ordered last 30 min' }}</p>
       </div>
       <div class="flex flex-col gap-[4px] items-start">
         <div class="flex gap-[7px] items-center justify-center">
@@ -49,9 +49,9 @@
         </div>
       </div>
       <div class="flex flex-col gap-[4px] items-start w-full">
-        <div class="flex gap-[6px] items-center w-full">
-          <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[17px]" />
-          <p class="font-medium text-[12px] whitespace-nowrap" style="color:var(--color-success)">Delivered by 24 March</p>
+        <div class="flex gap-[6px] items-center w-full min-w-0">
+          <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[17px] shrink-0" />
+          <p class="font-medium text-[12px] truncate" style="color:var(--color-success)">Delivered by 24 March</p>
         </div>
       </div>
     </div>
