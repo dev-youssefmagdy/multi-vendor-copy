@@ -1,4 +1,3 @@
-@if(request()->is('/'))
     <footer style="background: var(--color-footer-bg)">
     <div
       class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto"
@@ -125,6 +124,3 @@
       {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'ELORA') . '. ' . __('All Rights Reserved.')) }}
     </div>
 </footer>
-@else
-    @include('themes.elora.partials.footer')
-@endif
