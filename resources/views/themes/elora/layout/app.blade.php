@@ -186,7 +186,6 @@
         </script>
     @endif
 
-
     @include('themes.elora.partials.' . $headerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
 
     {{ $slot }}

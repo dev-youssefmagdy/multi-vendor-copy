@@ -20,6 +20,19 @@ function initCarousels() {
     });
   }
 
+  // Shop by Category: real Swiper carousel so it can hold many records.
+  const shopByCategorySwiper = document.getElementById("shopByCategorySwiper");
+  if (shopByCategorySwiper) {
+    new Swiper(shopByCategorySwiper, {
+      slidesPerView: "auto",
+      spaceBetween: 13,
+      navigation: {
+        prevEl: "#shopByCategoryPrev",
+        nextEl: "#shopByCategoryNext",
+      },
+    });
+  }
+
   // Flash-sale countdown: continue ticking down from whatever the server
   // already rendered (real sale end time), rather than a hardcoded value.
   const hEl = document.getElementById("flashHours");
