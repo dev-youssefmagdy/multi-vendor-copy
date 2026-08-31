@@ -1,5 +1,5 @@
-{{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, sold (optional badge text) --}}
-<div class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] lg:rounded-[8px] h-full shadow-[var(--shadow-card-lg)]">
+{{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
+<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] lg:rounded-[8px] h-full shadow-[var(--shadow-card-lg)]" style="text-decoration:none">
   <div class="flex flex-col gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-end justify-end px-[4px] lg:px-[6px] py-[3px] lg:py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-start left-0 p-[4px] lg:p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-end left-0 top-0 w-full">
@@ -10,13 +10,17 @@
           <p class="font-normal text-[8px] lg:text-[13px] tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? '70% Sold' }}</p>
         </div>
       </div>
-      <button type="button" aria-label="Add to favorites" class="bg-white cursor-pointer shadow flex items-center justify-center p-[5px] lg:p-[8px] relative rounded-full shrink-0 size-[20px] lg:size-[33px]">
+      <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
+        data-fav='{{ $p['favData'] ?? '{}' }}'
+        aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn bg-white cursor-pointer shadow flex items-center justify-center p-[5px] lg:p-[8px] relative rounded-full shrink-0 size-[20px] lg:size-[33px]">
         <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[21px]" />
       </button>
     </div>
-    <div class="flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[17px] shrink-0 h-[28px] lg:h-[47px] w-[36px] lg:w-[59px]" style="background:var(--color-text-primary)">
-      <img src="{{ asset('elora-4/assets/icons/cart.svg') }}" alt="Add to cart" class="size-[15px] lg:size-[25px] invert" />
-    </div>
+    <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
+      aria-label="{{ __('Add to cart') }}"
+      class="flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[17px] shrink-0 h-[28px] lg:h-[47px] w-[36px] lg:w-[59px] cursor-pointer" style="background:var(--color-text-primary)">
+      <img src="{{ asset('elora-4/assets/icons/cart.svg') }}" alt="" class="size-[15px] lg:size-[25px] invert" />
+    </button>
   </div>
   <div class="flex flex-col gap-[4px] lg:gap-[7px] items-start p-[4px] lg:p-[7px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[2px] lg:gap-[4px] items-start w-full">
@@ -48,4 +52,4 @@
       </div>
     </div>
   </div>
-</div>
+</a>

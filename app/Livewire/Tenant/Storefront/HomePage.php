@@ -22,10 +22,12 @@ class HomePage extends Component
     public int $bestSellingPage = 1;
     public int $flashPage = 1;
     public int $topRatedPage = 1;
+    public int $recommendedPage = 1;
     public bool $hasMoreNewIn = false;
     public bool $hasMoreBestSelling = false;
     public bool $hasMoreFlash = false;
     public bool $hasMoreTopRated = false;
+    public bool $hasMoreRecommended = false;
 
     // Active tab for the product tabs on the home page.
     public string $activeProductTab = 'cat-flash';
@@ -50,6 +52,13 @@ class HomePage extends Component
     public function loadMoreTopRated(): void
     {
         $this->topRatedPage++;
+    }
+
+    public function loadMoreRecommended(): void
+    {
+        if ($this->hasMoreRecommended) {
+            $this->recommendedPage++;
+        }
     }
 
     public function addToCart(int $productId): void
@@ -159,7 +168,9 @@ class HomePage extends Component
 
         $trendingNowProducts = $repo->trendingNowProducts(10);
 
-        $recommendedProducts = $repo->recommendedProducts(10);
+        $recommendedLimit = $this->perPage * $this->recommendedPage;
+        $recommendedProducts = $repo->recommendedProducts($recommendedLimit);
+        $this->hasMoreRecommended = $recommendedProducts->count() >= $recommendedLimit;
 
         $this->hasMoreNewIn = $newInPaginator->total() > $newInLimit;
         $this->hasMoreBestSelling = $bestSellingPaginator->total() > $bestSellingLimit;
@@ -204,6 +215,7 @@ class HomePage extends Component
             'buyTogetherProducts' => $buyTogetherProducts,
             'trendingNowProducts' => $trendingNowProducts,
             'recommendedProducts' => $recommendedProducts,
+            'hasMoreRecommended' => $this->hasMoreRecommended,
             'paginatedProducts' => $paginatedProducts,
             'homeSections' => $this->resolvedHomeSections($activeTheme, $activeVariant),
         ]);

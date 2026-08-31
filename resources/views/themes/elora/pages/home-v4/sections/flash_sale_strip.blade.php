@@ -1,20 +1,12 @@
     @php
-      $flashSaleImg = asset('elora-4/assets/images/product-placeholder.svg');
-      $flashSaleProducts = [
-        ['image' => $flashSaleImg, 'name' => 'Wireless Headphones', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Smartphone Pro', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Wireless Earbuds', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Volt Running Sneakers', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Mechanical Keyboard', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Potted Plant', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Wireless Headphones', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Smartphone Pro', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Wireless Earbuds', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Volt Running Sneakers', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Mechanical Keyboard', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => $flashSaleImg, 'name' => 'Potted Plant', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-      ];
+      $flashSaleProducts = ($flashProducts ?? collect())->map(fn ($product) => $product->toEloraV4Card($currentCurrency ?? null));
+      $flashSaleMinPrice = ($flashProducts ?? collect())->map(fn ($product) => $product->storefrontPricing()['current_price'])->filter()->min();
+      $flashSaleMinPriceLabel = $flashSaleMinPrice !== null
+        ? data_get($currentCurrency ?? null, 'symbol', '$') . number_format($flashSaleMinPrice * (float) data_get($currentCurrency ?? null, 'conversion_rate', 1.0), 2)
+        : null;
+      $flashSaleDiscountPct = ($flashSales ?? collect())->max('discount_percentage');
     @endphp
+    @if ($flashSaleProducts->isNotEmpty())
     <!-- ============ FLASH SALE ============ -->
     <section
       class="texture-bg texture-hard px-[16px] lg:px-[56px] py-[24px] lg:py-[16px] flex flex-col items-center gap-[24px]"
@@ -31,7 +23,7 @@
           <div class="relative">
             <img
               src="{{ asset('elora-4/assets/images/flash-sale-illustration.png') }}"
-              alt="Flash Sale"
+              alt="{{ __('Flash Sale') }}"
               class="w-[180px] lg:w-[283px] h-auto"
             />
             <div
@@ -40,7 +32,7 @@
             >
               <span
                 class="font-normal text-[14px] lg:text-[22px] text-white tracking-[0.5px]"
-                >20% Off</span
+                >{{ $flashSaleDiscountPct ? round($flashSaleDiscountPct) . '% ' . __('Off') : __('Flash Sale') }}</span
               >
             </div>
           </div>
@@ -102,21 +94,22 @@
               class="font-bold text-[14px] lg:text-[21px] whitespace-nowrap"
               style="color: var(--color-brand-orange)"
             >
-              Only $129.00
+              {{ $flashSaleMinPriceLabel ? __('Only :price', ['price' => $flashSaleMinPriceLabel]) : __('Flash deals') }}
             </p>
           </div>
         </div>
       </div>
       <div class="relative flex flex-col items-center pb-[8px]">
-        <button
-          type="button"
+        <a
+          href="{{ route('tenant.storefront.category') }}"
           class="border border-white rounded-full h-[48px] lg:h-[64px] px-[32px] flex items-center justify-center cursor-pointer"
           style="background: var(--color-brand-orange)"
         >
           <span
             class="font-medium text-white text-[16px] lg:text-[20px] tracking-[0.5px]"
-            >Explore all</span
+            >{{ __('Explore all') }}</span
           >
-        </button>
+        </a>
       </div>
     </section>
+    @endif

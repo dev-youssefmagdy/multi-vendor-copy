@@ -344,6 +344,56 @@ class Product extends Model
     }
 
     /**
+     * Maps this product into the plain array shape expected by the elora-v4
+     * ("Bold Edition") home page product card partials.
+     */
+    public function toEloraV4Card($currentCurrency = null): array
+    {
+        $symbol = data_get($currentCurrency, 'symbol', '$');
+        $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
+
+        $pricing = $this->storefrontPricing();
+        $sellPrice = (float) $pricing['current_price'];
+        $hasDiscount = (bool) $pricing['has_discount'];
+        $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
+        $realPrice = $pricing['original_price'];
+
+        $weightGrams = $this->centralProduct?->weight_grams ?? $this->weight_grams ?? null;
+        $weightLabel = $weightGrams
+            ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
+            : null;
+
+        $rating = (float) ($this->average_rating ?? 0);
+        $ratingCount = $this->relationLoaded('rates') ? $this->rates->count() : $this->rates()->count();
+
+        $favData = json_encode([
+            'slug' => $this->slug,
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'price' => round($sellPrice * $rate, 2),
+            'old_price' => $hasDiscount && $realPrice !== null ? round($realPrice * $rate, 2) : null,
+            'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
+            'rating' => $rating,
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? null,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'added' => time(),
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'favData' => $favData,
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? asset('elora-4/assets/images/product-placeholder.svg'),
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'weight' => $weightLabel,
+            'price' => $symbol . number_format($sellPrice * $rate, 2),
+            'oldPrice' => $hasDiscount && $realPrice !== null ? $symbol . number_format($realPrice * $rate, 2) : null,
+            'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
+            'rating' => number_format($rating, 1) . ($ratingCount > 0 ? ' (+' . $ratingCount . ')' : ''),
+        ];
+    }
+
+    /**
      * 'out_of_stock' when every variant (or the product itself, if it has no
      * variants) has zero stock; 'partial' when only some variants are
      * depleted; otherwise 'in_stock'.
