@@ -3,7 +3,7 @@
       $symbol = data_get($currency, 'symbol', '$');
       $rate = (float) data_get($currency, 'conversion_rate', 1.0);
 
-      $recommendedCards = ($recommendedProducts->isEmpty() ? $bestSelling : $recommendedProducts)->map(function ($product) use ($symbol, $rate) {
+      $recommendedCards = $recommendedProducts->map(function ($product) use ($symbol, $rate) {
           $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
           $pricing = $product->storefrontPricing($variant);
           $hasDiscount = (bool) $pricing['has_discount'];
@@ -12,6 +12,7 @@
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
           return [
+              'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New In'),
@@ -29,7 +30,6 @@
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
-      wire:ignore
     >
       <div class="flex items-center justify-between">
         <h2
@@ -49,11 +49,22 @@
         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[12px] lg:gap-[16px]"
       >
         @forelse ($recommendedCards as $p)
-          <div>
+          <div wire:key="recommended-v3-{{ $p['id'] }}">
             @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
           </div>
         @empty
           <p class="text-sm text-gray-500 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
         @endforelse
       </div>
+      @if ($hasMoreRecommended ?? false)
+        <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-[8px]">
+          <div wire:loading wire:target="loadMoreRecommended" class="flex items-center gap-2 text-[14px]" style="color: var(--color-text-subtitle)">
+            <svg class="animate-spin size-[18px]" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            {{ __('Loading more...') }}
+          </div>
+        </div>
+      @endif
     </section>

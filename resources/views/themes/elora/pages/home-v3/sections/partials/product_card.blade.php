@@ -21,11 +21,13 @@
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[4px] items-start tracking-[0.5px] w-full">
-      <div class="flex items-center justify-between w-full whitespace-nowrap">
-        <p class="font-medium text-[16px]" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="font-normal text-[14px] text-center" style="color:var(--color-brand-pink)">{{ $p['weight'] }}</p>
+      <div class="flex items-center justify-between gap-[4px] w-full">
+        <p class="font-medium text-[16px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+        @if (!empty($p['weight']))
+          <p class="font-normal text-[14px] text-center shrink-0" style="color:var(--color-brand-pink)">{{ $p['weight'] }}</p>
+        @endif
       </div>
-      <p class="font-normal text-[14px] w-full" style="color:var(--color-text-subtitle)">{{ $p['desc'] }}</p>
+      <p class="font-normal text-[14px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] }}</p>
     </div>
     @if (!empty($p['progress']))
       <div class="flex flex-col gap-[4px] items-start w-full">

@@ -83,40 +83,12 @@
           />
         </div>
       </div>
-      <div class="relative">
-        <div class="swiper card-swiper" id="flashSaleSwiper">
-          <div class="swiper-wrapper">
-            @forelse ($flashSaleProducts as $p)
-              @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
-            @empty
-              <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
-            @endforelse
-          </div>
-        </div>
-        <button
-          id="flashSalePrev"
-          type="button"
-          aria-label="Previous"
-          class="swiper-nav-btn swiper-nav-prev swiper-nav-btn-light"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
-            alt=""
-          />
-        </button>
-        <button
-          id="flashSaleNext"
-          type="button"
-          aria-label="Next"
-          class="swiper-nav-btn swiper-nav-next swiper-nav-btn-light"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
-            alt=""
-          />
-        </button>
+      <div class="flex items-stretch gap-[16px] overflow-x-auto no-scrollbar pb-[4px]">
+        @forelse ($flashSaleProducts as $p)
+          @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
+        @empty
+          <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
+        @endforelse
       </div>
       <div class="flex items-center justify-center">
         <a

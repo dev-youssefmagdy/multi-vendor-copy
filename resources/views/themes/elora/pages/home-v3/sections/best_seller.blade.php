@@ -34,42 +34,14 @@
       <h2 class="font-medium text-[22px] lg:text-[32px] text-white">
         {{ __('Best Seller') }}
       </h2>
-      <div class="relative w-full">
-        <div class="swiper card-swiper bestseller-swiper" id="bestSellerSwiper">
-          <div class="swiper-wrapper">
-            @forelse ($bestSellerProducts as $p)
-              <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
-                @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p, 'wide' => true])
-              </div>
-            @empty
-              <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>
-            @endforelse
+      <div class="bestseller-swiper flex items-stretch gap-[16px] overflow-x-auto no-scrollbar w-full">
+        @forelse ($bestSellerProducts as $p)
+          <div class="swiper-slide h-auto w-[210px] lg:w-[260px] shrink-0">
+            @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p, 'wide' => true])
           </div>
-        </div>
-        <button
-          id="bestSellerPrev"
-          type="button"
-          aria-label="Previous"
-          class="swiper-nav-btn swiper-nav-prev swiper-nav-btn-light"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
-            alt=""
-          />
-        </button>
-        <button
-          id="bestSellerNext"
-          type="button"
-          aria-label="Next"
-          class="swiper-nav-btn swiper-nav-next swiper-nav-btn-light"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
-            alt=""
-          />
-        </button>
+        @empty
+          <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>
+        @endforelse
       </div>
       <a
         href="{{ route('tenant.storefront.best-selling') }}"

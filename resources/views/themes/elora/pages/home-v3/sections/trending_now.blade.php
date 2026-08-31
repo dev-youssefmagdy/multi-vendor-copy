@@ -45,41 +45,13 @@
           >{{ __('see all') }}</a
         >
       </div>
-      <div class="relative">
-        <div class="swiper card-swiper" id="trendingSwiper">
-          <div class="swiper-wrapper">
-            @forelse ($trendingProducts as $p)
-              <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
-                @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
-              </div>
-            @empty
-              <p class="text-sm text-gray-500 py-6 w-full">{{ __('No trending products yet.') }}</p>
-            @endforelse
+      <div class="flex items-stretch gap-[16px] overflow-x-auto no-scrollbar pb-[4px]">
+        @forelse ($trendingProducts as $p)
+          <div class="shrink-0 h-auto w-[210px] lg:w-[260px]">
+            @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
           </div>
-        </div>
-        <button
-          id="trendingPrev"
-          type="button"
-          aria-label="Previous"
-          class="swiper-nav-btn swiper-nav-prev"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
-            alt=""
-          />
-        </button>
-        <button
-          id="trendingNext"
-          type="button"
-          aria-label="Next"
-          class="swiper-nav-btn swiper-nav-next"
-        >
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
-            alt=""
-          />
-        </button>
+        @empty
+          <p class="text-sm text-gray-500 py-6 w-full">{{ __('No trending products yet.') }}</p>
+        @endforelse
       </div>
     </section>

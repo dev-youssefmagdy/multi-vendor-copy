@@ -1,5 +1,5 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, optionally url --}}
-<div class="swiper-slide h-auto !w-[172px] lg:!w-[272px]">
+<div class="shrink-0 h-auto w-[172px] lg:w-[272px]">
   <a href="{{ $p['url'] ?? '#' }}" class="bg-white flex flex-col items-start rounded-[6px] h-full overflow-hidden">
     <div class="relative w-full shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[210px] lg:h-[363px] w-full object-cover bg-[var(--color-page-bg)]" />

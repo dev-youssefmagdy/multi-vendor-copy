@@ -3,17 +3,8 @@
 // file only turns the pre-rendered slides into working carousels.
 
 function initCarousels() {
-  const flashSaleSwiper = document.getElementById("flashSaleSwiper");
-  if (flashSaleSwiper) {
-    new Swiper(flashSaleSwiper, {
-      slidesPerView: "auto",
-      spaceBetween: 16,
-      navigation: {
-        prevEl: "#flashSalePrev",
-        nextEl: "#flashSaleNext",
-      },
-    });
-  }
+  // Flash Sale, Trending Now, and Best Seller are plain horizontally
+  // scrollable rows (like the Categories row) — no Swiper instance needed.
 
   // New In: real Swiper carousel using the Grid module — a fixed numeric
   // slidesPerView (columns visible) x grid rows:3, so each "slide" is really one
@@ -29,35 +20,17 @@ function initCarousels() {
     });
   }
 
-  const trendingSwiper = document.getElementById("trendingSwiper");
-  if (trendingSwiper) {
-    new Swiper(trendingSwiper, {
-      slidesPerView: "auto",
-      spaceBetween: 16,
-      navigation: {
-        prevEl: "#trendingPrev",
-        nextEl: "#trendingNext",
-      },
-    });
-  }
-
-  const bestSellerSwiper = document.getElementById("bestSellerSwiper");
-  if (bestSellerSwiper) {
-    new Swiper(bestSellerSwiper, {
-      slidesPerView: "auto",
-      spaceBetween: 16,
-      navigation: {
-        prevEl: "#bestSellerPrev",
-        nextEl: "#bestSellerNext",
-      },
-    });
-  }
-
-  // Flash-sale countdown (starts from the design's captured 03:06:25 and ticks down)
-  let remaining = 3 * 3600 + 6 * 60 + 25;
+  // Flash-sale countdown: continue ticking down from whatever the server
+  // already rendered (real sale end time), rather than a hardcoded value.
   const hEl = document.getElementById("flashHours");
   const mEl = document.getElementById("flashMinutes");
   const sEl = document.getElementById("flashSeconds");
+  let remaining =
+    hEl && mEl && sEl
+      ? parseInt(hEl.textContent, 10) * 3600 +
+        parseInt(mEl.textContent, 10) * 60 +
+        parseInt(sEl.textContent, 10)
+      : 0;
   if (hEl && mEl && sEl) {
     setInterval(() => {
       remaining = Math.max(0, remaining - 1);
