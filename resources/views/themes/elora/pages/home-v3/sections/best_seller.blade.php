@@ -36,7 +36,7 @@
       </h2>
       <div class="bestseller-swiper flex items-stretch gap-[16px] overflow-x-auto no-scrollbar w-full">
         @forelse ($bestSellerProducts as $p)
-          <div class="swiper-slide h-auto w-[210px] lg:w-[260px] shrink-0">
+          <div class="bestseller-card h-auto w-[210px] lg:w-[260px] shrink-0">
             @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p, 'wide' => true])
           </div>
         @empty

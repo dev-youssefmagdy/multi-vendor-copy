@@ -30,14 +30,14 @@
 .elora-v3-root .bestseller-swiper {
     padding-bottom: 24px;
 }
-.elora-v3-root .bestseller-swiper .swiper-slide:nth-child(even) {
+.elora-v3-root .bestseller-swiper .bestseller-card:nth-child(even) {
     transform: translateY(20px);
 }
 @media (min-width: 1024px) {
     .elora-v3-root .bestseller-swiper {
         padding-bottom: 40px;
     }
-    .elora-v3-root .bestseller-swiper .swiper-slide:nth-child(even) {
+    .elora-v3-root .bestseller-swiper .bestseller-card:nth-child(even) {
         transform: translateY(34px);
     }
 }
