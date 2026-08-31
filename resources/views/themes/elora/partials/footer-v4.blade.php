@@ -124,3 +124,5 @@
       {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'ELORA') . '. ' . __('All Rights Reserved.')) }}
     </div>
 </footer>
+
+@vite(['resources/css/elora/footer-v4.css', 'resources/js/elora/footer-v4.js'])

@@ -174,3 +174,4 @@
     </div>
 
 </footer>
+@vite(['resources/css/elora/footer.css', 'resources/js/elora/footer.js'])

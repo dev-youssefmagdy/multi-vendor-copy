@@ -29,11 +29,6 @@
   --color-flash-rainbow-teal: #429fa0;
   --color-flash-rainbow-purple: #6d77b0; /* Flash Sale section bg gradient — right edge */
 
-  /* Footer (shared across ELORA screens) */
-  --color-footer-bg: #3b3b3b;
-  --color-footer-bar: #242424;
-  --color-footer-subbar: #5b5b5b;
-  --color-footer-text-muted: #f2f2f2;
 
   /* Effects */
   --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);

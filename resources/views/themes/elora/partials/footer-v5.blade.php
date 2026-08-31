@@ -125,3 +125,5 @@
         Copyright &copy;2026 ELORA. All Rights Reserved.
       </div>
     </footer>
+
+@vite(['resources/css/elora/footer-v5.css', 'resources/js/elora/footer-v5.js'])
