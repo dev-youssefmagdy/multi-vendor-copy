@@ -1,28 +1,31 @@
     @php
-      $bsBadge = ['badge' => '30% OFF', 'badgeBg' => 'var(--color-primary)', 'badgeColor' => 'var(--color-white)', 'weightColor' => 'var(--color-primary)', 'deliveredColor' => 'var(--color-error)'];
-      $bestSellerProducts = [
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Weekend Backpack', 'weight' => '480g', 'price' => '$89.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.2 (+850)'] + $bsBadge,
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Weekend Backpack', 'weight' => '480g', 'price' => '$99.00', 'oldPrice' => '$120.00', 'discount' => '18% Off', 'rating' => '4.3 (+710)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Trail Sneakers', 'weight' => '270g', 'price' => '$115.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.4 (+560)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Smart Watch', 'weight' => '60g', 'price' => '$129.00', 'oldPrice' => '$159.00', 'discount' => '19% Off', 'rating' => '4.6 (+1.1k)', 'weightColor' => 'var(--color-primary)'],
-      ];
-      $bestSellerGroups = array_chunk($bestSellerProducts, 4);
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $bestSellerCards = $bestSelling->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-2/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : 'Best-Selling',
+              'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
+              'badgeColor' => $hasDiscount ? 'var(--color-white)' : 'var(--color-black)',
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : '',
+          ];
+      });
+      $bestSellerGroups = $bestSellerCards->values()->chunk(4)->filter(fn($g) => $g->count() === 4)->map(fn($g) => $g->values()->all())->all();
     @endphp
     <!-- ============ BEST SELLER ============ -->
     <section
@@ -37,7 +40,7 @@
           Best Seller
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-text-secondary-dark)"
           >see all</a

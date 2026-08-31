@@ -1,9 +1,29 @@
     @php
-      $trendingProducts = [
-        ['name' => 'Essential Shoes', 'weight' => '250g', 'progress' => 83, 'ordered' => '5 ordered last 30 min', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off'],
-        ['name' => 'Essential Shoes', 'weight' => '250g', 'progress' => 65, 'ordered' => '3 ordered last 30 min', 'rating' => '4.2 (+850)', 'price' => '$89.00', 'oldPrice' => null, 'discount' => null],
-        ['name' => 'Essential Shoes', 'weight' => '250g', 'progress' => 45, 'ordered' => '2 ordered last 30 min', 'rating' => '4.1 (+430)', 'price' => '$79.00', 'oldPrice' => '$99.00', 'discount' => '20% Off'],
-      ];
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $trendingCards = $trendingNowProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-2/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'progress' => 60,
+              'ordered' => '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : '',
+          ];
+      });
     @endphp
     <!-- ============ TRENDING NOW ============ -->
     <section
@@ -17,7 +37,7 @@
           Trending Now
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.new-in') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-green)"
           >see all</a
@@ -26,7 +46,7 @@
       <div class="relative">
         <div class="swiper card-swiper trending-swiper">
           <div class="swiper-wrapper" id="trendingWrapper">
-            @foreach ($trendingProducts as $p)
+            @foreach ($trendingCards as $p)
               <div class="swiper-slide h-auto !w-[280px] lg:!w-[420px]">
                 @include('themes.elora.pages.home-v6.sections.partials.trending_card', ['p' => $p])
               </div>

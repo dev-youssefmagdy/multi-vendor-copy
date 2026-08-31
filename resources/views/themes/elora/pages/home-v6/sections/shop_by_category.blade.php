@@ -23,131 +23,43 @@
         <div
           class="grid grid-cols-2 lg:grid-cols-3 gap-[10px] lg:gap-[19px] flex-1"
         >
-          <a
-            href="#"
-            class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-end justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto lg:row-span-2"
-          >
-            <img
-              src="{{ asset('elora-2/assets/images/shop-accessories.png') }}"
-              alt="Accessories"
-              class="absolute inset-0 h-full w-full object-cover"
-            />
-            <div
-              class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.79) 0%,
-                  rgba(0, 0, 0, 0) 100%
-                );
-              "
-            ></div>
-            <span
-              class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
-              >Accessories</span
+          @php
+            $__shopFallbackImgs = ['shop-accessories.png', 'shop-fashion.png', 'shop-electronics.png'];
+          @endphp
+          @foreach ($categories->take(5) as $category)
+            @php
+              $__shopCatName = $category->translationValue('name') ?? $category->slug;
+            @endphp
+            <a
+              href="{{ route('tenant.storefront.category', $category->slug) }}"
+              class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex {{ $loop->first ? 'items-end' : 'items-center' }} justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto {{ $loop->first ? 'lg:row-span-2' : '' }}"
             >
-          </a>
-          <a
-            href="#"
-            class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
-          >
-            <img
-              src="{{ asset('elora-2/assets/images/shop-fashion.png') }}"
-              alt="Fashion"
-              class="absolute inset-0 h-full w-full object-cover"
-            />
-            <div
-              class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.79) 0%,
-                  rgba(0, 0, 0, 0) 100%
-                );
-              "
-            ></div>
-            <span
-              class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
-              >Fashion</span
-            >
-          </a>
-          <a
-            href="#"
-            class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
-          >
-            <img
-              src="{{ asset('elora-2/assets/images/shop-electronics.png') }}"
-              alt="Electronics"
-              class="absolute inset-0 h-full w-full object-cover"
-            />
-            <div
-              class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.79) 0%,
-                  rgba(0, 0, 0, 0) 100%
-                );
-              "
-            ></div>
-            <span
-              class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
-              >Electronics</span
-            >
-          </a>
-          <a
-            href="#"
-            class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
-          >
-            <img
-              src="{{ asset('elora-2/assets/images/shop-fashion.png') }}"
-              alt="Fashion"
-              class="absolute inset-0 h-full w-full object-cover"
-            />
-            <div
-              class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.79) 0%,
-                  rgba(0, 0, 0, 0) 100%
-                );
-              "
-            ></div>
-            <span
-              class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
-              >Fashion</span
-            >
-          </a>
-          <a
-            href="#"
-            class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex items-center justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto"
-          >
-            <img
-              src="{{ asset('elora-2/assets/images/shop-electronics.png') }}"
-              alt="Electronics"
-              class="absolute inset-0 h-full w-full object-cover"
-            />
-            <div
-              class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  0deg,
-                  rgba(0, 0, 0, 0.79) 0%,
-                  rgba(0, 0, 0, 0) 100%
-                );
-              "
-            ></div>
-            <span
-              class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
-              >Electronics</span
-            >
-          </a>
+              <img
+                src="{{ $category->thumb_url ?? asset('elora-2/assets/images/' . $__shopFallbackImgs[$loop->index % 3]) }}"
+                alt="{{ $__shopCatName }}"
+                class="absolute inset-0 h-full w-full object-cover"
+              />
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.79) 0%,
+                    rgba(0, 0, 0, 0) 100%
+                  );
+                "
+              ></div>
+              <span
+                class="relative text-white font-medium text-[16px] lg:text-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
+                >{{ $__shopCatName }}</span
+              >
+            </a>
+          @endforeach
         </div>
       </div>
       <div class="flex justify-center">
-        <button
-          type="button"
+        <a
+          href="{{ route('tenant.storefront.category') }}"
           class="border rounded-full px-[32px] py-[16px] text-[14px] lg:text-[20px] font-medium tracking-[0.5px] cursor-pointer"
           style="
             border-color: var(--color-text-primary);
@@ -155,6 +67,6 @@
           "
         >
           Explore all
-        </button>
+        </a>
       </div>
     </section>

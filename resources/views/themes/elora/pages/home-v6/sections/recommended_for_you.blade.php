@@ -1,24 +1,28 @@
     @php
-      $recommendedProducts = [
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Court Sneakers', 'weight' => '255g', 'price' => '$92.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.3 (+390)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Zip Hoodie', 'weight' => '225g', 'price' => '$97.00', 'oldPrice' => '$115.00', 'discount' => '15% Off', 'rating' => '4.4 (+640)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Weekend Backpack', 'weight' => '480g', 'price' => '$89.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Essential Shoes', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Classic Tee', 'weight' => '180g', 'price' => '$45.00', 'oldPrice' => '$60.00', 'discount' => '25% Off', 'rating' => '4.1 (+430)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Smart Watch', 'weight' => '60g', 'price' => '$129.00', 'oldPrice' => '$159.00', 'discount' => '19% Off', 'rating' => '4.6 (+1.1k)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Trail Sneakers', 'weight' => '270g', 'price' => '$115.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.4 (+560)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pullover Hoodie', 'weight' => '220g', 'price' => '$91.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.6 (+890)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Pants', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Street Sneakers', 'weight' => '250g', 'price' => '$89.00', 'oldPrice' => '$89.00', 'discount' => '20% Off', 'rating' => '4.2 (+850)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Oversized Hoodie', 'weight' => '210g', 'price' => '$95.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.5 (+620)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Trail Backpack', 'weight' => '460g', 'price' => '$99.00', 'oldPrice' => '$120.00', 'discount' => '18% Off', 'rating' => '4.3 (+710)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Runner Sneakers', 'weight' => '260g', 'price' => '$110.00', 'oldPrice' => '$130.00', 'discount' => '15% Off', 'rating' => '4.6 (+1.2k)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Relaxed Tee', 'weight' => '190g', 'price' => '$42.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.0 (+210)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Fitness Watch', 'weight' => '55g', 'price' => '$109.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.4 (+560)', 'weightColor' => 'var(--color-primary)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Fleece Hoodie', 'weight' => '220g', 'price' => '$99.00', 'oldPrice' => '$120.00', 'discount' => '18% Off', 'rating' => '4.3 (+710)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Classic Sneakers', 'weight' => '250g', 'price' => '$99.00', 'oldPrice' => '$119.00', 'discount' => '17% Off', 'rating' => '4.3 (+700)'],
-        ['image' => 'images/product-placeholder.svg', 'name' => 'Tailored Pants', 'weight' => '310g', 'price' => '$84.00', 'oldPrice' => null, 'discount' => null, 'rating' => '4.1 (+430)', 'weightColor' => 'var(--color-primary)'],
-      ];
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+
+      $recommendedCards = $recommendedProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-2/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+
+          return [
+              'id' => $product->id,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'weight' => '',
+              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : '',
+          ];
+      });
     @endphp
     <!-- ============ RECOMMENDED FOR YOU ============ -->
     <section
@@ -32,7 +36,7 @@
           Recommended For You
         </h2>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-green)"
           >see all</a
@@ -41,8 +45,23 @@
       <div
         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[12px] lg:gap-[16px]"
       >
-        @foreach ($recommendedProducts as $p)
-          @include('themes.elora.pages.home-v6.sections.partials.grid_card', ['p' => $p])
-        @endforeach
+        @forelse ($recommendedCards as $p)
+          <div wire:key="recommended-v6-{{ $p['id'] }}">
+            @include('themes.elora.pages.home-v6.sections.partials.grid_card', ['p' => $p])
+          </div>
+        @empty
+          <p class="text-sm text-gray-500 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
+        @endforelse
       </div>
+      @if ($hasMoreRecommended ?? false)
+        <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-[8px]">
+          <div wire:loading wire:target="loadMoreRecommended" class="flex items-center gap-2 text-[14px]" style="color: var(--color-text-subtitle)">
+            <svg class="animate-spin size-[18px]" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            {{ __('Loading more...') }}
+          </div>
+        </div>
+      @endif
     </section>

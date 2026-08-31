@@ -1,10 +1,10 @@
-{{-- Expects $p: image, badge, badgeBg, badgeColor, name, weight, weightColor, desc, rating, price, priceColor, oldPrice, discount --}}
-<div class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] h-full shadow-[var(--shadow-card-lg)]">
+{{-- Expects $p: image, badge, badgeBg, badgeColor, name, weight, weightColor, desc, rating, price, priceColor, oldPrice, discount, url --}}
+<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] h-full shadow-[var(--shadow-card-lg)]">
   <div class="flex flex-col gap-[8px] h-[183px] lg:h-[227px] items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] h-[183px] lg:h-[227px] items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] h-[183px] lg:h-[227px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[183px] lg:h-[227px] rounded-t-[6px] top-0 w-full overflow-hidden">
-          <img src="{{ asset('elora-2/assets/' . $p['image']) }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
         </div>
         <div class="content-stretch flex h-[28px] items-center justify-center p-[6px] relative rounded-bl-[8px] rounded-tr-[8px] shrink-0" style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}">
           <p class="font-medium text-[14px] tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badge'] ?? '70% Sold' }}</p>
@@ -52,4 +52,4 @@
       </div>
     </div>
   </div>
-</div>
+</a>

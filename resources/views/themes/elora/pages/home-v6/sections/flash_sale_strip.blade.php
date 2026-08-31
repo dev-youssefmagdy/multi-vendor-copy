@@ -1,10 +1,30 @@
+    @if ($flashSales->isNotEmpty())
     @php
-      $flashProducts = array_fill(0, 18, [
-        'name' => 'Essential Shoes',
-        'price' => '$89.00',
-        'oldPrice' => '$89.00',
-        'discount' => '20% Off',
-      ]);
+      $currency = $currentCurrency ?? null;
+      $symbol = data_get($currency, 'symbol', '$');
+      $rate = (float) data_get($currency, 'conversion_rate', 1.0);
+      $firstFlashSale = $flashSales->first();
+
+      $flashCards = $flashProducts->map(function ($product) use ($symbol, $rate) {
+          $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
+          $pricing = $product->storefrontPricing($variant);
+          $hasDiscount = (bool) $pricing['has_discount'];
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-2/assets/images/product-placeholder.svg');
+
+          return [
+              'url' => route('tenant.storefront.product', $product->slug),
+              'image' => $img,
+              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : '',
+          ];
+      });
+
+      $flashRemaining = $firstFlashSale->end_date ? max(0, now()->diffInSeconds($firstFlashSale->end_date, false)) : 0;
+      $flashH = str_pad((string) intdiv($flashRemaining, 3600), 2, '0', STR_PAD_LEFT);
+      $flashM = str_pad((string) intdiv($flashRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
+      $flashS = str_pad((string) ($flashRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
@@ -24,7 +44,7 @@
           />
         </div>
         <a
-          href="#"
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="font-normal text-[14px] lg:text-[24px] tracking-[0.5px] lg:tracking-[0.8px] text-white whitespace-nowrap"
           >see all</a
         >
@@ -32,7 +52,7 @@
 
       <div class="swiper flash-swiper w-full ps-[16px]! lg:ps-[56px]!">
         <div class="swiper-wrapper" id="flashGrid">
-          @foreach ($flashProducts as $p)
+          @foreach ($flashCards as $p)
             <div class="swiper-slide">
               @include('themes.elora.pages.home-v6.sections.partials.flash_card', ['p' => $p])
             </div>
@@ -59,7 +79,7 @@
             <span
               id="flashTimerH"
               class="font-semibold text-[24px] lg:text-[40px] text-white tracking-[0.5px] lg:tracking-[0.8px]"
-              >03</span
+              >{{ $flashH }}</span
             >
           </div>
           <div
@@ -69,7 +89,7 @@
             <span
               id="flashTimerM"
               class="font-semibold text-[24px] lg:text-[40px] text-white tracking-[0.5px] lg:tracking-[0.8px]"
-              >06</span
+              >{{ $flashM }}</span
             >
           </div>
           <div
@@ -79,12 +99,12 @@
             <span
               id="flashTimerS"
               class="font-semibold text-[24px] lg:text-[40px] text-white tracking-[0.5px] lg:tracking-[0.8px]"
-              >25</span
+              >{{ $flashS }}</span
             >
           </div>
         </div>
-        <button
-          type="button"
+        <a
+          href="{{ route('tenant.storefront.best-selling') }}"
           class="flex-1 bg-white h-[46px] lg:h-[63px] rounded-full flex items-center justify-center px-[16px]"
         >
           <span
@@ -92,6 +112,7 @@
             style="color: var(--color-accent-green)"
             >Shop now</span
           >
-        </button>
+        </a>
       </div>
     </section>
+    @endif

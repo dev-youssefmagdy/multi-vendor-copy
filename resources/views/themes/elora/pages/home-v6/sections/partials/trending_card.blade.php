@@ -1,7 +1,7 @@
-{{-- Expects $p: name, weight, progress, ordered, rating, price, oldPrice, discount --}}
-<div class="flex h-full bg-[var(--color-bg-main)] rounded-[10px] shadow-sm overflow-hidden">
+{{-- Expects $p: name, weight, progress, ordered, rating, price, oldPrice, discount, image, url --}}
+<a href="{{ $p['url'] ?? '#' }}" class="flex h-full bg-[var(--color-bg-main)] rounded-[10px] shadow-sm overflow-hidden">
   <div class="relative w-[45%] shrink-0">
-    <img src="{{ asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
+    <img src="{{ $p['image'] ?? asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
     <span class="absolute top-0 right-0 text-[12px] font-normal px-[8px] py-[4px] rounded-bl-[8px]" style="background:var(--color-accent-yellow); color:var(--color-black)">70% Sold</span>
     <button type="button" aria-label="Add to favorites" class="absolute top-[6px] left-[6px] bg-white rounded-full p-[5px] shadow">
       <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[16px]" alt="" />
@@ -34,4 +34,4 @@
       @endif
     </div>
   </div>
-</div>
+</a>

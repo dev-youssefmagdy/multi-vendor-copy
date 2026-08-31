@@ -20,131 +20,33 @@
       <div
         class="flex items-stretch gap-[12px] lg:gap-[22px] overflow-x-auto no-scrollbar pb-[4px]"
       >
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
-            alt="Women bags"
-            class="w-[39px] lg:w-[73px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
+        @php
+          $__catIcons = ['cat-bag.png', 'cat-lamp.png', 'cat-controller.png', 'cat-laptop.png'];
+        @endphp
+        @foreach ($categories->take(8) as $category)
+          @php
+            $__catFilled = $loop->index % 4 === 2;
+            $__catIcon = $__catIcons[$loop->index % 4];
+            $__catRotate = $loop->index % 4 === 2 ? '-rotate-[15deg]' : '';
+            $__catName = \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 15);
+          @endphp
+          <a
+            href="{{ route('tenant.storefront.category', $category->slug) }}"
+            class="{{ $__catFilled ? '' : 'border-2' }} flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
+            style="{{ $__catFilled ? 'background: var(--color-accent-green)' : 'border-color: var(--color-accent-green)' }}"
           >
-            Women bags
-          </p>
-        </div>
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-lamp.png') }}"
-            alt="Accessories"
-            class="w-[28px] lg:w-[52px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
-          >
-            Accessories
-          </p>
-        </div>
-        <div
-          class="flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="background: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-controller.png') }}"
-            alt="Gaming"
-            class="w-[47px] lg:w-[88px] h-auto -rotate-[15deg]"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap text-white"
-          >
-            Gaming
-          </p>
-        </div>
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-laptop.png') }}"
-            alt="Women bags"
-            class="w-[53px] lg:w-[98px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
-          >
-            Women bags
-          </p>
-        </div>
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
-            alt="Women bags"
-            class="w-[39px] lg:w-[73px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
-          >
-            Women bags
-          </p>
-        </div>
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-lamp.png') }}"
-            alt="Accessories"
-            class="w-[28px] lg:w-[52px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
-          >
-            Accessories
-          </p>
-        </div>
-        <div
-          class="border-2 flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="border-color: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-laptop.png') }}"
-            alt="Women bags"
-            class="w-[53px] lg:w-[98px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap"
-            style="color: var(--color-accent-green)"
-          >
-            Women bags
-          </p>
-        </div>
-        <div
-          class="flex flex-col items-center justify-between px-[12px] py-[8px] lg:px-[22px] lg:py-[15px] rounded-[12px] lg:rounded-[22px] shrink-0"
-          style="background: var(--color-accent-green)"
-        >
-          <img
-            src="{{ asset('elora-2/assets/icons/cat-bag.png') }}"
-            alt="Electronics"
-            class="w-[39px] lg:w-[73px] h-auto"
-          />
-          <p
-            class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap text-white"
-          >
-            Electronics
-          </p>
-        </div>
+            <img
+              src="{{ $category->thumb_url ?? asset('elora-2/assets/icons/' . $__catIcon) }}"
+              alt="{{ $__catName }}"
+              class="w-[39px] lg:w-[73px] h-auto {{ $__catRotate }}"
+            />
+            <p
+              class="font-semibold text-[12px] lg:text-[22px] tracking-[0.5px] lg:tracking-[0.9px] whitespace-nowrap {{ $__catFilled ? 'text-white' : '' }}"
+              @unless($__catFilled) style="color: var(--color-accent-green)" @endunless
+            >
+              {{ $__catName }}
+            </p>
+          </a>
+        @endforeach
       </div>
     </section>
