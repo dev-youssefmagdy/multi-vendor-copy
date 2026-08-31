@@ -1,0 +1,33 @@
+/* Elora side-menu two-column styles */
+#eloraSideMenuPanel {
+    width: min(442px, 92vw) !important;
+    overflow: hidden !important;
+}
+
+#eloraCatLeft {
+    display: flex;
+}
+
+#eloraCatRight {
+    display: flex;
+}
+
+.cat-menu-btn:hover .cat-menu-label,
+.cat-menu-btn:hover .cat-menu-arrow {
+    color: #111827 !important;
+}
+
+.elora-sub-link:hover {
+    color: #111827 !important;
+    background: rgba(255, 82, 44, 0.06);
+}
+
+.elora-right-back-btn:hover {
+    background: rgba(255, 82, 44, 0.06);
+}
+
+/* RTL: mirror drill-in / back chevrons so they point toward the correct reading direction */
+[dir="rtl"] .cat-menu-arrow,
+[dir="rtl"] .elora-right-back-arrow {
+    transform: scaleX(-1);
+}

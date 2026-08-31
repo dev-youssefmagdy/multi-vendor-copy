@@ -1,10 +1,10 @@
 {
-  "_bootstrap-D9m9ggVa.js": {
-    "file": "assets/bootstrap-D9m9ggVa.js",
+  "_bootstrap-Cv2P70gR.js": {
+    "file": "assets/bootstrap-Cv2P70gR.js",
     "name": "bootstrap"
   },
-  "_phone-input-DOYpnxM_.js": {
-    "file": "assets/phone-input-DOYpnxM_.js",
+  "_phone-input-C8Sje3xl.js": {
+    "file": "assets/phone-input-C8Sje3xl.js",
     "name": "phone-input",
     "css": [
       "assets/phone-input-DynWKaYt.css"
@@ -107,6 +107,15 @@
     "src": "resources/css/elora/category.css",
     "isEntry": true
   },
+  "resources/css/elora/header.css": {
+    "file": "assets/header-CgIFb7QD.css",
+    "name": "header",
+    "names": [
+      "header.css"
+    ],
+    "src": "resources/css/elora/header.css",
+    "isEntry": true
+  },
   "resources/css/elora/home-v2.css": {
     "file": "assets/home-v2-DnJsTyo6.css",
     "name": "home-v2",
@@ -180,158 +189,164 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DsEKKWdi.js",
+    "file": "assets/app-CrKhUJ3y.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-D9m9ggVa.js",
-      "_phone-input-DOYpnxM_.js"
+      "_bootstrap-Cv2P70gR.js",
+      "_phone-input-C8Sje3xl.js"
     ]
   },
   "resources/js/ecommet.js": {
-    "file": "assets/ecommet-C1h7BBEn.js",
+    "file": "assets/ecommet-CPVKe3dY.js",
     "name": "ecommet",
     "src": "resources/js/ecommet.js",
     "isEntry": true
   },
   "resources/js/ecommet/cart.js": {
-    "file": "assets/cart-D1KK1PKV.js",
+    "file": "assets/cart-Z28W8h4f.js",
     "name": "cart",
     "src": "resources/js/ecommet/cart.js",
     "isEntry": true
   },
   "resources/js/ecommet/home.js": {
-    "file": "assets/home-DIV5i5hR.js",
+    "file": "assets/home-CrP3tL5Y.js",
     "name": "home",
     "src": "resources/js/ecommet/home.js",
     "isEntry": true
   },
   "resources/js/ecommet/product.js": {
-    "file": "assets/product-CH9ppezf.js",
+    "file": "assets/product-BSWaJiV-.js",
     "name": "product",
     "src": "resources/js/ecommet/product.js",
     "isEntry": true
   },
   "resources/js/elora-v2-carousels.js": {
-    "file": "assets/elora-v2-carousels-BJ8EiH77.js",
+    "file": "assets/elora-v2-carousels-DEhQn1fh.js",
     "name": "elora-v2-carousels",
     "src": "resources/js/elora-v2-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v2-interactions.js": {
-    "file": "assets/elora-v2-interactions-C8Ve0laf.js",
+    "file": "assets/elora-v2-interactions-Bm9c4jTy.js",
     "name": "elora-v2-interactions",
     "src": "resources/js/elora-v2-interactions.js",
     "isEntry": true
   },
   "resources/js/elora-v3-carousels.js": {
-    "file": "assets/elora-v3-carousels-bAzeXwr1.js",
+    "file": "assets/elora-v3-carousels-C2I9RFHr.js",
     "name": "elora-v3-carousels",
     "src": "resources/js/elora-v3-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v3-interactions.js": {
-    "file": "assets/elora-v3-interactions-DCqQnVRG.js",
+    "file": "assets/elora-v3-interactions-Cqvnkc02.js",
     "name": "elora-v3-interactions",
     "src": "resources/js/elora-v3-interactions.js",
     "isEntry": true
   },
   "resources/js/elora-v4-carousels.js": {
-    "file": "assets/elora-v4-carousels-Dhlmfo5e.js",
+    "file": "assets/elora-v4-carousels-BmLWbOme.js",
     "name": "elora-v4-carousels",
     "src": "resources/js/elora-v4-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v4-interactions.js": {
-    "file": "assets/elora-v4-interactions-DFYb-5Lf.js",
+    "file": "assets/elora-v4-interactions-CFJagNdb.js",
     "name": "elora-v4-interactions",
     "src": "resources/js/elora-v4-interactions.js",
     "isEntry": true
   },
   "resources/js/elora-v5-carousels.js": {
-    "file": "assets/elora-v5-carousels-D18G5i5c.js",
+    "file": "assets/elora-v5-carousels-CXxmHSdX.js",
     "name": "elora-v5-carousels",
     "src": "resources/js/elora-v5-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v5-interactions.js": {
-    "file": "assets/elora-v5-interactions-Dpl0GTk0.js",
+    "file": "assets/elora-v5-interactions-hFkUmTyh.js",
     "name": "elora-v5-interactions",
     "src": "resources/js/elora-v5-interactions.js",
     "isEntry": true
   },
   "resources/js/elora-v6-carousels.js": {
-    "file": "assets/elora-v6-carousels-D1pm81Tz.js",
+    "file": "assets/elora-v6-carousels-QLNKxS51.js",
     "name": "elora-v6-carousels",
     "src": "resources/js/elora-v6-carousels.js",
     "isEntry": true
   },
   "resources/js/elora-v6-interactions.js": {
-    "file": "assets/elora-v6-interactions-CbwmTIHs.js",
+    "file": "assets/elora-v6-interactions-CxdIQKQO.js",
     "name": "elora-v6-interactions",
     "src": "resources/js/elora-v6-interactions.js",
     "isEntry": true
   },
   "resources/js/elora.js": {
-    "file": "assets/elora-DhC-JWiJ.js",
+    "file": "assets/elora-BdO4DZIx.js",
     "name": "elora",
     "src": "resources/js/elora.js",
     "isEntry": true
   },
   "resources/js/elora/cart.js": {
-    "file": "assets/cart-DkVAXu05.js",
+    "file": "assets/cart-BLkBltyh.js",
     "name": "cart",
     "src": "resources/js/elora/cart.js",
     "isEntry": true
   },
   "resources/js/elora/category.js": {
-    "file": "assets/category-BGNmTjsQ.js",
+    "file": "assets/category-DtVa1u1u.js",
     "name": "category",
     "src": "resources/js/elora/category.js",
     "isEntry": true
   },
+  "resources/js/elora/header.js": {
+    "file": "assets/header-DVkI0a4R.js",
+    "name": "header",
+    "src": "resources/js/elora/header.js",
+    "isEntry": true
+  },
   "resources/js/elora/home.js": {
-    "file": "assets/home-D-zlGwac.js",
+    "file": "assets/home-DjMCOipv.js",
     "name": "home",
     "src": "resources/js/elora/home.js",
     "isEntry": true
   },
   "resources/js/elora/product.js": {
-    "file": "assets/product-BWz4yakS.js",
+    "file": "assets/product-Qr9ZVJcR.js",
     "name": "product",
     "src": "resources/js/elora/product.js",
     "isEntry": true
   },
   "resources/js/image-search.js": {
-    "file": "assets/image-search-Bs_Tjlfa.js",
+    "file": "assets/image-search-B5MK-Nc3.js",
     "name": "image-search",
     "src": "resources/js/image-search.js",
     "isEntry": true
   },
   "resources/js/souqify.js": {
-    "file": "assets/souqify-DW_P73pV.js",
+    "file": "assets/souqify-Fllb3shz.js",
     "name": "souqify",
     "src": "resources/js/souqify.js",
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-CEVnw6dI.js",
+    "file": "assets/storefront-cart-DVNkC8aq.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-DOYpnxM_.js"
+      "_phone-input-C8Sje3xl.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-D-IW8_us.js",
+    "file": "assets/website-BrBpk3P6.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-D9m9ggVa.js",
-      "_phone-input-DOYpnxM_.js"
+      "_bootstrap-Cv2P70gR.js",
+      "_phone-input-C8Sje3xl.js"
     ]
   }
 }
