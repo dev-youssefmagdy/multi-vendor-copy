@@ -16,7 +16,7 @@
         {{ __('Best Seller') }}
       </h2>
       <div class="relative w-full">
-        <div class="swiper card-swiper">
+        <div class="swiper card-swiper best-seller-swiper">
           <div class="swiper-wrapper" id="bestSellerWrapper">
             @foreach ($bestSellerProducts as $p)
               @include('themes.elora.pages.home-v4.sections.partials.best_seller_card', ['p' => $p])

@@ -90,7 +90,8 @@ body {
 }
 
 .newin-swiper,
-.trending-swiper {
+.trending-swiper,
+.best-seller-swiper {
   overflow: hidden;
 }
 
