@@ -51,8 +51,27 @@
     @endif
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+
+    @switch($storefrontThemeVariant?->key)
+        @case('v2') <!-- Purple Edition || public/souqify-1 -->
+            @php
+                $headerKey = 'header-v2';
+                $footerKey = 'footer-v2';
+                $stylesKey = 'styles-v2';
+                $scriptsKey = 'scripts-v2';
+            @endphp
+            @break
+        @default
+            @php
+                $headerKey = 'header';
+                $footerKey = 'footer';
+                $stylesKey = 'styles';
+                $scriptsKey = 'scripts';
+            @endphp
+    @endswitch
+
     @livewireStyles
-    @include('themes.souqify.layout.styles')
+    @include('themes.souqify.layout.' . $stylesKey)
     @include('storefront.partials.tracking-scripts')
     @stack('styles')
     @stack('head')
@@ -123,17 +142,17 @@
         </script>
     @endif
 
-    @include('themes.souqify.partials.header', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks])
+    @include('themes.souqify.partials.' . $headerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
 
     {{ $slot }}
 
-    @include('themes.souqify.partials.footer', ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks])
+    @include('themes.souqify.partials.' . $footerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks, 'cartCount' => $cartCount])
     @if(config('tenancy.path_tenant_slug'))
         <div data-update-uri="{{ url('/s/' . config('tenancy.path_tenant_slug') . '/livewire/update') }}"
             style="display:none" aria-hidden="true"></div>
     @endif
     @livewireScripts
-    @include('themes.souqify.layout.scripts')
+    @include('themes.souqify.layout.' . $scriptsKey)
     @stack('scripts')
 
     {{-- Variant selection modal --}}
