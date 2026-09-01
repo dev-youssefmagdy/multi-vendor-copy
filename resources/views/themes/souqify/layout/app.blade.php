@@ -77,6 +77,22 @@
                 $scriptsKey = 'scripts-v4';
             @endphp
             @break
+        @case('v5') <!-- v5 || public/souqify-4 -->
+            @php
+                $headerKey = 'header-v5';
+                $footerKey = 'footer-v5';
+                $stylesKey = 'styles-v5';
+                $scriptsKey = 'scripts-v5';
+            @endphp
+            @break
+        @case('v6') <!-- v6 || public/souqify-5 -->
+            @php
+                $headerKey = 'header-v6';
+                $footerKey = 'footer-v6';
+                $stylesKey = 'styles-v6';
+                $scriptsKey = 'scripts-v6';
+            @endphp
+            @break
         @default
             @php
                 $headerKey = 'header';
