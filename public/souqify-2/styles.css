@@ -1,0 +1,239 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #FF4D00;        /* ELORA/MAin */
+  --color-secondary: #FF522C;      /* Main Website/Main-clr */
+  --color-bg-main: #FDFDFD;        /* ELORA/fill */
+  --color-text-primary: #121212;   /* ELORA/Black */
+  --color-text-subtitle: #ADADAD;  /* ELORA/Subttitle */
+  --color-gray: #8F8F8F;           /* ELORA/GRAY */
+  --color-stroke: #D4D4D4;         /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424;          /* Black / Manti/Black */
+  --color-black-alt: #1B1B1B;      /* black */
+  --color-white: #FFFFFF;          /* Manti/White */
+  --color-success: #2AAF2F;        /* Manti/Green */
+  --color-error: #DE1709;          /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8A38F5;
+  --color-accent-purple-dark: #51218F;
+  --color-accent-purple-light: #B57DFF;
+  --color-accent-yellow: #FFD428;
+  --color-badge-purple: #9D00FF;
+  --color-surface: #F6F5F5;
+  --color-page-bg: #F4F4F4;
+  --color-footer-bg: #3B3B3B;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5B5B5B;
+  --color-footer-text-muted: #F2F2F2;
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4B4B4B;
+  --color-text-placeholder: #4C4C4C;
+  --color-hero-placeholder: #C3ACCF;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ============ New tokens for this screen (Souqify) ============ */
+  --color-souqify-teal: #199387;          /* Souqify primary brand color - CTAs, nav accents, ribbons, prices */
+  --color-souqify-orange: #FF570F;        /* Souqify/orange Figma var - discount badge variant */
+  --color-accent-amber: #FFB00A;          /* Yellow Figma var - discount badge variant */
+  --color-navbar-dark: #101010;           /* desktop navbar utility bar background */
+  --color-navbar-muted: #D1D5DC;          /* desktop navbar utility bar secondary text */
+  --color-text-navbar-category: #464646;  /* "All Category" dropdown label */
+  --color-card-title: #191B23;            /* product card title text */
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending Now / Flash Sale / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-souqify-teal);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Product-card image placeholder (client instruction: never fetch real product photography) */
+.product-image-placeholder {
+  background: var(--color-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-image-placeholder svg {
+  width: 34%;
+  height: 34%;
+  color: var(--color-stroke);
+}
+
+/* Category tile decorative mark image (Shop by Category section) */
+.category-tile-mark {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Mobile bottom tab bar spacing so content isn't hidden behind the fixed bar */
+.has-mobile-tabbar {
+  padding-bottom: 80px;
+}
+@media (min-width: 1024px) {
+  .has-mobile-tabbar {
+    padding-bottom: 0;
+  }
+}
+
+/* Mobile category filter pills */
+.category-pill {
+  color: var(--color-text-muted);
+  border-color: var(--color-stroke);
+}
+.category-pill.is-active-pill {
+  background: var(--color-souqify-teal);
+  border-color: var(--color-souqify-teal);
+  color: var(--color-white);
+}
+
+/* Mobile bottom tab bar active state */
+.mobile-tab {
+  color: var(--color-gray);
+}
+.mobile-tab.is-active-tab {
+  color: var(--color-souqify-teal);
+}
+.mobile-tab .tab-indicator {
+  opacity: 0;
+}
+.mobile-tab.is-active-tab .tab-indicator {
+  opacity: 1;
+}

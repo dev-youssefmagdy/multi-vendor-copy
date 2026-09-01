@@ -1,0 +1,292 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #FF4D00;        /* ELORA/MAin */
+  --color-secondary: #FF522C;      /* Main Website/Main-clr */
+  --color-bg-main: #FDFDFD;        /* ELORA/fill */
+  --color-text-primary: #121212;   /* ELORA/Black */
+  --color-text-subtitle: #ADADAD;  /* ELORA/Subttitle */
+  --color-gray: #8F8F8F;           /* ELORA/GRAY */
+  --color-stroke: #D4D4D4;         /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424;          /* Black / Manti/Black */
+  --color-black-alt: #1B1B1B;      /* black */
+  --color-white: #FFFFFF;          /* Manti/White */
+  --color-success: #2AAF2F;        /* Manti/Green */
+  --color-error: #DE1709;          /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8A38F5;
+  --color-accent-purple-dark: #51218F;
+  --color-accent-purple-light: #B57DFF;
+  --color-accent-yellow: #FFD428;
+  --color-badge-purple: #9D00FF;
+  --color-surface: #F6F5F5;
+  --color-page-bg: #F4F4F4;
+  --color-footer-bg: #3B3B3B;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5B5B5B;
+  --color-footer-text-muted: #F2F2F2;
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4B4B4B;
+  --color-text-placeholder: #4C4C4C;
+  --color-hero-placeholder: #C3ACCF;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ============ New tokens — Souqify Screen 1 (Home) ============ */
+  --color-brand-purple: #8B03BD;         /* Souqify wordmark, primary buttons, prices, section fills */
+  --color-accent-purple-bright: #AE01ED; /* mobile top-nav gradient + active bottom-nav tab */
+  --color-utility-bar-bg: #101010;       /* desktop top utility bar background */
+  --color-utility-text: #D1D5DC;         /* utility bar muted link text */
+  --color-text-secondary: #464646;       /* "All Category" dropdown label */
+  --color-card-bg-soft: #F3F3FE;         /* product deal-card image background fill */
+  --color-text-heading-alt: #191B23;     /* product card title text */
+  --color-badge-discount-yellow: #FFB00A;/* "35% off" discount tag */
+  --color-badge-discount-orange: #FF570F;/* "25% off" discount tag (Souqify/orange) */
+  --color-urgency-red-1: #AC0202;        /* "Only X left" ribbon gradient stop 1 */
+  --color-urgency-red-2: #E30000;        /* "Only X left" ribbon gradient stop 2 */
+  --color-urgency-red-3: #9E0000;        /* "Only X left" ribbon gradient stop 3 */
+  --color-dot-active: #FFDB4C;           /* active decorative pagination dot */
+  --color-dot-inactive: #F0F0F0;         /* inactive decorative pagination dot */
+  --color-bestseller-grad-1: #FF6EFF;    /* Best Seller banner gradient — pink */
+  --color-bestseller-grad-2: #9AD7FF;    /* Best Seller banner gradient — sky blue */
+  --color-bestseller-grad-3: #9D8DFF;    /* Best Seller banner gradient — periwinkle */
+  --color-flash-sale-bg: #000000;        /* Flash Sale section background (screenshot ground truth) */
+  --color-topnav-grad-dark: #571F6B;     /* mobile top-nav gradient dark stop */
+  --color-topnav-wordmark: #F1F1F1;      /* "Souqify" wordmark on the mobile gradient header */
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending / Best Seller / Recommended) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+.swiper-nav-btn.on-dark {
+  background: var(--color-white);
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-brand-purple);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Diagonal neon-stripe texture used behind Flash Sale (on black) and New In (on brand purple) */
+.stripe-bg-dark {
+  background-color: var(--color-flash-sale-bg);
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(139, 3, 189, 0) 0px,
+    rgba(139, 3, 189, 0) 18px,
+    rgba(174, 1, 237, 0.55) 19px,
+    rgba(174, 1, 237, 0.55) 22px
+  );
+}
+.stripe-bg-purple {
+  background-color: var(--color-brand-purple);
+  background-image: url("assets/images/new-in.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* New In: 3-row scrollable grid. Swiper's Grid module produced uneven row heights
+   with a non-exact item/column division, so this uses plain CSS grid instead —
+   grid-auto-flow:column packs items into 3 fixed rows and lets extra columns
+   overflow, scrollable horizontally without needing carousel JS or nav buttons. */
+.newin-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(3, 110px);
+  grid-auto-columns: 280px;
+  gap: 12px;
+  overflow-x: auto;
+}
+@media (min-width: 1024px) {
+  .newin-grid {
+    grid-template-rows: repeat(3, 127px);
+    grid-auto-columns: 318px;
+  }
+}
+
+/* Best Seller banner gradient */
+.bestseller-bg {
+  background: linear-gradient(
+    135deg,
+    var(--color-bestseller-grad-1) 0%,
+    var(--color-bestseller-grad-2) 55%,
+    var(--color-bestseller-grad-3) 100%
+  );
+}
+
+/* Mobile top-nav gradient header */
+.topnav-gradient {
+  background-image: linear-gradient(
+    251deg,
+    var(--color-topnav-grad-dark) 1.7%,
+    var(--color-accent-purple-bright) 33.5%,
+    var(--color-topnav-grad-dark) 68.4%,
+    var(--color-accent-purple-bright) 93.2%
+  );
+}
+
+/* "Only X left" urgency ribbon on product cards */
+.urgency-ribbon {
+  background-image: linear-gradient(
+    228deg,
+    var(--color-urgency-red-1) 2%,
+    var(--color-urgency-red-2) 45%,
+    var(--color-urgency-red-3) 100%
+  );
+}
+
+/* Decorative static pagination dots under some product rows */
+.dot-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.dot-row .dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-dot-inactive);
+}
+.dot-row .dot.is-active {
+  width: 24px;
+  background: var(--color-dot-active);
+}
+
+/* Product image placeholder (used for card thumbnails per client instruction) */
+.product-img-placeholder {
+  background: var(--color-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
