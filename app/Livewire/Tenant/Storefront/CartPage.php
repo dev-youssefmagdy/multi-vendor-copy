@@ -126,6 +126,12 @@ class CartPage extends Component
             return;
         }
 
+        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+            $this->addError('coupon', __('This coupon is not available in your country.'));
+            $this->toast(__('This coupon is not available in your country.'), 'error');
+            return;
+        }
+
         $cartTotal = app(StorefrontRepository::class)->cartTotal();
 
         if ($coupon->minimum_spend !== null && $cartTotal < (float) $coupon->minimum_spend) {

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CentralCoupon extends Model
 {
@@ -34,6 +35,44 @@ class CentralCoupon extends Model
             'active' => 'boolean',
         ];
     }
+
+    // ── Relationships ────────────────────────────────────────────────
+
+    /**
+     * Countries this coupon is available in.
+     * Empty pivot (no rows) = available everywhere (all countries).
+     */
+    public function countries(): BelongsToMany
+    {
+        return $this->belongsToMany(Country::class, 'central_coupon_country');
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────
+
+    /**
+     * Whether this coupon is available for a given central country ID.
+     * Null countryId (unknown visitor) = allow (show everything).
+     */
+    public function availableInCountry(?int $countryId): bool
+    {
+        if (!$countryId) {
+            return true; // unknown country — show all
+        }
+
+        // Load if not already eager-loaded
+        $assigned = $this->relationLoaded('countries')
+            ? $this->countries
+            : $this->countries()->get();
+
+        // Empty pivot = available everywhere
+        if ($assigned->isEmpty()) {
+            return true;
+        }
+
+        return $assigned->contains('id', $countryId);
+    }
+
+    // ── Scopes ───────────────────────────────────────────────────────
 
     public function scopeActive(Builder $query, ?CarbonInterface $moment = null): Builder
     {

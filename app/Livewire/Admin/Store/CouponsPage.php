@@ -26,6 +26,8 @@ class CouponsPage extends ListPage
     public ?string $startDate = null;
     public ?string $endDate = null;
     public bool $active = true;
+    public array $assignedCountryIds = [];
+    public bool $allCountries = true;
 
     protected function pageMeta(): array
     {
@@ -35,7 +37,7 @@ class CouponsPage extends ListPage
             'description' => 'Create platform-wide discount codes that are automatically synced to all tenant storefronts.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
-            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Status', 'Actions'],
+            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Countries', 'Status', 'Actions'],
         ];
     }
 
@@ -44,6 +46,7 @@ class CouponsPage extends ListPage
         $this->authorizePermission('store.coupons.manage');
 
         $records = CentralCoupon::query()
+            ->with('countries')
             ->orderByDesc('id')
             ->paginate(15);
 
@@ -63,6 +66,9 @@ class CouponsPage extends ListPage
             : '$' . e(number_format((float) $coupon->value, 2)),
             '$' . e(number_format((float) $coupon->minimum_spend, 2)),
             e(optional($coupon->start_date)->format('M d, Y') ?: '∞') . ' – ' . e(optional($coupon->end_date)->format('M d, Y') ?: '∞'),
+            $coupon->countries->isEmpty()
+                ? '<span class="badge badge-cyan">🌐 All</span>'
+                : '<span class="badge badge-secondary" title="' . e($coupon->countries->pluck('name')->join(', ')) . '">🏳 ' . $coupon->countries->count() . '</span>',
             '<span class="badge ' . ($coupon->active ? 'badge-green' : 'badge-amber') . '">' . e($coupon->active ? 'Active' : 'Inactive') . '</span>',
             '<div class="flex gap-2">
                 <button type="button" class="btn btn-secondary btn-sm" wire:click="editCoupon(' . $coupon->id . ')">Edit</button>
@@ -84,6 +90,12 @@ class CouponsPage extends ListPage
             'modalCloseAction' => 'closeModal',
             'modalSubmitAction' => 'save',
             'modalSubmitLabel' => $this->couponId ? 'Update Coupon' : 'Create Coupon',
+            'modalCountryPicker' => true,
+            'modalCountryPickerHint' => 'Leave set to All Countries to make this coupon usable everywhere.',
+            'countries' => \App\Models\Country::query()
+                ->where('is_active_for_tenants', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'iso2', 'flag_emoji']),
             'modalFieldGroups' => [
                 [
                     'gridClass' => 'form-grid-2',
@@ -113,6 +125,8 @@ class CouponsPage extends ListPage
         $this->startDate = null;
         $this->endDate = null;
         $this->active = true;
+        $this->assignedCountryIds = [];
+        $this->allCountries = true;
         $this->resetErrorBag();
         $this->showFormModal = true;
     }
@@ -130,6 +144,11 @@ class CouponsPage extends ListPage
         $this->startDate = optional($coupon->start_date)->format('Y-m-d\TH:i');
         $this->endDate = optional($coupon->end_date)->format('Y-m-d\TH:i');
         $this->active = $coupon->active;
+
+        $countryIds = $coupon->countries()->pluck('countries.id')->map(fn($id) => (string) $id)->all();
+        $this->assignedCountryIds = $countryIds;
+        $this->allCountries = empty($countryIds);
+
         $this->showFormModal = true;
     }
 
@@ -144,6 +163,8 @@ class CouponsPage extends ListPage
             'minimumSpend' => 'nullable|numeric|min:0',
             'startDate' => 'nullable|date',
             'endDate' => 'nullable|date|after_or_equal:startDate',
+            'assignedCountryIds' => 'array',
+            'assignedCountryIds.*' => 'integer|exists:countries,id',
         ]);
 
         $existing = CentralCoupon::query()
@@ -167,6 +188,7 @@ class CouponsPage extends ListPage
             'start_date' => $this->startDate,
             'end_date' => $this->endDate,
             'active' => $this->active,
+            'country_ids' => $this->allCountries ? [] : array_map('intval', $this->assignedCountryIds),
         ], $coupon);
 
         // Observer triggers sync automatically; explicit call is a safety net.
@@ -206,6 +228,8 @@ class CouponsPage extends ListPage
         $this->startDate = null;
         $this->endDate = null;
         $this->active = true;
+        $this->assignedCountryIds = [];
+        $this->allCountries = true;
         $this->resetErrorBag();
     }
 

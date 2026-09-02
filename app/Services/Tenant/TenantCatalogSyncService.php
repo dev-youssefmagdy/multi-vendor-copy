@@ -1095,10 +1095,12 @@ class TenantCatalogSyncService
     protected function syncCoupons(): int
     {
         $centralCoupons = tenancy()->central(
-            fn() => CentralCoupon::query()->get()
+            fn() => CentralCoupon::query()->with('countries')->get()
         );
 
         foreach ($centralCoupons as $centralCoupon) {
+            $countryIds = $centralCoupon->countries->pluck('id')->values()->all();
+
             Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
                 [
@@ -1108,6 +1110,7 @@ class TenantCatalogSyncService
                     'minimum_spend' => $centralCoupon->minimum_spend,
                     'start_date' => $centralCoupon->start_date,
                     'end_date' => $centralCoupon->end_date,
+                    'allowed_country_ids' => empty($countryIds) ? null : $countryIds,
                 ]
             );
         }

@@ -18,6 +18,11 @@
         $statisticsGridClass = $statisticsGridClass ?? (count($statistics) > 3 ? 'g-stats4' : 'g-stats3');
         $modalContentView = $modalContentView ?? null;
         $modalContentData = $modalContentData ?? [];
+        $modalCountryPicker = $modalCountryPicker ?? false;
+        $modalCountryPickerHint = $modalCountryPickerHint ?? null;
+        $countries = $countries ?? [];
+        $allCountries = $allCountries ?? true;
+        $assignedCountryIds = $assignedCountryIds ?? [];
         $showPrimaryAction = ($actionUrl || $actionMethod);
         $secondaryActionLabel = $secondaryActionLabel ?? null;
         $secondaryActionUrl = $secondaryActionUrl ?? null;
@@ -222,6 +227,32 @@
                             @endforeach
                         </div>
                     @endforeach
+
+                    @if (!empty($modalCountryPicker))
+                        <div class="card section-gap" style="padding:18px 20px;">
+                            <h3 class="panel-title" style="margin-bottom:8px;">Country Availability</h3>
+                            <p class="panel-copy" style="margin-bottom:14px;">{{ $modalCountryPickerHint ?? 'Leave set to All Countries to make this coupon usable everywhere.' }}</p>
+
+                            <x-checkbox wire:model.live="allCountries" label="All Countries (default)" />
+
+                            @if (!$allCountries)
+                                <div class="form-grid-3" style="gap:6px;max-height:260px;overflow-y:auto;margin-top:12px;">
+                                    @foreach ($countries as $country)
+                                        <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;">
+                                            <input type="checkbox"
+                                                   value="{{ $country->id }}"
+                                                   wire:model.defer="assignedCountryIds"
+                                                   style="accent-color:var(--cyan);width:13px;height:13px;flex-shrink:0;">
+                                            {{ $country->flag_emoji }} {{ $country->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                                @if (!empty($assignedCountryIds))
+                                    <p class="field-hint" style="margin-top:8px;">{{ count($assignedCountryIds) }} {{ Str::plural('country', count($assignedCountryIds)) }} selected.</p>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
 
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>

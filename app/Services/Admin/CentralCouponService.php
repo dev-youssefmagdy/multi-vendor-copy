@@ -25,6 +25,9 @@ class CentralCouponService
 
             $coupon->save();
 
+            $countryIds = array_values(array_filter((array) ($attributes['country_ids'] ?? []), 'is_numeric'));
+            $coupon->countries()->sync($countryIds);
+
             return $coupon->fresh();
         });
     }

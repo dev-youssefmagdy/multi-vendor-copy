@@ -8,6 +8,7 @@ use App\Enums\Tenant\CouponType;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Coupon;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\Tenant\CustomerCountryResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -44,6 +45,10 @@ class CouponController extends Controller
 
         if (!$coupon) {
             return response()->json(['success' => false, 'message' => __('This coupon code is invalid or has expired.')], 422);
+        }
+
+        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+            return response()->json(['success' => false, 'message' => __('This coupon is not available in your country.')], 422);
         }
 
         $cartTotal = app(StorefrontRepository::class)->cartTotal();

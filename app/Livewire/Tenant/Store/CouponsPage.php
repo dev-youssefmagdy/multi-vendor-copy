@@ -33,7 +33,7 @@ class CouponsPage extends ListPage
             'description' => 'Create and manage discount codes for the current tenant storefront.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
-            'headers' => ['Coupon', 'Type', 'Value', 'Window', 'Actions'],
+            'headers' => ['Coupon', 'Type', 'Value', 'Window', 'Countries', 'Actions'],
         ];
     }
 
@@ -56,6 +56,10 @@ class CouponsPage extends ListPage
                 e($coupon->type->label()),
                 $coupon->type === CouponType::Percentage ? e(number_format((float) $coupon->value, 2)) . '%' : '$' . e(number_format((float) $coupon->value, 2)),
                 e(optional($coupon->start_date)->format('M d, Y') ?: '-') . ' - ' . e(optional($coupon->end_date)->format('M d, Y') ?: '-'),
+                !empty($coupon->allowed_country_ids)
+                    ? '<span class="badge badge-secondary" title="' . e(implode(', ', array_slice((array) $coupon->allowed_country_ids, 0, 5))) . '">' .
+                        count((array) $coupon->allowed_country_ids) . ' ' . (count((array) $coupon->allowed_country_ids) === 1 ? 'country' : 'countries') . '</span>'
+                    : '<span class="badge badge-cyan">🌐 All</span>',
                 '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="editCoupon(' . $coupon->id . ')">Edit</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $coupon->id . ')">Delete</button></div>',
             ])->all(),
             'modalModel' => 'showFormModal',
