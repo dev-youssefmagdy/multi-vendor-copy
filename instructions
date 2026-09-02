@@ -1,0 +1,10 @@
+composer install
+
+cp .env.example .env
+php artisan key:generate
+
+yarn
+yarn build
+
+
+sudo nano /etc/hosts
