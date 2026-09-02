@@ -8,10 +8,10 @@ use App\Models\Tenant\Language;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
+use App\Models\Tenant\Translation;
 use App\Models\Tenant\TranslationOverride;
 use App\Services\OpenAiTranslationService;
 use App\Translation\TenantTranslator;
-use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Throwable;
 
@@ -79,14 +79,14 @@ class StoreTranslatorService
             $itemsTranslated += $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
             $language->forceFill(['translation_progress' => 10])->save();
 
-            $itemsTranslated += $this->translateModel(Category::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
+            $itemsTranslated += $this->translateModel(Category::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $language->forceFill(['translation_progress' => 30])->save();
 
-            $itemsTranslated += $this->translateModel(Product::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
+            $itemsTranslated += $this->translateModel(Product::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $language->forceFill(['translation_progress' => 80])->save();
 
-            $itemsTranslated += $this->translateModel(Page::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
-            $itemsTranslated += $this->translateModel(Banner::class, $sourceLocale, $targetLocale, $language->name, $brandContext);
+            $itemsTranslated += $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $this->translateModel(Banner::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $language->forceFill(['translation_progress' => 90])->save();
 
             $staticKeyCount = $this->translateStaticKeys($sourceLocale, $targetLocale, $language, $brandContext);
@@ -114,107 +114,115 @@ class StoreTranslatorService
 
     protected function translateSettings(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
     {
-        $count = 0;
-
-        Setting::query()
-            ->with('translations.language')
-            ->chunkById(50, function ($settings) use (&$count, $sourceLocale, $targetLocale, $targetLanguage, $brandContext) {
-                $pending = [];
-                $states = [];
-
-                foreach ($settings as $setting) {
-                    $translations = $this->existingTranslations($setting);
-                    $key = $this->modelKey($setting);
-
-                    foreach (['title', 'value'] as $field) {
-                        $sourceValue = trim((string) ($translations[$sourceLocale][$field] ?? ''));
-                        $targetValue = trim((string) ($translations[$targetLocale][$field] ?? ''));
-
-                        if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
-                            continue;
-                        }
-
-                        $states[$key] ??= ['model' => $setting, 'translations' => $translations];
-                        $pending[] = ['model_key' => $key, 'field' => $field, 'text' => $sourceValue];
-                    }
-                }
-
-                if ($pending === []) {
-                    return;
-                }
-
-                $translated = $this->openAi->translateBatch(
-                    array_map(fn(array $item) => $item['text'], $pending),
-                    $sourceLocale,
-                    $targetLocale,
-                    $targetLanguage,
-                    $brandContext ?: 'Tenant custom label setting',
-                );
-
-                foreach ($pending as $offset => $item) {
-                    $states[$item['model_key']]['translations'][$targetLocale][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
-                }
-
-                foreach ($states as $state) {
-                    $state['model']->syncTranslations($state['translations']);
-                    $count++;
-                }
-            });
-
-        return $count;
+        return $this->translateModel(Setting::class, ['title', 'value'], $sourceLocale, $targetLocale, $targetLanguage, $brandContext, 'Tenant custom label setting');
     }
 
-    protected function translateModel(string $modelClass, string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
-    {
-        $fields = self::MODEL_FIELDS[$modelClass];
-        $count = 0;
+    /**
+     * Translates every field of every row of $modelClass into $targetLocale in one pass:
+     * a single query pulls all existing source/target translation rows (no N+1, no per-row
+     * chunking), the whole pending text set is sent through translateBatch (which chunks
+     * internally for the OpenAI API), and results are written back with one bulk upsert
+     * keyed on the table's (language_id, translatable_type, translatable_id, field) unique
+     * index. This scales to several thousand rows without the per-chunk overhead of
+     * chunkById() + per-model delete/recreate.
+     */
+    protected function translateModel(
+        string $modelClass,
+        ?array $fields = null,
+        string $sourceLocale = '',
+        string $targetLocale = '',
+        string $targetLanguage = '',
+        string $brandContext = '',
+        ?string $fallbackContext = null,
+    ): int {
+        $fields ??= self::MODEL_FIELDS[$modelClass];
 
-        $modelClass::query()
-            ->with('translations.language')
-            ->chunkById(50, function ($models) use (&$count, $fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage, $brandContext) {
-                $pending = [];
-                $states = [];
+        $languageIds = Language::query()->pluck('id', 'code');
+        $sourceLanguageId = $languageIds->get($sourceLocale);
+        $targetLanguageId = $languageIds->get($targetLocale);
 
-                foreach ($models as $model) {
-                    $translations = $this->existingTranslations($model);
-                    $modelKey = $this->modelKey($model);
+        if (!$sourceLanguageId || !$targetLanguageId) {
+            return 0;
+        }
 
-                    foreach ($fields as $field) {
-                        $sourceValue = trim((string) ($translations[$sourceLocale][$field] ?? ''));
-                        $targetValue = trim((string) ($translations[$targetLocale][$field] ?? ''));
+        $morphClass = (new $modelClass())->getMorphClass();
+        $localeByLanguageId = [$sourceLanguageId => $sourceLocale, $targetLanguageId => $targetLocale];
 
-                        if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
-                            continue;
-                        }
+        $existing = [];
 
-                        $states[$modelKey] ??= ['model' => $model, 'translations' => $translations];
-                        $pending[] = ['model_key' => $modelKey, 'field' => $field, 'text' => $sourceValue];
-                    }
-                }
+        Translation::query()
+            ->where('translatable_type', $morphClass)
+            ->whereIn('language_id', [$sourceLanguageId, $targetLanguageId])
+            ->whereIn('field', $fields)
+            ->select(['translatable_id', 'language_id', 'field', 'value'])
+            ->cursor()
+            ->each(function ($row) use (&$existing, $localeByLanguageId) {
+                $locale = $localeByLanguageId[$row->language_id] ?? null;
 
-                if ($pending === []) {
-                    return;
-                }
-
-                $translated = $this->openAi->translateBatch(
-                    array_map(fn(array $item) => $item['text'], $pending),
-                    $sourceLocale,
-                    $targetLocale,
-                    $targetLanguage,
-                    $brandContext ?: ('Tenant store content: ' . class_basename($modelClass)),
-                );
-
-                foreach ($pending as $offset => $item) {
-                    $states[$item['model_key']]['translations'][$targetLocale][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
-                }
-
-                foreach ($states as $state) {
-                    $state['model']->syncTranslations($state['translations']);
-                    $count++;
+                if ($locale !== null) {
+                    $existing[$row->translatable_id][$locale][$row->field] = (string) $row->value;
                 }
             });
 
-        return $count;
+        $pending = [];
+
+        foreach ($existing as $translatableId => $locales) {
+            foreach ($fields as $field) {
+                $sourceValue = trim((string) ($locales[$sourceLocale][$field] ?? ''));
+                $targetValue = trim((string) ($locales[$targetLocale][$field] ?? ''));
+
+                if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
+                    continue;
+                }
+
+                $pending[] = ['translatable_id' => $translatableId, 'field' => $field, 'text' => $sourceValue];
+            }
+        }
+
+        if ($pending === []) {
+            return 0;
+        }
+
+        $translated = $this->openAi->translateBatch(
+            array_map(fn(array $item) => $item['text'], $pending),
+            $sourceLocale,
+            $targetLocale,
+            $targetLanguage,
+            $brandContext ?: ($fallbackContext ?? ('Tenant store content: ' . class_basename($modelClass))),
+        );
+
+        $now = now();
+        $rows = [];
+        $translatedIds = [];
+
+        foreach ($pending as $offset => $item) {
+            $value = trim((string) ($translated[$offset] ?? $item['text']));
+
+            if ($value === '') {
+                continue;
+            }
+
+            $rows[] = [
+                'language_id' => $targetLanguageId,
+                'translatable_type' => $morphClass,
+                'translatable_id' => $item['translatable_id'],
+                'field' => $item['field'],
+                'value' => $value,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            $translatedIds[$item['translatable_id']] = true;
+        }
+
+        foreach (array_chunk($rows, 500) as $chunk) {
+            Translation::query()->upsert(
+                $chunk,
+                ['language_id', 'translatable_type', 'translatable_id', 'field'],
+                ['value', 'updated_at'],
+            );
+        }
+
+        return count($translatedIds);
     }
 
     /**
@@ -293,24 +301,6 @@ class StoreTranslatorService
         return $count;
     }
 
-    protected function existingTranslations(Model $model): array
-    {
-        $model->loadMissing('translations.language');
-        $translations = [];
-
-        foreach ($model->translations as $translation) {
-            $locale = $translation->language?->code;
-
-            if (!is_string($locale) || $locale === '') {
-                continue;
-            }
-
-            $translations[$locale][$translation->field] = (string) $translation->value;
-        }
-
-        return $translations;
-    }
-
     protected function resolveSourceLocale(string $targetLocale, ?string $sourceLocale = null): ?string
     {
         $candidates = array_filter([
@@ -338,10 +328,5 @@ class StoreTranslatorService
         }
 
         return $targetValue === '' || $targetValue === $sourceValue;
-    }
-
-    protected function modelKey(Model $model): string
-    {
-        return $model::class . ':' . $model->getKey();
     }
 }
