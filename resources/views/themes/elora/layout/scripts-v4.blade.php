@@ -1,5 +1,4 @@
 @if(request()->is('/'))
-    <script src="{{ asset('tailwindcss.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     @vite(['resources/js/elora-v4-interactions.js', 'resources/js/elora-v4-carousels.js'])

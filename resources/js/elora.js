@@ -1,3 +1,4 @@
+if(typeof tailwind !== 'undefined') {
 tailwind.config = {
     theme: {
         extend: {
@@ -28,7 +29,7 @@ tailwind.config = {
         }
     }
 };
-
+}
 
 // ------------------- index.js
 
