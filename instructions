@@ -8,3 +8,31 @@ yarn build
 
 
 sudo nano /etc/hosts
+
+
+php artisan db:seed --class=TestPreviewTenantSeeder
+
+php artisan db:seed --class=WorldCitiesSeeder
+php artisan neozena:import-files
+
+php artisan queue:work
+php artisan queue:work --queue=tenant-sync
+# Process the queue:
+php artisan queue:work --queue=neozena-import
+php artisan queue:work --queue=translations
+
+
+pa db:seed --class=EmailTemplateTranslationSeeder
+php artisan db:seed --class=CentralEmailTemplateSeeder
+
+pa db:seed --class=SettingsSeeder
+
+pa db:seed --class=WorldCountriesSeeder
+
+php artisan db:seed --class=EmailTemplateTranslationSeeder
+
+pa db:seed --class=AdminPermissionSeeder
+
+pa products:backfill-country-ids
+
+php artisan tenants:run tenant:permission-seed

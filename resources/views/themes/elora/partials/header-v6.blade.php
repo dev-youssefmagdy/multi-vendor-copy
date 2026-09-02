@@ -54,10 +54,12 @@
           </button>
         </div>
         <form action="{{ route('tenant.storefront.search') }}" method="GET"
-          class="flex items-center justify-center gap-[8px] h-[40px] rounded-[32px] px-[12px] border"
+          data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+          class="elora-search-inner flex items-center justify-center gap-[8px] h-[40px] rounded-[32px] px-[12px] border"
           style="
             background: var(--color-surface);
             border-color: var(--color-stroke);
+            position: relative;
           "
         >
           <img
@@ -69,11 +71,15 @@
             type="search"
             name="q"
             value="{{ request('q') }}"
+            autocomplete="off"
             placeholder="Search..."
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
-          <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" />
+          <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v6">
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" />
+          </button>
         </form>
       </div>
 
@@ -96,8 +102,9 @@
           <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
         </a>
         <form action="{{ route('tenant.storefront.search') }}" method="GET"
-          class="flex flex-1 items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
-          style="background: var(--color-surface)"
+          data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+          class="elora-search-inner flex flex-1 items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
+          style="background: var(--color-surface); position: relative"
         >
           <img
             src="{{ asset('elora-2/assets/icons/search.svg') }}"
@@ -108,11 +115,17 @@
             type="search"
             name="q"
             value="{{ request('q') }}"
+            autocomplete="off"
             placeholder="Search..."
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-text-placeholder)"
           />
+          <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v6">
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[22px] w-[30px]" />
+          </button>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v6" :action="route('tenant.storefront.search.image')" />
         <div class="flex items-center gap-[38px] shrink-0">
           <livewire:tenant.storefront.layout.locale-switcher />
           <a
@@ -220,8 +233,9 @@
         </button>
       </div>
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
-        class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]"
-        style="background: var(--color-surface)"
+        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+        class="elora-search-inner flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]"
+        style="background: var(--color-surface); position: relative"
       >
         <img
           src="{{ asset('elora-2/assets/icons/search.svg') }}"
@@ -232,6 +246,7 @@
           type="search"
           name="q"
           value="{{ request('q') }}"
+          autocomplete="off"
           placeholder="Search..."
           class="bg-transparent outline-none text-[14px] w-full"
           style="color: var(--color-text-placeholder)"

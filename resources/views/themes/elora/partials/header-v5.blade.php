@@ -136,6 +136,18 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
+          <button
+            type="button"
+            aria-label="{{ __('Search by Image') }}"
+            class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v5"
+          >
+            <img
+              src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
+              alt=""
+              class="size-[20px]"
+            />
+          </button>
         </form>
         <div class="flex items-center gap-[38px] shrink-0">
           <button type="button" class="flex items-center gap-[6px]" onclick="Livewire.dispatch('open-locale-modal')">

@@ -48,9 +48,15 @@
     <a href="{{ route('tenant.home') }}">
         <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
     </a>
+    <form
+        action="{{ route('tenant.storefront.search') }}"
+        method="GET"
+        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+        class="flex-1"
+    >
     <div
-        class="flex flex-1 items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
-        style="background: var(--color-surface)"
+        class="elora-search-inner flex items-center gap-[8px] h-[54px] rounded-[32px] px-[24px]"
+        style="background: var(--color-surface); position: relative"
     >
         <img
         src="{{ asset('elora-1/assets/icons/search.svg') }}"
@@ -59,10 +65,22 @@
         />
         <input
         type="search"
+        name="q"
+        value="{{ request('q') }}"
+        autocomplete="off"
         placeholder="Search..."
         class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full"
         />
     </div>
+    </form>
+    <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0 ml-2 opacity-70 hover:opacity-100"
+        data-image-search-trigger="storefront-image-search-modal-v2">
+        <svg class="size-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+            <circle cx="12" cy="13" r="3.2" />
+        </svg>
+    </button>
+    <x-image-search-modal id="storefront-image-search-modal-v2" :action="route('tenant.storefront.search.image')" />
     <div class="flex items-center gap-[38px] shrink-0">
         <button
         type="button"
@@ -190,9 +208,15 @@
           </svg>
         </button>
       </div>
+      <form
+        action="{{ route('tenant.storefront.search') }}"
+        method="GET"
+        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+        class="mx-[16px] mt-[16px]"
+      >
       <div
-        class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]"
-        style="background: var(--color-surface)"
+        class="elora-search-inner flex items-center gap-[8px] h-[44px] rounded-[24px] px-[16px]"
+        style="background: var(--color-surface); position: relative"
       >
         <img
           src="{{ asset('elora-1/assets/icons/search.svg') }}"
@@ -201,10 +225,14 @@
         />
         <input
           type="search"
+          name="q"
+          value="{{ request('q') }}"
+          autocomplete="off"
           placeholder="Search..."
           class="bg-transparent outline-none text-[14px] text-[var(--color-text-placeholder)] w-full"
         />
       </div>
+      </form>
       <nav
         class="flex flex-col px-[16px] py-[12px] overflow-y-auto no-scrollbar"
       >
