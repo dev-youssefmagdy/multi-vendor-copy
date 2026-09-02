@@ -217,6 +217,32 @@
                             </div>
                         </div>
 
+                        {{-- Coupon code --}}
+                        <div class="mb-5">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('Coupon Code') }} <span class="font-normal normal-case text-gray-400">({{ __('optional') }})</span></label>
+                            <div class="flex gap-2 mt-1.5">
+                                <input type="text" wire:model.defer="couponCode"
+                                       class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm uppercase focus:border-primary focus:outline-none"
+                                       placeholder="{{ __('Enter promo code') }}">
+                                <button type="button" wire:click="applyCoupon"
+                                        class="px-4 py-2 rounded-xl border-2 border-primary text-primary text-sm font-bold hover:bg-orange-50">
+                                    {{ __('Apply') }}
+                                </button>
+                            </div>
+                            @if($couponError)
+                                <p class="text-red-500 text-xs mt-1.5">{{ $couponError }}</p>
+                            @endif
+                            @if($couponDiscount !== null)
+                                <div class="mt-2 flex items-center gap-2 text-sm">
+                                    <span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full text-xs">✓ {{ __('Coupon applied') }}</span>
+                                    <span class="text-green-700">
+                                        {{ __('Final price:') }} <strong>${{ number_format($couponDiscount, 2) }}</strong>
+                                        <span class="text-gray-400">({{ __('was') }} ${{ number_format($selectedPackage->price, 2) }})</span>
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+
                         {{-- Gateway list --}}
                         <div class="space-y-3 mb-5">
                             @forelse($gateways as $gateway)

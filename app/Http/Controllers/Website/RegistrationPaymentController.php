@@ -151,6 +151,8 @@ class RegistrationPaymentController extends Controller
                 'affiliate_referral_id' => $referral?->id,
                 'payment_data' => array_merge($payment, [
                     'package_price' => (float) ($data['package_price'] ?? 0),
+                    'applied_coupon_id' => $data['applied_coupon_id'] ?? null,
+                    'coupon_code' => $data['coupon_code'] ?? null,
                 ]),
                 'expires_at' => now()->addHours(48),
             ]);

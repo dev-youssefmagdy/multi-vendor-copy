@@ -6,6 +6,7 @@ use App\Models\Affiliate;
 use App\Models\AffiliateConversion;
 use App\Models\AffiliateReferral;
 use App\Models\AffiliatePayout;
+use App\Models\CentralCoupon;
 use App\Models\PaymentLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -127,6 +128,92 @@ class AffiliateService
         cookie()->queue(cookie()->forget(self::COOKIE_NAME));
 
         return $conversion;
+    }
+
+    /**
+     * Called when a tenant pays for a package using an affiliate-linked coupon code.
+     * Independent of the URL-referral cookie flow: fires even if the tenant was not
+     * referred via the affiliate's link. If a pending/approved referral conversion
+     * already exists for the same affiliate+tenant, it is upgraded rather than
+     * duplicated (whichever commission is higher wins — no double-crediting).
+     */
+    public function approveCouponConversion(string $tenantId, PaymentLog $paymentLog, CentralCoupon $coupon): ?AffiliateConversion
+    {
+        if (!$coupon->affiliate_id) {
+            return null;
+        }
+
+        $coupon->loadMissing('affiliate');
+        $affiliate = $coupon->affiliate;
+
+        if (!$affiliate) {
+            return null;
+        }
+
+        $commissionAmount = $coupon->calculateAffiliateCommission((float) $paymentLog->amount);
+
+        if ($commissionAmount <= 0) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($affiliate, $coupon, $tenantId, $paymentLog, $commissionAmount) {
+            $existing = AffiliateConversion::query()
+                ->where('affiliate_id', $affiliate->id)
+                ->where('tenant_id', $tenantId)
+                ->whereIn('status', ['pending', 'approved'])
+                ->first();
+
+            $commissionValue = $coupon->affiliate_commission_value ?? $affiliate->commission_value;
+
+            if ($existing) {
+                $previousCommission = (float) $existing->commission_amount;
+                $finalCommission = max($commissionAmount, $previousCommission);
+                $wasApproved = $existing->status === 'approved';
+
+                $existing->update([
+                    'coupon_id'         => $coupon->id,
+                    'source'            => 'coupon',
+                    'payment_log_id'    => $paymentLog->id,
+                    'package_id'        => $paymentLog->package_id,
+                    'sale_amount'       => $paymentLog->amount,
+                    'commission_amount' => $finalCommission,
+                    'commission_type'   => 'percentage',
+                    'commission_value'  => $commissionValue,
+                    'status'            => 'approved',
+                    'approved_at'       => now(),
+                ]);
+
+                $credit = $wasApproved ? max(0, $finalCommission - $previousCommission) : $finalCommission;
+
+                if ($credit > 0) {
+                    $affiliate->increment('balance', $credit);
+                    $affiliate->increment('total_earned', $credit);
+                }
+
+                return $existing->fresh();
+            }
+
+            $conversion = AffiliateConversion::query()->create([
+                'affiliate_id'          => $affiliate->id,
+                'affiliate_referral_id' => null,
+                'coupon_id'             => $coupon->id,
+                'source'                => 'coupon',
+                'tenant_id'             => $tenantId,
+                'payment_log_id'        => $paymentLog->id,
+                'package_id'            => $paymentLog->package_id,
+                'sale_amount'           => $paymentLog->amount,
+                'commission_amount'     => $commissionAmount,
+                'commission_type'       => 'percentage',
+                'commission_value'      => $commissionValue,
+                'status'                => 'approved',
+                'approved_at'           => now(),
+            ]);
+
+            $affiliate->increment('balance', $commissionAmount);
+            $affiliate->increment('total_earned', $commissionAmount);
+
+            return $conversion;
+        });
     }
 
     // ── Payouts ────────────────────────────────────────────────────

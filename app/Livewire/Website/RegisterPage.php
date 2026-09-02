@@ -39,6 +39,12 @@ class RegisterPage extends Component
     public string $authnetValue = '';
     public string $twocoToken = '';
 
+    // Step 3 – Coupon
+    public string $couponCode = '';
+    public string $couponError = '';
+    public ?float $couponDiscount = null;
+    public ?int $appliedCouponId = null;
+
     // UI state
     public bool $emailSent = false;
     public ?string $resendStatus = null;
@@ -199,6 +205,48 @@ class RegisterPage extends Component
         $this->redirect(route('website.register.complete', ['token' => $token]));
     }
 
+    public function applyCoupon(): void
+    {
+        $this->couponError = '';
+        $this->couponDiscount = null;
+        $this->appliedCouponId = null;
+
+        $code = strtoupper(trim($this->couponCode));
+
+        if (!$code) {
+            $this->couponError = __('Please enter a coupon code.');
+            return;
+        }
+
+        $package = filled($this->packageId) ? Package::query()->find((int) $this->packageId) : null;
+
+        if (!$package || (float) $package->price <= 0) {
+            $this->couponError = __('Select a paid plan to apply a coupon.');
+            return;
+        }
+
+        $coupon = \App\Models\CentralCoupon::query()
+            ->where('code', $code)
+            ->active()
+            ->first();
+
+        if (!$coupon) {
+            $this->couponError = __('Invalid or expired coupon code.');
+            return;
+        }
+
+        $original = (float) $package->price;
+
+        $discounted = match ($coupon->type->value) {
+            'percentage' => $original - ($original * (float) $coupon->value / 100),
+            'fixed' => $original - (float) $coupon->value,
+            default => $original,
+        };
+
+        $this->couponDiscount = max(0.0, round($discounted, 2));
+        $this->appliedCouponId = $coupon->id;
+    }
+
     protected function startPayment(): void
     {
         $package = Package::query()->findOrFail((int) $this->packageId);
@@ -213,8 +261,12 @@ class RegisterPage extends Component
                     'email' => $this->email,
                     'phone' => $this->phone,
                     'package_id' => (int) $this->packageId,
-                    'package_price' => (float) $package->price,
+                    'package_price' => $this->appliedCouponId
+                        ? max(0.0, (float) ($this->couponDiscount ?? $package->price))
+                        : (float) $package->price,
                     'gateway_code' => $this->gatewayCode,
+                    'applied_coupon_id' => $this->appliedCouponId,
+                    'coupon_code' => $this->appliedCouponId ? strtoupper(trim($this->couponCode)) : null,
                 ],
             ],
         ]);

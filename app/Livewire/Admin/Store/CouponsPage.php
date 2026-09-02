@@ -28,6 +28,8 @@ class CouponsPage extends ListPage
     public bool $active = true;
     public array $assignedCountryIds = [];
     public bool $allCountries = true;
+    public ?int $affiliateId = null;
+    public string $affiliateCommissionValue = '';
 
     protected function pageMeta(): array
     {
@@ -37,7 +39,7 @@ class CouponsPage extends ListPage
             'description' => 'Create platform-wide discount codes that are automatically synced to all tenant storefronts.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
-            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Countries', 'Status', 'Actions'],
+            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Countries', 'Affiliate', 'Status', 'Actions'],
         ];
     }
 
@@ -46,7 +48,7 @@ class CouponsPage extends ListPage
         $this->authorizePermission('store.coupons.manage');
 
         $records = CentralCoupon::query()
-            ->with('countries')
+            ->with(['countries', 'affiliate'])
             ->orderByDesc('id')
             ->paginate(15);
 
@@ -69,6 +71,9 @@ class CouponsPage extends ListPage
             $coupon->countries->isEmpty()
                 ? '<span class="badge badge-cyan">🌐 All</span>'
                 : '<span class="badge badge-secondary" title="' . e($coupon->countries->pluck('name')->join(', ')) . '">🏳 ' . $coupon->countries->count() . '</span>',
+            $coupon->affiliate
+                ? '<span class="badge badge-violet" title="' . e('Commission: ' . ($coupon->affiliate_commission_value !== null ? $coupon->affiliate_commission_value . '%' : $coupon->affiliate->commission_type . ' ' . $coupon->affiliate->commission_value)) . '">' . e($coupon->affiliate->name) . '</span>'
+                : '<span class="badge badge-secondary">Global</span>',
             '<span class="badge ' . ($coupon->active ? 'badge-green' : 'badge-amber') . '">' . e($coupon->active ? 'Active' : 'Inactive') . '</span>',
             '<div class="flex gap-2">
                 <button type="button" class="btn btn-secondary btn-sm" wire:click="editCoupon(' . $coupon->id . ')">Edit</button>
@@ -96,6 +101,11 @@ class CouponsPage extends ListPage
                 ->where('is_active_for_tenants', true)
                 ->orderBy('name')
                 ->get(['id', 'name', 'iso2', 'flag_emoji']),
+            'modalAffiliatePicker' => true,
+            'modalAffiliates' => \App\Models\Affiliate::query()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->get(['id', 'name', 'email']),
             'modalFieldGroups' => [
                 [
                     'gridClass' => 'form-grid-2',
@@ -127,6 +137,8 @@ class CouponsPage extends ListPage
         $this->active = true;
         $this->assignedCountryIds = [];
         $this->allCountries = true;
+        $this->affiliateId = null;
+        $this->affiliateCommissionValue = '';
         $this->resetErrorBag();
         $this->showFormModal = true;
     }
@@ -149,6 +161,11 @@ class CouponsPage extends ListPage
         $this->assignedCountryIds = $countryIds;
         $this->allCountries = empty($countryIds);
 
+        $this->affiliateId = $coupon->affiliate_id;
+        $this->affiliateCommissionValue = $coupon->affiliate_commission_value !== null
+            ? number_format((float) $coupon->affiliate_commission_value, 2, '.', '')
+            : '';
+
         $this->showFormModal = true;
     }
 
@@ -165,6 +182,8 @@ class CouponsPage extends ListPage
             'endDate' => 'nullable|date|after_or_equal:startDate',
             'assignedCountryIds' => 'array',
             'assignedCountryIds.*' => 'integer|exists:countries,id',
+            'affiliateId' => 'nullable|integer|exists:affiliates,id',
+            'affiliateCommissionValue' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $existing = CentralCoupon::query()
@@ -189,6 +208,10 @@ class CouponsPage extends ListPage
             'end_date' => $this->endDate,
             'active' => $this->active,
             'country_ids' => $this->allCountries ? [] : array_map('intval', $this->assignedCountryIds),
+            'affiliate_id' => $this->affiliateId ?: null,
+            'affiliate_commission_value' => filled($this->affiliateCommissionValue)
+                ? (float) $this->affiliateCommissionValue
+                : null,
         ], $coupon);
 
         // Observer triggers sync automatically; explicit call is a safety net.
@@ -230,6 +253,8 @@ class CouponsPage extends ListPage
         $this->active = true;
         $this->assignedCountryIds = [];
         $this->allCountries = true;
+        $this->affiliateId = null;
+        $this->affiliateCommissionValue = '';
         $this->resetErrorBag();
     }
 

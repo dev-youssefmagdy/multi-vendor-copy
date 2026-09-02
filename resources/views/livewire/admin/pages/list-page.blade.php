@@ -23,6 +23,8 @@
         $countries = $countries ?? [];
         $allCountries = $allCountries ?? true;
         $assignedCountryIds = $assignedCountryIds ?? [];
+        $modalAffiliatePicker = $modalAffiliatePicker ?? false;
+        $modalAffiliates = $modalAffiliates ?? [];
         $showPrimaryAction = ($actionUrl || $actionMethod);
         $secondaryActionLabel = $secondaryActionLabel ?? null;
         $secondaryActionUrl = $secondaryActionUrl ?? null;
@@ -251,6 +253,36 @@
                                     <p class="field-hint" style="margin-top:8px;">{{ count($assignedCountryIds) }} {{ Str::plural('country', count($assignedCountryIds)) }} selected.</p>
                                 @endif
                             @endif
+                        </div>
+                    @endif
+
+                    @if (!empty($modalAffiliatePicker))
+                        <div class="card section-gap" style="padding:18px 20px;">
+                            <h3 class="panel-title" style="margin-bottom:4px;">Affiliate Commission <span class="field-hint">(optional)</span></h3>
+                            <p class="panel-copy" style="margin-bottom:14px;">Link this coupon to a specific affiliate. When a user applies this coupon during registration, the affiliate earns a commission on the sale.</p>
+
+                            <div class="form-grid-2">
+                                <div>
+                                    <label class="field-label">Linked Affiliate</label>
+                                    <select wire:model.live="affiliateId" class="field-control">
+                                        <option value="">None (global coupon)</option>
+                                        @foreach ($modalAffiliates as $aff)
+                                            <option value="{{ $aff->id }}">{{ $aff->name }} — {{ $aff->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if (!empty($affiliateId))
+                                    <div>
+                                        <label class="field-label">Commission Override (%)</label>
+                                        <input type="number" step="0.01" min="0" max="100"
+                                               class="field-control {{ $errors->has('affiliateCommissionValue') ? 'is-invalid' : '' }}"
+                                               wire:model.defer="affiliateCommissionValue"
+                                               placeholder="Leave blank = affiliate's default rate">
+                                        @error('affiliateCommissionValue') <span class="field-error">{{ $message }}</span> @enderror
+                                        <p class="field-hint" style="margin-top:5px;">Percentage of the package sale amount credited to the affiliate when this coupon is used. Leave blank to use the affiliate's default rate.</p>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     @endif
 

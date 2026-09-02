@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CentralCoupon extends Model
@@ -22,6 +23,8 @@ class CentralCoupon extends Model
         'end_date',
         'minimum_spend',
         'active',
+        'affiliate_id',
+        'affiliate_commission_value',
     ];
 
     protected function casts(): array
@@ -33,6 +36,7 @@ class CentralCoupon extends Model
             'start_date' => 'datetime',
             'end_date' => 'datetime',
             'active' => 'boolean',
+            'affiliate_commission_value' => 'decimal:2',
         ];
     }
 
@@ -45,6 +49,11 @@ class CentralCoupon extends Model
     public function countries(): BelongsToMany
     {
         return $this->belongsToMany(Country::class, 'central_coupon_country');
+    }
+
+    public function affiliate(): BelongsTo
+    {
+        return $this->belongsTo(Affiliate::class);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────
@@ -70,6 +79,31 @@ class CentralCoupon extends Model
         }
 
         return $assigned->contains('id', $countryId);
+    }
+
+    public function hasAffiliate(): bool
+    {
+        return $this->affiliate_id !== null;
+    }
+
+    /**
+     * Calculate the commission amount for a given sale amount.
+     * Uses the coupon-specific override rate (always a percentage) if set,
+     * otherwise falls back to the affiliate's own commission_type + commission_value.
+     */
+    public function calculateAffiliateCommission(float $saleAmount): float
+    {
+        if (!$this->affiliate_id) {
+            return 0.0;
+        }
+
+        if ($this->affiliate_commission_value !== null) {
+            return round($saleAmount * (float) $this->affiliate_commission_value / 100, 2);
+        }
+
+        $this->loadMissing('affiliate');
+
+        return $this->affiliate?->calculateCommission($saleAmount) ?? 0.0;
     }
 
     // ── Scopes ───────────────────────────────────────────────────────

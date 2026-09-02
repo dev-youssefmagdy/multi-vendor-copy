@@ -141,6 +141,14 @@ class WebsiteRegistrationService
                 $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
 
                 app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog);
+
+                if (filled($payment['applied_coupon_id'] ?? null)) {
+                    $coupon = \App\Models\CentralCoupon::query()->find((int) $payment['applied_coupon_id']);
+
+                    if ($coupon && $coupon->hasAffiliate()) {
+                        app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $coupon);
+                    }
+                }
             }
         } else {
             // Free plan: create the tenant admin synchronously in the HTTP request,

@@ -9,6 +9,7 @@ class AffiliateConversion extends Model
 {
     protected $fillable = [
         'affiliate_id', 'affiliate_referral_id', 'tenant_id',
+        'coupon_id', 'source',
         'payment_log_id', 'package_id',
         'sale_amount', 'commission_amount',
         'commission_type', 'commission_value',
@@ -18,6 +19,7 @@ class AffiliateConversion extends Model
     protected function casts(): array
     {
         return [
+            'coupon_id'         => 'integer',
             'sale_amount'       => 'decimal:2',
             'commission_amount' => 'decimal:2',
             'commission_value'  => 'decimal:2',
@@ -28,6 +30,7 @@ class AffiliateConversion extends Model
 
     public function affiliate(): BelongsTo   { return $this->belongsTo(Affiliate::class); }
     public function referral(): BelongsTo    { return $this->belongsTo(AffiliateReferral::class, 'affiliate_referral_id'); }
+    public function coupon(): BelongsTo      { return $this->belongsTo(CentralCoupon::class, 'coupon_id'); }
     public function paymentLog(): BelongsTo  { return $this->belongsTo(PaymentLog::class); }
     public function package(): BelongsTo     { return $this->belongsTo(Package::class); }
 }
