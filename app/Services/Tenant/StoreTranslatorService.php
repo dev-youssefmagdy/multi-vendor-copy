@@ -7,6 +7,7 @@ use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\Product;
+use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Translation;
 use App\Models\Tenant\TranslationOverride;
@@ -34,6 +35,8 @@ class StoreTranslatorService
         Page::class => ['title', 'body'],
         Banner::class => ['title', 'subtitle', 'button_text'],
     ];
+
+    protected const VARIANT_FIELDS = ['title'];
 
     public function __construct(
         protected OpenAiTranslationService $openAi,
@@ -82,7 +85,7 @@ class StoreTranslatorService
             $itemsTranslated += $this->translateModel(Category::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $language->forceFill(['translation_progress' => 30])->save();
 
-            $itemsTranslated += $this->translateModel(Product::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $language->forceFill(['translation_progress' => 80])->save();
 
             $itemsTranslated += $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
@@ -223,6 +226,234 @@ class StoreTranslatorService
         }
 
         return count($translatedIds);
+    }
+
+    /**
+     * Translates every tenant Product together with its variants. Rather than
+     * treating Product like a plain tenant model, this pulls all products with
+     * their variants and each row's linked central Product/ProductVariant
+     * translations: when the central catalog already has the target-locale
+     * text (translated once, centrally, for every tenant), it is copied
+     * straight into the tenant Translation table with no AI call; only text
+     * missing from both the tenant and the central catalog is sent to OpenAI.
+     */
+    protected function translateProducts(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
+    {
+        $productFields = self::MODEL_FIELDS[Product::class];
+        $variantFields = self::VARIANT_FIELDS;
+
+        $languageIds = Language::query()->pluck('id', 'code');
+        $sourceLanguageId = $languageIds->get($sourceLocale);
+        $targetLanguageId = $languageIds->get($targetLocale);
+
+        if (!$sourceLanguageId || !$targetLanguageId) {
+            return 0;
+        }
+
+        $products = Product::query()
+            ->with([
+                'variants',
+                'centralProduct.translations.language',
+                'variants.centralVariant.translations.language',
+            ])
+            ->get();
+
+        if ($products->isEmpty()) {
+            return 0;
+        }
+
+        $productMorph = (new Product())->getMorphClass();
+        $variantMorph = (new ProductVariant())->getMorphClass();
+
+        $existing = $this->existingTenantTranslations(
+            [$productMorph, $variantMorph],
+            [$sourceLanguageId => $sourceLocale, $targetLanguageId => $targetLocale],
+        );
+
+        $now = now();
+        $copyRows = [];
+        $pending = [];
+        $touchedIds = [];
+
+        foreach ($products as $product) {
+            $this->planTranslationItem(
+                $productMorph,
+                $product->id,
+                $productFields,
+                $existing[$productMorph][$product->id] ?? [],
+                $this->centralTranslations($product->centralProduct, $productFields),
+                $sourceLocale,
+                $targetLocale,
+                $targetLanguageId,
+                $now,
+                $copyRows,
+                $pending,
+                $touchedIds,
+            );
+
+            foreach ($product->variants as $variant) {
+                $this->planTranslationItem(
+                    $variantMorph,
+                    $variant->id,
+                    $variantFields,
+                    $existing[$variantMorph][$variant->id] ?? [],
+                    $this->centralTranslations($variant->centralVariant, $variantFields),
+                    $sourceLocale,
+                    $targetLocale,
+                    $targetLanguageId,
+                    $now,
+                    $copyRows,
+                    $pending,
+                    $touchedIds,
+                );
+            }
+        }
+
+        foreach (array_chunk($copyRows, 500) as $chunk) {
+            Translation::query()->upsert(
+                $chunk,
+                ['language_id', 'translatable_type', 'translatable_id', 'field'],
+                ['value', 'updated_at'],
+            );
+        }
+
+        if ($pending !== []) {
+            $translated = $this->openAi->translateBatch(
+                array_map(fn(array $item) => $item['text'], $pending),
+                $sourceLocale,
+                $targetLocale,
+                $targetLanguage,
+                $brandContext ?: 'Tenant store products and variants',
+            );
+
+            $rows = [];
+
+            foreach ($pending as $offset => $item) {
+                $value = trim((string) ($translated[$offset] ?? $item['text']));
+
+                if ($value === '') {
+                    continue;
+                }
+
+                $rows[] = [
+                    'language_id' => $targetLanguageId,
+                    'translatable_type' => $item['morph'],
+                    'translatable_id' => $item['translatable_id'],
+                    'field' => $item['field'],
+                    'value' => $value,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            foreach (array_chunk($rows, 500) as $chunk) {
+                Translation::query()->upsert(
+                    $chunk,
+                    ['language_id', 'translatable_type', 'translatable_id', 'field'],
+                    ['value', 'updated_at'],
+                );
+            }
+        }
+
+        return count($touchedIds);
+    }
+
+    /**
+     * Decide, for one field, whether the target text can be copied straight
+     * from the linked central translation (no AI cost) or must be queued for
+     * OpenAI translation, falling back to the central source text when the
+     * tenant row itself has no source value.
+     */
+    protected function planTranslationItem(
+        string $morph,
+        int $id,
+        array $fields,
+        array $tenantLocales,
+        array $centralLocales,
+        string $sourceLocale,
+        string $targetLocale,
+        int $targetLanguageId,
+        \Carbon\Carbon $now,
+        array &$copyRows,
+        array &$pending,
+        array &$touchedIds,
+    ): void {
+        foreach ($fields as $field) {
+            $targetValue = trim((string) ($tenantLocales[$targetLocale][$field] ?? ''));
+            $centralTarget = trim((string) ($centralLocales[$targetLocale][$field] ?? ''));
+            $sourceValue = trim((string) ($tenantLocales[$sourceLocale][$field] ?? $centralLocales[$sourceLocale][$field] ?? ''));
+
+            if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
+                continue;
+            }
+
+            $touchedIds["{$morph}:{$id}"] = true;
+
+            if ($centralTarget !== '' && $centralTarget !== $sourceValue) {
+                $copyRows[] = [
+                    'language_id' => $targetLanguageId,
+                    'translatable_type' => $morph,
+                    'translatable_id' => $id,
+                    'field' => $field,
+                    'value' => $centralTarget,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+
+                continue;
+            }
+
+            $pending[] = ['morph' => $morph, 'translatable_id' => $id, 'field' => $field, 'text' => $sourceValue];
+        }
+    }
+
+    /**
+     * Bulk-load existing tenant Translation rows for several morph types at
+     * once, keyed as [morphClass][translatableId][locale][field] => value.
+     */
+    protected function existingTenantTranslations(array $morphClasses, array $localeByLanguageId): array
+    {
+        $existing = [];
+
+        Translation::query()
+            ->whereIn('translatable_type', $morphClasses)
+            ->whereIn('language_id', array_keys($localeByLanguageId))
+            ->select(['translatable_type', 'translatable_id', 'language_id', 'field', 'value'])
+            ->cursor()
+            ->each(function ($row) use (&$existing, $localeByLanguageId) {
+                $locale = $localeByLanguageId[$row->language_id] ?? null;
+
+                if ($locale !== null) {
+                    $existing[$row->translatable_type][$row->translatable_id][$locale][$row->field] = (string) $row->value;
+                }
+            });
+
+        return $existing;
+    }
+
+    /**
+     * Read a central model's already-translated fields (source + target
+     * locale) from its preloaded `translations.language` relation.
+     */
+    protected function centralTranslations(?\Illuminate\Database\Eloquent\Model $model, array $fields): array
+    {
+        if ($model === null || !$model->relationLoaded('translations')) {
+            return [];
+        }
+
+        $locales = [];
+
+        foreach ($model->translations as $translation) {
+            $locale = $translation->language?->code;
+
+            if (!is_string($locale) || $locale === '' || !in_array($translation->field, $fields, true)) {
+                continue;
+            }
+
+            $locales[$locale][$translation->field] = (string) $translation->value;
+        }
+
+        return $locales;
     }
 
     /**
