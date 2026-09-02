@@ -61,6 +61,13 @@
         </a>
       </div>
       @endif
+
+      @if ($registerUrl ?? false)
+      <p class="auth-note" style="margin-top: 1rem; text-align: center;">
+        {{ __("Don't have an account?") }}
+        <a href="{{ $registerUrl }}">{{ __('Apply now') }}</a>
+      </p>
+      @endif
     </div>
   </section>
 </main>

@@ -95,6 +95,8 @@ class AdminPermissions
 
             'support.tickets.view' => 'View support tickets',
             'support.tickets.manage' => 'Manage support tickets',
+
+            'affiliates.manage' => 'Manage affiliates and commissions',
         ];
     }
 

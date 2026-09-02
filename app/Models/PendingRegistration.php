@@ -18,6 +18,7 @@ class PendingRegistration extends Model
         'payment_data',
         'expires_at',
         'completed_at',
+        'affiliate_referral_id',
     ];
 
     protected $casts = [
@@ -31,6 +32,11 @@ class PendingRegistration extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function affiliateReferral(): BelongsTo
+    {
+        return $this->belongsTo(AffiliateReferral::class);
     }
 
     public function isExpired(): bool

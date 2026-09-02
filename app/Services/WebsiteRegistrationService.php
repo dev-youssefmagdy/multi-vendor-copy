@@ -117,6 +117,14 @@ class WebsiteRegistrationService
 
         $tenant = $this->tenantService->save($tenantAttributes);
 
+        if (filled($registrationData['affiliate_referral_id'] ?? null)) {
+            $referral = \App\Models\AffiliateReferral::query()->find((int) $registrationData['affiliate_referral_id']);
+
+            if ($referral && !$referral->converted_at) {
+                app(AffiliateService::class)->markReferralConverted($referral, $tenant->id);
+            }
+        }
+
         foreach ((array) ($registrationData['country_ids'] ?? []) as $countryId) {
             TenantCountry::query()->updateOrCreate(
                 ['tenant_id' => $tenant->id, 'country_id' => (int) $countryId],
@@ -131,6 +139,8 @@ class WebsiteRegistrationService
             if ($paymentLog) {
                 $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
                 $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
+
+                app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog);
             }
         } else {
             // Free plan: create the tenant admin synchronously in the HTTP request,

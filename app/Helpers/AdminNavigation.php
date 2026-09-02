@@ -142,6 +142,17 @@ class AdminNavigation
                             ['label' => 'Invoices', 'route' => 'admin.invoices.index', 'permission' => 'billing.invoices.view'],
                         ],
                     ],
+                    [
+                        'type' => 'group',
+                        'label' => 'Affiliates',
+                        'icon' => 'affiliates',
+                        'children' => [
+                            ['label' => 'Affiliate Accounts', 'route' => 'admin.affiliates.index', 'permission' => 'affiliates.manage'],
+                            ['label' => 'Conversions', 'route' => 'admin.affiliates.conversions', 'permission' => 'affiliates.manage'],
+                            ['label' => 'Payouts', 'route' => 'admin.affiliates.payouts', 'permission' => 'affiliates.manage'],
+                            ['label' => 'Reports', 'route' => 'admin.affiliates.reports', 'permission' => 'affiliates.manage'],
+                        ],
+                    ],
                 ],
             ],
             [

@@ -181,6 +181,7 @@ class RegisterPage extends Component
             'phone' => $this->phone ?: null,
             'locale' => app()->getLocale(),
             'package_id' => $package?->id,
+            'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
         ]);
@@ -238,6 +239,7 @@ class RegisterPage extends Component
             'phone' => $this->phone ?: null,
             'locale' => app()->getLocale(),
             'package_id' => $package?->id,
+            'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
         ]);

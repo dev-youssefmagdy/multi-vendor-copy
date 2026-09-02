@@ -417,6 +417,7 @@ class CompleteRegistrationPage extends Component
             'package_id' => $pending->package_id,
             'gateway_code' => $pending->payment_data['gateway_code'] ?? null,
             'locale' => $pending->locale,
+            'affiliate_referral_id' => $pending->affiliate_referral_id,
         ];
 
         $oauth = session('website.register.oauth');

@@ -149,27 +149,50 @@ Route::get('/locale/{locale}', function (string $locale) {
 })->name('locale.switch');
 
 // ── Public website ────────────────────────────────────────────────────────────
-Route::get('/', LandingPage::class)->name('website.home');
-Route::get('/about', AboutPage::class)->name('website.about');
-Route::get('/contact', ContactPage::class)->name('website.contact');
-Route::get('/register', RegisterPage::class)->name('website.register');
-Route::get('/register/complete', CompleteRegistrationPage::class)->name('website.register.complete');
-Route::get('/register/setup/{tenantId}', StoreOnboardingWizard::class)->name('website.store.onboarding');
-Route::prefix('register/payment')->name('website.register.payment.')->group(function () {
-    Route::get('{gateway}/{registration}/charge', [RegistrationPaymentController::class, 'charge'])->name('charge');
-    Route::match(['get', 'post'], '{gateway}/{registration}/success', [RegistrationPaymentController::class, 'success'])->name('success');
-    Route::get('{gateway}/{registration}/cancel', [RegistrationPaymentController::class, 'cancel'])->name('cancel');
+Route::middleware('track.affiliate')->group(function () {
+    Route::get('/', LandingPage::class)->name('website.home');
+    Route::get('/about', AboutPage::class)->name('website.about');
+    Route::get('/contact', ContactPage::class)->name('website.contact');
+    Route::get('/register', RegisterPage::class)->name('website.register');
+    Route::get('/register/complete', CompleteRegistrationPage::class)->name('website.register.complete');
+    Route::get('/register/setup/{tenantId}', StoreOnboardingWizard::class)->name('website.store.onboarding');
+    Route::prefix('register/payment')->name('website.register.payment.')->group(function () {
+        Route::get('{gateway}/{registration}/charge', [RegistrationPaymentController::class, 'charge'])->name('charge');
+        Route::match(['get', 'post'], '{gateway}/{registration}/success', [RegistrationPaymentController::class, 'success'])->name('success');
+        Route::get('{gateway}/{registration}/cancel', [RegistrationPaymentController::class, 'cancel'])->name('cancel');
+    });
+    Route::get('/templates', TemplatesPage::class)->name('website.templates');
+    Route::get('/pricing', PricingPage::class)->name('website.pricing');
+    Route::get('/how-it-works', HowItWorksPage::class)->name('website.how-it-works');
+    Route::get('/faqs', FaqsPage::class)->name('website.faqs');
+    Route::get('/terms', TermsPage::class)->name('website.terms');
+    Route::get('/privacy', PrivacyPage::class)->name('website.privacy');
+    Route::get('/blog', BlogListPage::class)->name('website.blog');
+    Route::get('/blog/{slug}', BlogDetailPage::class)->name('website.blog.show');
+    Route::get('/pages/{slug}', StaticPageView::class)->name('website.page');
+    Route::get('/maintenance', MaintenancePage::class)->name('website.maintenance');
 });
-Route::get('/templates', TemplatesPage::class)->name('website.templates');
-Route::get('/pricing', PricingPage::class)->name('website.pricing');
-Route::get('/how-it-works', HowItWorksPage::class)->name('website.how-it-works');
-Route::get('/faqs', FaqsPage::class)->name('website.faqs');
-Route::get('/terms', TermsPage::class)->name('website.terms');
-Route::get('/privacy', PrivacyPage::class)->name('website.privacy');
-Route::get('/blog', BlogListPage::class)->name('website.blog');
-Route::get('/blog/{slug}', BlogDetailPage::class)->name('website.blog.show');
-Route::get('/pages/{slug}', StaticPageView::class)->name('website.page');
-Route::get('/maintenance', MaintenancePage::class)->name('website.maintenance');
+
+// ── Affiliate Panel ────────────────────────────────────────────────────────
+Route::prefix('affiliate')->name('affiliate.')->group(function () {
+
+    // Auth (guest only)
+    Route::middleware('guest:affiliate')->group(function () {
+        Route::get('/login',    \App\Livewire\Affiliate\Auth\LoginPage::class)->name('login');
+        Route::get('/register', \App\Livewire\Affiliate\Auth\RegisterPage::class)->name('register');
+    });
+
+    // Authenticated affiliate panel
+    Route::middleware('auth:affiliate')->group(function () {
+        Route::get('/dashboard',     \App\Livewire\Affiliate\DashboardPage::class)->name('dashboard');
+        Route::get('/links',         \App\Livewire\Affiliate\LinksPage::class)->name('links');
+        Route::get('/conversions',   \App\Livewire\Affiliate\ConversionsPage::class)->name('conversions');
+        Route::get('/payouts',       \App\Livewire\Affiliate\PayoutsPage::class)->name('payouts');
+        Route::get('/profile',       \App\Livewire\Affiliate\ProfilePage::class)->name('profile');
+        Route::post('/logout',       \App\Http\Controllers\Affiliate\AuthController::class . '@logout')->name('logout');
+    });
+});
+
 Route::get('/sitemap.xml', SitemapController::class)->name('website.sitemap');
 Route::get('/login', OwnerLoginPage::class)->middleware('guest:tenant_owner')->name('owner.login');
 
@@ -461,6 +484,13 @@ Route::group([
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', AdminTicketsList::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('index');
         Route::get('/{ticketId}', AdminTicketDetail::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('show');
+    });
+
+    Route::prefix('affiliates')->name('affiliates.')->middleware('admin.permission:affiliates.manage')->group(function () {
+        Route::get('/',            \App\Livewire\Admin\Affiliate\AffiliatesListPage::class)->name('index');
+        Route::get('/conversions', \App\Livewire\Admin\Affiliate\ConversionsListPage::class)->name('conversions');
+        Route::get('/payouts',     \App\Livewire\Admin\Affiliate\PayoutsListPage::class)->name('payouts');
+        Route::get('/reports',     \App\Livewire\Admin\Affiliate\AffiliateReportsPage::class)->name('reports');
     });
 });
 

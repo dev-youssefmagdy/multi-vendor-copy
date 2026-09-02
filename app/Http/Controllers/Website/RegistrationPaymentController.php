@@ -71,7 +71,7 @@ class RegistrationPaymentController extends Controller
             return view((string) $result->viewName, $result->viewData);
         }
         if ($result->success) {
-            return $this->completeRegistration($registration, $gateway, [
+            return $this->completeRegistration($request, $registration, $gateway, [
                 'gateway_code' => $gateway,
                 'transaction_id' => $result->transactionId,
                 'raw_response' => $result->rawResponse,
@@ -102,7 +102,7 @@ class RegistrationPaymentController extends Controller
             return $this->redirectToRegisterWithError($result->errorMessage ?: __('Payment verification failed.'));
         }
 
-        return $this->completeRegistration($registration, $gateway, [
+        return $this->completeRegistration($request, $registration, $gateway, [
             'gateway_code' => $gateway,
             'transaction_id' => $result->transactionId,
             'raw_response' => $result->rawResponse,
@@ -118,7 +118,7 @@ class RegistrationPaymentController extends Controller
             ->with('registration_payment_cancelled', true);
     }
 
-    protected function completeRegistration(string $registration, string $gateway, array $payment): RedirectResponse
+    protected function completeRegistration(Request $request, string $registration, string $gateway, array $payment): RedirectResponse
     {
         $pending = $this->pendingRegistration($registration);
 
@@ -139,6 +139,8 @@ class RegistrationPaymentController extends Controller
 
         $token = Str::random(64);
 
+        $referral = app(\App\Services\AffiliateService::class)->resolveReferral($request);
+
         try {
             PendingRegistration::create([
                 'token' => $token,
@@ -146,6 +148,7 @@ class RegistrationPaymentController extends Controller
                 'phone' => $data['phone'] ?? null,
                 'locale' => app()->getLocale(),
                 'package_id' => $package?->id,
+                'affiliate_referral_id' => $referral?->id,
                 'payment_data' => array_merge($payment, [
                     'package_price' => (float) ($data['package_price'] ?? 0),
                 ]),

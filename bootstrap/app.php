@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
             'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
             'store.launch.gate' => \App\Http\Middleware\StoreLaunchGate::class,
+            'track.affiliate' => \App\Http\Middleware\TrackAffiliateReferral::class,
         ]);
 
         $middleware->web([
