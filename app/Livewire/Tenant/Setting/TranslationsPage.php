@@ -156,7 +156,7 @@ class TranslationsPage extends TenantPage
             'translation_progress' => 0,
         ])->save();
 
-        TranslateStoreJob::dispatch(tenant()->getTenantKey(), $language->id);
+        TranslateStoreJob::dispatch(tenant()->getTenantKey(), $language->id, triggeredBy: auth('tenant')->id());
         $limitService->incrementCounter(tenant(), 'ai_calls_count');
 
         $this->toast('Store translation queued. This may take a while.');

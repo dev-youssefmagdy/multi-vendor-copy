@@ -13,6 +13,7 @@ use App\Models\Tenant\Translation;
 use App\Models\Tenant\TranslationOverride;
 use App\Services\OpenAiTranslationService;
 use App\Translation\TenantTranslator;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Throwable;
 
@@ -45,9 +46,23 @@ class StoreTranslatorService
     ) {
     }
 
-    public function translateStore(Language $language, ?string $sourceLocale = null): void
+    public function translateStore(Language $language, ?string $sourceLocale = null, ?int $triggeredBy = null): void
     {
+        $log = Log::channel('ai_translations');
+        $jobId = (string) str()->uuid();
+        $tenantId = tenant('id');
+        $startedAt = microtime(true);
+
+        $context = [
+            'job_id' => $jobId,
+            'tenant_id' => $tenantId,
+            'language_id' => $language->id,
+            'triggered_by' => $triggeredBy,
+        ];
+
         if (!$this->openAi->configured()) {
+            $log->error('ai_translation.job_rejected', $context + ['reason' => 'OpenAI translation is not configured.']);
+
             throw new RuntimeException('OpenAI translation is not configured.');
         }
 
@@ -56,6 +71,7 @@ class StoreTranslatorService
         $sourceLang = $sourceLocale
             ? Language::query()->where('code', $sourceLocale)->first()
             : null;
+        $context += ['source_locale' => $sourceLocale, 'target_locale' => $targetLocale];
 
         if ($sourceLocale === null || $sourceLocale === $targetLocale) {
             $language->forceFill([
@@ -64,10 +80,15 @@ class StoreTranslatorService
                 'translation_summary' => json_encode(['items_translated' => 0]),
             ])->save();
 
+            $log->info('ai_translation.job_skipped', $context + ['reason' => 'source and target locale are the same, nothing to translate']);
+
             return;
         }
 
+        $log->info('ai_translation.job_started', $context);
+
         $itemsTranslated = 0;
+        $sectionSummary = [];
         $brandContext = $this->storeContext->build(
             targetLanguageName: $language->name,
             sourceLanguageName: $sourceLang?->name ?? $sourceLocale,
@@ -79,25 +100,38 @@ class StoreTranslatorService
             $language->forceFill(['translation_status' => 'running', 'translation_progress' => 0])->save();
 
             // Weight: settings/custom labels 10%, categories 30%, products 80%, pages/banners 90%, static keys 95%, done 100%.
-            $itemsTranslated += $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
+            $sectionSummary['settings'] = $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
+            $itemsTranslated += $sectionSummary['settings'];
             $language->forceFill(['translation_progress' => 10])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'settings', 'items_translated' => $sectionSummary['settings'], 'progress' => 10]);
 
-            $itemsTranslated += $this->translateModel(Category::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $sectionSummary['categories'] = $this->translateModel(Category::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $sectionSummary['categories'];
             $language->forceFill(['translation_progress' => 30])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'categories', 'items_translated' => $sectionSummary['categories'], 'progress' => 30]);
 
-            $itemsTranslated += $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $sectionSummary['products'];
             $language->forceFill(['translation_progress' => 80])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'products', 'items_translated' => $sectionSummary['products'], 'progress' => 80]);
 
-            $itemsTranslated += $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
-            $itemsTranslated += $this->translateModel(Banner::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $sectionSummary['pages'] = $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $sectionSummary['pages'];
+            $sectionSummary['banners'] = $this->translateModel(Banner::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $itemsTranslated += $sectionSummary['banners'];
             $language->forceFill(['translation_progress' => 90])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'pages_and_banners', 'items_translated' => $sectionSummary['pages'] + $sectionSummary['banners'], 'progress' => 90]);
 
             $staticKeyCount = $this->translateStaticKeys($sourceLocale, $targetLocale, $language, $brandContext);
+            $sectionSummary['static_keys'] = $staticKeyCount;
             $itemsTranslated += $staticKeyCount;
             $language->forceFill(['translation_progress' => 95])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'static_keys', 'items_translated' => $staticKeyCount, 'progress' => 95]);
 
             $tokensUsed = $this->openAi->totalTokensUsed();
             $pricePer1k = (float) config('services.openai.translation_price_per_1k_tokens', 0);
+            $costUsd = round($tokensUsed / 1000 * $pricePer1k, 4);
+            $durationSeconds = round(microtime(true) - $startedAt, 2);
 
             $language->forceFill([
                 'translation_status' => 'completed',
@@ -107,10 +141,32 @@ class StoreTranslatorService
                     'static_keys_translated' => $staticKeyCount,
                 ]),
                 'last_translation_token_count' => $tokensUsed,
-                'last_translation_cost_usd' => round($tokensUsed / 1000 * $pricePer1k, 4),
+                'last_translation_cost_usd' => $costUsd,
             ])->save();
+
+            $log->info('ai_translation.job_completed', $context + [
+                'status' => 'completed',
+                'items_translated' => $itemsTranslated,
+                'section_summary' => $sectionSummary,
+                'tokens_used' => $tokensUsed,
+                'cost_usd' => $costUsd,
+                'duration_seconds' => $durationSeconds,
+            ]);
         } catch (Throwable $e) {
+            $durationSeconds = round(microtime(true) - $startedAt, 2);
+
             $language->forceFill(['translation_status' => 'failed'])->save();
+
+            $log->error('ai_translation.job_failed', $context + [
+                'status' => 'failed',
+                'items_translated' => $itemsTranslated,
+                'section_summary' => $sectionSummary,
+                'tokens_used' => $this->openAi->totalTokensUsed(),
+                'duration_seconds' => $durationSeconds,
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+            ]);
+
             throw $e;
         }
     }

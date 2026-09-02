@@ -26,6 +26,7 @@ class TranslateStoreJob implements ShouldQueue
         public string $tenantId,
         public int $languageId,
         public ?string $sourceLocale = null,
+        public ?int $triggeredBy = null,
     ) {
         $this->onQueue('translations');
     }
@@ -35,10 +36,22 @@ class TranslateStoreJob implements ShouldQueue
         $tenant = TenantModel::find($this->tenantId);
 
         if (!$tenant) {
+            Log::channel('ai_translations')->warning('ai_translation.job_dequeued_missing_tenant', [
+                'tenant_id' => $this->tenantId,
+                'language_id' => $this->languageId,
+            ]);
+
             return;
         }
 
         tenancy()->initialize($tenant);
+
+        Log::channel('ai_translations')->info('ai_translation.job_dequeued', [
+            'tenant_id' => $this->tenantId,
+            'language_id' => $this->languageId,
+            'source_locale' => $this->sourceLocale,
+            'triggered_by' => $this->triggeredBy,
+        ]);
 
         try {
             $language = Language::query()->find($this->languageId);
@@ -47,7 +60,7 @@ class TranslateStoreJob implements ShouldQueue
                 return;
             }
 
-            app(StoreTranslatorService::class)->translateStore($language, $this->sourceLocale);
+            app(StoreTranslatorService::class)->translateStore($language, $this->sourceLocale, $this->triggeredBy);
 
             if ($language->central_language_id) {
                 app(AiTranslationPurchaseService::class)->markCompleted($this->tenantId, $language->central_language_id);
