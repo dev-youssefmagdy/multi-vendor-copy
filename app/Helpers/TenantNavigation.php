@@ -36,6 +36,7 @@ class TenantNavigation
                             ['label' => 'Products', 'route' => 'tenant.products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Own Products', 'route' => 'tenant.own-products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Edit Requests', 'route' => 'tenant.products.edit-requests', 'permission' => 'catalog.products.manage', 'badge' => self::pendingEditRequestsCount() ?: null],
+                            ['label' => 'Product Requests', 'route' => 'tenant.product-requests.index', 'permission' => 'catalog.products.manage', 'badge' => self::unreadProductRequestsCount() ?: null],
                             ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
                             ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
@@ -443,6 +444,18 @@ class TenantNavigation
         }
 
         return tenancy()->central(fn() => \App\Models\ProductEditRequest::forTenant($tenantId)->where('status', 'pending')->count());
+    }
+
+    /** Count of the tenant's product requests with an unread admin reply, shown as a nav badge. */
+    public static function unreadProductRequestsCount(): int
+    {
+        $tenantId = tenant()?->getTenantKey();
+
+        if (!$tenantId) {
+            return 0;
+        }
+
+        return tenancy()->central(fn() => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count());
     }
 
     public static function themeSelected(): bool

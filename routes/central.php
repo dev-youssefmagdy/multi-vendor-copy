@@ -486,6 +486,15 @@ Route::group([
         Route::get('/{ticketId}', AdminTicketDetail::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('show');
     });
 
+    Route::prefix('product-requests')->name('product-requests.')->group(function () {
+        Route::get('/', \App\Livewire\Admin\ProductRequest\RequestsList::class)
+             ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
+             ->name('index');
+        Route::get('/{requestId}', \App\Livewire\Admin\ProductRequest\RequestDetail::class)
+             ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
+             ->name('show');
+    });
+
     Route::prefix('affiliates')->name('affiliates.')->middleware('admin.permission:affiliates.manage')->group(function () {
         Route::get('/',            \App\Livewire\Admin\Affiliate\AffiliatesListPage::class)->name('index');
         Route::get('/conversions', \App\Livewire\Admin\Affiliate\ConversionsListPage::class)->name('conversions');

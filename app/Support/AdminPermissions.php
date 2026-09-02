@@ -17,6 +17,8 @@ class AdminPermissions
             'catalog.variations.manage' => 'Manage variations',
             'catalog.badges.manage' => 'Manage product badges',
             'catalog.product-edit-requests.manage' => 'Manage product edit requests',
+            'catalog.product-requests.view' => 'View product requests',
+            'catalog.product-requests.manage' => 'Manage product requests',
 
             'sales.orders.view' => 'View orders',
             'sales.orders.manage' => 'Manage orders',

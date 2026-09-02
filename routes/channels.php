@@ -15,6 +15,10 @@ Broadcast::channel('admin.support.{ticketId}', function ($user, int $ticketId) {
     return $user->hasAnyPermission(['support.tickets.view', 'support.tickets.manage']);
 }, ['guards' => ['admin']]);
 
+Broadcast::channel('admin.product-request.{requestId}', function ($user, int $requestId) {
+    return $user->hasAnyPermission(['catalog.product-requests.view', 'catalog.product-requests.manage']);
+}, ['guards' => ['admin']]);
+
 // Tenant panel — tenant subdomain, 'tenant' guard. The tenant is already
 // resolved from the subdomain by the time this runs, so just confirm the
 // channel's {tenantId} matches the current tenant.
@@ -23,6 +27,10 @@ Broadcast::channel('tenant.{tenantId}.notifications', function ($user, string $t
 }, ['guards' => ['tenant']]);
 
 Broadcast::channel('tenant.{tenantId}.support', function ($user, string $tenantId) {
+    return tenant('id') === $tenantId;
+}, ['guards' => ['tenant']]);
+
+Broadcast::channel('tenant.{tenantId}.product-requests', function ($user, string $tenantId) {
     return tenant('id') === $tenantId;
 }, ['guards' => ['tenant']]);
 

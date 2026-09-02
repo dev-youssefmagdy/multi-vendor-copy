@@ -39,6 +39,7 @@ class AdminNavigation
                             ['label' => 'Featured Products', 'route' => 'admin.badges.featured', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Recommended Products', 'route' => 'admin.badges.recommended', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Product Edit Requests', 'route' => 'admin.products.edit-requests', 'permission' => 'catalog.product-edit-requests.manage'],
+                            ['label' => 'Product Requests', 'route' => 'admin.product-requests.index', 'permission' => 'catalog.product-requests.view'],
                         ],
                     ],
                     [

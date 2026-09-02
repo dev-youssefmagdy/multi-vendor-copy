@@ -10,6 +10,9 @@
   $pendingEditRequestsCount = auth('admin')->user()?->hasPermission('catalog.product-edit-requests.manage')
       ? \App\Models\ProductEditRequest::where('status', 'pending')->count()
       : 0;
+  $productRequestsUnreadCount = auth('admin')->user()?->hasAnyPermission(['catalog.product-requests.view', 'catalog.product-requests.manage'])
+      ? \App\Models\ProductRequest::where('admin_has_unread', true)->count()
+      : 0;
 @endphp
 
 <aside id="sb">
@@ -68,6 +71,9 @@
             {{ $child['label'] }}
             @if (($child['route'] ?? null) === 'admin.products.edit-requests' && $pendingEditRequestsCount > 0)
               <span class="ni-badge">{{ $pendingEditRequestsCount }}</span>
+            @endif
+            @if (($child['route'] ?? null) === 'admin.product-requests.index' && $productRequestsUnreadCount > 0)
+              <span class="ni-badge">{{ $productRequestsUnreadCount }}</span>
             @endif
           </a>
         @endforeach

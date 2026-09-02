@@ -405,6 +405,12 @@ Route::middleware([
                 Route::get('/{ticketId}', TicketDetail::class)->name('show');
             });
 
+            Route::prefix('product-requests')->name('tenant.product-requests.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
+                Route::get('/', \App\Livewire\Tenant\ProductRequest\RequestsList::class)->name('index');
+                Route::get('/new', \App\Livewire\Tenant\ProductRequest\CreateRequest::class)->name('create');
+                Route::get('/{requestId}', \App\Livewire\Tenant\ProductRequest\RequestDetail::class)->name('show');
+            });
+
             Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
                 Route::get('/', CategoriesList::class)->name('index');
                 Route::get('/sort', SortCategories::class)->name('sort');
