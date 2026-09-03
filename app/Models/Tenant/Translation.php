@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Enums\TranslationSource;
 use App\Eloquent\Relations\CachedBelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,15 @@ class Translation extends Model
         'language_id',
         'field',
         'value',
+        'source',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'source' => TranslationSource::class,
+        ];
+    }
 
     public function language(): CachedBelongsTo
     {

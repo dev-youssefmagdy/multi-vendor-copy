@@ -2,6 +2,7 @@
 
 namespace App\Services\Tenant;
 
+use App\Enums\TranslationSource;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
@@ -124,13 +125,16 @@ class StoreTranslatorService
             ->where('translatable_type', $morphClass)
             ->whereIn('language_id', [$sourceLanguageId, $targetLanguageId])
             ->whereIn('field', $fields)
-            ->select(['translatable_id', 'language_id', 'field', 'value'])
+            ->select(['translatable_id', 'language_id', 'field', 'value', 'source'])
             ->cursor()
             ->each(function ($row) use (&$existing, $localeByLanguageId) {
                 $locale = $localeByLanguageId[$row->language_id] ?? null;
 
                 if ($locale !== null) {
-                    $existing[$row->translatable_id][$locale][$row->field] = (string) $row->value;
+                    $existing[$row->translatable_id][$locale][$row->field] = [
+                        'value' => (string) $row->value,
+                        'source' => $row->getRawOriginal('source'),
+                    ];
                 }
             });
 
@@ -138,10 +142,18 @@ class StoreTranslatorService
 
         foreach ($existing as $translatableId => $locales) {
             foreach ($fields as $field) {
-                $sourceValue = trim((string) ($locales[$sourceLocale][$field] ?? ''));
-                $targetValue = trim((string) ($locales[$targetLocale][$field] ?? ''));
+                $sourceValue = trim((string) ($locales[$sourceLocale][$field]['value'] ?? ''));
+                $target = $locales[$targetLocale][$field] ?? null;
+                $targetValue = trim((string) ($target['value'] ?? ''));
+                $targetSource = $target['source'] ?? null;
 
-                if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
+                $alreadyReviewed = $targetValue !== '' && in_array($targetSource, [
+                    TranslationSource::Manual->value,
+                    TranslationSource::Ai->value,
+                    TranslationSource::CentralCopy->value,
+                ], true);
+
+                if ($sourceValue === '' || $alreadyReviewed) {
                     continue;
                 }
 
@@ -178,6 +190,7 @@ class StoreTranslatorService
                 'translatable_id' => $item['translatable_id'],
                 'field' => $item['field'],
                 'value' => $value,
+                'source' => TranslationSource::Ai->value,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -188,7 +201,7 @@ class StoreTranslatorService
             Translation::query()->upsert(
                 $chunk,
                 ['language_id', 'translatable_type', 'translatable_id', 'field'],
-                ['value', 'updated_at'],
+                ['value', 'source', 'updated_at'],
             );
         }
 
@@ -298,7 +311,7 @@ class StoreTranslatorService
             Translation::query()->upsert(
                 $chunk,
                 ['language_id', 'translatable_type', 'translatable_id', 'field'],
-                ['value', 'updated_at'],
+                ['value', 'source', 'updated_at'],
             );
         }
 
@@ -326,6 +339,7 @@ class StoreTranslatorService
                     'translatable_id' => $item['translatable_id'],
                     'field' => $item['field'],
                     'value' => $value,
+                    'source' => TranslationSource::Ai->value,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
@@ -335,7 +349,7 @@ class StoreTranslatorService
                 Translation::query()->upsert(
                     $chunk,
                     ['language_id', 'translatable_type', 'translatable_id', 'field'],
-                    ['value', 'updated_at'],
+                    ['value', 'source', 'updated_at'],
                 );
             }
         }
@@ -344,10 +358,17 @@ class StoreTranslatorService
     }
 
     /**
-     * Decide, for one field, whether the target text can be copied straight
-     * from the linked central translation (no AI cost) or must be queued for
-     * OpenAI translation, falling back to the central source text when the
-     * tenant row itself has no source value.
+     * Decide, for one field, whether it needs (re)translating at all, and if
+     * so whether the target text can be copied straight from the linked
+     * central translation (no AI cost) or must be queued for OpenAI.
+     *
+     * A field is only skipped when its current target-locale row is Manual
+     * (a vendor/admin typed it on purpose) or already Ai/CentralCopy (a
+     * previous translation run already reviewed it — re-sending unchanged
+     * text like brand names to OpenAI on every run just re-bills the same
+     * tokens for the same result). Anything else — no row yet, or a row
+     * still marked Default — is a never-reviewed placeholder and gets
+     * (re)translated, i.e. TranslateStoreJob overrides every default value.
      */
     protected function planTranslationItem(
         string $morph,
@@ -364,11 +385,23 @@ class StoreTranslatorService
         array &$touchedIds,
     ): void {
         foreach ($fields as $field) {
-            $targetValue = trim((string) ($tenantLocales[$targetLocale][$field] ?? ''));
+            $target = $tenantLocales[$targetLocale][$field] ?? null;
+            $targetValue = trim((string) ($target['value'] ?? ''));
+            $targetSource = $target['source'] ?? null;
             $centralTarget = trim((string) ($centralLocales[$targetLocale][$field] ?? ''));
-            $sourceValue = trim((string) ($tenantLocales[$sourceLocale][$field] ?? $centralLocales[$sourceLocale][$field] ?? ''));
+            $sourceValue = trim((string) ($tenantLocales[$sourceLocale][$field]['value'] ?? $centralLocales[$sourceLocale][$field] ?? ''));
 
-            if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
+            if ($sourceValue === '') {
+                continue;
+            }
+
+            $alreadyReviewed = $targetValue !== '' && in_array($targetSource, [
+                TranslationSource::Manual->value,
+                TranslationSource::Ai->value,
+                TranslationSource::CentralCopy->value,
+            ], true);
+
+            if ($alreadyReviewed) {
                 continue;
             }
 
@@ -381,6 +414,7 @@ class StoreTranslatorService
                     'translatable_id' => $id,
                     'field' => $field,
                     'value' => $centralTarget,
+                    'source' => TranslationSource::CentralCopy->value,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
@@ -394,7 +428,7 @@ class StoreTranslatorService
 
     /**
      * Bulk-load existing tenant Translation rows for several morph types at
-     * once, keyed as [morphClass][translatableId][locale][field] => value.
+     * once, keyed as [morphClass][translatableId][locale][field] => ['value' => ..., 'source' => ...].
      */
     protected function existingTenantTranslations(array $morphClasses, array $localeByLanguageId): array
     {
@@ -403,13 +437,16 @@ class StoreTranslatorService
         Translation::query()
             ->whereIn('translatable_type', $morphClasses)
             ->whereIn('language_id', array_keys($localeByLanguageId))
-            ->select(['translatable_type', 'translatable_id', 'language_id', 'field', 'value'])
+            ->select(['translatable_type', 'translatable_id', 'language_id', 'field', 'value', 'source'])
             ->cursor()
             ->each(function ($row) use (&$existing, $localeByLanguageId) {
                 $locale = $localeByLanguageId[$row->language_id] ?? null;
 
                 if ($locale !== null) {
-                    $existing[$row->translatable_type][$row->translatable_id][$locale][$row->field] = (string) $row->value;
+                    $existing[$row->translatable_type][$row->translatable_id][$locale][$row->field] = [
+                        'value' => (string) $row->value,
+                        'source' => $row->getRawOriginal('source'),
+                    ];
                 }
             });
 
@@ -442,10 +479,19 @@ class StoreTranslatorService
     }
 
     /**
-     * Build the list of static UI keys (lang file defaults, minus tenant
-     * overrides) still needing translation for the target language. Skips
-     * keys that are already translated (i.e. have a target override that
-     * differs from the source text) and keys locked by the marketplace admin.
+     * Build the list of static UI keys (lang file defaults) still needing
+     * translation for the target language.
+     *
+     * keysForLocale($sourceLocale) is only used here to enumerate every
+     * known key with its English source text — it loads *English's own*
+     * overrides internally, which is irrelevant, so the target language's
+     * review status is looked up separately below. A key is pending when
+     * its target-language override has never been reviewed (no row yet, so
+     * it defaults to TranslationSource::Default). Manual/Ai/CentralCopy
+     * overrides are left alone — Manual because a vendor typed it on
+     * purpose, Ai/CentralCopy because a previous run already reviewed it
+     * (re-translating an unchanged brand name like "VISA" every run just
+     * re-bills OpenAI for the same result).
      *
      * Returned in fixed order so TranslateStaticKeysJob can safely page
      * through it with array_chunk() and report incremental progress, the
@@ -459,26 +505,23 @@ class StoreTranslatorService
             return [];
         }
 
-        $targetOverrides = TranslationOverride::query()
+        $targetOverrideSources = TranslationOverride::query()
             ->where('language_id', $language->id)
-            ->pluck('value', 'key')
-            ->all();
+            ->get(['key', 'source'])
+            ->keyBy('key');
 
         $pending = [];
 
         foreach ($rows as $row) {
             $sourceValue = trim((string) ($row['value'] ?? $row['default'] ?? ''));
-            $existingOverride = $targetOverrides[$row['key']] ?? null;
 
-            if ($sourceValue === '') {
+            if ($sourceValue === '' || ($row['locked'] ?? false)) {
                 continue;
             }
 
-            if ($row['locked'] ?? false) {
-                continue;
-            }
+            $targetSource = $targetOverrideSources->get($row['key'])?->source ?? TranslationSource::Default;
 
-            if ($existingOverride !== null && $existingOverride !== $sourceValue) {
+            if ($targetSource !== TranslationSource::Default) {
                 continue;
             }
 
@@ -491,8 +534,12 @@ class StoreTranslatorService
     /**
      * Translate one chunk of pending static keys (as built by
      * pendingStaticKeys()) into TranslationOverride rows for the target
-     * language. Returns the number of keys that received a translation in
-     * this chunk.
+     * language. Every reviewed key is saved with source=Ai — even when the
+     * translation comes back unchanged (untranslatable brand names, SKUs,
+     * emails) — so it's marked reviewed and pendingStaticKeys() won't keep
+     * re-sending it to OpenAI on every future run. Returns the number of
+     * keys whose value actually changed (i.e. a genuine translation, not
+     * just a reviewed-and-left-alone term).
      */
     public function translateStaticKeysChunk(
         array $pending,
@@ -517,15 +564,18 @@ class StoreTranslatorService
         foreach ($pending as $offset => $item) {
             $value = trim((string) ($translated[$offset] ?? ''));
 
-            if ($value === '' || $value === $item['text']) {
+            if ($value === '') {
                 continue;
             }
 
             TranslationOverride::query()->updateOrCreate(
                 ['language_id' => $language->id, 'key_hash' => hash('sha256', $item['key'])],
-                ['key' => $item['key'], 'value' => $value],
+                ['key' => $item['key'], 'value' => $value, 'source' => TranslationSource::Ai],
             );
-            $count++;
+
+            if ($value !== $item['text']) {
+                $count++;
+            }
         }
 
         TenantTranslator::flushCache();
@@ -551,14 +601,5 @@ class StoreTranslatorService
         }
 
         return null;
-    }
-
-    protected function shouldTranslate(string $sourceValue, string $targetValue): bool
-    {
-        if ($sourceValue === '') {
-            return false;
-        }
-
-        return $targetValue === '' || $targetValue === $sourceValue;
     }
 }
