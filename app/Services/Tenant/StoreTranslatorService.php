@@ -47,6 +47,9 @@ class StoreTranslatorService
     /** Products are processed in DB chunks of this size by TranslateProductsJob. */
     public const PRODUCT_CHUNK_SIZE = 200;
 
+    /** Static keys are processed in chunks of this size by TranslateStaticKeysJob. */
+    public const STATIC_KEY_CHUNK_SIZE = 50;
+
     public function __construct(
         protected OpenAiTranslationService $openAi,
         protected StoreContextService $storeContext,
@@ -439,21 +442,21 @@ class StoreTranslatorService
     }
 
     /**
-     * Translate all static UI keys (lang file defaults, minus tenant overrides)
-     * into TranslationOverride rows for the target language. Skips keys that
-     * are already translated (i.e. have a target override that differs from
-     * the source text) and keys locked by the marketplace admin.
+     * Build the list of static UI keys (lang file defaults, minus tenant
+     * overrides) still needing translation for the target language. Skips
+     * keys that are already translated (i.e. have a target override that
+     * differs from the source text) and keys locked by the marketplace admin.
+     *
+     * Returned in fixed order so TranslateStaticKeysJob can safely page
+     * through it with array_chunk() and report incremental progress, the
+     * same way productsQuery()->chunkById() pages through products.
      */
-    public function translateStaticKeys(
-        string $sourceLocale,
-        string $targetLocale,
-        Language $language,
-        string $brandContext = ''
-    ): int {
+    public function pendingStaticKeys(string $sourceLocale, Language $language): array
+    {
         $rows = $this->translationService->keysForLocale($sourceLocale);
 
         if (empty($rows)) {
-            return 0;
+            return [];
         }
 
         $targetOverrides = TranslationOverride::query()
@@ -482,6 +485,22 @@ class StoreTranslatorService
             $pending[] = ['key' => $row['key'], 'text' => $sourceValue];
         }
 
+        return $pending;
+    }
+
+    /**
+     * Translate one chunk of pending static keys (as built by
+     * pendingStaticKeys()) into TranslationOverride rows for the target
+     * language. Returns the number of keys that received a translation in
+     * this chunk.
+     */
+    public function translateStaticKeysChunk(
+        array $pending,
+        string $sourceLocale,
+        string $targetLocale,
+        Language $language,
+        string $brandContext = ''
+    ): int {
         if (empty($pending)) {
             return 0;
         }
