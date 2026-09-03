@@ -61,7 +61,7 @@
                 $scriptsKey = 'scripts-v2';
             @endphp
             @break
-        @case('v3') <!-- v3 || public/souqify-2 -->
+        @case('v3') <!-- v3 Modern Edition || public/souqify-2 -->
             @php
                 $headerKey = 'header-v3';
                 $footerKey = 'footer-v3';
@@ -69,7 +69,7 @@
                 $scriptsKey = 'scripts-v3';
             @endphp
             @break
-        @case('v4') <!-- v4 || public/souqify-3 -->
+        @case('v4') <!-- v4 Green Edition || public/souqify-3 -->
             @php
                 $headerKey = 'header-v4';
                 $footerKey = 'footer-v4';
@@ -77,7 +77,7 @@
                 $scriptsKey = 'scripts-v4';
             @endphp
             @break
-        @case('v5') <!-- v5 || public/souqify-4 -->
+        @case('v5') <!-- v5 Orange Edition || public/souqify-4 -->
             @php
                 $headerKey = 'header-v5';
                 $footerKey = 'footer-v5';
@@ -85,7 +85,7 @@
                 $scriptsKey = 'scripts-v5';
             @endphp
             @break
-        @case('v6') <!-- v6 || public/souqify-5 -->
+        @case('v6') <!-- v6 Pink Edition || public/souqify-5 -->
             @php
                 $headerKey = 'header-v6';
                 $footerKey = 'footer-v6';
