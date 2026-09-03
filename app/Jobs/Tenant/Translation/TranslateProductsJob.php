@@ -68,7 +68,7 @@ class TranslateProductsJob extends TranslatesStoreSection
             $total = Product::query()->count();
 
             if ($total === 0) {
-                Cache::put($this->reportCacheKey(), ['items' => 0, 'tokens' => 0], now()->addHours(2));
+                Cache::driver('file')->put($this->reportCacheKey(), ['items' => 0, 'tokens' => 0], now()->addHours(2));
                 Language::query()->where('id', $this->languageId)->increment('translation_progress', $this->weight());
 
                 return;
@@ -124,7 +124,7 @@ class TranslateProductsJob extends TranslatesStoreSection
 
             $tokensUsed = $service->totalTokensUsed();
 
-            Cache::put($this->reportCacheKey(), [
+            Cache::driver('file')->put($this->reportCacheKey(), [
                 'items' => $touched,
                 'tokens' => $tokensUsed,
             ], now()->addHours(2));
