@@ -67,7 +67,7 @@ class OpenAiTranslationService
         }
         info('OpenAI translation: ' . count($pending) . ' unique items to translate.');
 
-        $chunks = array_chunk(array_values($pending), 50);
+        $chunks = array_chunk(array_values($pending), 25);
         $totalChunks = count($chunks);
 
         foreach ($chunks as $chunkNumber => $chunk) {
