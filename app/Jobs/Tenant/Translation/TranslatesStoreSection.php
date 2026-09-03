@@ -86,7 +86,7 @@ abstract class TranslatesStoreSection implements ShouldQueue
 
             $tokensUsed = $service->totalTokensUsed();
 
-            Cache::put($this->reportCacheKey(), [
+            Cache::driver('file')->put($this->reportCacheKey(), [
                 'items' => $itemsTranslated,
                 'tokens' => $tokensUsed,
             ], now()->addHours(2));

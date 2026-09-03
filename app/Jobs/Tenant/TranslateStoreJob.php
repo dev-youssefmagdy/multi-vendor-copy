@@ -174,7 +174,7 @@ class TranslateStoreJob implements ShouldQueue
             ->onQueue('translations')
             ->allowFailures(false)
             ->then(function (Batch $batch) use ($tenantId, $languageId, $context, $sections, $batchCacheKey, $startedAt) {
-                self::finalizeAsTenant($tenantId, function () use ($languageId, $context, $sections, $batchCacheKey, $startedAt) {
+                self::finalizeAsTenant($tenantId, function () use ($tenantId, $languageId, $context, $sections, $batchCacheKey, $startedAt) {
                     $language = Language::query()->find($languageId);
 
                     if (!$language) {
@@ -223,7 +223,7 @@ class TranslateStoreJob implements ShouldQueue
                 });
             })
             ->catch(function (Batch $batch, Throwable $e) use ($tenantId, $languageId, $context, $sections, $batchCacheKey) {
-                self::finalizeAsTenant($tenantId, function () use ($languageId, $context, $sections, $batchCacheKey, $e) {
+                self::finalizeAsTenant($tenantId, function () use ($tenantId, $languageId, $context, $sections, $batchCacheKey, $e) {
                     $language = Language::query()->find($languageId);
 
                     $language?->forceFill(['translation_status' => 'failed'])->save();
