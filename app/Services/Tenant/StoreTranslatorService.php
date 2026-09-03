@@ -522,8 +522,8 @@ class StoreTranslatorService
             }
 
             TranslationOverride::query()->updateOrCreate(
-                ['language_id' => $language->id, 'key' => $item['key']],
-                ['value' => $value],
+                ['language_id' => $language->id, 'key_hash' => hash('sha256', $item['key'])],
+                ['key' => $item['key'], 'value' => $value],
             );
             $count++;
         }

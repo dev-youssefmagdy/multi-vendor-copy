@@ -88,8 +88,8 @@ class TenantTranslationService
         }
 
         TranslationOverride::query()->updateOrCreate(
-            ['language_id' => $languageId, 'key' => $key],
-            ['value' => $value],
+            ['language_id' => $languageId, 'key_hash' => hash('sha256', $key)],
+            ['key' => $key, 'value' => $value],
         );
 
         TenantTranslator::flushCache();
