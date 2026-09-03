@@ -2,7 +2,6 @@
 
 namespace App\Models\Tenant;
 
-use App\Enums\TranslationSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,15 +12,7 @@ class TranslationOverride extends Model
         'key',
         'key_hash',
         'value',
-        'source',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'source' => TranslationSource::class,
-        ];
-    }
 
     protected static function booted(): void
     {

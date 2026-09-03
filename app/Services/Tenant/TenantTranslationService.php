@@ -2,7 +2,6 @@
 
 namespace App\Services\Tenant;
 
-use App\Enums\TranslationSource;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\TranslationOverride;
 use App\Repositories\AppSettingRepository;
@@ -60,8 +59,8 @@ class TenantTranslationService
         if ($language) {
             $overrides = TranslationOverride::query()
                 ->where('language_id', $language->id)
-                ->get(['key', 'value', 'source'])
-                ->keyBy('key');
+                ->pluck('value', 'key')
+                ->all();
         }
 
         $rows = [];
@@ -71,9 +70,8 @@ class TenantTranslationService
             $rows[] = [
                 'key' => $key,
                 'default' => $default,
-                'override' => $override?->value,
-                'value' => $override?->value ?? $default,
-                'source' => $override?->source ?? TranslationSource::Default,
+                'override' => $override,
+                'value' => $override ?? $default,
                 'locked' => in_array($key, $lockedKeys, true),
             ];
         }
@@ -91,7 +89,7 @@ class TenantTranslationService
 
         TranslationOverride::query()->updateOrCreate(
             ['language_id' => $languageId, 'key_hash' => hash('sha256', $key)],
-            ['key' => $key, 'value' => $value, 'source' => TranslationSource::Manual],
+            ['key' => $key, 'value' => $value],
         );
 
         TenantTranslator::flushCache();
