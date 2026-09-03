@@ -110,7 +110,7 @@ class StoreTranslatorService
             $language->forceFill(['translation_progress' => 30])->save();
             $log->info('ai_translation.section_completed', $context + ['section' => 'categories', 'items_translated' => $sectionSummary['categories'], 'progress' => 30]);
 
-            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
+            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext, language: $language);
             $itemsTranslated += $sectionSummary['products'];
             $language->forceFill(['translation_progress' => 80])->save();
             $log->info('ai_translation.section_completed', $context + ['section' => 'products', 'items_translated' => $sectionSummary['products'], 'progress' => 80]);
@@ -293,7 +293,7 @@ class StoreTranslatorService
      * straight into the tenant Translation table with no AI call; only text
      * missing from both the tenant and the central catalog is sent to OpenAI.
      */
-    protected function translateProducts(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
+    protected function translateProducts(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = '', ?Language $language = null): int
     {
         $productFields = self::MODEL_FIELDS[Product::class];
         $variantFields = self::VARIANT_FIELDS;
@@ -374,12 +374,20 @@ class StoreTranslatorService
         }
 
         if ($pending !== []) {
+            $onChunkTranslated = $language !== null
+                ? function (int $completed, int $total) use ($language) {
+                    $progress = 30 + (int) round(50 * $completed / max($total, 1));
+                    $language->forceFill(['translation_progress' => min($progress, 80)])->save();
+                }
+                : null;
+
             $translated = $this->openAi->translateBatch(
                 array_map(fn(array $item) => $item['text'], $pending),
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
                 $brandContext ?: 'Tenant store products and variants',
+                $onChunkTranslated,
             );
 
             $rows = [];

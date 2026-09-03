@@ -37,6 +37,7 @@ class OpenAiTranslationService
         string $targetLocale,
         string $targetLanguage,
         string $context,
+        ?callable $onChunkTranslated = null,
     ): array {
         $translations = array_fill(0, count($texts), '');
         $pending = [];
@@ -64,8 +65,12 @@ class OpenAiTranslationService
 
             $pending[$cacheKey]['indexes'][] = $index;
         }
+        info('OpenAI translation: ' . count($pending) . ' unique items to translate.');
 
-        foreach (array_chunk(array_values($pending), 50) as $chunk) {
+        $chunks = array_chunk(array_values($pending), 50);
+        $totalChunks = count($chunks);
+
+        foreach ($chunks as $chunkNumber => $chunk) {
             $chunkTranslations = $this->requestTranslations(
                 array_map(fn(array $item) => $item['text'], $chunk),
                 $sourceLocale,
@@ -83,6 +88,10 @@ class OpenAiTranslationService
                 foreach ($item['indexes'] as $index) {
                     $translations[$index] = $translated;
                 }
+            }
+
+            if ($onChunkTranslated !== null) {
+                $onChunkTranslated($chunkNumber + 1, $totalChunks);
             }
         }
 
