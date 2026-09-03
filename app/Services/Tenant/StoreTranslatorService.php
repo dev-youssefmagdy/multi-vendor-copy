@@ -13,15 +13,20 @@ use App\Models\Tenant\Translation;
 use App\Models\Tenant\TranslationOverride;
 use App\Services\OpenAiTranslationService;
 use App\Translation\TenantTranslator;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 use RuntimeException;
-use Throwable;
 
 /**
  * Translates the full tenant store (custom labels, categories, products,
  * pages, and banners) into a given tenant language, using the same
  * OpenAiTranslationService + syncTranslations() pattern as
  * App\Services\CatalogTranslatorService (the central catalog equivalent).
+ *
+ * This service only contains the translation logic for each store section.
+ * Orchestration (queueing, progress tracking, batching, and finalizing the
+ * Language row) lives in the App\Jobs\Tenant\Translation job classes and in
+ * App\Jobs\Tenant\TranslateStoreJob, which builds a Bus::batch() of these
+ * per-section jobs.
  *
  * NOTE on pricing: token-usage-based billing is not implemented yet — this
  * service tracks a simple "items translated" count for the completion
@@ -30,14 +35,17 @@ use Throwable;
  */
 class StoreTranslatorService
 {
-    protected const MODEL_FIELDS = [
+    public const MODEL_FIELDS = [
         Category::class => ['name', 'description', 'meta_keywords', 'meta_description'],
         Product::class => ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
         Page::class => ['title', 'body'],
         Banner::class => ['title', 'subtitle', 'button_text'],
     ];
 
-    protected const VARIANT_FIELDS = ['title'];
+    public const VARIANT_FIELDS = ['title'];
+
+    /** Products are processed in DB chunks of this size by TranslateProductsJob. */
+    public const PRODUCT_CHUNK_SIZE = 200;
 
     public function __construct(
         protected OpenAiTranslationService $openAi,
@@ -46,132 +54,32 @@ class StoreTranslatorService
     ) {
     }
 
-    public function translateStore(Language $language, ?string $sourceLocale = null, ?int $triggeredBy = null): void
+    public function ensureConfigured(): void
     {
-        $log = Log::channel('ai_translations');
-        $jobId = (string) str()->uuid();
-        $tenantId = tenant('id');
-        $startedAt = microtime(true);
-
-        $context = [
-            'job_id' => $jobId,
-            'tenant_id' => $tenantId,
-            'language_id' => $language->id,
-            'triggered_by' => $triggeredBy,
-        ];
-
         if (!$this->openAi->configured()) {
-            $log->error('ai_translation.job_rejected', $context + ['reason' => 'OpenAI translation is not configured.']);
-
             throw new RuntimeException('OpenAI translation is not configured.');
-        }
-
-        $targetLocale = strtolower((string) $language->code);
-        $sourceLocale = $this->resolveSourceLocale($targetLocale, $sourceLocale);
-        $sourceLang = $sourceLocale
-            ? Language::query()->where('code', $sourceLocale)->first()
-            : null;
-        $context += ['source_locale' => $sourceLocale, 'target_locale' => $targetLocale];
-
-        if ($sourceLocale === null || $sourceLocale === $targetLocale) {
-            $language->forceFill([
-                'translation_progress' => 100,
-                'translation_status' => 'completed',
-                'translation_summary' => json_encode(['items_translated' => 0]),
-            ])->save();
-
-            $log->info('ai_translation.job_skipped', $context + ['reason' => 'source and target locale are the same, nothing to translate']);
-
-            return;
-        }
-
-        $log->info('ai_translation.job_started', $context);
-
-        $itemsTranslated = 0;
-        $sectionSummary = [];
-        $brandContext = $this->storeContext->build(
-            targetLanguageName: $language->name,
-            sourceLanguageName: $sourceLang?->name ?? $sourceLocale,
-        );
-
-        $this->openAi->resetUsage();
-
-        try {
-            $language->forceFill(['translation_status' => 'running', 'translation_progress' => 0])->save();
-
-            // Weight: settings/custom labels 10%, categories 30%, pages/banners 50%, static keys 70%, products 95%, done 100%.
-            $sectionSummary['settings'] = $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
-            $itemsTranslated += $sectionSummary['settings'];
-            $language->forceFill(['translation_progress' => 10])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'settings', 'items_translated' => $sectionSummary['settings'], 'progress' => 10]);
-
-            $sectionSummary['categories'] = $this->translateModel(Category::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
-            $itemsTranslated += $sectionSummary['categories'];
-            $language->forceFill(['translation_progress' => 30])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'categories', 'items_translated' => $sectionSummary['categories'], 'progress' => 30]);
-
-            $sectionSummary['pages'] = $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
-            $itemsTranslated += $sectionSummary['pages'];
-            $sectionSummary['banners'] = $this->translateModel(Banner::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
-            $itemsTranslated += $sectionSummary['banners'];
-            $language->forceFill(['translation_progress' => 50])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'pages_and_banners', 'items_translated' => $sectionSummary['pages'] + $sectionSummary['banners'], 'progress' => 50]);
-
-            $staticKeyCount = $this->translateStaticKeys($sourceLocale, $targetLocale, $language, $brandContext);
-            $sectionSummary['static_keys'] = $staticKeyCount;
-            $itemsTranslated += $staticKeyCount;
-            $language->forceFill(['translation_progress' => 70])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'static_keys', 'items_translated' => $staticKeyCount, 'progress' => 70]);
-
-            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext, language: $language);
-            $itemsTranslated += $sectionSummary['products'];
-            $language->forceFill(['translation_progress' => 95])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'products', 'items_translated' => $sectionSummary['products'], 'progress' => 95]);
-
-            $tokensUsed = $this->openAi->totalTokensUsed();
-            $pricePer1k = (float) config('services.openai.translation_price_per_1k_tokens', 0);
-            $costUsd = round($tokensUsed / 1000 * $pricePer1k, 4);
-            $durationSeconds = round(microtime(true) - $startedAt, 2);
-
-            $language->forceFill([
-                'translation_status' => 'completed',
-                'translation_progress' => 100,
-                'translation_summary' => json_encode([
-                    'items_translated' => $itemsTranslated,
-                    'static_keys_translated' => $staticKeyCount,
-                ]),
-                'last_translation_token_count' => $tokensUsed,
-                'last_translation_cost_usd' => $costUsd,
-            ])->save();
-
-            $log->info('ai_translation.job_completed', $context + [
-                'status' => 'completed',
-                'items_translated' => $itemsTranslated,
-                'section_summary' => $sectionSummary,
-                'tokens_used' => $tokensUsed,
-                'cost_usd' => $costUsd,
-                'duration_seconds' => $durationSeconds,
-            ]);
-        } catch (Throwable $e) {
-            $durationSeconds = round(microtime(true) - $startedAt, 2);
-
-            $language->forceFill(['translation_status' => 'failed'])->save();
-
-            $log->error('ai_translation.job_failed', $context + [
-                'status' => 'failed',
-                'items_translated' => $itemsTranslated,
-                'section_summary' => $sectionSummary,
-                'tokens_used' => $this->openAi->totalTokensUsed(),
-                'duration_seconds' => $durationSeconds,
-                'error' => $e->getMessage(),
-                'exception' => get_class($e),
-            ]);
-
-            throw $e;
         }
     }
 
-    protected function translateSettings(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
+    public function buildBrandContext(Language $targetLanguage, ?Language $sourceLanguage, string $sourceLocale): string
+    {
+        return $this->storeContext->build(
+            targetLanguageName: $targetLanguage->name,
+            sourceLanguageName: $sourceLanguage?->name ?? $sourceLocale,
+        );
+    }
+
+    public function totalTokensUsed(): int
+    {
+        return $this->openAi->totalTokensUsed();
+    }
+
+    public function resetUsage(): void
+    {
+        $this->openAi->resetUsage();
+    }
+
+    public function translateSettings(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = ''): int
     {
         return $this->translateModel(Setting::class, ['title', 'value'], $sourceLocale, $targetLocale, $targetLanguage, $brandContext, 'Tenant custom label setting');
     }
@@ -185,7 +93,7 @@ class StoreTranslatorService
      * index. This scales to several thousand rows without the per-chunk overhead of
      * chunkById() + per-model delete/recreate.
      */
-    protected function translateModel(
+    public function translateModel(
         string $modelClass,
         ?array $fields = null,
         string $sourceLocale = '',
@@ -285,16 +193,46 @@ class StoreTranslatorService
     }
 
     /**
-     * Translates every tenant Product together with its variants. Rather than
-     * treating Product like a plain tenant model, this pulls all products with
-     * their variants and each row's linked central Product/ProductVariant
-     * translations: when the central catalog already has the target-locale
-     * text (translated once, centrally, for every tenant), it is copied
-     * straight into the tenant Translation table with no AI call; only text
-     * missing from both the tenant and the central catalog is sent to OpenAI.
+     * Base query for the products translation pass: every tenant Product with
+     * its variants and each row's linked central Product/ProductVariant
+     * translations preloaded, ordered by id so it is safe to page through
+     * with chunkById() from TranslateProductsJob.
      */
-    protected function translateProducts(string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext = '', ?Language $language = null): int
+    public function productsQuery()
     {
+        return Product::query()
+            ->with([
+                'variants',
+                'centralProduct.translations.language',
+                'variants.centralVariant.translations.language',
+            ])
+            ->orderBy('id');
+    }
+
+    /**
+     * Translates one chunk of tenant Products (with their variants) fetched
+     * via productsQuery()->chunkById(). Rather than treating Product like a
+     * plain tenant model, this reads each row's linked central
+     * Product/ProductVariant translations: when the central catalog already
+     * has the target-locale text (translated once, centrally, for every
+     * tenant), it is copied straight into the tenant Translation table with
+     * no AI call; only text missing from both the tenant and the central
+     * catalog is sent to OpenAI.
+     *
+     * Returns the number of products+variants that received a translation
+     * in this chunk.
+     */
+    public function translateProductsChunk(
+        Collection $products,
+        string $sourceLocale,
+        string $targetLocale,
+        string $targetLanguage,
+        string $brandContext = '',
+    ): int {
+        if ($products->isEmpty()) {
+            return 0;
+        }
+
         $productFields = self::MODEL_FIELDS[Product::class];
         $variantFields = self::VARIANT_FIELDS;
 
@@ -303,18 +241,6 @@ class StoreTranslatorService
         $targetLanguageId = $languageIds->get($targetLocale);
 
         if (!$sourceLanguageId || !$targetLanguageId) {
-            return 0;
-        }
-
-        $products = Product::query()
-            ->with([
-                'variants',
-                'centralProduct.translations.language',
-                'variants.centralVariant.translations.language',
-            ])
-            ->get();
-
-        if ($products->isEmpty()) {
             return 0;
         }
 
@@ -374,20 +300,12 @@ class StoreTranslatorService
         }
 
         if ($pending !== []) {
-            $onChunkTranslated = $language !== null
-                ? function (int $completed, int $total) use ($language) {
-                    $progress = 30 + (int) round(50 * $completed / max($total, 1));
-                    $language->forceFill(['translation_progress' => min($progress, 80)])->save();
-                }
-                : null;
-
             $translated = $this->openAi->translateBatch(
                 array_map(fn(array $item) => $item['text'], $pending),
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
                 $brandContext ?: 'Tenant store products and variants',
-                $onChunkTranslated,
             );
 
             $rows = [];
@@ -526,7 +444,7 @@ class StoreTranslatorService
      * are already translated (i.e. have a target override that differs from
      * the source text) and keys locked by the marketplace admin.
      */
-    protected function translateStaticKeys(
+    public function translateStaticKeys(
         string $sourceLocale,
         string $targetLocale,
         Language $language,
@@ -596,7 +514,7 @@ class StoreTranslatorService
         return $count;
     }
 
-    protected function resolveSourceLocale(string $targetLocale, ?string $sourceLocale = null): ?string
+    public function resolveSourceLocale(string $targetLocale, ?string $sourceLocale = null): ?string
     {
         $candidates = array_filter([
             $sourceLocale,
