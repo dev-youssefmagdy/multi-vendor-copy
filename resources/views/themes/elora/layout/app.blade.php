@@ -100,6 +100,7 @@
 
     @livewireStyles
     @include('themes.elora.layout.' . $stylesKey)
+    @include('storefront.partials.theme-color-overrides')
     @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>

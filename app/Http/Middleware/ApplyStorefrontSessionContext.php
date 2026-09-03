@@ -83,6 +83,8 @@ class ApplyStorefrontSessionContext
                 $request->attributes->set('storefrontCurrentThemeVariant', $currentThemeVariant);
                 view()->share('storefrontThemeVariant', $currentThemeVariant);
             }
+
+            view()->share('storefrontColors', $this->storefrontRepository->resolvedThemeColors());
         }
 
         return $next($request);

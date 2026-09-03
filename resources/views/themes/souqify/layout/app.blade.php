@@ -104,6 +104,7 @@
 
     @livewireStyles
     @include('themes.souqify.layout.' . $stylesKey)
+    @include('storefront.partials.theme-color-overrides')
     @include('storefront.partials.tracking-scripts')
     @stack('styles')
     @stack('head')

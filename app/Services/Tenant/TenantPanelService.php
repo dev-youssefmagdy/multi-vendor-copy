@@ -23,6 +23,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Subscriber;
 use App\Models\Tenant\Theme;
+use App\Models\Tenant\TenantThemeColor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -704,6 +705,29 @@ class TenantPanelService
 
             return $banner->fresh('translations');
         });
+    }
+
+    /**
+     * Save the tenant's color overrides for a theme, optionally scoped to a
+     * country. Only non-empty values are stored — clearing a field removes
+     * that key so it falls back to the variant's default.
+     */
+    public function saveThemeColors(int $themeId, ?int $countryId, array $colors): TenantThemeColor
+    {
+        $colors = array_filter($colors, fn($value) => filled($value));
+
+        return TenantThemeColor::query()->updateOrCreate(
+            ['theme_id' => $themeId, 'country_id' => $countryId],
+            ['colors' => $colors]
+        );
+    }
+
+    public function resetThemeColors(int $themeId, ?int $countryId): void
+    {
+        TenantThemeColor::query()
+            ->where('theme_id', $themeId)
+            ->where('country_id', $countryId)
+            ->delete();
     }
 
     public function saveSocialLink(array $data, ?SocialLink $link = null): SocialLink

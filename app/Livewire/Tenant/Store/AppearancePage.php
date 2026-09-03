@@ -8,6 +8,7 @@ use App\Models\HomeVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
@@ -52,6 +53,63 @@ class AppearancePage extends TenantPage
         $this->logoBgColor = $value;
     }
 
+    // ── Colors ────────────────────────────────────────────────────────────────
+    /** @var array<string, string> CSS custom property => hex value, for the active theme's variant. */
+    public array $colorDefaults = [];
+    /** @var array<string, string> Tenant overrides currently in effect (subset of colorDefaults keys). */
+    public array $colorValues = [];
+
+    protected function loadColors(): void
+    {
+        $storefrontRepo = app(StorefrontRepository::class);
+        $theme = $storefrontRepo->currentTheme();
+        $variant = $storefrontRepo->currentHomeVariant();
+
+        $this->colorDefaults = $variant ? (array) ($variant->colors ?? []) : [];
+
+        $override = $theme
+            ? (array) (TenantThemeColor::query()
+                ->where('theme_id', $theme->id)
+                ->whereNull('country_id')
+                ->value('colors') ?? [])
+            : [];
+
+        if (is_string($override)) {
+            $override = json_decode($override, true) ?: [];
+        }
+
+        $this->colorValues = array_merge($this->colorDefaults, $override);
+    }
+
+    public function saveColors(TenantPanelService $service): void
+    {
+        $theme = app(StorefrontRepository::class)->currentTheme();
+        if (!$theme) {
+            return;
+        }
+
+        $rules = [];
+        foreach (array_keys($this->colorDefaults) as $property) {
+            $rules["colorValues.{$property}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{3,8}$/'];
+        }
+        $this->validate($rules);
+
+        $service->saveThemeColors($theme->id, null, $this->colorValues);
+        $this->toast('Storefront colors saved successfully.');
+    }
+
+    public function resetColors(TenantPanelService $service): void
+    {
+        $theme = app(StorefrontRepository::class)->currentTheme();
+        if (!$theme) {
+            return;
+        }
+
+        $service->resetThemeColors($theme->id, null);
+        $this->loadColors();
+        $this->toast('Storefront colors reset to the theme default.');
+    }
+
     // ── Social Links ──────────────────────────────────────────────────────────
     public bool $socialModalOpen = false;
     public ?int $socialId = null;
@@ -78,6 +136,8 @@ class AppearancePage extends TenantPage
 
     public function mount(): void
     {
+        $this->loadColors();
+
         $repo = app(TenantPanelRepository::class);
         $languages = $repo->activeLanguages();
 

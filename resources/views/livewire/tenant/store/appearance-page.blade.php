@@ -103,6 +103,7 @@
     <div class="appearance-tabs fu d1 section-gap">
         @foreach ([
             'general'      => 'General',
+            'colors'       => 'Colors',
             'social_links' => 'Social Links',
             'promo_banner' => 'Promo Banner',
             'footer'       => 'Footer',
@@ -132,6 +133,49 @@
                         {{-- Logo --}}
                         @include('livewire.tenant.store.partials.logo-builder')
                     </div>
+                </section>
+            </form>
+        </div>
+    @endif
+
+    {{-- ─────────────────────────────────── TAB: COLORS ───────────────────────────────────── --}}
+    @if ($activeTab === 'colors')
+        <div class="appearance-tab-panel fu d2">
+            <form wire:submit="saveColors" class="page-stack">
+                <section class="card form-card">
+                    <div class="panel-head mb-5">
+                        <div>
+                            <h3 class="panel-title">Storefront Colors</h3>
+                            <p class="panel-copy">Customize the colors of your active theme's variant. Changes apply site-wide.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <x-btn type="button" variant="secondary" wire:click="resetColors">Reset to Default</x-btn>
+                            <x-btn type="submit">Save Colors</x-btn>
+                        </div>
+                    </div>
+
+                    @if (empty($colorDefaults))
+                        <div class="empty-state">
+                            <div class="empty-state-title">No customizable colors for this variant</div>
+                            <p class="empty-state-copy">The active theme variant doesn't expose color customization yet.</p>
+                        </div>
+                    @else
+                        <div class="form-grid form-grid-2">
+                            @foreach ($colorDefaults as $property => $default)
+                                <div>
+                                    <label class="field-label">{{ \Illuminate\Support\Str::headline(str_replace('--color-', '', $property)) }}</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="color"
+                                            wire:model.live="colorValues.{{ $property }}"
+                                            style="width:44px;height:38px;padding:2px;border-radius:8px;" />
+                                        <x-input type="text" wire:model.live="colorValues.{{ $property }}"
+                                            :error="$errors->has('colorValues.' . $property)" />
+                                    </div>
+                                    @error('colorValues.' . $property)<div class="field-error">{{ $message }}</div>@enderror
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </section>
             </form>
         </div>

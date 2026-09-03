@@ -17,6 +17,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
 use App\Models\DeliveryPopupDay;
 use App\Models\HomeVariant;
 use App\Services\CountryDetectorService;
@@ -685,6 +686,47 @@ class StorefrontRepository
             ->where('is_default', true)
             ->where('is_active', true)
             ->first());
+    }
+
+    /**
+     * Resolve the CSS custom properties to render for the current storefront
+     * request: the active home variant's default palette, overlaid with any
+     * tenant color overrides (country-specific taking priority over the
+     * tenant-wide default), keyed by CSS custom property name.
+     */
+    public function resolvedThemeColors(): array
+    {
+        if (\array_key_exists('resolved_theme_colors', $this->memo)) {
+            return $this->memo['resolved_theme_colors'];
+        }
+
+        $theme = $this->currentTheme();
+        $variant = $this->currentHomeVariant();
+
+        if (!$theme || !$variant) {
+            return $this->memo['resolved_theme_colors'] = [];
+        }
+
+        $defaults = (array) ($variant->colors ?? []);
+
+        $country = $this->detectedCountry();
+        $override = null;
+
+        if ($country) {
+            $override = TenantThemeColor::query()
+                ->where('theme_id', $theme->id)
+                ->where('country_id', $country->id)
+                ->value('colors');
+        }
+
+        $override ??= TenantThemeColor::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('colors');
+
+        $override = $override ? (is_array($override) ? $override : json_decode($override, true)) : [];
+
+        return $this->memo['resolved_theme_colors'] = array_merge($defaults, $override ?: []);
     }
 
 

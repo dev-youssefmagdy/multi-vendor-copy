@@ -48,6 +48,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @livewireStyles
     @include('themes.ecommet.layout.styles')
+    @include('storefront.partials.theme-color-overrides')
     @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>
