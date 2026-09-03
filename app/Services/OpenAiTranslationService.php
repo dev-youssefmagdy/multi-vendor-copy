@@ -65,7 +65,7 @@ class OpenAiTranslationService
             $pending[$cacheKey]['indexes'][] = $index;
         }
 
-        foreach (array_chunk(array_values($pending), 25) as $chunk) {
+        foreach (array_chunk(array_values($pending), 50) as $chunk) {
             $chunkTranslations = $this->requestTranslations(
                 array_map(fn(array $item) => $item['text'], $chunk),
                 $sourceLocale,
