@@ -78,6 +78,8 @@ class TranslateProductsJob extends TranslatesStoreSection
             $processed = 0;
             $appliedWeight = 0;
 
+            info('Total Products to translate: ' . $total);
+
             $service->productsQuery()->chunkById(StoreTranslatorService::PRODUCT_CHUNK_SIZE, function ($products) use (
                 $service,
                 &$touched,
@@ -89,6 +91,8 @@ class TranslateProductsJob extends TranslatesStoreSection
                 if ($this->batch()?->cancelled()) {
                     return false;
                 }
+
+                info("Products chunk: " . $products->pluck('id')->join(', '));
 
                 $touched += $service->translateProductsChunk(
                     $products,
