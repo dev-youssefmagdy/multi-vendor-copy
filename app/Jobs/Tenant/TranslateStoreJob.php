@@ -186,7 +186,7 @@ class TranslateStoreJob implements ShouldQueue
                     $tokensUsed = 0;
 
                     foreach ($sections as $section) {
-                        $report = Cache::pull("{$batchCacheKey}:{$section}") ?? ['items' => 0, 'tokens' => 0];
+                        $report = Cache::driver('file')->pull("{$batchCacheKey}:{$section}") ?? ['items' => 0, 'tokens' => 0];
                         $summary[$section] = $report['items'];
                         $itemsTranslated += $report['items'];
                         $tokensUsed += $report['tokens'];
@@ -233,7 +233,7 @@ class TranslateStoreJob implements ShouldQueue
                     }
 
                     foreach ($sections as $section) {
-                        Cache::forget("{$batchCacheKey}:{$section}");
+                        Cache::driver('file')->forget("{$batchCacheKey}:{$section}");
                     }
 
                     Log::channel('ai_translations')->error('ai_translation.job_failed', $context + [
