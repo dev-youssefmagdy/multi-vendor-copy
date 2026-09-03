@@ -140,44 +140,67 @@
 
     {{-- ─────────────────────────────────── TAB: COLORS ───────────────────────────────────── --}}
     @if ($activeTab === 'colors')
-        <div class="appearance-tab-panel fu d2">
-            <form wire:submit="saveColors" class="page-stack">
-                <section class="card form-card">
-                    <div class="panel-head mb-5">
+        <div class="appearance-tab-panel fu d2 page-stack">
+            @forelse ($colorThemes as $themeId => $themeSection)
+                <details class="card form-card theme-color-group" @if ($themeSection['is_active']) open @endif>
+                    <summary class="panel-head mb-0" style="cursor:pointer;list-style:none;">
                         <div>
-                            <h3 class="panel-title">Storefront Colors</h3>
-                            <p class="panel-copy">Customize the colors of your active theme's variant. Changes apply site-wide.</p>
+                            <h3 class="panel-title">
+                                {{ $themeSection['name'] }}
+                                @if ($themeSection['is_active'])
+                                    <span class="badge badge-cyan" style="margin-inline-start:8px;">Active Theme</span>
+                                @endif
+                            </h3>
+                            <p class="panel-copy">{{ count($themeSection['variants']) }} variant(s) with customizable colors.</p>
                         </div>
-                        <div class="flex gap-2">
-                            <x-btn type="button" variant="secondary" wire:click="resetColors">Reset to Default</x-btn>
-                            <x-btn type="submit">Save Colors</x-btn>
-                        </div>
-                    </div>
+                    </summary>
 
-                    @if (empty($colorDefaults))
-                        <div class="empty-state">
-                            <div class="empty-state-title">No customizable colors for this variant</div>
-                            <p class="empty-state-copy">The active theme variant doesn't expose color customization yet.</p>
-                        </div>
-                    @else
-                        <div class="form-grid form-grid-2">
-                            @foreach ($colorDefaults as $property => $default)
-                                <div>
-                                    <label class="field-label">{{ \Illuminate\Support\Str::headline(str_replace('--color-', '', $property)) }}</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="color"
-                                            wire:model.live="colorValues.{{ $property }}"
-                                            style="width:44px;height:38px;padding:2px;border-radius:8px;" />
-                                        <x-input type="text" wire:model.live="colorValues.{{ $property }}"
-                                            :error="$errors->has('colorValues.' . $property)" />
+                    <div class="page-stack" style="margin-top:20px;">
+                        @foreach ($themeSection['variants'] as $variantId => $section)
+                            <section class="card form-card" style="background:transparent;">
+                                <div class="panel-head mb-5">
+                                    <div>
+                                        <h4 class="panel-title" style="font-size:14px;">
+                                            {{ $section['name'] }}
+                                            @if ($section['is_active'])
+                                                <span class="badge badge-green" style="margin-inline-start:8px;">Active Variant</span>
+                                            @endif
+                                        </h4>
+                                        <p class="panel-copy">Changes apply site-wide whenever this variant is active.</p>
                                     </div>
-                                    @error('colorValues.' . $property)<div class="field-error">{{ $message }}</div>@enderror
+                                    <div class="flex gap-2">
+                                        <x-btn type="button" variant="secondary" wire:click="resetColors({{ $themeId }}, {{ $variantId }})">Reset to Default</x-btn>
+                                        <x-btn type="button" wire:click="saveColors({{ $themeId }}, {{ $variantId }})">Save Colors</x-btn>
+                                    </div>
                                 </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
-            </form>
+
+                                <div class="form-grid form-grid-2">
+                                    @foreach ($section['defaults'] as $property => $default)
+                                        <div>
+                                            <label class="field-label">{{ \Illuminate\Support\Str::headline(str_replace('--color-', '', $property)) }}</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color"
+                                                    wire:model.live="colorThemes.{{ $themeId }}.variants.{{ $variantId }}.values.{{ $property }}"
+                                                    style="width:44px;height:38px;padding:2px;border-radius:8px;" />
+                                                <x-input type="text" wire:model.live="colorThemes.{{ $themeId }}.variants.{{ $variantId }}.values.{{ $property }}"
+                                                    :error="$errors->has('colorThemes.' . $themeId . '.variants.' . $variantId . '.values.' . $property)" />
+                                            </div>
+                                            @error('colorThemes.' . $themeId . '.variants.' . $variantId . '.values.' . $property)<div class="field-error">{{ $message }}</div>@enderror
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endforeach
+                    </div>
+                </details>
+            @empty
+                <div class="card form-card">
+                    <div class="empty-state">
+                        <div class="empty-state-title">No customizable colors yet</div>
+                        <p class="empty-state-copy">None of your storefront themes expose variants with color customization.</p>
+                    </div>
+                </div>
+            @endforelse
         </div>
     @endif
 

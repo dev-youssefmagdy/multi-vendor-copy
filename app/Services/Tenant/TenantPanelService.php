@@ -708,24 +708,26 @@ class TenantPanelService
     }
 
     /**
-     * Save the tenant's color overrides for a theme, optionally scoped to a
-     * country. Only non-empty values are stored — clearing a field removes
-     * that key so it falls back to the variant's default.
+     * Save the tenant's color overrides for one home variant of a theme,
+     * optionally scoped to a country. Only non-empty values are stored —
+     * clearing a field removes that key so it falls back to the variant's
+     * default.
      */
-    public function saveThemeColors(int $themeId, ?int $countryId, array $colors): TenantThemeColor
+    public function saveThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId, array $colors): TenantThemeColor
     {
         $colors = array_filter($colors, fn($value) => filled($value));
 
         return TenantThemeColor::query()->updateOrCreate(
-            ['theme_id' => $themeId, 'country_id' => $countryId],
+            ['theme_id' => $themeId, 'home_variant_id' => $homeVariantId, 'country_id' => $countryId],
             ['colors' => $colors]
         );
     }
 
-    public function resetThemeColors(int $themeId, ?int $countryId): void
+    public function resetThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId): void
     {
         TenantThemeColor::query()
             ->where('theme_id', $themeId)
+            ->where('home_variant_id', $homeVariantId)
             ->where('country_id', $countryId)
             ->delete();
     }

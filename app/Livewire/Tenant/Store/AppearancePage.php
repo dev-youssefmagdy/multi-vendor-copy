@@ -9,6 +9,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantThemeColor;
+use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
@@ -54,60 +55,99 @@ class AppearancePage extends TenantPage
     }
 
     // ── Colors ────────────────────────────────────────────────────────────────
-    /** @var array<string, string> CSS custom property => hex value, for the active theme's variant. */
-    public array $colorDefaults = [];
-    /** @var array<string, string> Tenant overrides currently in effect (subset of colorDefaults keys). */
-    public array $colorValues = [];
+    /**
+     * One entry per tenant theme, each holding one entry per home variant.
+     * Shape: [theme_id => ['name' => ..., 'slug' => ..., 'is_active' => bool, 'variants' => [
+     *     variant_id => ['key' => 'v2', 'name' => 'Purple Edition', 'is_active' => bool, 'defaults' => [...], 'values' => [...]],
+     * ]]]
+     * @var array<int, array>
+     */
+    public array $colorThemes = [];
 
     protected function loadColors(): void
     {
+        $this->colorThemes = [];
+
         $storefrontRepo = app(StorefrontRepository::class);
-        $theme = $storefrontRepo->currentTheme();
-        $variant = $storefrontRepo->currentHomeVariant();
+        $activeTheme = $storefrontRepo->currentTheme();
+        $activeVariant = $storefrontRepo->currentHomeVariant();
 
-        $this->colorDefaults = $variant ? (array) ($variant->colors ?? []) : [];
+        $themes = Theme::query()->orderBy('name')->get();
 
-        $override = $theme
-            ? (array) (TenantThemeColor::query()
+        foreach ($themes as $theme) {
+            $variants = tenancy()->central(fn() => HomeVariant::forTheme(strtolower($theme->slug))
+                ->where('is_active', true)
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get()
+            );
+
+            $overrides = TenantThemeColor::query()
                 ->where('theme_id', $theme->id)
                 ->whereNull('country_id')
-                ->value('colors') ?? [])
-            : [];
+                ->get()
+                ->keyBy('home_variant_id');
 
-        if (is_string($override)) {
-            $override = json_decode($override, true) ?: [];
+            $variantSections = [];
+            foreach ($variants as $variant) {
+                $defaults = (array) ($variant->colors ?? []);
+                if (empty($defaults)) {
+                    continue;
+                }
+
+                $override = (array) ($overrides->get($variant->id)?->colors ?? []);
+
+                $variantSections[$variant->id] = [
+                    'key' => $variant->key,
+                    'name' => $variant->name,
+                    'is_active' => $activeTheme && $activeTheme->id === $theme->id
+                        && $activeVariant && $activeVariant->id === $variant->id,
+                    'defaults' => $defaults,
+                    'values' => array_merge($defaults, $override),
+                ];
+            }
+
+            if (empty($variantSections)) {
+                continue;
+            }
+
+            $this->colorThemes[$theme->id] = [
+                'name' => $theme->name,
+                'slug' => $theme->slug,
+                'is_active' => $activeTheme && $activeTheme->id === $theme->id,
+                'variants' => $variantSections,
+            ];
         }
-
-        $this->colorValues = array_merge($this->colorDefaults, $override);
     }
 
-    public function saveColors(TenantPanelService $service): void
+    public function saveColors(int $themeId, int $variantId, TenantPanelService $service): void
     {
-        $theme = app(StorefrontRepository::class)->currentTheme();
-        if (!$theme) {
+        if (!isset($this->colorThemes[$themeId]['variants'][$variantId])) {
             return;
         }
 
+        $section = $this->colorThemes[$themeId]['variants'][$variantId];
+
         $rules = [];
-        foreach (array_keys($this->colorDefaults) as $property) {
-            $rules["colorValues.{$property}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{3,8}$/'];
+        foreach (array_keys($section['defaults']) as $property) {
+            $rules["colorThemes.{$themeId}.variants.{$variantId}.values.{$property}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{3,8}$/'];
         }
         $this->validate($rules);
 
-        $service->saveThemeColors($theme->id, null, $this->colorValues);
+        $service->saveThemeColors($themeId, $variantId, null, $section['values']);
         $this->toast('Storefront colors saved successfully.');
     }
 
-    public function resetColors(TenantPanelService $service): void
+    public function resetColors(int $themeId, int $variantId, TenantPanelService $service): void
     {
-        $theme = app(StorefrontRepository::class)->currentTheme();
-        if (!$theme) {
+        if (!isset($this->colorThemes[$themeId]['variants'][$variantId])) {
             return;
         }
 
-        $service->resetThemeColors($theme->id, null);
-        $this->loadColors();
-        $this->toast('Storefront colors reset to the theme default.');
+        $service->resetThemeColors($themeId, $variantId, null);
+        $this->colorThemes[$themeId]['variants'][$variantId]['values']
+            = $this->colorThemes[$themeId]['variants'][$variantId]['defaults'];
+        $this->toast('Storefront colors reset to the default.');
     }
 
     // ── Social Links ──────────────────────────────────────────────────────────

@@ -715,12 +715,14 @@ class StorefrontRepository
         if ($country) {
             $override = TenantThemeColor::query()
                 ->where('theme_id', $theme->id)
+                ->where('home_variant_id', $variant->id)
                 ->where('country_id', $country->id)
                 ->value('colors');
         }
 
         $override ??= TenantThemeColor::query()
             ->where('theme_id', $theme->id)
+            ->where('home_variant_id', $variant->id)
             ->whereNull('country_id')
             ->value('colors');
 
