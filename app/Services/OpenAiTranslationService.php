@@ -144,6 +144,8 @@ class OpenAiTranslationService
             throw new RuntimeException('OpenAI translation response was empty.');
         }
 
+        info($content);
+
         $decoded = json_decode($content, true);
 
         if (!is_array($decoded)) {

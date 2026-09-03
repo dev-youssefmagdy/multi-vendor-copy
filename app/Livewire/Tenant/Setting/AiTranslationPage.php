@@ -139,6 +139,7 @@ class AiTranslationPage extends TenantPage
             ->get()
             ->keyBy('central_language_id');
 
+
         $activeTenantCentralIds = $tenantLanguages
             ->filter(fn (TenantLanguage $lang) => $lang->is_active)
             ->keys()
