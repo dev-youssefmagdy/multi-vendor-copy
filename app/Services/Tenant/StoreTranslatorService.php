@@ -99,7 +99,7 @@ class StoreTranslatorService
         try {
             $language->forceFill(['translation_status' => 'running', 'translation_progress' => 0])->save();
 
-            // Weight: settings/custom labels 10%, categories 30%, products 80%, pages/banners 90%, static keys 95%, done 100%.
+            // Weight: settings/custom labels 10%, categories 30%, pages/banners 50%, static keys 70%, products 95%, done 100%.
             $sectionSummary['settings'] = $this->translateSettings($sourceLocale, $targetLocale, $language->name, $brandContext);
             $itemsTranslated += $sectionSummary['settings'];
             $language->forceFill(['translation_progress' => 10])->save();
@@ -110,23 +110,23 @@ class StoreTranslatorService
             $language->forceFill(['translation_progress' => 30])->save();
             $log->info('ai_translation.section_completed', $context + ['section' => 'categories', 'items_translated' => $sectionSummary['categories'], 'progress' => 30]);
 
-            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext, language: $language);
-            $itemsTranslated += $sectionSummary['products'];
-            $language->forceFill(['translation_progress' => 80])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'products', 'items_translated' => $sectionSummary['products'], 'progress' => 80]);
-
             $sectionSummary['pages'] = $this->translateModel(Page::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $itemsTranslated += $sectionSummary['pages'];
             $sectionSummary['banners'] = $this->translateModel(Banner::class, sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext);
             $itemsTranslated += $sectionSummary['banners'];
-            $language->forceFill(['translation_progress' => 90])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'pages_and_banners', 'items_translated' => $sectionSummary['pages'] + $sectionSummary['banners'], 'progress' => 90]);
+            $language->forceFill(['translation_progress' => 50])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'pages_and_banners', 'items_translated' => $sectionSummary['pages'] + $sectionSummary['banners'], 'progress' => 50]);
 
             $staticKeyCount = $this->translateStaticKeys($sourceLocale, $targetLocale, $language, $brandContext);
             $sectionSummary['static_keys'] = $staticKeyCount;
             $itemsTranslated += $staticKeyCount;
+            $language->forceFill(['translation_progress' => 70])->save();
+            $log->info('ai_translation.section_completed', $context + ['section' => 'static_keys', 'items_translated' => $staticKeyCount, 'progress' => 70]);
+
+            $sectionSummary['products'] = $this->translateProducts(sourceLocale: $sourceLocale, targetLocale: $targetLocale, targetLanguage: $language->name, brandContext: $brandContext, language: $language);
+            $itemsTranslated += $sectionSummary['products'];
             $language->forceFill(['translation_progress' => 95])->save();
-            $log->info('ai_translation.section_completed', $context + ['section' => 'static_keys', 'items_translated' => $staticKeyCount, 'progress' => 95]);
+            $log->info('ai_translation.section_completed', $context + ['section' => 'products', 'items_translated' => $sectionSummary['products'], 'progress' => 95]);
 
             $tokensUsed = $this->openAi->totalTokensUsed();
             $pricePer1k = (float) config('services.openai.translation_price_per_1k_tokens', 0);
