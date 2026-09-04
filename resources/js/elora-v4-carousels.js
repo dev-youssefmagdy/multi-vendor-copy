@@ -7,7 +7,7 @@ function mountNewIn() {
   const wrapper = document.getElementById("newInWrapper");
   if (!wrapper) return;
   return new Swiper(wrapper.closest(".swiper"), {
-    slidesPerView: 1.75,
+    slidesPerView: 0.5,
     spaceBetween: 16,
     slidesOffsetAfter: 16,
     breakpoints: {
@@ -19,13 +19,42 @@ function mountNewIn() {
   });
 }
 
+function mountCategories() {
+  const wrapper = document.getElementById("categoriesWrapper");
+  if (!wrapper) return;
+  return new Swiper(wrapper.closest(".swiper"), {
+    slidesPerView: "auto",
+    spaceBetween: 16,
+    breakpoints: {
+      1024: { spaceBetween: 32 },
+    },
+  });
+}
+
 function mountTrending() {
   const wrapper = document.getElementById("trendingWrapper");
   if (!wrapper) return;
-  return new Swiper(wrapper.closest(".swiper"), {
-    slidesPerView: 2.5,
-    spaceBetween: 16,
-  });
+  const container = wrapper.closest(".swiper");
+  // Mobile renders as a plain stacked column (no Swiper at all — toggling
+  // Swiper's `enabled` option across a breakpoint doesn't reliably
+  // re-run slide sizing/positioning), desktop is a real 2.5-per-view swiper.
+  const mq = window.matchMedia("(min-width: 1024px)");
+  let instance = null;
+
+  function sync() {
+    if (mq.matches && !instance) {
+      instance = new Swiper(container, {
+        slidesPerView: 2.5,
+        spaceBetween: 16,
+      });
+    } else if (!mq.matches && instance) {
+      instance.destroy(true, true);
+      instance = null;
+    }
+  }
+
+  sync();
+  mq.addEventListener("change", sync);
 }
 
 function mountFlashSale() {
@@ -56,6 +85,7 @@ function mountBestSeller() {
 
 function initCarousels() {
   mountNewIn();
+  mountCategories();
   mountTrending();
   mountFlashSale();
   mountBestSeller();

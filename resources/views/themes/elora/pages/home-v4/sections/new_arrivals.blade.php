@@ -27,11 +27,11 @@
               @if ($left)
                 <div class="swiper-slide h-auto lg:w-[898.26px]!">
                   <div class="flex gap-[16px] h-full">
-                    <div class="shrink-0 w-[240px] lg:w-[270.45px]">
+                    <div class="shrink-0 w-[126.08px] h-[190.43px] lg:w-[270.45px] lg:h-auto">
                       @include('themes.elora.pages.home-v4.sections.partials.product_card', ['p' => $left])
                     </div>
                     @if ($top || $bottom)
-                      <div class="flex-1 min-w-0 flex flex-col gap-[21px]">
+                      <div class="shrink-0 lg:flex-1 lg:shrink lg:min-w-0 flex flex-col gap-[21px]">
                         @if ($top)
                           <div class="flex-1 min-h-0">
                             @include('themes.elora.pages.home-v4.sections.partials.new_in_side_card', ['p' => $top])

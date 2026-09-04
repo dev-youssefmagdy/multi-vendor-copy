@@ -18,9 +18,8 @@
     </div>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
       aria-label="{{ __('Add to cart') }}"
-      class="flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[16px] shrink-0 h-[28px] lg:h-[45px] w-[36px] lg:w-[57px] cursor-pointer bg-[var(--color-text-primary)] lg:bg-[var(--color-bg-main)]">
-      <img src="{{ asset('elora-4/assets/icons/cart.svg') }}" alt="" class="lg:hidden size-[15px] invert" />
-      <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="hidden lg:block lg:size-[24px]" />
+      class="flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[16px] shrink-0 h-[28px] lg:h-[45px] w-[36px] lg:w-[57px] cursor-pointer bg-[var(--color-bg-main)]">
+      <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="size-[15px] lg:size-[24px]" />
     </button>
   </div>
   <div class="flex flex-col gap-[4px] lg:gap-[8px] items-start p-[4px] lg:p-[8px] relative shrink-0 w-full">

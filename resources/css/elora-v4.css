@@ -91,8 +91,21 @@ body {
 
 .newin-swiper,
 .trending-swiper,
-.best-seller-swiper {
+.best-seller-swiper,
+.categories-swiper {
   overflow: hidden;
+}
+
+/* Trending Now: stacked full-width column on mobile, horizontal swiper from desktop up */
+.trending-swiper .swiper-wrapper {
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 1024px) {
+  .trending-swiper .swiper-wrapper {
+    flex-direction: row;
+    gap: 0;
+  }
 }
 
 /* ── Flash Sale pure-JS slider ─────────────────────────────── */
