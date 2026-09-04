@@ -4,7 +4,7 @@
     @if ($recommendedCards->isNotEmpty())
     <!-- ============ RECOMMENDED FOR YOU ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class="relative px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
     >
       <div class="flex items-center justify-between">
         <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
@@ -13,16 +13,32 @@
         <a
           href="{{ route('tenant.storefront.category') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
-          style="color: var(--color-brand-orange-bright)"
+          style="color: var(--color-accent-purple)"
           >{{ __('see all') }}</a
         >
       </div>
       <div
-        class="grid grid-cols-2 lg:grid-cols-5 gap-[12px] lg:gap-[16px]"
+        class="grid grid-cols-2 lg:grid-cols-6 gap-[12px] lg:gap-[24px]"
       >
         @foreach ($recommendedCards as $p)
+          @php
+            $__badgeCycle = $loop->index % 3;
+            if ($__badgeCycle === 0) {
+                $p['badgeText'] = __('New In');
+                $p['badgeBg'] = 'var(--color-badge-purple)';
+                $p['badgeColor'] = '#FFFFFF';
+            } elseif ($__badgeCycle === 1) {
+                $p['badgeText'] = !empty($p['discount']) ? $p['discount'] : __('30% OFF');
+                $p['badgeBg'] = 'var(--color-error)';
+                $p['badgeColor'] = '#FFFFFF';
+            } else {
+                $p['badgeText'] = $p['sold'] ?? __('70% Sold');
+                $p['badgeBg'] = 'var(--color-accent-yellow)';
+                $p['badgeColor'] = 'var(--color-black)';
+            }
+          @endphp
           <div class="h-full" wire:key="recommended-{{ $p['id'] }}">
-            @include('themes.elora.pages.home-v4.sections.partials.product_card', ['p' => $p])
+            @include('themes.elora.pages.home-v4.sections.partials.recommended_card', ['p' => $p])
           </div>
         @endforeach
       </div>
@@ -37,5 +53,11 @@
           </div>
         </div>
       @endif
+
+      {{-- Right-edge fade hinting the grid continues / scrolls --}}
+      <div
+        class="hidden lg:block absolute top-0 right-0 h-full w-[120px] pointer-events-none"
+        style="background: linear-gradient(91.97deg, rgba(255, 255, 255, 0) 1.85%, #F3F3F3 95.21%);"
+      ></div>
     </section>
     @endif

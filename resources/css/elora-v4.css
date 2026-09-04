@@ -123,16 +123,16 @@ body {
 
 @media (min-width: 1024px) {
   .flash-track {
-    /* Desktop: 3 rows × 148px + 2 gaps of 12px = 468px */
-    height: 468px;
+    /* Desktop: 3 rows × 148.51px + 2 gaps of 12px = 469.53px */
+    height: 469.53px;
     gap: 12px;
     /* flex-direction stays column, flex-wrap stays wrap */
     /* Cards stack into columns of 3, track scrolls left/right */
   }
   .flash-slide {
     /* Desktop: 3 cards per column, each card fixed width */
-    width: 400px;
-    height: 148px;
+    width: 470.8px;
+    height: 148.51px;
   }
 }
 
@@ -232,7 +232,7 @@ body {
 
 .flash-card-fav {
   position: absolute;
-  bottom: 6px;
+  top: 6px;
   left: 6px;
   width: 26px;
   height: 26px;
@@ -316,44 +316,81 @@ body {
   white-space: nowrap;
 }
 
-.flash-card-cart {
-  display: inline-flex;
+.flash-card-delivery-row {
+  display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--color-text-primary);
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
-  align-self: flex-start;
+  min-width: 0;
 }
 
-.flash-card-cart-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: white;
+.flash-card-delivery-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.flash-card-delivery-text {
+  font-size: 8px;
+  font-weight: 500;
+  color: var(--color-success);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flash-card-cart {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.flash-card-cart-icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ── Desktop overrides ── */
 @media (min-width: 1024px) {
   .flash-card-wrap {
-    height: 148px;
-    width: 400px;
+    height: 148.51px;
+    width: 470.8px;
   }
 
   .flash-card {
-    height: 148px;
-    width: 400px;
+    height: 148.51px;
+    width: 470.8px;
+    border-radius: 9.9px;
+    gap: 4.95px;
   }
 
   .flash-card-img-wrap {
-    width: 156px;
+    width: 204.17px;
+  }
+
+  .flash-card-img {
+    inset: 5.19px 6.23px;
   }
 
   .flash-card-badge {
+    width: 64.91px;
+    height: 25.47px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 12px;
-    padding: 3px 8px;
+    padding: 5.46px;
+    border-top-right-radius: 7.28px;
+    border-bottom-left-radius: 7.28px;
   }
 
   .flash-card-fav {
@@ -362,8 +399,8 @@ body {
   }
 
   .flash-card-info {
-    padding: 10px 10px 8px;
-    gap: 5px;
+    padding: 6.6px;
+    gap: 6.6px;
   }
 
   .flash-card-name {
@@ -382,14 +419,27 @@ body {
     font-size: 13px;
   }
 
-  .flash-card-cart {
-    padding: 5px 14px;
-    border-radius: 8px;
-    gap: 5px;
+  .flash-card-delivery-icon {
+    width: 17px;
+    height: 17px;
   }
 
-  .flash-card-cart-label {
-    font-size: 13px;
+  .flash-card-delivery-text {
+    font-size: 12px;
+  }
+
+  .flash-card-cart {
+    bottom: 8px;
+    right: 8px;
+    width: 59.14px;
+    height: 46.69px;
+    padding: 4.15px 12.45px;
+    border-radius: 16.6px;
+  }
+
+  .flash-card-cart-icon {
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -438,7 +488,6 @@ body {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 12px 0;
 }
 .hero-dot {
   display: inline-block;
@@ -523,11 +572,11 @@ body {
 .pattern-newin {
   background-color: var(--color-brand-orange);
   background-image: repeating-radial-gradient(
-    circle at 0% 0%,
+    circle at center,
     rgba(255, 255, 255, 0.14) 0px,
-    rgba(255, 255, 255, 0.14) 2px,
-    transparent 2px,
-    transparent 46px
+    rgba(255, 255, 255, 0.14) 24px,
+    transparent 24px,
+    transparent 68px
   );
 }
 

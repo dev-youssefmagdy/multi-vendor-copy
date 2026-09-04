@@ -39,7 +39,7 @@
       <div class="mb-[8px] lg:mb-[17.6px]">
         <span class="inline-block bg-white
                      px-[8px] py-[2px] rounded-[4px]
-                     lg:px-[17.6px] lg:py-[4.4px] lg:rounded-[8.8px]
+                     lg:px-[17.61px] lg:py-[4.4px] lg:rounded-[8.8px]
                      font-black tracking-[1px] lg:tracking-[2.2px]
                      text-[12px] lg:text-[26.4px]
                      leading-[16px] lg:leading-[35.2px]

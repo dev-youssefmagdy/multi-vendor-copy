@@ -9,6 +9,13 @@ function mountNewIn() {
   return new Swiper(wrapper.closest(".swiper"), {
     slidesPerView: 1.75,
     spaceBetween: 16,
+    slidesOffsetAfter: 16,
+    breakpoints: {
+      1024: {
+        slidesPerView: "auto",
+        slidesOffsetAfter: 56,
+      },
+    },
   });
 }
 

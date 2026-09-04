@@ -4,7 +4,7 @@
     @if ($trendingCards->isNotEmpty())
     <!-- ============ TRENDING NOW ============ -->
     <section
-      class="pattern-trending px-[16px] lg:px-[56px] py-[24px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class="pattern-trending px-[16px] lg:px-[56px] py-[48px] flex flex-col gap-[16px] lg:gap-[34px] "
       wire:ignore
     >
       <div class="flex items-center justify-between">

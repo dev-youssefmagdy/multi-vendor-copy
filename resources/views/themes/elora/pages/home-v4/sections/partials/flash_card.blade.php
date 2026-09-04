@@ -42,6 +42,17 @@
         <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[14px] lg:size-[18px]" />
       </button>
 
+      {{-- Add to cart button --}}
+      <button
+        type="button"
+        class="flash-card-cart"
+        wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})"
+        onclick="event.stopPropagation()"
+        aria-label="{{ __('Add to cart') }}"
+      >
+        <img src="{{ asset('elora-4/assets/icons/add-to-cart.svg') }}" alt="" class="flash-card-cart-icon" />
+      </button>
+
     </div>
 
     {{-- ── Info section ────────────────────────────────────────────── --}}
@@ -49,7 +60,7 @@
 
       {{-- Name + weight --}}
       <div class="flash-card-name-row">
-        <p class="flash-card-name line-clamp-2">{{ $p['name'] }}</p>
+        <p class="flash-card-name line-clamp-1">{{ $p['name'] }}</p>
         @if ($p['weight'])
           <p class="flash-card-weight">{{ $p['weight'] }}</p>
         @endif
@@ -73,17 +84,11 @@
         @endif
       </div>
 
-      {{-- Add to cart button --}}
-      <button
-        type="button"
-        class="flash-card-cart"
-        wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})"
-        onclick="event.stopPropagation()"
-        aria-label="{{ __('Add to cart') }}"
-      >
-        <img src="{{ asset('elora-4/assets/icons/cart.svg') }}" alt="" class="size-[16px] lg:size-[20px] invert" />
-        <span class="flash-card-cart-label">{{ __('Add') }}</span>
-      </button>
+      {{-- Delivery estimate --}}
+      <div class="flash-card-delivery-row">
+        <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="flash-card-delivery-icon" />
+        <span class="flash-card-delivery-text">{{ __('Delivered by 24 March') }}</span>
+      </div>
 
     </div>
 

@@ -1,7 +1,7 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; ordered/progress optional --}}
 <div class="swiper-slide h-auto">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex bg-[var(--color-bg-main)] rounded-[10px] shadow-sm h-full overflow-hidden" style="text-decoration:none">
-    <div class="relative w-[45%] shrink-0">
+  <a href="{{ $p['url'] ?? '#' }}" class="flex lg:items-center bg-[var(--color-bg-main)] rounded-[10px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden" style="text-decoration:none">
+    <div class="relative w-[45%] lg:w-[222.51px] shrink-0 h-full lg:h-[236px] lg:px-[6.36px] lg:py-[5.3px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
       <span class="absolute top-0 right-0 text-[12px] lg:text-[16px] font-normal px-[8px] py-[4px] rounded-bl-[8px]" style="background:var(--color-accent-yellow); color:var(--color-black)">70% Sold</span>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
@@ -9,31 +9,50 @@
         aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[6px] left-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('elora-4/assets/icons/heart.svg') }}" class="size-[16px] lg:size-[22px]" alt="" /></button>
       <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
         aria-label="{{ __('Add to cart') }}"
-        class="absolute bottom-[8px] right-[8px] rounded-[8px] p-[6px] shadow cursor-pointer" style="background:var(--color-text-primary)"><img src="{{ asset('elora-4/assets/icons/cart.svg') }}" class="size-[20px] lg:size-[26px] invert" alt="" /></button>
+        class="absolute bottom-[8px] right-[8px] flex items-center justify-center bg-white rounded-[10px] lg:rounded-[14px] size-[32px] lg:size-[44px] shadow cursor-pointer"><img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" class="size-[14px] lg:size-[20px]" alt="" /></button>
     </div>
-    <div class="flex-1 min-w-0 p-[12px] lg:p-[14px] flex flex-col gap-[8px]">
-      <div class="flex items-center justify-between gap-[6px]">
-        <p class="font-medium text-[16px] lg:text-[19px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-        <p class="text-[14px] lg:text-[16px] shrink-0 whitespace-nowrap" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] ?? '250g' }}</p>
+    <div class="flex-1 min-w-0 px-[12px] py-[12px] lg:px-[13.49px] lg:py-[6.74px] flex flex-col gap-[8px] lg:gap-[13.49px] lg:h-[193.86px] lg:justify-center">
+
+      {{-- Name + weight + subtitle --}}
+      <div class="flex flex-col gap-[2px] lg:gap-[4.24px] w-full">
+        <div class="flex items-center justify-between gap-[6px] lg:gap-[2.12px] w-full">
+          <p class="font-medium text-[16px] lg:text-[23.6px] lg:leading-[30px] lg:tracking-[0.53px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
+          <p class="text-[14px] lg:text-[25.29px] lg:leading-[26px] lg:tracking-[0.53px] lg:text-center shrink-0 whitespace-nowrap" style="color:var(--color-brand-orange-bright)">{{ $p['weight'] ?? '250g' }}</p>
+        </div>
+        <p class="text-[13px] lg:text-[20.23px] lg:leading-[25px] lg:tracking-[0.53px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
       </div>
-      <p class="text-[13px] lg:text-[16px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
-      <div class="h-[6px] lg:h-[8px] w-full rounded-full" style="background:var(--color-stroke)">
-        <div class="h-full rounded-full" style="background:var(--color-error); width:{{ $p['progress'] ?? 83 }}%"></div>
+
+      {{-- Progress bar --}}
+      <div class="flex flex-col gap-[2px] lg:gap-[1.69px]">
+        <div class="h-[6px] lg:h-[8.43px] w-full rounded-full" style="background:#D9D9D9">
+          <div class="h-full rounded-full" style="background:var(--color-brand-orange-bright); width:{{ $p['progress'] ?? 83 }}%"></div>
+        </div>
+        <p class="text-[11px] lg:text-[16.86px] lg:leading-[21px] lg:tracking-[0.53px] truncate" style="color:var(--color-brand-orange-bright)">{{ $p['ordered'] ?? __('Trending now') }}</p>
       </div>
-      <p class="text-[11px] lg:text-[13px] truncate" style="color:var(--color-error)">{{ $p['ordered'] ?? __('Trending now') }}</p>
-      <div class="flex items-center gap-[6px]">
-        <img src="{{ asset('elora-4/assets/icons/star-rating.svg') }}" alt="" class="h-[8px] lg:h-[10px] w-[56px] lg:w-[70px]" />
-        <span class="text-[12px] lg:text-[14px]" style="color:var(--color-text-subtitle)">{{ $p['rating'] }}</span>
+
+      {{-- Rating + price --}}
+      <div class="flex flex-col gap-[6px] lg:gap-[4.24px]">
+        <div class="flex items-center gap-[6px] lg:gap-[8.48px]">
+          <img src="{{ asset('elora-4/assets/icons/star-rating.svg') }}" alt="" class="h-[8px] lg:h-[10.59px] w-[56px] lg:w-[72.57px] shrink-0" />
+          <span class="text-[12px] lg:text-[20.23px] lg:leading-[25px] lg:tracking-[0.53px]" style="color:var(--color-text-subtitle)">{{ $p['rating'] }}</span>
+        </div>
+        <div class="flex items-end gap-[6px] lg:gap-[8.48px]">
+          <p class="font-medium text-[16px] lg:text-[26.97px] lg:leading-[34px]" style="color:var(--color-text-primary)">{{ $p['price'] }}</p>
+          @if (!empty($p['oldPrice']))
+          <p class="text-[11px] lg:text-[14.83px] lg:leading-[19px] lg:font-light line-through" style="color:var(--color-text-subtitle)">{{ $p['oldPrice'] }}</p>
+          @endif
+          @if (!empty($p['discount']))
+          <p class="text-[12px] lg:text-[20.23px] lg:leading-[25px] lg:tracking-[0.53px]" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
+          @endif
+        </div>
       </div>
-      <div class="flex items-end gap-[6px]">
-        <p class="font-medium text-[16px] lg:text-[19px]" style="color:var(--color-text-primary)">{{ $p['price'] }}</p>
-        @if (!empty($p['oldPrice']))
-        <p class="text-[11px] lg:text-[13px] line-through" style="color:var(--color-text-subtitle)">{{ $p['oldPrice'] }}</p>
-        @endif
-        @if (!empty($p['discount']))
-        <p class="text-[12px] lg:text-[14px]" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
-        @endif
+
+      {{-- Delivery estimate --}}
+      <div class="flex items-center gap-[4px] lg:gap-[6.74px]">
+        <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="w-[14px] h-[14px] lg:w-[20.23px] lg:h-[20.23px] shrink-0" />
+        <span class="font-medium text-[10px] lg:text-[13.49px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by 24 March') }}</span>
       </div>
+
     </div>
   </a>
 </div>

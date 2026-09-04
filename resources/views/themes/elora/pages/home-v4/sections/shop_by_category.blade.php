@@ -47,9 +47,9 @@
             class="absolute inset-0"
             style="
               background: linear-gradient(
-                110deg,
-                {{ $__tile['color'] }} 42%,
-                rgba(0, 0, 0, 0) 43%
+                105deg,
+                {{ $__tile['color'] }} 41.55%,
+                rgba(0, 0, 0, 0) 42.39%
               );
             "
           ></div>
@@ -58,7 +58,7 @@
             style="opacity: 0.75"
             >{{ __('Explore') }}</span
           >
-          <div class="relative flex flex-col gap-[6px] lg:gap-[8px]">
+          <div class="relative flex flex-col gap-[6px]">
             <span class="text-white font-extrabold text-[14px] lg:text-[18px]"
               >{{ $cat->translationValue('name') ?? $cat->name }}</span
             >

@@ -51,9 +51,9 @@
 
           {{-- Orange leaf pill --}}
           <div
-            class="w-[66px] h-[37px] lg:w-[128px] lg:h-[72px]
+            class="w-[66px] h-[37px] lg:w-[128.17px] lg:h-[71.86px]
                    rounded-bl-[32px] rounded-tr-[32px]
-                   lg:rounded-bl-[62px] lg:rounded-tr-[62px]
+                   lg:rounded-bl-[62.14px] lg:rounded-tr-[62.14px]
                    overflow-visible"
             style="background: var(--color-brand-orange)"
           ></div>
@@ -79,7 +79,7 @@
 
         {{-- Category name --}}
         <p class="font-semibold text-[12px] lg:text-[23.3px]
-                  leading-[1.5] tracking-[0.5px] lg:tracking-[0.971px]
+                  leading-[1.5] tracking-[0.5px] lg:tracking-[0.97px]
                   text-black text-center whitespace-nowrap line-clamp-1
                   mt-0">
           {{ $name }}

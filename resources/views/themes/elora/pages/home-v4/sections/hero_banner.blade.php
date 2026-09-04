@@ -50,7 +50,7 @@
     </div>{{-- /.swiper-wrapper --}}
 
     {{-- Pagination dots --}}
-    <div class="hero-pagination"></div>
+    <div class="hero-pagination mt-[24px]"></div>
   </div>{{-- /.swiper --}}
 
 </section>

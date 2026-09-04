@@ -60,7 +60,7 @@
 
       {{-- Countdown timer ──────────────────────────────────── --}}
       <div
-        class="flex items-center gap-[8px] lg:gap-[10px]"
+        class="flex items-center gap-[8px] lg:gap-[5px]"
         aria-label="{{ __('Flash sale ends in') }}"
         data-flash-countdown="{{ $flashEndsAtIso }}"
       >
@@ -73,11 +73,9 @@
         <div class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white shrink-0" style="background: var(--color-brand-orange-bright)" role="timer" aria-label="{{ __('Hours') }}">
           <span class="font-semibold text-[26px] lg:text-[40px] text-white leading-none tabular-nums" data-flash-hh>00</span>
         </div>
-        <span class="text-white font-bold text-[20px] lg:text-[32px] leading-none select-none" aria-hidden="true">:</span>
         <div class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white shrink-0" style="background: var(--color-brand-orange-bright)" role="timer" aria-label="{{ __('Minutes') }}">
           <span class="font-semibold text-[26px] lg:text-[40px] text-white leading-none tabular-nums" data-flash-mm>00</span>
         </div>
-        <span class="text-white font-bold text-[20px] lg:text-[32px] leading-none select-none" aria-hidden="true">:</span>
         <div class="flex items-center justify-center h-[48px] w-[50px] lg:h-[73px] lg:w-[76px] rounded-[11px] border-2 border-white shrink-0" style="background: var(--color-brand-orange-bright)" role="timer" aria-label="{{ __('Seconds') }}">
           <span class="font-semibold text-[26px] lg:text-[40px] text-white leading-none tabular-nums" data-flash-ss>00</span>
         </div>
@@ -129,7 +127,7 @@
 
       {{-- "Only $X.XX" price pill --}}
       @if ($flashSaleMinPriceLabel)
-        <div class="absolute bottom-[-20px] left-0 z-10 bg-white border-2 border-black rounded-full h-[40px] lg:h-[48px] flex items-center justify-center px-[18px] lg:px-[24px]">
+        <div class="absolute bottom-[-20px] left-0 z-10 bg-white border-black rounded-full h-[40px] lg:h-[47.54px] flex items-center justify-center px-[18px] lg:px-[24px]" style="border-width: 1.49px; border-style: solid;">
           <p class="font-bold text-[13px] lg:text-[20px] whitespace-nowrap" style="color: var(--color-brand-orange)">
             {{ __('Only :price', ['price' => $flashSaleMinPriceLabel]) }}
           </p>
@@ -144,7 +142,7 @@
   <div class="flex items-center justify-center pt-[8px] lg:pt-[4px]">
     <a
       href="{{ route('tenant.storefront.category') }}"
-      class="border border-white rounded-full h-[46px] lg:h-[64px] px-[32px] lg:px-[48px] flex items-center justify-center font-medium text-white text-[15px] lg:text-[20px] tracking-[0.5px] transition-opacity duration-150 hover:opacity-85"
+      class="border border-white rounded-full h-[46px] lg:h-[64px] px-[32px] lg:px-[48px] flex items-center justify-center font-medium text-white text-[15px] lg:text-[20px] tracking-[0.5px] opacity-85 transition-opacity duration-150 hover:opacity-75"
       style="background: var(--color-brand-orange)"
     >
       {{ __('Explore all') }}

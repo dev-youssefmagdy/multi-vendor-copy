@@ -19,15 +19,15 @@
           >{{ __('see all') }}</a
         >
       </div>
-      <div class="relative">
-        <div class="swiper card-swiper newin-swiper">
+      <div class="relative min-w-0">
+        <div class="swiper card-swiper newin-swiper min-w-0">
           <div class="swiper-wrapper" id="newInWrapper">
             @foreach ($newInGroups as $group)
               @php [$left, $top, $bottom] = array_pad($group, 3, null); @endphp
               @if ($left)
-                <div class="swiper-slide h-auto">
+                <div class="swiper-slide h-auto lg:w-[898.26px]!">
                   <div class="flex gap-[16px] h-full">
-                    <div class="shrink-0 w-[240px]">
+                    <div class="shrink-0 w-[240px] lg:w-[270.45px]">
                       @include('themes.elora.pages.home-v4.sections.partials.product_card', ['p' => $left])
                     </div>
                     @if ($top || $bottom)
