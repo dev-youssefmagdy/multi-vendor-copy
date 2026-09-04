@@ -3,20 +3,88 @@
 // file only turns the pre-rendered slides into working carousels.
 
 function initCarousels() {
-  // Flash Sale, Trending Now, and Best Seller are plain horizontally
-  // scrollable rows (like the Categories row) — no Swiper instance needed.
+  // Trending Now: real Swiper carousel at both breakpoints (1.5 slides per
+  // view mobile, 5.25 desktop) via Swiper's own `breakpoints` option — a
+  // single persistent instance, unlike Flash Sale's create/destroy dance,
+  // since both breakpoints here want a real carousel (just a different
+  // slidesPerView), which is Swiper's well-tested standard use case.
+  const trendingSwiperEl = document.getElementById("trendingSwiper");
+  if (trendingSwiperEl) {
+    new Swiper(trendingSwiperEl, {
+      slidesPerView: 1.5,
+      spaceBetween: 16,
+      breakpoints: {
+        1024: { slidesPerView: 5.25 },
+      },
+    });
+  }
+
+  // Flash Sale: mobile is a static 2-column grid of the first 4 products
+  // (CSS-driven, see .card-swiper rules in elora-v3.css — not a scrollable
+  // carousel), desktop is a real Swiper at 4.5 slides per view advanced via
+  // the single "next" arrow next to the countdown. Fully creating/destroying
+  // the Swiper instance across the breakpoint (rather than toggling
+  // `enabled`) avoids Swiper's known issue where slide sizing doesn't
+  // reliably re-run after an `enabled` toggle.
+  const flashSaleSwiperEl = document.getElementById("flashSaleSwiper");
+  if (flashSaleSwiperEl) {
+    const flashSaleMq = window.matchMedia("(min-width: 1024px)");
+    let flashSaleInstance = null;
+    const syncFlashSale = () => {
+      if (flashSaleMq.matches && !flashSaleInstance) {
+        flashSaleInstance = new Swiper(flashSaleSwiperEl, {
+          slidesPerView: 4.5,
+          spaceBetween: 16,
+          navigation: { nextEl: "#flashSaleNext" },
+        });
+      } else if (!flashSaleMq.matches && flashSaleInstance) {
+        flashSaleInstance.destroy(true, true);
+        flashSaleInstance = null;
+      }
+    };
+    syncFlashSale();
+    flashSaleMq.addEventListener("change", syncFlashSale);
+  }
+
+  // Best Seller: mobile is a static 2-column grid (CSS-driven, see
+  // .bestseller-swiper rules in elora-v3.css — not a scrollable carousel),
+  // desktop is a real "auto"-width Swiper (cards keep their intrinsic
+  // 309px width) with alternating cards sitting lower via CSS. Same
+  // create/destroy-across-breakpoint approach as Flash Sale.
+  const bestSellerSwiperEl = document.getElementById("bestSellerSwiper");
+  if (bestSellerSwiperEl) {
+    const bestSellerMq = window.matchMedia("(min-width: 1024px)");
+    let bestSellerInstance = null;
+    const syncBestSeller = () => {
+      if (bestSellerMq.matches && !bestSellerInstance) {
+        bestSellerInstance = new Swiper(bestSellerSwiperEl, {
+          slidesPerView: "auto",
+          spaceBetween: 32,
+        });
+      } else if (!bestSellerMq.matches && bestSellerInstance) {
+        bestSellerInstance.destroy(true, true);
+        bestSellerInstance = null;
+      }
+    };
+    syncBestSeller();
+    bestSellerMq.addEventListener("change", syncBestSeller);
+  }
 
   // New In: real Swiper carousel using the Grid module — a fixed numeric
   // slidesPerView (columns visible) x grid rows:3, so each "slide" is really one
   // column and the view shows 3 stacked rows per column. Numeric slidesPerView
   // is required for the Grid module's row math to work at all (fractional/auto
   // slidesPerView leaves every slide with an identical, wrong row assignment).
+  // Mobile is a single column (1 x 3 rows), desktop is 3 columns x 3 rows.
   const newInSwiper = document.getElementById("newInSwiper");
   if (newInSwiper) {
     new Swiper(newInSwiper, {
-      slidesPerView: 3,
+      slidesPerView: 1,
       spaceBetween: 16,
       grid: { rows: 3, fill: "row" },
+      breakpoints: {
+        1024: { slidesPerView: 3 },
+      },
     });
   }
 

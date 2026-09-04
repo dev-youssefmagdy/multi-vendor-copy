@@ -14,12 +14,8 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => __('Best-Selling'),
-              'badgeBg' => 'var(--color-accent-yellow)',
-              'badgeText' => 'var(--color-text-primary)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
-              'desc' => $product->centralProduct?->category?->name ?? '',
+              'desc' => $product->centralProduct?->category?->name,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
@@ -34,15 +30,17 @@
       <h2 class="font-medium text-[22px] lg:text-[32px] text-white">
         {{ __('Best Seller') }}
       </h2>
-      <div class="bestseller-swiper flex items-stretch gap-[16px] overflow-x-auto no-scrollbar w-full">
-        @forelse ($bestSellerProducts as $p)
-          <div class="bestseller-card h-auto w-[210px] lg:w-[260px] shrink-0">
-            @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p, 'wide' => true])
+      @if ($bestSellerProducts->isEmpty())
+        <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>
+      @else
+        <div class="swiper bestseller-swiper w-full" id="bestSellerSwiper">
+          <div class="swiper-wrapper" id="bestSellerWrapper">
+            @foreach ($bestSellerProducts as $p)
+              @include('themes.elora.pages.home-v3.sections.partials.best_seller_card', ['p' => $p])
+            @endforeach
           </div>
-        @empty
-          <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>
-        @endforelse
-      </div>
+        </div>
+      @endif
       <a
         href="{{ route('tenant.storefront.best-selling') }}"
         class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[32px] flex items-center justify-center cursor-pointer"

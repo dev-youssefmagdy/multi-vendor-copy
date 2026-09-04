@@ -27,7 +27,7 @@
       $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <section
-      class="pattern-flash-sale px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
+      class="pattern-flash-sale rounded-t-[16px] px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
       wire:ignore
     >
       <div class="flex items-center justify-between">
@@ -41,16 +41,16 @@
             {{ __('Flash Sale') }}
           </h2>
         </div>
-        <div class="flex items-center gap-[8px] lg:gap-[14px]" @if($firstSale->end_date) data-countdown="{{ $firstSale->end_date->timestamp }}" @endif>
-          <span
-            class="font-semibold text-[13px] lg:text-[20px] tracking-[0.5px] lg:tracking-[0.83px]"
-            style="color: var(--color-accent-yellow)"
-            >{{ __('Ends in') }}</span
-          >
-          <div class="flex items-center gap-[6px] lg:gap-[8px]">
+        <div class="flex items-center gap-[8px] lg:gap-[28px]" @if($firstSale->end_date) data-countdown="{{ $firstSale->end_date->timestamp }}" @endif>
+          <div class="flex items-center gap-[3px] lg:gap-[5px]">
+            <span
+              class="font-semibold text-[13px] lg:text-[20px] tracking-[0.5px] lg:tracking-[0.83px]"
+              style="color: var(--color-accent-yellow)"
+              >{{ __('Ends in') }}</span
+            >
             <span
               id="flashHours"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
@@ -59,7 +59,7 @@
             >
             <span
               id="flashMinutes"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
@@ -68,7 +68,7 @@
             >
             <span
               id="flashSeconds"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
@@ -76,24 +76,33 @@
               >{{ $countdownS }}</span
             >
           </div>
-          <img
-            src="{{ asset('elora-3/assets/icons/arrow-outlined.svg') }}"
-            alt=""
-            class="hidden lg:block h-[57px] w-auto"
-          />
+          <button
+            id="flashSaleNext"
+            type="button"
+            aria-label="Next"
+            class="hidden lg:block cursor-pointer"
+          >
+            <img
+              src="{{ asset('elora-3/assets/icons/arrow-outlined.svg') }}"
+              alt=""
+              class="h-[57px] w-auto"
+            />
+          </button>
         </div>
       </div>
-      <div class="flex items-stretch gap-[16px] overflow-x-auto no-scrollbar pb-[4px]">
-        @forelse ($flashSaleProducts as $p)
-          @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
-        @empty
-          <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
-        @endforelse
+      <div class="swiper card-swiper flashsale-swiper" id="flashSaleSwiper">
+        <div class="swiper-wrapper" id="flashSaleWrapper">
+          @forelse ($flashSaleProducts as $p)
+            @include('themes.elora.pages.home-v3.sections.partials.flash_card', ['p' => $p])
+          @empty
+            <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
+          @endforelse
+        </div>
       </div>
       <div class="flex items-center justify-center">
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
-          class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[32px] flex items-center justify-center cursor-pointer"
+          class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[55px] flex items-center justify-center cursor-pointer"
         >
           <span
             class="font-medium text-white text-[14px] lg:text-[20px] tracking-[0.5px]"

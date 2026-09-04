@@ -99,6 +99,10 @@ body {
    height x 3 rows + row gaps. */
 .newin-swiper {
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 .newin-swiper .swiper-wrapper {
   height: 419px;
@@ -106,13 +110,52 @@ body {
 .card-swiper .swiper-wrapper {
   align-items: stretch;
 }
-
-/* Best Seller row: alternating cards sit slightly lower, matching the Figma layout */
-.bestseller-swiper {
-  padding-bottom: 24px;
+/* Numeric-slidesPerView swipers (Flash Sale 4.5, Trending Now 1.5/5.25) as
+   flex items of their section's `flex flex-col`:
+   - overflow/min-width/max-width: `.card-swiper`'s overflow:visible lets a
+     flex item size itself from its (pre-inline-width) slide content instead
+     of its own available space, producing a runaway width.
+   - margin: Swiper's own base `.swiper` rule sets `margin-left/right: auto`
+     for standalone centering; as a flex item that instead triggers
+     flexbox's auto-margin behavior (shrink-to-fit + center in free space)
+     rather than the normal stretch-to-fill sizing, collapsing the container
+     to a tiny content-driven width. Resetting the margin restores stretch. */
+.flashsale-swiper,
+.trending-swiper {
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
-.bestseller-swiper .swiper-slide:nth-child(even) {
-  transform: translateY(20px);
+
+/* Flash Sale: mobile renders as a static 2-column grid of the first 4
+   products (Swiper is destroyed below 1024px — see
+   elora-v3-carousels.js), desktop is a real 4.5-per-view Swiper. Scoped to
+   the mobile media query only — an unscoped rule here would out-specificity
+   (ID selector) Swiper's own `.swiper-wrapper { display: flex }` class rule
+   and break the carousel at every width, including desktop. */
+@media (max-width: 1023.98px) {
+  #flashSaleWrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0px;
+  }
+  #flashSaleWrapper .swiper-slide:nth-child(n + 5) {
+    display: none;
+  }
+}
+
+/* Best Seller: mobile renders as a static 2-column grid (Swiper is
+   destroyed below 1024px — see elora-v3-carousels.js, same reasoning as
+   Flash Sale above), desktop is a real "auto"-width Swiper with alternating
+   cards sitting slightly lower, matching the Figma layout. */
+.bestseller-swiper {
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 @media (min-width: 1024px) {
   .bestseller-swiper {
@@ -120,6 +163,13 @@ body {
   }
   .bestseller-swiper .swiper-slide:nth-child(even) {
     transform: translateY(34px);
+  }
+}
+@media (max-width: 1023.98px) {
+  #bestSellerWrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 .swiper-nav-btn {

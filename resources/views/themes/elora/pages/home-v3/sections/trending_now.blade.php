@@ -14,12 +14,8 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => __('Trending'),
-              'badgeBg' => 'var(--color-accent-yellow)',
-              'badgeText' => 'var(--color-text-primary)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
-              'desc' => $product->centralProduct?->category?->name ?? '',
+              'desc' => $product->centralProduct?->category?->name,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
@@ -45,13 +41,15 @@
           >{{ __('see all') }}</a
         >
       </div>
-      <div class="flex items-stretch gap-[16px] overflow-x-auto no-scrollbar pb-[4px]">
-        @forelse ($trendingProducts as $p)
-          <div class="shrink-0 h-auto w-[210px] lg:w-[260px]">
-            @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
+      @if ($trendingProducts->isEmpty())
+        <p class="text-sm text-gray-500 py-6 w-full">{{ __('No trending products yet.') }}</p>
+      @else
+        <div class="swiper trending-swiper" id="trendingSwiper">
+          <div class="swiper-wrapper" id="trendingWrapper">
+            @foreach ($trendingProducts as $p)
+              @include('themes.elora.pages.home-v3.sections.partials.trending_card', ['p' => $p])
+            @endforeach
           </div>
-        @empty
-          <p class="text-sm text-gray-500 py-6 w-full">{{ __('No trending products yet.') }}</p>
-        @endforelse
-      </div>
+        </div>
+      @endif
     </section>

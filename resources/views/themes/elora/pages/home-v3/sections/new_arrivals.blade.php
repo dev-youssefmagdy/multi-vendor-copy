@@ -14,12 +14,8 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => __('New In'),
-              'badgeBg' => 'var(--color-accent-purple)',
-              'badgeText' => 'var(--color-white)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 25),
-              'weight' => '',
-              'desc' => $product->centralProduct?->category?->name ?? '',
+              'desc' => $product->centralProduct?->category?->name,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
