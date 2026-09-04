@@ -16,7 +16,7 @@
         <p class="font-medium text-[11px] lg:text-[17px] tracking-[0.3px] lg:tracking-[0.45px] truncate min-w-0" style="color:#121212">{{ $p['name'] }}</p>
         <p class="font-normal text-[9px] lg:text-[14px] tracking-[0.3px] lg:tracking-[0.45px] shrink-0" style="color:#CD0032">{{ $p['weight'] ?? '250g' }}</p>
       </div>
-      <p class="font-normal text-[9px] lg:text-[14px] tracking-[0.3px] lg:tracking-[0.45px] truncate min-w-0 w-full" style="color:#ADADAD">{{ $p['desc'] ?? __('Premium quality') }}</p>
+      <p class="font-normal text-[9px] lg:text-[14px] tracking-[0.3px] lg:tracking-[0.45px] min-w-0 w-full" style="color:#ADADAD">{{ $p['desc'] ?? __('Premium quality') }}</p>
       <div class="flex gap-[4px] lg:gap-[7px] items-center">
         <img src="{{ asset('elora-3/assets/icons/star-rating.svg') }}" alt="" class="h-[8px] w-[55px] lg:h-[9px] lg:w-[62px]" />
         <span class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#ADADAD">{{ $p['rating'] }}</span>
@@ -30,15 +30,9 @@
           <p class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#FF522C">{{ $p['discount'] }}</p>
         @endif
       </div>
-      <div class="flex items-center justify-between gap-[4px] w-full min-w-0">
-        <div class="flex items-center gap-[3px] lg:gap-[6px] min-w-0">
-          <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[10px] lg:size-[17px] shrink-0" />
-          <span class="font-medium text-[9px] lg:text-[11px] truncate" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
-        </div>
-        <div class="flex items-center gap-[3px] lg:gap-[6px] shrink-0">
-          <img src="{{ asset('elora-3/assets/icons/cart-x.svg') }}" alt="" class="size-[8px] lg:size-[14px] shrink-0" />
-          <span class="font-medium text-[9px] lg:text-[11px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Only :n left', ['n' => $p['stockLeft'] ?? 5]) }}</span>
-        </div>
+      <div class="flex items-center gap-[3px] lg:gap-[6px] w-full min-w-0">
+        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[10px] lg:size-[17px] shrink-0" />
+        <span class="font-medium text-[9px] lg:text-[11px] truncate" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
       </div>
     </div>
   </a>
