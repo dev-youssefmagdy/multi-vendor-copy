@@ -25,7 +25,7 @@
     @endphp
     <!-- ============ NEW IN ============ -->
     <section
-      class=" py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class=" py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] lg:mt-[48px]! mt-[24px]!"
       style="background: var(--color-section-cream)"
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
