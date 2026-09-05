@@ -1,10 +1,10 @@
 {{-- Best Seller composite slide's small card (top-left/top-right of the right column). Expects $p: image, name, badge, badgeBg, badgeColor, weight, weightColor, rating, price, priceColor, oldPrice, url --}}
-<a href="{{ $p['url'] ?? '#' }}" class="flex-1 bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] overflow-hidden shadow-[var(--shadow-card)]">
+<a href="{{ $p['url'] ?? '#' }}" class="flex-1 bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.1px] lg:rounded-[8.7px] overflow-hidden shadow-[var(--shadow-card)]">
   <div class="relative h-[120px] lg:h-[166px] w-full shrink-0">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     <span class="absolute top-0 right-0 text-[11px] font-medium px-[6px] py-[3px] rounded-bl-[8px]" style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badge'] ?? '70% Sold' }}</span>
     <button type="button" aria-label="Add to favorites" class="absolute top-[6px] left-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[14px]" alt="" /></button>
-    <div class="absolute bottom-[6px] right-[6px] bg-white rounded-[8px] p-[5px] shadow"><img src="{{ asset('elora-2/assets/icons/cart.svg') }}" class="size-[16px]" alt="" /></div>
+    <div class="absolute bottom-[6px] right-[6px] bg-white rounded-[8px] p-[5px] shadow"><img src="{{ asset('elora-2/assets/icons/cart-add.svg') }}" class="size-[16px]" alt="" /></div>
   </div>
   <div class="flex flex-col gap-[4px] items-start p-[8px] w-full min-w-0">
     <div class="flex items-center justify-between w-full">

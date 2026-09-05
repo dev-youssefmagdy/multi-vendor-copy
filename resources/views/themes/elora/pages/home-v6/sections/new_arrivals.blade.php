@@ -25,10 +25,10 @@
     @endphp
     <!-- ============ NEW IN ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class=" py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-section-cream)"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
@@ -42,8 +42,8 @@
           >see all</a
         >
       </div>
-      <div class="relative">
-        <div class="swiper card-swiper">
+      <div class="relative ps-[16px] lg:ps-[56px]">
+        <div class="swiper card-swiper new-in-swiper">
           <div class="swiper-wrapper" id="newInWrapper">
             @foreach ($newInCards as $p)
               <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">

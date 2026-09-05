@@ -1,7 +1,7 @@
 {{-- Best Seller composite slide's bottom wide card. Expects $p: image, name, rating, price, priceColor, oldPrice, url --}}
-<a href="{{ $p['url'] ?? '#' }}" class="flex-1 flex bg-[var(--color-bg-main)] rounded-[6px] overflow-hidden shadow-[var(--shadow-card)]">
+<a href="{{ $p['url'] ?? '#' }}" class="flex-1 flex gap-[3px] lg:gap-[5px] bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.3px] overflow-hidden shadow-[var(--shadow-card)]">
   <div class="relative w-[38%] shrink-0">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
   </div>
   <div class="flex-1 p-[8px] flex flex-col justify-center gap-[4px] min-w-0">
     <p class="font-medium text-[14px] truncate" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>

@@ -9,14 +9,48 @@
   display: none;
 }
 
-/* Swiper carousel arrows (New In / Trending / Best Seller / Recommended) */
+/* Base swiper padding shared by New In / Trending / Best Seller / Recommended.
+   NOTE: overflow:visible here was originally believed necessary for Best
+   Seller's prev/next arrow buttons, but those buttons are DOM siblings of
+   .swiper (positioned absolute relative to the outer .relative wrapper, not
+   to the swiper itself) — clipping the swiper's own box has no effect on
+   them (verified: arrows stay fully visible with overflow:hidden). Every
+   carousel using this class gets its own scoped overflow:hidden below, since
+   leaving it visible lets every off-screen slide inflate the whole
+   document's scrollable width even though body{overflow-x:hidden} hides the
+   symptom visually (measured 1808px scrollWidth on a 390px viewport for New
+   In before this was scoped). */
 .elora-v6-root .card-swiper {
   overflow: visible;
   padding-bottom: 4px;
 }
-/* Trending Now: fractional slidesPerView (2.5) needs its own clipped container. */
+.elora-v6-root .new-in-swiper {
+  overflow: hidden;
+}
+/* Numeric slidesPerView (1.75) needs the same width-pinning as
+   .trending-swiper/.categories-swiper — without an explicit width, a flex
+   child with overflow:hidden can inflate via a ResizeObserver feedback loop,
+   producing a mismatch between Swiper's tracked slide width and the actual
+   rendered width, which shows up as slides overlapping/misaligning. */
+.elora-v6-root .best-seller-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+/* Trending Now: fractional slidesPerView (2.5 on desktop) needs its own
+   clipped, width-pinned container — same ResizeObserver feedback-loop fix as
+   .categories-swiper below (a flex-column child without an explicit width
+   inflates itself when Swiper measures it to compute numeric slide widths). */
 .elora-v6-root .trending-swiper {
   overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+/* Beats swiper-bundle's own default ".swiper-slide{width:100%}" on mobile
+   ("auto" mode) via selector specificity, not !important — so Swiper's own
+   JS-computed inline width still wins on desktop (slidesPerView:2.5). */
+.elora-v6-root .trending-swiper .swiper-slide {
+  width: 532.69px;
 }
 
 /* Categories: numeric slidesPerView (7 on desktop) needs its own clipped
@@ -51,41 +85,6 @@
 }
 .elora-v6-root .card-swiper .swiper-wrapper {
   align-items: stretch;
-}
-
-.elora-v6-root .swiper-nav-btn {
-  display: none;
-  position: absolute;
-  top: 40%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  border-radius: 9999px;
-  background: var(--color-white);
-  box-shadow: var(--shadow-card);
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-@media (min-width: 1024px) {
-  .elora-v6-root .swiper-nav-btn {
-    display: flex;
-  }
-}
-.elora-v6-root .swiper-nav-btn:hover {
-  background: var(--color-page-bg);
-}
-.elora-v6-root .swiper-nav-btn.swiper-button-disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-.elora-v6-root .swiper-nav-prev {
-  left: -8px;
-}
-.elora-v6-root .swiper-nav-next {
-  right: -8px;
 }
 
 /* Hero carousel */

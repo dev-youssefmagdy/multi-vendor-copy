@@ -1,15 +1,15 @@
     <!-- ============ SHOP BY CATEGORY ============ -->
     <section
-      class="bg-white border-l-[8px] lg:border-l-[14px] px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
+      class="bg-white w-full max-w-360 mx-auto border-l-[6px] lg:border-l-14 flex flex-col justify-end lg:justify-start items-center px-2 py-4.5 lg:px-14 lg:py-8 gap-2 lg:gap-6"
       style="border-color: var(--color-accent-green)"
     >
       <h2
-        class="lg:hidden font-medium text-[22px]"
+        class="lg:hidden w-full font-medium text-[22px]"
         style="color: var(--color-accent-green)"
       >
         Shop by Category
       </h2>
-      <div class="flex gap-[8px] lg:gap-[19px] items-stretch">
+      <div class="w-full flex gap-[8px] lg:gap-[19px] items-stretch">
         <div
           class="hidden lg:flex items-center justify-center w-[66px] shrink-0"
         >
@@ -32,7 +32,7 @@
             @endphp
             <a
               href="{{ route('tenant.storefront.category', $category->slug) }}"
-              class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex {{ $loop->first ? 'items-end' : 'items-center' }} justify-center p-[12px] lg:p-[16px] h-[160px] lg:h-auto {{ $loop->first ? 'lg:row-span-2' : '' }}"
+              class="relative rounded-[8px] lg:rounded-[13px] overflow-hidden flex justify-center p-3 h-40 lg:h-auto {{ $loop->first ? 'items-end lg:py-6.25 lg:px-0 lg:row-span-2' : 'items-center lg:pt-33.75 lg:pr-17.5 lg:pb-1.25 lg:pl-17' }}"
             >
               <img
                 src="{{ $category->thumb_url ?? asset('elora-2/assets/images/' . $__shopFallbackImgs[$loop->index % 3]) }}"
@@ -57,7 +57,7 @@
           @endforeach
         </div>
       </div>
-      <div class="flex justify-center">
+      <div class="w-full flex justify-center">
         <a
           href="{{ route('tenant.storefront.category') }}"
           class="border rounded-full px-[32px] py-[16px] text-[14px] lg:text-[20px] font-medium tracking-[0.5px] cursor-pointer"

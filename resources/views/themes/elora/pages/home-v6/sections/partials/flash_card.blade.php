@@ -1,7 +1,7 @@
 {{-- Expects $p: name, price, oldPrice, discount, image, url --}}
 <a href="{{ $p['url'] ?? '#' }}" class="flex gap-[5px] rounded-[10px] overflow-hidden h-full" style="background:var(--color-bg-main)">
   <div class="relative w-[45%] max-h-[148px] shrink-0">
-    <img src="{{ $p['image'] ?? asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full max-h-[148px] w-full object-cover rounded-l-[8px]" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full max-h-[148px] w-full object-cover rounded-l-[8px]" />
     <span class="absolute top-0 left-0 text-[12px] font-normal px-[6px] py-[4px] rounded-bl-[8px] rounded-tr-[8px]" style="background:var(--color-accent-yellow); color:var(--color-black)">70% Sold</span>
   </div>
   <div class="flex-1 p-[8px] flex flex-col gap-[4px] min-w-0">

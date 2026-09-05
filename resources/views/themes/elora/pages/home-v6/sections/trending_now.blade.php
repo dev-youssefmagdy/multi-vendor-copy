@@ -11,11 +11,16 @@
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
+          $variantWeight = (int) ($variant?->centralVariant?->weight_grams ?? 0);
+          $weightGrams = $variantWeight > 0
+              ? $variantWeight
+              : (int) ($product->centralProduct->weight_grams ?? $product->weight_grams ?? 0);
+
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
+              'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
               'progress' => 60,
               'ordered' => '',
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
@@ -27,9 +32,9 @@
     @endphp
     <!-- ============ TRENDING NOW ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[28px] flex flex-col gap-[16px] lg:gap-[24px]"
+      class="py-[24px] lg:py-[28px] flex flex-col gap-[16px] lg:gap-[24px]"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
@@ -43,11 +48,11 @@
           >see all</a
         >
       </div>
-      <div class="relative">
+      <div class="relative ps-[16px] lg:ps-[56px]">
         <div class="swiper card-swiper trending-swiper">
           <div class="swiper-wrapper" id="trendingWrapper">
             @foreach ($trendingCards as $p)
-              <div class="swiper-slide h-auto !w-[532.69px] lg:!w-[420px]">
+              <div class="swiper-slide h-auto">
                 @include('themes.elora.pages.home-v6.sections.partials.trending_card', ['p' => $p])
               </div>
             @endforeach

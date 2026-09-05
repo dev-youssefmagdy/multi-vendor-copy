@@ -15,11 +15,12 @@ function mountCarousel({ wrapperId, prevId, nextId }) {
     });
 }
 
-// Trending Now: horizontal "wide card" carousel — each slide's width is fixed
-// via CSS (!w-[Npx] per breakpoint), so slidesPerView must be "auto" (a numeric
-// value would fight the CSS width by forcing its own computed inline width,
-// the same conflict class fixed for the Categories carousel). No nav buttons;
-// the next card's edge peeks in as a scroll affordance.
+// Trending Now: "auto" on mobile (slide width pinned via CSS, one wide card
+// peeking) so it shows the full-size card; numeric 2.5 on desktop, letting
+// Swiper compute the slide width itself (matches the Categories pattern —
+// mixing a numeric slidesPerView with an !important CSS width causes a
+// runaway ResizeObserver feedback loop, so the CSS width rule for this slide
+// must stay non-important, see home-v6.css).
 function mountTrending() {
     const wrapper = document.getElementById("trendingWrapper");
     if (!wrapper) return;
@@ -27,6 +28,9 @@ function mountTrending() {
         slidesPerView: "auto",
         spaceBetween: 16,
         slidesOffsetAfter: 16,
+        breakpoints: {
+            1024: { slidesPerView: 2.5 },
+        },
     });
 }
 
@@ -67,7 +71,6 @@ function mountBestSeller() {
     return new Swiper(wrapper.closest(".swiper"), {
         slidesPerView: 1.75,
         spaceBetween: 16,
-        navigation: { prevEl: "#bestSellerPrev", nextEl: "#bestSellerNext" },
     });
 }
 
