@@ -41,7 +41,7 @@
                   class="relative flex flex-col gap-[19px] items-start justify-center w-[150px] lg:w-[412px]"
                 >
                   <h1
-                    class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05]"
+                    class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05] lg:leading-[80px]"
                   >
                     {{ $banner->title ?? $storeName }}
                   </h1>
@@ -50,7 +50,7 @@
                     class="flex h-[38px] lg:h-[68px] items-center justify-center rounded-[34px] w-full px-[8px] cursor-pointer bg-white"
                   >
                     <span
-                      class="font-medium text-[14px] lg:text-[24px] tracking-[0.5px]"
+                      class="font-medium text-[14px] lg:text-[24px] lg:leading-[25px] tracking-[0.5px]"
                       style="color: var(--color-accent-green)"
                       >{{ $banner->button_text ?? 'Shop Now' }}</span
                     >

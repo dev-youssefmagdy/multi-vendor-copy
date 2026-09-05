@@ -20,6 +20,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
         @includeIf("themes.elora.pages.home-v6.sections.{$__section}")
     @endforeach
 
+    @vite('resources/css/elora/home-v6.css')
 </div>
 
 @push('scripts')

@@ -109,7 +109,7 @@
           <img
             src="{{ asset('elora-2/assets/icons/search.svg') }}"
             alt=""
-            class="size-[22px] opacity-70"
+            class="size-[24px]"
           />
           <input
             type="search"

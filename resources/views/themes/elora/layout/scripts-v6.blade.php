@@ -1,4 +1,4 @@
-@if(request()->is('/'))
+@if(request()->routeIs('tenant.home', 'tenant.path.home', 'preview'))
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     @vite(['resources/js/elora-v6-interactions.js', 'resources/js/elora-v6-carousels.js'])
