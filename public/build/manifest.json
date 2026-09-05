@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DhYoZ9QN.css",
+    "file": "assets/app-DH4XED0i.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-6uuoFuKb.css",
+    "file": "assets/ecommet-n6jOwpWJ.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -319,7 +319,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CQYABuQt.css",
+    "file": "assets/souqify-UR4p8_XV.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -419,7 +419,7 @@
     "isEntry": true
   },
   "resources/js/elora-v6-carousels.js": {
-    "file": "assets/elora-v6-carousels-t7VMq55A.js",
+    "file": "assets/elora-v6-carousels-CxFN5uzj.js",
     "name": "elora-v6-carousels",
     "src": "resources/js/elora-v6-carousels.js",
     "isEntry": true

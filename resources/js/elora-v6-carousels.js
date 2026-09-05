@@ -15,13 +15,16 @@ function mountCarousel({ wrapperId, prevId, nextId }) {
     });
 }
 
-// Trending Now: horizontal "mobile card" carousel, 2.5 slides per view (no nav
-// buttons), so the next card's edge always peeks in as a scroll affordance.
+// Trending Now: horizontal "wide card" carousel — each slide's width is fixed
+// via CSS (!w-[Npx] per breakpoint), so slidesPerView must be "auto" (a numeric
+// value would fight the CSS width by forcing its own computed inline width,
+// the same conflict class fixed for the Categories carousel). No nav buttons;
+// the next card's edge peeks in as a scroll affordance.
 function mountTrending() {
     const wrapper = document.getElementById("trendingWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: 2.5,
+        slidesPerView: "auto",
         spaceBetween: 16,
         slidesOffsetAfter: 16,
     });

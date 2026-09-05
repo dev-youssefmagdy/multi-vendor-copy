@@ -47,7 +47,7 @@
         <div class="swiper card-swiper trending-swiper">
           <div class="swiper-wrapper" id="trendingWrapper">
             @foreach ($trendingCards as $p)
-              <div class="swiper-slide h-auto !w-[280px] lg:!w-[420px]">
+              <div class="swiper-slide h-auto !w-[532.69px] lg:!w-[420px]">
                 @include('themes.elora.pages.home-v6.sections.partials.trending_card', ['p' => $p])
               </div>
             @endforeach
