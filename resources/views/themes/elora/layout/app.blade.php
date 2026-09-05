@@ -54,7 +54,7 @@
             @break
         @case('v3') <!-- Fresh Edition || public/elora-3 -->
             @php
-                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
                 $headerKey = 'header-v3';
                 $footerKey = 'footer-v3';
                 $stylesKey = 'styles-v3';

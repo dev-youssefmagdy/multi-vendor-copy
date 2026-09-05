@@ -10,10 +10,10 @@
     @endphp
     <!-- ============ CATEGORIES ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[16px] lg:gap-[28px]"
+      class="py-[24px] lg:py-[40px] flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2
           class="font-medium text-[20px] lg:text-[32px]"
           style="color: var(--color-black)"
@@ -27,17 +27,19 @@
           >{{ __('see all') }}</a
         >
       </div>
-      <div
-        class="flex items-start gap-[16px] lg:gap-[32px] overflow-x-auto no-scrollbar pb-[4px]"
-      >
-        @foreach ($circleCategories as $c)
-          <a href="{{ $c['url'] }}" class="flex flex-col items-center gap-[6px] shrink-0 w-[80px] lg:w-[150px]">
-            <div class="category-blob relative flex items-center justify-center w-full h-[64px] lg:h-[120px]">
-              <img src="{{ $c['image'] }}" alt="{{ $c['name'] }}" class="h-[42px] lg:h-[78px] w-auto object-contain" />
+      <div class="swiper categories-swiper !ps-[16px] lg:!ps-[56px]" id="categoriesSwiper">
+        <div class="swiper-wrapper" id="categoriesWrapper">
+          @foreach ($circleCategories as $c)
+            <div class="swiper-slide">
+              <a href="{{ $c['url'] }}" class="flex flex-col items-center gap-[6px] lg:gap-[6.65px] w-full">
+                <div class="category-blob relative flex items-center justify-center w-full h-[64px] lg:h-[104px]">
+                  <img src="{{ $c['image'] }}" alt="{{ $c['name'] }}" class="h-[42px] lg:h-[84px] w-auto object-contain" />
+                </div>
+                <p class="font-semibold text-[12px] lg:text-[26.58px] tracking-[0.3px] lg:tracking-[1.1px] text-center truncate w-full" style="color:var(--color-black)">{{ $c['name'] }}</p>
+              </a>
             </div>
-            <p class="font-semibold text-[12px] lg:text-[20px] tracking-[0.3px] text-center whitespace-nowrap" style="color:var(--color-black)">{{ $c['name'] }}</p>
-          </a>
-        @endforeach
+          @endforeach
+        </div>
       </div>
     </section>
     @endif

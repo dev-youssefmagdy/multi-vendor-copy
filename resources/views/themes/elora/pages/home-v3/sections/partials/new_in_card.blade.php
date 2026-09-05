@@ -1,7 +1,7 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/sold/stockLeft optional --}}
 <div class="swiper-slide">
-  <a href="{{ $p['url'] ?? '#' }}" class="bg-[#FDFDFD] flex items-stretch rounded-[6px] lg:rounded-[9px] h-[129px] max-h-[129px] shadow-sm overflow-hidden">
-    <div class="relative shrink-0 w-[90px] lg:w-[178px]">
+  <a href="{{ $p['url'] ?? '#' }}" class="bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden">
+    <div class="relative shrink-0 w-[124px] lg:w-[178px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover bg-[var(--color-page-bg)]" />
       <button type="button" aria-label="Add to favorites" onclick="event.preventDefault()" class="absolute top-[4px] left-[4px] bg-white cursor-pointer shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[4px] lg:p-[6px] rounded-full size-[18px] lg:size-[29px]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" alt="" class="size-[10px] lg:size-[18px]" />
@@ -30,9 +30,9 @@
           <p class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#FF522C">{{ $p['discount'] }}</p>
         @endif
       </div>
-      <div class="flex items-center gap-[3px] lg:gap-[6px] w-full min-w-0">
-        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[10px] lg:size-[17px] shrink-0" />
-        <span class="font-medium text-[9px] lg:text-[11px] truncate" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
+      <div class="hidden lg:flex items-center gap-[6px] w-full min-w-0">
+        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[17px] shrink-0" />
+        <span class="font-medium text-[11px] truncate" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
       </div>
     </div>
   </a>

@@ -27,7 +27,7 @@
       $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <section
-      class="pattern-flash-sale rounded-t-[16px] px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
+      class="pattern-flash-sale rounded-t-[16px] mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[16px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
       wire:ignore
     >
       <div class="flex items-center justify-between">

@@ -105,7 +105,12 @@ body {
   margin-right: 0;
 }
 .newin-swiper .swiper-wrapper {
-  height: 419px;
+  height: 302px;
+}
+@media (min-width: 1024px) {
+  .newin-swiper .swiper-wrapper {
+    height: 419px;
+  }
 }
 .card-swiper .swiper-wrapper {
   align-items: stretch;
@@ -121,7 +126,8 @@ body {
      rather than the normal stretch-to-fill sizing, collapsing the container
      to a tiny content-driven width. Resetting the margin restores stretch. */
 .flashsale-swiper,
-.trending-swiper {
+.trending-swiper,
+.shopbycategory-swiper {
   overflow: hidden;
   min-width: 0;
   max-width: 100%;
@@ -166,10 +172,17 @@ body {
   }
 }
 @media (max-width: 1023.98px) {
+  .bestseller-swiper {
+    padding-bottom: 28px;
+  }
   #bestSellerWrapper {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    column-gap: 16px;
+    row-gap: 14px;
+  }
+  #bestSellerWrapper > .swiper-slide:nth-child(even) {
+    transform: translateY(28px);
   }
 }
 .swiper-nav-btn {

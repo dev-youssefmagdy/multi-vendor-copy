@@ -11,11 +11,11 @@
     @endphp
     <!-- ============ SHOP BY CATEGORY ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[36px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
-      style="background: var(--color-page-bg)"
+      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
+      style="background: #FFFFFF"
     >
       <h2
-        class="font-semibold text-[22px] lg:text-[32px] text-center tracking-[0.5px]"
+        class="font-semibold text-[22px] lg:text-[32px] lg:leading-[150%] text-center tracking-[0.5px]"
         style="color: var(--color-black)"
       >
         {{ __('Shop by Category') }}
@@ -36,7 +36,7 @@
                 );
               "
             ></div>
-            <span class="shop-cat-label text-[16px] lg:text-[20px]"
+            <span class="shop-cat-label text-[16px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
               >{{ $shopByCatTiles[0]['name'] }}</span
             >
           </a>
@@ -55,7 +55,7 @@
                   );
                 "
               ></div>
-              <span class="shop-cat-label text-[14px] lg:text-[18px]"
+              <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
                 >{{ $shopByCatTiles[1]['name'] }}</span
               >
             </a>
@@ -76,7 +76,7 @@
                   );
                 "
               ></div>
-              <span class="shop-cat-label text-[14px] lg:text-[18px]"
+              <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
                 >{{ $shopByCatTiles[2]['name'] }}</span
               >
             </a>
@@ -85,7 +85,7 @@
       </div>
       <a
         href="{{ route('tenant.storefront.category') }}"
-        class="border rounded-full px-[32px] py-[14px] lg:py-[16px] text-[14px] lg:text-[16px] font-medium cursor-pointer"
+        class="border rounded-full px-[32px] py-[14px] lg:px-0 lg:py-0 lg:w-[208px] lg:h-[64px] flex items-center justify-center text-[14px] lg:text-[20px] lg:leading-[25px] tracking-[0.5px] font-medium cursor-pointer"
         style="border-color: var(--color-primary); color: var(--color-primary)"
       >
         {{ __('Explore all') }}

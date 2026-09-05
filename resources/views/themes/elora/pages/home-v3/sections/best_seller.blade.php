@@ -24,12 +24,19 @@
       });
     @endphp
     <section
-      class="pattern-bestseller px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
+      class="pattern-bestseller mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[16px] lg:py-[32px] flex flex-col items-center gap-[12px] lg:gap-[24px]"
       wire:ignore
     >
-      <h2 class="font-medium text-[22px] lg:text-[32px] text-white">
-        {{ __('Best Seller') }}
-      </h2>
+      <div class="w-full flex items-center justify-between lg:justify-center gap-[8px]">
+        <h2 class="font-medium text-[18px] leading-[23px] lg:text-[32px] text-white">
+          {{ __('Best Seller') }}
+        </h2>
+        <div class="flex lg:hidden items-end gap-[3px]" aria-hidden="true">
+          <span class="w-[24px] h-[8px] rounded-full" style="background:#FFDB4C"></span>
+          <span class="w-[8px] h-[8px] rounded-full" style="background:#F0F0F0"></span>
+          <span class="w-[8px] h-[8px] rounded-full" style="background:#F0F0F0"></span>
+        </div>
+      </div>
       @if ($bestSellerProducts->isEmpty())
         <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>
       @else

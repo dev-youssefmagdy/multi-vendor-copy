@@ -29,7 +29,7 @@
       });
     @endphp
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
+      class="px-[16px] lg:px-[56px] py-[16px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
     >
       <div class="flex items-center justify-between">
         <h2
@@ -50,7 +50,7 @@
       >
         @forelse ($recommendedCards as $p)
           <div wire:key="recommended-v3-{{ $p['id'] }}">
-            @include('themes.elora.pages.home-v3.sections.partials.product_card', ['p' => $p])
+            @include('themes.elora.pages.home-v3.sections.partials.recommended_card', ['p' => $p])
           </div>
         @empty
           <p class="text-sm text-gray-500 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>

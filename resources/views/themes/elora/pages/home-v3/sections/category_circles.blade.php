@@ -1,6 +1,6 @@
     @if ($categories->isNotEmpty())
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[34px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[16px] lg:py-[34px] flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: #f0f0f0"
       wire:ignore
     >

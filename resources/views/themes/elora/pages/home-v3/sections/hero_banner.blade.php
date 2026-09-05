@@ -12,7 +12,7 @@
             @endphp
             <div class="swiper-slide">
               <a href="{{ $banner->url ?? '#' }}"
-                class="relative flex flex-col items-center lg:items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
+                class="relative flex flex-col items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
               >
                 <img
                   src="{{ $imgUrl }}"
@@ -38,7 +38,7 @@
                   "
                 ></div>
                 <div
-                  class="relative flex flex-col gap-[8px] lg:gap-[21px] items-start justify-center w-[210px] lg:w-[530px]"
+                  class="relative flex flex-col gap-[8px] lg:gap-[21px] items-start justify-center w-full lg:w-[530px]"
                 >
                   <span
                     class="text-white font-black text-[12px] lg:text-[31px] tracking-[1px] lg:tracking-[2.6px] rounded-[4px] lg:rounded-[10px] px-[8px] lg:px-[21px] py-[2px] lg:py-[5px]"
@@ -73,7 +73,7 @@
           @empty
             <div class="swiper-slide">
               <div
-                class="relative flex flex-col items-center lg:items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
+                class="relative flex flex-col items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
               >
                 <img
                   src="{{ asset('elora-3/assets/images/hero-mobile.jpg') }}"
@@ -99,7 +99,7 @@
                   "
                 ></div>
                 <div
-                  class="relative flex flex-col gap-[8px] lg:gap-[21px] items-start justify-center w-[210px] lg:w-[530px]"
+                  class="relative flex flex-col gap-[8px] lg:gap-[21px] items-start justify-center w-full lg:w-[530px]"
                 >
                   <h1
                     class="font-black text-[26px] lg:text-[68px] text-white leading-[1.1]"

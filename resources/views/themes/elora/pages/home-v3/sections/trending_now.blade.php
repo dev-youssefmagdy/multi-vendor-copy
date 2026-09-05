@@ -24,7 +24,7 @@
       });
     @endphp
     <section
-      class="px-[16px] lg:px-[56px] py-[48px] flex flex-col gap-[16px] lg:gap-[24px] bg-[#F0F0F0]"
+      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[16px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[24px] bg-[#F0F0F0]"
       wire:ignore
     >
       <div class="flex items-center justify-between">

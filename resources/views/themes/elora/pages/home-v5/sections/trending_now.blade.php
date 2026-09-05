@@ -49,7 +49,7 @@
           <div class="swiper-wrapper" id="trendingWrapper">
             @foreach ($trendingProducts as $p)
               <div class="swiper-slide" wire:key="trending-v5-{{ $p['id'] }}">
-                @include('themes.elora.pages.home-v5.sections.partials.wide_card', ['p' => $p])
+                @include('themes.elora.pages.home-v5.sections.partials.trending_card', ['p' => $p])
               </div>
             @endforeach
           </div>

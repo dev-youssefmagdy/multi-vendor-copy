@@ -72,20 +72,39 @@ body {
    container once several fixed-width wide cards are laid out) bleed out and
    inflate the whole page's scroll width. Clip to the container instead. */
 .newin-swiper,
-.trending-swiper {
+.trending-swiper,
+.categories-swiper {
   overflow: hidden;
+}
+
+/* Numeric slidesPerView makes these flex items that need this min-width/max-width/margin
+   reset (see the detailed comment on the same pattern in elora-v3.css) to stop them
+   collapsing or overflowing as a child of their section's flex-col layout — without it,
+   a flex item's default min-width:auto lets Swiper mis-measure its own container width,
+   which is exactly what broke Trending Now's layout when slidesPerView went below 1. */
+.newin-swiper,
+.trending-swiper,
+.categories-swiper {
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* Trending: Swiper's Grid module (2 rows) needs an explicit wrapper height
    for its per-slide height:calc(50% - gap) math — without a definite
    height to resolve the percentage against, the two rows fell out of
-   alignment with each other by a few pixels. */
+   alignment with each other by a few pixels. Height = 2 × the actual card
+   height (trending_card.blade.php: ~89.97px mobile, ~154.1px desktop) plus
+   one spaceBetween gap (18px) — must be kept in sync with the card's own
+   height or Grid allocates far more space per row than the card needs,
+   leaving a large empty gap above/below each card. */
 .trending-swiper .swiper-wrapper {
-  height: 378px;
+  height: 198px;
 }
 @media (min-width: 1024px) {
   .trending-swiper .swiper-wrapper {
-    height: 370px;
+    height: 326px;
   }
 }
 
@@ -113,6 +132,138 @@ body {
 }
 .js-fan-imgband {
   transition-property: height;
+}
+
+/* Per-cascade-slot fixed sizing for fan_card.blade.php inside Best Seller.
+   [data-cascade-pos] is set live by mountBestSellerCarousel (elora-v5-carousels.js) on
+   every position update, so these rules track the SLOT (0 = active/front, 1 = next, ...)
+   rather than whichever product currently occupies it as the user drags the cascade.
+   fan_card.blade.php's own Tailwind classes are the position-0 (active) sizing; slot 0
+   therefore needs no override here. Higher specificity than a single Tailwind utility
+   class wins these ties without needing !important. */
+@media (min-width: 1024px) {
+  [data-cascade-pos="1"] .fan-card {
+    border-radius: 11.6531px;
+    box-shadow: 0px 6.70241px 35.8579px rgba(0, 0, 0, 0.25);
+  }
+  [data-cascade-pos="1"] .fan-image {
+    border-radius: 9.76637px 9.76637px 0 0;
+  }
+  [data-cascade-pos="1"] .fan-heart-btn {
+    top: 7.32478px;
+    left: 7.32478px;
+    padding: 9.76637px;
+    width: 39.07px;
+    height: 39.07px;
+    box-shadow: 0px 4.88318px 4.88318px rgba(0, 0, 0, 0.15);
+  }
+  [data-cascade-pos="1"] .fan-heart-icon {
+    width: 24.42px;
+    height: 24.42px;
+  }
+  [data-cascade-pos="1"] .fan-badge {
+    padding: 6.42088px;
+    border-top-left-radius: 8.56117px;
+    border-bottom-right-radius: 8.56117px;
+  }
+  [data-cascade-pos="1"] .fan-badge-text {
+    font-size: 14.982px;
+    line-height: 19px;
+    letter-spacing: 0.535073px;
+  }
+  [data-cascade-pos="1"] .fan-cart-btn {
+    bottom: 7.32478px;
+    right: 7.32478px;
+    padding: 4.88318px 14.6496px;
+    border-radius: 19.5327px;
+    width: 69.59px;
+    height: 54.94px;
+  }
+  [data-cascade-pos="1"] .fan-cart-icon {
+    width: 29.3px;
+    height: 29.3px;
+  }
+  [data-cascade-pos="1"] .fan-content {
+    gap: 7.7687px;
+    padding: 7.7687px;
+  }
+  [data-cascade-pos="1"] .fan-info-block {
+    gap: 4.88px;
+  }
+  [data-cascade-pos="1"] .fan-title-row {
+    gap: 2.44px;
+  }
+  [data-cascade-pos="1"] .fan-name {
+    font-size: 23.3061px;
+    line-height: 29px;
+    letter-spacing: 0.610398px;
+  }
+  [data-cascade-pos="1"] .fan-weight {
+    font-size: 19.4218px;
+    line-height: 31px;
+    letter-spacing: 0.610398px;
+  }
+  [data-cascade-pos="1"] .fan-desc {
+    font-size: 19.4218px;
+    line-height: 24px;
+    letter-spacing: 0.610398px;
+  }
+  [data-cascade-pos="1"] .fan-rating-price {
+    gap: 4.88px;
+  }
+  [data-cascade-pos="1"] .fan-stars-row {
+    gap: 9.77px;
+  }
+  [data-cascade-pos="1"] .fan-star-icon {
+    width: 83.62px;
+    height: 12.2px;
+  }
+  [data-cascade-pos="1"] .fan-rating-text {
+    font-size: 15.5374px;
+    line-height: 20px;
+    letter-spacing: 0.610398px;
+  }
+  [data-cascade-pos="1"] .fan-price-row {
+    gap: 9.77px;
+  }
+  [data-cascade-pos="1"] .fan-price {
+    font-size: 23.3061px;
+    line-height: 29px;
+  }
+  [data-cascade-pos="1"] .fan-oldprice {
+    font-size: 17.0911px;
+    line-height: 22px;
+  }
+  [data-cascade-pos="1"] .fan-discount {
+    font-size: 15.5374px;
+    line-height: 20px;
+    letter-spacing: 0.610398px;
+  }
+  [data-cascade-pos="1"] .fan-delivery-block {
+    gap: 4.88px;
+  }
+  [data-cascade-pos="1"] .fan-delivery-row {
+    gap: 7.77px;
+  }
+  [data-cascade-pos="1"] .fan-delivery-icon {
+    width: 23.31px;
+    height: 23.31px;
+  }
+  [data-cascade-pos="1"] .fan-delivery-text {
+    font-size: 15.5374px;
+    line-height: 20px;
+  }
+  [data-cascade-pos="1"] .fan-stock-row {
+    gap: 9.77px;
+  }
+  [data-cascade-pos="1"] .fan-stock-icon {
+    width: 19.53px;
+    height: 19.53px;
+  }
+  [data-cascade-pos="1"] .fan-stock-text {
+    font-size: 14.6496px;
+    line-height: 18px;
+  }
 }
 
 .swiper-nav-btn {
@@ -232,5 +383,13 @@ body {
   bottom: 12px;
   text-align: center;
   color: var(--color-white);
-  font-weight: 600;
+  font-weight: 500;
+}
+@media (min-width: 1024px) {
+  .shop-cat-tile {
+    border-radius: 10.49px;
+  }
+  .shop-cat-tile .shop-cat-label {
+    bottom: 20.97px;
+  }
 }
