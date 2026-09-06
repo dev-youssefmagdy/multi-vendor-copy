@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenant\Widgets;
 
 use App\Helpers\TenantNavigation;
+use App\Services\Tenant\TenantPanelService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -25,6 +26,11 @@ class AccountSetupProgress extends Component
     public function toggle(): void
     {
         $this->expanded = !$this->expanded;
+    }
+
+    public function markPagesReviewed(TenantPanelService $service): void
+    {
+        $service->markDefaultPagesReviewed();
     }
 
     public function render()
