@@ -189,12 +189,40 @@ a {
     }
 }
 
+/* Second row of the top bar — the "finish setup" progress alert. */
+#nav2 {
+    height: 36px;
+    background: var(--panel, #12141a);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 60px;
+    right: 0;
+    left: 256px;
+    z-index: 39;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#nav2.nav-full {
+    left: 0;
+}
+
+@media (max-width: 1023px) {
+    #nav2 {
+        left: 0 !important;
+    }
+}
+
 #mn {
     margin-left: 256px;
     margin-top: 60px;
     min-height: calc(100vh - 60px);
     padding: 22px;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:has(#nav2) #mn {
+    margin-top: 96px;
+    min-height: calc(100vh - 96px);
 }
 
 #mn.mn-full {

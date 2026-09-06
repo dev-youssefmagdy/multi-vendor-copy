@@ -60,9 +60,9 @@
         </div>
     @endif
 
-    {{-- ── Persistent setup-progress banner ────────────────────────────────── --}}
+    {{-- ── Persistent setup-progress alert — second row of the top bar ───────── --}}
     @if ($showSetupBanner)
-        <a href="{{ route('tenant.onboarding', ['tab' => 'setup']) }}" wire:navigate class="ob-setup-banner">
+        <a href="{{ route('tenant.onboarding', ['tab' => 'setup']) }}" wire:navigate id="nav2" class="ob-setup-banner">
             <div class="ob-setup-banner-bar">
                 <div class="ob-setup-banner-fill" style="width: {{ $setupPct }}%"></div>
             </div>
@@ -79,15 +79,10 @@
 
         <style>
             .ob-setup-banner {
-                position: sticky;
-                top: 0;
-                z-index: 40;
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                padding: 8px 16px;
-                background: var(--panel, #12141a);
-                border-bottom: 1px solid var(--border);
+                padding: 0 18px;
                 text-decoration: none;
                 color: var(--t2);
             }
