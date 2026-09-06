@@ -27,15 +27,24 @@
 .elora-v6-root .new-in-swiper {
   overflow: hidden;
 }
-/* Numeric slidesPerView (1.75) needs the same width-pinning as
-   .trending-swiper/.categories-swiper — without an explicit width, a flex
-   child with overflow:hidden can inflate via a ResizeObserver feedback loop,
-   producing a mismatch between Swiper's tracked slide width and the actual
-   rendered width, which shows up as slides overlapping/misaligning. */
+/* Container needs the same width-pinning as .trending-swiper/.categories-swiper
+   — without an explicit width, a flex child with overflow:hidden can inflate
+   via a ResizeObserver feedback loop, producing a mismatch between Swiper's
+   tracked slide width and the actual rendered width, which shows up as
+   slides overlapping/misaligning. */
 .elora-v6-root .best-seller-swiper {
   overflow: hidden;
   min-width: 0;
   width: 100%;
+}
+/* Each composite slide's cards (product_card / best_seller_small_card /
+   best_seller_wide_card) now carry their own fixed px width, so the slide
+   itself must size to that content ("auto" mode) rather than swiper-bundle's
+   own default ".swiper-slide{width:100%}" — beats it via selector
+   specificity, not !important, matching the .categories-swiper pattern
+   below. */
+.elora-v6-root .best-seller-swiper .swiper-slide {
+  width: auto;
 }
 /* Trending Now: fractional slidesPerView (2.5 on desktop) needs its own
    clipped, width-pinned container — same ResizeObserver feedback-loop fix as

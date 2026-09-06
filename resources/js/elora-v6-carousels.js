@@ -65,11 +65,16 @@ function mountFlashGrid() {
 // Best Seller: each carousel slide is a composite of 4 products — one full
 // card on the left, and a right-hand column split into 2 small cards on top
 // plus 1 wide horizontal card on the bottom (matching the Figma layout).
+// The composite's cards each have their own fixed px size (see their Blade
+// partials), so slidesPerView must stay "auto" — a numeric value would force
+// each slide's width to container/N regardless of the fixed-size content,
+// leaving gaps or clipping (see .best-seller-swiper .swiper-slide in
+// home-v6.css for the matching width:auto override).
 function mountBestSeller() {
     const wrapper = document.getElementById("bestSellerWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: 1.75,
+        slidesPerView: "auto",
         spaceBetween: 16,
     });
 }
