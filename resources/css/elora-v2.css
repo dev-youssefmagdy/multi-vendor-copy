@@ -456,18 +456,16 @@ body {
   }
 }
 
-/* Best Seller: fanned "card effect" carousel — the active (centered) slide
-   sits upright and full size; two rings of neighbors on either side shrink
-   and rotate progressively further out. Scale/rotate/z-index are set
-   per-slide in JS (carousels.js) from index distance to the active slide.
-   The card itself reuses the Flash Sale card partial/component (same
-   vertical card — image on top, details below — matching the Best Seller
-   reference design almost exactly), so the slide is sized identically to
-   .flash-sale-slide. This just sizes the track around it and gives rotation
-   enough clearance that it doesn't get clipped by this container's own
-   overflow:hidden (see the .flash-sale-swiper comment for why that
-   clearance is needed) — more than Flash Sale needs, since 5 cards fan out
-   here instead of 3. */
+/* Best Seller: centered "card effect" carousel — the active (centered)
+   slide sits upright and full size; two rings of neighbors on either side
+   shrink progressively (no rotation). Scale/opacity/z-index are set
+   per-slide in JS (carousels.js) from index distance to the active slide —
+   opacity forces exactly 5 slides visible regardless of container size, so
+   this track's own width doesn't need to double as that guarantee. The
+   card itself reuses the Flash Sale card partial/component (same vertical
+   card — image on top, details below — matching the Best Seller reference
+   design almost exactly), so the slide is sized identically to
+   .flash-sale-slide. */
 .best-seller-swiper {
   width: min(380px, 100%) !important;
   margin: 0 auto;
@@ -489,8 +487,22 @@ body {
 }
 @media (min-width: 1024px) {
   .best-seller-swiper {
-    width: min(760px, 100%) !important;
-    padding: 55px 20px;
+    width: 1093px !important;
+    height: 448px !important;
+    max-width: 100%;
+    /* The card (494.91px tall) is taller than this 448px track. The CSS
+       overflow spec forces the used value of an axis set to `visible` up
+       to `auto` whenever the other axis isn't `visible` too — so
+       overflow-x:hidden + overflow-y:visible can't actually produce a
+       non-clipping y-axis; it silently becomes `auto` (a scrollbar) at
+       best. Plain overflow:hidden on both axes, with the wrapper's cross
+       axis centered below, clips the card symmetrically top/bottom instead
+       of behind a scrollbar or all off one edge. */
+    overflow: hidden;
+    padding: 0 20px;
+  }
+  .best-seller-swiper .swiper-wrapper {
+    align-items: center;
   }
   .best-seller-slide {
     width: 327.68px;
