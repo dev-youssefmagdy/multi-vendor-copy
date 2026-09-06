@@ -85,6 +85,20 @@ trait Translator
         return $this->t($field, $locale);
     }
 
+    public function getTranslatedKeys(): array
+    {
+        $translations = [];
+
+        foreach ($this->translated ?? [] as $field) {
+            $translations[$field] = $this->t($field, 'en');
+        }
+
+        return [
+            'id' => $this->getKey(),
+            'translations' => $translations,
+        ];
+    }
+
     public function translationsByLocale(array $fields): array
     {
         $languageModel = $this->translationLanguageModelClass();
