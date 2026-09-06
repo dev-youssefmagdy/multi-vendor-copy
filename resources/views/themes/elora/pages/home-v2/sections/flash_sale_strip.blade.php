@@ -22,7 +22,6 @@
               'badgeBg' => 'var(--color-accent-yellow)',
               'badgeText' => 'var(--color-text-primary)',
               'delivered' => 'Delivered by 24 March',
-              'stockLeft' => 'Only 5 left',
           ];
       })->values();
 

@@ -245,7 +245,9 @@ body {
   height: 239.43px;
   border-radius: 7.18px;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   box-shadow: var(--shadow-card-active-mobile);
 }
 .flash-sale-slide > a {

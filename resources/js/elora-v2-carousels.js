@@ -123,6 +123,14 @@ function mountFlashSale() {
     // "prev" slide reliably reads progress ~1 but "next" reads ~0, so only
     // one side ever rotated. Index math sidesteps that entirely: it can't
     // drift or come out lopsided, it's just i - activeIndex.
+    //
+    // Rotation is mirrored across the active card: the card to its left
+    // (lower index, distSigned < 0) rotates on the positive axis, the card
+    // to its right (higher index, distSigned > 0) rotates on the negative
+    // axis — hence the leading minus below. Anything beyond the immediate
+    // neighbor (dist > 1) is force-hidden with opacity so exactly 3 cards
+    // are ever visible, never a 4th sliver, regardless of how the container
+    // width and spaceBetween happen to interact.
     const applyLayout = (sw) => {
         sw.slides.forEach((slideEl, i) => {
             const distSigned = i - sw.activeIndex;
@@ -130,13 +138,11 @@ function mountFlashSale() {
             const scale = 1 - dist * 0.18;
             const rotate = -Math.max(
                 -FLASH_SALE_MAX_ROTATE_DEG,
-                Math.min(
-                    FLASH_SALE_MAX_ROTATE_DEG,
-                    distSigned * FLASH_SALE_MAX_ROTATE_DEG,
-                ),
+                Math.min(FLASH_SALE_MAX_ROTATE_DEG, distSigned * FLASH_SALE_MAX_ROTATE_DEG),
             );
             slideEl.style.transform = `rotate(${rotate}deg) scale(${scale})`;
             slideEl.style.zIndex = String(10 - Math.round(dist * 4));
+            slideEl.style.opacity = dist > 1 ? "0" : "1";
         });
     };
 
@@ -145,6 +151,8 @@ function mountFlashSale() {
         centeredSlides: true,
         initialSlide: 1,
         spaceBetween: -111,
+        loop: true,
+        loopAdditionalSlides: 2,
         breakpoints: {
             1024: { spaceBetween: -210 },
         },

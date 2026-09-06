@@ -1,5 +1,5 @@
 {{-- Expects $p: url, image, name, weight, desc, badge, badgeBg, badgeText,
-     rating (float 0-5), ratingLabel, price, oldPrice, discount, delivered, stockLeft --}}
+     rating (float 0-5), ratingLabel, price, oldPrice, discount, delivered --}}
 <a
   href="{{ $p['url'] ?? '#' }}"
   class="relative flex flex-col items-start w-full h-full overflow-hidden"
@@ -33,17 +33,7 @@
       class="absolute z-[1] top-[120.76px] lg:top-[249.61px] right-[4.51px] lg:right-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px]"
       style="background: var(--color-bg-main)"
     >
-      <span class="relative inline-flex items-center justify-center size-[18.06px] lg:size-[37.33px]">
-        <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" alt="Add to cart" class="absolute inset-0 size-full" />
-        <span
-          class="absolute right-0 bottom-0 flex items-center justify-center rounded-full size-[9px] lg:size-[16px]"
-          style="background: var(--color-text-primary)"
-        >
-          <span class="relative block w-[5px] h-[1.4px] lg:w-[9px] lg:h-[1.6px]" style="background: var(--color-white)">
-            <span class="absolute inset-0 m-auto w-[1.4px] h-[5px] lg:w-[1.6px] lg:h-[9px]" style="background: var(--color-white)"></span>
-          </span>
-        </span>
-      </span>
+      <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="Add to cart" class="size-[18.06px] lg:size-[37.33px]" />
     </div>
   </div>
 
@@ -105,25 +95,14 @@
       </div>
     </div>
 
-    <div class="flex flex-col items-start gap-[3.01px] lg:gap-[6.22px] w-full">
-      @if (!empty($p['delivered']))
-        <div class="flex flex-row items-center gap-[4.79px] lg:gap-[9.9px] w-full">
-          <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
-          <p
-            class="whitespace-nowrap font-medium text-[9.58px] lg:text-[19.79px] leading-[12px] lg:leading-[25px] truncate min-w-0"
-            style="color: var(--color-success)"
-          >{{ $p['delivered'] }}</p>
-        </div>
-      @endif
-      @if (!empty($p['stockLeft']))
-        <div class="flex flex-row items-center gap-[6.02px] lg:gap-[12.44px]">
-          <img src="{{ asset('elora-1/assets/icons/cart-x.svg') }}" alt="" class="size-[12.04px] lg:size-[24.88px] shrink-0" />
-          <p
-            class="whitespace-nowrap font-medium text-[9.03px] lg:text-[18.66px] leading-[11px] lg:leading-[24px]"
-            style="color: var(--color-success)"
-          >{{ $p['stockLeft'] }}</p>
-        </div>
-      @endif
-    </div>
+    @if (!empty($p['delivered']))
+      <div class="flex flex-row items-center gap-[4.79px] lg:gap-[9.9px] w-full">
+        <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
+        <p
+          class="whitespace-nowrap font-medium text-[9.58px] lg:text-[19.79px] leading-[12px] lg:leading-[25px] truncate min-w-0"
+          style="color: var(--color-success)"
+        >{{ $p['delivered'] }}</p>
+      </div>
+    @endif
   </div>
 </a>
