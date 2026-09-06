@@ -124,7 +124,7 @@
                 </div>
                 <div>
                     <label class="field-label">Country</label>
-                    <x-select name="countryId" placeholder="Select country" :error="$errors->has('countryId')">
+                    <x-select name="countryId" placeholder="Select country" searchable :error="$errors->has('countryId')">
                         <option value="">Select country</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}" @selected(old('countryId', $countryId) == $country->id)>{{ $country->name }}</option>

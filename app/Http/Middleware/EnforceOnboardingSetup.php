@@ -37,7 +37,7 @@ class EnforceOnboardingSetup
             return $next($request);
         }
 
-        if ($request->query('from') === 'onboarding') {
+        if ($request->input('from') === 'onboarding') {
             return $next($request);
         }
 
