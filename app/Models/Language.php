@@ -27,6 +27,9 @@ class Language extends Model
         'countries',
         'image_file_id',
         'translation_progress',
+        'translation_status',
+        'translation_source_locale',
+        'translation_error',
         'sort_order',
     ];
 
