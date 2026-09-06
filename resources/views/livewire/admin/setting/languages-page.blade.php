@@ -88,6 +88,7 @@
                         <th>Pricing</th>
                         <th>Progress</th>
                         <th>Status</th>
+                        <th>Tokens Used</th>
                         <th class="ta-r">Actions</th>
                     </tr>
                 </thead>
@@ -151,6 +152,7 @@
                     <td><span
                             class="badge {{ $language->is_active ? 'badge-green' : 'badge-amber' }}">{{ $language->is_active ? 'Active' : 'Inactive' }}</span>
                     </td>
+                    <td>{{ number_format((int) $language->ai_tokens_used) }}</td>
                     <td class="ta-r">
                         @if ($canManageLanguages)
                             <div class="table-actions-inline"><a

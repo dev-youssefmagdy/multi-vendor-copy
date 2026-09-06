@@ -39,9 +39,7 @@ class TranslateLanguageResourcesJob implements ShouldQueue
             return;
         }
 
-        $targetLocale = strtolower((string) $language->code);
-
-        $translator->translateLanguageResources($this->sourceLocale, $targetLocale, $language->name);
+        $translator->translateLanguageResources($this->sourceLocale, $language);
 
         $language->forceFill(['translation_progress' => 20])->save();
     }

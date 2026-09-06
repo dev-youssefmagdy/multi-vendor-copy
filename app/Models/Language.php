@@ -30,6 +30,7 @@ class Language extends Model
         'translation_status',
         'translation_source_locale',
         'translation_error',
+        'ai_tokens_used',
         'sort_order',
     ];
 
@@ -46,6 +47,7 @@ class Language extends Model
             'ai_translation_price' => 'decimal:2',
             'countries' => 'array',
             'translation_progress' => 'integer',
+            'ai_tokens_used' => 'integer',
             'sort_order' => 'integer',
         ];
     }

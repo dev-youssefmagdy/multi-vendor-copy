@@ -37,7 +37,7 @@ class CatalogTranslatorService
         }
 
         // Weight: resources = 20%, catalog models = 70%, tenant sync = 10%
-        $this->translateLanguageResources($sourceLocale, strtolower((string) $language->code), $language->name);
+        $this->translateLanguageResources($sourceLocale, $language);
         $language->forceFill(['translation_progress' => 20])->save();
 
         $this->translateCatalogModels($sourceLocale, strtolower((string) $language->code), $language);
@@ -64,6 +64,7 @@ class CatalogTranslatorService
                 'translation_progress' => 100,
                 'translation_status' => 'completed',
                 'translation_error' => null,
+                'ai_tokens_used' => 0,
             ])->save();
             return null;
         }
@@ -73,6 +74,7 @@ class CatalogTranslatorService
             'translation_status' => 'processing',
             'translation_source_locale' => $resolved,
             'translation_error' => null,
+            'ai_tokens_used' => 0,
         ])->save();
 
         return $resolved;
@@ -178,8 +180,11 @@ class CatalogTranslatorService
         }
     }
 
-    public function translateLanguageResources(string $sourceLocale, string $targetLocale, string $targetLanguage): void
+    public function translateLanguageResources(string $sourceLocale, Language $language): void
     {
+        $targetLocale = strtolower((string) $language->code);
+        $targetLanguage = $language->name;
+
         foreach ($this->translationFiles->resources() as $resource) {
             $payload = $this->translationFiles->read((string) $resource['key']);
             $rows = $payload['rows'] ?? [];
@@ -218,6 +223,8 @@ class CatalogTranslatorService
 
             $this->translationFiles->save((string) $resource['key'], $rows);
         }
+
+        $this->recordTokenUsage($language);
     }
 
     protected function translateCatalogModels(string $sourceLocale, string $targetLocale, Language $language): void
@@ -307,8 +314,25 @@ class CatalogTranslatorService
                 }
             });
 
+        $this->recordTokenUsage($language);
+
         $progress = $progressStart + (int) round(($progressEnd - $progressStart) * ($modelIndex + 1) / $totalModels);
         $language->forceFill(['translation_progress' => $progress])->save();
+    }
+
+    /**
+     * Add the OpenAI tokens consumed since the last reset to the language's
+     * running total, then reset the counter. Safe to call repeatedly across
+     * separate queued jobs since each job resolves its own OpenAiTranslationService.
+     */
+    protected function recordTokenUsage(Language $language): void
+    {
+        $used = $this->openAi->totalTokensUsed();
+        $this->openAi->resetUsage();
+
+        if ($used > 0) {
+            $language->increment('ai_tokens_used', $used);
+        }
     }
 
     protected function existingTranslations(Model $model): array
