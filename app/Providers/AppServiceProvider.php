@@ -81,6 +81,22 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('storefront.add-to-cart-button', \App\Livewire\Tenant\Storefront\ThemeKit\AddToCartButton::class);
         Livewire::component('storefront.cart-icon', \App\Livewire\Tenant\Storefront\ThemeKit\CartIcon::class);
 
+        // The central `/preview` route (tenant panel "Preview" button, admin
+        // Templates page) renders the dedicated "preview" tenant's storefront
+        // on the central domain by design (see InitializeTenancyForPreview).
+        // Livewire's persistent middleware below runs before that route's own
+        // middleware, so without this exception PreventAccessFromCentralDomains
+        // aborts(404) on every /preview hit; that 404 is then redirected by the
+        // global exception handler to the (also Livewire-persistent-middleware-
+        // guarded) not-found route, aborting again and looping forever.
+        PreventAccessFromCentralDomains::$abortRequest = function ($request, $next) {
+            if ($request->is('preview')) {
+                return $next($request);
+            }
+
+            abort(404);
+        };
+
         Livewire::addPersistentMiddleware([
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,

@@ -22,6 +22,7 @@ use App\Models\DeliveryPopupDay;
 use App\Models\HomeVariant;
 use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
+use App\Services\Preview\PreviewOverrides;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -657,6 +658,17 @@ class StorefrontRepository
 
         if (!$theme) {
             return $this->memo['current_home_variant'] = null;
+        }
+
+        if (PreviewOverrides::active() && PreviewOverrides::homepageVariantKey()) {
+            $forced = tenancy()->central(fn() => HomeVariant::query()
+                ->forTheme($theme->slug)
+                ->where('key', PreviewOverrides::homepageVariantKey())
+                ->first());
+
+            if ($forced) {
+                return $this->memo['current_home_variant'] = $forced;
+            }
         }
 
         $country = $this->detectedCountry();

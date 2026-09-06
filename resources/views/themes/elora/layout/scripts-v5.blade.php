@@ -1,4 +1,4 @@
-@if(request()->is('/'))
+@if(request()->is('/') || request()->routeIs('preview'))
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     @vite(['resources/js/elora-v5-interactions.js', 'resources/js/elora-v5-carousels.js'])

@@ -89,6 +89,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            // `tenant.storefront.not-found` is a tenant-domain-only route
+            // (guarded by PreventAccessFromCentralDomains). Redirecting to it
+            // from a request that is already on a central domain would just
+            // 404 again there and loop forever, so let it fall through to
+            // central.php's own fallback (website.not-found) instead.
+            if (in_array($request->getHost(), config('tenancy.central_domains'), true)) {
+                return null;
+            }
+
             if (!\Illuminate\Support\Facades\Route::has('tenant.storefront.not-found')) {
                 return null;
             }
