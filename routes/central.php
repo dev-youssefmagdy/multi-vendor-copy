@@ -176,6 +176,8 @@ Route::middleware('track.affiliate')->group(function () {
 // ── Affiliate Panel ────────────────────────────────────────────────────────
 Route::prefix('affiliate')->name('affiliate.')->group(function () {
 
+    Route::redirect('/', '/affiliate/dashboard');
+
     // Auth (guest only)
     Route::middleware('guest:affiliate')->group(function () {
         Route::get('/login',    \App\Livewire\Affiliate\Auth\LoginPage::class)->name('login');
