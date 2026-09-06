@@ -156,11 +156,32 @@ class TenantPanelRepository
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
                 $this->applyProductStockFilter($query, $filters['stock']);
             })
+            ->when(filled($filters['category'] ?? null), function ($query) use ($filters) {
+                $categoryIds = $this->resolveCategoryIdsWithDescendants((int) $filters['category']);
+                $query->whereHas('categories', fn (Builder $q) => $q->whereIn('categories.id', $categoryIds));
+            })
             ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
                 $query->whereIn('central_product_id', $filters['image_search_ids']);
             })
             ->orderBy('order_number')
             ->paginate($perPage);
+    }
+
+    /**
+     * A category plus every descendant category ID beneath it, so filtering
+     * by a parent category also matches products only assigned to its children.
+     *
+     * @return int[]
+     */
+    protected function resolveCategoryIdsWithDescendants(int $categoryId): array
+    {
+        $category = Category::query()->with('children.children.children.children')->find($categoryId);
+
+        if (!$category) {
+            return [$categoryId];
+        }
+
+        return array_merge([$category->id], $category->getAllChildrenIds());
     }
 
     /**

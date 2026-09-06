@@ -6,6 +6,7 @@ use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Country;
 use App\Models\FixedShippingCost;
+use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
@@ -22,6 +23,7 @@ class ProductsList extends ListPage
     public string $search = '';
     public string $statusFilter = '';
     public string $stockFilter = '';
+    public string $categoryFilter = '';
     public array $imageSearchIds = [];
     public bool $imageSearchActive = false;
 
@@ -104,9 +106,11 @@ class ProductsList extends ListPage
             'search' => $this->search,
             'status' => $this->statusFilter,
             'stock' => $this->stockFilter,
+            'category' => $this->categoryFilter,
             'image_search_ids' => $this->imageSearchIds,
         ]);
         $stats = $repository->productStats();
+        $categoryOptions = $this->categoryOptions();
         $centralProducts = $repository->centralProductSnapshots(
             collect($records->items())->pluck('central_product_id')->all()
         );
@@ -121,6 +125,7 @@ class ProductsList extends ListPage
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
                 ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
+                ['label' => 'Category', 'model' => 'categoryFilter', 'type' => 'select', 'options' => $categoryOptions],
             ],
             'statistics' => [
                 ['label' => 'Products', 'value' => number_format($stats['total']), 'caption' => 'Products in this tenant catalog', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
@@ -540,11 +545,47 @@ class ProductsList extends ListPage
         $this->resetPage();
     }
 
+    public function updatedCategoryFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'stockFilter']);
+        $this->reset(['search', 'statusFilter', 'stockFilter', 'categoryFilter']);
         $this->clearImageSearch();
         $this->resetPage();
+    }
+
+    /**
+     * Flat, hierarchical option list for the category filter: root categories
+     * followed by their descendants indented, so picking any node (parent or
+     * child) filters by that category plus its own sub-tree.
+     *
+     * @return array<string, string>
+     */
+    private function categoryOptions(): array
+    {
+        $options = ['' => 'All Categories'];
+
+        $roots = Category::query()
+            ->with(['translations.language', 'children.translations.language', 'children.children.translations.language', 'children.children.children.translations.language'])
+            ->whereNull('parent_id')
+            ->orderBy('order_number')
+            ->get();
+
+        $flatten = function ($categories, int $depth) use (&$flatten, &$options): void {
+            foreach ($categories as $category) {
+                $options[(string) $category->id] = str_repeat('— ', $depth) . ($category->translationValue('name') ?: ('#' . $category->id));
+                if ($category->children->isNotEmpty()) {
+                    $flatten($category->children, $depth + 1);
+                }
+            }
+        };
+
+        $flatten($roots, 0);
+
+        return $options;
     }
 
     public function applyImageSearch(array $ids): void
