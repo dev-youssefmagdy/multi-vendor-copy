@@ -6,19 +6,27 @@
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-hoodie.png');
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+          $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;
+          $weightLabel = $weightGrams
+              ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
+              : '';
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New'),
+              'badgeLabel' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
+              'badgeText' => 'var(--color-white)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
-              'desc' => $product->centralProduct?->category?->name ?? '',
-              'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+              'weight' => $weightLabel,
+              'desc' => $product->centralProduct?->category?->name ?? 'Premium cotton blend',
+              'rating' => $rating,
+              'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+              'delivered' => $hasDiscount ? null : 'Delivered by 24 March',
+              'stockLeft' => $hasDiscount ? 'Only 5 left' : null,
           ];
       });
     @endphp
@@ -26,7 +34,7 @@
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] mt-12 flex flex-col gap-[16px] lg:gap-[34px]"
       style="
         background: linear-gradient(
-          180deg,
+          90deg,
           var(--color-yellow-bright) 0%,
           transparent 100%
         );
@@ -47,9 +55,7 @@
         <div class="swiper card-swiper new-in-swiper">
           <div class="swiper-wrapper" id="newInWrapper">
             @forelse ($newInCards as $product)
-              <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
-                @include('themes.elora.pages.home-v2.sections.partials.product_card', ['p' => $product])
-              </div>
+              @include('themes.elora.pages.home-v2.sections.partials.new_in_card', ['p' => $product])
             @empty
               <p class="text-sm text-gray-500 py-6 w-full">{{ __('No new arrivals yet.') }}</p>
             @endforelse

@@ -160,13 +160,14 @@ function mountFlashSale() {
     });
 }
 
-function mountCarousel({ wrapperId, prevId, nextId }) {
+function mountCarousel({ wrapperId, prevId, nextId, spaceBetween = 16, breakpoints }) {
     const wrapper = document.getElementById(wrapperId);
     if (!wrapper) return;
 
     return new Swiper(wrapper.closest(".swiper"), {
         slidesPerView: "auto",
-        spaceBetween: 16,
+        spaceBetween,
+        ...(breakpoints ? { breakpoints } : {}),
         navigation: {
             prevEl: `#${prevId}`,
             nextEl: `#${nextId}`,
@@ -175,10 +176,18 @@ function mountCarousel({ wrapperId, prevId, nextId }) {
 }
 
 function initCarousels() {
+    // New In card is 132x200.03 up to the md breakpoint, 210x321 from it —
+    // spaceBetween matches what .new-in-swiper's fixed track width
+    // (elora-v2.css) assumes: 350px = 2.5 cards @132 + gaps of 10, and
+    // 1340px = 6 cards @210 + gaps of 16.
     mountCarousel({
         wrapperId: "newInWrapper",
         prevId: "newInPrev",
         nextId: "newInNext",
+        spaceBetween: 10,
+        breakpoints: {
+            768: { spaceBetween: 16 },
+        },
     });
     mountTrending();
     mountFlashSale();

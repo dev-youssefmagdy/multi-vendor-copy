@@ -571,3 +571,45 @@ body {
     border-radius: 14.85px;
   }
 }
+
+/* New In: vertical product card, "auto" slidesPerView with a fixed
+   container width sized to show exactly N cards ("N slides per view" here
+   means visible width, not Swiper's slidesPerView option — see the
+   Flash Sale slidesPerView:3 comment history in carousels.js for why a
+   literal numeric slidesPerView would force Swiper to override this card's
+   width instead of the container adapting around it).
+
+   Only the outer slide box lives here (same reasoning as
+   .flash-sale-slide/.best-seller-slide/.trending_now's slide-sizing rules):
+   Swiper's own bundled CSS sets `.swiper-slide{width:100%}` as a plain,
+   unlayered rule, and Tailwind wraps its utilities in `@layer utilities` —
+   per the CSS cascade spec, unlayered rules always beat layered ones on a
+   tie regardless of source order, so a Tailwind width class here would
+   silently lose. Everything else inside the card (badge, buttons, text —
+   none of which Swiper's CSS targets) is plain Tailwind in
+   new_in_card.blade.php, same as every other card this session.
+
+   .new-in-slide is scoped (not bare `.product-card`) because that exact
+   name, at this same 768px breakpoint, is also used by the Trending Now
+   card with different dimensions. */
+.new-in-swiper {
+  width: min(350px, 100%) !important;
+}
+@media (min-width: 768px) {
+  .new-in-swiper {
+    width: 1340px !important;
+    max-width: 100%;
+  }
+}
+.new-in-slide {
+  width: 132px !important;
+  height: 200.03px !important;
+  border-radius: 6px !important;
+}
+@media (min-width: 768px) {
+  .new-in-slide {
+    width: 210px !important;
+    height: 321px !important;
+    border-radius: 8px !important;
+  }
+}
