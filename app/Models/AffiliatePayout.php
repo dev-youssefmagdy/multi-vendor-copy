@@ -9,7 +9,7 @@ class AffiliatePayout extends Model
 {
     protected $fillable = [
         'affiliate_id', 'amount', 'method',
-        'reference', 'notes', 'paid_at',
+        'reference', 'notes', 'attachment_path', 'paid_at',
     ];
 
     protected function casts(): array

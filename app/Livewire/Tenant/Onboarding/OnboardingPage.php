@@ -46,6 +46,13 @@ class OnboardingPage extends Component
     {
         $this->tab = in_array($tab, ['tour', 'setup']) ? $tab : 'tour';
 
+        // Reaching the setup tab by any route (tab switch, direct link, sidebar)
+        // means the forced first-run tour no longer needs to intercept navigation
+        // away from this page — see OnboardingTour::maybeRedirectToOnboarding().
+        if ($this->tab === 'setup') {
+            $this->markTourSeen();
+        }
+
         $settings = Setting::query()
             ->whereIn('name', [
                 'logo_mode',
@@ -262,7 +269,7 @@ class OnboardingPage extends Component
                     : 'Enable a payment gateway so customers can complete purchases.',
                 'mandatory' => false,
                 'done' => $this->paymentGatewayConfigured(),
-                'action_url' => route('tenant.settings.payment-gateways'),
+                'action_url' => route('tenant.settings.payment-gateways', ['from' => 'onboarding']),
                 'action_label' => 'Configure Payments',
                 'icon' => 'payment',
             ],
@@ -286,7 +293,7 @@ class OnboardingPage extends Component
                     : 'Add your business name, logo, and contact info.',
                 'mandatory' => true,
                 'done' => TenantNavigation::profileComplete(),
-                'action_url' => route('tenant.settings.account'),
+                'action_url' => route('tenant.settings.account', ['from' => 'onboarding']),
                 'action_label' => 'Go to Account Settings',
                 'icon' => 'logo',
             ],
@@ -298,7 +305,7 @@ class OnboardingPage extends Component
                     : 'Add your store name, description, and address.',
                 'mandatory' => true,
                 'done' => TenantNavigation::storeDetailsComplete(),
-                'action_url' => route('tenant.settings.account') . '#store-details',
+                'action_url' => route('tenant.settings.account', ['from' => 'onboarding']) . '#store-details',
                 'action_label' => 'Go to Store Details',
                 'icon' => 'storefront',
             ],
@@ -310,7 +317,7 @@ class OnboardingPage extends Component
                     : 'Add owner details, business registration, and bank info in the Compliance Center.',
                 'mandatory' => true,
                 'done' => TenantNavigation::complianceComplete(),
-                'action_url' => route('tenant.settings.compliance'),
+                'action_url' => route('tenant.settings.compliance', ['from' => 'onboarding']),
                 'action_label' => 'Go to Compliance Center',
                 'icon' => 'settings',
             ],

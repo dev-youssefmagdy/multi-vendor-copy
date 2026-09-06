@@ -75,6 +75,13 @@ class ComplianceCenterController extends Controller
 
         $this->service->updateCompliance($updates);
 
+        if ($request->input('from') === 'onboarding') {
+            return redirect()
+                ->route('tenant.onboarding', ['tab' => 'setup'])
+                ->with('status', 'Compliance information updated successfully.')
+                ->with('status_type', 'success');
+        }
+
         return redirect()
             ->route('tenant.settings.compliance', ['section' => $section])
             ->with('status', 'Compliance information updated successfully.')

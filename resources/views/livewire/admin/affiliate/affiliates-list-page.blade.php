@@ -2,7 +2,7 @@
     @include('livewire.admin.pages.list-page')
 
     <x-modal wire:model="showPayoutModal" title="Issue Payout" maxWidth="lg" closeAction="closeModal">
-        <form wire:submit="issuePayout" class="page-stack">
+        <form wire:submit="issuePayout" class="page-stack" enctype="multipart/form-data">
             <p class="panel-copy">
                 Paying out to <strong>{{ $payoutAffiliateName }}</strong> —
                 available balance: <strong>${{ number_format((float) $payoutAffiliateBalance, 2) }}</strong>
@@ -14,21 +14,29 @@
                     <x-input type="number" step="0.01" min="0.01" wire:model="payoutAmount" placeholder="0.00" />
                 </div>
                 <div>
-                    <label class="field-label">Method</label>
-                    <x-select wire:model="payoutMethod">
-                        <option value="paypal">PayPal</option>
-                        <option value="bank_transfer">Bank Transfer</option>
-                        <option value="manual">Manual</option>
-                    </x-select>
-                </div>
-                <div>
                     <label class="field-label">Reference</label>
                     <x-input type="text" wire:model="payoutReference" placeholder="Transaction reference" />
                 </div>
-                <div>
-                    <label class="field-label">Notes</label>
-                    <x-input type="text" wire:model="payoutNotes" placeholder="Optional notes" />
-                </div>
+            </div>
+
+            <div>
+                <label class="field-label">Notes</label>
+                <textarea
+                    rows="4"
+                    wire:model="payoutNotes"
+                    placeholder="Optional notes"
+                    style="padding: 7px 11px!important;"
+                    class="w-full bg-[var(--input)] border border-[var(--border)] rounded-[8px] text-[13px] text-[var(--t1)]
+                        outline-none transition-all duration-200 shadow-sm placeholder:text-[var(--t3)] resize-none
+                        focus:border-[var(--cyan)] focus:ring-1 focus:ring-[var(--cyan)]/50 hover:border-gray-400/80"
+                ></textarea>
+            </div>
+
+            <div>
+                <label class="field-label">Attachment</label>
+                <input type="file" wire:model="payoutAttachment" class="input" />
+                @error('payoutAttachment') <span class="field-error">{{ $message }}</span> @enderror
+                <div wire:loading wire:target="payoutAttachment" class="field-hint">Uploading…</div>
             </div>
 
             <div class="page-actions compact-actions justify-end">

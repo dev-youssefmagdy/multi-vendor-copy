@@ -95,6 +95,7 @@
     <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="section" value="business">
+        <input type="hidden" name="from" value="{{ request('from') }}">
         <section class="card form-card fu d1 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -154,6 +155,7 @@
     <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="section" value="owner">
+        <input type="hidden" name="from" value="{{ request('from') }}">
         <section class="card form-card fu d2 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -198,6 +200,7 @@
     <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="section" value="company">
+        <input type="hidden" name="from" value="{{ request('from') }}">
         <section class="card form-card fu d3 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -256,6 +259,7 @@
     <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="section" value="bank">
+        <input type="hidden" name="from" value="{{ request('from') }}">
         <section class="card form-card fu d4 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
@@ -305,6 +309,7 @@
     <form method="POST" action="{{ route('tenant.settings.compliance.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="section" value="documents">
+        <input type="hidden" name="from" value="{{ request('from') }}">
         <section class="card form-card fu d5 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">

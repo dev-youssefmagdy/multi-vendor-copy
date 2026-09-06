@@ -50,9 +50,7 @@ class TenantService
                     ? ($tenant->activated_at ?? now())
                     : null,
                 'profit_percentage' => max(0, (float) ($attributes['profit_percentage'] ?? 0)),
-                'data' => array_merge($tenant->data ?? [], [
-                    'shop_name' => $attributes['shop_name'] ?? null,
-                ]),
+                'shop_name' => $attributes['shop_name'] ?? null,
             ]);
 
             // saveQuietly suppresses Eloquent-dispatched events (including TenantCreated),

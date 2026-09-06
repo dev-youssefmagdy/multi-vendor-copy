@@ -253,12 +253,13 @@ class AffiliateService
                 });
 
             return AffiliatePayout::query()->create([
-                'affiliate_id' => $affiliate->id,
-                'amount'       => $amount,
-                'method'       => $payoutData['method'] ?? 'manual',
-                'reference'    => $payoutData['reference'] ?? null,
-                'notes'        => $payoutData['notes'] ?? null,
-                'paid_at'      => now(),
+                'affiliate_id'    => $affiliate->id,
+                'amount'          => $amount,
+                'method'          => $payoutData['method'] ?? 'manual',
+                'reference'       => $payoutData['reference'] ?? null,
+                'notes'           => $payoutData['notes'] ?? null,
+                'attachment_path' => $payoutData['attachment_path'] ?? null,
+                'paid_at'         => now(),
             ]);
         });
     }

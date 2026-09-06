@@ -12,8 +12,9 @@
                 <thead>
                     <tr>
                         <th>{{ __('Amount') }}</th>
-                        <th>{{ __('Method') }}</th>
                         <th>{{ __('Reference') }}</th>
+                        <th>{{ __('Notes') }}</th>
+                        <th>{{ __('Attachment') }}</th>
                         <th>{{ __('Date') }}</th>
                     </tr>
                 </thead>
@@ -21,13 +22,20 @@
                     @forelse ($payouts as $payout)
                         <tr>
                             <td>${{ number_format((float) $payout->amount, 2) }}</td>
-                            <td>{{ ucfirst($payout->method ?? '-') }}</td>
                             <td>{{ $payout->reference ?? '-' }}</td>
+                            <td>{{ $payout->notes ?? '-' }}</td>
+                            <td>
+                                @if ($payout->attachment_path)
+                                    <a href="{{ $payout->attachment_path }}" target="_blank" rel="noopener">{{ __('View') }}</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td>{{ $payout->paid_at?->format('M d, Y') ?? '-' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 <div class="empty-state">
                                     <div class="empty-state-title">{{ __('No payouts yet') }}</div>
                                     <p class="empty-state-copy">{{ __('Payouts will appear here once processed.') }}</p>
