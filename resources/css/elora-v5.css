@@ -108,6 +108,26 @@ body {
   }
 }
 
+/* Best Seller section background — mobile only gets the navy/blue gradient
+   with a radial "light burst" texture layered on top (approximated in pure
+   CSS via repeating-conic-gradient, since there's no source texture asset
+   for this section); desktop keeps the original solid yellow. Using the
+   `background` shorthand (not just background-color) for the desktop
+   override is what actually matters here — background-image and
+   background-color are separate properties, so overriding only the color
+   while the gradient (set as background-image) stays active at every
+   breakpoint would leave the gradient visible on desktop regardless. */
+.bestseller-section-bg {
+  background:
+    repeating-radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0.08) 2px, transparent 2px, transparent 22px),
+    linear-gradient(270deg, #0b2575 0%, #1648e4 46.63%, #0b2575 100%);
+}
+@media (min-width: 1024px) {
+  .bestseller-section-bg {
+    background: var(--color-yellow);
+  }
+}
+
 /* Best Seller: draggable fan cascade — every slide is absolutely positioned
    by carousels.js (mountBestSellerCarousel) from a fixed geometry table
    indexed by distance-from-activeIndex, so dragging shifts which product
@@ -128,142 +148,49 @@ body {
   width: 100%;
 }
 .bestseller-slide {
-  transition-property: left, top, width, height;
-}
-.js-fan-imgband {
-  transition-property: height;
+  transition-property: transform;
 }
 
-/* Per-cascade-slot fixed sizing for fan_card.blade.php inside Best Seller.
-   [data-cascade-pos] is set live by mountBestSellerCarousel (elora-v5-carousels.js) on
-   every position update, so these rules track the SLOT (0 = active/front, 1 = next, ...)
-   rather than whichever product currently occupies it as the user drags the cascade.
-   fan_card.blade.php's own Tailwind classes are the position-0 (active) sizing; slot 0
-   therefore needs no override here. Higher specificity than a single Tailwind utility
-   class wins these ties without needing !important. */
+/* Best Seller cascade (both breakpoints): every slide is this ONE fixed
+   base size (matching the Figma card exactly — scale=1 at cascade position
+   0, the active/biggest slot), and mountBestSellerCarousel
+   (elora-v5-carousels.js) applies `transform: translate(left, top)
+   scale(ratio)` per slide to produce every other cascade depth from it —
+   never by resizing the slide's raw width/height directly. Scaling the
+   whole card as one unit guarantees every child (text, icons, padding)
+   scales in lockstep; the old approach resized each slide's raw
+   width/height per depth and needed a matching per-depth CSS override to
+   rescale the inner content, but that override only ever existed for one
+   of five desktop depths (and none of mobile's three), so the rest
+   rendered full-size text crammed into a shrunk box. transform-origin
+   stays at the default top-left so translate/scale compose the way the
+   position tables (in JS) expect. */
+.fan-slide-base {
+  width: 206.23px;
+  height: 312.52px;
+  transform-origin: top left;
+}
 @media (min-width: 1024px) {
-  [data-cascade-pos="1"] .fan-card {
-    border-radius: 11.6531px;
-    box-shadow: 0px 6.70241px 35.8579px rgba(0, 0, 0, 0.25);
+  .fan-slide-base {
+    width: 256.37px;
+    height: 388.49px;
   }
-  [data-cascade-pos="1"] .fan-image {
-    border-radius: 9.76637px 9.76637px 0 0;
-  }
-  [data-cascade-pos="1"] .fan-heart-btn {
-    top: 7.32478px;
-    left: 7.32478px;
-    padding: 9.76637px;
-    width: 39.07px;
-    height: 39.07px;
-    box-shadow: 0px 4.88318px 4.88318px rgba(0, 0, 0, 0.15);
-  }
-  [data-cascade-pos="1"] .fan-heart-icon {
-    width: 24.42px;
-    height: 24.42px;
-  }
-  [data-cascade-pos="1"] .fan-badge {
-    padding: 6.42088px;
-    border-top-left-radius: 8.56117px;
-    border-bottom-right-radius: 8.56117px;
-  }
-  [data-cascade-pos="1"] .fan-badge-text {
-    font-size: 14.982px;
-    line-height: 19px;
-    letter-spacing: 0.535073px;
-  }
-  [data-cascade-pos="1"] .fan-cart-btn {
-    bottom: 7.32478px;
-    right: 7.32478px;
-    padding: 4.88318px 14.6496px;
-    border-radius: 19.5327px;
-    width: 69.59px;
-    height: 54.94px;
-  }
-  [data-cascade-pos="1"] .fan-cart-icon {
-    width: 29.3px;
-    height: 29.3px;
-  }
-  [data-cascade-pos="1"] .fan-content {
-    gap: 7.7687px;
-    padding: 7.7687px;
-  }
-  [data-cascade-pos="1"] .fan-info-block {
-    gap: 4.88px;
-  }
-  [data-cascade-pos="1"] .fan-title-row {
-    gap: 2.44px;
-  }
-  [data-cascade-pos="1"] .fan-name {
-    font-size: 23.3061px;
-    line-height: 29px;
-    letter-spacing: 0.610398px;
-  }
-  [data-cascade-pos="1"] .fan-weight {
-    font-size: 19.4218px;
-    line-height: 31px;
-    letter-spacing: 0.610398px;
-  }
-  [data-cascade-pos="1"] .fan-desc {
-    font-size: 19.4218px;
-    line-height: 24px;
-    letter-spacing: 0.610398px;
-  }
-  [data-cascade-pos="1"] .fan-rating-price {
-    gap: 4.88px;
-  }
-  [data-cascade-pos="1"] .fan-stars-row {
-    gap: 9.77px;
-  }
-  [data-cascade-pos="1"] .fan-star-icon {
-    width: 83.62px;
-    height: 12.2px;
-  }
-  [data-cascade-pos="1"] .fan-rating-text {
-    font-size: 15.5374px;
-    line-height: 20px;
-    letter-spacing: 0.610398px;
-  }
-  [data-cascade-pos="1"] .fan-price-row {
-    gap: 9.77px;
-  }
-  [data-cascade-pos="1"] .fan-price {
-    font-size: 23.3061px;
-    line-height: 29px;
-  }
-  [data-cascade-pos="1"] .fan-oldprice {
-    font-size: 17.0911px;
-    line-height: 22px;
-  }
-  [data-cascade-pos="1"] .fan-discount {
-    font-size: 15.5374px;
-    line-height: 20px;
-    letter-spacing: 0.610398px;
-  }
-  [data-cascade-pos="1"] .fan-delivery-block {
-    gap: 4.88px;
-  }
-  [data-cascade-pos="1"] .fan-delivery-row {
-    gap: 7.77px;
-  }
-  [data-cascade-pos="1"] .fan-delivery-icon {
-    width: 23.31px;
-    height: 23.31px;
-  }
-  [data-cascade-pos="1"] .fan-delivery-text {
-    font-size: 15.5374px;
-    line-height: 20px;
-  }
-  [data-cascade-pos="1"] .fan-stock-row {
-    gap: 9.77px;
-  }
-  [data-cascade-pos="1"] .fan-stock-icon {
-    width: 19.53px;
-    height: 19.53px;
-  }
-  [data-cascade-pos="1"] .fan-stock-text {
-    font-size: 14.6496px;
-    line-height: 18px;
-  }
+}
+
+/* Best Seller mobile pagination dots (built by mountBestSellerCarousel). */
+.bestseller-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 29px;
+  background: #afafaf;
+  border: none;
+  padding: 0;
+  cursor: default;
+  transition: width 0.2s ease;
+}
+.bestseller-dot.is-active {
+  width: 24px;
+  background: #d7ad43;
 }
 
 .swiper-nav-btn {

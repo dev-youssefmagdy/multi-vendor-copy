@@ -89,12 +89,16 @@ const BEST_SELLER_POSITIONS_DESKTOP = [
     { left: 980, top: 123, width: 203, height: 307 },
 ];
 const BEST_SELLER_POSITIONS_MOBILE = [
-    { left: 0, top: 0, width: 172, height: 262 },
-    { left: 130, top: 35, width: 141, height: 213 },
-    { left: 224, top: 58, width: 119, height: 180 },
+    { left: 16, top: 53, width: 206.23, height: 312.52 },
+    { left: 172.03, top: 95.01, width: 168.04, height: 254.65 },
+    { left: 284.06, top: 121.74, width: 141.94, height: 215.1 },
 ];
 
-function mountBestSellerCarousel(containerId, positions) {
+function mountBestSellerCarousel(
+    containerId,
+    positions,
+    { baseWidth, dotsContainerId = null } = {},
+) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.style.position = "relative";
@@ -106,6 +110,27 @@ function mountBestSellerCarousel(containerId, positions) {
     // without needing Swiper's duplicated DOM nodes to be visually meaningful.
     const slideEls = [...container.children];
     const count = slideEls.length;
+
+    const dotsEl = dotsContainerId
+        ? document.getElementById(dotsContainerId)
+        : null;
+    if (dotsEl) {
+        dotsEl.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "bestseller-dot" + (i === 0 ? " is-active" : "");
+            dot.setAttribute("aria-label", `Product ${i + 1}`);
+            dotsEl.appendChild(dot);
+        }
+    }
+    const updateDots = (sw) => {
+        if (!dotsEl) return;
+        dotsEl.querySelectorAll(".bestseller-dot").forEach((dot, i) => {
+            dot.classList.toggle("is-active", i === sw.realIndex);
+        });
+    };
+
     const applyPositions = (sw) => {
         slideEls.forEach((slideEl, i) => {
             const distance = (((i - sw.realIndex) % count) + count) % count;
@@ -120,14 +145,17 @@ function mountBestSellerCarousel(containerId, positions) {
             }
             slideEl.style.opacity = "1";
             slideEl.style.pointerEvents = "";
-            slideEl.style.left = `${box.left}px`;
-            slideEl.style.top = `${box.top}px`;
-            slideEl.style.width = `${box.width}px`;
-            slideEl.style.height = `${box.height}px`;
+            // Every slide is the SAME base size (.fan-slide-base), positioned
+            // and resized purely via transform — scaling the whole card as
+            // one unit guarantees every child (text, icons, padding) scales
+            // in lockstep, so there's no way for content to overflow its box
+            // at any cascade depth.
+            const scale = box.width / baseWidth;
+            slideEl.style.transform = `translate(${box.left}px, ${box.top}px) scale(${scale})`;
             slideEl.style.zIndex = String(positions.length - distance);
             // Tracks which cascade slot this slide currently occupies (0 = active/front),
-            // independent of DOM order, so CSS can give each slot its own fixed
-            // typography/spacing even as dragging reassigns which product sits where.
+            // independent of DOM order — not used for styling any more (the transform
+            // above handles all sizing), kept only as a debugging hook.
             slideEl.dataset.cascadePos = String(distance);
         });
         // Loop mode clones aren't part of slideEls and never get positioned —
@@ -146,8 +174,14 @@ function mountBestSellerCarousel(containerId, positions) {
         loop: true,
         loopedSlides: count,
         on: {
-            init: applyPositions,
-            slideChange: applyPositions,
+            init(sw) {
+                applyPositions(sw);
+                updateDots(sw);
+            },
+            slideChange(sw) {
+                applyPositions(sw);
+                updateDots(sw);
+            },
             transitionEnd: applyPositions,
             setTransition(sw, duration) {
                 slideEls.forEach(
@@ -167,10 +201,12 @@ function initCarousels() {
     mountBestSellerCarousel(
         "bestSellerMobileWrapper",
         BEST_SELLER_POSITIONS_MOBILE,
+        { baseWidth: 206.23, dotsContainerId: "bestSellerMobileDots" },
     );
     mountBestSellerCarousel(
         "bestSellerDesktopWrapper",
         BEST_SELLER_POSITIONS_DESKTOP,
+        { baseWidth: 256.37 },
     );
 
     // Flash-sale countdown (starts from the design's captured 03:06:25 and ticks down)

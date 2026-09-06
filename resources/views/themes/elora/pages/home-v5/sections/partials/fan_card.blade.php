@@ -1,66 +1,76 @@
-{{-- Expects $p: name, weight, price, oldPrice, discount, rating, stock, alt (bool) — image band sized to 57.5% of card height, for use inside the Best Seller fan cascade / Flash Sale big cards.
-     Best Seller's mapper always sets 'alt' (true/false); Flash Sale's mapper never does — that presence, not alt's value, is what
-     tells us weight/price should use Best Seller's fixed orange/black scheme instead of Flash Sale's alt-driven blue/orange one.
-     The Tailwind classes below are cascade-position-0 (active/front card) sizing. Best Seller's fan cascade is draggable, so which
-     product occupies position 1, 2, etc. changes at runtime — elora-v5-carousels.js tags each slide with data-cascade-pos to match,
-     and per-position size/spacing overrides for positions 1+ live in elora-v5.css keyed off [data-cascade-pos="N"], targeting the
-     fan-* class hooks below, rather than being baked into this template. --}}
+{{-- Card used by both Best Seller's fan cascade AND Flash Sale's big slide
+     (flash_sale_strip.blade.php) — this partial itself stays size-agnostic
+     (w-full h-full, fills whatever box its caller gives it); Flash Sale
+     forces its own !w-[]/!h-[] on the .swiper-slide, and Best Seller's
+     .fan-slide-base class (elora-v5.css) fixes ONE base size per breakpoint
+     matching the Figma card exactly (206.23x312.52 mobile, 256.37x388.49
+     desktop). Every cascade depth (bigger in front, smaller behind) is then
+     produced by elora-v5-carousels.js applying `transform: scale()` to that
+     base slide — never by resizing the slide's raw width/height directly.
+     Scaling the whole card as a unit guarantees every child (text, icons,
+     padding) shrinks/grows in lockstep — the previous approach set each
+     slide's raw width/height per depth and relied on a matching CSS
+     override per depth to rescale the inner content, but that override
+     only ever existed for one of five desktop depths (and none of
+     mobile's three), so the rest rendered full-size text crammed into a
+     shrunk box.
+     Expects $p: name, weight, price, oldPrice, discount, rating, stock, left, alt (bool) --}}
 @php
     $isBestSeller = array_key_exists('alt', $p);
     $weightColor = $isBestSeller ? 'var(--color-badge-orange)' : (!empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)');
     $priceColor = $isBestSeller ? 'var(--color-black)' : (!empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)');
     $deliveredColor = !empty($p['alt']) ? 'var(--color-error)' : 'var(--color-success)';
 @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="fan-card flex flex-col items-start rounded-[8px] lg:rounded-[12.9px] h-full shadow-[var(--shadow-card-lg)] lg:shadow-[0px_6.38px_34.11px_rgba(0,0,0,0.25)]" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="fan-card flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)]" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-full" style="height:57.5%">
-    <div class="fan-image rounded-t-[8px] lg:rounded-t-[10.81px] absolute inset-0 overflow-hidden">
+    <div class="fan-image rounded-t-[7.86px] lg:rounded-t-[9.77px] absolute inset-0 overflow-hidden">
       <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     </div>
-    <button type="button" aria-label="Add to favorites" class="fan-heart-btn absolute top-[5px] left-[5px] lg:top-[8.11px] lg:left-[8.11px] bg-white cursor-pointer shadow lg:shadow-[0_5.40px_5.40px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5px] lg:p-[10.81px] rounded-full shrink-0 size-[22px] lg:size-[43.23px]">
-      <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="fan-heart-icon size-[13px] lg:size-[27.02px]" />
+    <button type="button" aria-label="Add to favorites" class="fan-heart-btn absolute top-[4.91px] left-[5.89px] lg:top-[7.32px] lg:left-[7.32px] bg-white cursor-pointer shadow-[0_3.93px_3.93px_rgba(0,0,0,0.15)] lg:shadow-[0_4.88px_4.88px_rgba(0,0,0,0.15)] flex items-center justify-center p-[7.86px] lg:p-[9.77px] rounded-full shrink-0 size-[31.43px] lg:size-[39.07px]">
+      <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" />
     </button>
-    <div class="fan-badge absolute top-0 right-0 flex items-center justify-center px-[10px] py-[5px] lg:p-[7.11px] rounded-tl-[8px] rounded-br-[8px] lg:rounded-tl-[9.47px] lg:rounded-br-[9.47px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
-      <p class="fan-badge-text font-normal text-[11px] lg:text-[16.58px] lg:leading-[21px] tracking-[0.3px] lg:tracking-[0.59px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['alt']) ? '30% OFF' : '70% Sold' }}</p>
+    <div class="fan-badge absolute top-0 right-0 flex items-center justify-center px-[5.17px] py-[5.17px] lg:px-[6.42px] lg:py-[6.42px] rounded-tl-[6.89px] rounded-br-[6.89px] lg:rounded-tl-[8.56px] lg:rounded-br-[8.56px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
+      <p class="fan-badge-text font-normal text-[12.05px] leading-[15px] lg:text-[14.98px] lg:leading-[19px] tracking-[0.43px] lg:tracking-[0.54px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['alt']) ? '30% OFF' : '70% Sold' }}</p>
     </div>
-    <div class="fan-cart-btn absolute bottom-[5px] right-[5px] lg:bottom-[8.11px] lg:right-[8.11px] flex items-center justify-center p-[7px] lg:px-[16.21px] lg:py-[5.40px] rounded-full lg:rounded-[21.62px] shrink-0 size-[34px] lg:w-[77px] lg:h-[60.79px] bg-white shadow">
-      <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="Add to cart" class="fan-cart-icon size-[18px] lg:size-[32.42px]" />
+    <div class="fan-cart-btn absolute bottom-[4.91px] right-[5.89px] lg:bottom-[7.32px] lg:right-[7.32px] flex items-center justify-center px-[11.78px] py-[3.93px] lg:px-[14.65px] lg:py-[4.88px] rounded-[15.71px] lg:rounded-[19.53px] shrink-0 w-[55.98px] h-[44.19px] lg:w-[69.59px] lg:h-[54.94px] bg-white shadow">
+      <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="Add to cart" class="fan-cart-icon size-[23.57px] lg:size-[29.3px]" />
     </div>
   </div>
-  <div class="fan-content flex flex-col gap-[4px] lg:gap-[8.60px] items-start p-[6px] lg:p-[8.60px] relative shrink-0 w-full">
-    <div class="fan-info-block flex flex-col gap-[2px] lg:gap-[5.40px] items-start w-full">
-      <div class="fan-title-row flex items-center justify-between gap-[6px] lg:gap-[2.70px] w-full whitespace-nowrap">
-        <p class="fan-name font-medium text-[13px] lg:text-[25.79px] lg:leading-[32px] lg:tracking-[0.68px] truncate" style="color:var(--color-black)">{{ $p['name'] }}</p>
-        <p class="fan-weight font-normal text-[11px] lg:text-[21.49px] lg:leading-[34px] lg:tracking-[0.68px] shrink-0" style="color:{{ $weightColor }}">{{ $p['weight'] }}</p>
+  <div class="fan-content flex flex-col gap-[6.25px] lg:gap-[7.77px] items-start p-[6.25px] lg:p-[7.77px] relative shrink-0 w-full flex-1 min-h-0">
+    <div class="fan-info-block flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start w-full">
+      <div class="fan-title-row flex items-center justify-between gap-[1.96px] lg:gap-[2.44px] w-full whitespace-nowrap">
+        <p class="fan-name font-medium text-[18.75px] leading-[24px] lg:text-[23.31px] lg:leading-[29px] tracking-[0.49px] lg:tracking-[0.61px] truncate" style="color:var(--color-black)">{{ $p['name'] }}</p>
+        <p class="fan-weight font-normal text-[15.62px] leading-[25px] lg:text-[19.42px] lg:leading-[31px] tracking-[0.49px] lg:tracking-[0.61px] shrink-0" style="color:{{ $weightColor }}">{{ $p['weight'] }}</p>
       </div>
-      <p class="fan-desc font-normal text-[10px] lg:text-[21.49px] lg:leading-[27px] lg:tracking-[0.68px] w-full truncate" style="color:var(--color-subtitle)">Premium cotton blend</p>
+      <p class="fan-desc font-normal text-[15.62px] leading-[20px] lg:text-[19.42px] lg:leading-[24px] tracking-[0.49px] lg:tracking-[0.61px] w-full truncate" style="color:var(--color-subtitle)">{{ __('Premium cotton blend') }}</p>
     </div>
-    <div class="fan-rating-price flex flex-col gap-[2px] lg:gap-[5.40px] items-start">
-      <div class="fan-stars-row flex gap-[5px] lg:gap-[10.81px] items-center justify-center">
-        <img src="{{ asset('elora-5/assets/icons/star-rating.svg') }}" alt="" class="fan-star-icon h-[7px] lg:h-[13.50px] w-[48px] lg:w-[92.53px]" />
-        <span class="fan-rating-text text-[9px] lg:text-[17.19px] lg:leading-[22px] tracking-[0.3px] lg:tracking-[0.68px] whitespace-nowrap" style="color:var(--color-subtitle)">{{ $p['rating'] }}</span>
+    <div class="fan-rating-price flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start">
+      <div class="fan-stars-row flex gap-[7.86px] lg:gap-[9.77px] items-center justify-center">
+        <img src="{{ asset('elora-5/assets/icons/star-rating.svg') }}" alt="" class="fan-star-icon h-[9.82px] w-[67.26px] lg:h-[12.2px] lg:w-[83.62px]" />
+        <span class="fan-rating-text text-[12.5px] leading-[16px] lg:text-[15.54px] lg:leading-[20px] tracking-[0.49px] lg:tracking-[0.61px] whitespace-nowrap" style="color:var(--color-subtitle)">{{ $p['rating'] }}</span>
       </div>
-      <div class="fan-price-row flex gap-[5px] lg:gap-[10.81px] items-end flex-wrap">
-        <p class="fan-price font-medium text-[13px] lg:text-[25.79px] lg:leading-[32px]" style="color:{{ $priceColor }}">{{ $p['price'] }}</p>
+      <div class="fan-price-row flex gap-[7.86px] lg:gap-[9.77px] items-end flex-wrap">
+        <p class="fan-price font-medium text-[18.75px] leading-[24px] lg:text-[23.31px] lg:leading-[29px]" style="color:{{ $priceColor }}">{{ $p['price'] }}</p>
         @if (!empty($p['oldPrice']))
-          <p class="fan-oldprice font-light text-[9px] lg:text-[18.91px] lg:leading-[24px] line-through whitespace-nowrap" style="color:var(--color-subtitle)">{{ $p['oldPrice'] }}</p>
+          <p class="fan-oldprice font-light text-[13.75px] leading-[17px] lg:text-[17.09px] lg:leading-[22px] line-through whitespace-nowrap" style="color:var(--color-subtitle)">{{ $p['oldPrice'] }}</p>
         @endif
         @if (!empty($p['discount']))
-          <p class="fan-discount font-normal text-[9px] lg:text-[17.19px] lg:leading-[22px] tracking-[0.3px] lg:tracking-[0.68px] whitespace-nowrap" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
+          <p class="fan-discount font-normal text-[12.5px] leading-[16px] lg:text-[15.54px] lg:leading-[20px] tracking-[0.49px] lg:tracking-[0.61px] whitespace-nowrap" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
         @endif
       </div>
     </div>
-    <div class="fan-delivery-block flex flex-col gap-[2px] lg:gap-[5.40px] items-start w-full">
+    <div class="fan-delivery-block flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start w-full">
       @if (!empty($p['left']))
         {{-- Low-stock urgency replaces the routine delivery line rather than stacking below it —
              every card-size spec's delivery/stock wrapper is only ever tall enough for one row. --}}
-        <div class="fan-stock-row flex gap-[5px] lg:gap-[8.60px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="fan-stock-icon size-[12px] lg:size-[25.79px] shrink-0" />
-          <p class="fan-stock-text font-medium text-[9px] lg:text-[17.19px] lg:leading-[22px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['left'] }}</p>
+        <div class="fan-stock-row flex gap-[6.25px] lg:gap-[9.77px] items-center w-full">
+          <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="fan-stock-icon size-[18.75px] lg:size-[19.53px] shrink-0" />
+          <p class="fan-stock-text font-medium text-[12.5px] leading-[16px] lg:text-[14.65px] lg:leading-[18px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['left'] }}</p>
         </div>
       @else
-        <div class="fan-delivery-row flex gap-[5px] lg:gap-[5.40px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="fan-delivery-icon size-[12px] lg:size-[24.32px] shrink-0" />
-          <p class="fan-delivery-text font-medium text-[9px] lg:text-[16.21px] lg:leading-[20px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] ?: 'Delivered by 24 March' }}</p>
+        <div class="fan-delivery-row flex gap-[3.93px] lg:gap-[7.77px] items-center w-full">
+          <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
+          <p class="fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] ?: __('Delivered by 24 March') }}</p>
         </div>
       @endif
     </div>
