@@ -6,12 +6,16 @@
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/flash-sneaker.png');
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+          $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;
+          $weightLabel = $weightGrams
+              ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
+              : '';
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
+              'weight' => $weightLabel,
               'desc' => $product->centralProduct?->category?->name ?? '',
               'rating' => $rating,
               'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

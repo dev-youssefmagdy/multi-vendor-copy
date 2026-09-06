@@ -38,7 +38,7 @@
   </div>
 
   {{-- Body --}}
-  <div class="flex flex-col items-start gap-[4.79px] lg:gap-[9.9px] p-[4.79px] lg:p-[9.9px] w-full shrink-0">
+  <div class="flex flex-col items-start justify-center gap-[4.79px] lg:gap-[9.9px] p-[4.79px] lg:p-[9.9px] w-full flex-1 min-h-0">
     <div class="flex flex-col items-start gap-[3.01px] lg:gap-[6.22px] w-full">
       <div class="flex flex-row items-center justify-between gap-[1.5px] lg:gap-[3.11px] w-full">
         <p
@@ -97,7 +97,7 @@
 
     @if (!empty($p['delivered']))
       <div class="flex flex-row items-center gap-[4.79px] lg:gap-[9.9px] w-full">
-        <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
+        <img src="{{ asset('elora-1/assets/icons/truck-delivery-green.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
         <p
           class="whitespace-nowrap font-medium text-[9.58px] lg:text-[19.79px] leading-[12px] lg:leading-[25px] truncate min-w-0"
           style="color: var(--color-success)"
