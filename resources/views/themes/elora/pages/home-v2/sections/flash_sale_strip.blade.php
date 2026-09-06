@@ -85,7 +85,7 @@
           </div>
           <a
             href="{{ route('tenant.storefront.best-selling') }}"
-            class="border-2 border-white rounded-full h-[48px] lg:h-[78px] px-[24px] lg:px-[40px] flex items-center justify-center cursor-pointer"
+            class="hidden border-2 border-white rounded-full h-[48px] lg:h-[78px] px-[24px] lg:px-[40px] lg:flex items-center justify-center cursor-pointer"
           >
             <span
               class="font-medium text-white text-[16px] lg:text-[29px] tracking-[1px]"
@@ -105,5 +105,16 @@
             @endforelse
           </div>
         </div>
+
+
+           <a
+            href="{{ route('tenant.storefront.best-selling') }}"
+            class="border-2 border-white rounded-full h-[48px] lg:h-[78px] px-[24px] lg:px-[40px] flex lg:hidden items-center justify-center cursor-pointer"
+          >
+            <span
+              class="font-medium text-white text-[16px] lg:text-[29px] tracking-[1px]"
+              >Explore all</span
+            >
+          </a>
       </div>
     </section>

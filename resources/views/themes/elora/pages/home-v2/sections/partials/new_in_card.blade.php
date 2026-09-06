@@ -1,7 +1,9 @@
 {{-- Expects $p: url, image, name, weight, desc, badgeLabel, badgeBg, badgeText,
-     rating (float 0-5), ratingLabel, price, oldPrice, discount, delivered, stockLeft --}}
+     rating (float 0-5, real backend average), ratingLabel, price, oldPrice,
+     discount, delivered, stockLeft --}}
 @php
   $filledStars = (int) round(min(5, max(0, (float) ($p['rating'] ?? 0))));
+  $starClip = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
 @endphp
 <div class="swiper-slide new-in-slide">
   <a
@@ -70,7 +72,7 @@
             @for ($i = 0; $i < 5; $i++)
               <span
                 class="block shrink-0 w-[6.6px] h-[6.28px] md:w-[10.5px] md:h-[10px]"
-                style="background: {{ $i < $filledStars ? '#FFE100' : 'var(--color-stroke)' }}"
+                style="background: {{ $i < $filledStars ? '#FFE100' : 'var(--color-stroke)' }}; clip-path: {{ $starClip }}"
               ></span>
             @endfor
           </div>
