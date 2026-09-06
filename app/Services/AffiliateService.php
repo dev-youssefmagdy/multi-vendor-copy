@@ -92,8 +92,14 @@ class AffiliateService
      * Called when a tenant completes a PAID package payment.
      * Finds any pending conversion for this tenant and approves it.
      */
-    public function approveConversion(string $tenantId, PaymentLog $paymentLog): ?AffiliateConversion
+    public function approveConversion(string $tenantId, PaymentLog $paymentLog, ?int $couponAffiliateId = null): ?AffiliateConversion
     {
+        // If an affiliated coupon was used, the coupon commission takes priority —
+        // skip the URL-referral commission to avoid double-attribution.
+        if ($couponAffiliateId !== null) {
+            return null;
+        }
+
         $conversion = AffiliateConversion::query()
             ->where('tenant_id', $tenantId)
             ->where('status', 'pending')

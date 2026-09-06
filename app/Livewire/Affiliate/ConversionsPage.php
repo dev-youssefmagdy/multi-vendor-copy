@@ -22,7 +22,7 @@ class ConversionsPage extends Component
         $affiliate = Auth::guard('affiliate')->user();
 
         $conversions = $affiliate->conversions()
-            ->with(['package', 'paymentLog'])
+            ->with(['package', 'paymentLog', 'coupon'])
             ->when($this->statusFilter, fn ($q) => $q->where('status', $this->statusFilter))
             ->latest()
             ->paginate(20);
