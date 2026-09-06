@@ -1,7 +1,7 @@
 <header>
     <!-- Mobile -->
     <div
-    class="lg:hidden flex items-center justify-between px-[18px] py-[12px]"
+    class="lg:hidden relative flex items-center justify-between px-[18px] pt-[12px] pb-[27px]"
     style="background: var(--color-text-primary)"
     >
     <div class="flex items-center gap-[12px]">
@@ -29,6 +29,46 @@
     >
         <img src="{{ asset('elora-1/assets/icons/bell.svg') }}" alt="" class="h-[15px] w-[14px]" />
     </button>
+    <form
+        action="{{ route('tenant.storefront.search') }}"
+        method="GET"
+        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+        class="absolute left-[16px] right-[16px] -bottom-[27px] z-30"
+    >
+        <div
+        class="elora-search-inner flex items-center justify-between gap-[8px] h-[54px] rounded-[32px] px-[12px] border"
+        style="background: var(--color-surface); border-color: var(--color-stroke); position: relative"
+        >
+        <div class="flex items-center gap-[8px] flex-1 min-w-0">
+            <img
+            src="{{ asset('elora-1/assets/icons/search.svg') }}"
+            alt=""
+            class="size-[20px] opacity-70 shrink-0"
+            />
+            <input
+            type="search"
+            name="q"
+            value="{{ request('q') }}"
+            autocomplete="off"
+            placeholder="Search..."
+            class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full min-w-0"
+            />
+        </div>
+        <button
+            type="button"
+            aria-label="{{ __('Search by Image') }}"
+            class="shrink-0 flex items-center justify-center pl-[8px] border-l opacity-70"
+            style="border-color: var(--color-gray)"
+            data-image-search-trigger="storefront-image-search-modal-v2-mobile"
+        >
+            <svg class="size-[20px]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color: var(--color-text-primary)">
+                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                <circle cx="12" cy="13" r="3.2" />
+            </svg>
+        </button>
+        </div>
+    </form>
+    <x-image-search-modal id="storefront-image-search-modal-v2-mobile" :action="route('tenant.storefront.search.image')" />
     </div>
 
     <!-- Desktop -->

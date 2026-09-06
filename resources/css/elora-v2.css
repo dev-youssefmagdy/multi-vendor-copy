@@ -143,15 +143,15 @@ body {
 }
 @media (min-width: 1024px) {
   .hero-pagination {
-    gap: 5px;
+    gap: 5.05px;
   }
 }
 .hero-dot {
   display: inline-block;
   height: 8px;
   width: 8px;
-  border-radius: 9999px;
-  background: var(--color-stroke);
+  border-radius: 29px;
+  background: #d9d9d9;
   cursor: pointer;
   transition:
     width 0.2s ease,
@@ -163,11 +163,12 @@ body {
 }
 @media (min-width: 1024px) {
   .hero-dot {
-    height: 13px;
-    width: 13px;
+    height: 13.47px;
+    width: 13.47px;
+    border-radius: 48.8421px;
   }
   .hero-dot.is-active {
-    width: 40px;
+    width: 40.42px;
   }
 }
 

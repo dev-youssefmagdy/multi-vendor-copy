@@ -28,7 +28,7 @@ class SectionRegistry
             'home' => [
                 'hero_banner' => 'Hero Banner',
                 'trust_bar' => 'Trust Bar',
-                'category_circles' => 'Category Circles',
+                'category_carousel' => 'Category Carousel (Static)',
                 'tabbed_products' => 'Tabbed Products',
                 'flash_sale_strip' => 'Flash Sale Strip',
                 'trending_now' => 'Trending Now',
