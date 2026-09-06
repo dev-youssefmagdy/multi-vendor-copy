@@ -150,11 +150,11 @@ function mountFlashSale() {
         slidesPerView: "auto",
         centeredSlides: true,
         initialSlide: 1,
-        spaceBetween: -111,
+        spaceBetween: -70,
         loop: true,
         loopAdditionalSlides: 2,
         breakpoints: {
-            1024: { spaceBetween: -210 },
+            1024: { spaceBetween: -140 },
         },
         on: {
             init: applyLayout,
