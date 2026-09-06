@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Tenant\CouponType;
 use App\Enums\TenantStatus;
 use App\Models\Language;
 use App\Models\Tenant;
@@ -9,17 +10,27 @@ use App\Models\Tenant\Coupon;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
-use App\Enums\Tenant\CouponType;
+use App\Services\TenantService;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use RuntimeException;
-use Stancl\Tenancy\Database\Models\Domain;
 
 /**
  * Creates (or re-seeds) a dedicated "preview" tenant used by the central admin
  * to preview any installed template via:
  *   https://preview.{central_domain}?_tpl={template_slug}
+ *
+ * Provisioning goes through the exact same {@see TenantService::save()} flow
+ * used by a real store's "Complete Registration" submission (see
+ * WebsiteRegistrationService::finalize()): tenant row, subdomain, tenant
+ * database creation/migration, owner admin + roles + appearance defaults, and
+ * a full central-catalog sync all run through that one path, so the preview
+ * tenant is provisioned identically to a real tenant instead of by a
+ * hand-rolled, drifting copy of that logic.
+ *
+ * The catalog/owner-admin sync normally happens on the queue (`tenant-sync`);
+ * this seeder forces the sync queue driver for the duration of the call so
+ * everything completes before the command returns.
  *
  * Usage:
  *   php artisan db:seed --class=TestPreviewTenantSeeder
@@ -32,68 +43,57 @@ class TestPreviewTenantSeeder extends Seeder
     /** Fixed UUID so the seeder is fully idempotent. */
     private const TENANT_ID = 'preview00-0000-4000-a000-000000000001';
 
-    public function run(): void
+    public function run(TenantService $tenantService): void
     {
         $centralDomain = config('tenancy.central_domains.0')
             ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
 
         $previewDomain = 'preview.' . $centralDomain;
 
-        // ── 1. Ensure tenant exists ───────────────────────────────────────────
-        /** @var Tenant $tenant */
-        $tenant = Tenant::query()->where('id', self::TENANT_ID)->first();
+        // ── 1. Provision the tenant through the real registration flow ────────
+        /** @var Tenant|null $existing */
+        $existing = Tenant::query()->where('id', self::TENANT_ID)->first();
+        $isNew = $existing === null;
 
-        if (!$tenant) {
-            $primaryLanguage = Language::query()->orderBy('id')->first();
+        $tenant = $existing ?? new Tenant(['id' => self::TENANT_ID]);
 
-            $tenant = new Tenant(['id' => self::TENANT_ID]);
-            $tenant->fill([
-                'name' => 'Preview Store',
-                'slug' => 'preview',
-                'email' => 'preview@preview.local',
-                'phone' => null,
-                'status' => TenantStatus::Active->value,
-                'catalog_id' => null,
-                'all_catalogs' => true,
-                'primary_language_id' => $primaryLanguage?->id,
-                'package_id' => null,
-                'activated_at' => now(),
-                'profit_percentage' => 0,
-                'data' => ['shop_name' => 'Preview Store', 'is_preview_tenant' => true],
-            ]);
-            $tenant->saveQuietly();
+        $primaryLanguage = Language::query()->orderBy('id')->first();
 
-            $this->command?->info("Preview tenant created (ID: " . self::TENANT_ID . ").");
-        } else {
-            $this->command?->info("Preview tenant already exists — re-seeding.");
+        $attributes = [
+            'name' => 'Preview Store',
+            'slug' => 'preview',
+            'email' => 'preview@preview.local',
+            'phone' => null,
+            'status' => TenantStatus::Active->value,
+            'category_ids' => null,
+            'package_id' => null,
+            'primary_language_id' => $primaryLanguage?->id,
+            'trial_ends_at' => null,
+            'shop_name' => 'Preview Store',
+            'profit_percentage' => 0,
+            // Owner admin is only ever used internally; never surfaced for login.
+            'password' => Str::random(40),
+        ];
+
+        $this->command?->info($isNew ? 'Provisioning preview tenant…' : 'Preview tenant already exists — re-syncing.');
+
+        // TenantService::save() dispatches SyncTenantOwnerAdminJob and
+        // SyncTenantSectionsJob onto the `tenant-sync` queue; force the sync
+        // driver so this command doesn't return before they've actually run.
+        $previousQueueDefault = Config::get('queue.default');
+        Config::set('queue.default', 'sync');
+
+        try {
+            $tenant = $tenantService->save($attributes, $tenant);
+        } finally {
+            Config::set('queue.default', $previousQueueDefault);
         }
 
-        // ── 2. Ensure domain mapping ──────────────────────────────────────────
-        Domain::query()->updateOrCreate(
-            ['tenant_id' => $tenant->id],
-            ['domain' => $previewDomain]
-        );
+        $this->command?->info("Preview tenant ready (ID: {$tenant->id}, domain: {$previewDomain}).");
 
-        $this->command?->info("Preview domain: {$previewDomain}");
-
-        // ── 3. Sync all central data (languages, currencies, themes, products …)
-        $this->command?->info("Syncing central catalog data into preview tenant…");
-
-        $exitCode = Artisan::call('tenants:sync-data', [
-            'tenant' => $tenant->id,
-            '--ensure-database' => true,
-        ]);
-
-        $output = trim(Artisan::output());
-        if ($output) {
-            $this->command?->getOutput()->write($output . "\n");
-        }
-
-        if ($exitCode !== 0) {
-            throw new RuntimeException("Tenant sync failed for preview tenant. Exit code: {$exitCode}");
-        }
-
-        // ── 4. Seed demo data inside the tenant ───────────────────────────────
+        // ── 2. Seed demo data inside the tenant (preview-only, not part of the
+        //      standard registration flow — makes the theme previews look
+        //      populated rather than empty) ─────────────────────────────────
         tenancy()->initialize($tenant);
 
         try {
@@ -167,7 +167,10 @@ class TestPreviewTenantSeeder extends Seeder
             ->limit(6)
             ->get();
 
-        $count = 0;
+        if ($products->isEmpty()) {
+            $this->command?->warn('No active products in preview tenant — skipping flash sale.');
+            return;
+        }
 
         $fs = FlashSale::query()->create(
             [
@@ -181,8 +184,7 @@ class TestPreviewTenantSeeder extends Seeder
 
         $fs->products()->attach($products->pluck('id')->all());
 
-
-        $this->command?->info("Flash sales seeded: {$count}.");
+        $this->command?->info("Flash sale seeded with " . $products->count() . " products.");
     }
 
     // ── Coupon seeding ────────────────────────────────────────────────────────
