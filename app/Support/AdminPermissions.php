@@ -51,6 +51,7 @@ class AdminPermissions
             'plans.tenants.manage' => 'Manage tenants',
             'plans.pending-registrations.view' => 'View pending registrations',
             'plans.pending-registrations.manage' => 'Manage pending registrations',
+            'plans.tenant-change-requests.manage' => 'Manage tenant country/category change requests',
 
             'compliance.tenants.view' => 'View tenant compliance',
             'compliance.tenants.manage' => 'Manage tenant compliance verification',

@@ -31,6 +31,7 @@ use App\Livewire\Admin\PaymentLog\PaymentLogsList;
 use App\Livewire\Admin\Plan\PlansList;
 use App\Livewire\Admin\Plan\RegisteredUsersList;
 use App\Livewire\Admin\Plan\PendingRegistrationsList;
+use App\Livewire\Admin\Plan\TenantChangeRequestsList;
 use App\Livewire\Admin\Plan\AddEditPackage;
 use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
@@ -368,6 +369,7 @@ Route::group([
             ->middleware('admin.permission:plans.tenants.manage')
             ->name('users.impersonate');
         Route::get('/pending-registrations', PendingRegistrationsList::class)->middleware('admin.permission:plans.pending-registrations.view,plans.pending-registrations.manage')->name('pending-registrations');
+        Route::get('/tenant-change-requests', TenantChangeRequestsList::class)->middleware('admin.permission:plans.tenant-change-requests.manage')->name('tenant-change-requests');
         Route::get('/', PlansList::class)->middleware('admin.permission:plans.packages.view,plans.packages.manage')->name('index');
         Route::get('/create', AddEditPackage::class)->middleware('admin.permission:plans.packages.manage')->name('create');
         Route::get('/{package}/edit', AddEditPackage::class)->middleware('admin.permission:plans.packages.manage')->name('edit');

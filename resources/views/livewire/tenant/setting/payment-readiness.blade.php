@@ -110,7 +110,7 @@
             @if(empty($report['target_countries']))
                 <p class="panel-copy">
                     You haven't set target countries yet.
-                    <a href="{{ route('tenant.store.target-countries') }}" class="link">Configure countries →</a>
+                    <a href="{{ route('tenant.settings.general') }}" class="link">Request target countries →</a>
                 </p>
             @else
                 @if(!empty($report['covered_countries']))

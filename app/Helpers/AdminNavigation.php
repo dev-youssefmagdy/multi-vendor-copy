@@ -120,6 +120,7 @@ class AdminNavigation
                         'children' => [
                             ['label' => 'Registered Users', 'route' => 'admin.plans.users', 'permission' => 'plans.tenants.view'],
                             ['label' => 'Pending Registrations', 'route' => 'admin.plans.pending-registrations', 'permission' => 'plans.pending-registrations.view'],
+                            ['label' => 'Tenant Change Requests', 'route' => 'admin.plans.tenant-change-requests', 'permission' => 'plans.tenant-change-requests.manage'],
                             ['label' => 'Plans', 'route' => 'admin.plans.index', 'permission' => 'plans.packages.view'],
                         ],
                     ],

@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50 py-10 px-4">
+<div class="min-h-screen bg-gray-50 pt-16 pb-10 px-4">
     <div class="max-w-2xl mx-auto">
 
         <div class="text-center mb-8">

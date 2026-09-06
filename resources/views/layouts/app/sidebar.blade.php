@@ -13,6 +13,9 @@
   $productRequestsUnreadCount = auth('admin')->user()?->hasAnyPermission(['catalog.product-requests.view', 'catalog.product-requests.manage'])
       ? \App\Models\ProductRequest::where('admin_has_unread', true)->count()
       : 0;
+  $pendingTenantChangeRequestsCount = auth('admin')->user()?->hasPermission('plans.tenant-change-requests.manage')
+      ? \App\Models\TenantChangeRequest::where('status', 'pending')->count()
+      : 0;
 @endphp
 
 <aside id="sb">
@@ -74,6 +77,9 @@
             @endif
             @if (($child['route'] ?? null) === 'admin.product-requests.index' && $productRequestsUnreadCount > 0)
               <span class="ni-badge">{{ $productRequestsUnreadCount }}</span>
+            @endif
+            @if (($child['route'] ?? null) === 'admin.plans.tenant-change-requests' && $pendingTenantChangeRequestsCount > 0)
+              <span class="ni-badge">{{ $pendingTenantChangeRequestsCount }}</span>
             @endif
           </a>
         @endforeach
