@@ -124,7 +124,7 @@
                 </div>
                 <div>
                     <label class="field-label">Country</label>
-                    <x-select name="countryId" placeholder="Select country" searchable :error="$errors->has('countryId')">
+                    <x-select id="complianceCountrySelect" name="countryId" placeholder="Select country" searchable :error="$errors->has('countryId')">
                         <option value="">Select country</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}" @selected(old('countryId', $countryId) == $country->id)>{{ $country->name }}</option>
@@ -134,8 +134,13 @@
                 </div>
                 <div>
                     <label class="field-label">City</label>
-                    <x-input type="text" name="city" value="{{ old('city', $city) }}" :error="$errors->has('city')" />
-                    @error('city')<div class="field-error">{{ $message }}</div>@enderror
+                    <x-select id="complianceCitySelect" name="cityId" placeholder="Select city" searchable :disabled="$cities->isEmpty()" :error="$errors->has('cityId')">
+                        <option value="">Select city</option>
+                        @foreach ($cities as $cityOption)
+                            <option value="{{ $cityOption->id }}" @selected(old('cityId', $cityId) == $cityOption->id)>{{ $cityOption->name }}</option>
+                        @endforeach
+                    </x-select>
+                    @error('cityId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label class="field-label">Phone</label>
@@ -298,8 +303,13 @@
                 </div>
                 <div>
                     <label class="field-label">Currency</label>
-                    <x-input type="text" name="bankCurrency" placeholder="e.g. USD" value="{{ old('bankCurrency', $bankCurrency) }}" :error="$errors->has('bankCurrency')" />
-                    @error('bankCurrency')<div class="field-error">{{ $message }}</div>@enderror
+                    <x-select name="currencyId" placeholder="Select currency" searchable :error="$errors->has('currencyId')">
+                        <option value="">Select currency</option>
+                        @foreach ($currencies as $currency)
+                            <option value="{{ $currency->id }}" @selected(old('currencyId', $currencyId) == $currency->id)>{{ $currency->code }} — {{ $currency->name }}</option>
+                        @endforeach
+                    </x-select>
+                    @error('currencyId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
         </section>
@@ -418,4 +428,48 @@
     </section>
 
 </main>
+
+@push('scripts')
+<script>
+    (function () {
+        const countrySelect = document.getElementById('complianceCountrySelect');
+        const citySelect = document.getElementById('complianceCitySelect');
+
+        if (!countrySelect || !citySelect) {
+            return;
+        }
+
+        const citiesByCountryUrl = @json(route('tenant.settings.compliance.cities-by-country', ['countryId' => '__ID__']));
+        const fromParam = @json((string) request('from'));
+
+        countrySelect.addEventListener('change', async () => {
+            const countryId = countrySelect.value;
+
+            citySelect.innerHTML = '<option value="">Select city</option>';
+            citySelect.disabled = true;
+
+            if (countryId) {
+                try {
+                    const query = fromParam ? `?from=${encodeURIComponent(fromParam)}` : '';
+                    const response = await fetch(citiesByCountryUrl.replace('__ID__', countryId) + query);
+                    const cities = await response.json();
+
+                    cities.forEach((city) => {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+
+                    citySelect.disabled = cities.length === 0;
+                } catch (e) {
+                    citySelect.disabled = false;
+                }
+            }
+
+            citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    })();
+</script>
+@endpush
 @endsection

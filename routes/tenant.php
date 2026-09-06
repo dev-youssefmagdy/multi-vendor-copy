@@ -665,6 +665,9 @@ Route::middleware([
                 Route::post('/compliance', [ComplianceCenterController::class, 'update'])
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('compliance.update');
+                Route::get('/compliance/cities-by-country/{countryId}', [ComplianceCenterController::class, 'citiesByCountry'])
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('compliance.cities-by-country');
                 Route::get('/return-policy', \App\Livewire\Tenant\Setting\ReturnPolicyPage::class)
                     ->middleware('tenant.permission:sales.returns.manage')
                     ->name('return-policy');

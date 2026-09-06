@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Helpers\TenantNavigation;
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Tenant\Page;
 use App\Services\Tenant\TenantPanelService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,6 +17,13 @@ use Illuminate\View\View;
 class ComplianceCenterController extends Controller
 {
     public function __construct(private readonly TenantPanelService $service) {}
+
+    public function citiesByCountry(int $countryId): JsonResponse
+    {
+        $cities = City::query()->where('country_id', $countryId)->orderBy('name')->get(['id', 'name']);
+
+        return response()->json($cities);
+    }
 
     public function show(): View
     {
@@ -26,7 +36,7 @@ class ComplianceCenterController extends Controller
             'businessName' => (string) ($s['compliance_business_name'] ?? ''),
             'storeName' => (string) ($s['compliance_store_name'] ?? $tenant?->shop_name ?? ''),
             'countryId' => $s['compliance_country'] ?? null,
-            'city' => (string) ($s['compliance_city'] ?? ''),
+            'cityId' => filled($s['compliance_city'] ?? null) ? (int) $s['compliance_city'] : null,
             'phone' => str_contains($rawPhone, 'object') ? '' : $rawPhone,
             'email' => (string) ($s['compliance_email'] ?? $tenant?->email ?? ''),
 
@@ -45,7 +55,7 @@ class ComplianceCenterController extends Controller
             'bankHolderName' => (string) ($s['compliance_bank_holder_name'] ?? ''),
             'bankAccountNumber' => (string) ($s['compliance_bank_account_number'] ?? ''),
             'bankIban' => (string) ($s['compliance_bank_iban'] ?? ''),
-            'bankCurrency' => (string) ($s['compliance_bank_currency'] ?? ''),
+            'currencyId' => filled($s['compliance_bank_currency'] ?? null) ? (int) $s['compliance_bank_currency'] : null,
 
             'docNationalIdPath' => $s['compliance_doc_national_id_path'] ?? null,
             'docCommercialRegistrationPath' => $s['compliance_doc_commercial_registration_path'] ?? null,
@@ -53,6 +63,10 @@ class ComplianceCenterController extends Controller
             'docAdditionalPaths' => (array) ($s['compliance_doc_additional_paths'] ?? []),
 
             'countries' => Country::query()->orderBy('name')->get(['id', 'name']),
+            'cities' => filled($s['compliance_country'] ?? null)
+                ? City::query()->where('country_id', (int) $s['compliance_country'])->orderBy('name')->get(['id', 'name'])
+                : collect(),
+            'currencies' => Currency::query()->orderBy('code')->get(['id', 'code', 'name']),
             'policyPages' => $this->policyPages(),
             'completionPercent' => TenantNavigation::complianceCompletionPercent(),
         ]);
@@ -98,7 +112,7 @@ class ComplianceCenterController extends Controller
             // but the default connection inside a tenant request is `tenant` — qualify
             // the rule with the central connection explicitly.
             'countryId' => ['nullable', 'integer', 'exists:' . config('tenancy.database.central_connection') . '.countries,id'],
-            'city' => ['required', 'string', 'max:255'],
+            'cityId' => ['required', 'integer', 'exists:' . config('tenancy.database.central_connection') . '.cities,id'],
             'phone' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:255'],
         ]);
@@ -107,7 +121,7 @@ class ComplianceCenterController extends Controller
             'business_name' => $validated['businessName'],
             'store_name' => $validated['storeName'],
             'country' => $validated['countryId'] ?? null,
-            'city' => $validated['city'],
+            'city' => $validated['cityId'],
             'phone' => $validated['phone'],
             'email' => $validated['email'],
         ];
@@ -165,7 +179,7 @@ class ComplianceCenterController extends Controller
             'bankHolderName' => ['required', 'string', 'max:255'],
             'bankAccountNumber' => ['required', 'string', 'max:100'],
             'bankIban' => ['nullable', 'string', 'max:100'],
-            'bankCurrency' => ['nullable', 'string', 'max:10'],
+            'currencyId' => ['nullable', 'integer', 'exists:' . config('tenancy.database.central_connection') . '.currencies,id'],
         ]);
 
         return [
@@ -173,7 +187,7 @@ class ComplianceCenterController extends Controller
             'bank_holder_name' => $validated['bankHolderName'],
             'bank_account_number' => $validated['bankAccountNumber'],
             'bank_iban' => $validated['bankIban'] ?? '',
-            'bank_currency' => $validated['bankCurrency'] ?? '',
+            'bank_currency' => $validated['currencyId'] ?? '',
         ];
     }
 
