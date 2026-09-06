@@ -1,33 +1,103 @@
 @php
-    $__recommendedCards = collect($recommendedProducts ?? [])->map(function ($product) use ($symbol, $rate) {
+    $__recommendedCards = collect($recommendedProducts ?? [])->values()->map(function ($product, $index) use ($symbol, $rate) {
         $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
         $pricing = $product->storefrontPricing($variant);
         $hasDiscount = (bool) $pricing['has_discount'];
         $rating = (float) ($product->average_rating ?? 0);
         $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+        // Figma cycles three discount-chip palettes across the cards.
+        $chip = [
+            ['bg' => '#DE1709', 'color' => '#FDFDFD'],
+            ['bg' => '#FF570F', 'color' => '#FDFDFD'],
+            ['bg' => '#FFB00A', 'color' => '#121212'],
+        ][$index % 3];
 
         return [
             'id' => $product->id,
             'url' => route('tenant.storefront.product', $product->slug),
             'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
-            'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : __('New'),
+            'tag' => '🔥 ' . __('Trending Now'),
+            'stock' => __('Only 5 left - Hurry up'),
             'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : null,
+            'discountBg' => $chip['bg'],
+            'discountColor' => $chip['color'],
         ];
     });
 @endphp
 <!-- ============ RECOMMENDED FOR YOU ============ -->
-<section class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] bg-white">
-    <div class="flex items-center justify-between">
-        <h2 class="font-medium text-[22px] lg:text-[32px]" style="color:var(--color-text-primary)">{{ __('Recommended For You') }}</h2>
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="text-[14px] lg:text-[20px] tracking-[0.5px]" style="color:var(--color-primary)">{{ __('Explore all') }}</a>
+<style>
+    .sqv5-reco {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px 16px;
+        gap: 16px;
+        background: #FFFFFF;
+    }
+    .sqv5-reco__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+    .sqv5-reco__title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 22px;
+        line-height: 1.25;              /* 50 / 40 */
+        color: #121212;
+        margin: 0;
+    }
+    .sqv5-reco__seeall {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.25;              /* 25 / 20 */
+        letter-spacing: 0.5px;
+        color: #121212;
+        white-space: nowrap;
+    }
+    /* Frame 1984080444: rows of five 250.57 cards, 18.79px apart, 24px between
+       rows. A static grid in the comp - no carousel. */
+    .sqv5-reco__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 12px;
+        width: 100%;
+    }
+    @media (min-width: 640px) {
+        .sqv5-reco__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+        .sqv5-reco {
+            /* The comp's content column is 1328px inside a 1440 canvas; capping it
+               keeps the cards at their design size on wider displays. */
+            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv5-reco__title { font-size: clamp(28px, 2.778vw, 40px); }
+        .sqv5-reco__seeall { font-size: clamp(15px, 1.389vw, 20px); }
+        .sqv5-reco__grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: clamp(16px, 1.667vw, 24px) clamp(12px, 1.3049vw, 18.79px);
+        }
+    }
+</style>
+
+<section class="sqv5-reco">
+    <div class="sqv5-reco__head">
+        <h2 class="sqv5-reco__title">{{ __('Recommended For You') }}</h2>
+        <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv5-reco__seeall">{{ __('see all') }}</a>
     </div>
-    <div id="recommendedWrapper" class="grid grid-cols-2 lg:grid-cols-5 gap-[12px] lg:gap-[16px]">
+    <div id="recommendedWrapper" class="sqv5-reco__grid">
         @forelse ($__recommendedCards as $p)
-            <div class="h-[300px] lg:h-[340px]" wire:key="recommended-v5-{{ $p['id'] }}">
+            <div wire:key="recommended-v5-{{ $p['id'] }}">
                 @include('themes.souqify.pages.home-v5.sections.partials.deal_card', ['p' => $p])
             </div>
         @empty

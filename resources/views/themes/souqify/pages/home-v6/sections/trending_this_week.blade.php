@@ -10,36 +10,118 @@
             'id' => $product->id,
             'url' => route('tenant.storefront.product', $product->slug),
             'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-            'desc' => \Illuminate\Support\Str::limit($product->translationValue('short_description') ?? '', 30),
+            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 22),
+            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'subtitle' => \Illuminate\Support\Str::limit(strip_tags($product->translationValue('short_description') ?? $product->translationValue('description') ?? ''), 34) ?: null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+            'sold' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Sold') : null,
+            'delivery' => __('Delivered by') . ' ' . now()->addDays(5)->translatedFormat('j F'),
+            'stock' => __('Only 5 left'),
         ];
     });
+
+    // Frame 1984080249: the cards are stacked two to a column, and the columns
+    // are what the carousel scrolls.
+    $__trendingColumns = $__trendingCards->chunk(2)->values();
 @endphp
+
+{{-- Figma: Frame 1984080216 (1440 x 451.61) - 24px 56px padding, 24px gap: a
+     50px header then the column row (20.82px between columns, 17.35px between
+     the two cards inside one).
+     Values are clamp(min, <value>/1440*100vw, max) off the 1440 canvas. --}}
+<style>
+    .sqv6-trend {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px 16px;
+        gap: 16px;
+        background: var(--color-page-bg, #FFFFFF);
+    }
+    /* Frame 1984080017 */
+    .sqv6-trend__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+    .sqv6-trend__title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 24px;
+        line-height: 1.25;              /* 50 / 40 */
+        color: #000000;
+        margin: 0;
+    }
+    .sqv6-trend__seeall {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 1.25;              /* 25 / 20 */
+        letter-spacing: 0.5px;
+        color: var(--color-brand-pink, #FF1A90);
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .sqv6-trend__row {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+    /* Frame 1984080249: one slide is a column of two cards. */
+    .sqv6-trend__col {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        height: auto;
+        min-width: 0;
+    }
+    .sqv6-trend__empty {
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        padding: 24px 0;
+        color: var(--color-text-muted, #8F8F8F);
+    }
+
+    @media (min-width: 1024px) {
+        .sqv6-trend {
+            /* The comp's content column is 1328px inside the 1440 canvas. */
+            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv6-trend__title { font-size: clamp(28px, 2.778vw, 40px); }
+        .sqv6-trend__seeall { font-size: clamp(15px, 1.389vw, 20px); }
+        .sqv6-trend__col { gap: clamp(12px, 1.2049vw, 17.35px); }
+    }
+</style>
+
 <!-- ============ TRENDING NOW ============ -->
-<section class="px-[16px] lg:px-[56px] py-[24px] lg:py-[42px] flex flex-col gap-[16px] lg:gap-[34px]">
-    <div class="flex items-center justify-between">
-        <h2 class="font-medium text-[22px] lg:text-[32px] text-black">{{ __('Trending Now') }}</h2>
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="text-[14px] lg:text-[20px] tracking-[0.5px]" style="color:var(--color-brand-pink)">{{ __('see all') }}</a>
+<section class="sqv6-trend">
+  <div class="sqv6-trend__head">
+    <h2 class="sqv6-trend__title">{{ __('Trending Now') }}</h2>
+    <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv6-trend__seeall">{{ __('see all') }}</a>
+  </div>
+
+  @if ($__trendingColumns->isNotEmpty())
+    <div class="swiper trending-swiper sqv6-trend__row">
+      <div class="swiper-wrapper" id="trendingWrapper">
+        @foreach ($__trendingColumns as $__colIndex => $__column)
+          <div class="swiper-slide sqv6-trend__col" wire:key="trending-v6-col-{{ $__colIndex }}">
+            @foreach ($__column as $p)
+              @include('themes.souqify.pages.home-v6.sections.partials.pink_mobile_card', ['p' => $p])
+            @endforeach
+          </div>
+        @endforeach
+      </div>
     </div>
-    @if ($__trendingCards->isNotEmpty())
-        <div class="relative">
-            <div class="swiper trending-swiper">
-                <div class="swiper-wrapper" id="trendingWrapper">
-                    @foreach ($__trendingCards as $p)
-                        <div class="swiper-slide h-auto !w-[260px] lg:!w-[380px]" wire:key="trending-v6-{{ $p['id'] }}">
-                            @include('themes.souqify.pages.home-v6.sections.partials.trending_card', ['p' => $p])
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-            <button id="trendingPrev" type="button" aria-label="{{ __('Previous') }}" class="swiper-nav-btn swiper-nav-prev"><img src="{{ asset('souqify-5/assets/icons/arrow-down.svg') }}" class="size-[14px] rotate-90" alt="" /></button>
-            <button id="trendingNext" type="button" aria-label="{{ __('Next') }}" class="swiper-nav-btn swiper-nav-next"><img src="{{ asset('souqify-5/assets/icons/arrow-down.svg') }}" class="size-[14px] -rotate-90" alt="" /></button>
-        </div>
-    @else
-        <p class="text-sm py-6" style="color:var(--color-text-muted)">{{ __('No trending products yet.') }}</p>
-    @endif
+  @else
+    <p class="sqv6-trend__empty">{{ __('No trending products yet.') }}</p>
+  @endif
 </section>

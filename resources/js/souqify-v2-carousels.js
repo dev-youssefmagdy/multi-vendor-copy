@@ -23,7 +23,39 @@ function mountCarousel({ wrapperId, prevId, nextId, extra }) {
   );
 }
 
+function mountTrustBar() {
+  const swiperEl = document.querySelector(".trust-swiper");
+  if (!swiperEl) return;
+
+  // The marquee is a desktop-only effect: mobile shows the features one at a
+  // time and the user swipes between them, so autoplay stays off there.
+  // Evaluated once at init - Swiper cannot toggle autoplay from a breakpoint.
+  const marquee =
+    window.matchMedia("(min-width: 1024px)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  new Swiper(swiperEl, {
+    slidesPerView: 1.5,
+    spaceBetween: 24,
+    loop: true,
+    // delay:0 + a long speed makes autoplay a continuous marquee rather than a
+    // slide-pause-slide step.
+    autoplay: marquee
+      ? { delay: 0, disableOnInteraction: false, pauseOnMouseEnter: true }
+      : false,
+    speed: marquee ? 4000 : 300,
+    allowTouchMove: true,
+    breakpoints: {
+      640: { slidesPerView: 2.5, spaceBetween: 32 },
+      // 52.39px spaceBetween is the Figma gap between feature blocks.
+      1024: { slidesPerView: 3.5, spaceBetween: 52.39 },
+    },
+  });
+}
+
 function initCarousels() {
+  mountTrustBar();
+
   mountCarousel({
     wrapperId: "flashSaleWrapper",
     prevId: "flashSalePrev",
