@@ -119,7 +119,7 @@ body {
    breakpoint would leave the gradient visible on desktop regardless. */
 .bestseller-section-bg {
   background:
-    repeating-radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0.08) 16px, transparent 16px, transparent 24px),
+    repeating-radial-gradient(circle at left, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0.08) 16px, transparent 16px, transparent 48px),
     linear-gradient(270deg, #0b2575 0%, #1648e4 46.63%, #0b2575 100%);
 }
 @media (min-width: 1024px) {
