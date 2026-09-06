@@ -22,6 +22,9 @@ class Language extends Model
         'is_active',
         'is_default',
         'image_file_id',
+        'sort_order',
+        'last_translation_token_count',
+        'last_translation_cost_usd',
     ];
 
     protected $appends = ['image_url'];
@@ -62,6 +65,9 @@ class Language extends Model
             'direction' => LanguageDirection::class,
             'is_active' => 'boolean',
             'is_default' => 'boolean',
+            'sort_order' => 'integer',
+            'last_translation_token_count' => 'integer',
+            'last_translation_cost_usd' => 'decimal:4',
         ];
     }
 

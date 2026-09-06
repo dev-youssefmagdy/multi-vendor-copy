@@ -6,7 +6,9 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
+        channels: __DIR__.'/../routes/channels.php',
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
@@ -22,7 +24,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.permission' => \App\Http\Middleware\TenantPermission::class,
             'tenant.gateway.blocked' => \App\Http\Middleware\CheckTenantGatewayBlocked::class,
             'preview.template' => \App\Http\Middleware\ForcePreviewTemplate::class,
+            'preview.init' => \App\Http\Middleware\InitializeTenancyForPreview::class,
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
+            'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
+            'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
+            'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
+            'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
+            'store.launch.gate' => \App\Http\Middleware\StoreLaunchGate::class,
+            'track.affiliate' => \App\Http\Middleware\TrackAffiliateReferral::class,
         ]);
 
         $middleware->web([
@@ -32,7 +41,23 @@ return Application::configure(basePath: dirname(__DIR__))
 
         ]);
 
+        // The storefront JSON API is stateless-first (bearer tenant token), but
+        // /favorites/* still authenticates the shopper via the existing
+        // session-based "storefront" guard, so cookies must be decrypted and a
+        // session started for API requests too.
+        $middleware->api(prepend: [
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+        ]);
+
         $middleware->trustHosts(at: fn() => ['.*']);
+
+        // Apple posts its Sign in with Apple callback cross-site with no Laravel CSRF
+        // token attached; the callback validates the signed `state` param itself.
+        $middleware->validateCsrfTokens(except: [
+            'auth/apple/callback',
+            'checkout/payment/*/webhook',
+        ]);
 
 
         // $middleware->priority([

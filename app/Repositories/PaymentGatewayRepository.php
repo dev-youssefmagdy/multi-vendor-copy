@@ -8,9 +8,16 @@ use Illuminate\Support\Collection;
 
 class PaymentGatewayRepository
 {
-    public function all(): Collection
+    public function all(array $filters = []): Collection
     {
-        return PaymentGateway::query()->with('logoFile')->orderBy('type')->orderByDesc('status')->orderBy('name')->get();
+        return PaymentGateway::query()
+            ->with('logoFile')
+            ->when($filters['type'] ?? '', fn ($query, $type) => $query->where('type', $type))
+            ->when($filters['status'] ?? '', fn ($query, $status) => $query->where('status', $status))
+            ->orderBy('type')
+            ->orderByDesc('status')
+            ->orderBy('name')
+            ->get();
     }
 
     public function stats(): array

@@ -288,6 +288,43 @@
         });
     }
 
+    // ── Description read more / show less ────────────────────────────────
+    function initReadMore() {
+        document.querySelectorAll('.desc-readmore:not([data-readmore-init])').forEach((wrap) => {
+            wrap.setAttribute('data-readmore-init', '1');
+            const btn = wrap.parentElement && wrap.parentElement.querySelector('.desc-readmore-btn');
+            const content = wrap.firstElementChild;
+            if (!btn || !content) return;
+
+            const lines = parseInt(wrap.getAttribute('data-lines') || '4', 10);
+            let lineHeight = parseFloat(getComputedStyle(content).lineHeight);
+            if (!lineHeight || Number.isNaN(lineHeight)) lineHeight = 20;
+            const collapsedHeight = Math.ceil(lineHeight * lines);
+            const fullHeight = wrap.scrollHeight;
+
+            if (fullHeight <= collapsedHeight + 8) {
+                btn.style.display = 'none';
+                return;
+            }
+
+            wrap.style.maxHeight = collapsedHeight + 'px';
+            wrap.classList.add('is-collapsed');
+
+            btn.addEventListener('click', () => {
+                const isCollapsed = wrap.classList.contains('is-collapsed');
+                if (isCollapsed) {
+                    wrap.style.maxHeight = fullHeight + 'px';
+                    wrap.classList.remove('is-collapsed');
+                    btn.textContent = btn.getAttribute('data-less-text');
+                } else {
+                    wrap.style.maxHeight = collapsedHeight + 'px';
+                    wrap.classList.add('is-collapsed');
+                    btn.textContent = btn.getAttribute('data-more-text');
+                }
+            });
+        });
+    }
+
     // ── Init ───────────────────────────────────────────────────────────────
     function initProductPage() {
         bindCartModal();
@@ -296,6 +333,7 @@
             slider.__mantiMounted = false; // allow re-mount on navigation
             mountGallery(slider);
         }
+        initReadMore();
     }
 
     if (document.readyState === 'loading') {

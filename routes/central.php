@@ -13,6 +13,8 @@ use App\Livewire\Admin\Cache\MainCachePage;
 use App\Livewire\Admin\Cache\TenantsCachePage;
 use App\Livewire\Admin\Category\AddEditCategory;
 use App\Livewire\Admin\Category\CategoriesList;
+use App\Livewire\Admin\Category\CategoryProducts;
+use App\Livewire\Admin\Category\SortCategories;
 use App\Livewire\Admin\Domain\DnsRecordsList;
 use App\Livewire\Admin\Domain\DomainRequestsList;
 use App\Livewire\Admin\Faq\AddEditFaq;
@@ -24,12 +26,13 @@ use App\Livewire\Admin\Order\OrdersList;
 use App\Livewire\Admin\Order\OrdersReportPage;
 use App\Livewire\Admin\Page\AddEditStaticPage;
 use App\Livewire\Admin\Page\StaticPagesList;
+use App\Livewire\Admin\Customer\CentralCustomersList;
 use App\Livewire\Admin\PaymentLog\PaymentLogsList;
 use App\Livewire\Admin\Plan\PlansList;
 use App\Livewire\Admin\Plan\RegisteredUsersList;
 use App\Livewire\Admin\Plan\PendingRegistrationsList;
 use App\Livewire\Admin\Plan\AddEditPackage;
-use App\Livewire\Admin\Plan\AddEditTenant;
+use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
 use App\Http\Controllers\Admin\TenantImpersonateController;
 use App\Http\Controllers\Admin\BadgeProductsController;
@@ -37,6 +40,8 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Livewire\Admin\Product\AddEditProduct;
 use App\Livewire\Admin\Product\ProductEditRequestsList;
 use App\Livewire\Admin\Product\ProductsList;
+use App\Livewire\Admin\Product\SortProducts;
+use App\Livewire\Admin\Product\SortBadgeProducts;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Livewire\Admin\Setting\AddEditCurrency;
 use App\Livewire\Admin\Setting\AddEditEmailTemplate;
@@ -44,18 +49,23 @@ use App\Livewire\Admin\Setting\CurrenciesPage;
 use App\Livewire\Admin\Setting\EmailConfigurationPage;
 use App\Livewire\Admin\Setting\EmailTemplatesPage;
 use App\Livewire\Admin\Setting\GeneralSettingsPage;
+use App\Livewire\Admin\Setting\HomeVariantsPage;
+use App\Livewire\Admin\Setting\CountriesPage;
 use App\Livewire\Admin\Setting\LanguagesPage;
 use App\Livewire\Admin\Setting\MaintenanceModePage;
 use App\Livewire\Admin\Setting\AddEditPaymentGateway;
 use App\Livewire\Admin\Setting\PaymentGatewayLimitsPage;
 use App\Livewire\Admin\Setting\AiLogoLimitPage;
+use App\Livewire\Admin\Setting\TranslationKeyAccessPage;
 use App\Livewire\Admin\Setting\PaymentGatewaysPage;
 use App\Livewire\Admin\Setting\AddEditTemplatePart;
 use App\Livewire\Admin\Setting\TemplateControlPage;
+use App\Livewire\Admin\Setting\BladeThemeQueuePage;
 use App\Livewire\Admin\Setting\TemplatePartsPage;
 use App\Livewire\Admin\Setting\TranslationsPage;
 use App\Livewire\Admin\Setting\LanguagePurchasesPage;
-use App\Livewire\Admin\Setting\DefaultBannersPage;
+use App\Livewire\Admin\Setting\DefaultBannersIndexPage;
+use App\Livewire\Admin\Setting\DefaultBannersListPage;
 use App\Livewire\Admin\Shipping\DeliveryChargesList;
 use App\Livewire\Admin\Shipping\AddEditShippingZone;
 use App\Livewire\Admin\Shipping\FixedShippingCostsList;
@@ -64,14 +74,17 @@ use App\Livewire\Admin\Shipping\DeliveryPopupPage;
 use App\Livewire\Admin\Shipping\ShippingDaysPage;
 use App\Livewire\Admin\Shipping\ShippingSettingsPage;
 use App\Livewire\Admin\Store\CouponsPage as AdminCouponsPage;
+use App\Livewire\Admin\Store\FlashSalesIndexPage as AdminFlashSalesIndexPage;
 use App\Livewire\Admin\Store\FlashSalesPage as AdminFlashSalesPage;
 use App\Livewire\Admin\Store\TenantSyncPage as AdminTenantSyncPage;
 use App\Livewire\Admin\Branch\BranchesList;
-use App\Livewire\Admin\Branch\AddEditBranch;
+use App\Http\Controllers\Admin\AddEditBranchController;
 use App\Livewire\Admin\Manufacturing\ManufacturingRequestsList;
 use App\Livewire\Admin\Manufacturing\ManufacturingRequestDetail;
 use App\Livewire\Admin\Variation\AddEditVariation;
 use App\Livewire\Admin\Variation\VariationsList;
+use App\Livewire\Admin\Compliance\ComplianceOverviewList;
+use App\Livewire\Admin\Compliance\ComplianceDetailPage;
 use App\Livewire\Admin\Wallet\InvoicesList;
 use App\Livewire\Admin\Wallet\InvoiceDetailPage;
 use App\Livewire\Admin\Wallet\WalletDetailPage;
@@ -87,6 +100,9 @@ use App\Livewire\Admin\Finance\VendorSettlementsPage;
 use App\Livewire\Admin\Wallet\TransactionsList;
 use App\Livewire\Admin\Wallet\WalletsList;
 use App\Livewire\Admin\Newsletter\NewsletterSubscribersList;
+use App\Livewire\Admin\Notifications\NotificationsPage;
+use App\Livewire\Admin\Support\TicketsList as AdminTicketsList;
+use App\Livewire\Admin\Support\TicketDetail as AdminTicketDetail;
 use App\Livewire\Website\AboutPage;
 use App\Livewire\Website\BlogDetailPage;
 use App\Livewire\Website\BlogListPage;
@@ -98,6 +114,7 @@ use App\Livewire\Website\TemplatesPage;
 use App\Livewire\Website\PricingPage;
 use App\Livewire\Website\RegisterPage;
 use App\Livewire\Website\CompleteRegistrationPage;
+use App\Livewire\Website\StoreOnboardingWizard;
 use App\Livewire\Website\TermsPage;
 use App\Livewire\Website\PrivacyPage;
 use App\Livewire\Website\StaticPageView;
@@ -105,6 +122,7 @@ use App\Livewire\Website\MaintenancePage;
 use App\Livewire\Website\NotFoundPage;
 use App\Livewire\Website\TenantLoginPage;
 use App\Http\Controllers\Website\RegistrationPaymentController;
+use App\Http\Controllers\Website\CentralSocialAuthController;
 use App\Http\Middleware\TenantOwnerAuth;
 use App\Livewire\TenantOwner\Auth\LoginPage as OwnerLoginPage;
 use App\Livewire\TenantOwner\Auth\SelectTenantPage as OwnerSelectTenantPage;
@@ -131,28 +149,64 @@ Route::get('/locale/{locale}', function (string $locale) {
 })->name('locale.switch');
 
 // ── Public website ────────────────────────────────────────────────────────────
-Route::get('/', LandingPage::class)->name('website.home');
-Route::get('/about', AboutPage::class)->name('website.about');
-Route::get('/contact', ContactPage::class)->name('website.contact');
-Route::get('/register', RegisterPage::class)->name('website.register');
-Route::get('/register/complete', CompleteRegistrationPage::class)->name('website.register.complete');
-Route::prefix('register/payment')->name('website.register.payment.')->group(function () {
-    Route::get('{gateway}/{registration}/charge', [RegistrationPaymentController::class, 'charge'])->name('charge');
-    Route::match(['get', 'post'], '{gateway}/{registration}/success', [RegistrationPaymentController::class, 'success'])->name('success');
-    Route::get('{gateway}/{registration}/cancel', [RegistrationPaymentController::class, 'cancel'])->name('cancel');
+Route::middleware('track.affiliate')->group(function () {
+    Route::get('/', LandingPage::class)->name('website.home');
+    Route::get('/about', AboutPage::class)->name('website.about');
+    Route::get('/contact', ContactPage::class)->name('website.contact');
+    Route::get('/register', RegisterPage::class)->name('website.register');
+    Route::get('/register/complete', CompleteRegistrationPage::class)->name('website.register.complete');
+    Route::get('/register/setup/{tenantId}', StoreOnboardingWizard::class)->name('website.store.onboarding');
+    Route::prefix('register/payment')->name('website.register.payment.')->group(function () {
+        Route::get('{gateway}/{registration}/charge', [RegistrationPaymentController::class, 'charge'])->name('charge');
+        Route::match(['get', 'post'], '{gateway}/{registration}/success', [RegistrationPaymentController::class, 'success'])->name('success');
+        Route::get('{gateway}/{registration}/cancel', [RegistrationPaymentController::class, 'cancel'])->name('cancel');
+    });
+    Route::get('/templates', TemplatesPage::class)->name('website.templates');
+    Route::get('/pricing', PricingPage::class)->name('website.pricing');
+    Route::get('/how-it-works', HowItWorksPage::class)->name('website.how-it-works');
+    Route::get('/faqs', FaqsPage::class)->name('website.faqs');
+    Route::get('/terms', TermsPage::class)->name('website.terms');
+    Route::get('/privacy', PrivacyPage::class)->name('website.privacy');
+    Route::get('/blog', BlogListPage::class)->name('website.blog');
+    Route::get('/blog/{slug}', BlogDetailPage::class)->name('website.blog.show');
+    Route::get('/pages/{slug}', StaticPageView::class)->name('website.page');
+    Route::get('/maintenance', MaintenancePage::class)->name('website.maintenance');
 });
-Route::get('/templates', TemplatesPage::class)->name('website.templates');
-Route::get('/pricing', PricingPage::class)->name('website.pricing');
-Route::get('/how-it-works', HowItWorksPage::class)->name('website.how-it-works');
-Route::get('/faqs', FaqsPage::class)->name('website.faqs');
-Route::get('/terms', TermsPage::class)->name('website.terms');
-Route::get('/privacy', PrivacyPage::class)->name('website.privacy');
-Route::get('/blog', BlogListPage::class)->name('website.blog');
-Route::get('/blog/{slug}', BlogDetailPage::class)->name('website.blog.show');
-Route::get('/pages/{slug}', StaticPageView::class)->name('website.page');
-Route::get('/maintenance', MaintenancePage::class)->name('website.maintenance');
+
+// ── Affiliate Panel ────────────────────────────────────────────────────────
+Route::prefix('affiliate')->name('affiliate.')->group(function () {
+
+    // Auth (guest only)
+    Route::middleware('guest:affiliate')->group(function () {
+        Route::get('/login',    \App\Livewire\Affiliate\Auth\LoginPage::class)->name('login');
+        Route::get('/register', \App\Livewire\Affiliate\Auth\RegisterPage::class)->name('register');
+    });
+
+    // Authenticated affiliate panel
+    Route::middleware('auth:affiliate')->group(function () {
+        Route::get('/dashboard',     \App\Livewire\Affiliate\DashboardPage::class)->name('dashboard');
+        Route::get('/links',         \App\Livewire\Affiliate\LinksPage::class)->name('links');
+        Route::get('/conversions',   \App\Livewire\Affiliate\ConversionsPage::class)->name('conversions');
+        Route::get('/payouts',       \App\Livewire\Affiliate\PayoutsPage::class)->name('payouts');
+        Route::get('/profile',       \App\Livewire\Affiliate\ProfilePage::class)->name('profile');
+        Route::post('/logout',       \App\Http\Controllers\Affiliate\AuthController::class . '@logout')->name('logout');
+    });
+});
+
 Route::get('/sitemap.xml', SitemapController::class)->name('website.sitemap');
 Route::get('/login', OwnerLoginPage::class)->middleware('guest:tenant_owner')->name('owner.login');
+
+// ── Google / Apple sign-in (tenant-owner login & new-tenant registration) ─────
+Route::get('/auth/google/{intent}', [CentralSocialAuthController::class, 'redirectToGoogle'])
+    ->whereIn('intent', ['login', 'register', 'register-popup'])
+    ->name('website.social.google');
+Route::get('/auth/google/callback', [CentralSocialAuthController::class, 'handleGoogleCallback'])
+    ->name('website.social.google.callback');
+Route::get('/auth/apple/{intent}', [CentralSocialAuthController::class, 'redirectToApple'])
+    ->whereIn('intent', ['login', 'register', 'register-popup'])
+    ->name('website.social.apple');
+Route::post('/auth/apple/callback', [CentralSocialAuthController::class, 'handleAppleCallback'])
+    ->name('website.social.apple.callback');
 Route::get('/my-account/select-tenant', OwnerSelectTenantPage::class)->middleware('auth:tenant_owner')->name('owner.select-tenant');
 
 // ── Tenant Owner Panel ────────────────────────────────────────────────────────
@@ -177,6 +231,13 @@ Route::middleware('guest:admin')->group(function () {
     Route::get('/admin/login', LoginPage::class)->name('admin.login');
 });
 
+// Default /broadcasting/auth endpoint, used by the admin panel's Echo client
+// (see resources/js/bootstrap.js) to authorize private/presence channels
+// under the 'admin' guard.
+Route::post('/broadcasting/auth', function (Request $request) {
+    return \Illuminate\Support\Facades\Broadcast::auth($request);
+})->middleware(AdminAuth::class)->name('broadcasting.auth');
+
 Route::post('/admin/logout', function (Request $request) {
     Auth::guard('admin')->logout();
     $request->session()->invalidate();
@@ -194,6 +255,7 @@ Route::group([
 
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', ProductsList::class)->middleware('admin.permission:catalog.products.view,catalog.products.manage')->name('index');
+        Route::get('/sort', SortProducts::class)->middleware('admin.permission:catalog.products.manage')->name('sort');
         Route::get('/create', [ProductController::class, 'create'])->middleware('admin.permission:catalog.products.manage')->name('create');
         Route::post('/create', [ProductController::class, 'store'])->middleware('admin.permission:catalog.products.manage')->name('store');
         Route::post('/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate');
@@ -201,12 +263,17 @@ Route::group([
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
+        Route::post('/image-search', [\App\Http\Controllers\ImageSearchController::class, 'adminPanel'])
+            ->middleware('admin.permission:catalog.products.view,catalog.products.manage')
+            ->name('image-search');
     });
 
     Route::prefix('categories')->name('categories.')->group(function () {
         Route::get('/', CategoriesList::class)->middleware('admin.permission:catalog.categories.view,catalog.categories.manage')->name('index');
         Route::get('/create', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('create');
+        Route::get('/sort', SortCategories::class)->middleware('admin.permission:catalog.categories.manage')->name('sort');
         Route::get('/{category}/edit', AddEditCategory::class)->middleware('admin.permission:catalog.categories.manage')->name('edit');
+        Route::get('/{category}/products', CategoryProducts::class)->middleware('admin.permission:catalog.categories.manage')->name('products');
     });
 
     Route::prefix('variations')->name('variations.')->group(function () {
@@ -219,7 +286,10 @@ Route::group([
         Route::get('/{badge}', [BadgeProductsController::class, 'show'])->name('show');
         Route::get('/new-in', [BadgeProductsController::class, 'show'])->name('new-in');
         Route::get('/best-selling', [BadgeProductsController::class, 'show'])->name('best-selling');
+        Route::get('/featured', [BadgeProductsController::class, 'show'])->name('featured');
+        Route::get('/recommended', [BadgeProductsController::class, 'show'])->name('recommended');
         Route::get('/{badge}/search', [BadgeProductsController::class, 'searchProducts'])->name('search');
+        Route::get('/{badge}/sort', SortBadgeProducts::class)->name('sort');
         Route::post('/{badge}/assign-category', [BadgeProductsController::class, 'assignCategory'])->name('assign-category');
         Route::post('/{badge}/save', [BadgeProductsController::class, 'save'])->name('save');
     });
@@ -228,6 +298,7 @@ Route::group([
         Route::get('/', OrdersList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('index');
         Route::get('/report', OrdersReportPage::class)->middleware('admin.permission:sales.orders.report.view,sales.orders.manage')->name('report');
         Route::get('/returns', OrderReturnsList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.index');
+        Route::get('/returns/analytics', \App\Livewire\Admin\Order\ReturnAnalyticsPage::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.analytics');
         Route::get('/returns/{id}', OrderReturnDetailPage::class)->middleware('admin.permission:sales.orders.manage')->name('returns.show');
         Route::get('/{tenantId}/{orderNumber}', OrderDetailPage::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('show');
         Route::get('/{tenantId}/{orderNumber}/receipt', [OrderReceiptController::class, 'show'])->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('receipt');
@@ -252,15 +323,20 @@ Route::group([
     });
 
     Route::prefix('store')->name('store.')->group(function () {
-        Route::get('/flash-sales', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
+        Route::get('/flash-sales', AdminFlashSalesIndexPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
+        Route::get('/flash-sales/list/{countryId?}', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.list');
         Route::get('/coupons', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
         Route::get('/tenant-sync', AdminTenantSyncPage::class)->middleware('admin.permission:store.sync.manage')->name('tenant-sync.index');
     });
 
     Route::prefix('branches')->name('branches.')->group(function () {
         Route::get('/', BranchesList::class)->middleware('admin.permission:branches.view,branches.manage')->name('index');
-        Route::get('/create', AddEditBranch::class)->middleware('admin.permission:branches.manage')->name('create');
-        Route::get('/{branch}/edit', AddEditBranch::class)->middleware('admin.permission:branches.manage')->name('edit');
+
+        Route::get('/create', [AddEditBranchController::class, 'create'])->middleware('admin.permission:branches.manage')->name('create');
+        Route::post('/create', [AddEditBranchController::class, 'store'])->middleware('admin.permission:branches.manage')->name('store');
+
+        Route::get('/{branch}/edit', [AddEditBranchController::class, 'edit'])->middleware('admin.permission:branches.manage')->name('edit');
+        Route::put('/{branch}/edit', [AddEditBranchController::class, 'update'])->middleware('admin.permission:branches.manage')->name('update');
     });
 
     Route::prefix('manufacturing')->name('manufacturing.')->group(function () {
@@ -273,10 +349,16 @@ Route::group([
         Route::get('/{tenantId}/{orderNumber}', PaymentLogDetailPage::class)->middleware('admin.permission:billing.payment-logs.view')->name('show');
     });
 
+    Route::prefix('customers')->name('customers.')->group(function () {
+        Route::get('/', CentralCustomersList::class)->middleware('admin.permission:sales.customers.view')->name('index');
+    });
+
     Route::prefix('plans')->name('plans.')->group(function () {
         Route::get('/registered-users', RegisteredUsersList::class)->middleware('admin.permission:plans.tenants.view,plans.tenants.manage')->name('users');
-        Route::get('/registered-users/create', AddEditTenant::class)->middleware('admin.permission:plans.tenants.manage')->name('users.create');
-        Route::get('/registered-users/{tenant}/edit', AddEditTenant::class)->middleware('admin.permission:plans.tenants.manage')->name('users.edit');
+        Route::get('/registered-users/create', [TenantEditorController::class, 'create'])->middleware('admin.permission:plans.tenants.manage')->name('users.create');
+        Route::post('/registered-users', [TenantEditorController::class, 'store'])->middleware('admin.permission:plans.tenants.manage')->name('users.store');
+        Route::get('/registered-users/{tenant}/edit', [TenantEditorController::class, 'edit'])->middleware('admin.permission:plans.tenants.manage')->name('users.edit');
+        Route::put('/registered-users/{tenant}', [TenantEditorController::class, 'update'])->middleware('admin.permission:plans.tenants.manage')->name('users.update');
         // Central admin → Tenant admin panel (token-based impersonation login)
         Route::get('/registered-users/{tenantId}/impersonate', [TenantImpersonateController::class, 'generate'])
             ->middleware('admin.permission:plans.tenants.manage')
@@ -290,6 +372,11 @@ Route::group([
     Route::prefix('wallets')->name('wallets.')->group(function () {
         Route::get('/', WalletsList::class)->middleware('admin.permission:billing.wallets.view')->name('index');
         Route::get('/{tenantId}', WalletDetailPage::class)->middleware('admin.permission:billing.wallets.view')->name('show');
+    });
+
+    Route::prefix('compliance')->name('compliance.')->group(function () {
+        Route::get('/', ComplianceOverviewList::class)->middleware('admin.permission:compliance.tenants.view')->name('index');
+        Route::get('/{tenant}', ComplianceDetailPage::class)->middleware('admin.permission:compliance.tenants.view')->name('show');
     });
 
     Route::prefix('wallet-transactions')->name('wallet-transactions.')->group(function () {
@@ -339,14 +426,16 @@ Route::group([
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/general', GeneralSettingsPage::class)->middleware('admin.permission:settings.general.manage')->name('general');
+        Route::get('/home-variants', HomeVariantsPage::class)->middleware('admin.permission:settings.home-variants.manage')->name('home-variants');
         Route::get('/templates', TemplateControlPage::class)->middleware('admin.permission:settings.templates.manage')->name('templates');
+        Route::get('/blade-themes', BladeThemeQueuePage::class)->middleware('admin.permission:settings.templates.manage')->name('blade-themes');
         Route::get('/template-parts', TemplatePartsPage::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts');
         Route::get('/template-parts/create/{templateId?}', AddEditTemplatePart::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.create');
         Route::get('/template-parts/{partId}/edit', AddEditTemplatePart::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.edit');
         Route::get('/template-parts/{templateId}', TemplatePartsPage::class)->middleware('admin.permission:settings.templates.manage')->name('template-parts.show');
         Route::get('/payment-gateways', PaymentGatewaysPage::class)->middleware('admin.permission:settings.payment-gateways.manage')->name('payment-gateways');
         Route::get('/payment-gateways/{gateway}/edit', AddEditPaymentGateway::class)->middleware('admin.permission:settings.payment-gateways.manage')->name('payment-gateways.edit');
-        Route::get('/payment-gateway-limits', PaymentGatewayLimitsPage::class)->middleware('admin.permission:settings.general.manage')->name('payment-gateway-limits');
+        Route::get('/payment-gateway-limits', PaymentGatewayLimitsPage::class)->middleware('admin.permission:settings.payment-gateway-limits.manage')->name('payment-gateway-limits');
         Route::get('/email-templates', EmailTemplatesPage::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates');
         Route::get('/email-templates/create', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.create');
         Route::get('/email-templates/{emailTemplate}/edit', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.edit');
@@ -361,9 +450,13 @@ Route::group([
         Route::get('/languages/{language}/edit', [LanguageController::class, 'edit'])->middleware('admin.permission:settings.languages.manage')->name('languages.edit');
         Route::put('/languages/{language}', [LanguageController::class, 'update'])->middleware('admin.permission:settings.languages.manage')->name('languages.update');
         Route::get('/translations', TranslationsPage::class)->middleware('admin.permission:settings.languages.view,settings.languages.manage')->name('translations');
+        Route::get('/countries', CountriesPage::class)->middleware('admin.permission:settings.countries.view,settings.countries.manage')->name('countries');
         Route::get('/maintenance', MaintenanceModePage::class)->middleware('admin.permission:settings.maintenance.manage')->name('maintenance');
-        Route::get('/default-banners', DefaultBannersPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
+        Route::get('/default-banners', DefaultBannersIndexPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
+        Route::get('/default-banners/list/{countryId?}', DefaultBannersListPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners.list');
         Route::get('/ai-logo-limit', AiLogoLimitPage::class)->middleware('admin.permission:settings.ai-logo-limits.manage')->name('ai-logo-limit');
+        Route::get('/translation-key-access', TranslationKeyAccessPage::class)->middleware('admin.permission:settings.languages.manage')->name('translation-key-access');
+        Route::get('/return-policy', \App\Livewire\Admin\Setting\ReturnPolicySettingsPage::class)->middleware('admin.permission:settings.general.manage')->name('return-policy');
     });
 
     Route::prefix('admins')->name('admins.')->group(function () {
@@ -384,6 +477,29 @@ Route::group([
     Route::prefix('cache')->name('cache.')->group(function () {
         Route::get('/tenants', TenantsCachePage::class)->middleware('admin.permission:system.cache.manage')->name('tenants');
         Route::get('/main', MainCachePage::class)->middleware('admin.permission:system.cache.manage')->name('main');
+    });
+
+    Route::get('/notifications', NotificationsPage::class)->name('notifications.index');
+
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', AdminTicketsList::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('index');
+        Route::get('/{ticketId}', AdminTicketDetail::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('show');
+    });
+
+    Route::prefix('product-requests')->name('product-requests.')->group(function () {
+        Route::get('/', \App\Livewire\Admin\ProductRequest\RequestsList::class)
+             ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
+             ->name('index');
+        Route::get('/{requestId}', \App\Livewire\Admin\ProductRequest\RequestDetail::class)
+             ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
+             ->name('show');
+    });
+
+    Route::prefix('affiliates')->name('affiliates.')->middleware('admin.permission:affiliates.manage')->group(function () {
+        Route::get('/',            \App\Livewire\Admin\Affiliate\AffiliatesListPage::class)->name('index');
+        Route::get('/conversions', \App\Livewire\Admin\Affiliate\ConversionsListPage::class)->name('conversions');
+        Route::get('/payouts',     \App\Livewire\Admin\Affiliate\PayoutsListPage::class)->name('payouts');
+        Route::get('/reports',     \App\Livewire\Admin\Affiliate\AffiliateReportsPage::class)->name('reports');
     });
 });
 

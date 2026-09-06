@@ -67,6 +67,9 @@ class LoginPage extends Component
             'submitLabel' => __('Sign In'),
             'brandLabel' => __('Tenant Portal'),
             'contextNote' => __('Use the email and password you registered with.'),
+            'showSocialLogin' => true,
+            'googleLoginUrl' => route('website.social.google', 'login'),
+            'appleLoginUrl' => route('website.social.apple', 'login'),
         ]);
     }
 }

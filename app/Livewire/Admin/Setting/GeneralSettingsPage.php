@@ -32,6 +32,8 @@ class GeneralSettingsPage extends ContentPage
     public ?string $faviconPath = null;
     public $faviconUpload = null;
 
+    public ?int $outOfStockArchiveDays = null;
+
     public string $facebookUrl = '';
     public string $twitterUrl = '';
     public string $instagramUrl = '';
@@ -54,6 +56,7 @@ class GeneralSettingsPage extends ContentPage
             'instagram_url',
             'youtube_url',
             'linkedin_url',
+            'out_of_stock_archive_days',
         ]);
 
         $this->appName = $settings->get('app_name')?->value ?? config('app.name', 'Multi Vendor');
@@ -71,6 +74,10 @@ class GeneralSettingsPage extends ContentPage
         $this->instagramUrl = $settings->get('instagram_url')?->value ?? '';
         $this->youtubeUrl = $settings->get('youtube_url')?->value ?? '';
         $this->linkedinUrl = $settings->get('linkedin_url')?->value ?? '';
+
+        $this->outOfStockArchiveDays = filled($settings->get('out_of_stock_archive_days')?->value)
+            ? (int) $settings->get('out_of_stock_archive_days')->value
+            : null;
     }
 
     protected function pageMeta(): array
@@ -104,6 +111,7 @@ class GeneralSettingsPage extends ContentPage
                 'instagramUrl' => ['nullable', 'url', 'max:255'],
                 'youtubeUrl' => ['nullable', 'url', 'max:255'],
                 'linkedinUrl' => ['nullable', 'url', 'max:255'],
+                'outOfStockArchiveDays' => ['nullable', 'integer', 'min:1', 'max:3650'],
             ]);
         } catch (ValidationException $exception) {
             $this->toast('Please fix the highlighted fields and try again.', 'error');
@@ -138,6 +146,7 @@ class GeneralSettingsPage extends ContentPage
                 'instagram_url' => ['value' => $validated['instagramUrl']],
                 'youtube_url' => ['value' => $validated['youtubeUrl']],
                 'linkedin_url' => ['value' => $validated['linkedinUrl']],
+                'out_of_stock_archive_days' => ['value' => $validated['outOfStockArchiveDays'] ?? ''],
             ]);
         } catch (Throwable $exception) {
             report($exception);
@@ -185,6 +194,14 @@ class GeneralSettingsPage extends ContentPage
                         ['label' => 'Header Logo', 'model' => 'headerLogoUpload', 'type' => 'file', 'preview' => $this->headerLogoPath, 'uploadLabel' => 'Upload header logo'],
                         ['label' => 'Footer Logo', 'model' => 'footerLogoUpload', 'type' => 'file', 'preview' => $this->footerLogoPath, 'uploadLabel' => 'Upload footer logo'],
                         ['label' => 'Favicon', 'model' => 'faviconUpload', 'type' => 'file', 'preview' => $this->faviconPath, 'uploadLabel' => 'Upload favicon', 'uploadSublabel' => 'PNG, ICO up to 1MB'],
+                    ],
+                ],
+                [
+                    'title' => 'Inventory Automation',
+                    'description' => 'Automatically archive and hide products from tenants once they run out of stock for too long.',
+                    'gridClass' => 'form-grid-2',
+                    'fields' => [
+                        ['label' => 'Archive Out-of-Stock Products After (days)', 'model' => 'outOfStockArchiveDays', 'type' => 'number', 'placeholder' => 'Leave empty to disable'],
                     ],
                 ],
                 [

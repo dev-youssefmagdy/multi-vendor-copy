@@ -7,6 +7,7 @@ use App\Enums\FileStorageType;
 use App\Enums\FileType;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Product;
+use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Http\Request;
@@ -122,6 +123,8 @@ class OwnProductController extends Controller
             'variants'           => $normalizedVariants,
         ], $product);
 
+        $savedProduct->badges()->sync(array_values(array_filter((array) $request->input('badge_ids', []), fn($id) => filled($id))));
+
         // Primary image — a new upload always wins; explicit removal without a
         // new file simply deletes the existing one.
         if ($request->hasFile('primary_image')) {
@@ -162,6 +165,18 @@ class OwnProductController extends Controller
                 'extension'    => strtolower($file->getClientOriginalExtension() ?: 'jpg'),
                 'size'         => $file->getSize(),
             ]);
+        }
+
+        // Gallery: persist drag-and-drop order
+        if ($request->filled('gallery_order')) {
+            $orderedIds = array_filter(explode(',', (string) $request->input('gallery_order')));
+            if (!empty($orderedIds)) {
+                $galleryFiles = $savedProduct->files()->where('key', 'gallery')->whereIn('id', $orderedIds)->get();
+                foreach ($orderedIds as $index => $fileId) {
+                    $file = $galleryFiles->firstWhere('id', (int) $fileId);
+                    $file?->update(['sort_order' => $index + 1]);
+                }
+            }
         }
 
         session()->flash('status', $product ? 'Product updated successfully.' : 'Product created successfully.');
@@ -225,6 +240,8 @@ class OwnProductController extends Controller
             'featured'             => ['boolean'],
             'category_ids'         => ['array'],
             'category_ids.*'       => ['integer', 'exists:categories,id'],
+            'badge_ids'            => ['array'],
+            'badge_ids.*'          => ['integer', 'exists:product_badges,id'],
             'primary_image'        => ['nullable', 'image', 'max:4096'],
             'gallery_files'        => ['array'],
             'gallery_files.*'      => ['nullable', 'mimes:jpg,jpeg,png,gif,webp,mp4,webm,mov', 'max:51200'],
@@ -270,10 +287,11 @@ class OwnProductController extends Controller
         $existingImage   = null;
         $existingGallery = collect();
         $categoryIds     = [];
+        $selectedBadgeIds = [];
         $productData     = null;
 
         if ($product) {
-            $product->load(['translations.language', 'categories', 'variants', 'files']);
+            $product->load(['translations.language', 'categories', 'variants', 'files', 'badges']);
 
             $translations = array_replace_recursive(
                 $blankTranslations,
@@ -281,6 +299,7 @@ class OwnProductController extends Controller
             );
 
             $categoryIds     = $product->categories->pluck('id')->all();
+            $selectedBadgeIds = $product->badges->pluck('id')->all();
             $existingImage   = $product->primary_image_url;
             $existingGallery = $product->files->where('key', 'gallery')->values();
 
@@ -363,6 +382,8 @@ class OwnProductController extends Controller
             'catMap'          => $catMap,
             'variations'      => $variations,
             'variationsJson'  => $variationsJson,
+            'badges'          => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
+            'selectedBadgeIds' => $selectedBadgeIds,
         ];
     }
 }

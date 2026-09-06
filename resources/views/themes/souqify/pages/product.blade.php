@@ -353,12 +353,13 @@
 
                 @if($product->translationValue('description'))
                 <div>
-                    <div id="sq-desc-text"
-                        class="text-base text-neutral-700 leading-7 line-clamp-3 overflow-hidden transition-all duration-300">
-                        {!! $product->translationValue('description') !!}
+                    <div id="sq-desc-wrap" class="sq-desc-readmore" data-lines="3">
+                        <div id="sq-desc-text" class="text-base text-neutral-700 leading-7">
+                            {!! $product->translationValue('description') !!}
+                        </div>
+                        <span class="sq-desc-fade" aria-hidden="true"></span>
                     </div>
-                    <button id="sq-desc-toggle"
-                        onclick="(function(){var el=document.getElementById('sq-desc-text'),btn=document.getElementById('sq-desc-toggle'),icon=document.getElementById('sq-desc-icon');var expanded=el.classList.toggle('line-clamp-none');el.classList.toggle('line-clamp-3',!expanded);btn.querySelector('span').textContent=expanded?'{{ __('See less') }}':'{{ __('See more') }}';icon.style.transform=expanded?'rotate(180deg)':'rotate(0deg)';})()"
+                    <button id="sq-desc-toggle" type="button"
                         class="mt-1 flex items-center gap-1 text-[#0159ED] text-sm font-medium hover:underline focus:outline-none">
                         <span>{{ __('See more') }}</span>
                         <svg id="sq-desc-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
@@ -367,63 +368,84 @@
                         </svg>
                     </button>
                 </div>
+                <style>
+                    .sq-desc-readmore {
+                        position: relative;
+                        overflow: hidden;
+                        transition: max-height 0.35s ease;
+                    }
+
+                    .sq-desc-fade {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        height: 48px;
+                        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+                        pointer-events: none;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    }
+
+                    .sq-desc-readmore.is-collapsed .sq-desc-fade {
+                        opacity: 1;
+                    }
+                </style>
+                <script>
+                    (function () {
+                        function initSqDescReadMore() {
+                            var wrap = document.getElementById('sq-desc-wrap');
+                            var content = document.getElementById('sq-desc-text');
+                            var btn = document.getElementById('sq-desc-toggle');
+                            var icon = document.getElementById('sq-desc-icon');
+                            if (!wrap || !content || !btn || wrap.dataset.readmoreInit) return;
+                            wrap.dataset.readmoreInit = '1';
+
+                            var lines = parseInt(wrap.getAttribute('data-lines') || '3', 10);
+                            var lineHeight = parseFloat(getComputedStyle(content).lineHeight);
+                            if (!lineHeight || isNaN(lineHeight)) lineHeight = 24;
+                            var collapsedHeight = Math.ceil(lineHeight * lines);
+                            var fullHeight = wrap.scrollHeight;
+
+                            if (fullHeight <= collapsedHeight + 8) {
+                                btn.style.display = 'none';
+                                return;
+                            }
+
+                            wrap.style.maxHeight = collapsedHeight + 'px';
+                            wrap.classList.add('is-collapsed');
+
+                            btn.addEventListener('click', function () {
+                                var isCollapsed = wrap.classList.contains('is-collapsed');
+                                if (isCollapsed) {
+                                    wrap.style.maxHeight = fullHeight + 'px';
+                                    wrap.classList.remove('is-collapsed');
+                                    btn.querySelector('span').textContent = '{{ __('See less') }}';
+                                    icon.style.transform = 'rotate(180deg)';
+                                } else {
+                                    wrap.style.maxHeight = collapsedHeight + 'px';
+                                    wrap.classList.add('is-collapsed');
+                                    btn.querySelector('span').textContent = '{{ __('See more') }}';
+                                    icon.style.transform = 'rotate(0deg)';
+                                }
+                            });
+                        }
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', initSqDescReadMore);
+                        } else {
+                            initSqDescReadMore();
+                        }
+                        document.addEventListener('livewire:navigated', initSqDescReadMore);
+                    })();
+                </script>
                 @endif
 
                 <!--Free shipping / weight info banner -->
-                @if($shippingThreshold > 0)
-                <div class="bg-[#FDF6F0] border border-[#F8CFB9] rounded-xl p-2 lg:p-4 flex flex-col gap-2">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-1 text-sm text-[#FF570F]">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_180_11273)">
-                                    <path
-                                        d="M9.33594 12V3.99996C9.33594 3.64634 9.19546 3.3072 8.94541 3.05715C8.69536 2.8071 8.35623 2.66663 8.0026 2.66663H2.66927C2.31565 2.66663 1.97651 2.8071 1.72646 3.05715C1.47641 3.3072 1.33594 3.64634 1.33594 3.99996V11.3333C1.33594 11.5101 1.40618 11.6797 1.5312 11.8047C1.65622 11.9297 1.82579 12 2.0026 12H3.33594"
-                                        stroke="#FF570F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M10 12H6" stroke="#FF570F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M12.6693 12H14.0026C14.1794 12 14.349 11.9298 14.474 11.8048C14.599 11.6798 14.6693 11.5102 14.6693 11.3334V8.90004C14.669 8.74875 14.6173 8.60205 14.5226 8.48404L12.2026 5.58404C12.1403 5.50596 12.0611 5.44289 11.9711 5.39951C11.8811 5.35612 11.7825 5.33352 11.6826 5.33337H9.33594"
-                                        stroke="#FF570F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M11.3333 13.3333C12.0697 13.3333 12.6667 12.7363 12.6667 12C12.6667 11.2636 12.0697 10.6666 11.3333 10.6666C10.597 10.6666 10 11.2636 10 12C10 12.7363 10.597 13.3333 11.3333 13.3333Z"
-                                        stroke="#FF570F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M4.66927 13.3333C5.40565 13.3333 6.0026 12.7363 6.0026 12C6.0026 11.2636 5.40565 10.6666 4.66927 10.6666C3.93289 10.6666 3.33594 11.2636 3.33594 12C3.33594 12.7363 3.93289 13.3333 4.66927 13.3333Z"
-                                        stroke="#FF570F" stroke-width="1.33333" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_180_11273">
-                                        <rect width="16" height="16" fill="white" />
-                                    </clipPath>
-                                </defs>
-                            </svg>
-
-                            <p id="sq-shipping-message" class="text-xs lg:text-base">
-                                @if($shippingProgressWeight >= $shippingThreshold)
-                                    <span class="font-semibold">{{ __('You unlocked FREE shipping') }}</span>
-                                @else
-                                    {{ __('Add :weight more to unlock FREE shipping', ['weight' => $weightLabel($remainingForFreeShipping)]) }}
-                                @endif
-                            </p>
-                        </div>
-                        <p id="sq-shipping-ratio" class="text-xs text-[#8F8F8F] hidden lg:block">{{ $weightLabel($shippingProgressWeight) }}/{{$weightLabel($shippingThreshold) }}</p>
-                    </div>
-                    <!-- free shipping progress -->
-                    <div class="h-[10px] bg-[#D9D9D9] rounded-full">
-                        <span id="sq-shipping-bar" class="rounded-full h-full bg-[#FF570F] block" style="width: {{ $shippingPct }}%"></span>
-                    </div>
-                    <p class="text-[10px] lg:text-xs text-[#8F8F8F]">{{ __('This item weighs') }} <span
-                            id="sq-item-weight" class="font-semibold">{{ $weightLabel($weightGrams) }}.</span>
-                        {{ __('free shipping threshold:')}} <span class="font-semibold">{{ $weightLabel($shippingThreshold) }}</span>
-                        {{ __('combined order weight.')}}
-                    </p>
-                </div>
-                @endif
+                <x-storefront.free-shipping-progress
+                    theme="souqify"
+                    :threshold="$shippingThreshold"
+                    :weight="$shippingProgressWeight"
+                    :item-weight="$weightGrams" />
                 <!-- Shipping countries -->
                 @if($shippingCountries->isNotEmpty())
                 <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
@@ -444,6 +466,33 @@
                         </span>
                         @endforeach
                     </div>
+                </div>
+                @endif
+
+                {{-- Return & refund policy --}}
+                @if(isset($returnPolicy))
+                <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                        <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
+                        </svg>
+                        <span>{{ __('Return & Refund Policy') }}</span>
+                    </div>
+                    @if(!$returnPolicy['is_returnable'])
+                    <p class="text-sm text-red-600">{{ __('This product is not eligible for returns.') }}</p>
+                    @else
+                    <p class="text-sm text-neutral-600">
+                        {{ __('Returns accepted within :days days of delivery.', ['days' => $returnPolicy['window_days']]) }}
+                        @if(($returnPolicy['fee'] ?? 0) > 0)
+                            {{ __('A return fee of :fee applies.', ['fee' => number_format($returnPolicy['fee'], 2)]) }}
+                        @else
+                            {{ __('Free returns.') }}
+                        @endif
+                    </p>
+                    @if(!empty($returnPolicy['conditions']))
+                    <p class="text-xs text-neutral-500">{{ $returnPolicy['conditions'] }}</p>
+                    @endif
+                    @endif
                 </div>
                 @endif
 
@@ -496,7 +545,8 @@
                         @endphp
                         <button type="button" data-variant-id="{{ $v->id }}" onclick="sqSelectVariant({{ $v->id }})" title="{{ $vTitle }}"
                             @if($vMediaIndex !== null) onmouseenter="window.sqGoToMediaIndex && window.sqGoToMediaIndex({{ $vMediaIndex }})" @endif
-                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[#004AC6] bg-[#E1E2ED] text-[#004AC6]' : 'border-neutral-300 hover:border-[#004AC6]') . (!$vIsInStock ? ' line-through' : '') }}">
+                            @if(!$vIsInStock) aria-disabled="true" @endif
+                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50 cursor-not-allowed' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[#004AC6] bg-[#E1E2ED] text-[#004AC6]' : 'border-neutral-300 hover:border-[#004AC6]') . (!$vIsInStock ? ' line-through' : '') }}">
                             @if($vThumb)
                             {{-- Image swatch --}}
                             <div data-variant-ring class="relative w-[60px] h-[60px] rounded-xl border-2 p-0.5 overflow-hidden {{ $vIsActive ? 'border-[#004AC6] bg-[#E1E2ED]' : 'border-transparent ring-1 ring-neutral-200' }}">
@@ -554,63 +604,86 @@
 
     <!-- =========== DESCRIPTION + WARRANTY =========== -->
     <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <!-- Tabs -->
-        <div class="flex items-center gap-6 border-b border-neutral-300 mb-6">
-            <button class="tab-btn pb-3 text-sm sm:text-base font-medium border-b-2 border-blue-700 text-blue-700"
-                data-tab="desc">{{ __('Description') }}</button>
-            <button
-                class="tab-btn pb-3 text-sm sm:text-base font-medium border-b-2 border-transparent text-neutral-600 hover:text-blue-700 transition"
-                data-tab="specs">{{ __('Technical Specs') }}</button>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
-            <!-- Description card -->
-            <div class="lg:col-span-3 bg-white rounded-[40px] p-6 sm:p-8">
-                <div id="tab-desc" class="tab-content">
-                    <h2 class="text-xl sm:text-2xl font-medium text-zinc-900 mb-3">
-                        {{ $product->translationValue('name') ?? $product->slug }}
-                    </h2>
-                    @if($product->translationValue('description'))
-                    <div class="text-neutral-700 leading-7">
-                        {!! $product->translationValue('description') !!}
+            <!-- Description + Specs accordion -->
+            <div class="lg:col-span-3 flex flex-col gap-4">
+                <!-- Description row -->
+                <div class="sq-accordion bg-white rounded-[40px] p-6 sm:p-8">
+                    <button type="button" class="sq-accordion-toggle w-full flex items-center justify-between gap-3 text-left" data-target="acc-desc">
+                        <h2 class="text-xl sm:text-2xl font-medium text-zinc-900">{{ __('Description') }}</h2>
+                        <svg class="sq-accordion-icon w-5 h-5 shrink-0 text-neutral-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="acc-desc" class="sq-accordion-content">
+                        <div class="sq-accordion-inner pt-4">
+                            <h3 class="text-base font-medium text-zinc-900 mb-3">
+                                {{ $product->translationValue('name') ?? $product->slug }}
+                            </h3>
+                            @if($product->translationValue('description'))
+                            <div class="text-neutral-700 leading-7">
+                                {!! $product->translationValue('description') !!}
+                            </div>
+                            @else
+                            <p class="text-neutral-500">{{ __('No description available.') }}</p>
+                            @endif
+                        </div>
                     </div>
-                    @else
-                    <p class="text-neutral-500">{{ __('No description available.') }}</p>
-                    @endif
                 </div>
-                <div id="tab-specs" class="tab-content hidden">
-                    <h2 class="text-xl sm:text-2xl font-medium text-zinc-900 mb-4">{{ __('Technical Specifications') }}
-                    </h2>
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-                        @if($central?->sku)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('SKU') }}</dt>
-                            <dd class="font-medium">{{ $central->sku }}</dd>
+
+                <!-- Technical specs row -->
+                <div class="sq-accordion bg-white rounded-[40px] p-6 sm:p-8">
+                    <button type="button" class="sq-accordion-toggle w-full flex items-center justify-between gap-3 text-left" data-target="acc-specs">
+                        <h2 class="text-xl sm:text-2xl font-medium text-zinc-900">{{ __('Technical Specs') }}</h2>
+                        <svg class="sq-accordion-icon w-5 h-5 shrink-0 text-neutral-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="acc-specs" class="sq-accordion-content" style="max-height:0">
+                        <div class="sq-accordion-inner pt-4">
+                            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                                @if($central?->sku)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('SKU') }}</dt>
+                                    <dd class="font-medium">{{ $central->sku }}</dd>
+                                </div>
+                                @endif
+                                @if($weightDisplay)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('Weight') }}</dt>
+                                    <dd class="font-medium">{{ $weightDisplay }}</dd>
+                                </div>
+                                @endif
+                                @foreach($variants as $v)
+                                @if($v->display_label)
+                                <div class="flex justify-between border-b border-neutral-100 pb-2">
+                                    <dt class="text-neutral-500">{{ __('Variant') }}</dt>
+                                    <dd class="font-medium">{{ $v->display_label }}</dd>
+                                </div>
+                                @endif
+                                @endforeach
+                                @if(
+                                !$central?->sku && !$weightDisplay &&
+                                $variants->every(fn($v) => blank($v->display_label))
+                                )
+                                <div class="col-span-2 text-neutral-500">{{ __('No specifications available.') }}</div>
+                                @endif
+                            </dl>
                         </div>
-                        @endif
-                        @if($weightDisplay)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('Weight') }}</dt>
-                            <dd class="font-medium">{{ $weightDisplay }}</dd>
-                        </div>
-                        @endif
-                        @foreach($variants as $v)
-                        @if($v->display_label)
-                        <div class="flex justify-between border-b border-neutral-100 pb-2">
-                            <dt class="text-neutral-500">{{ __('Variant') }}</dt>
-                            <dd class="font-medium">{{ $v->display_label }}</dd>
-                        </div>
-                        @endif
-                        @endforeach
-                        @if(
-                        !$central?->sku && !$weightDisplay &&
-                        $variants->every(fn($v) => blank($v->display_label))
-                        )
-                        <div class="col-span-2 text-neutral-500">{{ __('No specifications available.') }}</div>
-                        @endif
-                    </dl>
+                    </div>
                 </div>
             </div>
+
+            <style>
+                .sq-accordion-content {
+                    overflow: hidden;
+                    max-height: 0;
+                    transition: max-height 0.3s ease;
+                }
+                .sq-accordion.is-open .sq-accordion-icon {
+                    transform: rotate(180deg);
+                }
+            </style>
 
             <!-- Warranty + delivery card -->
             <aside class="bg-amber-400 rounded-[40px] p-6 flex flex-col gap-5">
@@ -1359,17 +1432,27 @@
     // ── Souqify Product Gallery ──────────────────────────────────
 
 
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('border-blue-700', 'text-blue-700');
-                b.classList.add('border-transparent', 'text-neutral-600');
-            });
-            btn.classList.remove('border-transparent', 'text-neutral-600');
-            btn.classList.add('border-blue-700', 'text-blue-700');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+    // Description / Technical Specs accordion
+    document.querySelectorAll('.sq-accordion').forEach(acc => {
+        const toggle = acc.querySelector('.sq-accordion-toggle');
+        const content = acc.querySelector('.sq-accordion-content');
+        if (!toggle || !content) return;
+
+        if (acc.classList.contains('is-open')) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+        } else {
+            content.style.maxHeight = '0px';
+        }
+
+        toggle.addEventListener('click', () => {
+            const isOpen = acc.classList.contains('is-open');
+            if (isOpen) {
+                content.style.maxHeight = '0px';
+                acc.classList.remove('is-open');
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                acc.classList.add('is-open');
+            }
         });
     });
 
@@ -1391,9 +1474,24 @@
     }
 </script>
 
+<?php $currencyData = data_get($currentCurrency ?? null, 'code', 'USD'); ?>
 <script>
     // ── Variant selection, qty, and add-to-cart – no Livewire re-render ────────
     const SQ_VARIANTS = @json($variantData ?? []);
+    const CURRENCY_DATA = @json($currencyData);
+    const SELL_PRICE_DATA = "{{ number_format($sellPrice * $rate, 2, '.', '') }}";
+
+    // ── Tracking: ViewContent ─────────────────────────────────────────────
+    (function () {
+        if (typeof window.trackViewContent !== 'function') return;
+        window.trackViewContent({
+            content_ids:  [@json($activeVariant?->id ?? $product->id)],
+            content_type: 'product',
+            content_name: @json($product->translationValue('name') ?? $product->slug),
+            value:        parseFloat(SELL_PRICE_DATA),
+            currency:     CURRENCY_DATA,
+        });
+    })();
     const SQ_CART_ADD_URL = @json($cartAddUrl);
     const SQ_PRODUCT_SLUG = @json($product->slug);
     let SQ_UNIT_PRICE = @json($sellPrice * $rate);
@@ -1461,6 +1559,18 @@
             slug: SQ_PRODUCT_SLUG,
             variantId: sqSelectedVariantId,
             qty: sqQty,
+        }).then(function () {
+            if (typeof window.trackAddToCart === 'function') {
+                var variant = sqSelectedVariantId ? SQ_VARIANTS[sqSelectedVariantId] : null;
+                window.trackAddToCart({
+                    content_ids:  [sqSelectedVariantId || @json($product->id)],
+                    content_type: 'product',
+                    content_name: @json($product->translationValue('name') ?? $product->slug),
+                    value:        variant ? parseFloat(variant.price || 0) : parseFloat(SELL_PRICE_DATA),
+                    currency:     CURRENCY_DATA,
+                    num_items:    sqQty,
+                });
+            }
         }).finally(function () {
             if (btn) { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); }
             if (label) label.innerHTML = prevLabel;
@@ -1478,6 +1588,12 @@
     function sqSelectVariant(id) {
         const data = SQ_VARIANTS[id];
         if (!data) return;
+        if (!data.isInStock) {
+            if (typeof Livewire !== 'undefined') {
+                Livewire.dispatch('storefront-toast', { message: @json(__('This option is out of stock')), type: 'error' });
+            }
+            return;
+        }
 
         sqSelectedVariantId = id;
 

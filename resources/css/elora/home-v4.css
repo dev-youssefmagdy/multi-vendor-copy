@@ -1,0 +1,56 @@
+/* ================================================================
+   ELORA V4 — "New User" Orange Edition color overrides
+   Primary: #FB7701 / #FF6A00
+   ================================================================ */
+
+/* ── "See all" links / accents ───────────────────────────────────── */
+.elora-v4-root .text-main,
+.elora-v4-root a.text-main {
+    color: #FF6A00 !important;
+}
+
+/* ── Buttons / pills ─────────────────────────────────────────────── */
+.elora-v4-root .bg-main {
+    background-color: #FB7701 !important;
+}
+.elora-v4-root .border-main {
+    border-color: #FB7701 !important;
+}
+
+/* ── Tabbed pills active state ───────────────────────────────────── */
+.elora-v4-root .tabbed-pill.active {
+    background: #FF6A00 !important;
+    border-color: #FF6A00 !important;
+    color: #fff !important;
+}
+.elora-v4-root .tabbed-pill:not(.active) {
+    border-color: var(--color-stroke) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* ── Swiper pagination bullets ───────────────────────────────────── */
+.elora-v4-root .swiper-pagination-bullet-active {
+    background: #FF6A00 !important;
+}
+
+/* ── Infinite scroll spinner ─────────────────────────────────────── */
+.elora-v4-root #all-products-spinner {
+    color: #FF6A00 !important;
+}
+
+/* ── Countdown separator opacity ─────────────────────────────────── */
+.countdown-sep {
+    opacity: 0.7;
+}
+
+/* ── Bottom nav safe-area padding for iOS ────────────────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .elora-v4-root .sm\:hidden[style*="position:fixed"] {
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ── Hide standard elora desktop mobile header on v4 ─────────────── */
+[data-variant="v4"] body > .sm\:hidden.mb-14:not(.elora-v4-mobile-header) {
+    display: none !important;
+}

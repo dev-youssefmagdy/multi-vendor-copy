@@ -19,25 +19,41 @@ use Livewire\Component;
 
 class RegisterPage extends Component
 {
+    // Steps:
+    // 1 = Plan selection
+    // 2 = Identity (email + phone + social)
+    // 3 = Payment
     public int $step = 1;
 
-    // Step 1 – Identity + Plan
+    // Step 2 – Identity
     public string $email = '';
     public string $phone = '';
 
     #[Url]
     public string $packageId = '';
 
-    // Step 2 – Payment gateway (only for paid plans)
+    // Step 3 – Payment gateway (only for paid plans)
     public string $gatewayCode = '';
     public string $stripeToken = '';
     public string $authnetDescriptor = '';
     public string $authnetValue = '';
     public string $twocoToken = '';
 
+    // Step 3 – Coupon
+    public string $couponCode = '';
+    public string $couponError = '';
+    public ?float $couponDiscount = null;
+    public ?int $appliedCouponId = null;
+
     // UI state
     public bool $emailSent = false;
     public ?string $resendStatus = null;
+
+    // OAuth state (set by socialAuthComplete, consumed by createPendingAndSendEmail)
+    public string $oauthProvider = '';
+    public string $oauthProviderId = '';
+    public string $oauthName = '';
+    public string $oauthAvatar = '';
 
     // Internal
     public string $centralDomain = '';
@@ -63,7 +79,7 @@ class RegisterPage extends Component
                 $this->updatedPackageId();
             }
 
-            $this->step = 2;
+            $this->step = 3;
         }
 
         $sentEmail = session('registration_email_sent');
@@ -76,13 +92,14 @@ class RegisterPage extends Component
 
     public function nextStep(): void
     {
-        $this->validateStepOne();
-        $this->step = 2;
+        if ($this->step === 1) {
+            $this->step = 2;
+        }
     }
 
     public function prevStep(): void
     {
-        $this->step = 1;
+        $this->step = max(1, $this->step - 1);
     }
 
     public function updatedGatewayCode(): void
@@ -116,10 +133,16 @@ class RegisterPage extends Component
      */
     public function proceed(): void
     {
-        $this->validateStepOne();
+        $this->validateIdentity();
 
         if ($this->requiresPayment()) {
-            $this->validateStepTwo();
+            if ($this->step < 3) {
+                $this->step = 3;
+
+                return;
+            }
+
+            $this->validateGateway();
             $this->startPayment();
 
             return;
@@ -127,6 +150,101 @@ class RegisterPage extends Component
 
         // Free plan
         $this->createPendingAndSendEmail(planName: __('Free Plan'));
+    }
+
+    public function socialAuthComplete(
+        string $email,
+        string $name,
+        string $provider,
+        string $providerId = '',
+        string $avatar = '',
+    ): void {
+        $this->email = strtolower(trim($email));
+        $this->oauthName = $name;
+        $this->oauthProvider = $provider;
+        $this->oauthProviderId = $providerId;
+        $this->oauthAvatar = $avatar;
+
+        if ($this->requiresPayment()) {
+            // Paid plan: go to payment step. OAuth info is already stored in
+            // Livewire properties so it survives to the payment/pending creation step.
+            $this->step = 3;
+
+            return;
+        }
+
+        // Free plan: OAuth has verified the email — skip the verification email
+        // and go straight to register.complete, same as the direct (non-popup) flow.
+        $token = Str::random(64);
+
+        $package = filled($this->packageId)
+            ? Package::query()->find((int) $this->packageId)
+            : null;
+
+        PendingRegistration::create([
+            'token' => $token,
+            'email' => $this->email,
+            'phone' => $this->phone ?: null,
+            'locale' => app()->getLocale(),
+            'package_id' => $package?->id,
+            'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
+            'payment_data' => null,
+            'expires_at' => now()->addHours(48),
+        ]);
+
+        session([
+            'website.register.oauth' => [
+                'email' => $this->email,
+                'name' => $this->oauthName,
+                'provider' => $this->oauthProvider,
+                'provider_id' => $this->oauthProviderId,
+                'avatar' => $this->oauthAvatar ?: null,
+            ],
+        ]);
+
+        $this->redirect(route('website.register.complete', ['token' => $token]));
+    }
+
+    public function applyCoupon(): void
+    {
+        $this->couponError = '';
+        $this->couponDiscount = null;
+        $this->appliedCouponId = null;
+
+        $code = strtoupper(trim($this->couponCode));
+
+        if (!$code) {
+            $this->couponError = __('Please enter a coupon code.');
+            return;
+        }
+
+        $package = filled($this->packageId) ? Package::query()->find((int) $this->packageId) : null;
+
+        if (!$package || (float) $package->price <= 0) {
+            $this->couponError = __('Select a paid plan to apply a coupon.');
+            return;
+        }
+
+        $coupon = \App\Models\CentralCoupon::query()
+            ->where('code', $code)
+            ->active()
+            ->first();
+
+        if (!$coupon) {
+            $this->couponError = __('Invalid or expired coupon code.');
+            return;
+        }
+
+        $original = (float) $package->price;
+
+        $discounted = match ($coupon->type->value) {
+            'percentage' => $original - ($original * (float) $coupon->value / 100),
+            'fixed' => $original - (float) $coupon->value,
+            default => $original,
+        };
+
+        $this->couponDiscount = max(0.0, round($discounted, 2));
+        $this->appliedCouponId = $coupon->id;
     }
 
     protected function startPayment(): void
@@ -143,8 +261,12 @@ class RegisterPage extends Component
                     'email' => $this->email,
                     'phone' => $this->phone,
                     'package_id' => (int) $this->packageId,
-                    'package_price' => (float) $package->price,
+                    'package_price' => $this->appliedCouponId
+                        ? max(0.0, (float) ($this->couponDiscount ?? $package->price))
+                        : (float) $package->price,
                     'gateway_code' => $this->gatewayCode,
+                    'applied_coupon_id' => $this->appliedCouponId,
+                    'coupon_code' => $this->appliedCouponId ? strtoupper(trim($this->couponCode)) : null,
                 ],
             ],
         ]);
@@ -169,9 +291,22 @@ class RegisterPage extends Component
             'phone' => $this->phone ?: null,
             'locale' => app()->getLocale(),
             'package_id' => $package?->id,
+            'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
         ]);
+
+        if ($this->oauthProvider && $this->email) {
+            session([
+                'website.register.oauth' => [
+                    'email' => $this->email,
+                    'name' => $this->oauthName,
+                    'provider' => $this->oauthProvider,
+                    'provider_id' => $this->oauthProviderId,
+                    'avatar' => $this->oauthAvatar ?: null,
+                ],
+            ]);
+        }
 
         $completeUrl = route('website.register.complete', ['token' => $token]);
         $expiresAt = now()->addHours(48)->format('M d, Y H:i') . ' UTC';
@@ -215,7 +350,7 @@ class RegisterPage extends Component
             : __('Email resent. You have reached the resend limit.');
     }
 
-    protected function validateStepOne(): array
+    protected function validateIdentity(): array
     {
         return $this->validate([
             'email' => ['required', 'email', 'max:255'],
@@ -224,7 +359,7 @@ class RegisterPage extends Component
         ]);
     }
 
-    protected function validateStepTwo(): array
+    protected function validateGateway(): array
     {
         return $this->validate([
             'gatewayCode' => [
@@ -321,6 +456,11 @@ class RegisterPage extends Component
             'hasAuthorizeNet' => $hasAuthorizeNet,
             'has2Checkout' => $has2Checkout,
             'authNetSandbox' => $authNetSandbox,
+            'stepLabels' => [
+                1 => __('Choose Plan'),
+                2 => __('Your Details'),
+                3 => __('Payment'),
+            ],
         ])->layout('layouts.website', ['title' => __('Create Your Store') . ' — Ecommet']);
     }
 }

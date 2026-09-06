@@ -10,6 +10,7 @@ use App\Models\Tenant\LanguagePurchase;
 use App\PaymentGateway\PaymentManager;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\LanguagePurchaseService;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 
 class LanguagesManagePage extends TenantPage
@@ -47,7 +48,23 @@ class LanguagesManagePage extends TenantPage
     public function toggleActive(int $languageId): void
     {
         $language = Language::query()->findOrFail($languageId);
-        $language->update(['is_active' => !$language->is_active]);
+        $activating = !$language->is_active;
+
+        if ($activating) {
+            $isPurchased = $language->central_language_id
+                && LanguagePurchase::query()->where('central_language_id', $language->central_language_id)->exists();
+
+            if (!$isPurchased) {
+                $limitService = app(PlanLimitService::class);
+                if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_LANGUAGES)) {
+                    $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_LANGUAGES), 'error');
+
+                    return;
+                }
+            }
+        }
+
+        $language->update(['is_active' => $activating]);
         $this->toast('Language state updated successfully.');
     }
 

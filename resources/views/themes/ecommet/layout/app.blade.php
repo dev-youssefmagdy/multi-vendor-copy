@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Bebas+Neue&family=Cairo:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Inter:wght@400;700&family=Lalezar&family=Lemonada:wght@400;700&family=Lora:wght@400;700&family=Montserrat:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Nunito:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&family=Readex+Pro:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Space+Grotesk:wght@400;700&family=Tajawal:wght@400;700&display=swap">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,11 +48,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @livewireStyles
     @include('themes.ecommet.layout.styles')
+    @include('storefront.partials.theme-color-overrides')
+    @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>
 
 <body
     class="bg-gray-lightest text-gray-dark font-main antialiased min-h-screen flex flex-col overflow-x-hidden w-full pb-14 lg:pb-0">
+
+    @if (\App\Services\Preview\PreviewOverrides::active())
+        <x-preview-banner />
+    @endif
 
     @php
         $storefrontFlashMessages = [];
@@ -104,14 +110,11 @@
         <div class="w-10 h-10 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
     </div>
 
-    <x-theme-part :categories="$categories" :rootCategories="$rootCategories" :logoPath="$logoPath"
-        :storeName="$storeName" type="header" fallback-view="themes.ecommet.layout.header" />
+    @include('themes.ecommet.partials.header', ['categories' => $categories, 'rootCategories' => $rootCategories, 'logoPath' => $logoPath, 'storeName' => $storeName])
 
     {{ $slot }}
 
-    <x-theme-part :categories="$categories" :rootCategories="$rootCategories" :logoPath="$logoPath"
-        :socialLinks="$socialLinks" :storeName="$storeName" :footerText="$footerText" type="footer" :footerCopyright="$footerCopyright"
-        fallback-view="themes.ecommet.layout.footer" />
+    @include('themes.ecommet.partials.footer', ['categories' => $categories, 'rootCategories' => $rootCategories, 'logoPath' => $logoPath, 'socialLinks' => $socialLinks, 'storeName' => $storeName, 'footerText' => $footerText, 'footerCopyright' => $footerCopyright])
 
     @if(config('tenancy.path_tenant_slug'))
         <div data-update-uri="{{ url('/s/' . config('tenancy.path_tenant_slug') . '/livewire/update') }}"
@@ -146,7 +149,7 @@
                     {{ __('Cancel') }}
                 </button>
                 <button id="variant-modal-confirm"
-                    class="flex-1 py-2 rounded-lg bg-[#242424] text-white text-[14px] hover:bg-[#3a3a3a] transition">
+                    class="flex-1 py-2 rounded-lg bg-[#de1709] text-white text-[14px] hover:opacity-90 transition">
                     {{ __('Add to Cart') }}
                 </button>
             </div>

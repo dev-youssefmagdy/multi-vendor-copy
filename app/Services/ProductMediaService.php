@@ -80,6 +80,10 @@ class ProductMediaService
         $originalExtension = strtolower($uploadedFile->getClientOriginalExtension() ?: 'jpg');
         $originalName = Str::uuid()->toString();
 
+        $nextSortOrder = 1 + (int) $product->files()
+            ->where('key', 'gallery')
+            ->max('sort_order');
+
         $originalPath = Storage::disk($disk)->putFileAs($directory, $uploadedFile, sprintf('%s.%s', $originalName, $originalExtension));
 
         $product->files()->create([
@@ -90,6 +94,7 @@ class ProductMediaService
             'mime_type' => $mimeType,
             'extension' => $originalExtension,
             'size' => $uploadedFile->getSize(),
+            'sort_order' => $nextSortOrder,
         ]);
 
         if ($fileType === FileType::Image) {
@@ -108,7 +113,32 @@ class ProductMediaService
                 'mime_type' => 'image/jpeg',
                 'extension' => 'jpg',
                 'size' => Storage::disk($disk)->size($thumbPath),
+                'sort_order' => $nextSortOrder,
             ]);
+        }
+    }
+
+    /**
+     * @param list<int> $orderedFileIds gallery file IDs in the desired display order
+     */
+    public function reorderGalleryFiles(Product $product, array $orderedFileIds): void
+    {
+        $galleryFiles = $product->files()->where('key', 'gallery')->whereIn('id', $orderedFileIds)->get();
+
+        foreach ($orderedFileIds as $index => $fileId) {
+            $file = $galleryFiles->firstWhere('id', (int) $fileId);
+            if (!$file) {
+                continue;
+            }
+
+            $sortOrder = $index + 1;
+            $file->update(['sort_order' => $sortOrder]);
+
+            $basename = pathinfo($file->path, PATHINFO_FILENAME);
+            $product->files()
+                ->where('key', 'gallery_thumb')
+                ->where('path', 'like', '%' . $basename . '-thumb%')
+                ->update(['sort_order' => $sortOrder]);
         }
     }
 

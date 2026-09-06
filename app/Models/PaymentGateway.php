@@ -37,7 +37,7 @@ class PaymentGateway extends Model
             'status' => ActivationStatus::class,
             'mode' => PaymentGatewayMode::class,
             'type' => PaymentGatewayType::class,
-            'credentials' => 'array',
+            'credentials' => 'encrypted:array',
             'transaction_fee_percentage' => 'decimal:4',
             'transaction_fee_fixed' => 'decimal:2',
         ];

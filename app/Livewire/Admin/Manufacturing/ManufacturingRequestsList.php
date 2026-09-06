@@ -50,7 +50,7 @@ class ManufacturingRequestsList extends ListPage
             ->latest()
             ->paginate(15);
 
-        $tenants = Tenant::query()->orderBy('name')->get(['id', 'name']);
+        $tenants = Tenant::query()->orderBy('data->name')->get(['id', 'data->name as name']);
 
         $stats = [
             'total' => ManufacturingRequest::count(),

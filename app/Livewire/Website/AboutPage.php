@@ -26,7 +26,7 @@ class AboutPage extends Component
 
         $stats = [
             [
-                'value' => number_format(Tenant::query()->where('status', TenantStatus::Active->value)->count()) . '+',
+                'value' => number_format(Tenant::query()->where('data->status', TenantStatus::Active->value)->count()) . '+',
                 'label' => 'Active Stores',
             ],
             [

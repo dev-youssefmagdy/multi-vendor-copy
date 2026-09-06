@@ -22,6 +22,7 @@ use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PaymentGateway;
+use App\PaymentGateway\PaymentManager;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
@@ -145,27 +146,50 @@ class TenantPanelRepository
     public function paginateProducts(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return Product::query()
-            ->with(['translations.language', 'categories.translations.language', 'variants', 'files'])
+            ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
                 $query->where('slug', 'like', "%{$search}%")
                     ->orWhereHas('translations', fn(Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
-            ->when(($filters['out_of_stock'] ?? '') === '1', function ($query) {
-                $query->where(function ($q) {
-                    // No-variant products: stock management enabled and stock depleted
-                    $q->whereDoesntHave('variants')
-                        ->where('manage_stock', true)
-                        ->where('stock', '<=', 0);
-                })->orWhere(function ($q) {
-                    // Variant products: total variant stock is zero or negative
-                    $q->whereHas('variants')
-                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM product_variants pv WHERE pv.product_id = products.id) <= 0');
-                });
+            ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
+                $this->applyProductStockFilter($query, $filters['stock']);
             })
-            ->latest('updated_at')
+            ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
+                $query->whereIn('central_product_id', $filters['image_search_ids']);
+            })
+            ->orderBy('order_number')
             ->paginate($perPage);
+    }
+
+    /**
+     * @param 'in'|'partial'|'out' $stock
+     */
+    protected function applyProductStockFilter(Builder $query, string $stock): void
+    {
+        match ($stock) {
+            'out' => $query->where(function (Builder $q) {
+                $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
+                });
+            }),
+            'in' => $query->where(function (Builder $q) {
+                $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where(function (Builder $nv) {
+                        $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
+                    });
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '<=', 0));
+                });
+            }),
+            'partial' => $query
+                ->whereHas('variants', fn($v) => $v->where('stock', '<=', 0))
+                ->whereHas('variants', fn($v) => $v->where('stock', '>', 0)),
+            default => null,
+        };
     }
 
     public function productStats(): array
@@ -566,21 +590,27 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateFlashSales(int $perPage = 10): LengthAwarePaginator
+    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
         return FlashSale::query()
             ->with(['product.translations.language', 'products.translations.language', 'files'])
+            ->where('country_id', $countryId)
             ->latest()
             ->paginate($perPage);
     }
 
-    public function flashSaleStats(): array
+    public function flashSaleStats(?int $countryId = null): array
     {
-        $row = DB::table('flash_sales')->selectRaw(
-            'COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount'
-        )->first();
+        $row = DB::table('flash_sales')
+            ->where('country_id', $countryId)
+            ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
+            ->first();
 
-        $productCount = DB::table('flash_sale_product')->distinct('product_id')->count('product_id');
+        $productCount = DB::table('flash_sale_product')
+            ->join('flash_sales', 'flash_sales.id', '=', 'flash_sale_product.flash_sale_id')
+            ->where('flash_sales.country_id', $countryId)
+            ->distinct('flash_sale_product.product_id')
+            ->count('flash_sale_product.product_id');
 
         return [
             'total' => (int) ($row->total ?? 0),
@@ -616,12 +646,103 @@ class TenantPanelRepository
 
     public function languages()
     {
-        return Language::query()->orderByDesc('is_default')->get();
+        return Language::query()->orderBy('sort_order')->orderByDesc('is_default')->get();
     }
 
     public function paymentGateways()
     {
         return PaymentGateway::query()->where('hide', false)->orderByDesc('is_active')->orderBy('name')->get();
+    }
+
+    /**
+     * Payment Readiness Widget data: gateway connectivity + international
+     * sales / Apple Pay / Google Pay / target-currency / target-country
+     * coverage of the tenant's currently active gateways.
+     */
+    public function paymentReadiness(): array
+    {
+        $manager = app(PaymentManager::class);
+
+        $activeGateways = PaymentGateway::query()
+            ->where('is_active', true)
+            ->where('hide', false)
+            ->get();
+
+        $connected = $activeGateways->isNotEmpty();
+
+        $metas = $activeGateways->map(fn(PaymentGateway $gateway) => $manager->meta($gateway->code));
+
+        $merchantCountries = $metas->pluck('merchant_countries')->flatten()->unique();
+        $customerCountries = $metas->pluck('customer_countries')->flatten()->map(fn($c) => strtoupper($c))->unique();
+        $currencies = $metas->pluck('currencies')->flatten()->map(fn($c) => strtoupper($c))->unique();
+        $paymentMethods = $metas->pluck('payment_methods')->flatten()->unique();
+
+        $targetCurrencyCodes = Currency::query()
+            ->where('is_active', true)
+            ->pluck('code')
+            ->map(fn($c) => strtoupper($c))
+            ->unique();
+
+        $targetCountryCodes = collect();
+        if (tenant()) {
+            $targetCountryCodes = tenant()->tenantCountries()
+                ->where('is_active', true)
+                ->with('country')
+                ->get()
+                ->pluck('country.iso2')
+                ->filter()
+                ->map(fn($c) => strtoupper($c))
+                ->unique();
+        }
+
+        $supportsInternational = $merchantCountries->count() > 1;
+        $supportsApplePay = $paymentMethods->contains('apple_pay');
+        $supportsGooglePay = $paymentMethods->contains('google_pay');
+        $supportsTargetCurrencies = $targetCurrencyCodes->isNotEmpty()
+            && $targetCurrencyCodes->diff($currencies)->isEmpty();
+        $canReceiveFromTargetCountries = $targetCountryCodes->isNotEmpty()
+            && $targetCountryCodes->diff($customerCountries)->isEmpty();
+
+        return [
+            [
+                'label' => 'Gateway connected',
+                'ready' => $connected,
+                'caption' => $connected
+                    ? $activeGateways->count() . ' active gateway(s)'
+                    : 'Connect a payment gateway to start accepting orders.',
+            ],
+            [
+                'label' => 'Supports international sales',
+                'ready' => $supportsInternational,
+                'caption' => $supportsInternational
+                    ? 'Your connected gateways can onboard from multiple countries.'
+                    : 'Connect a gateway with broader merchant country coverage.',
+            ],
+            [
+                'label' => 'Supports Apple Pay',
+                'ready' => $supportsApplePay,
+                'caption' => $supportsApplePay ? 'Available at checkout.' : 'No connected gateway offers Apple Pay.',
+            ],
+            [
+                'label' => 'Supports Google Pay',
+                'ready' => $supportsGooglePay,
+                'caption' => $supportsGooglePay ? 'Available at checkout.' : 'No connected gateway offers Google Pay.',
+            ],
+            [
+                'label' => 'Supports your target currencies',
+                'ready' => $supportsTargetCurrencies,
+                'caption' => $targetCurrencyCodes->isEmpty()
+                    ? 'No active currencies configured yet.'
+                    : ($supportsTargetCurrencies ? 'All your active currencies are supported.' : 'Some of your active currencies are not supported by connected gateways.'),
+            ],
+            [
+                'label' => 'Can receive from your target countries',
+                'ready' => $canReceiveFromTargetCountries,
+                'caption' => $targetCountryCodes->isEmpty()
+                    ? 'No target countries configured yet.'
+                    : ($canReceiveFromTargetCountries ? 'All your target countries are covered.' : 'Some of your target countries are not covered by connected gateways.'),
+            ],
+        ];
     }
 
     public function paginateAdmins(array $filters, int $perPage = 10): LengthAwarePaginator
@@ -714,7 +835,7 @@ class TenantPanelRepository
 
     public function activeLanguages()
     {
-        return Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        return Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
     }
 
     /**
@@ -1625,6 +1746,25 @@ class TenantPanelRepository
                 'logo_font_en',
                 'logo_path_ar',
                 'logo_path_en',
+                'promo_banner_title',
+                'promo_banner_subtitle',
+                'promo_banner_link',
+                'promo_banner_cta_text',
+                'promo_banner_image_url',
+            ])
+            ->get()
+            ->pluck('value', 'name')
+            ->all();
+    }
+
+    public function trackingSettings(): array
+    {
+        return Setting::query()
+            ->whereIn('name', [
+                'tracking_fb_pixel_id',
+                'tracking_tiktok_pixel_id',
+                'tracking_snapchat_pixel_id',
+                'tracking_ga_measurement_id',
             ])
             ->get()
             ->pluck('value', 'name')

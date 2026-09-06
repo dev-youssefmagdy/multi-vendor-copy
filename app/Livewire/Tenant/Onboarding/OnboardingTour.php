@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Onboarding;
 
+use App\Helpers\TenantNavigation;
 use App\Models\Tenant\AdminUser;
 use App\Models\StaticPage;
 use App\Models\Tenant as TenantModel;
@@ -13,6 +14,9 @@ class OnboardingTour extends Component
     // ── Compliance acceptance state ──────────────────────────────────────────
     public bool $showCompliance = false;
     public bool $complianceChecked = false;
+
+    // ── Persistent setup-progress banner state ─────────────────────────────
+    public bool $showSetupBanner = false;
 
     public function mount(): void
     {
@@ -30,6 +34,10 @@ class OnboardingTour extends Component
         }
 
         $this->maybeRedirectToOnboarding($admin);
+
+        $this->showSetupBanner = $admin->tour_seen_at !== null
+            && !request()->routeIs('tenant.onboarding')
+            && TenantNavigation::onboardingSetupProgress()['done'] < TenantNavigation::onboardingSetupProgress()['total'];
     }
 
     /**
@@ -133,8 +141,13 @@ class OnboardingTour extends Component
 
     public function render()
     {
+        $progress = TenantNavigation::onboardingSetupProgress();
+
         return view('livewire.tenant.onboarding.tour', [
             'compliancePagesList' => $this->showCompliance ? $this->compliancePages() : collect(),
+            'setupDone' => $progress['done'],
+            'setupTotal' => $progress['total'],
+            'setupPct' => $progress['total'] > 0 ? (int) round(($progress['done'] / $progress['total']) * 100) : 100,
         ]);
     }
 }

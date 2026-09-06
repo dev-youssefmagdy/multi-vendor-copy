@@ -63,6 +63,11 @@ return [
             'driver' => 'session',
             'provider' => 'tenant_owners',
         ],
+
+        'affiliate' => [
+            'driver' => 'session',
+            'provider' => 'affiliates',
+        ],
     ],
 
     /*
@@ -108,6 +113,11 @@ return [
             'model' => \App\Models\TenantOwner::class,
         ],
 
+        'affiliates' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Affiliate::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -150,6 +160,13 @@ return [
 
         'tenants' => [
             'provider' => 'tenant_admins',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'affiliates' => [
+            'provider' => 'affiliates',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

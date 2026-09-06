@@ -92,14 +92,20 @@
             </div>
             <p class="page-copy">{{ $description }}</p>
         </div>
+        @if ($previewUrl)
+            <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">
+                Preview
+            </a>
+        @endif
     </div>
 
     {{-- Tabs --}}
     <div class="appearance-tabs fu d1 section-gap">
         @foreach ([
             'general'      => 'General',
-            'banners'      => 'Banners',
+            'colors'       => 'Colors',
             'social_links' => 'Social Links',
+            'promo_banner' => 'Promo Banner',
             'footer'       => 'Footer',
         ] as $key => $label)
             <button type="button"
@@ -132,132 +138,70 @@
         </div>
     @endif
 
-    {{-- ─────────────────────────────────── TAB: BANNERS ─────────────────────────────────── --}}
-    @if ($activeTab === 'banners')
-        <div class="appearance-tab-panel fu d2">
-            <div class="card table-card-shell">
-                <div class="table-header-shell">
-                    <div>
-                        <h3 class="panel-title">Banners</h3>
-                        <p class="panel-copy">Homepage and promotional banners with multi-language content.</p>
-                    </div>
-                    <div class="table-header-actions">
-                        <x-btn type="button" wire:click="openBannerModal()">Add Banner</x-btn>
-                    </div>
-                </div>
-
-                <x-table :headers="['Title', 'URL', 'Image', 'Order', 'Actions']">
-                    @forelse ($banners as $banner)
-                        <tr>
-                            <td>{{ e($banner->title ?? '—') }}</td>
-                            <td>
-                                @if ($banner->url)
-                                    <a href="{{ e($banner->url) }}" target="_blank" rel="noopener"
-                                        class="panel-copy" style="text-decoration:underline;word-break:break-all;">
-                                        {{ e(\Illuminate\Support\Str::limit($banner->url, 40)) }}
-                                    </a>
-                                @else
-                                    <span class="panel-copy">—</span>
+    {{-- ─────────────────────────────────── TAB: COLORS ───────────────────────────────────── --}}
+    @if ($activeTab === 'colors')
+        <div class="appearance-tab-panel fu d2 page-stack">
+            @forelse ($colorThemes as $themeId => $themeSection)
+                <details class="card form-card theme-color-group" @if ($themeSection['is_active']) open @endif>
+                    <summary class="panel-head mb-0" style="cursor:pointer;list-style:none;">
+                        <div>
+                            <h3 class="panel-title">
+                                {{ $themeSection['name'] }}
+                                @if ($themeSection['is_active'])
+                                    <span class="badge badge-cyan" style="margin-inline-start:8px;">Active Theme</span>
                                 @endif
-                            </td>
-                            <td>
-                                @if ($banner->image_path)
-                                    <img src="{{ $banner->image_path }}"
-                                        alt="" style="height:36px;border-radius:6px;object-fit:cover;" />
-                                @else
-                                    <span class="panel-copy">—</span>
-                                @endif
-                            </td>
-                            <td>{{ e($banner->serial_number) }}</td>
-                            <td>
-                                <div class="flex gap-2">
-                                    <x-btn type="button" variant="secondary" class="btn-sm"
-                                        wire:click="openBannerModal({{ $banner->id }})">Edit</x-btn>
-                                    <x-btn type="button" variant="secondary" class="btn-sm"
-                                        wire:click="confirmDeleteBanner({{ $banner->id }})">Delete</x-btn>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <div class="empty-state-title">No banners yet</div>
-                                    <p class="empty-state-copy">Add your first banner to display on the storefront.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </x-table>
-            </div>
-        </div>
-
-        {{-- Banner modal --}}
-        <x-modal wire:model="bannerModalOpen"
-            title="{{ $bannerId ? 'Edit Banner' : 'Add Banner' }}"
-            maxWidth="2xl"
-            closeAction="closeBannerModal">
-            <form wire:submit="saveBanner" class="page-stack">
-                <div class="form-grid form-grid-2">
-                    <div>
-                        <label class="field-label">URL</label>
-                        <x-input type="url" wire:model.defer="bannerUrl" :error="$errors->has('bannerUrl')" />
-                        @error('bannerUrl')<div class="field-error">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="span-2">
-                        <label class="field-label">Image</label>
-                        <x-dropzone id="banner-image" model="bannerImage" :multiple="false" accept="image/*"
-                            label="Upload banner image"
-                            sublabel="PNG, JPG, WEBP up to 2MB" />
-                        <p class="panel-copy" style="margin-top:4px;">Max 2 MB. Leave empty to keep existing image.</p>
-                        @error('bannerImage')<div class="field-error">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                {{-- Translations --}}
-                @foreach ($languages as $language)
-                    <div class="locale-fields-group">
-                        <div class="locale-badge">{{ $language->native_name ?? $language->name }} ({{ $language->code }})</div>
-                        <div class="form-grid form-grid-2">
-                            <div>
-                                <label class="field-label">Title</label>
-                                <x-input type="text"
-                                    wire:model.defer="bannerTranslations.{{ $language->code }}.title"
-                                    :error="$errors->has('bannerTranslations.' . $language->code . '.title')" />
-                                @error('bannerTranslations.' . $language->code . '.title')
-                                    <div class="field-error">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="field-label">Button Text</label>
-                                <x-input type="text"
-                                    wire:model.defer="bannerTranslations.{{ $language->code }}.button_text"
-                                    :error="$errors->has('bannerTranslations.' . $language->code . '.button_text')" />
-                                @error('bannerTranslations.' . $language->code . '.button_text')
-                                    <div class="field-error">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="span-2">
-                                <label class="field-label">Subtitle</label>
-                                <x-input type="text"
-                                    wire:model.defer="bannerTranslations.{{ $language->code }}.subtitle"
-                                    :error="$errors->has('bannerTranslations.' . $language->code . '.subtitle')" />
-                                @error('bannerTranslations.' . $language->code . '.subtitle')
-                                    <div class="field-error">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            </h3>
+                            <p class="panel-copy">{{ count($themeSection['variants']) }} variant(s) with customizable colors.</p>
                         </div>
-                    </div>
-                @endforeach
+                    </summary>
 
-                <div class="page-actions compact-actions justify-end">
-                    <x-btn type="button" variant="secondary" wire:click="closeBannerModal">Cancel</x-btn>
-                    <x-btn type="submit">
-                        {{ $bannerId ? 'Update Banner' : 'Create Banner' }}
-                    </x-btn>
+                    <div class="page-stack" style="margin-top:20px;">
+                        @foreach ($themeSection['variants'] as $variantId => $section)
+                            <section class="card form-card" style="background:transparent;">
+                                <div class="panel-head mb-5">
+                                    <div>
+                                        <h4 class="panel-title" style="font-size:14px;">
+                                            {{ $section['name'] }}
+                                            @if ($section['is_active'])
+                                                <span class="badge badge-green" style="margin-inline-start:8px;">Active Variant</span>
+                                            @endif
+                                        </h4>
+                                        <p class="panel-copy">Changes apply site-wide whenever this variant is active.</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <x-btn type="button" variant="secondary" wire:click="resetColors({{ $themeId }}, {{ $variantId }})">Reset to Default</x-btn>
+                                        <x-btn type="button" wire:click="saveColors({{ $themeId }}, {{ $variantId }})">Save Colors</x-btn>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid form-grid-2">
+                                    @foreach ($section['defaults'] as $property => $default)
+                                        <div>
+                                            <label class="field-label">{{ \Illuminate\Support\Str::headline(str_replace('--color-', '', $property)) }}</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color"
+                                                    wire:model.live="colorThemes.{{ $themeId }}.variants.{{ $variantId }}.values.{{ $property }}"
+                                                    style="width:44px;height:38px;padding:2px;border-radius:8px;" />
+                                                <x-input type="text" wire:model.live="colorThemes.{{ $themeId }}.variants.{{ $variantId }}.values.{{ $property }}"
+                                                    :error="$errors->has('colorThemes.' . $themeId . '.variants.' . $variantId . '.values.' . $property)" />
+                                            </div>
+                                            @error('colorThemes.' . $themeId . '.variants.' . $variantId . '.values.' . $property)<div class="field-error">{{ $message }}</div>@enderror
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endforeach
+                    </div>
+                </details>
+            @empty
+                <div class="card form-card">
+                    <div class="empty-state">
+                        <div class="empty-state-title">No customizable colors yet</div>
+                        <p class="empty-state-copy">None of your storefront themes expose variants with color customization.</p>
+                    </div>
                 </div>
-            </form>
-        </x-modal>
+            @endforelse
+        </div>
     @endif
 
     {{-- ──────────────────────────────── TAB: SOCIAL LINKS ──────────────────────────────── --}}
@@ -356,6 +300,56 @@
                 </div>
             </form>
         </x-modal>
+    @endif
+
+    {{-- ─────────────────────────────────── TAB: PROMO BANNER ─────────────────────────────────── --}}
+    @if ($activeTab === 'promo_banner')
+        <div class="appearance-tab-panel fu d2">
+            <form wire:submit="savePromoBanner" class="page-stack">
+                <section class="card form-card">
+                    <div class="panel-head mb-5">
+                        <div>
+                            <h3 class="panel-title">Promotional Banner</h3>
+                            <p class="panel-copy">Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.</p>
+                        </div>
+                        <x-btn type="submit">Save Promo Banner</x-btn>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div>
+                            <label class="field-label">Title</label>
+                            <x-input type="text" wire:model.defer="promoBannerTitle"
+                                placeholder="Summer Sale" :error="$errors->has('promoBannerTitle')" />
+                            @error('promoBannerTitle')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Call-to-Action Text</label>
+                            <x-input type="text" wire:model.defer="promoBannerCtaText"
+                                placeholder="Shop Now" :error="$errors->has('promoBannerCtaText')" />
+                            @error('promoBannerCtaText')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="span-2">
+                            <label class="field-label">Subtitle</label>
+                            <x-input type="text" wire:model.defer="promoBannerSubtitle"
+                                placeholder="Up to 50% off selected items" :error="$errors->has('promoBannerSubtitle')" />
+                            @error('promoBannerSubtitle')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Link URL</label>
+                            <x-input type="url" wire:model.defer="promoBannerLink"
+                                placeholder="https://" :error="$errors->has('promoBannerLink')" />
+                            @error('promoBannerLink')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Image URL</label>
+                            <x-input type="url" wire:model.defer="promoBannerImageUrl"
+                                placeholder="https://" :error="$errors->has('promoBannerImageUrl')" />
+                            @error('promoBannerImageUrl')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
     @endif
 
     {{-- ──────────────────────────────────── TAB: FOOTER ────────────────────────────────── --}}

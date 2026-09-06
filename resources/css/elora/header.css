@@ -1,0 +1,135 @@
+/* Elora side-menu two-column styles */
+#eloraSideMenuPanel {
+    width: min(442px, 92vw) !important;
+    overflow: hidden !important;
+}
+
+#eloraCatLeft {
+    display: flex;
+}
+
+#eloraCatRight {
+    display: flex;
+}
+
+.cat-menu-btn:hover .cat-menu-label,
+.cat-menu-btn:hover .cat-menu-arrow {
+    color: #111827 !important;
+}
+
+.elora-sub-link:hover {
+    color: #111827 !important;
+    background: rgba(255, 82, 44, 0.06);
+}
+
+.elora-right-back-btn:hover {
+    background: rgba(255, 82, 44, 0.06);
+}
+
+/* RTL: mirror drill-in / back chevrons so they point toward the correct reading direction */
+[dir="rtl"] .cat-menu-arrow,
+[dir="rtl"] .elora-right-back-arrow {
+    transform: scaleX(-1);
+}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    justify-content: center;
+    gap: 16px;
+    max-width: 100vw;
+    z-index: 40;
+    padding: 8px 10px max(env(safe-area-inset-bottom, 8px), 8px);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: #111827;
+}
+
+.mob-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: #888;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 500;
+    /* flex: 1 1 0; */
+    min-width: 0;
+    padding: 4px 0;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.mob-nav-item.active {
+    color: #111827;
+}
+
+.mob-nav-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+.cart-nav {
+    /* flex: 1.1 1 0; */
+    min-width: 0;
+}
+
+.cart-nav-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    background: #111827;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 100%;
+    padding: 8px 10px;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.mob-nav-item span,
+.cart-nav-inner > span:not(#elora-mob-cart-badge) {
+    display: block;
+    /* width: 100%; */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    .navbar {
+        display: none !important;
+    }
+}
+
+/* ── RTL: side menu drawer should dock and slide in from the reading-start (right) side ── */
+[dir="rtl"] #sideMenu .menu-panel {
+    left: auto !important;
+    right: 0 !important;
+    transform: translateX(100%) !important;
+}
+
+[dir="rtl"] #sideMenu.open .menu-panel {
+    transform: translateX(0) !important;
+}

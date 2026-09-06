@@ -21,9 +21,16 @@ class CentralCouponService
                 'start_date' => filled($attributes['start_date'] ?? null) ? $attributes['start_date'] : null,
                 'end_date' => filled($attributes['end_date'] ?? null) ? $attributes['end_date'] : null,
                 'active' => (bool) ($attributes['active'] ?? true),
+                'affiliate_id' => $attributes['affiliate_id'] ?? null,
+                'affiliate_commission_value' => filled($attributes['affiliate_commission_value'] ?? null)
+                    ? $attributes['affiliate_commission_value']
+                    : null,
             ]);
 
             $coupon->save();
+
+            $countryIds = array_values(array_filter((array) ($attributes['country_ids'] ?? []), 'is_numeric'));
+            $coupon->countries()->sync($countryIds);
 
             return $coupon->fresh();
         });

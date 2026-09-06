@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\DeliveryScope;
 use App\Enums\OrderStatus;
 use App\Enums\ShippingZoneStatus;
@@ -29,6 +30,7 @@ class CheckoutPage extends Component
 {
     use HasStorefrontLayout;
     use ChecksCartStock;
+    use SanitizesPhoneNumber;
     use CalculatesFreeShipping;
 
     // ─── All mutable form state under a single structured property ───────────
@@ -110,6 +112,13 @@ class CheckoutPage extends Component
         }
 
         $this->data['coupon']['code'] = session('storefront_coupon', '');
+
+        $cartItems = $repo->cartItems();
+        $this->dispatch('tracking-event', name: 'initiate_checkout', params: [
+            'content_ids' => collect($cartItems)->pluck('product_id')->values()->all(),
+            'num_items' => collect($cartItems)->sum('qty'),
+            'value' => collect($cartItems)->sum(fn($item) => (float) ($item['subtotal'] ?? 0)),
+        ]);
     }
 
     // ─── Address selection ────────────────────────────────────────────────────
@@ -156,6 +165,7 @@ class CheckoutPage extends Component
         }
 
         $this->data['modal']['show'] = true;
+        $this->dispatch('storefront-open-address-modal-changed');
     }
 
     public function closeAddressModal(): void
@@ -191,7 +201,7 @@ class CheckoutPage extends Component
             'customer_id' => $customer->id,
             'full_name' => $this->data['modal']['full_name'],
             'email' => $this->data['modal']['email'] ?: null,
-            'phone' => $this->data['modal']['phone'] ?: null,
+            'phone' => $this->sanitizePhone($this->data['modal']['phone']),
             'address_line_1' => $this->data['modal']['line1'],
             'city' => $this->data['modal']['city'] ?: null,
             'state' => $this->data['modal']['state'] ?: null,
@@ -296,6 +306,12 @@ class CheckoutPage extends Component
             return;
         }
 
+        if (!$coupon->availableInCountry($this->resolveShippingCountryId())) {
+            $this->addError('data.coupon.code', __('This coupon is not available in your country.'));
+            $this->toast(__('This coupon is not available in your country.'), 'error');
+            return;
+        }
+
         $cartTotal = app(StorefrontRepository::class)->cartTotal();
 
         if ($coupon->minimum_spend !== null && $cartTotal < (float) $coupon->minimum_spend) {
@@ -324,6 +340,12 @@ class CheckoutPage extends Component
 
     public function placeOrder(): void
     {
+        $limitService = app(\App\Services\Tenant\PlanLimitService::class);
+        if (!$limitService->canPerform(tenant(), \App\Services\Tenant\PlanLimitService::FEATURE_ORDERS_PER_MONTH)) {
+            $this->addError('order', __('This store cannot accept new orders at this time. Please try again next month.'));
+            return;
+        }
+
         $billingRequired = !$this->data['billing']['same_as_shipping'];
 
         $this->validate([
@@ -356,7 +378,8 @@ class CheckoutPage extends Component
             return;
         }
 
-        // ── Stock validation ──────────────────────────────────────────────────
+        // ── Stock validation (warn only — OOS items no longer block submission) ──
+        $stockWarnings = [];
         foreach ($cartItems as $item) {
             $product = $item['product'] ?? null;
             $variant = $item['variant'] ?? null;
@@ -365,9 +388,11 @@ class CheckoutPage extends Component
             }
             $stockError = $this->checkProductStock($product, $variant, (int) $item['qty'], 0);
             if ($stockError !== null) {
-                $this->toast($stockError, 'error');
-                return;
+                $stockWarnings[] = $stockError;
             }
+        }
+        foreach ($stockWarnings as $warning) {
+            $this->dispatch('storefront-toast', message: $warning, type: 'warning');
         }
         // ─────────────────────────────────────────────────────────────────────
 
@@ -485,7 +510,7 @@ class CheckoutPage extends Component
         $shippingAddress = [
             'name' => $this->data['shipping']['name'],
             'email' => $this->data['shipping']['email'],
-            'phone' => $this->data['shipping']['phone'],
+            'phone' => $this->sanitizePhone($this->data['shipping']['phone']),
             'address' => $this->data['shipping']['address'],
             'country' => $this->resolveShippingCountry(),
             'country_id' => $this->resolveShippingCountryId(),

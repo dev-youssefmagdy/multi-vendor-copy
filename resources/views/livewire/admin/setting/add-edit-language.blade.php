@@ -38,6 +38,21 @@
                         @error('price') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                 @endif
+                <div class="field-flag-grid mt-4">
+                    <label class="toggle-field"><input type="checkbox"
+                            wire:model.live="offersAiTranslation"><span>Offer AI Translation for this
+                            language</span></label>
+                </div>
+                @if ($offersAiTranslation)
+                    <div class="mt-4">
+                        <label class="field-label">AI Translation Price (USD)</label>
+                        <x-input type="number" step="0.01" min="0" wire:model.defer="aiTranslationPrice"
+                            placeholder="0 for free" />
+                        <p class="field-help mt-1">Set to 0 for free AI translation (plan must allow it). Charged
+                            once per AI translation run tenants trigger for this language.</p>
+                        @error('aiTranslationPrice') <p class="field-error">{{ $message }}</p> @enderror
+                    </div>
+                @endif
             </div>
             <div class="mt-4">
                 <x-multi-select

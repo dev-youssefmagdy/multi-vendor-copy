@@ -109,6 +109,27 @@
                     </div>
                 </div>
 
+                <div class="field-flag-grid mt-4"
+                    x-data="{ offersAi: {{ $f('offers_ai_translation', $isEdit ? $language->ai_translation_price !== null : false) ? 'true' : 'false' }} }">
+                    <label class="toggle-field">
+                        <input type="hidden" name="offers_ai_translation" value="0">
+                        <input type="checkbox" name="offers_ai_translation" value="1"
+                            x-model="offersAi"
+                            {{ $f('offers_ai_translation', $isEdit ? $language->ai_translation_price !== null : false) ? 'checked' : '' }}>
+                        <span>Offer AI Translation for this language</span>
+                    </label>
+
+                    <div x-show="offersAi" x-cloak class="mt-4" style="width:100%">
+                        <label class="field-label" for="ai_translation_price">AI Translation Price (USD)</label>
+                        <x-input type="number" id="ai_translation_price" name="ai_translation_price" step="0.01" min="0"
+                            value="{{ $f('ai_translation_price', $language?->ai_translation_price) }}" placeholder="0 for free"
+                            class="{{ $errors->has('ai_translation_price') ? 'is-invalid' : '' }}" />
+                        <p class="field-help mt-1">Set to 0 for free AI translation (plan must allow it). Charged once
+                            per AI translation run tenants trigger for this language.</p>
+                        @error('ai_translation_price') <p class="field-error">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
             </div>
 
             {{-- ── Associated Countries ─────────────────────────────────── --}}

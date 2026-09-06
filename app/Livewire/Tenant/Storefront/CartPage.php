@@ -55,6 +55,12 @@ class CartPage extends Component
         session(['storefront_cart' => $cart]);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added');
+        $this->dispatch('tracking-event', name: 'add_to_cart', params: [
+            'content_ids' => [$product->id],
+            'content_name' => $product->translationValue('name') ?? $product->slug,
+            'content_type' => 'product',
+            'value' => $product->storefrontPricing()['current_price'] ?? null,
+        ]);
     }
 
     public function removeFromCart(string $key): void
@@ -117,6 +123,12 @@ class CartPage extends Component
         if (!$coupon) {
             $this->addError('coupon', __('This coupon code is invalid or has expired.'));
             $this->toast(__('This coupon code is invalid or has expired.'), 'error');
+            return;
+        }
+
+        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+            $this->addError('coupon', __('This coupon is not available in your country.'));
+            $this->toast(__('This coupon is not available in your country.'), 'error');
             return;
         }
 

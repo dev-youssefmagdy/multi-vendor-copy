@@ -5,9 +5,21 @@
         'model' => null,
         'default' => null,
     'removeAction' => null,
+    'expectedWidth' => null,
+    'expectedHeight' => null,
+    'dimensionLabel' => null,
     ])
 
-<div class="w-full relative group" data-dropzone @if($model) data-model="{{ $model }}" @endif @if($removeAction) data-remove-action="{{ $removeAction }}" @endif>
+<div class="w-full relative group" data-dropzone
+    @if($model) data-model="{{ $model }}" @endif
+    @if($removeAction) data-remove-action="{{ $removeAction }}" @endif
+    @if($expectedWidth && $expectedHeight) data-expect-w="{{ $expectedWidth }}" data-expect-h="{{ $expectedHeight }}" @endif>
+
+    @if($expectedWidth && $expectedHeight)
+        <p class="dimension-hint">
+            Required size{{ $dimensionLabel ? " ($dimensionLabel)" : '' }}: <strong>{{ $expectedWidth }} × {{ $expectedHeight }}px</strong>
+        </p>
+    @endif
     <label class="relative flex flex-col items-center justify-center w-full {{ $multiple ? 'py-10' : 'py-4' }} px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">
 
         <div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>

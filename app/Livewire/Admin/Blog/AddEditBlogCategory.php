@@ -18,7 +18,7 @@ class AddEditBlogCategory extends Component
 
     public function mount(?BlogCategory $blogCategory = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -74,7 +74,7 @@ class AddEditBlogCategory extends Component
     {
         return view('livewire.admin.blog.add-edit-blog-category', [
             'pageTitle' => $this->categoryId ? 'Edit Blog Category' : 'Add Blog Category',
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'statusOptions' => ['draft' => 'Draft', 'active' => 'Active'],
         ]);
     }

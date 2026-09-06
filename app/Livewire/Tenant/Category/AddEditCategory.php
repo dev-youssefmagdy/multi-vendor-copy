@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Category;
 
 use App\Models\Tenant\Category;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantCategoryMediaService;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Validation\ValidationException;
@@ -76,6 +77,18 @@ class AddEditCategory extends Component
             if (!$snapshot) {
                 $this->addError('centralCategoryId', 'The linked central category could not be found.');
                 $this->dispatch('admin-toast', message: 'The linked central category could not be found.', type: 'error');
+
+                return null;
+            }
+        }
+
+        $isNewRootCategory = !$this->categoryId && !($validated['parentId'] ?? null);
+        if ($isNewRootCategory) {
+            $limitService = app(PlanLimitService::class);
+            if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_CATEGORIES)) {
+                $message = $limitService->errorMessage(PlanLimitService::FEATURE_CATEGORIES);
+                $this->addError('parentId', $message);
+                $this->dispatch('admin-toast', message: $message, type: 'error');
 
                 return null;
             }

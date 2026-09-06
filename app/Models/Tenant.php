@@ -15,31 +15,30 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
 
-    protected $fillable = [
-        'id',
-        'name',
-        'slug',
-        'email',
-        'phone',
-        'status',
-        'category_ids',
-        'primary_language_id',
-        'package_id',
-        'trial_ends_at',
-        'activated_at',
-        'profit_percentage',
-        'data',
-    ];
+    // No physical columns other than `id`/`data` exist on this table (see
+    // vendor/stancl/virtualcolumn) — every other attribute, including the
+    // many dynamic `compliance_*`/`shop_name`/etc keys saved via saveData(),
+    // is redirected into the `data` JSON column regardless of name. A fixed
+    // $fillable allowlist here would silently drop any key not listed, so
+    // mass assignment stays wide open like the base Stancl\Tenancy model.
+    protected $guarded = [];
 
     protected $casts = [
         'status' => TenantStatus::class,
         'trial_ends_at' => 'datetime',
         'activated_at' => 'datetime',
         'compliance_accepted_at' => 'datetime',
+        'compliance_reviewed_at' => 'datetime',
         'profit_percentage' => 'decimal:2',
         'category_ids' => 'array',
         'data' => 'array',
+        'launch_ready' => 'boolean',
     ];
+
+    public function isLaunchReady(): bool
+    {
+        return (bool) ($this->launch_ready ?? false);
+    }
 
 
     public function primaryLanguage(): BelongsTo
@@ -57,6 +56,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->hasMany(PaymentLog::class, 'tenant_id', 'id');
     }
 
+    public function tenantCountries(): HasMany
+    {
+        return $this->hasMany(TenantCountry::class);
+    }
+
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'tenant_id', 'id');
@@ -68,8 +72,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             $tenant = self::query()
                 ->where('id', $tenantId)->first();
 
-            $tenant->compliance_version = $data['compliance_version'] ?? null;
-            $tenant->compliance_accepted_at = $data['compliance_accepted_at'] ?? null;
+            $tenant->fill($data);
             $tenant->save();
         });
     }

@@ -2,6 +2,7 @@
     @php
         $filterFields = $filterFields ?? [];
         $rows = $rows ?? [];
+        $rowClasses = $rowClasses ?? [];
         $records = $records ?? null;
         $actionUrl = $actionUrl ?? null;
         $actionMethod = $actionMethod ?? null;
@@ -17,7 +18,16 @@
         $statisticsGridClass = $statisticsGridClass ?? (count($statistics) > 3 ? 'g-stats4' : 'g-stats3');
         $modalContentView = $modalContentView ?? null;
         $modalContentData = $modalContentData ?? [];
+        $modalCountryPicker = $modalCountryPicker ?? false;
+        $modalCountryPickerHint = $modalCountryPickerHint ?? null;
+        $countries = $countries ?? [];
+        $allCountries = $allCountries ?? true;
+        $assignedCountryIds = $assignedCountryIds ?? [];
+        $modalAffiliatePicker = $modalAffiliatePicker ?? false;
+        $modalAffiliates = $modalAffiliates ?? [];
         $showPrimaryAction = ($actionUrl || $actionMethod);
+        $secondaryActionLabel = $secondaryActionLabel ?? null;
+        $secondaryActionUrl = $secondaryActionUrl ?? null;
       @endphp
     <div class="page-head fu d0">
         <div>
@@ -34,6 +44,9 @@
                 <x-btn variant="secondary" class="xs-hide" type="button" wire:click="export">
                     Export
                 </x-btn>
+            @endif
+            @if (!empty($secondaryActionLabel) && $secondaryActionUrl)
+                <a href="{{ $secondaryActionUrl }}" class="btn btn-secondary">{{ $secondaryActionLabel }}</a>
             @endif
             @if ($actionUrl)
                 <a href="{{ $actionUrl }}" class="btn btn-primary">{{ $actionLabel }}</a>
@@ -61,13 +74,17 @@
         <div class="filters-grid">
             @forelse ($filterFields as $field)
                 <div>
-                    <label class="field-label">{{ $field['label'] }}</label>
+                    @if (($field['type'] ?? 'text') !== 'checkbox')
+                        <label class="field-label">{{ $field['label'] }}</label>
+                    @endif
                     @if (($field['type'] ?? 'text') === 'select')
                         <x-select wire:model.live="{{ $field['model'] }}">
                             @foreach ($field['options'] ?? [] as $optionValue => $optionLabel)
                                 <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
                             @endforeach
                         </x-select>
+                    @elseif (($field['type'] ?? 'text') === 'checkbox')
+                        <x-checkbox wire:model.live="{{ $field['model'] }}" label="{{ $field['toggleLabel'] ?? $field['label'] }}" />
                     @else
                         <x-input type="{{ $field['type'] ?? 'text' }}" wire:model.live.debounce.300ms="{{ $field['model'] }}"
                             placeholder="{{ $field['placeholder'] ?? '' }}" />
@@ -120,8 +137,8 @@
         </div>
 
         <x-table :headers="$headers">
-            @forelse ($rows as $row)
-                <tr>
+            @forelse ($rows as $index => $row)
+                <tr @if($rowClasses[$index] ?? null) class="{{ $rowClasses[$index] }}" @endif>
                     @foreach ($row as $cell)
                         <td>{!! $cell !!}</td>
                     @endforeach
@@ -212,6 +229,62 @@
                             @endforeach
                         </div>
                     @endforeach
+
+                    @if (!empty($modalCountryPicker))
+                        <div class="card section-gap" style="padding:18px 20px;">
+                            <h3 class="panel-title" style="margin-bottom:8px;">Country Availability</h3>
+                            <p class="panel-copy" style="margin-bottom:14px;">{{ $modalCountryPickerHint ?? 'Leave set to All Countries to make this coupon usable everywhere.' }}</p>
+
+                            <x-checkbox wire:model.live="allCountries" label="All Countries (default)" />
+
+                            @if (!$allCountries)
+                                <div class="form-grid-3" style="gap:6px;max-height:260px;overflow-y:auto;margin-top:12px;">
+                                    @foreach ($countries as $country)
+                                        <label style="display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;">
+                                            <input type="checkbox"
+                                                   value="{{ $country->id }}"
+                                                   wire:model.defer="assignedCountryIds"
+                                                   style="accent-color:var(--cyan);width:13px;height:13px;flex-shrink:0;">
+                                            {{ $country->flag_emoji }} {{ $country->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                                @if (!empty($assignedCountryIds))
+                                    <p class="field-hint" style="margin-top:8px;">{{ count($assignedCountryIds) }} {{ Str::plural('country', count($assignedCountryIds)) }} selected.</p>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
+
+                    @if (!empty($modalAffiliatePicker))
+                        <div class="card section-gap" style="padding:18px 20px;">
+                            <h3 class="panel-title" style="margin-bottom:4px;">Affiliate Commission <span class="field-hint">(optional)</span></h3>
+                            <p class="panel-copy" style="margin-bottom:14px;">Link this coupon to a specific affiliate. When a user applies this coupon during registration, the affiliate earns a commission on the sale.</p>
+
+                            <div class="form-grid-2">
+                                <div>
+                                    <label class="field-label">Linked Affiliate</label>
+                                    <select wire:model.live="affiliateId" class="field-control">
+                                        <option value="">None (global coupon)</option>
+                                        @foreach ($modalAffiliates as $aff)
+                                            <option value="{{ $aff->id }}">{{ $aff->name }} — {{ $aff->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if (!empty($affiliateId))
+                                    <div>
+                                        <label class="field-label">Commission Override (%)</label>
+                                        <input type="number" step="0.01" min="0" max="100"
+                                               class="field-control {{ $errors->has('affiliateCommissionValue') ? 'is-invalid' : '' }}"
+                                               wire:model.defer="affiliateCommissionValue"
+                                               placeholder="Leave blank = affiliate's default rate">
+                                        @error('affiliateCommissionValue') <span class="field-error">{{ $message }}</span> @enderror
+                                        <p class="field-hint" style="margin-top:5px;">Percentage of the package sale amount credited to the affiliate when this coupon is used. Leave blank to use the affiliate's default rate.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>

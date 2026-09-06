@@ -24,7 +24,7 @@ class CategoryRepository
                 });
             })
             ->when(filled($filters['status'] ?? null), fn($query) => $query->where('status', $filters['status']))
-            ->latest('updated_at')
+            ->orderBy('order_number')
             ->paginate($perPage);
     }
 
@@ -59,6 +59,7 @@ class CategoryRepository
                 'children.children.children.translations.language',
             ])
             ->whereNull('parent_id')
+            ->orderBy('order_number')
             ->get();
 
         $flat = [];

@@ -4,9 +4,12 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
-use App\Models\Tenant\Banner;
+use App\Models\HomeVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
+use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
+use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
@@ -51,13 +54,101 @@ class AppearancePage extends TenantPage
         $this->logoBgColor = $value;
     }
 
-    // ── Banners ───────────────────────────────────────────────────────────────
-    public bool $bannerModalOpen = false;
-    public ?int $bannerId = null;
-    public string $bannerUrl = '';
-    public int $bannerSerial = 0;
-    public $bannerImage = null;
-    public array $bannerTranslations = [];
+    // ── Colors ────────────────────────────────────────────────────────────────
+    /**
+     * One entry per tenant theme, each holding one entry per home variant.
+     * Shape: [theme_id => ['name' => ..., 'slug' => ..., 'is_active' => bool, 'variants' => [
+     *     variant_id => ['key' => 'v2', 'name' => 'Purple Edition', 'is_active' => bool, 'defaults' => [...], 'values' => [...]],
+     * ]]]
+     * @var array<int, array>
+     */
+    public array $colorThemes = [];
+
+    protected function loadColors(): void
+    {
+        $this->colorThemes = [];
+
+        $storefrontRepo = app(StorefrontRepository::class);
+        $activeTheme = $storefrontRepo->currentTheme();
+        $activeVariant = $storefrontRepo->currentHomeVariant();
+
+        $themes = Theme::query()->orderBy('name')->get();
+
+        foreach ($themes as $theme) {
+            $variants = tenancy()->central(fn() => HomeVariant::forTheme(strtolower($theme->slug))
+                ->where('is_active', true)
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get()
+            );
+
+            $overrides = TenantThemeColor::query()
+                ->where('theme_id', $theme->id)
+                ->whereNull('country_id')
+                ->get()
+                ->keyBy('home_variant_id');
+
+            $variantSections = [];
+            foreach ($variants as $variant) {
+                $defaults = (array) ($variant->colors ?? []);
+                if (empty($defaults)) {
+                    continue;
+                }
+
+                $override = (array) ($overrides->get($variant->id)?->colors ?? []);
+
+                $variantSections[$variant->id] = [
+                    'key' => $variant->key,
+                    'name' => $variant->name,
+                    'is_active' => $activeTheme && $activeTheme->id === $theme->id
+                        && $activeVariant && $activeVariant->id === $variant->id,
+                    'defaults' => $defaults,
+                    'values' => array_merge($defaults, $override),
+                ];
+            }
+
+            if (empty($variantSections)) {
+                continue;
+            }
+
+            $this->colorThemes[$theme->id] = [
+                'name' => $theme->name,
+                'slug' => $theme->slug,
+                'is_active' => $activeTheme && $activeTheme->id === $theme->id,
+                'variants' => $variantSections,
+            ];
+        }
+    }
+
+    public function saveColors(int $themeId, int $variantId, TenantPanelService $service): void
+    {
+        if (!isset($this->colorThemes[$themeId]['variants'][$variantId])) {
+            return;
+        }
+
+        $section = $this->colorThemes[$themeId]['variants'][$variantId];
+
+        $rules = [];
+        foreach (array_keys($section['defaults']) as $property) {
+            $rules["colorThemes.{$themeId}.variants.{$variantId}.values.{$property}"] = ['required', 'string', 'regex:/^#[0-9a-fA-F]{3,8}$/'];
+        }
+        $this->validate($rules);
+
+        $service->saveThemeColors($themeId, $variantId, null, $section['values']);
+        $this->toast('Storefront colors saved successfully.');
+    }
+
+    public function resetColors(int $themeId, int $variantId, TenantPanelService $service): void
+    {
+        if (!isset($this->colorThemes[$themeId]['variants'][$variantId])) {
+            return;
+        }
+
+        $service->resetThemeColors($themeId, $variantId, null);
+        $this->colorThemes[$themeId]['variants'][$variantId]['values']
+            = $this->colorThemes[$themeId]['variants'][$variantId]['defaults'];
+        $this->toast('Storefront colors reset to the default.');
+    }
 
     // ── Social Links ──────────────────────────────────────────────────────────
     public bool $socialModalOpen = false;
@@ -65,6 +156,13 @@ class AppearancePage extends TenantPage
     public string $socialIcon = 'facebook';
     public string $socialUrl = '';
     public int $socialSerial = 0;
+
+    // ── Promo Banner ──────────────────────────────────────────────────────────
+    public string $promoBannerTitle = '';
+    public string $promoBannerSubtitle = '';
+    public string $promoBannerLink = '';
+    public string $promoBannerCtaText = '';
+    public string $promoBannerImageUrl = '';
 
     // ── Footer ────────────────────────────────────────────────────────────────
     public string $footerText = '';
@@ -78,13 +176,10 @@ class AppearancePage extends TenantPage
 
     public function mount(): void
     {
+        $this->loadColors();
+
         $repo = app(TenantPanelRepository::class);
         $languages = $repo->activeLanguages();
-
-        $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
-            $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
-        ])->all();
-
 
         $settings = $repo->appearanceSettings();
         $this->logoMode = ($settings['logo_mode'] ?? '') === 'text' ? 'text' : 'image';
@@ -100,6 +195,12 @@ class AppearancePage extends TenantPage
         $this->logoPathEn = ($settings['logo_path_en'] ?? '') ?: null;
         $this->footerText = $settings['footer_text'] ?? '';
         $this->footerCopyright = $settings['footer_copyright'] ?? '';
+
+        $this->promoBannerTitle = $settings['promo_banner_title'] ?? '';
+        $this->promoBannerSubtitle = $settings['promo_banner_subtitle'] ?? '';
+        $this->promoBannerLink = $settings['promo_banner_link'] ?? '';
+        $this->promoBannerCtaText = $settings['promo_banner_cta_text'] ?? '';
+        $this->promoBannerImageUrl = $settings['promo_banner_image_url'] ?? '';
 
         // Build the per-locale matrix then overlay any saved translations.
         $this->footerTranslations = $languages->mapWithKeys(fn($l) => [
@@ -158,12 +259,48 @@ class AppearancePage extends TenantPage
     protected function pageData(): array
     {
         $repo = app(TenantPanelRepository::class);
+        $storefrontRepo = app(StorefrontRepository::class);
+        $activeTheme = $storefrontRepo->currentTheme();
+        $bannerDimensions = config('image_dimensions.themes.' . ($activeTheme->slug ?? ''));
 
         return array_merge(parent::pageData(), [
             'languages' => $repo->activeLanguages(),
-            'banners' => $repo->banners(),
             'socialLinks' => $repo->socialLinks(),
+            'colorThemes' => $repo->themes(),
+            'previewUrl' => $this->previewUrl($storefrontRepo),
+            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
+            'bannerWidth' => $bannerDimensions['width'] ?? null,
+            'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
+    }
+
+    /** Build the `/preview` URL that mirrors this tenant's current theme, colors, and homepage variant. */
+    protected function previewUrl(StorefrontRepository $repo): ?string
+    {
+        $theme = $repo->currentTheme();
+        if (!$theme) {
+            return null;
+        }
+
+        $query = ['theme' => $theme->slug];
+
+        $variantId = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+
+        if ($variantId) {
+            $variantKey = tenancy()->central(fn() => HomeVariant::query()->find($variantId)?->key);
+            if ($variantKey) {
+                $query['homepage_variant'] = $variantKey;
+            }
+        }
+
+        $centralDomain = config('tenancy.central_domains.0')
+            ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
+        $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
+
+        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
     }
 
     // ── Tab ───────────────────────────────────────────────────────────────────
@@ -214,93 +351,6 @@ class AppearancePage extends TenantPage
         $this->logoUploadAr = null;
         $this->logoUploadEn = null;
         $this->toast('General settings saved successfully.');
-    }
-
-    // ── Banners ───────────────────────────────────────────────────────────────
-
-    public function openBannerModal(?int $id = null): void
-    {
-        $this->resetBannerForm();
-
-        if ($id) {
-            $banner = Banner::query()->with('translations.language')->findOrFail($id);
-            $this->bannerId = $banner->id;
-            $this->bannerUrl = (string) ($banner->url ?? '');
-            $this->bannerSerial = (int) $banner->serial_number;
-            $this->bannerTranslations = array_replace_recursive(
-                $this->bannerTranslations,
-                $banner->translationsByLocale(['title', 'subtitle', 'button_text'])
-            );
-        }
-
-        $this->bannerModalOpen = true;
-    }
-
-    public function saveBanner(TenantPanelService $service): void
-    {
-        $rules = [
-            'bannerUrl' => ['nullable', 'url', 'max:500'],
-            'bannerSerial' => ['required', 'integer', 'min:0'],
-            'bannerImage' => ['nullable', 'image', 'max:2048'],
-        ];
-        foreach (array_keys($this->bannerTranslations) as $locale) {
-            $rules["bannerTranslations.{$locale}.title"] = ['nullable', 'string', 'max:255'];
-            $rules["bannerTranslations.{$locale}.subtitle"] = ['nullable', 'string', 'max:500'];
-            $rules["bannerTranslations.{$locale}.button_text"] = ['nullable', 'string', 'max:100'];
-        }
-        $this->validate($rules);
-
-        $imagePath = $this->bannerId ? Banner::query()->find($this->bannerId)?->image_path : null;
-        if ($this->bannerImage) {
-            $imagePath = $this->bannerImage->store('appearances/banners', 'public');
-            $imagePath = tenant_asset($imagePath);
-        }
-
-        $service->saveBanner([
-            'url' => $this->bannerUrl ?: null,
-            'image_path' => $imagePath,
-            'serial_number' => $this->bannerSerial,
-            'translations' => $this->bannerTranslations,
-        ], $this->bannerId ? Banner::query()->findOrFail($this->bannerId) : null);
-
-        $this->bannerModalOpen = false;
-        $this->resetBannerForm();
-        $this->toast('Banner saved successfully.');
-    }
-
-    public function confirmDeleteBanner(int $id): void
-    {
-        $this->confirmAction('deleteBanner', [$id], [
-            'title' => 'Delete banner?',
-            'confirmButtonText' => 'Delete banner',
-        ]);
-    }
-
-    public function deleteBanner(int $id): void
-    {
-        Banner::query()->findOrFail($id)->delete();
-        $this->toast('Banner deleted.');
-    }
-
-    public function closeBannerModal(): void
-    {
-        $this->bannerModalOpen = false;
-        $this->resetBannerForm();
-    }
-
-    protected function resetBannerForm(): void
-    {
-        $this->bannerId = null;
-        $this->bannerUrl = '';
-        $this->bannerSerial = 0;
-        $this->bannerImage = null;
-
-        $languages = app(TenantPanelRepository::class)->activeLanguages();
-        $this->bannerTranslations = $languages->mapWithKeys(fn($l) => [
-            $l->code => ['title' => '', 'subtitle' => '', 'button_text' => ''],
-        ])->all();
-
-        $this->resetErrorBag();
     }
 
     // ── Social Links ──────────────────────────────────────────────────────────
@@ -368,6 +418,29 @@ class AppearancePage extends TenantPage
         $this->resetErrorBag();
     }
 
+    // ── Promo Banner ──────────────────────────────────────────────────────────
+
+    public function savePromoBanner(TenantPanelService $service): void
+    {
+        $this->validate([
+            'promoBannerTitle' => ['nullable', 'string', 'max:120'],
+            'promoBannerSubtitle' => ['nullable', 'string', 'max:255'],
+            'promoBannerLink' => ['nullable', 'url', 'max:500'],
+            'promoBannerCtaText' => ['nullable', 'string', 'max:40'],
+            'promoBannerImageUrl' => ['nullable', 'url', 'max:1000'],
+        ]);
+
+        $service->savePromoBannerSettings([
+            'promo_banner_title' => $this->promoBannerTitle,
+            'promo_banner_subtitle' => $this->promoBannerSubtitle,
+            'promo_banner_link' => $this->promoBannerLink,
+            'promo_banner_cta_text' => $this->promoBannerCtaText,
+            'promo_banner_image_url' => $this->promoBannerImageUrl,
+        ]);
+
+        $this->toast('Promotional banner updated.');
+    }
+
     // ── Footer ────────────────────────────────────────────────────────────────
 
     public function saveFooter(TenantPanelService $service): void
@@ -392,5 +465,4 @@ class AppearancePage extends TenantPage
 
         $this->toast('Footer settings saved successfully.');
     }
-
 }

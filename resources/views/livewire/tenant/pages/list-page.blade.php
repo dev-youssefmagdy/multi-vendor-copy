@@ -2,6 +2,7 @@
     @php
         $filterFields = $filterFields ?? [];
         $rows = $rows ?? [];
+        $rowClasses = $rowClasses ?? [];
         $records = $records ?? null;
         $actionUrl = $actionUrl ?? null;
         $actionMethod = $actionMethod ?? null;
@@ -18,6 +19,8 @@
         $modalContentView = $modalContentView ?? null;
         $modalContentData = $modalContentData ?? [];
         $extraModals = $extraModals ?? [];
+        $secondaryActionLabel = $secondaryActionLabel ?? null;
+        $secondaryActionUrl = $secondaryActionUrl ?? null;
       @endphp
     <div class="page-head fu d0">
         <div>
@@ -33,6 +36,9 @@
             @if ($exportable ?? false)
                 <x-btn variant="secondary" class="xs-hide" type="button" wire:click="export">Export</x-btn>
             @endif
+            @if (!empty($secondaryActionLabel) && $secondaryActionUrl)
+                <a href="{{ $secondaryActionUrl }}" class="btn btn-secondary">{{ $secondaryActionLabel }}</a>
+            @endif
             @if (!empty($actionLabel))
                 @if ($actionUrl)
                     <a href="{{ $actionUrl }}" class="btn btn-primary">{{ $actionLabel }}</a>
@@ -44,6 +50,18 @@
             @endif
         </div>
     </div>
+
+    @if (!empty($recommendations ?? []))
+        <div class="card section-gap fu d1" style="padding:16px 20px;">
+            <div class="panel-title" style="margin-bottom:6px;">Best gateways for you</div>
+            <p class="panel-copy" style="margin-bottom:8px;">Based on the countries you sell to, these gateways are most likely to accept payments from your customers.</p>
+            <div class="flex gap-2" style="flex-wrap:wrap;">
+                @foreach ($recommendations as $rec)
+                    <span class="badge badge-cyan">{{ $rec['name'] }} ({{ $rec['score'] }} {{ $rec['score'] === 1 ? 'country' : 'countries' }} matched)</span>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     <details class="card filters-card fu d1 section-gap" wire:ignore.self>
         <summary class="filters-summary">
@@ -80,6 +98,28 @@
                                     <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
                                 @endforeach
                             </x-select>
+                        @endif
+                    @elseif (($field['model'] ?? '') === 'search' && ($imageSearchModal ?? false))
+                        <div style="position:relative;display:flex;align-items:center;">
+                            <x-input type="text" wire:model.live.debounce.300ms="{{ $field['model'] }}"
+                                placeholder="{{ $field['placeholder'] ?? '' }}" :error="$errors->has($field['model'])"
+                                style="padding-right:38px;" />
+                            <button type="button" data-image-search-trigger="tenant-product-image-search-modal"
+                                title="{{ __('Search by image') }}"
+                                style="position:absolute;right:6px;width:26px;height:26px;border-radius:6px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text-muted,#94a3b8);cursor:pointer;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+                                    <circle cx="12" cy="13" r="3.2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        @if ($imageSearchActive ?? false)
+                            <div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;font-size:11.5px;font-weight:600;color:#4338ca;">
+                                {{ __('Visual match — :n results', ['n' => count($imageSearchIds ?? [])]) }}
+                                <button type="button" wire:click="clearImageSearch" style="border:none;background:transparent;padding:0;margin-left:2px;cursor:pointer;color:#6366f1;display:flex;align-items:center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                </button>
+                            </div>
                         @endif
                     @else
                         <x-input type="{{ $field['type'] ?? 'text' }}" wire:model.live.debounce.300ms="{{ $field['model'] }}"
@@ -133,8 +173,8 @@
         </div>
 
         <x-table :headers="$headers">
-            @forelse ($rows as $row)
-                <tr>
+            @forelse ($rows as $rowIndex => $row)
+                <tr class="{{ $rowClasses[$rowIndex] ?? '' }}">
                     @foreach ($row as $cell)
                         <td>{!! $cell !!}</td>
                     @endforeach
@@ -289,6 +329,14 @@
                         @endif
                     @endif
 
+                    @if (!empty($webhookUrl ?? ''))
+                        <div>
+                            <label class="field-label">Webhook URL</label>
+                            <x-input type="text" value="{{ $webhookUrl }}" readonly onclick="this.select()" />
+                            <p class="field-hint">Paste this URL into your gateway's dashboard so it can notify us of payment events.</p>
+                        </div>
+                    @endif
+
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>
                         <x-btn type="submit">{{ $modalSubmitLabel }}</x-btn>
@@ -312,6 +360,20 @@
             </x-modal>
         @endif
     @endforeach
+
+    @if ($imageSearchModal ?? false)
+        <x-image-search-modal
+            id="tenant-product-image-search-modal"
+            :action="route('tenant.products.image-search')"
+            on-results="tenantImageSearchResults" />
+        <script>
+            window.tenantImageSearchResults = function (json) {
+                var ids = (json && Array.isArray(json.ids)) ? json.ids : [];
+                @this.call('applyImageSearch', ids);
+            };
+        </script>
+    @endif
+
 </main>
 
 @script

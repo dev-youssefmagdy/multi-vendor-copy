@@ -35,17 +35,39 @@ class ProductRepository
                 $query->whereHas('categories', fn(Builder $categoryQuery) => $categoryQuery->whereKey($filters['category_id']));
             })
             ->when(filled($filters['delivery_scope'] ?? null), fn($query) => $query->where('delivery_scope', $filters['delivery_scope']))
-            ->when(($filters['out_of_stock'] ?? '') === '1', function ($query) {
-                $query->where('manage_stock', true)->where(function ($q) {
-                    $q->where(function ($hasVariants) {
-                        $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
-                    })->orWhere(function ($noVariants) {
-                        $noVariants->whereDoesntHave('variants')->where('stock', '<=', 0);
-                    });
-                });
+            ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
+                $this->applyStockFilter($query, $filters['stock']);
             })
-            ->latest('updated_at')
+            ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
+                $query->whereIn('id', $filters['image_search_ids']);
+            })
+            ->orderBy('order_number')
             ->paginate($perPage);
+    }
+
+    /**
+     * @param 'in'|'partial'|'out' $stock
+     */
+    protected function applyStockFilter(Builder $query, string $stock): void
+    {
+        $query->where('manage_stock', true)->where(function (Builder $q) use ($stock) {
+            match ($stock) {
+                'out' => $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where('stock', '<=', 0);
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
+                }),
+                'in' => $q->where(function (Builder $noVariants) {
+                    $noVariants->whereDoesntHave('variants')->where('stock', '>', 0);
+                })->orWhere(function (Builder $hasVariants) {
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '<=', 0));
+                }),
+                'partial' => $q
+                    ->whereHas('variants', fn($v) => $v->where('stock', '<=', 0))
+                    ->whereHas('variants', fn($v) => $v->where('stock', '>', 0)),
+                default => null,
+            };
+        });
     }
 
     public function stats(): array
@@ -157,10 +179,12 @@ class ProductRepository
             'categories.parent.translations.language',
             'categories.parent.parent.translations.language',
             'shippingZones',
+            'countries',
             'variations.translations.language',
             'variants.options.translations.language',
             'variants.files',
             'files',
+            'badges',
         ]);
     }
 }

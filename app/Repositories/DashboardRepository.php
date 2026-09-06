@@ -22,7 +22,7 @@ class DashboardRepository
             'orders' => $this->aggregateService->orders()->count(),
             'products' => Product::query()->count(),
             'packages' => Package::query()->count(),
-            'active_tenants' => Tenant::query()->where('status', 'active')->count(),
+            'active_tenants' => Tenant::query()->where('data->status', 'active')->count(),
         ];
     }
 

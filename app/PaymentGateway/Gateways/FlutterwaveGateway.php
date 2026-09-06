@@ -81,4 +81,14 @@ class FlutterwaveGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure($data['message'] ?? 'Flutterwave verification failed.');
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['NGN', 'GHS', 'KES', 'UGX', 'TZS', 'ZAR', 'USD', 'GBP', 'EUR'],
+            'merchant_countries' => ['NG', 'GH', 'KE', 'UG', 'TZ', 'ZA', 'RW', 'CM', 'CI', 'SN'],
+            'customer_countries' => ['NG', 'GH', 'KE', 'UG', 'TZ', 'ZA', 'RW', 'CM', 'CI', 'SN', 'US', 'GB'],
+            'payment_methods' => ['card', 'mobile_money', 'bank_transfer', 'ussd'],
+        ];
+    }
 }

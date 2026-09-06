@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Tenant\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,9 @@ use Illuminate\Support\Str;
 class ProductVariant extends Model
 {
     use HasFactory;
+    use HasTranslations;
+
+    protected array $translated = ['title'];
 
     protected $fillable = [
         'product_id',

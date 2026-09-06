@@ -23,6 +23,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Subscriber;
 use App\Models\Tenant\Theme;
+use App\Models\Tenant\TenantThemeColor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -124,6 +125,24 @@ class TenantPanelService
             }
             if (array_key_exists('weight_grams', $attributes)) {
                 $productFill['weight_grams'] = $attributes['weight_grams'] !== '' && $attributes['weight_grams'] !== null ? (int) $attributes['weight_grams'] : null;
+            }
+            if (array_key_exists('return_policy_override', $attributes)) {
+                $productFill['return_policy_override'] = (bool) $attributes['return_policy_override'];
+            }
+            if (array_key_exists('is_returnable', $attributes)) {
+                $productFill['is_returnable'] = (bool) $attributes['is_returnable'];
+            }
+            if (array_key_exists('return_window_days', $attributes)) {
+                $productFill['return_window_days'] = $attributes['return_window_days'] !== '' && $attributes['return_window_days'] !== null ? (int) $attributes['return_window_days'] : null;
+            }
+            if (array_key_exists('return_fee', $attributes)) {
+                $productFill['return_fee'] = $attributes['return_fee'] !== '' && $attributes['return_fee'] !== null ? (float) $attributes['return_fee'] : null;
+            }
+            if (array_key_exists('return_video_required', $attributes)) {
+                $productFill['return_video_required'] = (bool) $attributes['return_video_required'];
+            }
+            if (array_key_exists('return_conditions', $attributes)) {
+                $productFill['return_conditions'] = $attributes['return_conditions'] ?: null;
             }
 
             $product->fill($productFill);
@@ -303,6 +322,7 @@ class TenantPanelService
             ]);
             $page->save();
             $page->syncTranslations($attributes['translations'] ?? []);
+            $this->markDefaultPagesReviewed();
 
             return $page->fresh('translations.language');
         });
@@ -345,6 +365,7 @@ class TenantPanelService
                 'end_date' => $attributes['end_date'] ?? null,
                 'active' => (bool) ($attributes['active'] ?? true),
                 'banner_image' => $attributes['banner_image'] ?? $flashSale->banner_image,
+                'country_id' => $attributes['country_id'] ?? $flashSale->country_id,
             ]);
             $flashSale->save();
 
@@ -391,6 +412,11 @@ class TenantPanelService
 
     public function activateTheme(Theme $theme): void
     {
+        $previouslyActiveSlug = Theme::query()
+            ->where('is_universal', true)
+            ->where('is_active', true)
+            ->value('slug');
+
         DB::transaction(function () use ($theme) {
             if ($theme->is_universal) {
                 // Universal themes (no country restrictions) behave like a radio button —
@@ -405,6 +431,22 @@ class TenantPanelService
             // Country-specific themes just toggle on independently.
             $theme->update(['is_active' => true]);
         });
+
+        // Activating/deactivating the tenant-local 'custom' Theme row from the
+        // generic Themes page is the only way vendors activate their uploaded Blade
+        // theme (the Blade Theme upload page no longer has its own Activate action),
+        // so drive the actual BladeTheme.is_active flag and live-views symlink here.
+        $tenant = tenant();
+        if ($tenant) {
+            $tenantId = (string) $tenant->getTenantKey();
+            $bladeThemeService = app(BladeThemeService::class);
+
+            if ($theme->slug === 'custom') {
+                $bladeThemeService->activateLatestApprovedForCurrentTenant($tenantId);
+            } elseif ($previouslyActiveSlug === 'custom') {
+                $bladeThemeService->deactivateAllForCurrentTenant($tenantId);
+            }
+        }
     }
 
     public function deactivateTheme(Theme $theme): void
@@ -514,14 +556,24 @@ class TenantPanelService
             $admin->save();
         }
 
-        $tenant->fill([
-            'phone' => $attributes['phone'] ?? $tenant->phone,
-            'data' => array_merge($data, [
-                'shop_name' => $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name),
-                'address' => $attributes['address'] ?? ($data['address'] ?? null),
-            ]),
-        ]);
-        $tenant->save();
+        $incomingPhone = (string) ($attributes['phone'] ?? $tenant->phone ?? '');
+        $phone = str_contains($incomingPhone, 'object') ? null : ($incomingPhone ?: null);
+        $shopName = $attributes['shop_name'] ?? ($data['shop_name'] ?? $tenant->name);
+        $address = $attributes['address'] ?? ($data['address'] ?? null);
+        $description = $attributes['description'] ?? ($data['description'] ?? null);
+
+        // Must run in central context: inside a tenant request the default DB
+        // connection is switched to the tenant DB; Tenant model lives in central.
+        // The Tenant model virtualizes non-column attributes into the `data`
+        // JSON column on save, so these must be set as top-level attributes
+        // (not nested under `data`) or they'll be discarded on save.
+        tenancy()->central(function () use ($tenant, $phone, $shopName, $address, $description) {
+            $tenant->phone = $phone;
+            $tenant->description = $description;
+            $tenant->address = $address;
+            $tenant->shop_name = $shopName;
+            $tenant->save();
+        });
 
         if (array_key_exists('shop_name', $attributes)) {
             Setting::query()->updateOrCreate(
@@ -529,6 +581,95 @@ class TenantPanelService
                 ['value' => (string) $attributes['shop_name'], 'group' => 'appearance']
             );
         }
+    }
+
+    private const COMPLIANCE_FIELD_MAP = [
+        'business_name' => 'compliance_business_name',
+        'store_name' => 'compliance_store_name',
+        'country' => 'compliance_country',
+        'city' => 'compliance_city',
+        'phone' => 'compliance_phone',
+        'email' => 'compliance_email',
+        'owner_name' => 'compliance_owner_name',
+        'owner_id_number' => 'compliance_owner_id_number',
+        'owner_dob' => 'compliance_owner_dob',
+        'owner_contact' => 'compliance_owner_contact',
+        'company_name' => 'compliance_company_name',
+        'registration_number' => 'compliance_registration_number',
+        'registration_expiry' => 'compliance_registration_expiry',
+        'vat_number' => 'compliance_vat_number',
+        'registration_document_path' => 'compliance_registration_document_path',
+        'bank_name' => 'compliance_bank_name',
+        'bank_holder_name' => 'compliance_bank_holder_name',
+        'bank_iban' => 'compliance_bank_iban',
+        'bank_account_number' => 'compliance_bank_account_number',
+        'bank_currency' => 'compliance_bank_currency',
+        'doc_national_id_path' => 'compliance_doc_national_id_path',
+        'doc_commercial_registration_path' => 'compliance_doc_commercial_registration_path',
+        'doc_tax_certificate_path' => 'compliance_doc_tax_certificate_path',
+        'doc_additional_paths' => 'compliance_doc_additional_paths',
+    ];
+
+    private const COMPLIANCE_JSON_FIELDS = ['compliance_doc_additional_paths'];
+
+    /**
+     * Persist the full Compliance Center form into the tenant's own `settings`
+     * table (group = 'compliance'), rather than the central `tenants.data` JSON.
+     */
+    public function updateCompliance(array $attributes): void
+    {
+        foreach (self::COMPLIANCE_FIELD_MAP as $attributeKey => $settingName) {
+            if (!array_key_exists($attributeKey, $attributes)) {
+                continue;
+            }
+
+            $raw = $attributes[$attributeKey];
+            $value = in_array($settingName, self::COMPLIANCE_JSON_FIELDS, true)
+                ? json_encode((array) $raw)
+                : (string) ($raw ?? '');
+
+            Setting::query()->updateOrCreate(
+                ['name' => $settingName],
+                ['value' => $value, 'type' => 'string', 'group' => 'compliance'],
+            );
+        }
+    }
+
+    /** Reads all Compliance Center fields from the tenant's `settings` table. */
+    public function complianceSettings(): array
+    {
+        $names = array_values(self::COMPLIANCE_FIELD_MAP);
+
+        $raw = Setting::query()
+            ->whereIn('name', $names)
+            ->pluck('value', 'name')
+            ->all();
+
+        foreach (self::COMPLIANCE_JSON_FIELDS as $jsonField) {
+            if (isset($raw[$jsonField])) {
+                $raw[$jsonField] = json_decode((string) $raw[$jsonField], true) ?? [];
+            }
+        }
+
+        return $raw;
+    }
+
+    /**
+     * Store a Compliance Center document upload under a per-tenant folder and
+     * return its public tenant_asset() URL.
+     */
+    public function storeComplianceDocument(\Illuminate\Http\UploadedFile $file): string
+    {
+        return tenant_asset($file->store('compliance-documents', 'public'));
+    }
+
+    /** Marks the setup-progress "default pages reviewed" step, called whenever a tenant saves a storefront page. */
+    public function markDefaultPagesReviewed(): void
+    {
+        Setting::query()->updateOrCreate(
+            ['name' => 'default_pages_reviewed_at'],
+            ['value' => (string) now(), 'group' => 'general']
+        );
     }
 
     public function deleteModel(Model $model): void
@@ -557,12 +698,38 @@ class TenantPanelService
                 'url' => $data['url'] ?? null,
                 'image_path' => $data['image_path'] ?? null,
                 'serial_number' => (int) ($data['serial_number'] ?? 0),
+                'country_id' => $data['country_id'] ?? null,
             ]);
             $banner->save();
             $banner->syncTranslations($data['translations'] ?? []);
 
             return $banner->fresh('translations');
         });
+    }
+
+    /**
+     * Save the tenant's color overrides for one home variant of a theme,
+     * optionally scoped to a country. Only non-empty values are stored —
+     * clearing a field removes that key so it falls back to the variant's
+     * default.
+     */
+    public function saveThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId, array $colors): TenantThemeColor
+    {
+        $colors = array_filter($colors, fn($value) => filled($value));
+
+        return TenantThemeColor::query()->updateOrCreate(
+            ['theme_id' => $themeId, 'home_variant_id' => $homeVariantId, 'country_id' => $countryId],
+            ['colors' => $colors]
+        );
+    }
+
+    public function resetThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId): void
+    {
+        TenantThemeColor::query()
+            ->where('theme_id', $themeId)
+            ->where('home_variant_id', $homeVariantId)
+            ->where('country_id', $countryId)
+            ->delete();
     }
 
     public function saveSocialLink(array $data, ?SocialLink $link = null): SocialLink
@@ -578,6 +745,26 @@ class TenantPanelService
         return $link;
     }
 
+
+    public function saveTrackingSettings(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'tracking']
+            );
+        }
+    }
+
+    public function savePromoBannerSettings(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'promo_banner']
+            );
+        }
+    }
 
     public function saveAppearanceSettings(array $data): void
     {

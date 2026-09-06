@@ -9,6 +9,7 @@ use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Models\Tenant;
 use App\Models\Tenant\Currency as TenantCurrency;
+use App\Models\Tenant\Customer as TenantCustomer;
 use App\Models\Tenant\Order as TenantOrder;
 use App\Models\Tenant\Subscription;
 use App\Models\Tenant\Transaction as TenantTransaction;
@@ -26,6 +27,33 @@ class TenantAdminAggregateService
     protected ?Collection $transactionsCache = null;
 
     protected ?Collection $paymentLogsCache = null;
+
+    protected ?Collection $customersCache = null;
+
+    public function customers(): Collection
+    {
+        if ($this->customersCache !== null) {
+            return $this->customersCache;
+        }
+
+        return $this->customersCache = $this->collectAcrossTenants(function (Tenant $tenant) {
+            return TenantCustomer::query()
+                ->withCount('orders')
+                ->get()
+                ->map(fn(TenantCustomer $customer) => (object) [
+                    'id' => $customer->id,
+                    'tenant' => $tenant,
+                    'tenant_id' => $tenant->getTenantKey(),
+                    'store_name' => $this->tenantStoreName($tenant),
+                    'full_name' => $customer->full_name,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                    'active' => (bool) $customer->active,
+                    'orders_count' => $customer->orders_count,
+                    'created_at' => $customer->created_at,
+                ]);
+        });
+    }
 
     public function orders(): Collection
     {

@@ -49,6 +49,17 @@ $orders Collection<Order>
                         <img loading="lazy" src="{{ asset('ecommet/assets/images/home/user-2.png') }}" class="w-[20px] ml-6" alt="">
                         {{ __('Your Profile') }}
                     </button>
+                    <button wire:click="setTab('returns')"
+                        class="flex items-center gap-4 px-4 py-3 text-[15px] transition-colors rounded-md relative
+                               {{ $activeTab === 'returns' ? 'bg-[#f7f7f7] text-[#111] font-semibold' : 'hover:bg-gray-50 text-[#333] font-medium' }}">
+                        @if ($activeTab === 'returns')
+                            <div
+                                class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[70%] bg-[#242424] rounded-r-full">
+                            </div>
+                        @endif
+                        <img loading="lazy" src="{{ asset('ecommet/assets/images/home/document.png') }}" class="w-[20px] ml-6" alt="">
+                        {{ __('Returns') }}
+                    </button>
                     <button wire:click="logout"
                         class="flex items-center gap-4 px-4 py-3 text-[15px] font-medium text-red-600 hover:bg-red-50 transition-colors rounded-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] ml-6" fill="none" viewBox="0 0 24 24"
@@ -75,9 +86,72 @@ $orders Collection<Order>
                                    {{ $activeTab === 'profile' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
                             {{ __('Profile & Addresses') }}
                         </button>
+                        <button wire:click="setTab('returns')"
+                            class="flex-1 py-2.5 text-[13px] font-semibold rounded-full border transition
+                                   {{ $activeTab === 'returns' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
+                            {{ __('Returns') }}
+                        </button>
                     </div>
 
-                    @if ($activeTab === 'orders')
+                    @if ($activeTab === 'returns')
+                        <div class="max-w-[700px]">
+                            <h2 class="text-[20px] font-bold text-[#242424] mb-6">{{ __('Return Requests') }}</h2>
+
+                            @if ($returnRequests->isEmpty())
+                                <div class="text-center py-12 text-[13px] text-[#808080]">
+                                    {{ __('You have no return requests.') }}
+                                </div>
+                            @else
+                                <div class="flex flex-col gap-3">
+                                    @foreach ($returnRequests as $ret)
+                                    @php
+                                        $statusColor = match($ret->status->color()) {
+                                            'green' => '#16a34a', 'blue'  => '#2563eb',
+                                            'red'   => '#dc2626', 'gray'  => '#6b7280',
+                                            default => '#d97706',
+                                        };
+                                    @endphp
+                                    <div class="border border-[#eee] rounded-lg p-4">
+                                        <div class="flex items-center justify-between flex-wrap gap-3">
+                                            <div>
+                                                <div class="text-[14px] font-semibold text-[#242424]">
+                                                    {{ __('Order') }} #{{ $ret->order_number }}
+                                                </div>
+                                                <div class="text-xs text-[#808080] mt-0.5">
+                                                    {{ $ret->reason->label() }} · {{ $ret->created_at?->format('M d, Y') }}
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-semibold px-3 py-1 rounded-full"
+                                                style="background:{{ $statusColor }}22;color:{{ $statusColor }}">
+                                                {{ $ret->status->label() }}
+                                            </span>
+                                        </div>
+                                        @if ($ret->refund_amount)
+                                            <div class="text-xs text-[#555] mt-2">
+                                                {{ __('Refund') }}: {{ number_format((float)$ret->refund_amount, 2) }}
+                                            </div>
+                                        @endif
+                                        @if ($ret->notes->isNotEmpty())
+                                            <div class="text-xs text-[#808080] mt-2 italic">
+                                                {{ \Illuminate\Support\Str::limit($ret->notes->first()->note, 60) }}
+                                            </div>
+                                        @endif
+                                        <div class="mt-3 flex items-center gap-4">
+                                            <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
+                                                class="text-xs font-medium underline text-[#555] hover:text-[#242424]">
+                                                {{ __('View Order') }}
+                                            </a>
+                                            <a href="{{ route('tenant.storefront.return-detail', $ret->id) }}"
+                                                class="text-xs font-medium underline text-[#242424] hover:opacity-75">
+                                                {{ __('View Details') }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @elseif ($activeTab === 'orders')
                         {{-- Status filter pills --}}
                         <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1 no-scrollbar">
                             @foreach ([null => __('All'), 'pending' => __('Pending'), 'processing' => __('Processing'), 'shipped' => __('Shipped'), 'delivered' => __('Delivered'), 'cancelled' => __('Cancelled')] as $val => $label)
@@ -245,50 +319,55 @@ $orders Collection<Order>
 
                             {{-- Address Modal --}}
                             @if ($showAddressModal)
-                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" wire:click.self="closeAddressModal">
-                                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-                                    <div class="flex items-center justify-between mb-5">
-                                        <h3 class="text-[16px] font-bold text-[#242424]">
-                                            {{ $editingAddressId ? __('Edit Address') : __('New Address') }}
-                                        </h3>
-                                        <button type="button" wire:click="closeAddressModal" class="text-[#aaa] hover:text-[#242424]">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-8" wire:click.self="closeAddressModal">
+                                <div class="bg-white rounded-[20px] shadow-2xl ring-1 ring-black/5 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+                                    <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0f0f0] shrink-0">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-9 h-9 rounded-full bg-[#f7f7f7] flex items-center justify-center text-[#242424] shrink-0">
+                                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                            </span>
+                                            <h3 class="text-[17px] font-bold text-[#242424] tracking-tight">
+                                                {{ $editingAddressId ? __('Edit Address') : __('New Address') }}
+                                            </h3>
+                                        </div>
+                                        <button type="button" wire:click="closeAddressModal" class="w-8 h-8 rounded-full flex items-center justify-center text-[#aaa] hover:text-[#242424] hover:bg-[#f7f7f7] transition">
+                                            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                         </button>
                                     </div>
-                                    <div class="space-y-3">
+                                    <div class="px-6 py-5 space-y-4 overflow-y-auto">
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
-                                                <input wire:model="addrFullName" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('Full Name') }}" />
+                                                <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
+                                                <input wire:model="addrFullName" type="text" class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Full Name') }}" />
                                                 @error('addrFullName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                             </div>
                                             <div>
-                                                <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Label') }}</label>
-                                                <input wire:model="addrLabel" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('e.g. Home, Work') }}" />
+                                                <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('Label') }}</label>
+                                                <input wire:model="addrLabel" type="text" class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('e.g. Home, Work') }}" />
                                             </div>
                                         </div>
-                                        <div>
-                                            <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Phone') }}</label>
-                                            <input wire:model="addrPhone" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('Phone') }}" />
+                                        <div wire:ignore>
+                                            <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('Phone') }}</label>
+                                            <input wire-event="addrPhone" value="{{$addrPhone ?? ''}}" type="tel" data-phone-input class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Phone') }}" />
                                         </div>
                                         <div>
-                                            <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Address') }} <span class="text-red-500">*</span></label>
-                                            <input wire:model="addrLine1" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('Street address') }}" />
+                                            <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('Address') }} <span class="text-red-500">*</span></label>
+                                            <input wire:model="addrLine1" type="text" class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('Street address') }}" />
                                             @error('addrLine1') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('City') }} <span class="text-red-500">*</span></label>
-                                                <input wire:model="addrCity" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('City') }}" />
+                                                <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('City') }} <span class="text-red-500">*</span></label>
+                                                <input wire:model="addrCity" type="text" class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('City') }}" />
                                                 @error('addrCity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                             </div>
                                             <div>
-                                                <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('State / Region') }}</label>
-                                                <input wire:model="addrState" type="text" class="w-full border border-[#eee] rounded-lg px-3 py-2 text-[14px] outline-none focus:border-[#aaa]" placeholder="{{ __('State') }}" />
+                                                <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('State / Region') }}</label>
+                                                <input wire:model="addrState" type="text" class="w-full border border-[#e5e5e5] rounded-xl px-3.5 py-2.5 text-[14px] outline-none transition focus:border-[#242424] focus:ring-4 focus:ring-black/5" placeholder="{{ __('State') }}" />
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="text-[12px] font-semibold text-[#666] block mb-1">{{ __('Country') }} <span class="text-red-500">*</span></label>
+                                            <label class="text-[12px] font-semibold text-[#666] block mb-1.5">{{ __('Country') }} <span class="text-red-500">*</span></label>
                                             @include('themes.ecommet.sections.country-select', [
                                                 'wireModel' => 'addrCountryId',
                                                 'countries' => $countries,
@@ -296,19 +375,19 @@ $orders Collection<Order>
                                             ])
                                             @error('addrCountryId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
-                                        <label class="flex items-center gap-2 cursor-pointer select-none">
-                                            <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#242424]" />
-                                            <span class="text-[14px] text-[#242424]">{{ __('Set as default address') }}</span>
+                                        <label class="flex items-center gap-2.5 cursor-pointer select-none bg-[#fafafa] rounded-xl px-3.5 py-3 border border-[#f0f0f0]">
+                                            <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#242424] rounded" />
+                                            <span class="text-[13.5px] font-medium text-[#242424]">{{ __('Set as default address') }}</span>
                                         </label>
                                     </div>
-                                    <div class="flex gap-2 mt-5">
-                                        <button type="button" wire:click="saveAddress"
-                                            class="flex-1 py-2.5 bg-[#242424] hover:bg-black text-white text-[14px] font-semibold rounded-full transition">
-                                            {{ __('Save') }}
-                                        </button>
+                                    <div class="flex gap-2.5 px-6 py-5 border-t border-[#f0f0f0] shrink-0">
                                         <button type="button" wire:click="closeAddressModal"
-                                            class="flex-1 py-2.5 border border-[#eee] text-[#242424] text-[14px] font-semibold rounded-full hover:bg-[#f7f7f7] transition">
+                                            class="flex-1 py-2.5 border border-[#e5e5e5] text-[#242424] text-[14px] font-semibold rounded-full hover:bg-[#f7f7f7] transition">
                                             {{ __('Cancel') }}
+                                        </button>
+                                        <button type="button" wire:click="saveAddress"
+                                            class="flex-1 py-2.5 bg-[#242424] hover:bg-black text-white text-[14px] font-semibold rounded-full transition shadow-sm">
+                                            {{ __('Save') }}
                                         </button>
                                     </div>
                                 </div>
@@ -326,3 +405,10 @@ $orders Collection<Order>
             </div>
         </div>
     </div>
+@push('scripts')
+    <script>
+        document.addEventListener('storefront-open-address-modal-changed', function (event) {
+            window.bootPhoneInputs();
+        });
+    </script>
+@endpush

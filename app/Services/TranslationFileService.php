@@ -13,7 +13,7 @@ class TranslationFileService
     public function locales(): array
     {
         $databaseLocales = Language::query()
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
 
             ->pluck('code')
             ->filter()

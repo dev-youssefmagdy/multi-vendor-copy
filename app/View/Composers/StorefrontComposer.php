@@ -5,7 +5,9 @@ namespace App\View\Composers;
 use App\Enums\ShippingZoneStatus;
 use App\Models\ShippingZone;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
+use App\Services\Tenant\HomeVariantResolver;
 use Illuminate\View\View;
 
 /**
@@ -16,8 +18,10 @@ use Illuminate\View\View;
  */
 class StorefrontComposer
 {
-    public function __construct(protected StorefrontRepository $repo)
-    {
+    public function __construct(
+        protected StorefrontRepository $repo,
+        protected HomeVariantResolver $homeVariantResolver,
+    ) {
     }
 
     public function compose(View $view): void
@@ -35,7 +39,15 @@ class StorefrontComposer
                 app()->setLocale($currentLanguage->code);
             }
 
+            $currentTheme = $this->repo->currentTheme();
+            $currentCountry = app(CountryDetectorService::class)->detect(request());
+            $currentVariant = $currentTheme
+                ? $this->homeVariantResolver->resolveFor($currentTheme, $currentCountry)
+                : null;
+
             request()->attributes->set('_sf_layout', [
+                'themeColorStyle' => '',
+                'currentHomeVariant' => $currentVariant,
                 'storeName' => $this->repo->storeName(),
                 'logoPath' => $this->repo->logoPath(),
                 'cartCount' => $this->repo->cartCount(),

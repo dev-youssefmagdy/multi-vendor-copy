@@ -17,10 +17,13 @@ class AdminPermissions
             'catalog.variations.manage' => 'Manage variations',
             'catalog.badges.manage' => 'Manage product badges',
             'catalog.product-edit-requests.manage' => 'Manage product edit requests',
+            'catalog.product-requests.view' => 'View product requests',
+            'catalog.product-requests.manage' => 'Manage product requests',
 
             'sales.orders.view' => 'View orders',
             'sales.orders.manage' => 'Manage orders',
             'sales.orders.report.view' => 'View order reports',
+            'sales.customers.view' => 'View customers',
             'shipping.delivery.view' => 'View shipping delivery',
             'shipping.delivery.manage' => 'Manage shipping delivery',
             'shipping.settings.view' => 'View shipping settings',
@@ -49,6 +52,9 @@ class AdminPermissions
             'plans.pending-registrations.view' => 'View pending registrations',
             'plans.pending-registrations.manage' => 'Manage pending registrations',
 
+            'compliance.tenants.view' => 'View tenant compliance',
+            'compliance.tenants.manage' => 'Manage tenant compliance verification',
+
             'content.blog-categories.view' => 'View blog categories',
             'content.blog-categories.manage' => 'Manage blog categories',
             'content.blog-posts.view' => 'View blog posts',
@@ -65,6 +71,7 @@ class AdminPermissions
             'domains.dns.manage' => 'Manage DNS records',
 
             'settings.general.manage' => 'Manage general settings',
+            'settings.home-variants.manage' => 'Manage home page variants',
             'settings.templates.manage' => 'Manage templates',
             'settings.payment-gateways.manage' => 'Manage payment gateways',
             'settings.payment-gateway-limits.manage' => 'Manage payment gateway limits',
@@ -75,6 +82,8 @@ class AdminPermissions
             'settings.languages.view' => 'View languages',
             'settings.languages.purchases.view' => 'View language purchases',
             'settings.languages.manage' => 'Manage languages',
+            'settings.countries.view' => 'View countries',
+            'settings.countries.manage' => 'Manage countries',
             'settings.maintenance.manage' => 'Manage maintenance mode',
             'settings.default-banners.manage' => 'Manage default banners',
             'settings.ai-logo-limits.manage' => 'Manage AI logo generation limits',
@@ -85,6 +94,11 @@ class AdminPermissions
             'admins.roles.manage' => 'Manage roles and permissions',
 
             'system.cache.manage' => 'Manage cache tools',
+
+            'support.tickets.view' => 'View support tickets',
+            'support.tickets.manage' => 'Manage support tickets',
+
+            'affiliates.manage' => 'Manage affiliates and commissions',
         ];
     }
 
@@ -156,6 +170,7 @@ class AdminPermissions
 
             'plans.packages.manage' => ['plans.packages.manage'],
             'plans.tenants.manage' => ['plans.tenants.manage'],
+            'compliance.tenants.manage' => ['compliance.tenants.view', 'compliance.tenants.manage'],
 
             'content.blog.manage' => ['content.blog-categories.manage', 'content.blog-posts.manage'],
             'content.pages.manage' => ['content.pages.manage'],
@@ -164,10 +179,12 @@ class AdminPermissions
             'domains.requests.review' => ['domains.requests.manage'],
 
             'settings.general.manage' => ['settings.general.manage'],
+            'settings.home-variants.manage' => ['settings.home-variants.manage'],
             'settings.templates.manage' => ['settings.templates.manage'],
             'settings.email.manage' => ['settings.email-templates.manage', 'settings.email-configuration.manage'],
             'settings.currencies.manage' => ['settings.currencies.manage'],
             'settings.languages.manage' => ['settings.languages.manage'],
+            'settings.countries.manage' => ['settings.countries.manage'],
             'settings.maintenance.manage' => ['settings.maintenance.manage'],
 
             'admins.users.manage' => ['admins.users.manage'],

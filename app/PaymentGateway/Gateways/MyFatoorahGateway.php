@@ -91,4 +91,56 @@ class MyFatoorahGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure($data['Message'] ?? 'MyFatoorah verification failed.');
     }
+
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        $response = Http::withToken($this->cfg('token'))
+            ->post("{$this->baseUrl}/v2/MakeRefund", [
+                'Key' => $transactionId,
+                'KeyType' => 'InvoiceId',
+                'RefundChargeOnCustomer' => false,
+                'ServiceChargeOnCustomer' => false,
+                'Amount' => $amount,
+                'Comment' => $context['reason'] ?? 'Refund',
+            ]);
+
+        $data = $response->json();
+
+        if ($data['IsSuccess'] ?? false) {
+            return PaymentResult::success($transactionId, json_encode($data['Data'] ?? $data));
+        }
+
+        return PaymentResult::failure($data['Message'] ?? 'MyFatoorah refund failed.');
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', 'myfatoorah'),
+            'events' => ['InvoicePaid', 'InvoiceRefunded'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        $secret = $this->cfg('webhook_secret');
+        $signature = $request->header('X-Webhook-Signature');
+
+        if ($secret && $signature) {
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+            return hash_equals($expected, $signature);
+        }
+
+        return $request->input('Data.InvoiceId') !== null;
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['KWD', 'SAR', 'AED', 'EGP', 'QAR', 'BHD', 'OMR', 'USD'],
+            'merchant_countries' => ['KW', 'SA', 'AE', 'EG', 'QA', 'BH', 'OM'],
+            'customer_countries' => ['KW', 'SA', 'AE', 'EG', 'QA', 'BH', 'OM', 'US', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'IE', 'SE', 'IN', 'PK', 'TR', 'CA'],
+            'payment_methods' => ['card', 'apple_pay', 'knet', 'mada'],
+        ];
+    }
 }

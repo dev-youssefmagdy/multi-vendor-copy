@@ -143,6 +143,20 @@ class TenantPayoutEditPage extends AdminPage
 
         if ($transitioningToPaid) {
             $this->releaseOrdersForTenant();
+
+            app(\App\Services\TenantNotificationService::class)->notifyById(
+                tenantId: $record->tenant_id,
+                type: 'payment',
+                title: 'Payout Released',
+                message: sprintf('Your payout of %s has been released.', number_format((float) $record->amount, 2)),
+                data: ['payout_id' => $record->id, 'amount' => $record->amount],
+            );
+            app(\App\Services\AdminNotificationService::class)->notify(
+                type: 'payment',
+                title: 'Payout Marked Paid',
+                message: sprintf('Payout #%d for tenant %s (%s) marked as paid.', $record->id, $record->tenant_id, number_format((float) $record->amount, 2)),
+                data: ['payout_id' => $record->id, 'tenant_id' => $record->tenant_id],
+            );
         }
 
         $this->toast('Payout updated successfully.');

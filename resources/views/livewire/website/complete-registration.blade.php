@@ -128,15 +128,15 @@
                     {{ $tenantDomain }}
                 </div>
                 <div class="flex flex-col gap-3">
-                    <a href="http://{{ $tenantDomain }}/admin/login"
-                        @if($hasDomainRequest && !$dnsConnected) style="pointer-events:none;opacity:0.5;" aria-disabled="true" @endif
+                    <button wire:click="continueToOnboarding" type="button"
+                        @if($hasDomainRequest && !$dnsConnected) disabled @endif
                         class="btn-primary block text-center py-3 font-bold text-sm rounded-xl {{ $hasDomainRequest && !$dnsConnected ? 'opacity-50 cursor-not-allowed' : '' }}">
-                        {{ __('Go to My Dashboard') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                    </a>
+                        {{ __('Continue to Store Setup') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                    </button>
                     @if($hasDomainRequest && !$dnsConnected)
                         <p class="text-xs text-gray-400 text-center">
                             <i class="fas fa-info-circle me-1"></i>
-                            {{ __('Verify your DNS connection above to enable dashboard access via your custom domain.') }}
+                            {{ __('Verify your DNS connection above to continue.') }}
                         </p>
                     @endif
                     <a href="{{ route('website.home') }}"
@@ -174,22 +174,29 @@
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
                 <h2 class="text-lg font-extrabold text-gray-900 mb-6">{{ __('Store Details') }}</h2>
 
-                {{-- ── Step indicator (only shown when plan requires category selection) ── --}}
-                @if($categoriesCount > 0)
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 1 ? 'bg-primary text-white' : 'bg-green-500 text-white' }}">
-                                @if($step > 1)<i class="fas fa-check text-xs"></i>@else 1 @endif
-                            </div>
-                            <span class="text-sm font-medium {{ $step === 1 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Store Setup') }}</span>
+                {{-- ── Step indicator ── --}}
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 1 ? 'bg-primary text-white' : 'bg-green-500 text-white' }}">
+                            @if($step > 1)<i class="fas fa-check text-xs"></i>@else 1 @endif
                         </div>
-                        <div class="flex-1 h-px bg-gray-200"></div>
+                        <span class="text-sm font-medium {{ $step === 1 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Store Setup') }}</span>
+                    </div>
+                    <div class="flex-1 h-px bg-gray-200"></div>
+                    @if($categoriesCount > 0)
                         <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 2 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500' }}">2</div>
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 2 ? 'bg-primary text-white' : ($step > 2 ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500') }}">
+                                @if($step > 2)<i class="fas fa-check text-xs"></i>@else 2 @endif
+                            </div>
                             <span class="text-sm font-medium {{ $step === 2 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Choose Categories') }}</span>
                         </div>
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                    @endif
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 3 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500' }}">3</div>
+                        <span class="text-sm font-medium {{ $step === 3 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Target Countries') }}</span>
                     </div>
-                @endif
+                </div>
 
                 {{-- ── STEP 1: Shop setup ──────────────────────────────────── --}}
                 @if($step === 1)
@@ -374,15 +381,9 @@
                     <button wire:click="submitStep1" type="button" wire:loading.attr="disabled"
                         wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep1"
                         class="btn-primary w-full py-3.5 font-bold text-sm rounded-xl">
-                        @if($categoriesCount > 0)
-                            <span wire:loading.remove wire:target="submitStep1">
-                                {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                            </span>
-                        @else
-                            <span wire:loading.remove wire:target="submitStep1">
-                                {{ __('Create My Store') }} <i class="fas fa-rocket ms-1.5"></i>
-                            </span>
-                        @endif
+                        <span wire:loading.remove wire:target="submitStep1">
+                            {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                        </span>
                         <span wire:loading wire:target="submitStep1" class="flex items-center justify-center gap-2">
                             <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24">
@@ -399,8 +400,11 @@
                 @if($step === 2)
                 <div class="space-y-5">
                     <div>
+                        <h2 class="text-lg font-extrabold text-gray-900 mb-1">
+                            {{ __('Select Your Product Categories') }}
+                        </h2>
                         <p class="text-sm text-gray-600 mb-4">
-                            {{ __('Select up to :count product categories to sync into your store.', ['count' => $categoriesCount]) }}
+                            {{ __('Your plan allows up to :count categories.', ['count' => $categoriesCount]) }}
                         </p>
 
                         @if($rootCategories->isEmpty())
@@ -409,25 +413,135 @@
                                 {{ __('No categories are available yet.') }}
                             </div>
                         @else
-                            <div class="space-y-2">
-                                @foreach($rootCategories as $category)
-                                    @php $checked = in_array((string)$category->id, $selectedCategoryIds); @endphp
-                                    <label class="flex items-center gap-3 p-4 rounded-xl cursor-pointer border-2 transition-all
-                                        {{ $checked ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
-                                        <input wire:model.live="selectedCategoryIds"
-                                            type="checkbox"
-                                            value="{{ $category->id }}"
-                                            class="accent-primary w-4 h-4"
-                                            @if(!$checked && count($selectedCategoryIds) >= $categoriesCount) disabled @endif>
-                                        <span class="flex-1 font-semibold text-gray-900 text-sm">
-                                            {{ $category->translationValue('name') ?: $category->id }}
-                                        </span>
-                                    </label>
+                            {{-- Category tree selector --}}
+                            <div class="space-y-2 max-h-80 overflow-y-auto border border-gray-200 rounded-xl p-3">
+                                @foreach($rootCategories as $root)
+                                    @php
+                                        $rootSelected = in_array((string) $root->id, $selectedCategoryIds);
+                                        $hasChildren = $root->children->isNotEmpty();
+                                    @endphp
+                                    <div x-data="{ open: {{ $rootSelected ? 'true' : 'false' }} }"
+                                         class="border border-gray-100 rounded-lg overflow-hidden">
+
+                                        {{-- Root row --}}
+                                        <label class="flex items-center gap-3 p-3 cursor-pointer
+                                               {{ $rootSelected ? 'bg-primary/5' : 'hover:bg-gray-50' }} transition-colors">
+                                            <input
+                                                type="checkbox"
+                                                value="{{ $root->id }}"
+                                                class="w-4 h-4 rounded text-primary"
+                                                wire:model.live="selectedCategoryIds"
+                                                @if(!$rootSelected && count($selectedCategoryIds) >= $categoriesCount)
+                                                    disabled title="{{ __('Maximum categories reached') }}"
+                                                @endif
+                                            >
+                                            <span class="flex-1 font-medium text-sm text-gray-900">
+                                                {{ $root->translationValue('name') ?: $root->id }}
+                                            </span>
+                                            @if($hasChildren)
+                                                <button type="button" @click.prevent="open = !open"
+                                                    class="text-gray-400 hover:text-gray-600 transition-colors p-1">
+                                                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                            clip-rule="evenodd"/>
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        </label>
+
+                                        {{-- Level 2 children --}}
+                                        @if($hasChildren)
+                                            <div x-show="open" x-cloak class="bg-gray-50 border-t border-gray-100 px-4 py-2 space-y-1">
+                                                @foreach($root->children as $child)
+                                                    @php $hasGrandchildren = $child->children->isNotEmpty(); @endphp
+                                                    <div x-data="{ open2: false }">
+                                                        <div class="flex items-center gap-2 py-1.5">
+                                                            <span class="w-3 border-t border-gray-300 flex-shrink-0"></span>
+                                                            <span class="text-sm text-gray-600 flex-1">
+                                                                {{ $child->translationValue('name') ?: $child->id }}
+                                                            </span>
+                                                            @if($hasGrandchildren)
+                                                                <button type="button" @click.prevent="open2 = !open2"
+                                                                    class="text-gray-400 hover:text-gray-600 p-0.5">
+                                                                    <svg class="w-3.5 h-3.5 transition-transform" :class="open2 ? 'rotate-90' : ''"
+                                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                            clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+
+                                                        {{-- Level 3 grandchildren --}}
+                                                        @if($hasGrandchildren)
+                                                            <div x-show="open2" x-cloak class="ml-5 space-y-1">
+                                                                @foreach($child->children as $grandchild)
+                                                                    <div class="flex items-center gap-2 py-1">
+                                                                        <span class="w-3 border-t border-gray-200 flex-shrink-0"></span>
+                                                                        <span class="text-xs text-gray-500">
+                                                                            {{ $grandchild->translationValue('name') ?: $grandchild->id }}
+                                                                        </span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
                                 @endforeach
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">
-                                {{ __(':selected / :max selected', ['selected' => count($selectedCategoryIds), 'max' => $categoriesCount]) }}
+
+                            <p class="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
+                                <i class="fas fa-info-circle"></i>
+                                {{ __(':selected / :max root categories selected. Sub-categories are included automatically.', [
+                                    'selected' => count($selectedCategoryIds),
+                                    'max' => $categoriesCount,
+                                ]) }}
                             </p>
+
+                            {{-- Preview of what will be synced --}}
+                            @if(!empty($categoryPreviewTree))
+                                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                                    <p class="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1.5">
+                                        <i class="fas fa-layer-group"></i>
+                                        {{ __('Categories that will be available in your store:') }}
+                                    </p>
+                                    <div class="space-y-1">
+                                        @foreach($categoryPreviewTree as $root)
+                                            <div>
+                                                <span class="text-xs font-medium text-blue-900">
+                                                    <i class="fas fa-folder text-blue-400 me-1"></i>{{ $root['name'] }}
+                                                </span>
+                                                @if(!empty($root['children']))
+                                                    <div class="ml-4 mt-0.5 space-y-0.5">
+                                                        @foreach($root['children'] as $child)
+                                                            <div>
+                                                                <span class="text-xs text-blue-700">
+                                                                    <i class="fas fa-folder-open text-blue-300 me-1"></i>{{ $child['name'] }}
+                                                                </span>
+                                                                @if(!empty($child['children']))
+                                                                    <div class="ml-4 mt-0.5">
+                                                                        @foreach($child['children'] as $grand)
+                                                                            <span class="text-xs text-blue-500 block">
+                                                                                <i class="fas fa-tag text-blue-200 me-1"></i>{{ $grand['name'] }}
+                                                                            </span>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         @error('selectedCategoryIds')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
@@ -444,9 +558,74 @@
                             wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep2"
                             class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
                             <span wire:loading.remove wire:target="submitStep2">
+                                {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                            </span>
+                            <span wire:loading wire:target="submitStep2">
+                                {{ __('Please wait…') }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                @endif
+
+                {{-- ── STEP 3: Target countries selection ──────────────────── --}}
+                @if($step === 3)
+                <div class="space-y-5">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-gray-900 mb-1">
+                            {{ __('Which countries will you sell to?') }}
+                        </h2>
+                        <p class="text-sm text-gray-600 mb-4">
+                            {{ __('Countries marked Free are included at no extra cost. Select all the countries you plan to ship to.') }}
+                        </p>
+
+                        <input wire:model.live.debounce.300ms="countrySearch" type="text"
+                            placeholder="{{ __('Search countries...') }}"
+                            class="w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 mb-3">
+
+                        @if($countries->isEmpty())
+                            <div class="p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-500">
+                                <i class="fas fa-info-circle me-1.5 text-gray-400"></i>
+                                {{ __('No countries match your search.') }}
+                            </div>
+                        @else
+                            <div class="max-h-80 overflow-y-auto rounded-xl border border-gray-200 divide-y divide-gray-100">
+                                @foreach($countries as $country)
+                                    <label class="flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50">
+                                        <span class="flex items-center gap-2 text-sm text-gray-800">
+                                            <input type="checkbox" wire:model="selectedCountryIds" value="{{ $country->id }}"
+                                                class="rounded border-gray-300 text-primary focus:ring-primary/30">
+                                            @if($country->flag_emoji) <span>{{ $country->flag_emoji }}</span> @endif
+                                            {{ $country->name ?: $country->iso2 }}
+                                        </span>
+                                        @if($country->is_free)
+                                            <span class="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full whitespace-nowrap">{{ __('FREE') }}</span>
+                                        @endif
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">
+                                {{ __(':count countries selected', ['count' => count($selectedCountryIds)]) }}
+                            </p>
+                        @endif
+
+                        @error('selectedCountryIds')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                        @error('selectedCountryIds.*')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button wire:click="prevStep" type="button"
+                            class="flex-1 py-3.5 font-bold text-sm rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-colors">
+                            <i class="fas fa-arrow-left me-1.5"></i> {{ __('Back') }}
+                        </button>
+
+                        <button wire:click="submitStep3" type="button" wire:loading.attr="disabled"
+                            wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep3"
+                            class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
+                            <span wire:loading.remove wire:target="submitStep3">
                                 {{ __('Create My Store') }} <i class="fas fa-rocket ms-1.5"></i>
                             </span>
-                            <span wire:loading wire:target="submitStep2" class="flex items-center justify-center gap-2">
+                            <span wire:loading wire:target="submitStep3" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -463,6 +642,20 @@
 
     </div>
 </div>
+
+@if($categoriesCount > 0)
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+        <style>
+            .select2-container .select2-selection--multiple { min-height: 3rem; border-radius: 0.75rem; border-color: #e5e7eb; }
+            .select2-container--default .select2-selection--multiple .select2-selection__choice { background-color: #fff7ed; border-color: #fdba74; }
+        </style>
+    @endpush
+    @push('scripts')
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @endpush
+@endif
 
 @script
 <script>

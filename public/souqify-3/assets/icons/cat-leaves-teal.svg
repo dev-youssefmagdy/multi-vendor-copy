@@ -1,0 +1,12 @@
+<!-- Souqify v3 category art. Figma "Repeat group 1" (90.62 sq) with
+     Rectangle 5963 (34x30, radius 0/104/0/176 -> clamps to 15), repeated
+     five times at 72deg about the centre. The petal sits at 38/10 rather
+     than Figma's 50.15/4 so the petals meet in the middle instead of
+     leaving a hole behind the product image. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1.05 1.05 88.52 88.52" fill="#199387" aria-hidden="true">
+  <path d="M0,0 H19 A15,15 0 0 1 34,15 V30 H15 A15,15 0 0 0 0,15 Z" transform="rotate(0 45.31 45.31) translate(38 10)"/>
+  <path d="M0,0 H19 A15,15 0 0 1 34,15 V30 H15 A15,15 0 0 0 0,15 Z" transform="rotate(72 45.31 45.31) translate(38 10)"/>
+  <path d="M0,0 H19 A15,15 0 0 1 34,15 V30 H15 A15,15 0 0 0 0,15 Z" transform="rotate(144 45.31 45.31) translate(38 10)"/>
+  <path d="M0,0 H19 A15,15 0 0 1 34,15 V30 H15 A15,15 0 0 0 0,15 Z" transform="rotate(216 45.31 45.31) translate(38 10)"/>
+  <path d="M0,0 H19 A15,15 0 0 1 34,15 V30 H15 A15,15 0 0 0 0,15 Z" transform="rotate(288 45.31 45.31) translate(38 10)"/>
+</svg>

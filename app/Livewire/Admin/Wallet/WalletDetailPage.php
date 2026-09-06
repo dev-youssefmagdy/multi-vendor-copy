@@ -146,6 +146,14 @@ class WalletDetailPage extends AdminPage
                 ],
             ]);
 
+            app(\App\Services\TenantNotificationService::class)->notifyById(
+                tenantId: $this->tenantId,
+                type: 'payment',
+                title: 'Settlement Confirmed',
+                message: sprintf('Your settlement of %s has been confirmed.', number_format($this->markAmount, 2)),
+                data: ['order_number' => $this->markOrderUuid, 'amount' => $this->markAmount],
+            );
+
             // Refresh ledger data
             $entry = app(TenantLedgerService::class)->find($this->tenantId);
             if ($entry) {

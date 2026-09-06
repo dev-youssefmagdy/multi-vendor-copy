@@ -59,4 +59,66 @@
             </div>
         </div>
     @endif
+
+    {{-- ── Persistent setup-progress banner ────────────────────────────────── --}}
+    @if ($showSetupBanner)
+        <a href="{{ route('tenant.onboarding', ['tab' => 'setup']) }}" wire:navigate class="ob-setup-banner">
+            <div class="ob-setup-banner-bar">
+                <div class="ob-setup-banner-fill" style="width: {{ $setupPct }}%"></div>
+            </div>
+            <span class="ob-setup-banner-text">
+                Setup {{ $setupPct }}% complete — {{ $setupTotal - $setupDone }} {{ \Illuminate\Support\Str::plural('step', $setupTotal - $setupDone) }} remaining
+            </span>
+            <span class="ob-setup-banner-cta">
+                Finish setup
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </span>
+        </a>
+
+        <style>
+            .ob-setup-banner {
+                position: sticky;
+                top: 0;
+                z-index: 40;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 16px;
+                background: var(--panel, #12141a);
+                border-bottom: 1px solid var(--border);
+                text-decoration: none;
+                color: var(--t2);
+            }
+            .ob-setup-banner-bar {
+                flex-shrink: 0;
+                width: 80px;
+                height: 4px;
+                border-radius: 4px;
+                background: var(--border);
+                overflow: hidden;
+            }
+            .ob-setup-banner-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--cyan), var(--violet));
+                border-radius: 4px;
+            }
+            .ob-setup-banner-text {
+                flex: 1;
+                min-width: 0;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .ob-setup-banner-cta {
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--cyan);
+            }
+        </style>
+    @endif
 </div>

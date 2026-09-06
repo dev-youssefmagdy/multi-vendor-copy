@@ -112,9 +112,14 @@
                         @endif
                         @if ($product->translationValue('description') ?? null)
                         <section class="mt-4  max-w-4xl">
-                            <div class="text-[15px] text-gray-700 leading-relaxed space-y-4 prose max-w-none">
-                                {!! $product->translationValue('description') !!}
+                            <div class="desc-readmore" data-lines="4">
+                                <div class="text-[15px] text-gray-700 leading-relaxed space-y-4 prose max-w-none">
+                                    {!! $product->translationValue('description') !!}
+                                </div>
+                                <span class="desc-readmore-fade" aria-hidden="true"></span>
                             </div>
+                            <button type="button" class="desc-readmore-btn"
+                                data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                         </section>
                         @endif
                     </div>
@@ -187,11 +192,15 @@
                                 @php
                                     $vMediaIndex = $variantData[$variant->id]['mediaIndex'] ?? null;
                                 @endphp
+                                @php
+                                    $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
+                                @endphp
                                 <button type="button"
                                     data-variant-id="{{ $variant->id }}"
                                     onclick="ecommetSelectVariant({{ $variant->id }})"
                                     @if($vMediaIndex !== null) onmouseenter="window.mantiShowMediaIndex && window.mantiShowMediaIndex({{ $vMediaIndex }})" @endif
-                                    class="flex flex-col items-center gap-1 cursor-pointer transition-all active:scale-95">
+                                    @if(!$vIsInStock) aria-disabled="true" @endif
+                                    class="flex flex-col items-center gap-1 transition-all active:scale-95 {{ $vIsInStock ? 'cursor-pointer' : 'cursor-not-allowed' }}">
                                     @php
                                         $vThumb = $variant->thumbnail_url ?? $variant->centralVariant?->thumbnail_url ?? null;
                                         $vTitle = $variant->display_label ?? __('Not available');
@@ -199,7 +208,6 @@
                                         $variantPricing = $product->storefrontPricing($variant);
                                         $vSell = (float) $variantPricing['current_price'];
                                         $vDisplay = number_format($vSell * $rate, 2);
-                                        $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
                                     @endphp
                                     <div data-variant-ring class="relative w-[60px] h-[60px] rounded-[8px] border-2 {{ $isActive ? 'border-[#222]' : 'border-transparent ring-1 ring-[#e5e5e5]' }} overflow-hidden bg-white p-[2px] {{ !$vIsInStock ? 'opacity-40' : '' }}">
                                         @if ($vThumb)
@@ -326,6 +334,33 @@
                     </div>
                 </div>
                 @endif
+
+                {{-- Return & refund policy --}}
+                @if(isset($returnPolicy))
+                <div class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5 flex flex-col gap-2 shadow-sm">
+                    <div class="flex items-center gap-2 text-[13px] font-bold text-[#222]">
+                        <svg class="w-4 h-4 text-[#d9a036] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
+                        </svg>
+                        <span>{{ __('Return & Refund Policy') }}</span>
+                    </div>
+                    @if(!$returnPolicy['is_returnable'])
+                    <p class="text-sm text-red-600">{{ __('This product is not eligible for returns.') }}</p>
+                    @else
+                    <p class="text-sm text-[#555]">
+                        {{ __('Returns accepted within :days days of delivery.', ['days' => $returnPolicy['window_days']]) }}
+                        @if(($returnPolicy['fee'] ?? 0) > 0)
+                            {{ __('A return fee of :fee applies.', ['fee' => number_format($returnPolicy['fee'], 2)]) }}
+                        @else
+                            {{ __('Free returns.') }}
+                        @endif
+                    </p>
+                    @if(!empty($returnPolicy['conditions']))
+                    <p class="text-xs text-[#8a8a8a]">{{ $returnPolicy['conditions'] }}</p>
+                    @endif
+                    @endif
+                </div>
+                @endif
             </div>
         </div>
 
@@ -393,9 +428,24 @@
 
 @push('scripts')
 @vite('resources/js/ecommet/product.js')
+    <?php $currencyData = data_get($currentCurrency ?? null, 'code', 'USD'); ?>
     <script>
         // ── Variant selection – no Livewire re-render ─────────────────────────────
         const ECOMMET_VARIANTS = @json($variantData ?? []);
+        const CURRENCY_DATA = @json($currencyData);
+        const SELL_PRICE_DATA = "{{ number_format($sellPrice * $rate, 2, '.', '') }}";
+
+        // ── Tracking: ViewContent ─────────────────────────────────────────────
+        (function () {
+            if (typeof window.trackViewContent !== 'function') return;
+            window.trackViewContent({
+                content_ids:  [@json($activeVariant?->id ?? $product->id)],
+                content_type: 'product',
+                content_name: @json($product->translationValue('name') ?? $product->slug),
+                value:        parseFloat(SELL_PRICE_DATA),
+                currency:     CURRENCY_DATA,
+            });
+        })();
         const ECOMMET_CART_ADD_URL = @json($cartAddUrl);
         const ECOMMET_PRODUCT_SLUG = @json($product->slug);
         let ecommetSelectedVariantId = @json($activeVariant?->id);
@@ -449,6 +499,18 @@
                 slug: ECOMMET_PRODUCT_SLUG,
                 variantId: ecommetSelectedVariantId,
                 qty: ecommetQty,
+            }).then(function () {
+                if (typeof window.trackAddToCart === 'function') {
+                    var variant = ecommetSelectedVariantId ? ECOMMET_VARIANTS[ecommetSelectedVariantId] : null;
+                    window.trackAddToCart({
+                        content_ids:  [ecommetSelectedVariantId || @json($product->id)],
+                        content_type: 'product',
+                        content_name: @json($product->translationValue('name') ?? $product->slug),
+                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(SELL_PRICE_DATA),
+                        currency:     CURRENCY_DATA,
+                        num_items:    ecommetQty,
+                    });
+                }
             }).finally(function () {
                 if (btn) { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); }
                 if (label) label.textContent = @json(__('Add to Cart'));
@@ -458,6 +520,12 @@
         function ecommetSelectVariant(id) {
             const data = ECOMMET_VARIANTS[id];
             if (!data) return;
+            if (!data.isInStock) {
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('storefront-toast', { message: @json(__('This option is out of stock')), type: 'error' });
+                }
+                return;
+            }
 
             ecommetSelectedVariantId = id;
 

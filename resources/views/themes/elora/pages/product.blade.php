@@ -126,21 +126,13 @@
             </button>
         </div>
 
-        <!-- free shipping par -->
-        @if($shippingThreshold > 0)
-        <div id="elora-shipping-widget" class="hidden sm:block mb-4 p-3 bg-[#ff4d0016] rounded-2xl border border-[#ff4d00]">
-            <p id="elora-shipping-message" class="text-center text-[15px] text-[#FF4D00] font-medium mb-2">
-                @if ($remainingForFreeShipping <= 0)
-                    {{ __("You've reached free shipping!") }}
-                @else
-                    {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
-                @endif
-            </p>
-            <div class="h-2 bg-[#D9D9D9] rounded-full overflow-hidden">
-                <div id="elora-shipping-bar" class="h-full bg-[#FF4D00] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
-            </div>
+        <!-- free shipping bar -->
+        <div class="hidden sm:block mb-4">
+            <x-storefront.free-shipping-progress
+                theme="elora"
+                :threshold="$shippingThreshold"
+                :weight="$shippingProgressWeight" />
         </div>
-        @endif
 
         {{-- Breadcrumb --}}
         <nav aria-label="{{ __('Breadcrumb') }}" class="hidden lg:flex text-[12px] text-[#787878] mb-6 items-center gap-1 flex-wrap">
@@ -281,7 +273,12 @@
                             <span>{{ __('Category: :category', ['category' => $primaryCategory->translationValue('name') ?? $primaryCategory->slug]) }}</span>
                         @endif
                         @if ($product->translationValue('description') ?? null)
-                            <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                            <div class="desc-readmore" data-lines="4">
+                                <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                                <span class="desc-readmore-fade" aria-hidden="true"></span>
+                            </div>
+                            <button type="button" class="desc-readmore-btn"
+                                data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                         @endif
                     </div>
                 </div>
@@ -396,6 +393,33 @@
                 </div>
                 @endif
 
+                {{-- Return & refund policy --}}
+                @if(isset($returnPolicy))
+                <div class="border border-neutral-200 rounded-xl p-3 flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                        <svg class="w-4 h-4 text-[#2AAF2F] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
+                        </svg>
+                        <span>{{ __('Return & Refund Policy') }}</span>
+                    </div>
+                    @if(!$returnPolicy['is_returnable'])
+                    <p class="text-sm text-red-600">{{ __('This product is not eligible for returns.') }}</p>
+                    @else
+                    <p class="text-sm text-neutral-600">
+                        {{ __('Returns accepted within :days days of delivery.', ['days' => $returnPolicy['window_days']]) }}
+                        @if(($returnPolicy['fee'] ?? 0) > 0)
+                            {{ __('A return fee of :fee applies.', ['fee' => number_format($returnPolicy['fee'], 2)]) }}
+                        @else
+                            {{ __('Free returns.') }}
+                        @endif
+                    </p>
+                    @if(!empty($returnPolicy['conditions']))
+                    <p class="text-xs text-neutral-500">{{ $returnPolicy['conditions'] }}</p>
+                    @endif
+                    @endif
+                </div>
+                @endif
+
                 {{-- <!-- color variant selector -->
                 <div>
                     <h3 class="font-bold text-sm">Color: white</h3>
@@ -442,21 +466,15 @@
                 </div>--}}
 
 
-                <!-- free shipping par -->
-                @if($shippingThreshold > 0)
-                <div id="elora-shipping-widget-mobile" class="sm:hidden p-3 bg-[#ff4d0016] -mx-6">
-                    <p id="elora-shipping-message-mobile" class="text-center text-sm text-[#FF4D00] font-medium mb-2">
-                        @if ($remainingForFreeShipping <= 0)
-                            {{ __("You've reached free shipping!") }}
-                        @else
-                            {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
-                        @endif
-                    </p>
-                    <div class="h-2 bg-[#D9D9D9] rounded-full overflow-hidden mx-6">
-                        <div id="elora-shipping-bar-mobile" class="h-full bg-[#FF4D00] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
-                    </div>
+                <!-- free shipping bar -->
+                <div class="sm:hidden -mx-6">
+                    <x-storefront.free-shipping-progress
+                        theme="elora"
+                        :threshold="$shippingThreshold"
+                        :weight="$shippingProgressWeight"
+                        id-suffix="-mobile"
+                        :bare="true" />
                 </div>
-                @endif
 
 
                 {{-- Variant selector --}}
@@ -471,10 +489,14 @@
                         </div>
                         <div class="flex flex-wrap gap-2.5">
                             @foreach ($variants as $variant)
+                                @php
+                                    $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
+                                @endphp
                                 <button type="button"
                                         data-variant-id="{{ $variant->id }}"
                                         onclick="eloraSelectVariant({{ $variant->id }})"
-                                        class="flex flex-col items-center gap-1 cursor-pointer transition-all active:scale-95">
+                                        @if(!$vIsInStock) aria-disabled="true" @endif
+                                        class="flex flex-col items-center gap-1 transition-all active:scale-95 {{ $vIsInStock ? 'cursor-pointer' : 'cursor-not-allowed' }}">
                                     @php
                                         $vThumb = $variant->thumbnail_url ?? $variant->centralVariant?->thumbnail_url ?? null;
                                         $vTitle = $variant->display_label ?? __('Not available');
@@ -482,7 +504,6 @@
                                         $variantPricing = $product->storefrontPricing($variant);
                                         $vSell = (float) $variantPricing['current_price'];
                                         $vDisplay = number_format($vSell * $rate, 2);
-                                        $vIsInStock = !$manageStock || (($variant->stock ?? 9999) > 0);
                                     @endphp
                                     <div data-variant-ring
                                          class="w-[60px] h-[60px] rounded-[8px] border-2 {{ $isActive ? 'border-[#222]' : 'border-transparent ring-1 ring-[#e5e5e5]' }} overflow-hidden bg-white p-[2px] {{ !$vIsInStock ? 'opacity-40' : '' }} relative">
@@ -815,7 +836,12 @@
                     <span>{{ __('Category: :category', ['category' => $primaryCategory->translationValue('name') ?? $primaryCategory->slug]) }}</span>
                 @endif
                 @if ($product->translationValue('description') ?? null)
-                    <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                    <div class="desc-readmore" data-lines="4">
+                        <span class="leading-5">{!! $product->translationValue('description') !!}</span>
+                        <span class="desc-readmore-fade" aria-hidden="true"></span>
+                    </div>
+                    <button type="button" class="desc-readmore-btn"
+                        data-more-text="{{ __('Read More') }}" data-less-text="{{ __('Show Less') }}">{{ __('Read More') }}</button>
                 @endif
             </div>
         </div>
@@ -1407,9 +1433,25 @@ We are committed to maintaining transparency and reducing permission requests wi
             shareUrl: @json(route('tenant.storefront.product', $product->slug)),
         };
     </script>
+    <?php $currencyData = data_get($currentCurrency ?? null, 'code', 'USD'); ?>
     <script>
         // ── Variant selection – no Livewire re-render ─────────────────────────────
         const ELORA_VARIANTS = @json($variantData ?? []);
+        const CURRENCY_DATA = @json($currencyData);
+        const SELL_PRICE_DATA = "{{ number_format($sellPrice * $rate, 2, '.', '') }}";
+
+        // ── Tracking: ViewContent ─────────────────────────────────────────────
+        (function () {
+            if (typeof window.trackViewContent !== 'function') return;
+            window.trackViewContent({
+                content_ids:  [@json($activeVariant?->id ?? $product->id)],
+                content_type: 'product',
+                content_name: @json($product->translationValue('name') ?? $product->slug),
+                value:        parseFloat(SELL_PRICE_DATA),
+                currency:     CURRENCY_DATA,
+            });
+        })();
+
         const ELORA_CART_ADD_URL = @json($cartAddUrl);
         const ELORA_PRODUCT_SLUG = @json($product->slug);
         let eloraSelectedVariantId = @json($activeVariant?->id);
@@ -1462,6 +1504,7 @@ We are committed to maintaining transparency and reducing permission requests wi
         }
 
         function eloraAddToCart() {
+            var getCurrency = @json(data_get($currentCurrency ?? null, 'code', 'USD'));
             const buttons = ['elora-add-to-cart-btn', 'elora-mobile-add-to-cart-btn']
                 .map((id) => document.getElementById(id))
                 .filter(Boolean);
@@ -1477,6 +1520,19 @@ We are committed to maintaining transparency and reducing permission requests wi
                 slug: ELORA_PRODUCT_SLUG,
                 variantId: eloraSelectedVariantId,
                 qty: eloraQty,
+            }).then(function () {
+                // ── Tracking: AddToCart ───────────────────────────────────────────
+                if (typeof window.trackAddToCart === 'function') {
+                    var variant = eloraSelectedVariantId ? ELORA_VARIANTS[eloraSelectedVariantId] : null;
+                    window.trackAddToCart({
+                        content_ids:  [eloraSelectedVariantId || @json($product->id)],
+                        content_type: 'product',
+                        content_name: @json($product->translationValue('name') ?? $product->slug),
+                        value:        variant ? parseFloat(variant.price || 0) : parseFloat(number_format($sellPrice * $rate, 2, '.', '')),
+                        currency:     getCurrency,
+                        num_items:    eloraQty,
+                    });
+                }
             }).finally(function () {
                 buttons.forEach((btn) => { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); });
                 labels.forEach((el) => { el.textContent = @json(__('Add to Cart')); });
@@ -1486,6 +1542,12 @@ We are committed to maintaining transparency and reducing permission requests wi
         function eloraSelectVariant(id) {
             const data = ELORA_VARIANTS[id];
             if (!data) return;
+            if (!data.isInStock) {
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('storefront-toast', { message: @json(__('This option is out of stock')), type: 'error' });
+                }
+                return;
+            }
 
             eloraSelectedVariantId = id;
 

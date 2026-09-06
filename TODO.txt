@@ -800,3 +800,17 @@ pa db:seed --class=WorldCountriesSeeder
 ----------------------------------------------------
 
 php artisan db:seed --class=EmailTemplateTranslationSeeder
+
+php artisan image-search:backfill
+php artisan queue:work --queue=default --stop-when-empty --tries=1 --timeout=120
+
+
+Start php artisan reverb:start and a queue worker (php artisan queue:work) — supervisor config from the prompt is a good template for the VPS.
+
+pa db:seed --class=AdminPermissionSeeder
+
+pa products:backfill-country-ids
+
+php artisan tenants:run tenant:permission-seed
+
+pa queue:work --queue=translations

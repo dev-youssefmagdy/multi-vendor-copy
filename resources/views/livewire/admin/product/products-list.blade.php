@@ -6,8 +6,9 @@
             <p class="page-copy">Manage central products, translated merchandising copy, media assets, and delivery
                 coverage.</p>
         </div>
-        <div class="page-actions" style="flex-shrink:0">
+        <div class="page-actions" style="flex-shrink:0; display:flex; gap:8px;">
             @if ($canManageProducts)
+                <a href="{{ route('admin.products.sort') }}" class="btn btn-secondary" style="width:100%;justify-content:center">Sort Products</a>
                 <a href="{{ route('admin.products.create') }}" class="btn btn-primary"
                     style="width:100%;justify-content:center">
                     <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -130,8 +131,26 @@
         <div class="filters-grid">
             <div>
                 <label class="field-label" for="product-search">Search</label>
-                <input id="product-search" type="text" class="field-control" wire:model.live.debounce.300ms="search"
-                    placeholder="SKU or product name">
+                <div style="position:relative;display:flex;align-items:center;">
+                    <input id="product-search" type="text" class="field-control" wire:model.live.debounce.300ms="search"
+                        placeholder="SKU or product name" style="padding-right:38px;">
+                    <button type="button" data-image-search-trigger="admin-image-search-modal"
+                        title="Search by image"
+                        style="position:absolute;right:6px;width:26px;height:26px;border-radius:6px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--text-muted,#94a3b8);cursor:pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
+                            <circle cx="12" cy="13" r="3.2"/>
+                        </svg>
+                    </button>
+                </div>
+                @if ($imageSearchActive)
+                    <div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;font-size:11.5px;font-weight:600;color:#4338ca;">
+                        Visual match &mdash; {{ count($imageSearchIds) }} results
+                        <button type="button" wire:click="clearImageSearch" style="border:none;background:transparent;padding:0;margin-left:2px;cursor:pointer;color:#6366f1;display:flex;align-items:center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <div>
@@ -171,9 +190,11 @@
 
             <div>
                 <label class="field-label" for="stock-filter">Stock</label>
-                <select id="stock-filter" class="field-control" wire:model.live="outOfStockFilter">
-                    <option value="">All stock levels</option>
-                    <option value="1">Out of stock</option>
+                <select id="stock-filter" class="field-control" wire:model.live="stockFilter">
+                    <option value="">All</option>
+                    <option value="in">In Stock</option>
+                    <option value="partial">Partially Out of Stock</option>
+                    <option value="out">Out of Stock</option>
                 </select>
             </div>
 
@@ -222,6 +243,7 @@
                             <th>Categories</th>
                             <th>Stock</th>
                             <th>Status</th>
+                            <th>Countries</th>
                             <th class="ta-r">Actions</th>
                         </tr>
                     </thead>
@@ -285,8 +307,15 @@
                                     return $html;
                                 };
                                 $catHtml = $renderCatTree($catRoots);
+
+                                $stockStatus = $product->stockStatus();
+                                $rowStockClass = match ($stockStatus) {
+                                    'out_of_stock' => 'row-out-of-stock',
+                                    'partial' => 'row-partial-stock',
+                                    default => '',
+                                };
                               @endphp
-                            <tr wire:key="product-row-{{ $product->id }}">
+                            <tr wire:key="product-row-{{ $product->id }}" class="{{ $rowStockClass }}">
 
                                 {{-- Image --}}
                                 <td>
@@ -308,6 +337,27 @@
                                     <div class="entity-title">{{ $product->translationValue('name') ?? 'Untitled product' }}
                                     </div>
                                     <div class="entity-subtitle">/{{ $product->slug }}</div>
+                                    @if ($stockStatus === 'out_of_stock')
+                                        <span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>
+                                    @elseif ($stockStatus === 'partial')
+                                        <span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>
+                                    @endif
+                                    @if ($product->badges->isNotEmpty())
+                                        <div class="entity-badges" style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
+                                            @foreach ($product->badges as $badge)
+                                                @php
+                                                    $badgeTone = match ($badge->text) {
+                                                        'featured' => 'badge badge-violet',
+                                                        'recommended' => 'badge badge-green',
+                                                        'best-selling' => 'badge badge-amber',
+                                                        'new-in' => 'badge badge-cyan',
+                                                        default => 'badge badge-amber',
+                                                    };
+                                                @endphp
+                                                <span class="{{ $badgeTone }}" style="font-size:10px;">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}</span>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </td>
 
                                 {{-- SKU --}}
@@ -361,6 +411,11 @@
                                             : ($product->stock ?? 0);
                                     @endphp
                                     <div class="table-stat">{{ number_format($stockQty) }}</div>
+                                    @if ($stockStatus === 'out_of_stock')
+                                        <div class="table-meta" style="color:var(--red);">Out of stock</div>
+                                    @elseif ($stockStatus === 'partial')
+                                        <div class="table-meta" style="color:var(--amber);">Partial stock</div>
+                                    @endif
                                     <div class="table-meta">Min {{ number_format($product->min_stock) }}</div>
                                 </td>
 
@@ -370,6 +425,17 @@
                                         <span class="badge badge-red">Deleted</span>
                                     @else
                                         <span class="{{ $statusTone }}">{{ $product->status->label() }}</span>
+                                    @endif
+                                </td>
+
+                                {{-- Country targeting --}}
+                                <td>
+                                    @if ($product->countries->isEmpty())
+                                        <span class="badge" title="No country preference — ranks equally everywhere">Global</span>
+                                    @else
+                                        <span class="badge badge-green" title="{{ $product->countries->pluck('name')->join(', ') }}">
+                                            {{ $product->countries->count() }} {{ Str::plural('country', $product->countries->count()) }}
+                                        </span>
                                     @endif
                                 </td>
 
@@ -472,5 +538,17 @@
             </div>
         </div>
     @endif
+
+    <x-image-search-modal
+        id="admin-image-search-modal"
+        :action="route('admin.products.image-search')"
+        on-results="adminImageSearchResults" />
+
+    <script>
+        window.adminImageSearchResults = function (json) {
+            var ids = (json && Array.isArray(json.ids)) ? json.ids : [];
+            @this.call('applyImageSearch', ids);
+        };
+    </script>
 
 </main>

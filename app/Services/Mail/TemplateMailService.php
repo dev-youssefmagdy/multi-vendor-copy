@@ -153,6 +153,21 @@ class TemplateMailService
         );
     }
 
+    public function sendReturnStatusUpdate(\App\Models\ReturnRequest $returnRequest, Order $order): bool
+    {
+        return $this->sendTenantTemplate(
+            EmailTemplateAction::TenantReturnUpdate,
+            $this->orderRecipient($order),
+            $this->orderTokens($order, [
+                '{{return_status}}' => $returnRequest->status->label(),
+                '{{return_reason}}' => $returnRequest->reason->label(),
+                '{{processed_at}}' => optional($returnRequest->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
+            ]),
+            [],
+            $this->orderLocale($order),
+        );
+    }
+
     public function sendCentralTemplate(EmailTemplateAction $action, ?string $recipient, array $tokens = [], array $attachments = [], ?string $locale = null): bool
     {
         if (!filled($recipient)) {
@@ -867,6 +882,34 @@ class TemplateMailService
         $this->notifyAdminOfDeliveryFailure(EmailTemplateAction::AdminGatewayLimitBlock, $recipient);
 
         return false;
+    }
+
+    /**
+     * Send a store-admin email verification link. Uses the tenant's own mail
+     * configuration (falling back to central) directly, bypassing the
+     * template-driven system since this is a one-off transactional link.
+     */
+    public function sendTenantEmailVerification(string $email, string $verifyUrl): bool
+    {
+        if (!filled($email)) {
+            return false;
+        }
+
+        $storeName = tenant()?->data['shop_name'] ?? tenant()?->name ?? config('app.name', 'Multi Vendor');
+        $subject = sprintf('Verify your email for %s', $storeName);
+        $body = '<p>Please confirm your email address to finish setting up your vendor account.</p>'
+            . '<p><a href="' . e($verifyUrl) . '" style="display:inline-block;padding:10px 18px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;">Verify Email Address</a></p>'
+            . '<p style="color:#6b7280;font-size:12px;">If you did not create this account, no further action is required. This link expires in 60 minutes.</p>';
+
+        $tenantConfig = $this->configurationResolver->tenant();
+
+        if ($this->tryDeliver($tenantConfig, $email, $subject, $body)) {
+            return true;
+        }
+
+        $centralConfig = $this->configurationResolver->central();
+
+        return $centralConfig !== $tenantConfig && $this->tryDeliver($centralConfig, $email, $subject, $body);
     }
 
     protected function centralAdminEmail(): ?string

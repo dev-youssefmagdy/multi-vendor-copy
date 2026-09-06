@@ -35,6 +35,7 @@ class Product extends Model
         'stock',
         'min_stock',
         'manage_stock',
+        'out_of_stock_at',
         'sold_count',
         'is_taxable',
         'requires_shipping',
@@ -42,6 +43,7 @@ class Product extends Model
         'fixed_shipping_costs',
         'factory',
         'published_at',
+        'order_number',
     ];
 
     protected $appends = [
@@ -59,6 +61,7 @@ class Product extends Model
             'stock' => 'integer',
             'min_stock' => 'integer',
             'manage_stock' => 'boolean',
+            'out_of_stock_at' => 'datetime',
             'sold_count' => 'integer',
             'is_taxable' => 'boolean',
             'requires_shipping' => 'boolean',
@@ -93,6 +96,16 @@ class Product extends Model
         return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
     }
 
+    /**
+     * Countries this product is explicitly targeted at.
+     * An empty relation means "no country preference" — the product is
+     * available everywhere and is never demoted in storefront sorting.
+     */
+    public function countries(): BelongsToMany
+    {
+        return $this->belongsToMany(Country::class, 'product_country');
+    }
+
     public function shippingZones(): BelongsToMany
     {
         return $this->belongsToMany(ShippingZone::class)->withTimestamps();
@@ -122,7 +135,7 @@ class Product extends Model
 
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'model');
+        return $this->morphMany(File::class, 'model')->orderBy('sort_order')->orderBy('id');
     }
 
     public function getPrimaryImageUrlAttribute(): ?string
@@ -161,5 +174,43 @@ class Product extends Model
     public function isVisibleToTenants(): bool
     {
         return $this->status === ProductStatus::Published && !$this->trashed();
+    }
+
+    /**
+     * 'out_of_stock' when every variant (or the product itself, if it has no
+     * variants) has zero stock; 'partial' when only some variants are
+     * depleted; otherwise 'in_stock'.
+     */
+    public function stockStatus(): string
+    {
+        $variants = $this->relationLoaded('variants') ? $this->variants : $this->variants()->get();
+
+        if ($variants->isEmpty()) {
+            return (int) ($this->stock ?? 0) > 0 ? 'in_stock' : 'out_of_stock';
+        }
+
+        $outCount = $variants->filter(fn(ProductVariant $variant) => (int) $variant->stock <= 0)->count();
+
+        if ($outCount === 0) {
+            return 'in_stock';
+        }
+
+        return $outCount === $variants->count() ? 'out_of_stock' : 'partial';
+    }
+
+    /**
+     * Keep out_of_stock_at in sync with the current stock status: set once
+     * when the product becomes fully out of stock, cleared once stock is
+     * replenished. Uses a quiet save so it does not re-trigger observers.
+     */
+    public function syncOutOfStockAt(): void
+    {
+        $isOutOfStock = $this->stockStatus() === 'out_of_stock';
+
+        if ($isOutOfStock && $this->out_of_stock_at === null) {
+            $this->forceFill(['out_of_stock_at' => now()])->saveQuietly();
+        } elseif (!$isOutOfStock && $this->out_of_stock_at !== null) {
+            $this->forceFill(['out_of_stock_at' => null])->saveQuietly();
+        }
     }
 }

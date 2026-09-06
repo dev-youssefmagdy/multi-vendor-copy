@@ -12,15 +12,25 @@ use Illuminate\Http\Request;
 
 class BadgeProductsController extends Controller
 {
-    public function show(ProductBadge $badge): \Illuminate\View\View
+    public function show(Request $request, ProductBadge $badge): \Illuminate\View\View
     {
         $badgeTitle = match ($badge->text) {
             'new-in'       => 'New In Products',
             'best-selling' => 'Best Selling Products',
+            'featured'     => 'Featured Products',
+            'recommended'  => 'Recommended Products',
             default        => ucwords(str_replace('-', ' ', $badge->text)) . ' Products',
         };
 
-        $selectedProductIds = $badge->products()->pluck('products.id')->map(fn ($id) => (int) $id)->all();
+        $activeCountryId = $request->integer('country_id') ?: null;
+
+        $tenantId = tenant()->getTenantKey();
+        $countries = tenancy()->central(fn () => \App\Models\Country::query()
+            ->whereIn('id', \App\Models\TenantCountry::where('tenant_id', $tenantId)->where('is_active', true)->pluck('country_id'))
+            ->orderBy('name')
+            ->get(['id', 'iso2', 'name', 'flag_emoji']));
+
+        $selectedProductIds = $badge->productsForCountry($activeCountryId)->pluck('products.id')->map(fn ($id) => (int) $id)->all();
 
         $repo = app(TenantPanelRepository::class);
         $selectedProductLabels = $repo->productNamesForIds($selectedProductIds);
@@ -30,6 +40,8 @@ class BadgeProductsController extends Controller
         return view('tenant.badge.show', [
             'badge'                 => $badge,
             'badgeTitle'            => $badgeTitle,
+            'countries'             => $countries,
+            'activeCountryId'       => $activeCountryId,
             'selectedProductIds'    => $selectedProductIds,
             'selectedProductLabels' => $selectedProductLabels,
             'initialProducts'       => $initialProducts,
@@ -78,10 +90,31 @@ class BadgeProductsController extends Controller
 
     public function save(Request $request, ProductBadge $badge): RedirectResponse
     {
+        $countryId = $request->integer('country_id') ?: null;
         $ids = array_filter(array_map('intval', $request->input('product_ids', [])));
 
-        $badge->products()->sync($ids);
+        $existingOrder = $badge->productsForCountry($countryId)->pluck('product_badge_product.sort_order', 'products.id');
+        $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
 
-        return back()->with('status', 'Badge assignment saved — ' . count($ids) . ' products assigned.');
+        \DB::table('product_badge_product')
+            ->where('product_badge_id', $badge->id)
+            ->when($countryId === null, fn ($q) => $q->whereNull('country_id'), fn ($q) => $q->where('country_id', $countryId))
+            ->delete();
+
+        $now = now();
+        foreach ($ids as $id) {
+            \DB::table('product_badge_product')->insert([
+                'product_badge_id' => $badge->id,
+                'product_id'       => $id,
+                'country_id'       => $countryId,
+                'sort_order'       => $existingOrder[$id] ?? $nextOrder++,
+                'created_at'       => $now,
+                'updated_at'       => $now,
+            ]);
+        }
+
+        $label = $countryId ? ('country #' . $countryId) : 'Default';
+
+        return back()->with('status', 'Badge assignment saved — ' . count($ids) . " products assigned for {$label}.");
     }
 }

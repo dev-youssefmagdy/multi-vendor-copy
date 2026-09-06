@@ -1,0 +1,233 @@
+:root {
+  /* Brand / primary palette (ELORA baseline tokens — reused where colors match) */
+  --color-primary: #FF4D00;        /* ELORA/MAin */
+  --color-secondary: #FF522C;      /* Main Website/Main-clr */
+  --color-bg-main: #FDFDFD;        /* ELORA/fill */
+  --color-text-primary: #121212;   /* ELORA/Black */
+  --color-text-subtitle: #ADADAD;  /* ELORA/Subttitle */
+  --color-gray: #8F8F8F;           /* ELORA/GRAY */
+  --color-stroke: #D4D4D4;         /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424;          /* Black / Manti/Black */
+  --color-black-alt: #1B1B1B;      /* black */
+  --color-white: #FFFFFF;          /* Manti/White */
+  --color-success: #2AAF2F;        /* Manti/Green */
+  --color-error: #DE1709;          /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8A38F5;
+  --color-accent-purple-dark: #51218F;
+  --color-accent-purple-light: #B57DFF;
+  --color-accent-yellow: #FFD428;
+  --color-badge-purple: #9D00FF;
+  --color-surface: #F6F5F5;
+  --color-page-bg: #F4F4F4;
+  --color-footer-bg: #3B3B3B;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5B5B5B;
+  --color-footer-text-muted: #F2F2F2;
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4B4B4B;
+  --color-text-placeholder: #4C4C4C;
+  --color-hero-placeholder: #C3ACCF;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ============ Souqify (Screen 5) — new tokens ============ */
+  --color-brand-pink: #FF1A90;        /* Souqify brand pink — logo, CTAs, badges */
+  --color-topbar: #101010;            /* Desktop utility top bar background */
+  --color-topbar-text: #D1D5DC;       /* Utility top bar muted link text */
+  --color-text-heading: #191B23;      /* Product-card title text */
+  --color-text-slate: #464646;        /* "All Category" dropdown label */
+  --color-card-image-bg: #F3F3FE;     /* Product card image slot background */
+  --color-ribbon-red-1: #AC0202;      /* Delivery ribbon gradient stop 1 */
+  --color-ribbon-red-2: #E30000;      /* Delivery ribbon gradient stop 2 */
+  --color-ribbon-red-3: #9E0000;      /* Delivery ribbon gradient stop 3 */
+  --color-feature-text: #070707;      /* Desktop feature-strip heading text */
+  --color-feature-subtext: #444444;   /* Desktop feature-strip subtext */
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+html, body {
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending Now / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-brand-pink);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Trending Now mini-card carousel */
+.trending-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+
+/* "Shop by Category" scalloped divider background (Best Seller section) */
+.scalloped-top {
+  position: relative;
+}
+.scalloped-top::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background-image: radial-gradient(circle at 10px 0, transparent 12px, var(--color-brand-pink) 12.5px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+}
+
+/* Product-card image placeholder (New In / Trending Now / Flash Sale / Best Seller / Recommended) */
+.product-img-placeholder {
+  background: var(--color-card-image-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Delivery ribbon gradient used on product cards */
+.delivery-ribbon {
+  background: linear-gradient(228deg, var(--color-ribbon-red-1) 2%, var(--color-ribbon-red-2) 45%, var(--color-ribbon-red-3) 100%);
+}
+
+/* Mobile fixed bottom navigation bar */
+.mobile-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+}

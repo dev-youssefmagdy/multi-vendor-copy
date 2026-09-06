@@ -3,8 +3,10 @@
 namespace App\Helpers;
 
 use App\Models\Tenant\AdminUser;
+use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\PaymentGateway;
+use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Theme;
 use Illuminate\Support\Facades\Route;
@@ -33,15 +35,22 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'Products', 'route' => 'tenant.products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Own Products', 'route' => 'tenant.own-products.index', 'permission' => 'catalog.products.manage'],
+                            ['label' => 'Edit Requests', 'route' => 'tenant.products.edit-requests', 'permission' => 'catalog.products.manage', 'badge' => self::pendingEditRequestsCount() ?: null],
+                            ['label' => 'Product Requests', 'route' => 'tenant.product-requests.index', 'permission' => 'catalog.products.manage', 'badge' => self::unreadProductRequestsCount() ?: null],
                             ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
                             ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Featured Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'featured'], 'permission' => 'catalog.badges.manage'],
+                            ['label' => 'Recommended Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'recommended'], 'permission' => 'catalog.badges.manage'],
                         ]
                     ],
                     ['type' => 'link', 'label' => 'Orders', 'route' => 'tenant.orders.index', 'icon' => 'orders', 'permission' => 'sales.orders.view'],
+                    ['type' => 'link', 'label' => 'Returns', 'route' => 'tenant.returns.index', 'icon' => 'orders', 'permission' => 'sales.returns.manage'],
+                    ['type' => 'link', 'label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'icon' => 'dashboard', 'permission' => 'sales.returns.manage'],
                     ['type' => 'link', 'label' => 'Customers', 'route' => 'tenant.customers.index', 'icon' => 'admins', 'permission' => 'sales.customers.manage'],
                     ['type' => 'link', 'label' => 'Manufacturing Requests', 'route' => 'tenant.manufacturing.index', 'icon' => 'manufacturing', 'permission' => 'catalog.products.manage'],
                     ['type' => 'link', 'label' => 'Notifications', 'route' => 'tenant.notifications.index', 'icon' => 'notifications', 'permission' => 'dashboard.view'],
+                    ['type' => 'link', 'label' => 'Support', 'route' => 'tenant.support.index', 'icon' => 'admins', 'permission' => 'dashboard.view'],
                 ],
             ],
             [
@@ -82,13 +91,16 @@ class TenantNavigation
                         'icon' => 'pages',
                         'children' => [
                             ['label' => 'Themes', 'route' => 'tenant.store.themes', 'permission' => 'store.themes.manage'],
-                            ['label' => 'Theme Parts', 'route' => 'tenant.store.theme-parts', 'permission' => 'store.themes.manage'],
+                            ['label' => 'Page Builder', 'route' => 'tenant.store.page-builder', 'permission' => 'store.page-builder.manage'],
                             ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
                         ]
                     ],
+                    ['type' => 'link', 'label' => 'Target Countries', 'route' => 'tenant.store.target-countries', 'icon' => 'storefront', 'permission' => 'store.appearance.manage'],
                     ['type' => 'link', 'label' => 'Coupons', 'route' => 'tenant.store.coupons', 'icon' => 'payments', 'permission' => 'store.coupons.manage'],
-                    ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
+                    ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
                     ['type' => 'link', 'label' => 'Appearance', 'route' => 'tenant.store.appearance', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
+                    ['type' => 'link', 'label' => 'Banners', 'route' => 'tenant.store.banners.index', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
+                    ['type' => 'link', 'label' => 'Blade Theme', 'route' => 'tenant.store.blade-theme', 'icon' => 'code', 'permission' => 'store.blade-theme.manage'],
                     // Subscribers page hidden from navbar
                     // ['type' => 'link', 'label' => 'Subscribers', 'route' => 'tenant.settings.subscribers', 'icon' => 'blog', 'permission' => 'store.subscribers.manage'],
                 ],
@@ -104,6 +116,8 @@ class TenantNavigation
                             ['label' => 'Currencies', 'route' => 'tenant.settings.currencies', 'permission' => 'settings.regional.manage'],
                             // ['label' => 'Languages', 'route' => 'tenant.settings.languages', 'permission' => 'settings.regional.manage'],
                             ['label' => 'Languages Manage', 'route' => 'tenant.settings.languages-manage', 'permission' => 'settings.regional.manage'],
+                            ['label' => 'Translations', 'route' => 'tenant.settings.translations', 'permission' => 'settings.translations.manage'],
+                            ['label' => 'AI Translation', 'route' => 'tenant.settings.ai-translation', 'permission' => 'settings.translations.manage'],
                         ]
                     ],
                     [
@@ -121,13 +135,23 @@ class TenantNavigation
                         'icon' => 'settings',
                         'children' => [
                             ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Payment Readiness', 'route' => 'tenant.settings.payment-readiness', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
                             ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
+                            ['label' => 'Tracking', 'route' => 'tenant.settings.tracking', 'permission' => 'settings.tracking.manage'],
                             ['label' => 'Account Settings', 'route' => 'tenant.settings.account', 'permission' => 'settings.account.manage'],
                             ['label' => 'General Settings', 'route' => 'tenant.settings.general', 'permission' => 'settings.account.manage'],
+                            ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],
                         ]
                     ],
+                ],
+            ],
+            [
+                'label' => 'Help',
+                'items' => [
+                    ['type' => 'link', 'label' => 'Documentation', 'route' => 'tenant.help.index', 'icon' => 'faq', 'permission' => null],
                 ],
             ],
         ];
@@ -208,11 +232,11 @@ class TenantNavigation
         return false;
     }
 
-    /** Store-setup checklist progress, shown as a "x/4" badge on the Get Started nav item. */
+    /** Store-setup checklist progress, shown as a "x/7" badge on the Get Started nav item. */
     public static function onboardingSetupProgress(): array
     {
         $done = 0;
-        $total = 4;
+        $total = 7;
 
         if (self::logoIsConfigured()) {
             $done++;
@@ -226,8 +250,256 @@ class TenantNavigation
         if (Language::query()->where('is_active', true)->exists()) {
             $done++;
         }
+        if (self::profileComplete()) {
+            $done++;
+        }
+        if (self::storeDetailsComplete()) {
+            $done++;
+        }
+        if (self::complianceComplete()) {
+            $done++;
+        }
 
         return ['done' => $done, 'total' => $total];
+    }
+
+    /** Profile step: business name, logo, and a contact phone number set. */
+    public static function profileComplete(): bool
+    {
+        $tenant = tenant();
+
+        return self::logoIsConfigured()
+            && filled($tenant?->phone)
+            && filled($tenant?->shop_name);
+    }
+
+    /** Store-details step: store name, description, and address set. */
+    public static function storeDetailsComplete(): bool
+    {
+        $tenant = tenant();
+
+        return filled($tenant?->shop_name)
+            && filled($tenant?->description)
+            && filled($tenant?->address);
+    }
+
+    /** Compliance step: owner details, business registration, and bank info set. */
+    public static function complianceComplete(): bool
+    {
+        return self::complianceCompletionPercent() === 100;
+    }
+
+    /**
+     * Weighted percentage across the Compliance Center's required fields, used both
+     * for the Account Setup Progress "compliance info" step and the admin overview.
+     * Reads from the tenant's own `settings` table (group = 'compliance'); the
+     * caller is responsible for tenancy being initialized for the tenant in question.
+     */
+    public static function complianceCompletionPercent(mixed $tenant = null): int
+    {
+        $fields = [
+            'compliance_business_name',
+            'compliance_store_name',
+            'compliance_country',
+            'compliance_city',
+            'compliance_phone',
+            'compliance_email',
+            'compliance_owner_name',
+            'compliance_owner_id_number',
+            'compliance_registration_number',
+            'compliance_bank_name',
+            'compliance_bank_holder_name',
+            'compliance_bank_account_number',
+            'compliance_bank_iban',
+            'compliance_doc_national_id_path',
+        ];
+
+        $values = Setting::query()
+            ->whereIn('name', $fields)
+            ->pluck('value', 'name')
+            ->all();
+
+        $filledCount = 0;
+        foreach ($fields as $field) {
+            if (filled($values[$field] ?? null)) {
+                $filledCount++;
+            }
+        }
+
+        return (int) round(($filledCount / count($fields)) * 100);
+    }
+
+    /**
+     * The 10-step "Account Setup Progress" checklist (Prompt 33), each step
+     * worth an equal 10% share of the persistent progress widget.
+     */
+    public static function setupProgress(): array
+    {
+        $steps = [
+            [
+                'key' => 'email_verified',
+                'label' => 'Email verified',
+                'done' => self::emailVerified(),
+                'action_label' => 'Resend verification email',
+                'action_route' => 'tenant.dashboard',
+            ],
+            [
+                'key' => 'store_name_logo',
+                'label' => 'Store name and logo set',
+                'done' => self::profileComplete(),
+                'action_label' => 'Go to Account Settings',
+                'action_route' => 'tenant.settings.account',
+            ],
+            [
+                'key' => 'category_selected',
+                'label' => 'At least one category selected',
+                'done' => self::categorySelected(),
+                'action_label' => 'Manage Categories',
+                'action_route' => 'tenant.categories.index',
+            ],
+            [
+                'key' => 'product_synced',
+                'label' => 'At least one product synced',
+                'done' => self::productSynced(),
+                'action_label' => 'Manage Products',
+                'action_route' => 'tenant.products.index',
+            ],
+            [
+                'key' => 'theme_selected',
+                'label' => 'Theme selected',
+                'done' => self::themeSelected(),
+                'action_label' => 'Browse Themes',
+                'action_route' => 'tenant.store.themes',
+            ],
+            [
+                'key' => 'payment_gateway',
+                'label' => 'Payment gateway configured',
+                'done' => self::paymentGatewayIsConfigured(),
+                'action_label' => 'Configure Payments',
+                'action_route' => 'tenant.settings.payment-gateways',
+            ],
+            [
+                'key' => 'compliance_info',
+                'label' => 'Compliance info completed',
+                'done' => self::complianceComplete(),
+                'action_label' => 'Go to Compliance Center',
+                'action_route' => 'tenant.settings.compliance',
+            ],
+            [
+                'key' => 'default_pages_reviewed',
+                'label' => 'Default pages reviewed/edited',
+                'done' => self::defaultPagesReviewed(),
+                'action_label' => 'Review Pages',
+                'action_route' => 'tenant.store.pages',
+            ],
+            [
+                'key' => 'storefront_launched',
+                'label' => 'Storefront launched',
+                'done' => self::storefrontLaunched(),
+                'action_label' => 'Go to Dashboard',
+                'action_route' => 'tenant.dashboard',
+            ],
+        ];
+
+        $done = collect($steps)->filter(fn(array $step) => $step['done'])->count();
+        $total = count($steps);
+
+        foreach ($steps as &$step) {
+            $step['action_url'] = Route::has($step['action_route']) ? route($step['action_route']) : '#';
+        }
+        unset($step);
+
+        return [
+            'steps' => $steps,
+            'done' => $done,
+            'total' => $total,
+            'percent' => (int) round(($done / $total) * 100),
+        ];
+    }
+
+    public static function emailVerified(): bool
+    {
+        $admin = auth('tenant')->user();
+
+        return $admin instanceof AdminUser && $admin->hasVerifiedEmail();
+    }
+
+    public static function categorySelected(): bool
+    {
+        return Category::query()->exists();
+    }
+
+    public static function productSynced(): bool
+    {
+        return Product::query()->exists();
+    }
+
+    /** Count of the tenant's pending product name/description edit requests, shown as a nav badge. */
+    public static function pendingEditRequestsCount(): int
+    {
+        $tenantId = tenant()?->getTenantKey();
+
+        if (!$tenantId) {
+            return 0;
+        }
+
+        return tenancy()->central(fn() => \App\Models\ProductEditRequest::forTenant($tenantId)->where('status', 'pending')->count());
+    }
+
+    /** Count of the tenant's product requests with an unread admin reply, shown as a nav badge. */
+    public static function unreadProductRequestsCount(): int
+    {
+        $tenantId = tenant()?->getTenantKey();
+
+        if (!$tenantId) {
+            return 0;
+        }
+
+        return tenancy()->central(fn() => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count());
+    }
+
+    public static function themeSelected(): bool
+    {
+        return Theme::query()->where('is_active', true)->exists();
+    }
+
+    public static function paymentGatewayIsConfigured(): bool
+    {
+        return PaymentGateway::query()->where('is_active', true)->whereNotNull('connection_status')->exists();
+    }
+
+    public static function defaultPagesReviewed(): bool
+    {
+        return filled(Setting::query()->where('name', 'default_pages_reviewed_at')->value('value'));
+    }
+
+    public static function storefrontLaunched(): bool
+    {
+        // Consider the storefront "launched" once it is actually live
+        // (launch_ready flag set by the registration wizard), OR once
+        // all other 8 setup steps are complete — whichever comes first.
+        if ((bool) (tenant()?->launch_ready ?? false)) {
+            return true;
+        }
+
+        return self::allSetupStepsDone();
+    }
+
+    /**
+     * Returns true when all 8 non-launch prerequisites are satisfied.
+     * Used by StoreLaunchGate and storefrontLaunched() to auto-unlock stores
+     * that completed setup inside the panel without going through the wizard.
+     */
+    public static function allSetupStepsDone(): bool
+    {
+        return self::emailVerified()
+            && self::profileComplete()
+            && self::categorySelected()
+            && self::productSynced()
+            && self::themeSelected()
+            && self::paymentGatewayIsConfigured()
+            && self::complianceComplete()
+            && self::defaultPagesReviewed();
     }
 
     /** A logo counts as configured once a text wordmark is chosen or any image is uploaded. */

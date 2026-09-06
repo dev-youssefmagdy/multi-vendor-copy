@@ -14,7 +14,7 @@ class OwnProductsList extends ListPage
 
     public string $search = '';
     public string $statusFilter = '';
-    public string $outOfStockFilter = '';
+    public string $stockFilter = '';
 
     protected function pageMeta(): array
     {
@@ -32,12 +32,32 @@ class OwnProductsList extends ListPage
     protected function pageData(): array
     {
         $records = Product::query()
+            ->with(['badges', 'variants'])
             ->where('is_own_product', true)
             ->when(filled($this->search), function ($q) {
                 $q->whereHas('translations', fn($t) => $t->where('value', 'like', "%{$this->search}%"));
             })
             ->when(filled($this->statusFilter), fn($q) => $q->where('active', $this->statusFilter === 'active'))
-            ->when($this->outOfStockFilter === '1', fn($q) => $q->where('manage_stock', true)->where('stock', '<=', 0))
+            ->when($this->stockFilter === 'out', function ($q) {
+                $q->where(function ($noVar) {
+                    $noVar->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
+                })->orWhere(function ($hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
+                });
+            })
+            ->when($this->stockFilter === 'in', function ($q) {
+                $q->where(function ($noVar) {
+                    $noVar->whereDoesntHave('variants')->where(function ($nv) {
+                        $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
+                    });
+                })->orWhere(function ($hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '<=', 0));
+                });
+            })
+            ->when($this->stockFilter === 'partial', function ($q) {
+                $q->whereHas('variants', fn($v) => $v->where('stock', '<=', 0))
+                    ->whereHas('variants', fn($v) => $v->where('stock', '>', 0));
+            })
             ->latest()
             ->paginate(15);
 
@@ -51,16 +71,38 @@ class OwnProductsList extends ListPage
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Search by name...'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
-                ['label' => 'Stock', 'model' => 'outOfStockFilter', 'type' => 'select', 'options' => ['' => 'All stock levels', '1' => 'Out of stock']],
+                ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
             ],
             'statistics' => [
                 ['label' => 'Total Own Products', 'value' => $stats['total'], 'caption' => 'Products you added directly.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active', 'value' => $stats['active'], 'caption' => 'Currently visible in your store.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Inactive', 'value' => $stats['total'] - $stats['active'], 'caption' => 'Disabled from your storefront.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
-            'rows' => collect($records->items())->map(fn(Product $product) => [
+            'rowClasses' => collect($records->items())->map(fn(Product $product) => match ($product->stockStatus()) {
+                'out_of_stock' => 'row-out-of-stock',
+                'partial' => 'row-partial-stock',
+                default => '',
+            })->values()->all(),
+            'rows' => collect($records->items())->map(function (Product $product) {
+                $badgeTones = [
+                    'featured' => 'badge-violet',
+                    'recommended' => 'badge-green',
+                    'best-selling' => 'badge-amber',
+                    'new-in' => 'badge-cyan',
+                ];
+                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(ucfirst(str_replace('-', ' ', $badge->text))) . '</span>')->implode(' ');
+                $badgeCell = $badgePills !== '' ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">' . $badgePills . '</div>' : '';
+
+                $stockStatus = $product->stockStatus();
+                $titleStockBadge = match ($stockStatus) {
+                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>',
+                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>',
+                    default => '',
+                };
+
+                return [
                 '<div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div>'
-                . '<div class="entity-subtitle">Own product · No central shipping</div>',
+                . '<div class="entity-subtitle">Own product · No central shipping</div>' . $titleStockBadge . $badgeCell,
                 '<div class="entity-title">$' . e(number_format((float) $product->default_price, 2)) . '</div>',
                 '<div class="entity-title">' . ($product->stock !== null ? e($product->stock) : '<span class="entity-subtitle">Unlimited</span>') . '</div>',
                 '<span class="badge ' . ($product->active ? 'badge-green' : 'badge-amber') . '">' . e($product->active ? 'Active' : 'Inactive') . '</span>',
@@ -69,7 +111,8 @@ class OwnProductsList extends ListPage
                 . '<a href="' . route('tenant.own-products.edit', $product) . '"  class="btn btn-secondary btn-sm">Edit</a>'
                 . '<button type="button" class="btn btn-secondary btn-sm btn-danger" wire:click="deleteProduct(' . $product->id . ')" wire:confirm="Delete this product permanently?">Delete</button>'
                 . '</div>',
-            ])->all(),
+                ];
+            })->all(),
             'emptyTitle' => 'No own products yet',
             'emptyCopy' => 'Click "Add Product" to create your first own product.',
             'tableDescription' => $records->total() . ' own products found.',
@@ -97,14 +140,14 @@ class OwnProductsList extends ListPage
         $this->resetPage();
     }
 
-    public function updatedOutOfStockFilter(): void
+    public function updatedStockFilter(): void
     {
         $this->resetPage();
     }
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'outOfStockFilter']);
+        $this->reset(['search', 'statusFilter', 'stockFilter']);
         $this->resetPage();
     }
 }
