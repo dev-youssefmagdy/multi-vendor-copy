@@ -11,7 +11,7 @@
   style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
 >
   {{-- Media --}}
-  <div class="relative flex flex-col justify-end items-end p-[4px_4px] lg:p-[5px_6px] gap-[5px] lg:gap-[8px] w-full h-[115px] lg:h-[183px] isolate box-border">
+  <div class="relative flex flex-col justify-end items-end p-[4px_4px] lg:p-[5px_6px] gap-[5px] lg:gap-[8px] w-full h-[115px] lg:h-[183px] isolate overflow-hidden box-border">
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
