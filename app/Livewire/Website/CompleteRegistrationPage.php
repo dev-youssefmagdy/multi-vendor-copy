@@ -5,7 +5,6 @@ namespace App\Livewire\Website;
 use App\Jobs\SyncFixedShippingCostsToTenantsJob;
 use App\Jobs\SyncProductFixedShippingCosts;
 use App\Models\Category;
-use App\Models\Country;
 use App\Models\DnsRecord;
 use App\Models\DomainRequest;
 use App\Models\PendingRegistration;
@@ -47,10 +46,6 @@ class CompleteRegistrationPage extends Component
     // Step 2 – Category selection
     public array $selectedCategoryIds = [];
     public array $categoryPreviewTree = [];
-
-    // Step 3 – Target countries selection
-    public array $selectedCountryIds = [];
-    public string $countrySearch = '';
 
     // State flags
     public bool $shopNameTaken = false;
@@ -127,17 +122,6 @@ class CompleteRegistrationPage extends Component
 
         if (!empty($pending->category_ids)) {
             $this->selectedCategoryIds = array_map('strval', (array) $pending->category_ids);
-        }
-
-        if (!empty($pending->country_ids)) {
-            $this->selectedCountryIds = array_map('strval', (array) $pending->country_ids);
-        } else {
-            $this->selectedCountryIds = Country::query()
-                ->where('is_active_for_tenants', true)
-                ->where('is_free', true)
-                ->pluck('id')
-                ->map(fn ($id) => (string) $id)
-                ->all();
         }
 
         $this->loadDnsRecords();
@@ -299,13 +283,19 @@ class CompleteRegistrationPage extends Component
             'profitPercentage' => ['nullable', 'numeric', 'min:0', 'max:1000'],
         ]);
 
-        $this->step = $this->categoriesCount > 0 ? 2 : 3;
+        if ($this->categoriesCount > 0) {
+            $this->step = 2;
+            return;
+        }
+
+        $this->finalize(app(WebsiteRegistrationService::class), []);
     }
 
     /**
-     * Step 2 – validate category selection, advance to the countries step.
+     * Step 2 – validate category selection, then finalize registration.
+     * Target countries are selected afterward, on the store setup wizard.
      */
-    public function submitStep2(): void
+    public function submitStep2(WebsiteRegistrationService $registrationService): void
     {
         $this->validate([
             'selectedCategoryIds' => [
@@ -317,36 +307,11 @@ class CompleteRegistrationPage extends Component
             'selectedCategoryIds.*' => ['integer', Rule::exists('categories', 'id')],
         ]);
 
-        $this->step = 3;
-    }
-
-    /**
-     * Step 3 – validate target countries selection, then finalize.
-     */
-    public function submitStep3(WebsiteRegistrationService $registrationService): void
-    {
-        $this->validate([
-            'selectedCountryIds' => ['required', 'array', 'min:1'],
-            'selectedCountryIds.*' => [
-                'integer',
-                Rule::exists('countries', 'id')->where('is_active_for_tenants', true),
-            ],
-        ]);
-
-        $this->finalize(
-            $registrationService,
-            array_map('intval', $this->selectedCategoryIds),
-            array_map('intval', $this->selectedCountryIds)
-        );
+        $this->finalize($registrationService, array_map('intval', $this->selectedCategoryIds));
     }
 
     public function prevStep(): void
     {
-        if ($this->step === 3) {
-            $this->step = $this->categoriesCount > 0 ? 2 : 1;
-            return;
-        }
-
         $this->step = 1;
     }
 
@@ -383,7 +348,7 @@ class CompleteRegistrationPage extends Component
         $this->dnsChecking = false;
     }
 
-    protected function finalize(WebsiteRegistrationService $registrationService, array $categoryIds, array $countryIds = []): void
+    protected function finalize(WebsiteRegistrationService $registrationService, array $categoryIds): void
     {
         $pending = PendingRegistration::query()
             ->where('token', $this->token)
@@ -398,10 +363,6 @@ class CompleteRegistrationPage extends Component
             $pending->update(['category_ids' => $categoryIds]);
         }
 
-        if (!empty($countryIds)) {
-            $pending->update(['country_ids' => $countryIds]);
-        }
-
         $registrationData = [
             'name' => $this->name,
             'email' => $pending->email,
@@ -410,7 +371,6 @@ class CompleteRegistrationPage extends Component
             'phone' => $pending->phone ?? $this->phone,
             'shop_name' => $this->shopName,
             'category_ids' => !empty($categoryIds) ? $categoryIds : null,
-            'country_ids' => !empty($countryIds) ? $countryIds : null,
             'profit_percentage' => (float) ($this->profitPercentage ?: 0),
             'domain_type' => $this->domainType,
             'custom_domain' => $this->customDomain,
@@ -514,21 +474,9 @@ class CompleteRegistrationPage extends Component
             ? DnsRecord::query()->where('is_required', true)->orderBy('type')->orderBy('name')->get()
             : collect();
 
-        $countries = $this->step === 3
-            ? Country::query()
-                ->where('is_active_for_tenants', true)
-                ->orderByDesc('is_free')
-                ->orderBy('name')
-                ->get()
-                ->filter(fn (Country $country) => $this->countrySearch === ''
-                    || str_contains(strtolower((string) $country->name), strtolower($this->countrySearch)))
-                ->values()
-            : collect();
-
         return view('livewire.website.complete-registration', [
             'centralDomain' => $this->centralDomain,
             'rootCategories' => $rootCategories,
-            'countries' => $countries,
             'requiredDnsRecords' => $requiredDnsRecords,
             'categoryPreviewTree' => $this->categoryPreviewTree,
         ])->layout('layouts.website', ['title' => __('Complete Your Registration') . ' — Ecommet']);

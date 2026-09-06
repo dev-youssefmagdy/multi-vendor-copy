@@ -185,17 +185,10 @@
                     <div class="flex-1 h-px bg-gray-200"></div>
                     @if($categoriesCount > 0)
                         <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 2 ? 'bg-primary text-white' : ($step > 2 ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500') }}">
-                                @if($step > 2)<i class="fas fa-check text-xs"></i>@else 2 @endif
-                            </div>
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 2 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500' }}">2</div>
                             <span class="text-sm font-medium {{ $step === 2 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Choose Categories') }}</span>
                         </div>
-                        <div class="flex-1 h-px bg-gray-200"></div>
                     @endif
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $step === 3 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500' }}">3</div>
-                        <span class="text-sm font-medium {{ $step === 3 ? 'text-gray-900' : 'text-gray-400' }}">{{ __('Target Countries') }}</span>
-                    </div>
                 </div>
 
                 {{-- ── STEP 1: Shop setup ──────────────────────────────────── --}}
@@ -382,7 +375,11 @@
                         wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep1"
                         class="btn-primary w-full py-3.5 font-bold text-sm rounded-xl">
                         <span wire:loading.remove wire:target="submitStep1">
-                            {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                            @if($categoriesCount > 0)
+                                {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                            @else
+                                {{ __('Create My Store') }} <i class="fas fa-rocket ms-1.5"></i>
+                            @endif
                         </span>
                         <span wire:loading wire:target="submitStep1" class="flex items-center justify-center gap-2">
                             <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -390,7 +387,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
-                            {{ __('Processing…') }}
+                            {{ $categoriesCount > 0 ? __('Processing…') : __('Provisioning database…') }}
                         </span>
                     </button>
                 </div>
@@ -558,74 +555,9 @@
                             wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep2"
                             class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
                             <span wire:loading.remove wire:target="submitStep2">
-                                {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                            </span>
-                            <span wire:loading wire:target="submitStep2">
-                                {{ __('Please wait…') }}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-                @endif
-
-                {{-- ── STEP 3: Target countries selection ──────────────────── --}}
-                @if($step === 3)
-                <div class="space-y-5">
-                    <div>
-                        <h2 class="text-lg font-extrabold text-gray-900 mb-1">
-                            {{ __('Which countries will you sell to?') }}
-                        </h2>
-                        <p class="text-sm text-gray-600 mb-4">
-                            {{ __('Countries marked Free are included at no extra cost. Select all the countries you plan to ship to.') }}
-                        </p>
-
-                        <input wire:model.live.debounce.300ms="countrySearch" type="text"
-                            placeholder="{{ __('Search countries...') }}"
-                            class="w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 mb-3">
-
-                        @if($countries->isEmpty())
-                            <div class="p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-500">
-                                <i class="fas fa-info-circle me-1.5 text-gray-400"></i>
-                                {{ __('No countries match your search.') }}
-                            </div>
-                        @else
-                            <div class="max-h-80 overflow-y-auto rounded-xl border border-gray-200 divide-y divide-gray-100">
-                                @foreach($countries as $country)
-                                    <label class="flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50">
-                                        <span class="flex items-center gap-2 text-sm text-gray-800">
-                                            <input type="checkbox" wire:model="selectedCountryIds" value="{{ $country->id }}"
-                                                class="rounded border-gray-300 text-primary focus:ring-primary/30">
-                                            @if($country->flag_emoji) <span>{{ $country->flag_emoji }}</span> @endif
-                                            {{ $country->name ?: $country->iso2 }}
-                                        </span>
-                                        @if($country->is_free)
-                                            <span class="text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full whitespace-nowrap">{{ __('FREE') }}</span>
-                                        @endif
-                                    </label>
-                                @endforeach
-                            </div>
-                            <p class="text-xs text-gray-400 mt-2">
-                                {{ __(':count countries selected', ['count' => count($selectedCountryIds)]) }}
-                            </p>
-                        @endif
-
-                        @error('selectedCountryIds')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                        @error('selectedCountryIds.*')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button wire:click="prevStep" type="button"
-                            class="flex-1 py-3.5 font-bold text-sm rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-colors">
-                            <i class="fas fa-arrow-left me-1.5"></i> {{ __('Back') }}
-                        </button>
-
-                        <button wire:click="submitStep3" type="button" wire:loading.attr="disabled"
-                            wire:loading.class="opacity-75 cursor-not-allowed" wire:target="submitStep3"
-                            class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
-                            <span wire:loading.remove wire:target="submitStep3">
                                 {{ __('Create My Store') }} <i class="fas fa-rocket ms-1.5"></i>
                             </span>
-                            <span wire:loading wire:target="submitStep3" class="flex items-center justify-center gap-2">
+                            <span wire:loading wire:target="submitStep2" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
