@@ -11,11 +11,19 @@
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
+          $variantWeight = (int) ($variant?->centralVariant?->weight_grams ?? 0);
+          $weightGrams = $variantWeight > 0
+              ? $variantWeight
+              : (int) ($product->centralProduct->weight_grams ?? $product->weight_grams ?? 0);
+
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : 'New',
+              'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
+              'badgeColor' => $hasDiscount ? '#fff' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 25),
-              'weight' => '',
+              'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
@@ -46,8 +54,8 @@
         <div class="swiper card-swiper new-in-swiper">
           <div class="swiper-wrapper" id="newInWrapper">
             @foreach ($newInCards as $p)
-              <div class="swiper-slide h-auto !w-[210px] lg:!w-[260px]">
-                @include('themes.elora.pages.home-v6.sections.partials.product_card', ['p' => $p])
+              <div class="swiper-slide h-auto">
+                @include('themes.elora.pages.home-v6.sections.partials.new_in_card', ['p' => $p])
               </div>
             @endforeach
           </div>

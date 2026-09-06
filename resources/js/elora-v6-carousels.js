@@ -3,6 +3,12 @@
 // (resources/views/themes/elora/pages/home-v6/sections/*.blade.php and their
 // partials/ subfolder), so this file only mounts Swiper on the existing DOM.
 
+// New In: "auto" — new_in_card carries its own fixed px size (192.01x290
+// mobile / 282.43x426.58 desktop), tuned so "auto" naturally shows ~1.5
+// cards on mobile and ~4.5 on desktop at this section's actual container
+// width. A numeric slidesPerView would instead force slide width to
+// container/N regardless of the card's fixed size, causing the same
+// overlap bug fixed for Best Seller (see home-v6.css).
 function mountCarousel({ wrapperId, prevId, nextId }) {
     const wrapper = document.getElementById(wrapperId);
     if (!wrapper) return;
