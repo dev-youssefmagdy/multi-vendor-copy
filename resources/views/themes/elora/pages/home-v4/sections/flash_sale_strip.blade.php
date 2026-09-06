@@ -27,7 +27,7 @@
 
 @if ($flashSaleProducts->isNotEmpty())
 <section
-  class="texture-bg texture-hard px-[16px] lg:px-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[24px] lg:gap-[28px]"
+  class="texture-bg texture-hard ps-[16px] lg:ps-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[24px] lg:gap-[28px]"
   aria-label="{{ __('Flash Sale') }}"
 >
   <img src="{{ asset('elora-4/assets/images/flash-sale-texture.png') }}" alt="" class="texture-overlay" aria-hidden="true" />
@@ -98,29 +98,6 @@
         </div>
       </div>
 
-      {{-- Prev / Next arrows (desktop only) --}}
-      @if ($flashSaleProducts->count() > 2)
-        <button
-          type="button"
-          class="flash-arrow flash-prev hidden lg:flex"
-          data-flash-target="{{ $flashId }}"
-          aria-label="{{ __('Previous') }}"
-        >
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="flash-arrow flash-next hidden lg:flex"
-          data-flash-target="{{ $flashId }}"
-          aria-label="{{ __('Next') }}"
-        >
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-          </svg>
-        </button>
-      @endif
 
       {{-- Dot indicators --}}
       <div class="flash-dots" id="{{ $flashId }}-dots"></div>

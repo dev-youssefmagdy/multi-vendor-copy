@@ -26,7 +26,11 @@ function mountCategories() {
     slidesPerView: "auto",
     spaceBetween: 16,
     breakpoints: {
-      1024: { spaceBetween: 32 },
+      // Exactly 8 categories are rendered server-side (categories.take(8)),
+      // so a numeric slidesPerView here shows all of them at once on
+      // desktop with no swiping needed — each slide's width is Swiper's own
+      // computed 1/8th share of the container, not the mobile fixed px.
+      1024: { slidesPerView: 8, spaceBetween: 32 },
     },
   });
 }
@@ -83,12 +87,51 @@ function mountBestSeller() {
   });
 }
 
+// Best Seller on mobile: a real swipeable carousel, 2 columns x 2 rows per
+// page (Swiper's grid module), instead of the desktop's single-row fanned
+// stack — matches the reference design's "2 rows, 2 cards per row" mobile
+// layout while still letting you swipe to further products.
+function mountBestSellerMobile() {
+  const wrapper = document.getElementById("bestSellerMobileWrapper");
+  if (!wrapper) return;
+  return new Swiper(wrapper.closest(".swiper"), {
+    slidesPerView: 2,
+    slidesPerGroup: 2,
+    spaceBetween: 24,
+    grid: { rows: 2, fill: "row" },
+  });
+}
+
+// Shop by Category: mobile pages 2 columns x 2 rows (same grid-module
+// technique as Best Seller mobile above), desktop switches to a plain
+// single-row carousel showing 6 slides per view.
+function mountShopByCategory() {
+  const wrapper = document.getElementById("shopByCategoryWrapper");
+  if (!wrapper) return;
+  return new Swiper(wrapper.closest(".swiper"), {
+    slidesPerView: 2,
+    slidesPerGroup: 2,
+    spaceBetween: 8,
+    grid: { rows: 2, fill: "row" },
+    breakpoints: {
+      1024: {
+        slidesPerView: 6,
+        slidesPerGroup: 6,
+        spaceBetween: 24,
+        grid: { rows: 1, fill: "row" },
+      },
+    },
+  });
+}
+
 function initCarousels() {
   mountNewIn();
   mountCategories();
   mountTrending();
   mountFlashSale();
   mountBestSeller();
+  mountBestSellerMobile();
+  mountShopByCategory();
 }
 
 let carouselsInitialized = false;

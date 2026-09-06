@@ -1,5 +1,5 @@
     <section
-      class="flex items-center justify-center px-[16px] py-[12px] lg:py-[8px] md:mt-[48px]! mt-6!"
+      class="flex items-center justify-center px-[16px] py-[12px] lg:py-[8px] md:mt-[48px]! mt-6! mb-6!"
       style="background: var(--color-brand-orange)"
     >
       <div class="flex items-center gap-[12px] lg:gap-[19px]">

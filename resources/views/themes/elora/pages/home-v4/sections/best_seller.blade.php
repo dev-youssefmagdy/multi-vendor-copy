@@ -15,7 +15,22 @@
       <h2 class="relative font-bold text-[24px] lg:text-[36px] text-white">
         {{ __('Best Seller') }}
       </h2>
-      <div class="relative w-full">
+      {{-- Mobile: swipeable 2-col x 2-row grid carousel (Swiper's grid
+           module) — 2 rows of 2 cards per page, swipe for more products. --}}
+      <div class="relative w-full lg:hidden">
+        <div class="swiper best-seller-mobile-swiper">
+          <div class="swiper-wrapper" id="bestSellerMobileWrapper">
+            @foreach ($bestSellerProducts as $p)
+              <div class="swiper-slide">
+                @include('themes.elora.pages.home-v4.sections.partials.best_seller_mobile_card', ['p' => $p])
+              </div>
+            @endforeach
+          </div>
+        </div>
+      </div>
+
+      {{-- Desktop: swiper carousel --}}
+      <div class="relative w-full hidden lg:block">
         <div class="swiper card-swiper best-seller-swiper">
           <div class="swiper-wrapper" id="bestSellerWrapper">
             @foreach ($bestSellerProducts as $p)

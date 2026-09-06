@@ -576,9 +576,47 @@ body {
   transform: rotate(0deg);
 }
 
+/* Best Seller mobile: 2-col x 2-row grid-swiper (Swiper's grid module).
+   The swiper needs an explicit height so Swiper's per-row math
+   (slide height = (100% - gap) / rows) has something real to divide. */
+.best-seller-mobile-swiper {
+  height: 561.42px !important; /* 2 * 268.71px card + 24px row gap */
+}
+#bestSellerMobileWrapper .swiper-slide {
+  transition: transform 0.2s ease;
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 1) {
+  transform: rotate(4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 2) {
+  transform: rotate(-4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 3) {
+  transform: rotate(-4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 4) {
+  transform: rotate(4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:active {
+  transform: rotate(0deg);
+}
+
 /* Shop by Category tile hover chip */
 .category-tile-chip {
   background: var(--color-icon-chip-bg);
+}
+
+/* Shop by Category carousel: mobile pages 2x2 (Swiper grid module needs an
+   explicit container height so its per-row math — slide height =
+   (100% - gap) / rows — has something real to divide), desktop is a single
+   row of 6, so the container only needs to be one tile tall. */
+.shop-by-category-swiper {
+  height: 264px !important; /* 2 * 128px tile + 8px row gap */
+}
+@media (min-width: 1024px) {
+  .shop-by-category-swiper {
+    height: 128px !important;
+  }
 }
 
 /* New In: orange fill with concentric sunburst rings radiating from the heading corner */
