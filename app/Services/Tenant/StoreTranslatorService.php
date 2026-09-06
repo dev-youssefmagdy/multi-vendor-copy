@@ -90,11 +90,12 @@ class StoreTranslatorService
     /**
      * Translates every field of every row of $modelClass into $targetLocale in one pass:
      * a single query pulls all existing source/target translation rows (no N+1, no per-row
-     * chunking), the whole pending text set is sent through translateBatch (which chunks
-     * internally for the OpenAI API), and results are written back with one bulk upsert
-     * keyed on the table's (language_id, translatable_type, translatable_id, field) unique
-     * index. This scales to several thousand rows without the per-chunk overhead of
-     * chunkById() + per-model delete/recreate.
+     * chunking), the pending fields are grouped by row id into {id, translations} records
+     * and sent through translateGroupedPending (one OpenAI request per 100-record chunk,
+     * mirroring ids/keys back), and results are written back with one bulk upsert keyed on
+     * the table's (language_id, translatable_type, translatable_id, field) unique index.
+     * This scales to several thousand rows without the per-chunk overhead of chunkById() +
+     * per-model delete/recreate.
      */
     public function translateModel(
         string $modelClass,
