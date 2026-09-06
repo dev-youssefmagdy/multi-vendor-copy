@@ -30,7 +30,7 @@
       </div>
 
       {{-- Desktop: swiper carousel --}}
-      <div class="relative w-full hidden lg:block">
+      <div class="w-full hidden lg:block">
         <div class="swiper card-swiper best-seller-swiper">
           <div class="swiper-wrapper" id="bestSellerWrapper">
             @foreach ($bestSellerProducts as $p)
@@ -38,30 +38,7 @@
             @endforeach
           </div>
         </div>
-        <button
-          id="bestSellerPrev"
-          type="button"
-          aria-label="Previous"
-          class="swiper-nav-btn swiper-nav-prev"
-        >
-          <img
-            src="{{ asset('elora-4/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
-            alt=""
-          />
-        </button>
-        <button
-          id="bestSellerNext"
-          type="button"
-          aria-label="Next"
-          class="swiper-nav-btn swiper-nav-next"
-        >
-          <img
-            src="{{ asset('elora-4/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
-            alt=""
-          />
-        </button>
+  
       </div>
       <a
         href="{{ route('tenant.storefront.best-selling') }}"

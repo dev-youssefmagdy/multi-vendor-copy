@@ -124,11 +124,48 @@ function mountShopByCategory() {
   });
 }
 
+// Flash Sale mobile: "card effect" carousel — one product fully visible at a
+// time (a static decorative card peeks from behind it, per the reference
+// design), with a floating discount badge + "Only $X" price pill that swap
+// to match whichever product is currently active.
+function mountFlashSaleMobile() {
+  const wrapper = document.getElementById("flashMobileWrapper");
+  if (!wrapper) return;
+
+  const badgeEl = document.getElementById("flashMobileBadge");
+  const priceEl = document.getElementById("flashMobilePrice");
+
+  const applyActive = (sw) => {
+    const active = sw.slides[sw.activeIndex];
+    if (!active) return;
+    const discount = active.dataset.discount;
+    const price = active.dataset.price;
+    if (badgeEl) {
+      if (discount) {
+        badgeEl.hidden = false;
+        badgeEl.textContent = discount;
+      } else {
+        badgeEl.hidden = true;
+      }
+    }
+    if (priceEl && price) {
+      priceEl.textContent = priceEl.dataset.template.replace("%s", price);
+    }
+  };
+
+  return new Swiper(wrapper.closest(".swiper"), {
+    slidesPerView: 1,
+    centeredSlides: true,
+    on: { init: applyActive, slideChange: applyActive },
+  });
+}
+
 function initCarousels() {
   mountNewIn();
   mountCategories();
   mountTrending();
   mountFlashSale();
+  mountFlashSaleMobile();
   mountBestSeller();
   mountBestSellerMobile();
   mountShopByCategory();

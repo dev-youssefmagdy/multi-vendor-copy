@@ -108,6 +108,19 @@ body {
   }
 }
 
+/* Flash Sale mobile "card effect" carousel — Swiper's own unlayered CSS
+   sets `.swiper { position: relative }`, which beats Tailwind's layered
+   `absolute` utility on this element regardless of source order, so
+   `inset-0` silently did nothing and the container collapsed to its
+   content's height instead of filling the 262x191 card. !important forces
+   this past that tie. */
+.flash-mobile-swiper {
+  position: absolute !important;
+  inset: 0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
 /* ── Flash Sale pure-JS slider ─────────────────────────────── */
 .flash-viewport {
   overflow: hidden;
@@ -176,29 +189,6 @@ body {
 .flash-arrow:disabled { opacity: 0.35; cursor: default; }
 .flash-prev { left: -20px; }
 .flash-next { right: -20px; }
-
-/* Dot indicators */
-.flash-dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding-top: 10px;
-}
-.flash-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: rgba(255,255,255,0.4);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: width 0.2s, background 0.2s;
-}
-.flash-dot.is-active {
-  width: 22px;
-  background: white;
-}
 
 /* ── Flash sale card ────────────────────────────────────────── */
 .flash-card-wrap {

@@ -176,13 +176,23 @@ function initFlashCountdown() {
   const endTime = new Date(endIso).getTime();
   if (isNaN(endTime)) return;
 
-  const hhEl = section.querySelector("[data-flash-hh]");
-  const mmEl = section.querySelector("[data-flash-mm]");
-  const ssEl = section.querySelector("[data-flash-ss]");
-  if (!hhEl || !mmEl || !ssEl) return;
+  // querySelectorAll, not querySelector — the mobile layout duplicates its
+  // own set of hh/mm/ss boxes (different colors) alongside the desktop
+  // ones, both nested under this same [data-flash-countdown] section, and
+  // both need to tick in sync.
+  const hhEls = section.querySelectorAll("[data-flash-hh]");
+  const mmEls = section.querySelectorAll("[data-flash-mm]");
+  const ssEls = section.querySelectorAll("[data-flash-ss]");
+  if (!hhEls.length || !mmEls.length || !ssEls.length) return;
 
   function pad(n) {
     return String(n).padStart(2, "0");
+  }
+
+  function setText(list, text) {
+    list.forEach(function (el) {
+      el.textContent = text;
+    });
   }
 
   function tick() {
@@ -198,9 +208,9 @@ function initFlashCountdown() {
     const mm = Math.floor((totalSecs % 3600) / 60);
     const ss = totalSecs % 60;
 
-    hhEl.textContent = pad(hh);
-    mmEl.textContent = pad(mm);
-    ssEl.textContent = pad(ss);
+    setText(hhEls, pad(hh));
+    setText(mmEls, pad(mm));
+    setText(ssEls, pad(ss));
 
     if (diff > 0) {
       setTimeout(tick, 1000);
