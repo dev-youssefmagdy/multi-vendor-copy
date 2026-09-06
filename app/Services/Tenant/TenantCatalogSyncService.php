@@ -662,6 +662,11 @@ class TenantCatalogSyncService
             ->whereNotNull('central_language_id')
             ->exists();
 
+        // Resolved once for the whole run instead of per-product inside the loop below.
+        $categoryIdMap = Category::query()
+            ->whereNotNull('central_category_id')
+            ->pluck('id', 'central_category_id');
+
         foreach ($products as $product) {
             /** @var CentralProduct $product */
             $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $product->id]);
@@ -693,7 +698,9 @@ class TenantCatalogSyncService
                 $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
                 ['name', 'description', 'meta_keywords']
             ));
-            $tenantProduct->categories()->sync(Category::query()->whereIn('central_category_id', $product->categories->pluck('id'))->pluck('id')->all());
+            $tenantProduct->categories()->sync(
+                $product->categories->pluck('id')->map(fn($id) => $categoryIdMap[$id] ?? null)->filter()->values()->all()
+            );
 
             if ($isNewProduct && $hasPaidTranslation) {
                 $tenantProduct->update(['needs_ai_translation' => true]);

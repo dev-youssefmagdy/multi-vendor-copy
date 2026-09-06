@@ -23,9 +23,11 @@ use App\Models\HomeVariant;
 use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
 use App\Services\Preview\PreviewOverrides;
+use App\Support\CacheVersion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -75,6 +77,23 @@ class StorefrontRepository
     private function detectedCountry(): ?\App\Models\Country
     {
         return $this->memo['detected_country'] ??= app(CountryDetectorService::class)->detect(request());
+    }
+
+    /**
+     * Cache a query result behind a version-tagged key: the key embeds the
+     * current cache version of each tag, so it stays valid until a write to
+     * one of those models bumps its tag (see CacheVersionObserver) — no TTL
+     * race, no need to flush by pattern (the `file` driver doesn't support tags).
+     *
+     * @param  string[]  $tags  Model class basenames this result depends on.
+     */
+    protected function cacheRemember(string $key, array $tags, \Closure $callback, ?int $ttl = null)
+    {
+        $ttl ??= (int) config('cache.storefront.default_ttl', 3600);
+        $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
+        $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
+
+        return Cache::driver('file')->remember($fullKey, $ttl, $callback);
     }
 
     protected function customerCountryId(): ?int
@@ -401,7 +420,7 @@ class StorefrontRepository
      */
     protected function appearanceSettings(): array
     {
-        return $this->memo['appearance_settings'] ??= Setting::query()
+        return $this->memo['appearance_settings'] ??= $this->cacheRemember('appearance_settings', ['Setting'], fn() => Setting::query()
             ->whereIn('name', [
                 'store_name',
                 'logo_path',
@@ -421,7 +440,7 @@ class StorefrontRepository
             ->with('translations.language')
             ->get()
             ->keyBy('name')
-            ->all();
+            ->all());
     }
 
     public function storeName(): string
@@ -496,28 +515,28 @@ class StorefrontRepository
 
     public function socialLinks(): Collection
     {
-        return $this->memo['social_links'] ??= SocialLink::query()->orderBy('serial_number')->get();
+        return $this->memo['social_links'] ??= $this->cacheRemember('social_links', ['SocialLink'], fn() => SocialLink::query()->orderBy('serial_number')->get());
     }
 
     // ─── Languages & Currencies ──────────────────────────────────────────────
 
     public function activeLanguages(): Collection
     {
-        return $this->memo['active_languages'] ??= Language::query()
+        return $this->memo['active_languages'] ??= $this->cacheRemember('active_languages', ['Language'], fn() => Language::query()
             ->where('is_active', true)
             ->orderBy('sort_order')->orderByDesc('is_default')
 
             ->with('imageFile')
-            ->get();
+            ->get());
     }
 
     public function activeCurrencies(): Collection
     {
-        return $this->memo['active_currencies'] ??= Currency::query()
+        return $this->memo['active_currencies'] ??= $this->cacheRemember('active_currencies', ['Currency'], fn() => Currency::query()
             ->where('is_active', true)
             ->orderByDesc('is_default')
             ->orderBy('code')
-            ->get();
+            ->get());
     }
 
     public function currentLanguage(): ?Language
@@ -606,41 +625,43 @@ class StorefrontRepository
 
         $country = $this->detectedCountry();
 
-        if ($country) {
-            // Find country-specific active themes allowing this country, ordered
-            // by specificity (ascending total allowed country count). We join the
-            // pivot twice — once to filter, once to count — which is fine for the
-            // small number of themes a tenant has.
-            $specific = Theme::query()
-                ->where('is_universal', false)
-                ->where('is_active', true)
-                ->whereExists(function ($q) use ($country) {
-                    $q->select(DB::raw(1))
-                        ->from('theme_country')
-                        ->whereColumn('theme_country.theme_id', 'themes.id')
-                        ->where('theme_country.country_id', $country->id)
-                        ->where('theme_country.is_enabled', true);
-                })
-                ->withCount([
-                    'countries as allowed_countries_count' => function ($q) {
-                        $q->where('is_enabled', true);
-                    }
-                ])
-                ->orderBy('allowed_countries_count')
-                ->orderBy('id')
-                ->first();
+        return $this->memo['current_theme'] = $this->cacheRemember('current_theme_' . ($country?->id ?? 'default'), ['Theme'], function () use ($country) {
+            if ($country) {
+                // Find country-specific active themes allowing this country, ordered
+                // by specificity (ascending total allowed country count). We join the
+                // pivot twice — once to filter, once to count — which is fine for the
+                // small number of themes a tenant has.
+                $specific = Theme::query()
+                    ->where('is_universal', false)
+                    ->where('is_active', true)
+                    ->whereExists(function ($q) use ($country) {
+                        $q->select(DB::raw(1))
+                            ->from('theme_country')
+                            ->whereColumn('theme_country.theme_id', 'themes.id')
+                            ->where('theme_country.country_id', $country->id)
+                            ->where('theme_country.is_enabled', true);
+                    })
+                    ->withCount([
+                        'countries as allowed_countries_count' => function ($q) {
+                            $q->where('is_enabled', true);
+                        }
+                    ])
+                    ->orderBy('allowed_countries_count')
+                    ->orderBy('id')
+                    ->first();
 
-            if ($specific) {
-                return $this->memo['current_theme'] = $specific;
+                if ($specific) {
+                    return $specific;
+                }
             }
-        }
 
-        return $this->memo['current_theme'] = Theme::query()
-            ->where('is_universal', true)
-            ->where('is_active', true)
-            ->orderBy('id')
-            ->first()
-            ?? Theme::query()->where('is_universal', true)->orderBy('id')->first();
+            return Theme::query()
+                ->where('is_universal', true)
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->first()
+                ?? Theme::query()->where('is_universal', true)->orderBy('id')->first();
+        });
     }
 
     /**
@@ -672,32 +693,39 @@ class StorefrontRepository
         }
 
         $country = $this->detectedCountry();
-        $tenantChoice = null;
 
-        if ($country) {
-            $tenantChoice = TenantHomeVariant::query()
-                ->where('theme_id', $theme->id)
-                ->where('country_id', $country->id)
-                ->first();
-        }
+        return $this->memo['current_home_variant'] = $this->cacheRemember(
+            'current_home_variant_' . $theme->id . '_' . ($country?->id ?? 'default'),
+            ['Theme', 'TenantHomeVariant', 'HomeVariant'],
+            function () use ($theme, $country) {
+                $tenantChoice = null;
 
-        $tenantChoice ??= TenantHomeVariant::query()
-            ->where('theme_id', $theme->id)
-            ->whereNull('country_id')
-            ->first();
+                if ($country) {
+                    $tenantChoice = TenantHomeVariant::query()
+                        ->where('theme_id', $theme->id)
+                        ->where('country_id', $country->id)
+                        ->first();
+                }
 
-        if ($tenantChoice) {
-            $variant = tenancy()->central(fn() => HomeVariant::query()->find($tenantChoice->home_variant_id));
+                $tenantChoice ??= TenantHomeVariant::query()
+                    ->where('theme_id', $theme->id)
+                    ->whereNull('country_id')
+                    ->first();
 
-            if ($variant) {
-                return $this->memo['current_home_variant'] = $variant;
-            }
-        }
+                if ($tenantChoice) {
+                    $variant = tenancy()->central(fn() => HomeVariant::query()->find($tenantChoice->home_variant_id));
 
-        return $this->memo['current_home_variant'] = tenancy()->central(fn() => HomeVariant::forTheme($theme->slug)
-            ->where('is_default', true)
-            ->where('is_active', true)
-            ->first());
+                    if ($variant) {
+                        return $variant;
+                    }
+                }
+
+                return tenancy()->central(fn() => HomeVariant::forTheme($theme->slug)
+                    ->where('is_default', true)
+                    ->where('is_active', true)
+                    ->first());
+            },
+        );
     }
 
     /**
@@ -720,27 +748,33 @@ class StorefrontRepository
         }
 
         $defaults = (array) ($variant->colors ?? []);
-
         $country = $this->detectedCountry();
-        $override = null;
 
-        if ($country) {
-            $override = TenantThemeColor::query()
-                ->where('theme_id', $theme->id)
-                ->where('home_variant_id', $variant->id)
-                ->where('country_id', $country->id)
-                ->value('colors');
-        }
+        return $this->memo['resolved_theme_colors'] = $this->cacheRemember(
+            'resolved_theme_colors_' . $theme->id . '_' . $variant->id . '_' . ($country?->id ?? 'default'),
+            ['TenantThemeColor'],
+            function () use ($defaults, $theme, $variant, $country) {
+                $override = null;
 
-        $override ??= TenantThemeColor::query()
-            ->where('theme_id', $theme->id)
-            ->where('home_variant_id', $variant->id)
-            ->whereNull('country_id')
-            ->value('colors');
+                if ($country) {
+                    $override = TenantThemeColor::query()
+                        ->where('theme_id', $theme->id)
+                        ->where('home_variant_id', $variant->id)
+                        ->where('country_id', $country->id)
+                        ->value('colors');
+                }
 
-        $override = $override ? (is_array($override) ? $override : json_decode($override, true)) : [];
+                $override ??= TenantThemeColor::query()
+                    ->where('theme_id', $theme->id)
+                    ->where('home_variant_id', $variant->id)
+                    ->whereNull('country_id')
+                    ->value('colors');
 
-        return $this->memo['resolved_theme_colors'] = array_merge($defaults, $override ?: []);
+                $override = $override ? (is_array($override) ? $override : json_decode($override, true)) : [];
+
+                return array_merge($defaults, $override ?: []);
+            },
+        );
     }
 
 
@@ -754,23 +788,25 @@ class StorefrontRepository
 
         $countryId = $this->detectedCountry()?->id;
 
-        if ($countryId) {
-            $countryBanners = Banner::query()
+        return $this->memo['active_banners'] = $this->cacheRemember('active_banners_' . ($countryId ?? 'default'), ['Banner'], function () use ($countryId) {
+            if ($countryId) {
+                $countryBanners = Banner::query()
+                    ->with('translations.language')
+                    ->where('country_id', $countryId)
+                    ->orderBy('serial_number')
+                    ->get();
+
+                if ($countryBanners->isNotEmpty()) {
+                    return $countryBanners;
+                }
+            }
+
+            return Banner::query()
                 ->with('translations.language')
-                ->where('country_id', $countryId)
+                ->whereNull('country_id')
                 ->orderBy('serial_number')
                 ->get();
-
-            if ($countryBanners->isNotEmpty()) {
-                return $this->memo['active_banners'] = $countryBanners;
-            }
-        }
-
-        return $this->memo['active_banners'] = Banner::query()
-            ->with('translations.language')
-            ->whereNull('country_id')
-            ->orderBy('serial_number')
-            ->get();
+        });
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
@@ -792,19 +828,19 @@ class StorefrontRepository
 
     public function activeCategories(): Collection
     {
-        return $this->memo['active_categories'] ??= Category::query()
+        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories', ['Category'], fn() => Category::query()
             ->where('active', true)
             ->withCount(['products', 'children']) // For fallback thumb in header menu
             ->with(['translations.language', 'files', 'centralCategory.files'])
             ->orderBy('order_number')
             ->get()
             ->filter(fn(Category $c) => $c->children_count > 0 || $c->products_count > 0)
-            ->values();
+            ->values());
     }
 
     public function rootCategoriesWithChildren(): Collection
     {
-        return $this->memo['root_categories'] ??= $this->pruneEmptyLeaves(
+        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories', ['Category'], fn() => $this->pruneEmptyLeaves(
             Category::query()
                 ->where('active', true)
                 ->whereNull('parent_id')
@@ -824,7 +860,7 @@ class StorefrontRepository
                 ->withCount('products')
                 ->orderBy('order_number')
                 ->get()
-        );
+        ));
     }
 
     /**
@@ -1077,7 +1113,7 @@ class StorefrontRepository
     public function trendingNowProducts(int $limit = 10): Collection
     {
         $key = 'trending_now_' . $limit;
-        return $this->memo[$key] ??= (function () use ($limit): Collection{
+        return $this->memo[$key] ??= $this->cacheRemember($key, ['Product', 'ProductVariant', 'Order', 'OrderItem'], (function () use ($limit): Collection{
             $salesQuery = OrderItem::query()
                 ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
                 ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
@@ -1096,7 +1132,7 @@ class StorefrontRepository
                 ->select('products.*')
                 ->orderByRaw($this->effectivePriceExpression() . ' asc')
                 ->get();
-        })();
+        }), ttl: (int) config('cache.storefront.trending_ttl', 300));
     }
 
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -1195,33 +1231,43 @@ class StorefrontRepository
 
         $countryId = $this->customerCountryId();
 
-        // Priority: country-specific flash sales first, fall back to the default
-        // (country_id IS NULL) set only when no country-specific sale applies.
-        if ($countryId) {
-            $countrySpecific = FlashSale::query()
-                ->activeWindow()
-                ->where('country_id', $countryId)
-                ->with([
-                    'files',
-                    'products' => fn($query) => $query->with($this->productRelations()),
-                ])
-                ->orderByDesc('created_at')
-                ->get();
+        // Short TTL: the "active" window is time-based (start/end timestamps), so
+        // a sale can flip active/inactive with no model write — keep this fresh
+        // rather than relying solely on the version bump.
+        return $this->memo['active_flash_sales'] = $this->cacheRemember(
+            'active_flash_sales_' . ($countryId ?? 'default'),
+            ['FlashSale', 'Product'],
+            function () use ($countryId) {
+                // Priority: country-specific flash sales first, fall back to the default
+                // (country_id IS NULL) set only when no country-specific sale applies.
+                if ($countryId) {
+                    $countrySpecific = FlashSale::query()
+                        ->activeWindow()
+                        ->where('country_id', $countryId)
+                        ->with([
+                            'files',
+                            'products' => fn($query) => $query->with($this->productRelations()),
+                        ])
+                        ->orderByDesc('created_at')
+                        ->get();
 
-            if ($countrySpecific->isNotEmpty()) {
-                return $this->memo['active_flash_sales'] = $countrySpecific;
-            }
-        }
+                    if ($countrySpecific->isNotEmpty()) {
+                        return $countrySpecific;
+                    }
+                }
 
-        return $this->memo['active_flash_sales'] = FlashSale::query()
-            ->activeWindow()
-            ->whereNull('country_id')
-            ->with([
-                'files',
-                'products' => fn($query) => $query->with($this->productRelations()),
-            ])
-            ->orderByDesc('created_at')
-            ->get();
+                return FlashSale::query()
+                    ->activeWindow()
+                    ->whereNull('country_id')
+                    ->with([
+                        'files',
+                        'products' => fn($query) => $query->with($this->productRelations()),
+                    ])
+                    ->orderByDesc('created_at')
+                    ->get();
+            },
+            ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
+        );
     }
 
     // ─── Cart (session-based) ────────────────────────────────────────────────

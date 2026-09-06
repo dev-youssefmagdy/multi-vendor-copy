@@ -216,7 +216,7 @@ Route::get('/my-account/select-tenant', OwnerSelectTenantPage::class)->middlewar
 // ── Tenant Owner Panel ────────────────────────────────────────────────────────
 Route::group([
     'prefix' => 'my-account',
-    'as' => 'owner.',
+    'as' => 'owner .',
     'middleware' => TenantOwnerAuth::class,
 ], function () {
     Route::redirect('/', '/my-account/domains')->name('dashboard');
