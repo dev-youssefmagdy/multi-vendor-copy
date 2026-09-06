@@ -15,17 +15,13 @@ function mountCarousel({ wrapperId, prevId, nextId }) {
     });
 }
 
-// Trending Now: "auto" on mobile (slide width pinned via CSS, one wide card
-// peeking) so it shows the full-size card; numeric 2.5 on desktop, letting
-// Swiper compute the slide width itself (matches the Categories pattern —
-// mixing a numeric slidesPerView with an !important CSS width causes a
-// runaway ResizeObserver feedback loop, so the CSS width rule for this slide
-// must stay non-important, see home-v6.css).
+// Trending Now: numeric slidesPerView on both breakpoints — 1.25 on mobile
+// (one card plus a peek of the next), 2.5 on desktop.
 function mountTrending() {
     const wrapper = document.getElementById("trendingWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: "auto",
+        slidesPerView: 1.25,
         spaceBetween: 16,
         slidesOffsetAfter: 16,
         breakpoints: {
@@ -48,17 +44,21 @@ function mountCategories() {
     });
 }
 
-// Flash Sale: real Swiper carousel using the Grid module — slidesPerView:3
-// (3 columns visible) x grid rows:3 = 9 products per view/page. 18 items is
-// an exact multiple of 9, so it pages cleanly across exactly 2 full views
-// with no partial/uneven row. No nav buttons; swipe/drag pages between views.
+// Flash Sale: Swiper Grid module — each slide is a column of 3 stacked
+// products (grid rows:3) on both breakpoints. slidesPerView:1.5 on mobile
+// (1.5 columns visible, i.e. a peek of the next column's 3 cards) scaling
+// up to slidesPerView:3 on desktop (3 full columns = 9 products per
+// view/page). No nav buttons; swipe/drag pages between views.
 function mountFlashGrid() {
     const grid = document.getElementById("flashGrid");
     if (!grid) return;
     return new Swiper(grid.closest(".swiper"), {
-        slidesPerView: 3,
+        slidesPerView: 1.5,
         spaceBetween: 12,
         grid: { rows: 3, fill: "row" },
+        breakpoints: {
+            1024: { slidesPerView: 3 },
+        },
     });
 }
 

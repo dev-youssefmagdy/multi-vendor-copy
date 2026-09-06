@@ -46,20 +46,16 @@
 .elora-v6-root .best-seller-swiper .swiper-slide {
   width: auto;
 }
-/* Trending Now: fractional slidesPerView (2.5 on desktop) needs its own
-   clipped, width-pinned container — same ResizeObserver feedback-loop fix as
-   .categories-swiper below (a flex-column child without an explicit width
-   inflates itself when Swiper measures it to compute numeric slide widths). */
+/* Trending Now: fractional slidesPerView (1.25 mobile / 2.5 desktop) needs
+   its own clipped, width-pinned container — same ResizeObserver
+   feedback-loop fix as .categories-swiper below (a flex-column child
+   without an explicit width inflates itself when Swiper measures it to
+   compute numeric slide widths). Slide width itself is JS-computed at both
+   breakpoints now, so no CSS width override is needed on .swiper-slide. */
 .elora-v6-root .trending-swiper {
   overflow: hidden;
   min-width: 0;
   width: 100%;
-}
-/* Beats swiper-bundle's own default ".swiper-slide{width:100%}" on mobile
-   ("auto" mode) via selector specificity, not !important — so Swiper's own
-   JS-computed inline width still wins on desktop (slidesPerView:2.5). */
-.elora-v6-root .trending-swiper .swiper-slide {
-  width: 532.69px;
 }
 
 /* Categories: numeric slidesPerView (7 on desktop) needs its own clipped
@@ -78,11 +74,17 @@
   width: auto;
 }
 
-/* Flash Sale: Swiper Grid module — 3 columns x 3 rows per view. The wrapper
-   needs an explicit height for the Grid module's per-slide height:calc(33.33%)
-   math to resolve against. */
+/* Flash Sale: Swiper Grid module — each slide is a column of 3 stacked
+   products (grid rows:3) at every breakpoint (slidesPerView:1.5 mobile / 3
+   desktop just changes how many columns peek). The wrapper needs an
+   explicit height for the Grid module's per-slide height:calc(33.33%) math
+   to resolve against. min-width:0 for the same reason as .best-seller-swiper
+   / .categories-swiper above — numeric slidesPerView on an overflow:hidden
+   flex child without it can inflate via a ResizeObserver feedback loop,
+   showing up as slides overlapping/misaligning. */
 .elora-v6-root .flash-swiper {
   overflow: hidden;
+  min-width: 0;
 }
 .elora-v6-root .flash-swiper .swiper-wrapper {
   height: 336px;
