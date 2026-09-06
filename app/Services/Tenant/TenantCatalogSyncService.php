@@ -33,6 +33,7 @@ use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product;
 use App\Models\CentralCoupon;
 use App\Models\CentralFlashSale;
+use App\Models\TenantCountry;
 use App\Models\Tenant\Coupon;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\ProductBadge;
@@ -1095,12 +1096,23 @@ class TenantCatalogSyncService
     protected function syncCoupons(): int
     {
         $centralCoupons = tenancy()->central(
-            fn() => CentralCoupon::query()->with('countries')->get()
+            fn() => CentralCoupon::query()->get()
         );
 
-        foreach ($centralCoupons as $centralCoupon) {
-            $countryIds = $centralCoupon->countries->pluck('id')->values()->all();
+        // Only sync Default coupons (country_id null) plus coupons scoped to a
+        // country this tenant actually serves — a tenant should never receive a
+        // coupon targeting a country it doesn't sell in.
+        $tenantCountryIds = TenantCountry::query()
+            ->where('tenant_id', tenant()->id)
+            ->where('is_active', true)
+            ->pluck('country_id')
+            ->all();
 
+        $applicableCoupons = $centralCoupons->filter(
+            fn(CentralCoupon $coupon) => $coupon->country_id === null || in_array($coupon->country_id, $tenantCountryIds, true)
+        );
+
+        foreach ($applicableCoupons as $centralCoupon) {
             Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
                 [
@@ -1110,17 +1122,18 @@ class TenantCatalogSyncService
                     'minimum_spend' => $centralCoupon->minimum_spend,
                     'start_date' => $centralCoupon->start_date,
                     'end_date' => $centralCoupon->end_date,
-                    'allowed_country_ids' => empty($countryIds) ? null : $countryIds,
+                    'country_id' => $centralCoupon->country_id,
                 ]
             );
         }
 
-        // Remove tenant coupons whose central counterpart was deleted.
+        // Remove tenant coupons whose central counterpart was deleted or is no
+        // longer applicable to this tenant (e.g. tenant stopped serving that country).
         Coupon::query()
             ->whereNotNull('central_coupon_id')
-            ->whereNotIn('central_coupon_id', $centralCoupons->pluck('id'))
+            ->whereNotIn('central_coupon_id', $applicableCoupons->pluck('id'))
             ->delete();
 
-        return $centralCoupons->count();
+        return $applicableCoupons->count();
     }
 }

@@ -15,6 +15,8 @@ class CouponsPage extends ListPage
     use InteractsWithTenantUi;
     use WithPagination;
 
+    public ?int $countryId = null;
+
     public bool $showFormModal = false;
     public ?int $couponId = null;
     public string $code = '';
@@ -25,26 +27,37 @@ class CouponsPage extends ListPage
     public ?string $endDate = null;
     public string $nameText = '';
 
+    public function mount(?int $countryId = null): void
+    {
+        $this->countryId = $countryId;
+    }
+
     protected function pageMeta(): array
     {
+        $country = $this->countryId ? \App\Models\Country::query()->find($this->countryId) : null;
+
         return [
-            'title' => 'Coupons',
+            'title' => $country ? "Coupons — {$country->flag_emoji} {$country->name}" : 'Coupons — Default',
             'badge' => 'Storefront',
-            'description' => 'Create and manage discount codes for the current tenant storefront.',
+            'description' => $country
+                ? "Discount codes for visitors from {$country->name}."
+                : 'Default coupons shown when no country-specific coupons exist.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
-            'headers' => ['Coupon', 'Type', 'Value', 'Window', 'Countries', 'Actions'],
+            'headers' => ['Coupon', 'Type', 'Value', 'Window', 'Actions'],
         ];
     }
 
     protected function pageData(): array
     {
         $repository = app(TenantPanelRepository::class);
-        $records = $repository->paginateCoupons();
-        $stats = $repository->couponStats();
+        $records = $repository->paginateCoupons($this->countryId);
+        $stats = $repository->couponStats($this->countryId);
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
+            'secondaryActionLabel' => '← All Countries',
+            'secondaryActionUrl' => route('tenant.store.coupons.index'),
             'records' => $records,
             'statistics' => [
                 ['label' => 'Coupons', 'value' => number_format($stats['total']), 'caption' => 'Coupons stored for this tenant', 'dot' => 'dot-cyan'],
@@ -56,10 +69,6 @@ class CouponsPage extends ListPage
                 e($coupon->type->label()),
                 $coupon->type === CouponType::Percentage ? e(number_format((float) $coupon->value, 2)) . '%' : '$' . e(number_format((float) $coupon->value, 2)),
                 e(optional($coupon->start_date)->format('M d, Y') ?: '-') . ' - ' . e(optional($coupon->end_date)->format('M d, Y') ?: '-'),
-                !empty($coupon->allowed_country_ids)
-                    ? '<span class="badge badge-secondary" title="' . e(implode(', ', array_slice((array) $coupon->allowed_country_ids, 0, 5))) . '">' .
-                        count((array) $coupon->allowed_country_ids) . ' ' . (count((array) $coupon->allowed_country_ids) === 1 ? 'country' : 'countries') . '</span>'
-                    : '<span class="badge badge-cyan">🌐 All</span>',
                 '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="editCoupon(' . $coupon->id . ')">Edit</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $coupon->id . ')">Delete</button></div>',
             ])->all(),
             'modalModel' => 'showFormModal',
@@ -137,6 +146,7 @@ class CouponsPage extends ListPage
             'start_date' => $validated['startDate'] ?? null,
             'end_date' => $validated['endDate'] ?? null,
             'translations' => [$defaultLocale => ['name' => $validated['nameText']]],
+            'country_id' => $this->countryId,
         ], $couponId ? Coupon::query()->findOrFail($couponId) : null);
 
         $this->closeModal();

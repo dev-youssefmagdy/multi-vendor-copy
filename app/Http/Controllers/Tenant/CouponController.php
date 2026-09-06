@@ -28,6 +28,11 @@ class CouponController extends Controller
             return response()->json(['coupon' => null]);
         }
 
+        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+            session()->forget('storefront_coupon');
+            return response()->json(['coupon' => null]);
+        }
+
         return response()->json(['coupon' => $this->transform($coupon)]);
     }
 

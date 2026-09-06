@@ -574,19 +574,19 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateCoupons(int $perPage = 10): LengthAwarePaginator
+    public function paginateCoupons(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
-        return Coupon::query()->with('translations.language')->latest()->paginate($perPage);
+        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest()->paginate($perPage);
     }
 
-    public function couponStats(): array
+    public function couponStats(?int $countryId = null): array
     {
         return [
-            'total' => Coupon::query()->count(),
-            'active' => Coupon::query()->where(function ($query) {
+            'total' => Coupon::query()->where('country_id', $countryId)->count(),
+            'active' => Coupon::query()->where('country_id', $countryId)->where(function ($query) {
                 $query->whereNull('end_date')->orWhere('end_date', '>=', now());
             })->count(),
-            'scheduled' => Coupon::query()->whereNotNull('start_date')->where('start_date', '>', now())->count(),
+            'scheduled' => Coupon::query()->where('country_id', $countryId)->whereNotNull('start_date')->where('start_date', '>', now())->count(),
         ];
     }
 

@@ -362,6 +362,7 @@ class AdminNavigation
                     'group' => 'Store',
                     'labels' => [
                         'admin.store.flash-sales.index' => 'Flash Sales',
+                        'admin.store.coupons.index' => 'Coupons',
                         'admin.store.tenant-sync.index' => 'Tenant Sync',
                     ],
                     'default' => 'Store',

@@ -22,7 +22,7 @@ class Coupon extends Model
         'start_date',
         'end_date',
         'minimum_spend',
-        'allowed_country_ids',
+        'country_id',
     ];
 
     protected function casts(): array
@@ -33,26 +33,19 @@ class Coupon extends Model
             'minimum_spend' => 'decimal:2',
             'start_date' => 'datetime',
             'end_date' => 'datetime',
-            'allowed_country_ids' => 'array',
         ];
     }
 
     /**
      * Whether this tenant coupon is usable in the given country.
-     * NULL / empty allowed_country_ids = available everywhere.
+     * NULL country_id (Default) = available everywhere.
      */
     public function availableInCountry(?int $countryId): bool
     {
-        if (!$countryId) {
+        if ($this->country_id === null) {
             return true;
         }
 
-        $ids = $this->allowed_country_ids;
-
-        if (empty($ids)) {
-            return true;
-        }
-
-        return in_array($countryId, (array) $ids, strict: false);
+        return $countryId !== null && (int) $countryId === (int) $this->country_id;
     }
 }
