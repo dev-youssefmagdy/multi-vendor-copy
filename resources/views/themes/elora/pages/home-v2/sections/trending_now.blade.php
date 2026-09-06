@@ -6,13 +6,16 @@
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-sneaker.png');
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
-
+          $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;
+          $weightLabel = $weightGrams
+              ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
+              : '';
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => '',
-              'desc' => $product->centralProduct?->category?->name ?? '',
+              'weight' => $weightLabel,
+              'desc' => $product->centralProduct?->category?->name ?? 'Premium cotton blend',
               'badge' => __('Trending'),
               'badgeBg' => 'var(--color-accent-yellow)',
               'badgeText' => 'var(--color-black)',
@@ -22,6 +25,7 @@
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+              'delivered' => 'Delivered by 24 March',
           ];
       });
     @endphp
@@ -50,29 +54,6 @@
             @endforelse
           </div>
         </div>
-        <button
-          id="trendingPrev"
-          type="button"
-          aria-label="Previous"
-          class="swiper-nav-btn swiper-nav-prev"
-        >
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
-            alt=""
-          />
-        </button>
-        <button
-          id="trendingNext"
-          type="button"
-          aria-label="Next"
-          class="swiper-nav-btn swiper-nav-next"
-        >
-          <img
-            src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
-            alt=""
-          />
-        </button>
+   
       </div>
     </section>

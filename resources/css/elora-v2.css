@@ -90,6 +90,269 @@ body {
   overflow: hidden;
 }
 
+/* Trending Now: product card. Sizing is forced with !important, in plain
+   (unlayered) CSS rather than Tailwind utility classes, and applied
+   directly to the .swiper-slide element itself rather than a wrapped
+   child. Swiper's own bundled CSS sets `.swiper-slide{width:100%}` as a
+   plain, unlayered rule of its own — Tailwind wraps its utilities in
+   `@layer utilities`, and per the CSS cascade spec, unlayered rules always
+   beat layered ones on a tie regardless of source order, so a Tailwind
+   width class here would silently lose. !important on top of that settles
+   any remaining ambiguity in our favor at both breakpoints. */
+.product-card {
+  font-family: "Outfit", sans-serif;
+  display: flex;
+  flex-direction: row;
+  background: #fdfdfd;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 767px) {
+  .product-card {
+    width: 316px !important;
+    height: 140px !important;
+    border-radius: 6px !important;
+  }
+  .card-media {
+    position: relative;
+    width: 132px !important;
+    height: 140px !important;
+    flex-shrink: 0;
+  }
+  .product-image {
+    width: 132px !important;
+    height: 140px !important;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+  }
+  .top-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 132px !important;
+    padding: 3.77px !important;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .sale-badge {
+    background: #ffd428;
+    color: #242424;
+    font-size: 7.7px !important;
+    line-height: 10px !important;
+    padding: 3.3px 4.4px !important;
+    border-radius: 0 4.4px 4.4px 0 !important;
+  }
+  .heart-btn {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+  .heart-btn .icon {
+    width: 12.5px !important;
+    height: 12.5px !important;
+  }
+  .bottom-overlay {
+    position: absolute;
+    bottom: 3.77px;
+    right: 3.77px;
+  }
+  .cart-btn {
+    width: 35.8px !important;
+    height: 28.3px !important;
+    border-radius: 10px !important;
+    background: #fdfdfd;
+  }
+  .cart-btn .icon {
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 8px !important;
+    gap: 8px !important;
+    width: 184px !important;
+    height: 140px !important;
+    box-sizing: border-box;
+  }
+  .product-title {
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+  .weight-tag {
+    font-size: 15px !important;
+    line-height: 16px !important;
+  }
+  .product-subtitle {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .progress-bar {
+    width: 100% !important;
+    height: 5px !important;
+  }
+  .progress-text {
+    font-size: 10px !important;
+    line-height: 13px !important;
+  }
+  .stars {
+    font-size: 8px !important;
+  }
+  .rating-text {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .current-price {
+    font-size: 16px !important;
+    line-height: 20px !important;
+  }
+  .original-price {
+    font-size: 8.8px !important;
+    line-height: 11px !important;
+  }
+  .discount-badge {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .meta-item.delivery span {
+    font-size: 8px !important;
+    line-height: 10px !important;
+  }
+  .meta-item.stock span {
+    font-size: 7.5px !important;
+    line-height: 10px !important;
+  }
+  .meta-icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .product-card {
+    width: 460.83px !important;
+    height: 204.17px !important;
+    border-radius: 8.75px !important;
+  }
+  .card-media {
+    position: relative;
+    width: 192.5px !important;
+    height: 204.17px !important;
+    flex-shrink: 0;
+  }
+  .product-image {
+    width: 192.5px !important;
+    height: 204.17px !important;
+    object-fit: cover;
+    border-radius: 7.33px 7.33px 0 0;
+  }
+  .top-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 192.5px !important;
+    padding: 5.5px !important;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .sale-badge {
+    background: #ffd428;
+    color: #242424;
+    font-size: 11.25px !important;
+    line-height: 14px !important;
+    padding: 4.8px !important;
+    border-radius: 0 6.43px 6.43px 0 !important;
+  }
+  .heart-btn {
+    width: 29.33px !important;
+    height: 29.33px !important;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+  .heart-btn .icon {
+    width: 18.33px !important;
+    height: 18.33px !important;
+  }
+  .bottom-overlay {
+    position: absolute;
+    bottom: 5.5px;
+    right: 5.5px;
+  }
+  .cart-btn {
+    width: 52.25px !important;
+    height: 41.25px !important;
+    border-radius: 14.67px !important;
+    background: #fdfdfd;
+  }
+  .cart-btn .icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 5.83px 11.67px !important;
+    gap: 11.67px !important;
+    width: 268.33px !important;
+    height: 204.17px !important;
+    box-sizing: border-box;
+  }
+  .product-title {
+    font-size: 20.42px !important;
+    line-height: 26px !important;
+  }
+  .weight-tag {
+    font-size: 21.88px !important;
+    line-height: 23px !important;
+  }
+  .product-subtitle {
+    font-size: 17.5px !important;
+    line-height: 22px !important;
+  }
+  .progress-bar {
+    width: 100% !important;
+    height: 7.29px !important;
+  }
+  .progress-text {
+    font-size: 14.58px !important;
+    line-height: 18px !important;
+  }
+  .stars {
+    font-size: 11px !important;
+  }
+  .rating-text {
+    font-size: 17.5px !important;
+    line-height: 22px !important;
+  }
+  .current-price {
+    font-size: 23.33px !important;
+    line-height: 29px !important;
+  }
+  .original-price {
+    font-size: 12.83px !important;
+    line-height: 16px !important;
+  }
+  .discount-badge {
+    font-size: 17.5px !important;
+  }
+  .meta-item.delivery span {
+    font-size: 11.67px !important;
+    line-height: 15px !important;
+  }
+  .meta-item.stock span {
+    font-size: 11px !important;
+    line-height: 14px !important;
+  }
+  .meta-icon {
+    width: 17.5px !important;
+    height: 17.5px !important;
+  }
+}
+
 /* Mobile: slides size to their own content (slidesPerView: "auto"). Desktop
    switches to a numeric slidesPerView (3.5), where Swiper sets each slide's
    width inline — this plain (non-!important) rule only fills in for mobile,
