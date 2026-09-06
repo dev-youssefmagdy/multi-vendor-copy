@@ -456,33 +456,51 @@ body {
   }
 }
 
-/* Best Seller: centered/focus carousel — the active (centered) slide is full
-   size, overlapping neighbors that shrink symmetrically the further they are
-   from center. Same opacity/background as the active slide throughout; only
-   size (and stacking order) changes. Scale/z-index are set per-slide in JS
-   (carousels.js) based on live distance from the active slide, not by CSS
-   classes, so it stays correct as the centered slide changes. */
+/* Best Seller: fanned "card effect" carousel — the active (centered) slide
+   sits upright and full size; two rings of neighbors on either side shrink
+   and rotate progressively further out. Scale/rotate/z-index are set
+   per-slide in JS (carousels.js) from index distance to the active slide.
+   The card itself reuses the Flash Sale card partial/component (same
+   vertical card — image on top, details below — matching the Best Seller
+   reference design almost exactly), so the slide is sized identically to
+   .flash-sale-slide. This just sizes the track around it and gives rotation
+   enough clearance that it doesn't get clipped by this container's own
+   overflow:hidden (see the .flash-sale-swiper comment for why that
+   clearance is needed) — more than Flash Sale needs, since 5 cards fan out
+   here instead of 3. */
 .best-seller-swiper {
-  width: 100% !important;
-  max-width: 999.24px;
+  width: min(380px, 100%) !important;
   margin: 0 auto;
   overflow: hidden;
-  padding: 24px 0 8px;
-}
-.best-seller-swiper .swiper-wrapper {
-  position: relative;
-  width: 100%;
-  height: 448.72px;
+  padding: 25px 15px;
 }
 .best-seller-slide {
-  width: 296.11px;
-  height: 448.72px;
-  border-radius: 13.46px;
+  width: 158.52px;
+  height: 239.43px;
+  border-radius: 7.18px;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  box-shadow: var(--shadow-card-active-mobile);
 }
-.best-seller-slide > div {
-  border-radius: 13.46px;
+.best-seller-slide > a {
+  border-radius: 7.18px;
+}
+@media (min-width: 1024px) {
+  .best-seller-swiper {
+    width: min(760px, 100%) !important;
+    padding: 55px 20px;
+  }
+  .best-seller-slide {
+    width: 327.68px;
+    height: 494.91px;
+    border-radius: 14.85px;
+    box-shadow: var(--shadow-card-active);
+  }
+  .best-seller-slide > a {
+    border-radius: 14.85px;
+  }
 }
 
 /* Flash Sale: fanned-card carousel (scale/rotation set per-slide in JS from

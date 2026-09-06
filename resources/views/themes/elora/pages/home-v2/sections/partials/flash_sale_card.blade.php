@@ -1,5 +1,6 @@
 {{-- Expects $p: url, image, name, weight, desc, badge, badgeBg, badgeText,
-     rating (float 0-5), ratingLabel, price, oldPrice, discount, delivered --}}
+     rating (float 0-5), ratingLabel, price, oldPrice, discount, delivered, stockLeft
+     (delivered and stockLeft are mutually exclusive — stockLeft takes priority when both are set) --}}
 <a
   href="{{ $p['url'] ?? '#' }}"
   class="relative flex flex-col items-start w-full h-full overflow-hidden"
@@ -95,7 +96,15 @@
       </div>
     </div>
 
-    @if (!empty($p['delivered']))
+    @if (!empty($p['stockLeft']))
+      <div class="flex flex-row items-center gap-[4.79px] lg:gap-[9.9px] w-full">
+        <img src="{{ asset('elora-1/assets/icons/cart-x.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
+        <p
+          class="whitespace-nowrap font-medium text-[9.58px] lg:text-[19.79px] leading-[12px] lg:leading-[25px] truncate min-w-0"
+          style="color: var(--color-secondary)"
+        >{{ $p['stockLeft'] }}</p>
+      </div>
+    @elseif (!empty($p['delivered']))
       <div class="flex flex-row items-center gap-[4.79px] lg:gap-[9.9px] w-full">
         <img src="{{ asset('elora-1/assets/icons/truck-delivery-green.svg') }}" alt="" class="size-[14.36px] lg:size-[29.69px] shrink-0" />
         <p

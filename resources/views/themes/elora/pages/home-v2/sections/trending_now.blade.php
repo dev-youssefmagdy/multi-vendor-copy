@@ -30,10 +30,10 @@
       });
     @endphp
     <section
-      class="px-[16px] lg:px-[56px] py-12 flex flex-col gap-[16px] lg:gap-[34px]"
+      class=" py-12 flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
           Trending Now
         </h2>
@@ -44,7 +44,7 @@
           >see all</a
         >
       </div>
-      <div class="relative">
+      <div class="relative ps-[16px] lg:ps-[56px]">
         <div class="swiper card-swiper trending-swiper">
           <div class="swiper-wrapper" id="trendingWrapper">
             @forelse ($trendingProducts as $product)
