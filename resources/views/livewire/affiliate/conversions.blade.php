@@ -33,7 +33,7 @@
                     @forelse ($conversions as $conversion)
                         <tr>
                             <td>
-                                @if ($conversion->source === 'coupon' && $conversion->coupon_id)
+                                @if ($conversion->source === 'coupon' && $conversion->affiliate_coupon_id)
                                     <span class="chip c-a">
                                         🏷 {{ __('Coupon') }}
                                     </span>

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Affiliate;
 
-use App\Models\CentralCoupon;
+use App\Models\AffiliateCoupon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -12,7 +12,7 @@ class LinksPage extends Component
     {
         $affiliate = Auth::guard('affiliate')->user();
 
-        $coupons = CentralCoupon::query()
+        $coupons = AffiliateCoupon::query()
             ->where('affiliate_id', $affiliate->id)
             ->orderByDesc('active')
             ->orderByDesc('created_at')

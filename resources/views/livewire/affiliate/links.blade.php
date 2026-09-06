@@ -43,7 +43,7 @@
             <input type="text" id="referral-url-input" readonly value="{{ $referralUrl }}"
                    class="field-control" style="flex:1;">
             <button type="button" class="btn btn-primary" onclick="
-                navigator.clipboard.writeText(document.getElementById('referral-url-input').value);
+                window.copyToClipboard(document.getElementById('referral-url-input').value);
                 this.innerText = '{{ __('Copied!') }}';
                 setTimeout(() => this.innerText = '{{ __('Copy') }}', 1500);
             ">{{ __('Copy') }}</button>
@@ -82,15 +82,11 @@
                                     <strong style="font-size:15px;letter-spacing:1px;color:var(--cyan);">{{ $coupon->code }}</strong>
                                 </td>
                                 <td>
-                                    @if ($coupon->type->value === 'percentage')
-                                        {{ $coupon->value }}% off
-                                    @else
-                                        ${{ number_format((float) $coupon->value, 2) }} off
-                                    @endif
+                                    {{ $coupon->discountLabel() }}
                                 </td>
                                 <td>
-                                    @if ($coupon->affiliate_commission_value !== null)
-                                        <strong>{{ $coupon->affiliate_commission_value }}%</strong>
+                                    @if ($coupon->commission_value !== null)
+                                        <strong>{{ $coupon->commission_value }}%</strong>
                                         <span class="panel-copy"> of sale</span>
                                     @else
                                         <span class="panel-copy">{{ __('Your default rate') }}
@@ -107,7 +103,7 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="navigator.clipboard.writeText('{{ $coupon->code }}');this.innerText='{{ __('Copied!') }}';setTimeout(()=>this.innerText='{{ __('Copy Code') }}',1500);">
+                                            onclick="window.copyToClipboard('{{ $coupon->code }}');this.innerText='{{ __('Copied!') }}';setTimeout(()=>this.innerText='{{ __('Copy Code') }}',1500);">
                                         {{ __('Copy Code') }}
                                     </button>
                                 </td>
@@ -123,4 +119,30 @@
             </div>
         @endif
     </div>
+
+    <script>
+        if (!window.copyToClipboard) {
+            window.copyToClipboard = function (text) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).catch(() => window.copyToClipboardFallback(text));
+                } else {
+                    window.copyToClipboardFallback(text);
+                }
+            };
+
+            window.copyToClipboardFallback = function (text) {
+                const el = document.createElement('textarea');
+                el.value = text;
+                el.style.position = 'fixed';
+                el.style.opacity = '0';
+                document.body.appendChild(el);
+                el.focus();
+                el.select();
+                try {
+                    document.execCommand('copy');
+                } catch (e) {}
+                document.body.removeChild(el);
+            };
+        }
+    </script>
 </main>

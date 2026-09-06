@@ -225,7 +225,7 @@ class RegisterPage extends Component
             return;
         }
 
-        $coupon = \App\Models\CentralCoupon::query()
+        $coupon = \App\Models\AffiliateCoupon::query()
             ->where('code', $code)
             ->active()
             ->first();
@@ -236,14 +236,9 @@ class RegisterPage extends Component
         }
 
         $original = (float) $package->price;
+        $discount = $coupon->calculateDiscount($original);
 
-        $discounted = match ($coupon->type->value) {
-            'percentage' => $original - ($original * (float) $coupon->value / 100),
-            'fixed' => $original - (float) $coupon->value,
-            default => $original,
-        };
-
-        $this->couponDiscount = max(0.0, round($discounted, 2));
+        $this->couponDiscount = max(0.0, round($original - $discount, 2));
         $this->appliedCouponId = $coupon->id;
     }
 
@@ -265,7 +260,7 @@ class RegisterPage extends Component
                         ? max(0.0, (float) ($this->couponDiscount ?? $package->price))
                         : (float) $package->price,
                     'gateway_code' => $this->gatewayCode,
-                    'applied_coupon_id' => $this->appliedCouponId,
+                    'applied_affiliate_coupon_id' => $this->appliedCouponId,
                     'coupon_code' => $this->appliedCouponId ? strtoupper(trim($this->couponCode)) : null,
                 ],
             ],

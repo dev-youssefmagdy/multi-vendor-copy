@@ -502,6 +502,7 @@ Route::group([
         Route::get('/conversions', \App\Livewire\Admin\Affiliate\ConversionsListPage::class)->name('conversions');
         Route::get('/payouts',     \App\Livewire\Admin\Affiliate\PayoutsListPage::class)->name('payouts');
         Route::get('/reports',     \App\Livewire\Admin\Affiliate\AffiliateReportsPage::class)->name('reports');
+        Route::get('/coupons',     \App\Livewire\Admin\Affiliate\AffiliateCouponsPage::class)->name('coupons');
     });
 });
 

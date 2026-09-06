@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('central_coupons', function (Blueprint $table) {
-            // Removed: affiliate concerns moved to the dedicated affiliate_coupons table.
             if (Schema::hasColumn('central_coupons', 'affiliate_commission_value')) {
                 $table->dropColumn('affiliate_commission_value');
             }

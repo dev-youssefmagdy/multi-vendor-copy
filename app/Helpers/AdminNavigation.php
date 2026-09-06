@@ -152,6 +152,7 @@ class AdminNavigation
                             ['label' => 'Conversions', 'route' => 'admin.affiliates.conversions', 'permission' => 'affiliates.manage'],
                             ['label' => 'Payouts', 'route' => 'admin.affiliates.payouts', 'permission' => 'affiliates.manage'],
                             ['label' => 'Reports', 'route' => 'admin.affiliates.reports', 'permission' => 'affiliates.manage'],
+                            ['label' => 'Promo Codes', 'route' => 'admin.affiliates.coupons', 'permission' => 'affiliates.manage'],
                         ],
                     ],
                 ],

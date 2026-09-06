@@ -663,14 +663,11 @@ class TenantPanelRepository
     {
         $manager = app(PaymentManager::class);
 
-        $activeGateways = PaymentGateway::query()
-            ->where('is_active', true)
-            ->where('hide', false)
-            ->get();
+        $activeGateways = $manager->storefrontGateways();
 
         $connected = $activeGateways->isNotEmpty();
 
-        $metas = $activeGateways->map(fn(PaymentGateway $gateway) => $manager->meta($gateway->code));
+        $metas = $activeGateways->map(fn(array $gateway) => $manager->meta($gateway['code']));
 
         $merchantCountries = $metas->pluck('merchant_countries')->flatten()->unique();
         $customerCountries = $metas->pluck('customer_countries')->flatten()->map(fn($c) => strtoupper($c))->unique();

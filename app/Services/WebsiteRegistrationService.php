@@ -140,22 +140,21 @@ class WebsiteRegistrationService
                 $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
                 $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
 
+                $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
+                $affiliateCoupon   = null;
                 $couponAffiliateId = null;
-                $coupon            = null;
 
-                if (filled($payment['applied_coupon_id'] ?? null)) {
-                    $coupon = \App\Models\CentralCoupon::query()->find((int) $payment['applied_coupon_id']);
-
-                    if ($coupon && $coupon->hasAffiliate()) {
-                        $couponAffiliateId = $coupon->affiliate_id;
-                    }
+                if ($affiliateCouponId) {
+                    $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
+                    $couponAffiliateId = $affiliateCoupon?->affiliate_id;
                 }
 
-                // URL-referral commission — suppressed when an affiliated coupon was used
+                // URL-referral commission — suppressed when an affiliate coupon was used
                 app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
 
-                if ($coupon && $coupon->hasAffiliate()) {
-                    app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $coupon);
+                // Affiliate coupon commission — fires only when an affiliate coupon was applied
+                if ($affiliateCoupon) {
+                    app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
                 }
             }
         } else {

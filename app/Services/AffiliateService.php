@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\Affiliate;
 use App\Models\AffiliateConversion;
+use App\Models\AffiliateCoupon;
 use App\Models\AffiliateReferral;
 use App\Models\AffiliatePayout;
-use App\Models\CentralCoupon;
 use App\Models\PaymentLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -143,12 +143,8 @@ class AffiliateService
      * already exists for the same affiliate+tenant, it is upgraded rather than
      * duplicated (whichever commission is higher wins — no double-crediting).
      */
-    public function approveCouponConversion(string $tenantId, PaymentLog $paymentLog, CentralCoupon $coupon): ?AffiliateConversion
+    public function approveCouponConversion(string $tenantId, PaymentLog $paymentLog, AffiliateCoupon $coupon): ?AffiliateConversion
     {
-        if (!$coupon->affiliate_id) {
-            return null;
-        }
-
         $coupon->loadMissing('affiliate');
         $affiliate = $coupon->affiliate;
 
@@ -156,7 +152,7 @@ class AffiliateService
             return null;
         }
 
-        $commissionAmount = $coupon->calculateAffiliateCommission((float) $paymentLog->amount);
+        $commissionAmount = $coupon->calculateCommission((float) $paymentLog->amount);
 
         if ($commissionAmount <= 0) {
             return null;
@@ -169,7 +165,7 @@ class AffiliateService
                 ->whereIn('status', ['pending', 'approved'])
                 ->first();
 
-            $commissionValue = $coupon->affiliate_commission_value ?? $affiliate->commission_value;
+            $commissionValue = $coupon->commission_value ?? $affiliate->commission_value;
 
             if ($existing) {
                 $previousCommission = (float) $existing->commission_amount;
@@ -177,7 +173,7 @@ class AffiliateService
                 $wasApproved = $existing->status === 'approved';
 
                 $existing->update([
-                    'coupon_id'         => $coupon->id,
+                    'affiliate_coupon_id' => $coupon->id,
                     'source'            => 'coupon',
                     'payment_log_id'    => $paymentLog->id,
                     'package_id'        => $paymentLog->package_id,
@@ -202,7 +198,7 @@ class AffiliateService
             $conversion = AffiliateConversion::query()->create([
                 'affiliate_id'          => $affiliate->id,
                 'affiliate_referral_id' => null,
-                'coupon_id'             => $coupon->id,
+                'affiliate_coupon_id'   => $coupon->id,
                 'source'                => 'coupon',
                 'tenant_id'             => $tenantId,
                 'payment_log_id'        => $paymentLog->id,
