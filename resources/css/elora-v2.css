@@ -492,18 +492,17 @@ body {
 @media (min-width: 1024px) {
   .best-seller-swiper {
     width: 1093px !important;
-    height: 448px !important;
     max-width: 100%;
-    /* The card (494.91px tall) is taller than this 448px track. The CSS
-       overflow spec forces the used value of an axis set to `visible` up
-       to `auto` whenever the other axis isn't `visible` too — so
-       overflow-x:hidden + overflow-y:visible can't actually produce a
-       non-clipping y-axis; it silently becomes `auto` (a scrollbar) at
-       best. Plain overflow:hidden on both axes, with the wrapper's cross
-       axis centered below, clips the card symmetrically top/bottom instead
-       of behind a scrollbar or all off one edge. */
+    /* No forced height here: the card is 494.91px tall, and a shorter fixed
+       height on this box (448px was tried) can only show the full card by
+       either clipping it or scrolling — the CSS overflow spec forces
+       overflow-y up to `auto` (a scrollbar) the moment overflow-x is
+       `hidden` and overflow-y is left `visible`, so there's no clean
+       "visible but no scrollbar" middle ground. Letting height be
+       content-driven (card height + this padding) is what actually shows
+       every slide uncropped. */
     overflow: hidden;
-    padding: 0 20px;
+    padding: 20px;
   }
   .best-seller-swiper .swiper-wrapper {
     align-items: center;

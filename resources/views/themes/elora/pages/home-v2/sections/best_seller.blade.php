@@ -28,6 +28,22 @@
               'stockLeft' => $hasDiscount ? 'Only 5 left' : null,
           ];
       });
+
+      // Swiper's own `loop` feature computes its duplicate-slide buffer from
+      // slidesPerView — which is "auto" here — and with exactly this many
+      // real slides that estimate lands right on the boundary where Swiper
+      // silently decides it doesn't have enough slides to loop safely, so
+      // it never creates the duplicates needed to show neighbors before the
+      // very first slide. Padding the display list ourselves with a small,
+      // real (not synthetic) buffer sidesteps that heuristic entirely: the
+      // "first" active slide always has genuine neighbor cards already
+      // sitting next to it in the DOM, no loop math involved.
+      $bestSellerBuffer = min(3, $bestSellerProducts->count());
+      $bestSellerDisplay = $bestSellerBuffer > 0
+          ? $bestSellerProducts->slice(-$bestSellerBuffer)->values()
+              ->concat($bestSellerProducts)
+              ->concat($bestSellerProducts->slice(0, $bestSellerBuffer))
+          : $bestSellerProducts;
     @endphp
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] overflow-hidden"
@@ -45,8 +61,8 @@
         >
       </div>
       <div class="swiper best-seller-swiper">
-        <div class="swiper-wrapper" id="bestSellerWrapper">
-          @forelse ($bestSellerProducts as $product)
+        <div class="swiper-wrapper" id="bestSellerWrapper" data-initial-slide="{{ $bestSellerBuffer }}">
+          @forelse ($bestSellerDisplay as $product)
             <div class="swiper-slide best-seller-slide">
               @include('themes.elora.pages.home-v2.sections.partials.flash_sale_card', ['p' => $product])
             </div>

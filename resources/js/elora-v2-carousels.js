@@ -52,9 +52,18 @@ function mountBestSeller() {
     return new Swiper(wrapper.closest(".swiper"), {
         slidesPerView: "auto",
         centeredSlides: true,
-        initialSlide: 2,
+        initialSlide: 0,
         spaceBetween: -70,
         loop: true,
+        // With slidesPerView:"auto", Swiper can't derive a reliable default
+        // buffer size for the duplicate slides loop needs on each side, so
+        // it doesn't create enough of them — least visibly when starting at
+        // slide 0, since there's no earlier real slide to fall back to and
+        // no duplicate one was inserted before it either, leaving nothing
+        // to show on the left at all. Setting loopedSlides explicitly (at
+        // least the 3 slides our own ring effect needs on each side) forces
+        // that buffer to exist regardless of what "auto" would have guessed.
+        loopedSlides: 3,
         loopAdditionalSlides: 3,
         breakpoints: {
             1024: { spaceBetween: -150 },
@@ -118,7 +127,10 @@ function mountFlashSale() {
             const scale = 1 - dist * 0.18;
             const rotate = Math.max(
                 -FLASH_SALE_MAX_ROTATE_DEG,
-                Math.min(FLASH_SALE_MAX_ROTATE_DEG, distSigned * FLASH_SALE_MAX_ROTATE_DEG),
+                Math.min(
+                    FLASH_SALE_MAX_ROTATE_DEG,
+                    distSigned * FLASH_SALE_MAX_ROTATE_DEG,
+                ),
             );
             slideEl.style.transform = `rotate(${rotate}deg) scale(${scale})`;
             slideEl.style.zIndex = String(10 - Math.round(dist * 4));
