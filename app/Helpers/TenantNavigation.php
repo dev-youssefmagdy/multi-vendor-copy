@@ -263,6 +263,14 @@ class TenantNavigation
         return ['done' => $done, 'total' => $total];
     }
 
+    /** True once every item on the "Quick Store Setup" checklist is done. */
+    public static function onboardingSetupComplete(): bool
+    {
+        $progress = self::onboardingSetupProgress();
+
+        return $progress['done'] >= $progress['total'];
+    }
+
     /** Profile step: business name, logo, and a contact phone number set. */
     public static function profileComplete(): bool
     {

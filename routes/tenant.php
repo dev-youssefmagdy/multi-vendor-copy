@@ -359,10 +359,11 @@ Route::middleware([
             ->middleware(['signed', 'throttle:6,1'])
             ->name('tenant.verification.verify');
 
-        Route::middleware('auth:tenant')->group(function () {
+        Route::middleware(['auth:tenant', 'tenant.setup.enforce'])->group(function () {
 
             Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
                 ->middleware('throttle:6,1')
+                ->withoutMiddleware('tenant.setup.enforce')
                 ->name('tenant.verification.send');
 
             Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
