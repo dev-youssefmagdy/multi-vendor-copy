@@ -107,8 +107,8 @@ class TenantTranslationService
             return '';
         }
 
-        $translated = $ai->translateBatch(
-            [$default],
+        $translated = $ai->translateGroupedPending(
+            [['group' => $key, 'field' => 'value', 'text' => $default]],
             config('app.fallback_locale', 'en'),
             strtolower((string) $language->code),
             $language->name,
@@ -150,8 +150,14 @@ class TenantTranslationService
             return 0;
         }
 
-        $translated = $ai->translateBatch(
-            array_values($defaults),
+        $pending = [];
+
+        foreach ($defaults as $key => $text) {
+            $pending[] = ['group' => $key, 'field' => 'value', 'text' => $text];
+        }
+
+        $translated = $ai->translateGroupedPending(
+            $pending,
             $defaultLocale,
             strtolower((string) $language->code),
             $language->name,
@@ -159,9 +165,9 @@ class TenantTranslationService
         );
 
         $count = 0;
-        foreach (array_keys($defaults) as $index => $key) {
-            $value = trim((string) ($translated[$index] ?? $defaults[$key]));
-            $this->saveOverride((string) $language->id, $key, $value);
+        foreach ($pending as $offset => $item) {
+            $value = trim((string) ($translated[$offset] ?? $item['text']));
+            $this->saveOverride((string) $language->id, $item['group'], $value);
             $count++;
         }
 

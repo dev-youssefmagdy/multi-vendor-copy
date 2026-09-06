@@ -194,7 +194,8 @@ class CatalogTranslatorService
                 }
 
                 $pending[] = [
-                    'index' => $index,
+                    'group' => $index,
+                    'field' => 'value',
                     'text' => $sourceValue,
                 ];
             }
@@ -203,8 +204,8 @@ class CatalogTranslatorService
                 continue;
             }
 
-            $translations = $this->openAi->translateBatch(
-                array_map(fn(array $item) => $item['text'], $pending),
+            $translated = $this->openAi->translateGroupedPending(
+                $pending,
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
@@ -212,7 +213,7 @@ class CatalogTranslatorService
             );
 
             foreach ($pending as $offset => $item) {
-                $rows[$item['index']]['values'][$targetLocale] = trim((string) ($translations[$offset] ?? $item['text']));
+                $rows[$item['group']]['values'][$targetLocale] = trim((string) ($translated[$offset] ?? $item['text']));
             }
 
             $this->translationFiles->save((string) $resource['key'], $rows);
@@ -249,13 +250,14 @@ class CatalogTranslatorService
 
         $modelClass::query()
             ->with('translations.language')
-            ->chunkById(50, function ($models) use ($fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
-                $pending = [];
+            ->chunkById(100, function ($models) use ($fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
+                $items = [];
                 $states = [];
 
                 foreach ($models as $model) {
                     $translations = $this->existingTranslations($model);
                     $modelKey = $this->modelKey($model);
+                    $pendingFields = [];
 
                     foreach ($fields as $field) {
                         $sourceValue = trim((string) ($translations[$sourceLocale][$field] ?? ''));
@@ -265,33 +267,37 @@ class CatalogTranslatorService
                             continue;
                         }
 
-                        $states[$modelKey] ??= [
-                            'model' => $model,
-                            'translations' => $translations,
-                        ];
-
-                        $pending[] = [
-                            'model_key' => $modelKey,
-                            'field' => $field,
-                            'text' => $sourceValue,
-                        ];
+                        $pendingFields[$field] = $sourceValue;
                     }
+
+                    if ($pendingFields === []) {
+                        continue;
+                    }
+
+                    $states[$modelKey] = [
+                        'model' => $model,
+                        'translations' => $translations,
+                    ];
+
+                    $items[] = ['id' => $modelKey, 'translations' => $pendingFields];
                 }
 
-                if ($pending === []) {
+                if ($items === []) {
                     return;
                 }
 
-                $translated = $this->openAi->translateBatch(
-                    array_map(fn(array $item) => $item['text'], $pending),
+                $translated = $this->openAi->translateStructuredBatch(
+                    $items,
                     $sourceLocale,
                     $targetLocale,
                     $targetLanguage,
                     'Central catalog model: ' . class_basename($modelClass),
                 );
 
-                foreach ($pending as $offset => $item) {
-                    $states[$item['model_key']]['translations'][$targetLocale][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
+                foreach ($translated as $modelKey => $translatedFields) {
+                    foreach ($translatedFields as $field => $value) {
+                        $states[$modelKey]['translations'][$targetLocale][$field] = $value;
+                    }
                 }
 
                 foreach ($states as $state) {
