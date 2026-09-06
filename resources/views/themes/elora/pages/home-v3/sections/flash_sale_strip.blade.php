@@ -26,6 +26,103 @@
       $countdownM = str_pad((string) intdiv($countdownRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
       $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
+
+{{-- Phone layout for the strip: a 2 x 2 block of cards that pages four at a
+     time. These rules live here rather than in resources/css/elora-v3.css
+     because that file ships through Vite and needs a rebuild to reach the page;
+     coming later in document order, they win. --}}
+<style>
+    @media (max-width: 1023.98px) {
+        /* Undo the static CSS grid from elora-v3.css - Swiper's Grid module
+           lays the rows out. flex-wrap: wrap is what Swiper's own .swiper-grid
+           rule uses, so the block stays correct even before the mount runs. */
+        #flashSaleWrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 0;
+        }
+        /* Every product stays in the carousel; the static layout hid all but
+           the first four. */
+        #flashSaleWrapper .swiper-slide:nth-child(n + 5) { display: block; }
+        /* Two cards per row, a hairline 4px apart. */
+        #flashSaleWrapper > .swiper-slide {
+            width: calc((100% - 4px) / 2);
+            height: auto;
+        }
+        /* Cards stand apart now, so each one carries its own corners. */
+        #flashSaleWrapper > .swiper-slide > a {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .flashsale-swiper { padding-bottom: 4px; }
+        /* The comp keeps the next arrow beside the countdown on phones. */
+        .elora-v3-flash__next { display: block; }
+        .elora-v3-flash__next img { height: 26px; }
+        /* No Explore all pill on the phone comp. */
+        .elora-v3-flash__cta { display: none; }
+    }
+</style>
+
+{{-- Mounted here rather than in resources/js/elora-v3-carousels.js: that file
+     ships through Vite, so a change there needs a rebuild before it reaches the
+     page. Runs against the Swiper 11 bundle the v3 scripts partial loads. --}}
+<script>
+(function () {
+  var MOBILE = '(max-width: 1023.98px)';
+
+  function mountFlashV3() {
+    var el = document.getElementById('flashSaleSwiper');
+    if (!el || typeof Swiper === 'undefined') return;
+
+    var mq = window.matchMedia(MOBILE);
+
+    var sync = function () {
+      var isMobile = mq.matches;
+      var current = el.swiper;
+
+      // The Vite bundle mounts (or destroys) this element on its own, so an
+      // instance that is not ours is torn down before we take over.
+      if (current && current.__eloraV3FlashGrid !== isMobile) {
+        current.destroy(true, true);
+        current = null;
+      }
+      if (current) return;
+
+      if (!isMobile) {
+        var wide = new Swiper(el, {
+          slidesPerView: 4.5,
+          spaceBetween: 0,
+          navigation: { nextEl: '#flashSaleNext' },
+        });
+        wide.__eloraV3FlashGrid = false;
+        return;
+      }
+
+      // Two columns x two rows = four cards per page; a swipe brings the next
+      // four. grid is init-time only, hence the create/destroy on breakpoint.
+      var grid = new Swiper(el, {
+        slidesPerView: 2,
+        slidesPerGroup: 2,
+        grid: { rows: 2, fill: 'row' },
+        spaceBetween: 4,
+        navigation: { nextEl: '#flashSaleNext' },
+      });
+      grid.__eloraV3FlashGrid = true;
+    };
+
+    sync();
+    mq.addEventListener('change', sync);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountFlashV3);
+  } else {
+    mountFlashV3();
+  }
+  window.addEventListener('load', mountFlashV3);
+})();
+</script>
     <section
       class="pattern-flash-sale rounded-t-[16px] mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[16px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
       wire:ignore
@@ -80,7 +177,7 @@
             id="flashSaleNext"
             type="button"
             aria-label="Next"
-            class="hidden lg:block cursor-pointer"
+            class="elora-v3-flash__next hidden lg:block cursor-pointer"
           >
             <img
               src="{{ asset('elora-3/assets/icons/arrow-outlined.svg') }}"
@@ -99,7 +196,7 @@
           @endforelse
         </div>
       </div>
-      <div class="flex items-center justify-center">
+      <div class="elora-v3-flash__cta flex items-center justify-center">
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
           class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[55px] flex items-center justify-center cursor-pointer"
