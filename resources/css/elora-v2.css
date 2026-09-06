@@ -472,6 +472,10 @@ body {
   overflow: hidden;
   padding: 25px 15px;
 }
+.best-seller-swiper .swiper-wrapper {
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
 .best-seller-slide {
   width: 158.52px;
   height: 239.43px;
@@ -503,6 +507,7 @@ body {
   }
   .best-seller-swiper .swiper-wrapper {
     align-items: center;
+    padding: 16px 24px;
   }
   .best-seller-slide {
     width: 327.68px;
