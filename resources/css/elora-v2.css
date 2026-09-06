@@ -34,6 +34,10 @@
   /* Effects */
   --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
   --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+  --shadow-card-active: 0 24px 48px 0 rgba(0, 0, 0, 0.18);
+  --shadow-card-active-mobile: 0 10px 20px 0 rgba(0, 0, 0, 0.16);
+  --shadow-heart: 0px 4px 2px 0 rgba(0, 0, 0, 0.15);
+  --shadow-heart-mobile: 0px 2px 1px 0 rgba(0, 0, 0, 0.15);
 
   /* Typography */
   --font-family-base: "Outfit", sans-serif;
@@ -81,8 +85,35 @@ body {
    row edge instead of bleeding past the section's padding, so they never
    cause horizontal overflow on narrow viewports. */
 .new-in-swiper,
-.trending-swiper {
+.trending-swiper,
+.features-swiper {
   overflow: hidden;
+}
+
+/* Mobile: slides size to their own content (slidesPerView: "auto"). Desktop
+   switches to a numeric slidesPerView (3.5), where Swiper sets each slide's
+   width inline — this plain (non-!important) rule only fills in for mobile,
+   since inline styles naturally win over it once Swiper takes over. */
+.features-swiper .swiper-slide {
+  width: auto;
+}
+
+/* Swiper's own bundled CSS sets `.swiper-slide { display: block }` as a
+   plain, unlayered rule. Tailwind v4 wraps all of its utility classes
+   (including `flex`) inside `@layer utilities`, and per the CSS cascade
+   spec, unlayered rules always beat layered ones on an equal-specificity
+   tie regardless of source order — so the `flex` class on `.swiper-slide`
+   elements is silently overridden. Declaring the layout here directly
+   (also a plain rule) restores it. */
+.features-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .features-swiper .swiper-slide {
+    gap: 26.2px;
+  }
 }
 .swiper-nav-btn {
   display: none;
@@ -117,16 +148,6 @@ body {
 }
 .swiper-nav-next {
   right: -8px;
-}
-
-/* Flash Sale: fixed 3-per-view carousel — clipped to exactly 3 slides wide.
-   Center card stays upright/full size; scale never exceeds 1 so nothing needs
-   vertical clipping room. */
-.flash-swiper {
-  overflow: hidden;
-}
-.flash-swiper .swiper-wrapper {
-  align-items: center;
 }
 
 /* Hero carousel */
@@ -199,4 +220,49 @@ body {
 }
 .best-seller-slide > div {
   border-radius: 13.46px;
+}
+
+/* Flash Sale: fanned-card carousel (scale/rotation set per-slide in JS from
+   live distance to the centered/active slide), sized to the
+   "elora-active-card" spec — 158.52x239.43 on mobile, 327.68x494.91 from
+   the lg breakpoint up. The track is a fixed width that fits exactly the
+   active card plus a sliver of each heavily-overlapped neighbor, and clips
+   everything else, so the carousel never bleeds into the text column next
+   to it and never shows a 4th card peeking in. */
+.flash-sale-swiper {
+  width: min(270.9px, 100%) !important;
+  overflow: hidden;
+  /* Extra vertical padding beyond the card's own height: rotating a tall
+     rectangle a few degrees increases its visual bounding-box height even
+     though layout (and therefore this container's content height) is
+     computed from the un-rotated box, so without this the rotated side
+     cards get clipped at the top/bottom by this container's own
+     overflow:hidden. */
+  padding: 20px 0;
+}
+.flash-sale-slide {
+  width: 158.52px;
+  height: 239.43px;
+  border-radius: 7.18px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: var(--shadow-card-active-mobile);
+}
+.flash-sale-slide > a {
+  border-radius: 7.18px;
+}
+@media (min-width: 1024px) {
+  .flash-sale-swiper {
+    width: 560px !important;
+    padding: 40px 0;
+  }
+  .flash-sale-slide {
+    width: 327.68px;
+    height: 494.91px;
+    border-radius: 14.85px;
+    box-shadow: var(--shadow-card-active);
+  }
+  .flash-sale-slide > a {
+    border-radius: 14.85px;
+  }
 }

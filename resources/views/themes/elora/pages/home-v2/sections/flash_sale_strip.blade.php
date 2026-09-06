@@ -4,6 +4,8 @@
           $pricing = $product->storefrontPricing($variant);
           $hasDiscount = (bool) $pricing['has_discount'];
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/flash-sneaker.png');
+          $rating = (float) ($product->average_rating ?? 0);
+          $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
@@ -11,22 +13,18 @@
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'weight' => '',
               'desc' => $product->centralProduct?->category?->name ?? '',
+              'rating' => $rating,
+              'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
               'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Flash Sale'),
-              'badgeBg' => 'var(--color-primary)',
-              'badgeText' => 'var(--color-white)',
-              'deliveredColor' => 'var(--color-success)',
+              'badgeBg' => 'var(--color-accent-yellow)',
+              'badgeText' => 'var(--color-text-primary)',
+              'delivered' => 'Delivered by 24 March',
+              'stockLeft' => 'Only 5 left',
           ];
       })->values();
-
-      $flashStackLayout = [
-        ['rotate' => -4, 'translateY' => 20, 'scale' => 0.86, 'z' => 1],
-        ['rotate' => 0, 'translateY' => -8, 'scale' => 1, 'z' => 3],
-        ['rotate' => 4, 'translateY' => 18, 'scale' => 0.85, 'z' => 1],
-      ];
-      $flashStackTotal = $flashSaleProducts->count();
 
       $firstSale = $flashSales->first();
       $countdownRemaining = $firstSale && $firstSale->end_date ? max(0, now()->diffInSeconds($firstSale->end_date, false)) : 0;
@@ -46,7 +44,7 @@
       "
     >
       <div
-        class="flex flex-col lg:flex-row items-center gap-[24px] lg:gap-[12px]"
+        class="flex flex-col lg:flex-row items-center lg:justify-between gap-[24px] lg:gap-[12px]"
       >
         <div
           class="flex flex-col items-center lg:items-start gap-[16px] lg:gap-[24px] lg:w-fit lg:shrink-0"
@@ -93,15 +91,12 @@
           </a>
         </div>
 
-        <div
-          class="swiper card-swiper flash-swiper w-full lg:flex-1 max-w-[700px]! pt-[20px]!"
-        >
-          <div class="swiper-wrapper" id="flashStackWrapper">
-            @forelse ($flashSaleProducts as $i => $p)
-              @include('themes.elora.pages.home-v2.sections.partials.flash_stack_card', [
-                'p' => $p,
-                'layout' => $flashStackLayout[$i % count($flashStackLayout)],
-              ])
+        <div class="swiper flash-sale-swiper w-full lg:w-auto lg:shrink-0">
+          <div class="swiper-wrapper" id="flashSaleWrapper">
+            @forelse ($flashSaleProducts as $p)
+              <div class="swiper-slide flash-sale-slide">
+                @include('themes.elora.pages.home-v2.sections.partials.flash_sale_card', ['p' => $p])
+              </div>
             @empty
               <p class="text-sm text-white/70 py-4">{{ __('No flash sale products at the moment.') }}</p>
             @endforelse
