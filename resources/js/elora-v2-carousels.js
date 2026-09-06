@@ -125,18 +125,18 @@ function mountFlashSale() {
     // drift or come out lopsided, it's just i - activeIndex.
     //
     // Rotation is mirrored across the active card: the card to its left
-    // (lower index, distSigned < 0) rotates on the positive axis, the card
-    // to its right (higher index, distSigned > 0) rotates on the negative
-    // axis — hence the leading minus below. Anything beyond the immediate
-    // neighbor (dist > 1) is force-hidden with opacity so exactly 3 cards
-    // are ever visible, never a 4th sliver, regardless of how the container
-    // width and spaceBetween happen to interact.
+    // (lower index, distSigned < 0) rotates on the negative axis, the card
+    // to its right (higher index, distSigned > 0) rotates on the positive
+    // axis. Anything beyond the immediate neighbor (dist > 1) is
+    // force-hidden with opacity so exactly 3 cards are ever visible, never
+    // a 4th sliver, regardless of how the container width and spaceBetween
+    // happen to interact.
     const applyLayout = (sw) => {
         sw.slides.forEach((slideEl, i) => {
             const distSigned = i - sw.activeIndex;
             const dist = Math.min(Math.abs(distSigned), 2);
             const scale = 1 - dist * 0.18;
-            const rotate = -Math.max(
+            const rotate = Math.max(
                 -FLASH_SALE_MAX_ROTATE_DEG,
                 Math.min(FLASH_SALE_MAX_ROTATE_DEG, distSigned * FLASH_SALE_MAX_ROTATE_DEG),
             );

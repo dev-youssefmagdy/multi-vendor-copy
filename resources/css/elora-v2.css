@@ -230,15 +230,17 @@ body {
    everything else, so the carousel never bleeds into the text column next
    to it and never shows a 4th card peeking in. */
 .flash-sale-swiper {
-  width: min(270.9px, 100%) !important;
+  width: min(320px, 100%) !important;
   overflow: hidden;
-  /* Extra vertical padding beyond the card's own height: rotating a tall
-     rectangle a few degrees increases its visual bounding-box height even
-     though layout (and therefore this container's content height) is
+  /* Extra padding on every side beyond the card's own box: rotating a tall
+     rectangle increases its visual bounding-box in both width and height
+     even though layout (and therefore this container's content size) is
      computed from the un-rotated box, so without this the rotated side
-     cards get clipped at the top/bottom by this container's own
-     overflow:hidden. */
-  padding: 20px 0;
+     cards get clipped — top/bottom AND left/right — by this container's
+     own overflow:hidden. Widening the container doesn't risk a 4th card
+     ever showing: those slides are forced to opacity:0 in JS regardless of
+     how much of them this box could otherwise fit. */
+  padding: 30px 15px;
 }
 .flash-sale-slide {
   width: 158.52px;
@@ -255,8 +257,8 @@ body {
 }
 @media (min-width: 1024px) {
   .flash-sale-swiper {
-    width: 560px !important;
-    padding: 40px 0;
+    width: 650px !important;
+    padding: 60px 30px;
   }
   .flash-sale-slide {
     width: 327.68px;
