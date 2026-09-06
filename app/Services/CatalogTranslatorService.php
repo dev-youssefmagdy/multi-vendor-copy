@@ -46,9 +46,8 @@ class CatalogTranslatorService
         $this->translateLanguageResources($sourceLocale, $targetLocale, $language->name);
         $language->forceFill(['translation_progress' => 20])->save();
 
-        $this->translateCatalogModels($sourceLocale, $targetLocale, $language->name);
+        $this->translateCatalogModels($sourceLocale, $targetLocale, $language);
 
-        $language->forceFill(['translation_progress' => 90])->save();
         $this->tenantSyncService->syncAllTenants(['languages', 'categories', 'products']);
         $language->forceFill(['translation_progress' => 100])->save();
     }
@@ -166,9 +165,17 @@ class CatalogTranslatorService
         }
     }
 
-    protected function translateCatalogModels(string $sourceLocale, string $targetLocale, string $targetLanguage): void
+    protected function translateCatalogModels(string $sourceLocale, string $targetLocale, Language $language): void
     {
-        foreach (self::MODEL_FIELDS as $modelClass => $fields) {
+        $targetLanguage = $language->name;
+        $modelClasses = array_keys(self::MODEL_FIELDS);
+        $progressStart = 20;
+        $progressEnd = 90;
+        $totalModels = count($modelClasses);
+
+        foreach ($modelClasses as $modelIndex => $modelClass) {
+            $fields = self::MODEL_FIELDS[$modelClass];
+
             $modelClass::query()
                 ->with('translations.language')
                 ->chunkById(50, function ($models) use ($fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
@@ -222,6 +229,9 @@ class CatalogTranslatorService
                         $model->syncTranslations($state['translations']);
                     }
                 });
+
+            $progress = $progressStart + (int) round(($progressEnd - $progressStart) * ($modelIndex + 1) / $totalModels);
+            $language->forceFill(['translation_progress' => $progress])->save();
         }
     }
 
