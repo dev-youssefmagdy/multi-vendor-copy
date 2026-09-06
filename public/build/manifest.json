@@ -27,7 +27,7 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-TwPv2Bls.css",
+    "file": "assets/app-tJbgUgtU.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,7 +36,7 @@
     "isEntry": true
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DW84LTKb.css",
+    "file": "assets/ecommet-C678grP-.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -45,7 +45,7 @@
     "isEntry": true
   },
   "resources/css/elora-v2.css": {
-    "file": "assets/elora-v2-DxYZvIZ6.css",
+    "file": "assets/elora-v2-DCrsIsc7.css",
     "name": "elora-v2",
     "names": [
       "elora-v2.css"
@@ -54,7 +54,7 @@
     "isEntry": true
   },
   "resources/css/elora-v3.css": {
-    "file": "assets/elora-v3-curixsTi.css",
+    "file": "assets/elora-v3-D4rR2qyl.css",
     "name": "elora-v3",
     "names": [
       "elora-v3.css"
@@ -63,7 +63,7 @@
     "isEntry": true
   },
   "resources/css/elora-v4.css": {
-    "file": "assets/elora-v4-zmmX2jGJ.css",
+    "file": "assets/elora-v4-nPKUxJFd.css",
     "name": "elora-v4",
     "names": [
       "elora-v4.css"
@@ -72,7 +72,7 @@
     "isEntry": true
   },
   "resources/css/elora-v5.css": {
-    "file": "assets/elora-v5-CeGpFn85.css",
+    "file": "assets/elora-v5-DtI1OYA-.css",
     "name": "elora-v5",
     "names": [
       "elora-v5.css"
@@ -81,7 +81,7 @@
     "isEntry": true
   },
   "resources/css/elora-v6.css": {
-    "file": "assets/elora-v6-B6pQ3NeF.css",
+    "file": "assets/elora-v6-CSg5b4Di.css",
     "name": "elora-v6",
     "names": [
       "elora-v6.css"
@@ -319,7 +319,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-YglYWDth.css",
+    "file": "assets/souqify-CEaQ8RTj.css",
     "name": "souqify",
     "names": [
       "souqify.css"

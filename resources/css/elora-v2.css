@@ -199,3 +199,42 @@ body {
 .best-seller-slide > div {
   border-radius: 13.46px;
 }
+
+/* ── Product description read more / show less ─────────────────────────── */
+.desc-readmore {
+    position: relative;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+.desc-readmore-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.desc-readmore.is-collapsed .desc-readmore-fade {
+    opacity: 1;
+}
+
+.desc-readmore-btn {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2aaf2f;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.desc-readmore-btn:hover {
+    text-decoration: underline;
+}
