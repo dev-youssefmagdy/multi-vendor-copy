@@ -82,6 +82,9 @@
         @if ($p['oldPrice'])
           <span class="flash-card-old-price">{{ $p['oldPrice'] }}</span>
         @endif
+        @if ($p['discount'])
+          <span class="flash-card-discount">{{ $p['discount'] }}</span>
+        @endif
       </div>
 
       {{-- Delivery estimate --}}

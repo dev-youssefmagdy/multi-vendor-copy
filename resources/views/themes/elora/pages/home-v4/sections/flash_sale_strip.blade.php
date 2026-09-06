@@ -99,9 +99,6 @@
       </div>
 
 
-      {{-- Dot indicators --}}
-      <div class="flash-dots" id="{{ $flashId }}-dots"></div>
-
       {{-- "Only $X.XX" price pill --}}
       @if ($flashSaleMinPriceLabel)
         <div class="absolute bottom-[-20px] left-0 z-10 bg-white border-black rounded-full h-[40px] lg:h-[47.54px] flex items-center justify-center px-[18px] lg:px-[24px]" style="border-width: 1.49px; border-style: solid;">

@@ -113,6 +113,11 @@ body {
   overflow: hidden;
   width: 100%;
   position: relative;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.flash-viewport:active {
+  cursor: grabbing;
 }
 
 .flash-track {
@@ -329,6 +334,13 @@ body {
   white-space: nowrap;
 }
 
+.flash-card-discount {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-secondary);
+  white-space: nowrap;
+}
+
 .flash-card-delivery-row {
   display: flex;
   align-items: center;
@@ -407,8 +419,8 @@ body {
   }
 
   .flash-card-fav {
-    width: 32px;
-    height: 32px;
+    width: 33.2px;
+    height: 33.2px;
   }
 
   .flash-card-info {
@@ -417,28 +429,38 @@ body {
   }
 
   .flash-card-name {
-    font-size: 14px;
+    font-size: 19.808px;
+    font-weight: 500;
   }
 
   .flash-card-weight {
-    font-size: 12px;
+    font-size: 16.5067px;
+  }
+
+  .flash-card-rating-text {
+    font-size: 13.2053px;
   }
 
   .flash-card-price {
-    font-size: 17px;
+    font-size: 19.808px;
+    color: #000000;
   }
 
   .flash-card-old-price {
-    font-size: 13px;
+    font-size: 14.5259px;
+  }
+
+  .flash-card-discount {
+    font-size: 13.2053px;
   }
 
   .flash-card-delivery-icon {
-    width: 17px;
-    height: 17px;
+    width: 19.81px;
+    height: 19.81px;
   }
 
   .flash-card-delivery-text {
-    font-size: 12px;
+    font-size: 13.2053px;
   }
 
   .flash-card-cart {
