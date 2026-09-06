@@ -89,6 +89,45 @@
         </button>
       </form>
     </div>
+
+    {{-- Mobile: horizontally-scrollable category quick-nav tabs, real
+         categories from the storefront (StorefrontComposer shares
+         $categories with every themed view, header included). --}}
+    @if (($categories ?? collect())->isNotEmpty())
+      @php $activeCategorySlug = request()->route('slug'); @endphp
+      <div class="lg:hidden flex items-center overflow-x-auto no-scrollbar pb-[12px]" >
+        <a
+          href="{{ route('tenant.storefront.category') }}"
+          class="relative flex flex-col justify-center items-center px-[16px] py-[8px] shrink-0"
+          style="text-decoration:none"
+        >
+          <span
+            class="text-[12px] leading-[15px] tracking-[0.5px] whitespace-nowrap"
+            style="color: {{ !$activeCategorySlug ? 'var(--color-brand-orange)' : '#555555' }}"
+          >{{ __('All') }}</span>
+          @if (!$activeCategorySlug)
+            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[19px] h-[2px] rounded-full" style="background: var(--color-brand-orange)"></span>
+          @endif
+        </a>
+        @foreach ($categories as $cat)
+          @php $catActive = $activeCategorySlug === $cat->slug; @endphp
+          <a
+            href="{{ route('tenant.storefront.category', $cat->slug) }}"
+            class="relative flex flex-col justify-center items-center px-[16px] py-[8px] shrink-0"
+            style="text-decoration:none"
+          >
+            <span
+              class="text-[12px] leading-[15px] tracking-[0.5px] whitespace-nowrap"
+              style="color: {{ $catActive ? 'var(--color-brand-orange)' : '#555555' }}"
+            >{{ $cat->translationValue('name') ?? $cat->name }}</span>
+            @if ($catActive)
+              <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[19px] h-[2px] rounded-full" style="background: var(--color-brand-orange)"></span>
+            @endif
+          </a>
+        @endforeach
+      </div>
+    @endif
+
     <x-image-search-modal id="storefront-image-search-modal-v4" :action="route('tenant.storefront.search.image')" />
 
     <!-- Desktop -->
