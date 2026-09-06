@@ -33,7 +33,18 @@ function mountFeatures() {
 // reusing the same vertical card (flash_sale_card partial). No rotation —
 // only the active card is full size, straight, up front; the 2 rings on
 // either side (5 slides visible total) just shrink, staying upright.
-
+//
+// No Swiper `loop` here: with slidesPerView:"auto", Swiper derives its
+// duplicate-slide buffer size from an estimated slidesPerView, and with
+// this many real slides that estimate landed exactly on the boundary where
+// Swiper decides it doesn't have enough slides to loop safely — so it
+// silently skipped creating any duplicates, leaving no neighbor cards
+// before the first slide at all. best_seller.blade.php works around this
+// server-side instead: it pads the rendered list with a few real slides
+// (last N + all + first N) and reports how many via
+// #bestSellerWrapper's data-initial-slide, so the "first" active slide
+// always has genuine neighbors already sitting in the DOM — no loop
+// math involved.
 function mountBestSeller() {
     const wrapper = document.getElementById("bestSellerWrapper");
     if (!wrapper) return;
@@ -52,21 +63,10 @@ function mountBestSeller() {
     return new Swiper(wrapper.closest(".swiper"), {
         slidesPerView: "auto",
         centeredSlides: true,
-        initialSlide: 0,
-        spaceBetween: -70,
-        loop: true,
-        // With slidesPerView:"auto", Swiper can't derive a reliable default
-        // buffer size for the duplicate slides loop needs on each side, so
-        // it doesn't create enough of them — least visibly when starting at
-        // slide 0, since there's no earlier real slide to fall back to and
-        // no duplicate one was inserted before it either, leaving nothing
-        // to show on the left at all. Setting loopedSlides explicitly (at
-        // least the 3 slides our own ring effect needs on each side) forces
-        // that buffer to exist regardless of what "auto" would have guessed.
-        loopedSlides: 3,
-        loopAdditionalSlides: 3,
+        initialSlide: parseInt(wrapper.dataset.initialSlide, 10) || 0,
+        spaceBetween: -55,
         breakpoints: {
-            1024: { spaceBetween: -150 },
+            1024: { spaceBetween: -120 },
         },
         on: {
             init: applyLayout,

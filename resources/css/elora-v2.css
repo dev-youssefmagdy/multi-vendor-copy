@@ -469,7 +469,13 @@ body {
 .best-seller-swiper {
   width: min(380px, 100%) !important;
   margin: 0 auto;
-  overflow: hidden;
+  /* Not overflow:hidden: the ring cards on either side need to extend past
+     this box's own edges without being clipped early — "exactly 5 visible"
+     is already guaranteed by JS opacity regardless of what this container
+     clips, and the section itself (best_seller.blade.php) has its own
+     overflow-hidden as the real backstop against page-level horizontal
+     scroll. */
+  overflow: visible;
   padding: 25px 15px;
 }
 .best-seller-swiper .swiper-wrapper {
@@ -495,13 +501,11 @@ body {
     max-width: 100%;
     /* No forced height here: the card is 494.91px tall, and a shorter fixed
        height on this box (448px was tried) can only show the full card by
-       either clipping it or scrolling — the CSS overflow spec forces
-       overflow-y up to `auto` (a scrollbar) the moment overflow-x is
-       `hidden` and overflow-y is left `visible`, so there's no clean
-       "visible but no scrollbar" middle ground. Letting height be
-       content-driven (card height + this padding) is what actually shows
-       every slide uncropped. */
-    overflow: hidden;
+       either clipping it or scrolling. Letting height be content-driven
+       (card height + this padding) is what actually shows every slide
+       uncropped — and overflow:visible (see the mobile rule above for why)
+       does the same for the ring cards on the sides. */
+    overflow: visible;
     padding: 20px;
   }
   .best-seller-swiper .swiper-wrapper {
