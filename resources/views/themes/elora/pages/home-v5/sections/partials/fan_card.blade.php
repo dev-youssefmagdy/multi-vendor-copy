@@ -19,7 +19,10 @@
     $isBestSeller = array_key_exists('alt', $p);
     $weightColor = $isBestSeller ? 'var(--color-badge-orange)' : (!empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)');
     $priceColor = $isBestSeller ? 'var(--color-black)' : (!empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)');
-    $deliveredColor = !empty($p['alt']) ? 'var(--color-error)' : 'var(--color-success)';
+    // "Delivered by" is always a positive/green status; red is reserved for
+    // the "Only X left" urgency row below, not tied to the badge's alt cycle.
+    $deliveredColor = 'var(--color-success)';
+    $stockColor = 'var(--color-error)';
 @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="fan-card flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)]" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-full" style="height:57.5%">
@@ -65,7 +68,7 @@
              every card-size spec's delivery/stock wrapper is only ever tall enough for one row. --}}
         <div class="fan-stock-row flex gap-[6.25px] lg:gap-[9.77px] items-center w-full">
           <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="fan-stock-icon size-[18.75px] lg:size-[19.53px] shrink-0" />
-          <p class="fan-stock-text font-medium text-[12.5px] leading-[16px] lg:text-[14.65px] lg:leading-[18px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['left'] }}</p>
+          <p class="fan-stock-text font-medium text-[12.5px] leading-[16px] lg:text-[14.65px] lg:leading-[18px] whitespace-nowrap" style="color:{{ $stockColor }}">{{ $p['left'] }}</p>
         </div>
       @else
         <div class="fan-delivery-row flex gap-[3.93px] lg:gap-[7.77px] items-center w-full">
