@@ -159,7 +159,7 @@
 </style>
 
 <!-- ============ BEST SELLER ============ -->
-<section class="sqv5-best mx-[8px] lg:mx-[16px]">
+<section class="sqv5-best mx-[8px] lg:mx-[16px]" wire:ignore>
   <span class="sqv5-best__bg" aria-hidden="true">
     {{-- 95.64 / 1440 = 6.642% step; 16 columns cover the full 1440 width. --}}
     @for ($__i = 0; $__i < 16; $__i++)

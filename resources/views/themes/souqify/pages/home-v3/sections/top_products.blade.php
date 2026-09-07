@@ -156,7 +156,7 @@
 @include('themes.souqify.pages.home-v3.sections.partials.deal_card_styles')
 
 <!-- ============ BEST SELLER ============ -->
-<section class="sqv3-best">
+<section class="sqv3-best" wire:ignore>
   <img src="{{ asset('souqify-2/assets/images/best-seller-texture-mobile.png') }}" alt="" class="sqv3-best__texture lg:hidden" />
   <img src="{{ asset('souqify-2/assets/images/best-seller-texture-desktop.png') }}" alt="" class="sqv3-best__texture hidden lg:block" />
 

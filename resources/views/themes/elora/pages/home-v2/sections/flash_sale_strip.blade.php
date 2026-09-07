@@ -67,6 +67,7 @@
       $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
     @endphp
     <section
+    wire:ignore
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
       style="
         background: linear-gradient(

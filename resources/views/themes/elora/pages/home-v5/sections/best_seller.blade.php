@@ -69,6 +69,7 @@
     @endphp
     <!-- ============ BEST SELLER ============ -->
     <section
+      wire:ignore
       class="bestseller-section-bg px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px] overflow-hidden"
     >
       <div class="flex items-center justify-between w-full">

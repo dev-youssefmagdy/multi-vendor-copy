@@ -3,7 +3,7 @@
       $__heroFallbackCtas = [__('Shop Now'), __('Shop Deals'), __('Discover More'), __('Start Shopping')];
     @endphp
     <!-- ============ HERO ============ -->
-    <section class="relative">
+    <section class="relative" wire:ignore>
       <div class="swiper hero-swiper">
         <div class="swiper-wrapper">
           @forelse ($banners as $banner)

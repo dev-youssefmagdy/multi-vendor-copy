@@ -2,7 +2,7 @@
     <section class="overflow-hidden lg:mt-[48px] shadow-[0px_13.0987px_65.4933px_rgba(0,38,3,0.08)]" style="background: var(--color-primary)">
       <div
         id="featureStripDesktop"
-        class="hidden lg:block"
+        class="hidden lg:block" wire:ignore
       >
       <div class="swiper feature-strip-swiper !py-[13px] !ps-[56px]">
         <div class="swiper-wrapper" id="featureStripDesktopWrapper">

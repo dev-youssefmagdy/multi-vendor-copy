@@ -59,7 +59,7 @@
           ];
       });
     @endphp
-    <section
+    <section wire:ignore
       class=" py-12 flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
     >
@@ -84,6 +84,6 @@
             @endforelse
           </div>
         </div>
-   
+
       </div>
     </section>

@@ -8,7 +8,7 @@
 @endphp
 
 @if ($promoBannerImageUrl || $promoBannerTitle)
-    <section class="px-4 mb-6">
+    <section class="px-4 mb-6" wire:ignore>
         <a href="{{ $promoBannerLink }}"
             class="relative block rounded-2xl overflow-hidden bg-black min-h-[200px] max-w-[1280px] mx-auto">
             @if ($promoBannerImageUrl)

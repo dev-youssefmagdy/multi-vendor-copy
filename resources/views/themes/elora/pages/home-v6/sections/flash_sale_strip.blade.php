@@ -41,7 +41,7 @@
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
-      class="flash-sale-stripes py-[24px] lg:py-[32px] flex flex-col gap-[24px]"
+      class="flash-sale-stripes py-[24px] lg:py-[32px] flex flex-col gap-[24px]" wire:ignore
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <div class="flex items-center gap-2 lg:gap-3.25">

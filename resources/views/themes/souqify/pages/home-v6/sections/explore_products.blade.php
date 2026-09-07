@@ -155,7 +155,7 @@
 </style>
 
 <!-- ============ SHOP BY CATEGORY ============ -->
-<section class="sqv6-shop">
+<section class="sqv6-shop" wire:ignore>
   <h2 class="sqv6-shop__title">{{ __('Shop by Category') }}</h2>
 
   @if ($__tiles->isNotEmpty())

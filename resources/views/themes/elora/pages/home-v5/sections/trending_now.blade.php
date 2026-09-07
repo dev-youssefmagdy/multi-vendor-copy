@@ -65,6 +65,7 @@
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[28px]"
       style="background: var(--color-page-bg)"
+      wire:ignore
     >
       <div class="flex items-center justify-between">
         <h2

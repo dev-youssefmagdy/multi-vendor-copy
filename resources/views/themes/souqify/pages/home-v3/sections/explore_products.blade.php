@@ -168,7 +168,7 @@
 </style>
 
 <!-- ============ SHOP BY CATEGORY ============ -->
-<section class="sqv3-shop">
+<section class="sqv3-shop" wire:ignore>
   <h2 class="sqv3-shop__title">{{ __('Shop by Category') }}</h2>
 
   @if ($__tiles->isNotEmpty())

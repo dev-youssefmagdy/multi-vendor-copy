@@ -1,4 +1,4 @@
-    <section class="relative">
+    <section class="relative" wire:ignore>
       <div class="swiper hero-swiper">
         <div class="swiper-wrapper">
           @forelse ($banners as $banner)

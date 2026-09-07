@@ -1,5 +1,5 @@
     <!-- ============ SHOP BY CATEGORY ============ -->
-    <section
+    <section wire:ignore
       class="bg-white w-full max-w-360 mx-auto border-l-[6px] lg:border-l-14 flex flex-col justify-end lg:justify-start items-center px-2 py-4.5 lg:px-14 lg:py-8 gap-2 lg:gap-6 lg:my-[24px]"
       style="border-color: var(--color-accent-green)"
     >

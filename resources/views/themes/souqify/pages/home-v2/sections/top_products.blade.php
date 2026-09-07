@@ -190,7 +190,7 @@
 </style>
 
 <!-- ============ BEST SELLER ============ -->
-<section class="sqv2-best">
+<section class="sqv2-best" wire:ignore>
   <div class="sqv2-best__head">
     <h2 class="sqv2-best__title">{{ __('Best Seller') }}</h2>
     <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv2-best__seeall">{{ __('see all') }}</a>

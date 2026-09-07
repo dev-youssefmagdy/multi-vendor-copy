@@ -16,7 +16,7 @@
       // the second), not a plain repeating grid.
       $overlayGradient = 'linear-gradient(0deg, rgba(0, 0, 0, 0.79) 0%, rgba(138, 56, 245, 0.09) 100%)';
     @endphp
-    <section class="flex flex-col items-center px-[16px] lg:px-0 py-[32px] gap-[16px] lg:gap-[24px] w-full max-w-[375px] lg:max-w-[1328px] mx-auto bg-white box-border" style="font-family: 'Outfit', sans-serif">
+    <section wire:ignore class="flex flex-col items-center px-[16px] lg:px-0 py-[32px] gap-[16px] lg:gap-[24px] w-full max-w-[375px] lg:max-w-[1328px] mx-auto bg-white box-border" style="font-family: 'Outfit', sans-serif">
       <div class="flex flex-col justify-center items-center w-[265px] lg:w-auto h-[48px]">
         <h2 class="m-0 font-semibold text-[32px] leading-[150%] tracking-[0.5px] lg:whitespace-nowrap" style="color: var(--color-text-primary)">
           {{ __('Shop by Category') }}

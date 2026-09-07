@@ -293,7 +293,7 @@
 </style>
 
 <!-- ============ BEST SELLER ============ -->
-<section class="sqv6-best">
+<section class="sqv6-best" wire:ignore>
   <div class="sqv6-best__bg" aria-hidden="true">
     <span class="sqv6-best__blob sqv6-best__blob--s1"></span>
     <span class="sqv6-best__blob sqv6-best__blob--s2"></span>

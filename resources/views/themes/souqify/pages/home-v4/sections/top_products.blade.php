@@ -251,7 +251,7 @@
 </style>
 
 <!-- ============ BEST SELLER ============ -->
-<section class="sqv4-best">
+<section class="sqv4-best" wire:ignore>
   <img src="{{ asset('souqify-3/assets/images/best-seller-swirl-bg.png') }}" alt="" class="sqv4-best__overlay" />
 
   <div class="sqv4-best__head">

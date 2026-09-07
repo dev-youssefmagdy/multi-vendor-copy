@@ -99,7 +99,7 @@
 @endphp
 
 <!-- ============ FEATURED STRIP ============ -->
-<section class="sqv2-trust">
+<section class="sqv2-trust" wire:ignore>
   <div class="swiper trust-swiper sqv2-trust__viewport">
     <div class="swiper-wrapper">
       @foreach ($__trustSlides as $__index => $__feature)

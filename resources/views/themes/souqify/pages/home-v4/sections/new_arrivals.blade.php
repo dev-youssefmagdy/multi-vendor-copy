@@ -137,7 +137,7 @@
 </style>
 
 <!-- ============ NEW IN ============ -->
-<section class="sqv4-newin">
+<section class="sqv4-newin" wire:ignore>
   <div class="sqv4-newin__head">
     <h2 class="sqv4-newin__title">{{ __('New In') }}</h2>
     <a href="{{ route('tenant.storefront.new-in') }}" class="sqv4-newin__seeall">{{ __('see all') }}</a>

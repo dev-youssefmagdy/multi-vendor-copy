@@ -17,7 +17,7 @@
     ];
 @endphp
 <!-- ============ HERO ============ -->
-<section class="relative">
+<section class="relative" wire:ignore>
   <div class="sqv-hero-static">
     <div class="sqv-hero-static__inner">
       @forelse ($__heroBanners as $banner)

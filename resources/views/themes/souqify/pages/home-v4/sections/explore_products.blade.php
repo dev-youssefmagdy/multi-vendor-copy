@@ -165,7 +165,7 @@
 </style>
 
 <!-- ============ SHOP BY CATEGORY ============ -->
-<section class="sqv4-shopcat">
+<section class="sqv4-shopcat" wire:ignore>
   <div class="sqv4-shopcat__head">
     <h2 class="sqv4-shopcat__title">{{ __('Shop by Category') }}</h2>
     <a href="{{ route('tenant.storefront.category') }}" class="sqv4-shopcat__seeall">{{ __('Explore all') }}</a>

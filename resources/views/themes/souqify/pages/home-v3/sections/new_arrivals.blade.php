@@ -118,7 +118,7 @@
 @include('themes.souqify.pages.home-v3.sections.partials.deal_card_styles')
 
 <!-- ============ NEW IN ============ -->
-<section class="sqv3-newin">
+<section class="sqv3-newin" wire:ignore>
   <div class="sqv3-newin__head">
     <h2 class="sqv3-newin__title">{{ __('New In') }}</h2>
     <a href="{{ route('tenant.storefront.new-in') }}" class="sqv3-newin__seeall">{{ __('see all') }}</a>

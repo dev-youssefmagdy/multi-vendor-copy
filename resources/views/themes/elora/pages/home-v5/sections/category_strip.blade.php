@@ -10,6 +10,7 @@
     @endphp
     <!-- ============ CATEGORIES ============ -->
     <section
+        wire:ignore
       class="py-[24px] lg:py-[40px] flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
     >

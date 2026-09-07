@@ -81,6 +81,7 @@
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
+        wire:ignore
       class="relative overflow-hidden py-[24px] lg:py-[12px] flex flex-col items-center gap-[20px] lg:gap-[24px]"
       style="
         background:

@@ -248,7 +248,7 @@
 </style>
 
 <!-- ============ FLASH SALE ============ -->
-<section class="sqv6-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
+<section class="sqv6-flash" wire:ignore @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
   <div class="sqv6-flash__head">
     <h2 class="sqv6-flash__title">{{ __('Flash Sale') }}</h2>
     <div class="sqv6-flash__ends">

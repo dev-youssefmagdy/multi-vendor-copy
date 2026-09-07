@@ -11,6 +11,7 @@
       });
     @endphp
     <section
+    wire:ignore
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[34px] flex flex-col gap-[16px] lg:gap-[34px]"
       style="background: var(--color-page-bg)"
     >

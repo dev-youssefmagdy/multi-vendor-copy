@@ -165,7 +165,7 @@
 </style>
 
 <!-- ============ CATEGORIES ============ -->
-<section class="sqv3-cats" style="background:var(--color-page-bg)">
+<section class="sqv3-cats" style="background:var(--color-page-bg)" wire:ignore>
   <div class="sqv3-cats__head">
     <h2 class="sqv3-cats__title">{{ __('Categories') }}</h2>
     <a href="{{ route('tenant.storefront.category') }}" class="sqv3-cats__seeall">{{ __('see all') }}</a>

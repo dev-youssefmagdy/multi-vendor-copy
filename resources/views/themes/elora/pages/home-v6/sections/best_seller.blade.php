@@ -39,6 +39,7 @@
     @endphp
     <!-- ============ BEST SELLER ============ -->
     <section
+    wire:ignore
       class=" py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
       style="background: var(--color-accent-yellow)"
     >

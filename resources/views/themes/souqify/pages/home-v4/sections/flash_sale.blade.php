@@ -397,7 +397,7 @@
 @include('themes.souqify.pages.home-v4.sections.partials.deal_card_styles')
 
 <!-- ============ FLASH SALE ============ -->
-<section class="sqv4-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
+<section class="sqv4-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif wire:ignore>
   <div class="sqv4-flash__timer">
     <span class="sqv4-flash__endsin-slot"><span class="sqv4-flash__endsin">{{ __('Ends in') }}</span></span>
     <span class="sqv4-flash__box"><span data-flash-hours class="sqv4-flash__digit">03</span></span>

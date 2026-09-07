@@ -511,7 +511,7 @@
 </style>
 
 <!-- ============ FLASH SALE ============ -->
-<section class="sqv5-flash mx-[8px] lg:mx-[16px]" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
+<section class="sqv5-flash mx-[8px] lg:mx-[16px]" wire:ignore @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
   <span class="sqv5-flash__badge sqv5-flash__badge--top">
     <img src="{{ asset('souqify-4/assets/icons/flash-lightning.svg') }}" alt="" />
   </span>

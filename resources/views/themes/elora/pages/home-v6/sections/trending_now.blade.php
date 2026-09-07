@@ -53,7 +53,7 @@
       });
     @endphp
     <!-- ============ TRENDING NOW ============ -->
-    <section
+    <section wire:ignore
       class="py-[24px]! lg:py-[48px]! flex flex-col gap-[16px] lg:gap-[24px] bg-[#f0f0f0]"
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">

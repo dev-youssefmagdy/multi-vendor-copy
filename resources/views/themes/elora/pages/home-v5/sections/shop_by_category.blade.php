@@ -12,7 +12,7 @@
     <!-- ============ SHOP BY CATEGORY ============ -->
     <section
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
-      style="background: #FFFFFF"
+      style="background: #FFFFFF" wire:ignore
     >
       <h2
         class="font-semibold text-[22px] lg:text-[32px] lg:leading-[150%] text-center tracking-[0.5px]"

@@ -80,6 +80,7 @@
           : $bestSellerProducts;
     @endphp
     <section
+    wire:ignore
       class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] overflow-hidden"
       style="background: var(--color-yellow-bright)"
     >

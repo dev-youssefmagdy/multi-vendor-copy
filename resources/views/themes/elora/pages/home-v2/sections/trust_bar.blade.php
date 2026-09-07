@@ -1,4 +1,4 @@
-    <section class="overflow-hidden" style="background: var(--color-accent-yellow)">
+    <section wire:ignore class="overflow-hidden" style="background: var(--color-accent-yellow)">
       <div class="px-[16px] lg:px-[56px] py-[8px] lg:py-[13.0987px]">
         <div class="swiper card-swiper features-swiper">
           <div class="swiper-wrapper !items-center" id="featuresWrapper">

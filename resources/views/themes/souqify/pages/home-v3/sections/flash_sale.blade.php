@@ -285,7 +285,7 @@
 @include('themes.souqify.pages.home-v3.sections.partials.trending_card_styles')
 
 <!-- ============ FLASH SALE ============ -->
-<section class="sqv3-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
+<section class="sqv3-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif wire:ignore>
   <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.png') }}" alt="" class="sqv3-flash__texture lg:hidden" />
   <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-desktop.png') }}" alt="" class="sqv3-flash__texture hidden lg:block" />
 

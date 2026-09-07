@@ -219,7 +219,7 @@
 </style>
 
 <!-- ============ FLASH SALE ============ -->
-<section class="sqv2-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif>
+<section class="sqv2-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif  wire:ignore>
   <span class="sqv2-flash__clear" aria-hidden="true"></span>
 
   <div class="sqv2-flash__head">

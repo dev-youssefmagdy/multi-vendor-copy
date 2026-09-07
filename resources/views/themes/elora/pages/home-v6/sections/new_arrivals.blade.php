@@ -33,7 +33,7 @@
       });
     @endphp
     <!-- ============ NEW IN ============ -->
-    <section
+    <section wire:ignore
       class=" py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] lg:mt-[48px]! mt-[24px]!"
       style="background: var(--color-section-cream)"
     >

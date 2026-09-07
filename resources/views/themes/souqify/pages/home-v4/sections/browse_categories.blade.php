@@ -172,7 +172,7 @@
 </style>
 
 <!-- ============ CATEGORIES ============ -->
-<section class="sqv4-cats" style="background:var(--color-page-bg)">
+<section class="sqv4-cats" style="background:var(--color-page-bg)" wire:ignore>
   <div class="sqv4-cats__head">
     <h2 class="sqv4-cats__title">{{ __('Categories') }}</h2>
     <a href="{{ route('tenant.storefront.category') }}" class="sqv4-cats__seeall">{{ __('see all') }}</a>

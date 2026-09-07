@@ -72,7 +72,7 @@
       });
     @endphp
     <!-- ============ NEW IN ============ -->
-    <section
+    <section wire:ignore
       class="newin-bg py-[24px] lg:py-[38px] flex flex-col gap-[16px] lg:gap-[24px] mt-12"
     >
       <img

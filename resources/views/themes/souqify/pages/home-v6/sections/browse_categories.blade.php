@@ -140,7 +140,7 @@
 </style>
 
 <!-- ============ CATEGORIES ============ -->
-<section class="sqv6-cats">
+<section class="sqv6-cats" wire:ignore>
   <div class="sqv6-cats__head">
     <h2 class="sqv6-cats__title">{{ __('Categories') }}</h2>
     <a href="{{ route('tenant.storefront.category') }}" class="sqv6-cats__seeall">{{ __('see all') }}</a>

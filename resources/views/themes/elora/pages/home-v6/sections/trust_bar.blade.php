@@ -1,5 +1,5 @@
     <!-- ============ FEATURED STRIP ============ -->
-    <section style="background: var(--color-accent-green)">
+    <section style="background: var(--color-accent-green)" wire:ignore>
       <div
         class="flex items-center justify-center gap-[32px] lg:gap-[52px] px-[16px] lg:px-[56px] py-[12px] lg:py-[13px]"
       >

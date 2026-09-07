@@ -121,7 +121,7 @@
 </style>
 
 <!-- ============ TRENDING NOW ============ -->
-<section class="sqv6-trend">
+<section class="sqv6-trend" wire:ignore>
   <div class="sqv6-trend__head">
     <h2 class="sqv6-trend__title">{{ __('Trending Now') }}</h2>
     <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv6-trend__seeall">{{ __('see all') }}</a>

@@ -204,7 +204,7 @@
 </style>
 
 <!-- ============ NEW IN ============ -->
-<section class="sqv6-newin">
+<section class="sqv6-newin" wire:ignore>
   <span class="sqv6-newin__shade" aria-hidden="true"></span>
 
   <div class="sqv6-newin__head">
