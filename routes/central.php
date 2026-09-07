@@ -535,15 +535,15 @@ Route::get('prod', function () {
 //     ApplyTenantProfitPercentageJob::dispatch(Tenant::first()->id);
 // });
 
-Route::get('get-product-translated-keys', function () {
-    $productArr = [];
-    \App\Models\Product::query()->chunk(100, function ($products) use (&$productArr) {
-        foreach ($products as $product) {
-            $productArr[] = $product->getTranslatedKeys();
-        }
-        dd(json_encode($productArr));
-        // this json encoded array pass it to openai
-    });
+// Route::get('get-product-translated-keys', function () {
+//     $productArr = [];
+//     \App\Models\Product::query()->chunk(100, function ($products) use (&$productArr) {
+//         foreach ($products as $product) {
+//             $productArr[] = $product->getTranslatedKeys();
+//         }
+//         dd(json_encode($productArr));
+//         // this json encoded array pass it to openai
+//     });
 
-    return response()->json($productArr);
-});
+//     return response()->json($productArr);
+// });

@@ -66,6 +66,11 @@ class ProductsList extends ListPage
     public ?string $shareImageUrl = null;
     public bool $hasAiContent = false;
 
+    // ── Video Ad modal state ───────────────────────────────────────────────
+    public bool $videoAdModalOpen = false;
+    public ?int $videoAdProductId = null;
+    public string $videoAdProductName = '';
+
     // ── Price list modal state ─────────────────────────────────────────────
     public bool $priceListOpen = false;
     public ?int $priceListProductId = null;
@@ -205,6 +210,9 @@ class ProductsList extends ListPage
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openPriceListModal(' . $product->id . ')" title="Edit per-country prices">'
                     . '&#9776; Prices'
                     . '</button>'
+                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openVideoAdModal(' . $product->id . ')" title="Generate a video ad for this product">'
+                    . '&#127909; Video Ad'
+                    . '</button>'
                     . '</div>',
                 ];
             })->all(),
@@ -277,6 +285,12 @@ class ProductsList extends ListPage
                         'shippingByCountry' => $this->priceListShippingByCountry,
                     ],
                 ],
+                [
+                    'model' => 'videoAdModalOpen',
+                    'title' => 'Generate new Video Ad',
+                    'closeAction' => 'closeVideoAdModal',
+                    'maxWidth' => '2xl',
+                ],
             ],
         ]);
     }
@@ -342,6 +356,24 @@ class ProductsList extends ListPage
         $this->socialSelectedLanguage = 'all';
         $this->socialIncludeImage = 'on';
         $this->socialSelectedPlatform = 'all';
+    }
+
+    // ── Video Ad actions ───────────────────────────────────────────────────
+
+    public function openVideoAdModal(int $productId): void
+    {
+        $product = Product::query()->with('translations.language')->findOrFail($productId);
+
+        $this->videoAdProductId = $productId;
+        $this->videoAdProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->videoAdModalOpen = true;
+    }
+
+    public function closeVideoAdModal(): void
+    {
+        $this->videoAdModalOpen = false;
+        $this->videoAdProductId = null;
+        $this->videoAdProductName = '';
     }
 
     public function generateSocialPosts(SocialPostService $service): void
