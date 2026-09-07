@@ -74,7 +74,16 @@ def _image_to_data_url(image_path: str) -> str:
 
 
 def _url_to_data_url(url: str) -> str:
-    with urllib.request.urlopen(url, timeout=15) as resp:
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+        },
+    )
+    with urllib.request.urlopen(req, timeout=15) as resp:
         content = resp.read()
     mime = _sniff_image_mime(content, url)
     encoded = base64.b64encode(content).decode("ascii")
