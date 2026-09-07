@@ -51,7 +51,9 @@ class AddEditProduct extends Component
         $this->translations = array_replace_recursive($this->translations, $product->translationsByLocale(['name', 'description', 'meta_keywords', 'meta_description']));
         $this->syncVariantsFromCentral($this->centralProductId, $product);
 
-        $this->pendingEditRequest = tenancy()->central(fn() => \App\Models\ProductEditRequest::where('tenant_id', tenant()->getTenantKey())
+        $tenantId = tenant()->getTenantKey();
+
+        $this->pendingEditRequest = tenancy()->central(fn() => \App\Models\ProductEditRequest::where('tenant_id', $tenantId)
             ->where('product_id', $this->productId)
             ->where('status', 'pending')
             ->first(['id', 'requested_translations', 'created_at'])

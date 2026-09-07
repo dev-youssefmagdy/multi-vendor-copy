@@ -33,6 +33,7 @@ use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product;
 use App\Models\CentralCoupon;
 use App\Models\CentralFlashSale;
+use App\Models\TenantCountry;
 use App\Models\Tenant\Coupon;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\ProductBadge;
@@ -661,6 +662,11 @@ class TenantCatalogSyncService
             ->whereNotNull('central_language_id')
             ->exists();
 
+        // Resolved once for the whole run instead of per-product inside the loop below.
+        $categoryIdMap = Category::query()
+            ->whereNotNull('central_category_id')
+            ->pluck('id', 'central_category_id');
+
         foreach ($products as $product) {
             /** @var CentralProduct $product */
             $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $product->id]);
@@ -692,7 +698,9 @@ class TenantCatalogSyncService
                 $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
                 ['name', 'description', 'meta_keywords']
             ));
-            $tenantProduct->categories()->sync(Category::query()->whereIn('central_category_id', $product->categories->pluck('id'))->pluck('id')->all());
+            $tenantProduct->categories()->sync(
+                $product->categories->pluck('id')->map(fn($id) => $categoryIdMap[$id] ?? null)->filter()->values()->all()
+            );
 
             if ($isNewProduct && $hasPaidTranslation) {
                 $tenantProduct->update(['needs_ai_translation' => true]);
@@ -1095,12 +1103,23 @@ class TenantCatalogSyncService
     protected function syncCoupons(): int
     {
         $centralCoupons = tenancy()->central(
-            fn() => CentralCoupon::query()->with('countries')->get()
+            fn() => CentralCoupon::query()->get()
         );
 
-        foreach ($centralCoupons as $centralCoupon) {
-            $countryIds = $centralCoupon->countries->pluck('id')->values()->all();
+        // Only sync Default coupons (country_id null) plus coupons scoped to a
+        // country this tenant actually serves — a tenant should never receive a
+        // coupon targeting a country it doesn't sell in.
+        $tenantCountryIds = TenantCountry::query()
+            ->where('tenant_id', tenant()->id)
+            ->where('is_active', true)
+            ->pluck('country_id')
+            ->all();
 
+        $applicableCoupons = $centralCoupons->filter(
+            fn(CentralCoupon $coupon) => $coupon->country_id === null || in_array($coupon->country_id, $tenantCountryIds, true)
+        );
+
+        foreach ($applicableCoupons as $centralCoupon) {
             Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
                 [
@@ -1110,17 +1129,18 @@ class TenantCatalogSyncService
                     'minimum_spend' => $centralCoupon->minimum_spend,
                     'start_date' => $centralCoupon->start_date,
                     'end_date' => $centralCoupon->end_date,
-                    'allowed_country_ids' => empty($countryIds) ? null : $countryIds,
+                    'country_id' => $centralCoupon->country_id,
                 ]
             );
         }
 
-        // Remove tenant coupons whose central counterpart was deleted.
+        // Remove tenant coupons whose central counterpart was deleted or is no
+        // longer applicable to this tenant (e.g. tenant stopped serving that country).
         Coupon::query()
             ->whereNotNull('central_coupon_id')
-            ->whereNotIn('central_coupon_id', $centralCoupons->pluck('id'))
+            ->whereNotIn('central_coupon_id', $applicableCoupons->pluck('id'))
             ->delete();
 
-        return $centralCoupons->count();
+        return $applicableCoupons->count();
     }
 }

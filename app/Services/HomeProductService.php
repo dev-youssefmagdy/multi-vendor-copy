@@ -3,73 +3,96 @@
 namespace App\Services;
 
 use App\Models\Tenant\Product;
+use App\Support\CacheVersion;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class HomeProductService
 {
+    /** Model tags every list here depends on. */
+    protected const CACHE_TAGS = ['Product', 'ProductVariant', 'ProductBadge'];
+
+    protected function cacheRemember(string $key, \Closure $callback, array $extraTags = [])
+    {
+        $tags = array_merge(self::CACHE_TAGS, $extraTags);
+        $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
+        $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":home_products:{$key}:v{$version}";
+        $ttl = (int) config('cache.storefront.home_products_ttl', 3600);
+
+        return Cache::driver('file')->remember($fullKey, $ttl, $callback);
+    }
+
     public function getNewIn(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('new-in', $limit, $countryId);
+        return $this->cacheRemember("new_in:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
+            $badged = $this->byBadge('new-in', $limit, $countryId);
 
-        if ($badged->isNotEmpty()) {
-            return $badged;
-        }
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
 
-        return $this->baseQuery()
-            ->orderByDesc('products.created_at')
-            ->limit($limit)
-            ->get();
+            return $this->baseQuery()
+                ->orderByDesc('products.created_at')
+                ->limit($limit)
+                ->get();
+        });
     }
 
     public function getBestSelling(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('best-selling', $limit, $countryId);
+        return $this->cacheRemember("best_selling:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
+            $badged = $this->byBadge('best-selling', $limit, $countryId);
 
-        if ($badged->isNotEmpty()) {
-            return $badged;
-        }
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
 
-        return $this->baseQuery()
-            ->orderByDesc('products.orders_count')
-            ->orderByDesc('products.created_at')
-            ->limit($limit)
-            ->get();
+            return $this->baseQuery()
+                ->orderByDesc('products.orders_count')
+                ->orderByDesc('products.created_at')
+                ->limit($limit)
+                ->get();
+        }, ['Order', 'OrderItem']);
     }
 
     public function getFeatured(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('featured', $limit, $countryId);
+        return $this->cacheRemember("featured:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
+            $badged = $this->byBadge('featured', $limit, $countryId);
 
-        if ($badged->isNotEmpty()) {
-            return $badged;
-        }
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
 
-        $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
+            $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
 
-        return $this->baseQuery()
-            ->whereNotIn('products.id', $excludeIds)
-            ->orderByDesc('products.created_at')
-            ->limit($limit)
-            ->get();
+            return $this->baseQuery()
+                ->whereNotIn('products.id', $excludeIds)
+                ->orderByDesc('products.created_at')
+                ->limit($limit)
+                ->get();
+        });
     }
 
     public function getRecommended(int $limit, ?int $countryId = null): Collection
     {
-        $badged = $this->byBadge('recommended', $limit, $countryId);
+        return $this->cacheRemember("recommended:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
+            $badged = $this->byBadge('recommended', $limit, $countryId);
 
-        if ($badged->isNotEmpty()) {
-            return $badged;
-        }
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
 
-        $excludeIds = $this->getNewIn($limit, $countryId)
-            ->pluck('id')
-            ->merge($this->getFeatured($limit, $countryId)->pluck('id'));
+            $excludeIds = $this->getNewIn($limit, $countryId)
+                ->pluck('id')
+                ->merge($this->getFeatured($limit, $countryId)->pluck('id'));
 
-        return $this->baseQuery()
-            ->whereNotIn('products.id', $excludeIds)
-            ->orderByDesc('products.created_at')
-            ->limit($limit)
-            ->get();
+            return $this->baseQuery()
+                ->whereNotIn('products.id', $excludeIds)
+                ->orderByDesc('products.created_at')
+                ->limit($limit)
+                ->get();
+        });
     }
 
     /**

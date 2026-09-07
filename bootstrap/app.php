@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'preview.init' => \App\Http\Middleware\InitializeTenancyForPreview::class,
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
             'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
+            'tenant.setup.enforce' => \App\Http\Middleware\EnforceOnboardingSetup::class,
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
             'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
@@ -85,6 +86,15 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (!in_array($e->getStatusCode(), [404, 500], true)) {
+                return null;
+            }
+
+            // `tenant.storefront.not-found` is a tenant-domain-only route
+            // (guarded by PreventAccessFromCentralDomains). Redirecting to it
+            // from a request that is already on a central domain would just
+            // 404 again there and loop forever, so let it fall through to
+            // central.php's own fallback (website.not-found) instead.
+            if (in_array($request->getHost(), config('tenancy.central_domains'), true)) {
                 return null;
             }
 

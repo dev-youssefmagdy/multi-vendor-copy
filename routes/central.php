@@ -31,6 +31,7 @@ use App\Livewire\Admin\PaymentLog\PaymentLogsList;
 use App\Livewire\Admin\Plan\PlansList;
 use App\Livewire\Admin\Plan\RegisteredUsersList;
 use App\Livewire\Admin\Plan\PendingRegistrationsList;
+use App\Livewire\Admin\Plan\TenantChangeRequestsList;
 use App\Livewire\Admin\Plan\AddEditPackage;
 use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
@@ -73,6 +74,7 @@ use App\Livewire\Admin\Shipping\AddEditFixedShippingCost;
 use App\Livewire\Admin\Shipping\DeliveryPopupPage;
 use App\Livewire\Admin\Shipping\ShippingDaysPage;
 use App\Livewire\Admin\Shipping\ShippingSettingsPage;
+use App\Livewire\Admin\Store\CouponsIndexPage as AdminCouponsIndexPage;
 use App\Livewire\Admin\Store\CouponsPage as AdminCouponsPage;
 use App\Livewire\Admin\Store\FlashSalesIndexPage as AdminFlashSalesIndexPage;
 use App\Livewire\Admin\Store\FlashSalesPage as AdminFlashSalesPage;
@@ -176,6 +178,8 @@ Route::middleware('track.affiliate')->group(function () {
 // ── Affiliate Panel ────────────────────────────────────────────────────────
 Route::prefix('affiliate')->name('affiliate.')->group(function () {
 
+    Route::redirect('/', '/affiliate/dashboard');
+
     // Auth (guest only)
     Route::middleware('guest:affiliate')->group(function () {
         Route::get('/login',    \App\Livewire\Affiliate\Auth\LoginPage::class)->name('login');
@@ -212,7 +216,7 @@ Route::get('/my-account/select-tenant', OwnerSelectTenantPage::class)->middlewar
 // ── Tenant Owner Panel ────────────────────────────────────────────────────────
 Route::group([
     'prefix' => 'my-account',
-    'as' => 'owner.',
+    'as' => 'owner .',
     'middleware' => TenantOwnerAuth::class,
 ], function () {
     Route::redirect('/', '/my-account/domains')->name('dashboard');
@@ -325,7 +329,8 @@ Route::group([
     Route::prefix('store')->name('store.')->group(function () {
         Route::get('/flash-sales', AdminFlashSalesIndexPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
         Route::get('/flash-sales/list/{countryId?}', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.list');
-        Route::get('/coupons', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
+        Route::get('/coupons', AdminCouponsIndexPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
+        Route::get('/coupons/list/{countryId?}', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.list');
         Route::get('/tenant-sync', AdminTenantSyncPage::class)->middleware('admin.permission:store.sync.manage')->name('tenant-sync.index');
     });
 
@@ -364,6 +369,7 @@ Route::group([
             ->middleware('admin.permission:plans.tenants.manage')
             ->name('users.impersonate');
         Route::get('/pending-registrations', PendingRegistrationsList::class)->middleware('admin.permission:plans.pending-registrations.view,plans.pending-registrations.manage')->name('pending-registrations');
+        Route::get('/tenant-change-requests', TenantChangeRequestsList::class)->middleware('admin.permission:plans.tenant-change-requests.manage')->name('tenant-change-requests');
         Route::get('/', PlansList::class)->middleware('admin.permission:plans.packages.view,plans.packages.manage')->name('index');
         Route::get('/create', AddEditPackage::class)->middleware('admin.permission:plans.packages.manage')->name('create');
         Route::get('/{package}/edit', AddEditPackage::class)->middleware('admin.permission:plans.packages.manage')->name('edit');
@@ -500,6 +506,7 @@ Route::group([
         Route::get('/conversions', \App\Livewire\Admin\Affiliate\ConversionsListPage::class)->name('conversions');
         Route::get('/payouts',     \App\Livewire\Admin\Affiliate\PayoutsListPage::class)->name('payouts');
         Route::get('/reports',     \App\Livewire\Admin\Affiliate\AffiliateReportsPage::class)->name('reports');
+        Route::get('/coupons',     \App\Livewire\Admin\Affiliate\AffiliateCouponsPage::class)->name('coupons');
     });
 });
 
@@ -526,4 +533,17 @@ Route::get('prod', function () {
 
 // Route::get('apply-tenant-profit', function () {
 //     ApplyTenantProfitPercentageJob::dispatch(Tenant::first()->id);
+// });
+
+// Route::get('get-product-translated-keys', function () {
+//     $productArr = [];
+//     \App\Models\Product::query()->chunk(100, function ($products) use (&$productArr) {
+//         foreach ($products as $product) {
+//             $productArr[] = $product->getTranslatedKeys();
+//         }
+//         dd(json_encode($productArr));
+//         // this json encoded array pass it to openai
+//     });
+
+//     return response()->json($productArr);
 // });

@@ -75,7 +75,7 @@ class EmailTemplateTranslationSeeder extends Seeder
                 // Skip subject if already translated
                 if ($existingSubject === '' || $existingSubject === $template->subject) {
                     $pending[] = [
-                        'template_id' => $template->id,
+                        'group' => $template->id,
                         'field' => 'subject',
                         'text' => $template->subject,
                     ];
@@ -85,7 +85,7 @@ class EmailTemplateTranslationSeeder extends Seeder
                 $defaultBody = trim((string) ($template->body ?? ''));
                 if ($defaultBody !== '' && ($existingBody === '' || $existingBody === $defaultBody)) {
                     $pending[] = [
-                        'template_id' => $template->id,
+                        'group' => $template->id,
                         'field' => 'body',
                         'text' => $defaultBody,
                     ];
@@ -97,8 +97,8 @@ class EmailTemplateTranslationSeeder extends Seeder
                 continue;
             }
 
-            $translated = $this->openAi->translateBatch(
-                array_map(fn(array $item) => $item['text'], $pending),
+            $translated = $this->openAi->translateGroupedPending(
+                $pending,
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
@@ -109,7 +109,7 @@ class EmailTemplateTranslationSeeder extends Seeder
             $byTemplate = [];
 
             foreach ($pending as $offset => $item) {
-                $byTemplate[$item['template_id']][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
+                $byTemplate[$item['group']][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
             }
 
             foreach ($byTemplate as $templateId => $fields) {

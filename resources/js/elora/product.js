@@ -179,6 +179,8 @@ window.eloraOpenDeliveryModal = function () {
 
         (function () {
             'use strict';
+            // Persists across re-mounts (e.g. Livewire re-renders) for the current page view only.
+            let videoModalDismissed = false;
             // --- full screen images handler -------------------------------------------
             const productPreviewButton = document.getElementById('product-preview-button');
             const preview = document.getElementById('product-preview');
@@ -254,12 +256,16 @@ window.eloraOpenDeliveryModal = function () {
                 function destroyFixedModal() {
                     if (mobileFixedModal && mobileFixedModal.parentNode) {
                         mobileFixedModal.parentNode.removeChild(mobileFixedModal);
-                        mobileFixedModal = null;
                     }
+                    mobileFixedModal = null;
+                    // Guard against a stray leftover node from a previous mount/init call.
+                    const stray = document.getElementById('mantiFixedVideoModal');
+                    if (stray && stray.parentNode) stray.parentNode.removeChild(stray);
                 }
 
                 function showFixedVideoModal(item) {
-                    if (mobileFixedModal) return; // already shown
+                    if (videoModalDismissed) return; // user closed it on this page view
+                    if (mobileFixedModal || document.getElementById('mantiFixedVideoModal')) return; // already shown
 
                     const modal = document.createElement('div');
                     modal.id = 'mantiFixedVideoModal';
@@ -309,6 +315,7 @@ window.eloraOpenDeliveryModal = function () {
                     closeBtn.onclick = () => {
                         stopActiveVideo();
                         destroyFixedModal();
+                        videoModalDismissed = true;
                     };
 
                     const vid = document.createElement('video');
@@ -554,6 +561,7 @@ window.eloraOpenDeliveryModal = function () {
                 // Clean up fixed video modal before Livewire navigation
                 const existingModal = document.getElementById('mantiFixedVideoModal');
                 if (existingModal) existingModal.remove();
+                videoModalDismissed = false; // reset for the incoming page
             });
 
             document.addEventListener('livewire:navigated', () => {

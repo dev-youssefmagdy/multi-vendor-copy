@@ -120,6 +120,7 @@ class AdminNavigation
                         'children' => [
                             ['label' => 'Registered Users', 'route' => 'admin.plans.users', 'permission' => 'plans.tenants.view'],
                             ['label' => 'Pending Registrations', 'route' => 'admin.plans.pending-registrations', 'permission' => 'plans.pending-registrations.view'],
+                            ['label' => 'Tenant Change Requests', 'route' => 'admin.plans.tenant-change-requests', 'permission' => 'plans.tenant-change-requests.manage'],
                             ['label' => 'Plans', 'route' => 'admin.plans.index', 'permission' => 'plans.packages.view'],
                         ],
                     ],
@@ -152,6 +153,7 @@ class AdminNavigation
                             ['label' => 'Conversions', 'route' => 'admin.affiliates.conversions', 'permission' => 'affiliates.manage'],
                             ['label' => 'Payouts', 'route' => 'admin.affiliates.payouts', 'permission' => 'affiliates.manage'],
                             ['label' => 'Reports', 'route' => 'admin.affiliates.reports', 'permission' => 'affiliates.manage'],
+                            ['label' => 'Promo Codes', 'route' => 'admin.affiliates.coupons', 'permission' => 'affiliates.manage'],
                         ],
                     ],
                 ],
@@ -361,6 +363,7 @@ class AdminNavigation
                     'group' => 'Store',
                     'labels' => [
                         'admin.store.flash-sales.index' => 'Flash Sales',
+                        'admin.store.coupons.index' => 'Coupons',
                         'admin.store.tenant-sync.index' => 'Tenant Sync',
                     ],
                     'default' => 'Store',

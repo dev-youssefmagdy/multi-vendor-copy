@@ -236,5 +236,5 @@ Route::prefix('vendor/{tenant}')
 //
 //   /preview?theme=elora&colors[color-primary]=%23ff0000&homepage_variant=v2
 Route::get('/preview', HomePage::class)
-    ->middleware(['web', InitializeTenancyForPreview::class, 'tenant.storefront.context', 'preview.template'])
+    ->middleware(['web', InitializeTenancyForPreview::class, 'preview.template', 'tenant.storefront.context'])
     ->name('preview');

@@ -6,11 +6,13 @@ use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\Affiliate;
 use App\Services\AffiliateService;
+use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class AffiliatesListPage extends ListPage
 {
-    use InteractsWithAdminUi, WithPagination;
+    use InteractsWithAdminUi, WithPagination, WithFileUploads;
 
     public bool $showFormModal   = false;
     public bool $showPayoutModal = false;
@@ -28,9 +30,9 @@ class AffiliatesListPage extends ListPage
     public string $payoutAffiliateName = '';
     public string $payoutAffiliateBalance = '0.00';
     public string $payoutAmount    = '';
-    public string $payoutMethod    = 'paypal';
     public string $payoutReference = '';
     public string $payoutNotes     = '';
+    public $payoutAttachment       = null;
 
     protected function pageView(): string
     {
@@ -151,9 +153,9 @@ class AffiliatesListPage extends ListPage
         $this->payoutAffiliateName    = $a->name;
         $this->payoutAffiliateBalance = (string) $a->balance;
         $this->payoutAmount           = '';
-        $this->payoutMethod           = 'paypal';
         $this->payoutReference        = '';
         $this->payoutNotes            = '';
+        $this->payoutAttachment       = null;
         $this->showPayoutModal        = true;
     }
 
@@ -161,9 +163,10 @@ class AffiliatesListPage extends ListPage
     {
         $this->authorizePermission('affiliates.manage');
         $this->validate([
-            'payoutAmount'    => 'required|numeric|min:0.01',
-            'payoutMethod'    => 'required|string',
-            'payoutReference' => 'nullable|string|max:255',
+            'payoutAmount'     => 'required|numeric|min:0.01',
+            'payoutReference'  => 'nullable|string|max:255',
+            'payoutNotes'      => 'nullable|string|max:2000',
+            'payoutAttachment' => 'nullable|file|max:10240',
         ]);
 
         $affiliate = Affiliate::query()->findOrFail($this->payoutAffiliateId);
@@ -173,11 +176,15 @@ class AffiliatesListPage extends ListPage
             return;
         }
 
+        $attachmentPath = $this->payoutAttachment
+            ? Storage::disk('public')->url($this->payoutAttachment->store('affiliate-payouts', 'public'))
+            : null;
+
         $service->issuePayout($affiliate, [
-            'amount'    => $this->payoutAmount,
-            'method'    => $this->payoutMethod,
-            'reference' => $this->payoutReference,
-            'notes'     => $this->payoutNotes,
+            'amount'          => $this->payoutAmount,
+            'reference'       => $this->payoutReference,
+            'notes'           => $this->payoutNotes,
+            'attachment_path' => $attachmentPath,
         ]);
 
         $this->showPayoutModal = false;

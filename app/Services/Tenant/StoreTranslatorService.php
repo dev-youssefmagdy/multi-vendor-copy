@@ -90,11 +90,12 @@ class StoreTranslatorService
     /**
      * Translates every field of every row of $modelClass into $targetLocale in one pass:
      * a single query pulls all existing source/target translation rows (no N+1, no per-row
-     * chunking), the whole pending text set is sent through translateBatch (which chunks
-     * internally for the OpenAI API), and results are written back with one bulk upsert
-     * keyed on the table's (language_id, translatable_type, translatable_id, field) unique
-     * index. This scales to several thousand rows without the per-chunk overhead of
-     * chunkById() + per-model delete/recreate.
+     * chunking), the pending fields are grouped by row id into {id, translations} records
+     * and sent through translateGroupedPending (one OpenAI request per 100-record chunk,
+     * mirroring ids/keys back), and results are written back with one bulk upsert keyed on
+     * the table's (language_id, translatable_type, translatable_id, field) unique index.
+     * This scales to several thousand rows without the per-chunk overhead of chunkById() +
+     * per-model delete/recreate.
      */
     public function translateModel(
         string $modelClass,
@@ -145,7 +146,7 @@ class StoreTranslatorService
                     continue;
                 }
 
-                $pending[] = ['translatable_id' => $translatableId, 'field' => $field, 'text' => $sourceValue];
+                $pending[] = ['group' => $translatableId, 'field' => $field, 'text' => $sourceValue];
             }
         }
 
@@ -153,8 +154,8 @@ class StoreTranslatorService
             return 0;
         }
 
-        $translated = $this->openAi->translateBatch(
-            array_map(fn(array $item) => $item['text'], $pending),
+        $translated = $this->openAi->translateGroupedPending(
+            $pending,
             $sourceLocale,
             $targetLocale,
             $targetLanguage,
@@ -175,13 +176,13 @@ class StoreTranslatorService
             $rows[] = [
                 'language_id' => $targetLanguageId,
                 'translatable_type' => $morphClass,
-                'translatable_id' => $item['translatable_id'],
+                'translatable_id' => $item['group'],
                 'field' => $item['field'],
                 'value' => $value,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
-            $translatedIds[$item['translatable_id']] = true;
+            $translatedIds[$item['group']] = true;
         }
 
         foreach (array_chunk($rows, 500) as $chunk) {
@@ -303,8 +304,8 @@ class StoreTranslatorService
         }
 
         if ($pending !== []) {
-            $translated = $this->openAi->translateBatch(
-                array_map(fn(array $item) => $item['text'], $pending),
+            $translated = $this->openAi->translateGroupedPending(
+                $pending,
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
@@ -388,7 +389,7 @@ class StoreTranslatorService
                 continue;
             }
 
-            $pending[] = ['morph' => $morph, 'translatable_id' => $id, 'field' => $field, 'text' => $sourceValue];
+            $pending[] = ['group' => "{$morph}:{$id}", 'morph' => $morph, 'translatable_id' => $id, 'field' => $field, 'text' => $sourceValue];
         }
     }
 
@@ -482,7 +483,7 @@ class StoreTranslatorService
                 continue;
             }
 
-            $pending[] = ['key' => $row['key'], 'text' => $sourceValue];
+            $pending[] = ['group' => $row['key'], 'field' => 'value', 'key' => $row['key'], 'text' => $sourceValue];
         }
 
         return $pending;
@@ -505,8 +506,8 @@ class StoreTranslatorService
             return 0;
         }
 
-        $translated = $this->openAi->translateBatch(
-            array_map(fn(array $item) => $item['text'], $pending),
+        $translated = $this->openAi->translateGroupedPending(
+            $pending,
             $sourceLocale,
             $targetLocale,
             $language->name,

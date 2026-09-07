@@ -27,6 +27,7 @@
           class="acct-layout">
         @csrf
         @method('PUT')
+        <input type="hidden" name="from" value="{{ request('from') }}">
 
         {{-- ── Left column — Avatar card ─────────────────────────────── --}}
         <aside class="acct-sidebar">

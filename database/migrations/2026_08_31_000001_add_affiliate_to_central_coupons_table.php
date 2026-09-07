@@ -9,25 +9,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('central_coupons', function (Blueprint $table) {
-            $table->foreignId('affiliate_id')
-                  ->nullable()
-                  ->after('active')
-                  ->constrained('affiliates')
-                  ->nullOnDelete();
-
-            // NULL = use the affiliate's own commission_type + commission_value.
-            // Numeric value is always treated as a PERCENTAGE (0-100).
-            $table->decimal('affiliate_commission_value', 8, 2)
-                  ->nullable()
-                  ->after('affiliate_id');
+            // Removed: affiliate concerns moved to the dedicated affiliate_coupons table.
+            if (Schema::hasColumn('central_coupons', 'affiliate_commission_value')) {
+                $table->dropColumn('affiliate_commission_value');
+            }
+            if (Schema::hasColumn('central_coupons', 'affiliate_id')) {
+                try { $table->dropForeign(['affiliate_id']); } catch (\Throwable) {}
+                $table->dropColumn('affiliate_id');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('central_coupons', function (Blueprint $table) {
-            $table->dropForeign(['affiliate_id']);
-            $table->dropColumn(['affiliate_id', 'affiliate_commission_value']);
+            $table->foreignId('affiliate_id')->nullable()->constrained('affiliates')->nullOnDelete();
+            $table->decimal('affiliate_commission_value', 8, 2)->nullable()->after('affiliate_id');
         });
     }
 };

@@ -53,6 +53,15 @@ class StoreOnboardingWizard extends Component
             ->map(fn ($id) => (string) $id)
             ->all();
 
+        if (empty($this->countryIds)) {
+            $this->countryIds = Country::query()
+                ->where('is_active_for_tenants', true)
+                ->where('is_free', true)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
+                ->all();
+        }
+
         tenancy()->initialize($tenant);
 
         $this->languageIds = TenantLanguage::query()

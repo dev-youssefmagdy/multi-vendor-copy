@@ -782,6 +782,7 @@ function toggleDesktopSidebar() {
     sbCollapsed = !sbCollapsed;
     byId("sb")?.classList.toggle("sb-hide", sbCollapsed);
     byId("nav")?.classList.toggle("nav-full", sbCollapsed);
+    byId("nav2")?.classList.toggle("nav-full", sbCollapsed);
     byId("mn")?.classList.toggle("mn-full", sbCollapsed);
 }
 
@@ -810,6 +811,7 @@ function syncSidebarLayout() {
 
     sidebar.classList.toggle("sb-hide", sbCollapsed);
     nav.classList.toggle("nav-full", sbCollapsed);
+    byId("nav2")?.classList.toggle("nav-full", sbCollapsed);
     main.classList.toggle("mn-full", sbCollapsed);
 }
 

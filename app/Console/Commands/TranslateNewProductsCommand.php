@@ -167,7 +167,7 @@ class TranslateNewProductsCommand extends Command
                 continue;
             }
 
-            $pending[] = ['field' => $field, 'text' => $sourceValue];
+            $pending[] = ['group' => $product->id, 'field' => $field, 'text' => $sourceValue];
         }
 
         if ($pending === []) {
@@ -180,8 +180,8 @@ class TranslateNewProductsCommand extends Command
             return;
         }
 
-        $translated = $openAi->translateBatch(
-            array_map(fn (array $item) => $item['text'], $pending),
+        $translated = $openAi->translateGroupedPending(
+            $pending,
             $sourceLocale,
             $targetLocale,
             $language->name,

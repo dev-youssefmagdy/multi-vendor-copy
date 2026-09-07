@@ -54,6 +54,13 @@ class AccountSettingsController extends Controller
             'password' => $validated['password'] ?? null,
         ]);
 
+        if ($request->input('from') === 'onboarding') {
+            return redirect()
+                ->route('tenant.onboarding', ['tab' => 'setup'])
+                ->with('status', 'Account settings updated successfully.')
+                ->with('status_type', 'success');
+        }
+
         return redirect()
             ->route('tenant.settings.account')
             ->with('status', 'Account settings updated successfully.')

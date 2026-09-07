@@ -156,11 +156,32 @@ class TenantPanelRepository
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
                 $this->applyProductStockFilter($query, $filters['stock']);
             })
+            ->when(filled($filters['category'] ?? null), function ($query) use ($filters) {
+                $categoryIds = $this->resolveCategoryIdsWithDescendants((int) $filters['category']);
+                $query->whereHas('categories', fn (Builder $q) => $q->whereIn('categories.id', $categoryIds));
+            })
             ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
                 $query->whereIn('central_product_id', $filters['image_search_ids']);
             })
             ->orderBy('order_number')
             ->paginate($perPage);
+    }
+
+    /**
+     * A category plus every descendant category ID beneath it, so filtering
+     * by a parent category also matches products only assigned to its children.
+     *
+     * @return int[]
+     */
+    protected function resolveCategoryIdsWithDescendants(int $categoryId): array
+    {
+        $category = Category::query()->with('children.children.children.children')->find($categoryId);
+
+        if (!$category) {
+            return [$categoryId];
+        }
+
+        return array_merge([$category->id], $category->getAllChildrenIds());
     }
 
     /**
@@ -574,19 +595,19 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateCoupons(int $perPage = 10): LengthAwarePaginator
+    public function paginateCoupons(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
-        return Coupon::query()->with('translations.language')->latest()->paginate($perPage);
+        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest()->paginate($perPage);
     }
 
-    public function couponStats(): array
+    public function couponStats(?int $countryId = null): array
     {
         return [
-            'total' => Coupon::query()->count(),
-            'active' => Coupon::query()->where(function ($query) {
+            'total' => Coupon::query()->where('country_id', $countryId)->count(),
+            'active' => Coupon::query()->where('country_id', $countryId)->where(function ($query) {
                 $query->whereNull('end_date')->orWhere('end_date', '>=', now());
             })->count(),
-            'scheduled' => Coupon::query()->whereNotNull('start_date')->where('start_date', '>', now())->count(),
+            'scheduled' => Coupon::query()->where('country_id', $countryId)->whereNotNull('start_date')->where('start_date', '>', now())->count(),
         ];
     }
 
@@ -666,6 +687,9 @@ class TenantPanelRepository
         $activeGateways = PaymentGateway::query()
             ->where('is_active', true)
             ->where('hide', false)
+            ->where('use_own', true)
+            ->where('connection_status', 'connected')
+            ->whereIn('code', $manager->centrallyActiveGatewayCodes())
             ->get();
 
         $connected = $activeGateways->isNotEmpty();

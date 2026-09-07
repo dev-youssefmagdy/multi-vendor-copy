@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50 py-10 px-4">
+<div class="min-h-screen bg-gray-50 pt-16 pb-10 px-4">
     <div class="max-w-2xl mx-auto">
 
         <div class="text-center mb-8">
@@ -40,7 +40,7 @@
             {{-- STEP 1: Countries --}}
             @if($step === 1)
                 <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Target Countries') }}</h2>
-                <p class="text-sm text-gray-500 mb-5">{{ __('Confirm or update which countries you want to sell to. These were pre-selected during registration.') }}</p>
+                <p class="text-sm text-gray-500 mb-5">{{ __('Select the countries you want to sell to. Free countries are pre-checked to get you started.') }}</p>
 
                 <div class="space-y-2 max-h-72 overflow-y-auto border border-gray-200 rounded-xl p-3 mb-4">
                     @foreach($allCountries as $country)

@@ -27,6 +27,13 @@ class PaymentGatewaysPage extends ListPage
     /** @var array<int, array{key: string, value: string}> */
     public array $requiredFields = [];
 
+    public bool $fromOnboarding = false;
+
+    public function mount(): void
+    {
+        $this->fromOnboarding = request()->query('from') === 'onboarding';
+    }
+
     protected function pageMeta(): array
     {
         return [
@@ -144,15 +151,19 @@ class PaymentGatewaysPage extends ListPage
             'useOwn' => ['boolean'],
             'requiredFields' => ['array'],
             'requiredFields.*.key' => ['required', 'string'],
-            'requiredFields.*.value' => ['nullable', 'string'],
         ];
 
-        if ($this->useOwn) {
-            foreach ($this->requiredFields as $index => $field) {
-                // check if key includes 'sandbox' or 'test'
-                if (str_contains($field['key'], 'sandbox') || str_contains($field['key'], 'test')) {
-                    continue;
-                }
+        foreach ($this->requiredFields as $index => $field) {
+            // The "sandbox" credential renders as a checkbox, so its value is
+            // boolean rather than the string every other credential field holds.
+            if ($field['key'] === 'sandbox') {
+                $rules["requiredFields.{$index}.value"] = ['boolean'];
+                continue;
+            }
+
+            $rules["requiredFields.{$index}.value"] = ['nullable', 'string'];
+
+            if ($this->useOwn && !str_contains($field['key'], 'sandbox') && !str_contains($field['key'], 'test')) {
                 $rules["requiredFields.{$index}.value"][] = 'required';
             }
         }
@@ -189,6 +200,13 @@ class PaymentGatewaysPage extends ListPage
 
         $this->dispatch('setup-step-completed');
         $this->closeModal();
+
+        if ($this->fromOnboarding) {
+            $this->redirectRoute('tenant.onboarding', ['tab' => 'setup'], navigate: true);
+
+            return;
+        }
+
         $this->toast($this->useOwn ? 'Connected and saved successfully.' : 'Gateway configuration updated successfully.');
     }
 

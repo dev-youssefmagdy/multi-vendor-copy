@@ -82,12 +82,12 @@ use App\Livewire\Tenant\Store\BladeThemePage;
 use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
+use App\Livewire\Tenant\Store\CouponsIndexPage;
 use App\Livewire\Tenant\Store\CouponsPage;
 use App\Livewire\Tenant\Store\FlashSalesIndexPage;
 use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
 use App\Livewire\Tenant\Store\PagesList;
-use App\Livewire\Tenant\Store\TargetCountriesPage;
 use App\Livewire\Tenant\Store\ThemesPage;
 use App\Livewire\Tenant\Storefront\AuthPage;
 use App\Livewire\Tenant\Storefront\BestSellingPage;
@@ -359,10 +359,11 @@ Route::middleware([
             ->middleware(['signed', 'throttle:6,1'])
             ->name('tenant.verification.verify');
 
-        Route::middleware('auth:tenant')->group(function () {
+        Route::middleware(['auth:tenant', 'tenant.setup.enforce'])->group(function () {
 
             Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
                 ->middleware('throttle:6,1')
+                ->withoutMiddleware('tenant.setup.enforce')
                 ->name('tenant.verification.send');
 
             Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
@@ -566,9 +567,12 @@ Route::middleware([
                 Route::get('/pages/{page}/edit', AddEditPage::class)
                     ->middleware('tenant.permission:store.pages.manage')
                     ->name('pages.edit');
-                Route::get('/coupons', CouponsPage::class)
+                Route::get('/coupons', CouponsIndexPage::class)
                     ->middleware('tenant.permission:store.coupons.manage')
-                    ->name('coupons');
+                    ->name('coupons.index');
+                Route::get('/coupons/list/{countryId?}', CouponsPage::class)
+                    ->middleware('tenant.permission:store.coupons.manage')
+                    ->name('coupons.list');
                 Route::get('/flash-sales', FlashSalesIndexPage::class)
                     ->middleware('tenant.permission:store.flash-sales.manage')
                     ->name('flash-sales.index');
@@ -596,9 +600,6 @@ Route::middleware([
                 Route::get('/home-variants', HomeVariantsPage::class)
                     ->middleware('tenant.permission:store.home-variants.manage')
                     ->name('home-variants');
-                Route::get('/target-countries', TargetCountriesPage::class)
-                    ->middleware('tenant.permission:store.appearance.manage')
-                    ->name('target-countries');
             });
 
             Route::get('/help', DocsPage::class)->name('tenant.help.index');
@@ -664,6 +665,9 @@ Route::middleware([
                 Route::post('/compliance', [ComplianceCenterController::class, 'update'])
                     ->middleware('tenant.permission:settings.account.manage')
                     ->name('compliance.update');
+                Route::get('/compliance/cities-by-country/{countryId}', [ComplianceCenterController::class, 'citiesByCountry'])
+                    ->middleware('tenant.permission:settings.account.manage')
+                    ->name('compliance.cities-by-country');
                 Route::get('/return-policy', \App\Livewire\Tenant\Setting\ReturnPolicyPage::class)
                     ->middleware('tenant.permission:sales.returns.manage')
                     ->name('return-policy');

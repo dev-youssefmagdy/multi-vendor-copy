@@ -50,6 +50,17 @@ class LanguagesPage extends Component
         session()->flash('status', 'Language deleted successfully.');
     }
 
+    public function retryTranslation(int $languageId): void
+    {
+        $this->authorizePermission('settings.languages.manage');
+
+        $language = Language::query()->findOrFail($languageId);
+
+        \App\Jobs\TranslateLanguageCatalogJob::dispatch($language->id, $language->translation_source_locale)->afterCommit();
+
+        $this->toast('Translation restarted.');
+    }
+
     public function updateOrder(array $orderedIds): void
     {
         $this->authorizePermission('settings.languages.manage');

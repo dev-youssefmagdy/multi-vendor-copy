@@ -339,6 +339,7 @@ class TenantPanelService
                 'start_date' => $attributes['start_date'] ?? null,
                 'end_date' => $attributes['end_date'] ?? null,
                 'minimum_spend' => filled($attributes['minimum_spend'] ?? null) ? $attributes['minimum_spend'] : 0,
+                'country_id' => $attributes['country_id'] ?? $coupon->country_id,
             ]);
             $coupon->save();
             $coupon->syncTranslations($attributes['translations'] ?? []);

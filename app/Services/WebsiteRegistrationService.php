@@ -140,14 +140,21 @@ class WebsiteRegistrationService
                 $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
                 $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
 
-                app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog);
+                $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
+                $affiliateCoupon   = null;
+                $couponAffiliateId = null;
 
-                if (filled($payment['applied_coupon_id'] ?? null)) {
-                    $coupon = \App\Models\CentralCoupon::query()->find((int) $payment['applied_coupon_id']);
+                if ($affiliateCouponId) {
+                    $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
+                    $couponAffiliateId = $affiliateCoupon?->affiliate_id;
+                }
 
-                    if ($coupon && $coupon->hasAffiliate()) {
-                        app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $coupon);
-                    }
+                // URL-referral commission — suppressed when an affiliate coupon was used
+                app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
+
+                // Affiliate coupon commission — fires only when an affiliate coupon was applied
+                if ($affiliateCoupon) {
+                    app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
                 }
             }
         } else {
