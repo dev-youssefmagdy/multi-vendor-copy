@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
 use App\Support\CacheVersion;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class HomeProductService
 {
@@ -93,6 +95,73 @@ class HomeProductService
                 ->limit($limit)
                 ->get();
         });
+    }
+
+    /**
+     * "Trending Now" — merchandiser curation (the badge) wins when set.
+     *
+     * When no products are manually assigned, momentum is computed from recent
+     * order velocity with a recency decay so a fresh burst of sales in the last
+     * few hours outranks a slow trickle from days ago. If nothing has sold
+     * recently either, it falls back to the newest catalog products so the
+     * section is never empty — the same guarantee every other badge section
+     * gives.
+     */
+    public function getTrendingNow(int $limit, ?int $countryId = null): Collection
+    {
+        return $this->cacheRemember("trending_now:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
+            $badged = $this->byBadge('trending-now', $limit, $countryId);
+
+            if ($badged->isNotEmpty()) {
+                return $badged;
+            }
+
+            $trending = $this->trendingByVelocity($limit);
+
+            if ($trending->isNotEmpty()) {
+                return $trending;
+            }
+
+            $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
+
+            return $this->baseQuery()
+                ->whereNotIn('products.id', $excludeIds)
+                ->orderByDesc('products.created_at')
+                ->limit($limit)
+                ->get();
+        }, ['Order', 'OrderItem']);
+    }
+
+    /**
+     * Sales-velocity score over a short recent window, decayed by recency so an
+     * order placed an hour ago outweighs one from three days ago.
+     */
+    protected function trendingByVelocity(int $limit, int $windowHours = 72): Collection
+    {
+        $now = now();
+        $windowStart = (clone $now)->subHours($windowHours);
+
+        $salesQuery = OrderItem::query()
+            ->selectRaw(
+                'COALESCE(order_items.product_id, product_variants.product_id) as product_id,
+                 SUM(order_items.qty / (1 + TIMESTAMPDIFF(HOUR, orders.created_at, ?))) as trend_score',
+                [$now]
+            )
+            ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where(function ($query) {
+                $query->whereNotNull('order_items.product_id')
+                    ->orWhereNotNull('product_variants.product_id');
+            })
+            ->where('orders.created_at', '>=', $windowStart)
+            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'));
+
+        return $this->baseQuery()
+            ->joinSub($salesQuery, 'trend_totals', fn($join) => $join->on('trend_totals.product_id', '=', 'products.id'))
+            ->select('products.*')
+            ->orderByDesc('trend_totals.trend_score')
+            ->limit($limit)
+            ->get();
     }
 
     /**

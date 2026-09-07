@@ -1110,29 +1110,18 @@ class StorefrontRepository
         return $query->paginate($perPage)->withQueryString();
     }
 
+    /**
+     * Merchandiser-curated "trending-now" badge wins when set; otherwise this
+     * falls back to a recency-decayed sales-velocity score, and finally to the
+     * newest products if nothing has sold recently — see
+     * HomeProductService::getTrendingNow() for the full fallback chain.
+     */
     public function trendingNowProducts(int $limit = 10): Collection
     {
         $key = 'trending_now_' . $limit;
-        return $this->memo[$key] ??= $this->cacheRemember($key, ['Product', 'ProductVariant', 'Order', 'OrderItem'], (function () use ($limit): Collection{
-            $salesQuery = OrderItem::query()
-                ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
-                ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
-                ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                ->where(function ($query): void{
-                    $query->whereNotNull('order_items.product_id')
-                        ->orWhereNotNull('product_variants.product_id');
-                })
-                ->where('orders.created_at', '>=', now()->subDays(30))
-                ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
-                ->orderByDesc('total_qty')
-                ->limit($limit);
 
-            return $this->productBaseQuery()
-                ->joinSub($salesQuery, 'sales_totals', fn($join) => $join->on('sales_totals.product_id', '=', 'products.id'))
-                ->select('products.*')
-                ->orderByRaw($this->effectivePriceExpression() . ' asc')
-                ->get();
-        }), ttl: (int) config('cache.storefront.trending_ttl', 300));
+        return $this->memo[$key] ??= app(\App\Services\HomeProductService::class)
+            ->getTrendingNow($limit, $this->customerCountryId());
     }
 
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
