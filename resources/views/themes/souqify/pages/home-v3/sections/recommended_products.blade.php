@@ -6,8 +6,7 @@
         ['bg' => '#FFB00A', 'color' => '#121212'],
     ];
 
-    // Frame 1984080444 stacks four rows of five cards, so cap at 20.
-    $__recommendedCards = collect($recommendedProducts ?? [])->take(20)->values()
+    $__recommendedCards = collect($recommendedProducts ?? [])->values()
         ->map(function ($product, $index) use ($symbol, $rate, $__chipPalettes) {
             $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
             $pricing = $product->storefrontPricing($variant);
@@ -133,10 +132,24 @@
   @if ($__recommendedCards->isNotEmpty())
     <div class="sqv3-reco__grid">
       @foreach ($__recommendedCards as $p)
-        @include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])
+        <div wire:key="recommended-v3-{{ $p['id'] }}">
+          @include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])
+        </div>
       @endforeach
     </div>
   @else
     <p class="sqv3-reco__empty">{{ __('No recommendations yet.') }}</p>
+  @endif
+
+  @if ($hasMoreRecommended ?? false)
+    <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-[8px]">
+        <div wire:loading wire:target="loadMoreRecommended" class="flex items-center gap-2 text-[14px]" style="color:var(--color-text-subtitle)">
+            <svg class="animate-spin size-[18px]" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            {{ __('Loading more...') }}
+        </div>
+    </div>
   @endif
 </section>
