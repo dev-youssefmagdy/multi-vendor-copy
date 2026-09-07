@@ -31,4 +31,12 @@ class Theme extends Model
     {
         return $this->hasMany(ThemeCountry::class)->orderBy('name');
     }
+
+    public function parts(): HasMany
+    {
+        return $this->hasMany(ThemePart::class)
+            ->orderBy('type')
+            ->orderByDesc('is_default')
+            ->orderBy('name');
+    }
 }

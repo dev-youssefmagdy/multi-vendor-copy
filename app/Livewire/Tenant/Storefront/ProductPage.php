@@ -13,7 +13,6 @@ use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\CountryDetectorService;
-use App\Services\ReturnPolicyService;
 use App\Services\Tenant\CustomerCountryResolver;
 use App\Services\Tenant\ShippingEstimateService;
 use Livewire\Component;
@@ -46,8 +45,6 @@ class ProductPage extends Component
     {
         $this->reviewsLimit += 10;
     }
-
-    public bool $viewContentTracked = false;
 
     public function mount(string $slug): void
     {
@@ -96,12 +93,6 @@ class ProductPage extends Component
         session(['storefront_cart' => $cart]);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added', itemName: $itemName, qty: 1);
-        $this->dispatch('tracking-event', name: 'add_to_cart', params: [
-            'content_ids' => [$product->id],
-            'content_name' => $itemName,
-            'content_type' => 'product',
-            'value' => $product->storefrontPricing()['current_price'] ?? null,
-        ]);
     }
 
     public function render()
@@ -113,18 +104,8 @@ class ProductPage extends Component
             abort(404);
         }
 
-        if (!$this->viewContentTracked) {
-            $this->viewContentTracked = true;
-            $this->dispatch('tracking-event', name: 'view_content', params: [
-                'content_ids' => [$product->id],
-                'content_name' => $product->translationValue('name') ?? $product->slug,
-                'content_type' => 'product',
-                'value' => $product->storefrontPricing()['current_price'] ?? null,
-            ]);
-        }
-
-        // Active variants, in the order set by the vendor's drag-and-drop arrangement
-        $variants = $product->variants->where('active', true)->values();
+        // Active variants, in-stock first
+        $variants = $product->variants->where('active', true)->sortByDesc('stock')->values();
 
         // Resolve the active variant for display
         $activeVariant = $this->selectedVariantId
@@ -308,7 +289,7 @@ class ProductPage extends Component
         // country's free-shipping threshold.
         $shippingThreshold = $this->detectFreeShippingThreshold();
         $cartWeight = $this->cartWeightGrams($repo->cartItems());
-        $shippingProgressWeight = $cartWeight + ($weightGrams * max(1, $this->qty));
+        $shippingProgressWeight = $cartWeight;
         $shippingPct = $shippingThreshold > 0
             ? min(100, (int) round($shippingProgressWeight / $shippingThreshold * 100))
             : 0;
@@ -391,11 +372,8 @@ class ProductPage extends Component
         $rawDesc = strip_tags($product->translationValue('description') ?? $product->centralProduct?->translationValue('description') ?? '');
         $seoDesc = $seoCaption ? mb_substr(strip_tags($seoCaption), 0, 200) : mb_substr($rawDesc, 0, 200);
 
-        $returnPolicy = app(ReturnPolicyService::class)->resolveProductPolicy(tenant()->getTenantKey(), $product->id);
-
         $data = array_merge($shared, [
             'product' => $product,
-            'returnPolicy' => $returnPolicy,
             'seoDesc' => $seoDesc,
             'variants' => $variants,
             'activeVariant' => $activeVariant,

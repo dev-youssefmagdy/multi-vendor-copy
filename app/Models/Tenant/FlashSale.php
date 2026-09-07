@@ -25,7 +25,6 @@ class FlashSale extends Model
         'end_date',
         'active',
         'banner_image',
-        'country_id',
     ];
 
     protected function casts(): array

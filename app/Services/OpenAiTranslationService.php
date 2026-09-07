@@ -9,26 +9,9 @@ class OpenAiTranslationService
 {
     protected array $cache = [];
 
-    protected int $totalTokensUsed = 0;
-
     public function configured(): bool
     {
         return filled(config('services.openai.api_key'));
-    }
-
-    /**
-     * Reset the running token-usage counter. Call before a batch of related
-     * translateBatch() calls (e.g. at the start of a full-store translation)
-     * so totalTokensUsed() reflects just that run.
-     */
-    public function resetUsage(): void
-    {
-        $this->totalTokensUsed = 0;
-    }
-
-    public function totalTokensUsed(): int
-    {
-        return $this->totalTokensUsed;
     }
 
     public function translateBatch(
@@ -37,7 +20,6 @@ class OpenAiTranslationService
         string $targetLocale,
         string $targetLanguage,
         string $context,
-        ?callable $onChunkTranslated = null,
     ): array {
         $translations = array_fill(0, count($texts), '');
         $pending = [];
@@ -65,12 +47,8 @@ class OpenAiTranslationService
 
             $pending[$cacheKey]['indexes'][] = $index;
         }
-        info('OpenAI translation: ' . count($pending) . ' unique items to translate.');
 
-        $chunks = array_chunk(array_values($pending), 25);
-        $totalChunks = count($chunks);
-
-        foreach ($chunks as $chunkNumber => $chunk) {
+        foreach (array_chunk(array_values($pending), 25) as $chunk) {
             $chunkTranslations = $this->requestTranslations(
                 array_map(fn(array $item) => $item['text'], $chunk),
                 $sourceLocale,
@@ -88,10 +66,6 @@ class OpenAiTranslationService
                 foreach ($item['indexes'] as $index) {
                     $translations[$index] = $translated;
                 }
-            }
-
-            if ($onChunkTranslated !== null) {
-                $onChunkTranslated($chunkNumber + 1, $totalChunks);
             }
         }
 
@@ -127,10 +101,10 @@ class OpenAiTranslationService
                     [
                         'role' => 'system',
                         'content' => implode("\n", [
-                            'You are a professional ecommerce localization expert.',
+                            'You are a professional ecommerce localization engine.',
                             "Translate text from {$sourceLocale} into {$targetLanguage} ({$targetLocale}).",
-                            'The context below describes the specific store — adapt your translations to fit its brand voice, product niche, and audience.',
                             'Preserve placeholders exactly, including :name, :count, {name}, %s, HTML tags, URLs, SKUs, and line breaks.',
+                            'Keep the output natural for ecommerce UI and catalog content.',
                             'Return JSON only with the shape {"translations":[{"index":0,"translation":"..."}]}.',
                         ]),
                     ],
@@ -145,15 +119,11 @@ class OpenAiTranslationService
             ])
             ->throw();
 
-        $this->totalTokensUsed += (int) data_get($response->json(), 'usage.total_tokens', 0);
-
         $content = data_get($response->json(), 'choices.0.message.content');
 
         if (!is_string($content) || trim($content) === '') {
             throw new RuntimeException('OpenAI translation response was empty.');
         }
-
-        info($content);
 
         $decoded = json_decode($content, true);
 

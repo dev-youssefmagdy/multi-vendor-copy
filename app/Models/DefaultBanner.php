@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class DefaultBanner extends Model
@@ -18,11 +17,5 @@ class DefaultBanner extends Model
         'url',
         'image_path',
         'serial_number',
-        'country_id',
     ];
-
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
-    }
 }

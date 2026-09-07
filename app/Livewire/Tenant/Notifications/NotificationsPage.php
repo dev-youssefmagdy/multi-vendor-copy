@@ -49,6 +49,5 @@ class NotificationsPage extends TenantPage
     public function markRead(int $id): void
     {
         TenantNotification::find($id)?->markAsRead();
-        $this->dispatch('notification-read');
     }
 }

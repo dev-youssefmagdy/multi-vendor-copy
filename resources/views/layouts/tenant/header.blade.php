@@ -55,8 +55,6 @@ if ($activeSub) {
   </a>
   @endif
 
-  <x-tenant-notification-bell />
-
   <div class="tp" data-action="toggle-theme" title="Toggle theme">
     <div class="to ta" id="dOpt">Moon</div>
     <div class="to" id="lOpt">Sun</div>

@@ -9,7 +9,6 @@ use App\Models\Tenant\PaymentGateway;
 use App\PaymentGateway\GatewayConnectionChecker;
 use App\PaymentGateway\PaymentManager;
 use App\Repositories\Tenant\TenantPanelRepository;
-use App\Services\Payments\PaymentGatewayRecommendationService;
 use App\Services\Tenant\TenantPanelService;
 
 class PaymentGatewaysPage extends ListPage
@@ -22,7 +21,6 @@ class PaymentGatewaysPage extends ListPage
     public bool $useOwn = false;
     public string $mode = 'test';
     public bool $sandboxMode = true;
-    public string $webhookUrl = '';
 
     /** @var array<int, array{key: string, value: string}> */
     public array $requiredFields = [];
@@ -34,20 +32,16 @@ class PaymentGatewaysPage extends ListPage
             'badge' => 'Settings',
             'description' => 'Configure tenant payment gateways. Activation is synced from central settings.',
             'tableTitle' => 'Gateway Configurations',
-            'headers' => ['Gateway', 'Mode', 'Status', 'Connection', 'Webhook', 'Monitoring', 'Actions'],
+            'headers' => ['Gateway', 'Mode', 'Status', 'Connection', 'Actions'],
         ];
     }
 
     protected function pageData(): array
     {
         $gateways = app(TenantPanelRepository::class)->paymentGateways();
-        $recommendations = tenant()
-            ? app(PaymentGatewayRecommendationService::class)->recommend(tenant())
-            : [];
 
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
-            'recommendations' => $recommendations,
             'rows' => $gateways->map(function (PaymentGateway $gateway) {
                 $connStatus = $this->resolveConnectionStatus($gateway);
                 $connBadge = match ($connStatus) {
@@ -56,27 +50,14 @@ class PaymentGatewaysPage extends ListPage
                     default         => '<span class="badge badge-gray">Not checked</span>',
                 };
 
-                $webhookBadge = match ($gateway->webhook_status) {
-                    'connected' => '<span class="badge badge-green">Webhook OK</span>',
-                    'failed'    => '<span class="badge badge-red">Webhook failed</span>',
-                    default     => '<span class="badge badge-gray">No webhook events yet</span>',
-                };
-
-                $name = e($gateway->name) . ($gateway->is_primary ? ' <span class="badge badge-cyan">Primary</span>' : '');
-                $lastTransaction = $gateway->last_transaction_at?->diffForHumans() ?? '—';
-                $lastSynced = $gateway->last_synced_at?->diffForHumans() ?? '—';
-
                 return [
-                    $name,
+                    e($gateway->name),
                     e($gateway->mode->label()),
                     '<span class="badge ' . ($gateway->is_active ? 'badge-green' : 'badge-amber') . '">' . e($gateway->is_active ? 'Active' : 'Inactive') . '</span>',
                     $connBadge,
-                    $webhookBadge,
-                    '<div class="entity-subtitle">Last synced: ' . e($lastSynced) . '</div><div class="entity-subtitle">Last transaction: ' . e($lastTransaction) . '</div>' . ($gateway->last_error ? '<div class="entity-subtitle" style="color:var(--danger,#dc2626);">' . e($gateway->last_error) . '</div>' : ''),
                     '<div class="flex gap-2">'
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="editGateway(' . $gateway->id . ')">Configure</button>'
-                    . '<button type="button" class="btn btn-outline btn-sm" wire:click="checkConnection(' . $gateway->id . ')" wire:loading.attr="disabled" wire:target="checkConnection(' . $gateway->id . ')">Recheck</button>'
-                    . ($gateway->is_active && !$gateway->is_primary ? '<button type="button" class="btn btn-outline btn-sm" wire:click="setPrimary(' . $gateway->id . ')">Set primary</button>' : '')
+                    . '<button type="button" class="btn btn-outline btn-sm" wire:click="checkConnection(' . $gateway->id . ')" wire:loading.attr="disabled" wire:target="checkConnection(' . $gateway->id . ')">Check</button>'
                     . '</div>',
                 ];
             })->all(),
@@ -100,7 +81,6 @@ class PaymentGatewaysPage extends ListPage
                 ]
             ],
             'credentialFields' => $this->useOwn ? $this->requiredFields : [],
-            'webhookUrl' => $this->webhookUrl,
         ]);
     }
 
@@ -124,16 +104,7 @@ class PaymentGatewaysPage extends ListPage
             ->values()
             ->all();
 
-        $this->webhookUrl = route('tenant.payment.webhook', $gateway->code);
-
         $this->showFormModal = true;
-    }
-
-    public function setPrimary(int $gatewayId): void
-    {
-        $gateway = PaymentGateway::query()->where('is_active', true)->findOrFail($gatewayId);
-        $gateway->markAsPrimary();
-        $this->toast($gateway->name . ' is now the primary gateway.');
     }
 
     public function save(TenantPanelService $service, GatewayConnectionChecker $checker): void
@@ -185,8 +156,6 @@ class PaymentGatewaysPage extends ListPage
             'required_values' => $requiredValues,
         ], $gateway);
 
-        $gateway->update(['webhook_url' => route('tenant.payment.webhook', $gateway->code)]);
-
         $this->dispatch('setup-step-completed');
         $this->closeModal();
         $this->toast($this->useOwn ? 'Connected and saved successfully.' : 'Gateway configuration updated successfully.');
@@ -195,7 +164,7 @@ class PaymentGatewaysPage extends ListPage
     public function closeModal(): void
     {
         $this->showFormModal = false;
-        $this->reset(['gatewayId', 'requiredFields', 'webhookUrl']);
+        $this->reset(['gatewayId', 'requiredFields']);
         $this->isActive = false;
         $this->useOwn = false;
         $this->sandboxMode = true;
@@ -218,11 +187,7 @@ class PaymentGatewaysPage extends ListPage
 
         $status = $result['ok'] ? 'connected' : 'not_connected';
 
-        $gateway->update([
-            'connection_status' => $status,
-            'last_synced_at' => now(),
-            'last_error' => $result['ok'] ? null : $result['message'],
-        ]);
+        $gateway->update(['connection_status' => $status]);
 
         if ($result['ok']) {
             $this->toast($result['message'], type: 'success');

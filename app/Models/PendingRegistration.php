@@ -14,16 +14,13 @@ class PendingRegistration extends Model
         'locale',
         'package_id',
         'category_ids',
-        'country_ids',
         'payment_data',
         'expires_at',
         'completed_at',
-        'affiliate_referral_id',
     ];
 
     protected $casts = [
         'category_ids' => 'array',
-        'country_ids' => 'array',
         'payment_data' => 'array',
         'expires_at' => 'datetime',
         'completed_at' => 'datetime',
@@ -32,11 +29,6 @@ class PendingRegistration extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
-    }
-
-    public function affiliateReferral(): BelongsTo
-    {
-        return $this->belongsTo(AffiliateReferral::class);
     }
 
     public function isExpired(): bool

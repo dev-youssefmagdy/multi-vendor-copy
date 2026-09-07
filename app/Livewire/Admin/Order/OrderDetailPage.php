@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Admin\Order;
 
-use App\Enums\ReturnReason;
 use App\Enums\ReturnStatus;
 use App\Livewire\Admin\Base\AdminPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
-use App\Models\ReturnRequest;
+use App\Models\OrderReturn;
 use App\Repositories\OrderRepository;
 use App\Services\Admin\OrderFulfillmentService;
 
@@ -83,7 +82,7 @@ class OrderDetailPage extends AdminPage
             'returnNotes' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $existing = ReturnRequest::where('tenant_id', $this->tenantId)
+        $existing = OrderReturn::where('tenant_id', $this->tenantId)
             ->where('order_number', $this->orderNumber)
             ->whereIn('status', [ReturnStatus::Pending->value, ReturnStatus::Approved->value])
             ->exists();
@@ -93,13 +92,12 @@ class OrderDetailPage extends AdminPage
             return;
         }
 
-        $returnRecord = ReturnRequest::create([
+        $returnRecord = OrderReturn::create([
             'tenant_id' => $this->tenantId,
             'order_number' => $this->orderNumber,
-            'customer_id' => 0,
-            'status' => ReturnStatus::AwaitingMerchantReview,
-            'reason' => ReturnReason::Other,
-            'description' => trim($this->returnReason . ($this->returnNotes ? "\n\n" . $this->returnNotes : '')),
+            'status' => ReturnStatus::Pending,
+            'reason' => $this->returnReason,
+            'customer_notes' => $this->returnNotes ?: null,
         ]);
 
         $this->showReturnModal = false;

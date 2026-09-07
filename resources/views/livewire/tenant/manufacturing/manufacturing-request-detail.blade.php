@@ -486,17 +486,4 @@
         }, { capture: true });
     </script>
     @endscript
-
-    @script
-    <script>
-        if (window.Echo) {
-            window.Echo.private('tenant.{{ tenant("id") }}.manufacturing.{{ $requestId }}')
-                .listen('.message.sent', (e) => {
-                    if (e.sender_type === 'admin') {
-                        $wire.$refresh();
-                    }
-                });
-        }
-    </script>
-    @endscript
 </main>

@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
-use App\Jobs\NotifyTenantsForProductCategories;
 use App\Models\Category;
 use App\Models\Language;
 use App\Models\Product;
-use App\Models\ProductBadge;
 use App\Models\ProductTenantAssignment;
 use App\Models\Tenant;
 use App\Models\Variation;
@@ -78,12 +76,6 @@ class ProductController extends Controller
                 ->withInput();
         }
 
-        $isNew = $product === null;
-        $previousCatIds = $product
-            ? $product->categories()->pluck('categories.id')->map(fn ($id) => (int) $id)->all()
-            : [];
-        $prevVariantCount = $product ? $product->variants()->count() : 0;
-
         $savedProduct = $service->save([
             'sku' => $request->input('sku'),
             'slug' => $request->input('slug') ?: null,
@@ -108,16 +100,6 @@ class ProductController extends Controller
             'remove_gallery_ids' => $request->input('remove_gallery_ids', []),
         ], $product);
 
-        if ($request->filled('gallery_order')) {
-            $orderedIds = array_filter(explode(',', (string) $request->input('gallery_order')));
-            if (!empty($orderedIds)) {
-                app(\App\Services\ProductMediaService::class)
-                    ->reorderGalleryFiles($savedProduct, array_map('intval', $orderedIds));
-            }
-        }
-
-        $savedProduct->badges()->sync(array_filter((array) $request->input('badge_ids', []), fn($id) => filled($id)));
-        $tenantSyncService->syncAllTenants(['badges']);
 
         $tenantIds = [];
         foreach (Tenant::all() as $tenant) {
@@ -165,16 +147,6 @@ class ProductController extends Controller
 
         $affectedTenantIds = array_unique(array_merge($previousAssignedIds, array_values($newTenantIds)));
         $tenantSyncService->syncProductToAssignedTenants($savedProduct, $affectedTenantIds);
-
-        // Notify tenants whose category tree covers this product, even without
-        // an explicit assignment (skip tenants already notified above).
-        NotifyTenantsForProductCategories::dispatch(
-            productId: $savedProduct->id,
-            isNew: $isNew,
-            previousCatIds: $previousCatIds,
-            prevVariantCount: $prevVariantCount,
-            alreadyNotifiedIds: array_values($newTenantIds),
-        );
 
         session()->flash('status', $product ? 'Product updated successfully.' : 'Product created successfully.');
 
@@ -276,8 +248,6 @@ class ProductController extends Controller
             'factory' => ['nullable', 'string', 'max:255'],
             'weight_grams' => ['nullable', 'integer', 'min:0'],
             'primary_image' => ['nullable', 'image', 'max:4096'],
-            'badge_ids' => ['array'],
-            'badge_ids.*' => ['integer', 'exists:product_badges,id'],
         ];
 
         foreach (Language::query()->where('is_active', true)->get() as $language) {
@@ -298,7 +268,7 @@ class ProductController extends Controller
 
     protected function viewData(?Product $product = null): array
     {
-        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
 
         $blankTranslations = $languages->mapWithKeys(fn(Language $lang) => [
             $lang->code => [
@@ -316,13 +286,10 @@ class ProductController extends Controller
         $existingImage = null;
         $existingGallery = collect();
         $assignedTenantIds = [];
-        $selectedBadgeIds = [];
         $productData = null;
 
         if ($product) {
             $loaded = app(ProductRepository::class)->findForEditor($product);
-
-            $selectedBadgeIds = $loaded->badges->pluck('id')->all();
 
             $translations = array_replace_recursive(
                 $blankTranslations,
@@ -414,13 +381,11 @@ class ProductController extends Controller
             'statusOptions' => ProductStatus::cases(),
             'existingImage' => $existingImage,
             'existingGallery' => $existingGallery,
-            'tenants' => Tenant::query()->orderBy('data->name')->get(),
+            'tenants' => Tenant::query()->orderBy('name')->get(),
             'translations' => $translations,
             'variants' => $variants,
             'assignedTenantIds' => $assignedTenantIds,
             'assignToAllTenants' => $assignToAllTenants ?? false,
-            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
-            'selectedBadgeIds' => $selectedBadgeIds,
         ];
     }
 }

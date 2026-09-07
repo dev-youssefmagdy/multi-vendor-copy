@@ -2,14 +2,12 @@
 
 namespace App\Livewire\Admin\Order;
 
+use App\Enums\ReturnStatus;
 use App\Livewire\Admin\Base\AdminPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\AdminUser;
-use App\Models\ReturnRequest;
-use App\Models\ReturnRequestNote;
-use App\Models\Tenant;
+use App\Models\OrderReturn;
 use App\Repositories\OrderRepository;
-use App\Services\ReturnRequestService;
 use Illuminate\Support\Facades\Auth;
 
 class OrderReturnDetailPage extends AdminPage
@@ -19,20 +17,20 @@ class OrderReturnDetailPage extends AdminPage
     public int    $returnId    = 0;
     public array  $returnRecord = [];
     public array  $order        = [];
-    public string $noteText     = '';
-    public string $rejectReason = '';
-    public string $infoMessage  = '';
+    public string $adminNotes   = '';
     public string $refundAmount = '';
+    public bool   $showApproveModal  = false;
     public bool   $showRejectModal   = false;
-    public bool   $showInfoModal     = false;
     public bool   $showRefundModal   = false;
 
     public function mount(int $id): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
 
-        $record = ReturnRequest::with(['reviewer', 'media', 'notes'])->findOrFail($id);
-        $this->returnId = $record->id;
+        $record = OrderReturn::with('reviewer')->findOrFail($id);
+        $this->returnId     = $record->id;
+        $this->adminNotes   = (string) $record->admin_notes;
+        $this->refundAmount = $record->refund_amount !== null ? (string) $record->refund_amount : '';
         $this->hydrateReturn($record);
 
         $orderRecord = app(OrderRepository::class)->find($record->tenant_id, $record->order_number);
@@ -63,147 +61,109 @@ class OrderReturnDetailPage extends AdminPage
         ]);
     }
 
-    public function addNote(): void
+    public function saveNotes(): void
     {
-        $this->validate(['noteText' => ['required', 'string', 'max:2000']]);
+        $this->validate(['adminNotes' => ['nullable', 'string', 'max:2000']]);
 
-        $record = ReturnRequest::findOrFail($this->returnId);
-
-        /** @var AdminUser|null $admin */
-        $admin = Auth::guard('admin')->user();
-
-        app(ReturnRequestService::class)->addNote($record, $this->noteText, ReturnRequestNote::AUTHOR_ADMIN, $admin?->id, false);
-        $this->noteText = '';
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
-        $this->toast('Note added.');
+        $record = OrderReturn::findOrFail($this->returnId);
+        $record->update(['admin_notes' => $this->adminNotes ?: null]);
+        $this->hydrateReturn($record->fresh());
+        $this->toast('Notes saved.');
     }
 
     public function approve(): void
     {
-        $record = ReturnRequest::findOrFail($this->returnId);
+        $record = OrderReturn::findOrFail($this->returnId);
+
+        if ($record->status === ReturnStatus::Refunded) {
+            $this->toast('This return has already been refunded.', 'error');
+            return;
+        }
 
         /** @var AdminUser|null $admin */
         $admin = Auth::guard('admin')->user();
 
-        app(ReturnRequestService::class)->approve($record, $admin?->id);
+        $record->update([
+            'status'               => ReturnStatus::Approved,
+            'admin_notes'          => $this->adminNotes ?: $record->admin_notes,
+            'reviewed_by_admin_id' => $admin?->id,
+            'reviewed_at'          => now(),
+        ]);
 
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
+        $this->showApproveModal = false;
+        $this->hydrateReturn($record->fresh());
         $this->toast('Return request approved.');
     }
 
     public function reject(): void
     {
-        $this->validate(['rejectReason' => ['required', 'string', 'max:2000']]);
+        $record = OrderReturn::findOrFail($this->returnId);
 
-        $record = ReturnRequest::findOrFail($this->returnId);
+        if (in_array($record->status, [ReturnStatus::Refunded, ReturnStatus::Rejected], true)) {
+            $this->toast('Cannot reject this return.', 'error');
+            return;
+        }
 
         /** @var AdminUser|null $admin */
         $admin = Auth::guard('admin')->user();
 
-        app(ReturnRequestService::class)->reject($record, $this->rejectReason, $admin?->id);
+        $record->update([
+            'status'               => ReturnStatus::Rejected,
+            'admin_notes'          => $this->adminNotes ?: $record->admin_notes,
+            'reviewed_by_admin_id' => $admin?->id,
+            'reviewed_at'          => now(),
+        ]);
 
         $this->showRejectModal = false;
-        $this->rejectReason = '';
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
+        $this->hydrateReturn($record->fresh());
         $this->toast('Return request rejected.');
-    }
-
-    public function requestMoreInfo(): void
-    {
-        $this->validate(['infoMessage' => ['required', 'string', 'max:2000']]);
-
-        $record = ReturnRequest::findOrFail($this->returnId);
-
-        /** @var AdminUser|null $admin */
-        $admin = Auth::guard('admin')->user();
-
-        app(ReturnRequestService::class)->requestMoreInfo($record, $this->infoMessage, $admin?->id);
-
-        $this->showInfoModal = false;
-        $this->infoMessage = '';
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
-        $this->toast('Requested more information from the customer.');
-    }
-
-    public function markAwaitingMerchantReview(): void
-    {
-        $record = ReturnRequest::findOrFail($this->returnId);
-
-        /** @var AdminUser|null $admin */
-        $admin = Auth::guard('admin')->user();
-
-        app(ReturnRequestService::class)->markAwaitingMerchantReview($record, $admin?->id);
-
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
-        $this->toast('Request forwarded to merchant for review.');
-    }
-
-    public function markItemReceived(): void
-    {
-        $record = ReturnRequest::findOrFail($this->returnId);
-
-        /** @var AdminUser|null $admin */
-        $admin = Auth::guard('admin')->user();
-
-        app(ReturnRequestService::class)->markItemReceived($record, $admin?->id);
-
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
-        $this->toast('Return marked as item received.');
     }
 
     public function markRefunded(): void
     {
         $this->validate([
-            'refundAmount' => ['required', 'numeric', 'min:0'],
+            'refundAmount' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $record = ReturnRequest::findOrFail($this->returnId);
+        $record = OrderReturn::findOrFail($this->returnId);
+
+        if ($record->status === ReturnStatus::Rejected) {
+            $this->toast('Cannot refund a rejected return.', 'error');
+            return;
+        }
 
         /** @var AdminUser|null $admin */
         $admin = Auth::guard('admin')->user();
 
-        app(ReturnRequestService::class)->markRefunded($record, (float) $this->refundAmount, $admin?->id);
+        $record->update([
+            'status'               => ReturnStatus::Refunded,
+            'refund_amount'        => $this->refundAmount !== '' ? (float) $this->refundAmount : null,
+            'admin_notes'          => $this->adminNotes ?: $record->admin_notes,
+            'reviewed_by_admin_id' => $admin?->id,
+            'reviewed_at'          => now(),
+        ]);
 
         $this->showRefundModal = false;
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
+        $this->hydrateReturn($record->fresh());
         $this->toast('Return marked as refunded.');
     }
 
-    public function close(): void
-    {
-        $record = ReturnRequest::findOrFail($this->returnId);
-
-        app(ReturnRequestService::class)->close($record);
-
-        $this->hydrateReturn($record->fresh(['reviewer', 'media', 'notes']));
-        $this->toast('Return request closed.');
-    }
-
-    private function hydrateReturn(ReturnRequest $record): void
+    private function hydrateReturn(OrderReturn $record): void
     {
         $this->returnRecord = [
             'id'            => $record->id,
             'tenant_id'     => $record->tenant_id,
-            'tenant_name'   => Tenant::find($record->tenant_id)?->name ?? $record->tenant_id,
             'order_number'  => $record->order_number,
             'status'        => $record->status,
             'status_label'  => $record->status->label(),
             'status_color'  => $record->status->color(),
-            'reason'        => $record->reason->label(),
-            'description'   => $record->description,
+            'reason'        => $record->reason,
+            'customer_notes'=> $record->customer_notes,
+            'admin_notes'   => $record->admin_notes,
             'refund_amount' => $record->refund_amount,
             'reviewed_by'   => $record->reviewer?->name,
             'reviewed_at'   => $record->reviewed_at?->format('M d, Y H:i'),
             'created_at'    => $record->created_at?->format('M d, Y H:i'),
-            'media'         => $record->media->map(fn($m) => [
-                'url'  => $m->url(),
-                'type' => $m->type->value,
-            ])->all(),
-            'notes'         => $record->notes->sortByDesc('id')->map(fn($n) => [
-                'author_type' => $n->author_type,
-                'note'        => $n->note,
-                'created_at'  => $n->created_at?->format('M d, Y H:i'),
-            ])->values()->all(),
         ];
     }
 }

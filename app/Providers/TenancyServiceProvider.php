@@ -7,7 +7,6 @@ namespace App\Providers;
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\InitializeTenancyBySlug;
 use App\Repositories\Tenant\StorefrontRepository;
-use App\Translation\TenantTranslator;
 use App\View\Composers\StorefrontComposer;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -78,13 +77,11 @@ class TenancyServiceProvider extends ServiceProvider
             Events\InitializingTenancy::class => [],
             Events\TenancyInitialized::class => [
                 Listeners\BootstrapTenancy::class,
-                fn () => TenantTranslator::flushCache(),
             ],
 
             Events\EndingTenancy::class => [],
             Events\TenancyEnded::class => [
                 Listeners\RevertToCentralContext::class,
-                fn () => TenantTranslator::flushCache(),
             ],
 
             Events\BootstrappingTenancy::class => [],
@@ -129,7 +126,7 @@ class TenancyServiceProvider extends ServiceProvider
             // same instance is shared across all themes.* view-composer calls on that request.
             app()->singleton(StorefrontRepository::class);
 
-            View::composer(['themes.*', 'layout.*', 'pages.*'], StorefrontComposer::class);
+            View::composer('themes.*', StorefrontComposer::class);
         });
     }
 

@@ -20,9 +20,6 @@ class Customer extends Authenticatable
         'password',
         'active',
         'language',
-        'provider',
-        'provider_id',
-        'avatar',
     ];
 
     protected $hidden = ['password', 'remember_token'];

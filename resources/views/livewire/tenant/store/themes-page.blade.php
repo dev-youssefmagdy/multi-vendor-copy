@@ -354,15 +354,19 @@
             @endforeach
         </div>
 
-        @if ($variantCards)
+        @if ($themes)
             <section class="theme-grid">
-                @foreach ($variantCards as $theme)
-                    <article wire:key="variant-card-{{ $theme['theme_id'] }}-{{ $theme['variant_id'] }}"
+                @foreach ($themes as $theme)
+                    <article wire:key="theme-card-{{ $theme['id'] }}"
                         class="theme-card {{ $theme['is_active'] ? 'is-active' : '' }} fu d{{ ($loop->index % 6) + 1 }}">
                         <div class="theme-card-preview">
-                            <div class="theme-card-fallback">
-                                <span>{{ $theme['initials'] }}</span>
-                            </div>
+                            @if ($theme['preview_path'])
+                                <img src="{{ $theme['preview_path'] }}" alt="{{ $theme['name'] }} preview">
+                            @else
+                                <div class="theme-card-fallback">
+                                    <span>{{ $theme['initials'] }}</span>
+                                </div>
+                            @endif
 
                             @if ($theme['is_active'])
                                 <div class="theme-card-status">Live Theme</div>
@@ -372,7 +376,7 @@
                         <div class="theme-card-body">
                             <div class="theme-card-copy">
                                 <h3 class="theme-card-title">{{ $theme['name'] }}</h3>
-                                <div class="theme-card-subtitle">{{ $theme['theme_name'] }}</div>
+                                <div class="theme-card-subtitle">{{ $theme['slug'] }}</div>
                                 <div class="theme-card-subtitle">
                                     <span class="theme-scope-badge theme-scope-{{ $theme['is_universal'] ? 'universal' : 'specific' }}">
                                         {{ $theme['scope_label'] }}
@@ -382,18 +386,11 @@
                             </div>
 
                             <div class="theme-card-actions">
-                                @if ($theme['action_method'] === 'activateVariant')
+                                @if ($theme['action_method'])
                                     <button type="button" class="{{ $theme['action_class'] }}"
-                                        wire:click="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})"
+                                        wire:click="{{ $theme['action_method'] }}({{ $theme['id'] }})"
                                         wire:loading.attr="disabled"
-                                        wire:target="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})">
-                                        {{ $theme['action_label'] }}
-                                    </button>
-                                @elseif ($theme['action_method'])
-                                    <button type="button" class="{{ $theme['action_class'] }}"
-                                        wire:click="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})"
-                                        wire:loading.attr="disabled"
-                                        wire:target="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})">
+                                        wire:target="{{ $theme['action_method'] }}({{ $theme['id'] }})">
                                         {{ $theme['action_label'] }}
                                     </button>
                                 @else
@@ -402,19 +399,16 @@
                                     </button>
                                 @endif
 
-                                <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
-                                    class="theme-pill-btn">Preview</a>
-
-                                @if (!empty($theme['storefront_url']))
-                                    <a href="{{ $theme['storefront_url'] }}" target="_blank" rel="noopener noreferrer"
-                                        class="theme-pill-btn" style="border-color:var(--color-green,#22c55e);color:var(--color-green,#22c55e)">
-                                        View Live
-                                    </a>
+                                @if ($theme['preview_path'])
+                                    <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
+                                        class="theme-pill-btn">Preview</a>
+                                @else
+                                    <button type="button" class="theme-pill-btn is-disabled" disabled>No Preview</button>
                                 @endif
 
                                 @if ($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"
-                                        wire:click="openCountries({{ $theme['theme_id'] }})">
+                                        wire:click="openCountries({{ $theme['id'] }})">
                                         Countries
                                     </button>
                                 @endif
@@ -425,8 +419,8 @@
             </section>
         @else
             <div class="theme-empty-state">
-                <div class="empty-state-title">No variants available</div>
-                <p class="empty-state-copy">Variant cards will appear here after home page variants are published for your themes.</p>
+                <div class="empty-state-title">No themes available</div>
+                <p class="empty-state-copy">Theme cards will appear here after tenant theme records are synced.</p>
             </div>
         @endif
     </div>

@@ -15,7 +15,6 @@ use App\Models\Tenant;
 use App\Models\Tenant\Subscription;
 use App\Models\Tenant\Transaction;
 use Illuminate\Support\Str;
-use App\Services\AffiliateService;
 
 class SubscriptionPaymentService
 {
@@ -47,7 +46,7 @@ class SubscriptionPaymentService
         $gateway = PaymentGateway::query()->where('code', $payment['gateway_code'])->first();
 
         // Central payment log
-        $paymentLog = PaymentLog::create([
+        PaymentLog::create([
             'tenant_id'  => $tenant->id,
             'package_id' => $package->id,
             'gateway'    => (string) $payment['gateway_code'],
@@ -57,8 +56,6 @@ class SubscriptionPaymentService
             'paid_at'    => now(),
             'meta'       => ['type' => $type],
         ]);
-
-        app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog);
 
         // Update central tenant record with new package
         $tenant->update(['package_id' => $package->id]);

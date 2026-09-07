@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
-    protected $fillable = ['key', 'path', 'storage_type', 'file_type', 'mime_type', 'extension', 'size', 'model_id', 'model_type', 'sort_order'];
+    protected $fillable = ['key', 'path', 'storage_type', 'file_type', 'mime_type', 'extension', 'size', 'model_id', 'model_type'];
 
     protected $appends = ['full_path'];
 
@@ -29,7 +29,6 @@ class File extends Model
             'storage_type' => FileStorageType::class,
             'file_type' => FileType::class,
             'size' => 'integer',
-            'sort_order' => 'integer',
         ];
     }
 

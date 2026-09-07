@@ -76,15 +76,6 @@ class ApplyStorefrontSessionContext
             // Share globally so Blade views can read `$storefrontTheme` without
             // passing it through every controller.
             view()->share('storefrontTheme', $currentTheme);
-
-            $currentThemeVariant = $this->storefrontRepository->currentHomeVariant();
-
-            if ($currentThemeVariant) {
-                $request->attributes->set('storefrontCurrentThemeVariant', $currentThemeVariant);
-                view()->share('storefrontThemeVariant', $currentThemeVariant);
-            }
-
-            view()->share('storefrontColors', $this->storefrontRepository->resolvedThemeColors());
         }
 
         return $next($request);

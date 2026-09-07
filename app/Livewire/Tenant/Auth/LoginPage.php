@@ -71,9 +71,6 @@ class LoginPage extends Component
             'submitLabel' => 'Login to Vendor Panel',
             'brandLabel' => 'Tenant Workspace',
             'contextNote' => 'Use a tenant admin email and password created inside this tenant workspace.',
-            'showSocialLogin' => false,
-            'googleLoginUrl' => null,
-            'appleLoginUrl' => null,
         ]);
     }
 }

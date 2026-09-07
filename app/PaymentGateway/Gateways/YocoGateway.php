@@ -69,14 +69,4 @@ class YocoGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('Yoco checkout status: ' . ($data['status'] ?? 'unknown'));
     }
-
-    protected static function meta(): array
-    {
-        return [
-            'currencies' => ['ZAR'],
-            'merchant_countries' => ['ZA'],
-            'customer_countries' => ['ZA'],
-            'payment_methods' => ['card', 'eft', 'qr_code'],
-        ];
-    }
 }

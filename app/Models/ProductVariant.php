@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\VariationStatus;
-use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,9 +12,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class ProductVariant extends Model
 {
-    use HasFactory, HasTranslations, CentralConnection;
-
-    protected array $translated = ['title'];
+    use HasFactory, CentralConnection;
 
     protected $fillable = [
         'product_id',

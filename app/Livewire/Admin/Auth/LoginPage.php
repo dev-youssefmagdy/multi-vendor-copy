@@ -69,9 +69,6 @@ class LoginPage extends Component
             'submitLabel' => 'Login to Central',
             'brandLabel' => 'Central Control',
             'contextNote' => 'Use your central admin email and password.',
-            'showSocialLogin' => false,
-            'googleLoginUrl' => null,
-            'appleLoginUrl' => null,
         ]);
     }
 }
