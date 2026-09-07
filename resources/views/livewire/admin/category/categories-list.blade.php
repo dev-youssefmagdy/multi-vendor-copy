@@ -7,6 +7,7 @@
         </div>
         <div class="page-actions">
             @if ($canManageCategories)
+                <a href="{{ route('admin.categories.sort') }}" class="btn btn-secondary">Sort Categories</a>
                 <a href="{{ route('admin.categories.create') }}"  class="btn btn-primary">Add Category</a>
             @endif
         </div>
@@ -124,7 +125,8 @@
                                 <td class="ta-r">
                                     @if ($canManageCategories)
                                         <div class="table-actions-inline"><a href="{{ route('admin.categories.edit', $category) }}"
-                                                 class="btn btn-secondary btn-sm">Edit</a><button type="button"
+                                                 class="btn btn-secondary btn-sm">Edit</a><a href="{{ route('admin.categories.products', $category) }}"
+                                                 class="btn btn-secondary btn-sm">Sort Products</a><button type="button"
                                                 class="btn btn-secondary btn-sm btn-danger"
                                                 wire:click="deleteCategory({{ $category->id }})">Delete</button></div>
                                     @else

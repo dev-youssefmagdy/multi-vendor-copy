@@ -38,6 +38,9 @@ class Product extends Model
 
     protected $fillable = [
         'central_product_id',
+        'has_custom_translations',
+        'needs_ai_translation',
+        'ai_translated_at',
         'sku',
         'slug',
         'price',
@@ -46,6 +49,7 @@ class Product extends Model
         'cost_price',
         'active',
         'central_visible',
+        'allowed_country_ids',
         'featured',
         'is_own_product',
         'is_tenant_owned',
@@ -60,6 +64,13 @@ class Product extends Model
         'ai_price_data',
         'fixed_shipping_costs',
         'profit',
+        'order_number',
+        'return_policy_override',
+        'is_returnable',
+        'return_window_days',
+        'return_fee',
+        'return_video_required',
+        'return_conditions',
     ];
 
     protected $appends = ['primary_image_url', 'average_rating'];
@@ -70,7 +81,11 @@ class Product extends Model
             'price' => 'array',
             'default_price' => 'decimal:2',
             'active' => 'boolean',
+            'has_custom_translations' => 'boolean',
+            'needs_ai_translation' => 'boolean',
+            'ai_translated_at' => 'datetime',
             'central_visible' => 'boolean',
+            'allowed_country_ids' => 'array',
             'featured' => 'boolean',
             'sale_price' => 'decimal:2',
             'cost_price' => 'decimal:2',
@@ -86,6 +101,11 @@ class Product extends Model
             'ai_price_data' => 'array',
             'fixed_shipping_costs' => 'array',
             'profit' => 'array',
+            'return_policy_override' => 'boolean',
+            'is_returnable' => 'boolean',
+            'return_window_days' => 'integer',
+            'return_fee' => 'decimal:2',
+            'return_video_required' => 'boolean',
         ];
     }
 
@@ -133,7 +153,7 @@ class Product extends Model
 
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'model');
+        return $this->morphMany(File::class, 'model')->orderBy('sort_order')->orderBy('id');
     }
 
     public function badges(): BelongsToMany
@@ -321,5 +341,77 @@ class Product extends Model
             'flash_sale_percentage' => round($flashDiscountPercentage, 2),
             'flash_sale' => $flashSale,
         ];
+    }
+
+    /**
+     * Maps this product into the plain array shape expected by the elora-v4
+     * ("Bold Edition") home page product card partials.
+     */
+    public function toEloraV4Card($currentCurrency = null): array
+    {
+        $symbol = data_get($currentCurrency, 'symbol', '$');
+        $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
+
+        $pricing = $this->storefrontPricing();
+        $sellPrice = (float) $pricing['current_price'];
+        $hasDiscount = (bool) $pricing['has_discount'];
+        $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
+        $realPrice = $pricing['original_price'];
+
+        $weightGrams = $this->centralProduct?->weight_grams ?? $this->weight_grams ?? null;
+        $weightLabel = $weightGrams
+            ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
+            : null;
+
+        $rating = (float) ($this->average_rating ?? 0);
+        $ratingCount = $this->relationLoaded('rates') ? $this->rates->count() : $this->rates()->count();
+
+        $favData = json_encode([
+            'slug' => $this->slug,
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'price' => round($sellPrice * $rate, 2),
+            'old_price' => $hasDiscount && $realPrice !== null ? round($realPrice * $rate, 2) : null,
+            'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
+            'rating' => $rating,
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? null,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'added' => time(),
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'favData' => $favData,
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? asset('elora-4/assets/images/product-placeholder.svg'),
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'weight' => $weightLabel,
+            'price' => $symbol . number_format($sellPrice * $rate, 2),
+            'oldPrice' => $hasDiscount && $realPrice !== null ? $symbol . number_format($realPrice * $rate, 2) : null,
+            'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
+            'rating' => number_format($rating, 1) . ($ratingCount > 0 ? ' (+' . $ratingCount . ')' : ''),
+        ];
+    }
+
+    /**
+     * 'out_of_stock' when every variant (or the product itself, if it has no
+     * variants) has zero stock; 'partial' when only some variants are
+     * depleted; otherwise 'in_stock'.
+     */
+    public function stockStatus(): string
+    {
+        $variants = $this->relationLoaded('variants') ? $this->variants : $this->variants()->get();
+
+        if ($variants->isEmpty()) {
+            return (int) ($this->stock ?? 0) > 0 ? 'in_stock' : 'out_of_stock';
+        }
+
+        $outCount = $variants->filter(fn(ProductVariant $variant) => (int) $variant->stock <= 0)->count();
+
+        if ($outCount === 0) {
+            return 'in_stock';
+        }
+
+        return $outCount === $variants->count() ? 'out_of_stock' : 'partial';
     }
 }

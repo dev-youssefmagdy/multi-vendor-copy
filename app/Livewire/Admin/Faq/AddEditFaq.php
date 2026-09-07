@@ -18,7 +18,7 @@ class AddEditFaq extends Component
 
     public function mount(?Faq $faq = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -75,7 +75,7 @@ class AddEditFaq extends Component
     {
         return view('livewire.admin.faq.add-edit-faq', [
             'pageTitle' => $this->faqId ? 'Edit FAQ' : 'Add FAQ',
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'statusOptions' => ['draft' => 'Draft', 'active' => 'Active'],
         ]);
     }

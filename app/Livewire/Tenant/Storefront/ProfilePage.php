@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Concerns\SanitizesPhoneNumber;
 use App\Enums\OrderStatus;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Country;
@@ -17,6 +18,7 @@ use Livewire\Component;
 class ProfilePage extends Component
 {
     use HasStorefrontLayout;
+    use SanitizesPhoneNumber;
 
     public string $activeTab = 'orders';
     public ?string $statusFilter = null;
@@ -39,11 +41,16 @@ class ProfilePage extends Component
         if (!Auth::guard('storefront')->check()) {
             $this->redirect(route('tenant.storefront.login'));
         }
+
+        $tab = request()->query('tab');
+        if (is_string($tab)) {
+            $this->setTab($tab);
+        }
     }
 
     public function setTab(string $tab): void
     {
-        $this->activeTab = in_array($tab, ['orders', 'profile', 'wishlist']) ? $tab : 'orders';
+        $this->activeTab = in_array($tab, ['orders', 'profile', 'wishlist', 'returns']) ? $tab : 'orders';
     }
 
     public function openAddressModal(?int $id = null): void
@@ -66,6 +73,7 @@ class ProfilePage extends Component
             $this->addrIsDefault = (bool) $addr->is_default;
         }
         $this->showAddressModal = true;
+        $this->dispatch('storefront-open-address-modal-changed', $this->showAddressModal);
     }
 
     public function closeAddressModal(): void
@@ -93,7 +101,7 @@ class ProfilePage extends Component
             'customer_id'    => $customer->id,
             'label'          => $this->addrLabel ?: null,
             'full_name'      => $this->addrFullName,
-            'phone'          => $this->addrPhone ?: null,
+            'phone'          => $this->sanitizePhone($this->addrPhone),
             'address_line_1' => $this->addrLine1,
             'city'           => $this->addrCity,
             'state'          => $this->addrState ?: null,
@@ -286,9 +294,18 @@ class ProfilePage extends Component
             ->orderBy('id')
             ->get();
 
+        $returnRequests = $customer
+            ? \App\Models\ReturnRequest::where('tenant_id', tenant()->id)
+                ->where('customer_id', $customer->id)
+                ->with(['notes' => fn($q) => $q->where('customer_visible', true)->latest()->limit(1)])
+                ->latest()
+                ->get()
+            : collect();
+
         $data = array_merge($this->sharedData(), [
             'customer' => $customer,
             'orders' => $orders,
+            'returnRequests' => $returnRequests,
             'activeTab' => $this->activeTab,
             'statusFilter' => $this->statusFilter,
             'reviewedProductIds' => $reviewedProductIds,

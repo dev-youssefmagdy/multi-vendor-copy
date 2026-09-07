@@ -5,6 +5,7 @@ namespace App\Livewire\Website;
 use App\Jobs\SyncFixedShippingCostsToTenantsJob;
 use App\Jobs\SyncProductFixedShippingCosts;
 use App\Models\Category;
+use App\Models\Country;
 use App\Models\DnsRecord;
 use App\Models\DomainRequest;
 use App\Models\PendingRegistration;
@@ -45,12 +46,18 @@ class CompleteRegistrationPage extends Component
 
     // Step 2 – Category selection
     public array $selectedCategoryIds = [];
+    public array $categoryPreviewTree = [];
+
+    // Step 3 – Target countries selection
+    public array $selectedCountryIds = [];
+    public string $countrySearch = '';
 
     // State flags
     public bool $shopNameTaken = false;
     public bool $invalid = false;
     public bool $registered = false;
     public bool $hasDomainRequest = false;
+    public string $registeredTenantId = '';
     public string $tenantDomain = '';
     public string $centralDomain = '';
 
@@ -122,7 +129,25 @@ class CompleteRegistrationPage extends Component
             $this->selectedCategoryIds = array_map('strval', (array) $pending->category_ids);
         }
 
+        if (!empty($pending->country_ids)) {
+            $this->selectedCountryIds = array_map('strval', (array) $pending->country_ids);
+        } else {
+            $this->selectedCountryIds = Country::query()
+                ->where('is_active_for_tenants', true)
+                ->where('is_free', true)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
+                ->all();
+        }
+
         $this->loadDnsRecords();
+        $this->buildCategoryPreview();
+
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $this->email) {
+            $this->name = (string) ($oauth['name'] ?? '');
+        }
     }
 
     public function updatedDomainType(): void
@@ -134,6 +159,80 @@ class CompleteRegistrationPage extends Component
     public function updatedShopName(): void
     {
         $this->checkShopNameAvailability();
+    }
+
+    public function updatedSelectedCategoryIds(): void
+    {
+        $this->buildCategoryPreview();
+    }
+
+    public function buildCategoryPreview(): void
+    {
+        if (empty($this->selectedCategoryIds)) {
+            $this->categoryPreviewTree = [];
+            return;
+        }
+
+        $rootIds = array_map('intval', $this->selectedCategoryIds);
+
+        $allIds = $rootIds;
+        $check = $rootIds;
+
+        while (!empty($check)) {
+            $children = Category::whereIn('parent_id', $check)
+                ->where('status', 'published')
+                ->pluck('id')
+                ->toArray();
+            $new = array_diff($children, $allIds);
+            $allIds = array_merge($allIds, $new);
+            $check = $new;
+        }
+
+        $all = Category::query()
+            ->with('translations.language')
+            ->whereIn('id', $allIds)
+            ->orderBy('parent_id')
+            ->orderBy('order_number')
+            ->get()
+            ->keyBy('id');
+
+        $tree = [];
+        foreach ($all as $cat) {
+            if (in_array($cat->id, $rootIds, true)) {
+                $tree[$cat->id] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => [],
+                ];
+            }
+        }
+
+        foreach ($all as $cat) {
+            if ($cat->parent_id && isset($tree[$cat->parent_id])) {
+                $tree[$cat->parent_id]['children'][] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+
+        $this->categoryPreviewTree = array_values($tree);
+    }
+
+    private function buildSubTree(int $parentId, $all, array $rootIds): array
+    {
+        $children = [];
+        foreach ($all as $cat) {
+            if ($cat->parent_id === $parentId && !in_array($cat->id, $rootIds, true)) {
+                $children[] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+        return $children;
     }
 
     private function checkShopNameAvailability(): void
@@ -150,7 +249,7 @@ class CompleteRegistrationPage extends Component
             return;
         }
 
-        $this->shopNameTaken = Tenant::query()->where('slug', $slug)->exists()
+        $this->shopNameTaken = Tenant::query()->where('data->slug', $slug)->exists()
             || DB::table('domains')->where('domain', 'like', $slug . '.%')->exists();
     }
 
@@ -168,11 +267,10 @@ class CompleteRegistrationPage extends Component
     }
 
     /**
-     * Step 1 – validate shop details.
-     * If the plan requires category selection, advance to step 2.
-     * Otherwise, finalize the registration immediately.
+     * Step 1 – validate shop details, then advance to category selection
+     * (if the plan requires it) or straight to the target countries step.
      */
-    public function submitStep1(WebsiteRegistrationService $registrationService): void
+    public function submitStep1(): void
     {
 
         $this->checkShopNameAvailability();
@@ -201,18 +299,13 @@ class CompleteRegistrationPage extends Component
             'profitPercentage' => ['nullable', 'numeric', 'min:0', 'max:1000'],
         ]);
 
-        if ($this->categoriesCount > 0) {
-            $this->step = 2;
-            return;
-        }
-
-        $this->finalize($registrationService, []);
+        $this->step = $this->categoriesCount > 0 ? 2 : 3;
     }
 
     /**
-     * Step 2 – validate category selection, then finalize.
+     * Step 2 – validate category selection, advance to the countries step.
      */
-    public function submitStep2(WebsiteRegistrationService $registrationService): void
+    public function submitStep2(): void
     {
         $this->validate([
             'selectedCategoryIds' => [
@@ -224,11 +317,36 @@ class CompleteRegistrationPage extends Component
             'selectedCategoryIds.*' => ['integer', Rule::exists('categories', 'id')],
         ]);
 
-        $this->finalize($registrationService, array_map('intval', $this->selectedCategoryIds));
+        $this->step = 3;
+    }
+
+    /**
+     * Step 3 – validate target countries selection, then finalize.
+     */
+    public function submitStep3(WebsiteRegistrationService $registrationService): void
+    {
+        $this->validate([
+            'selectedCountryIds' => ['required', 'array', 'min:1'],
+            'selectedCountryIds.*' => [
+                'integer',
+                Rule::exists('countries', 'id')->where('is_active_for_tenants', true),
+            ],
+        ]);
+
+        $this->finalize(
+            $registrationService,
+            array_map('intval', $this->selectedCategoryIds),
+            array_map('intval', $this->selectedCountryIds)
+        );
     }
 
     public function prevStep(): void
     {
+        if ($this->step === 3) {
+            $this->step = $this->categoriesCount > 0 ? 2 : 1;
+            return;
+        }
+
         $this->step = 1;
     }
 
@@ -265,7 +383,7 @@ class CompleteRegistrationPage extends Component
         $this->dnsChecking = false;
     }
 
-    protected function finalize(WebsiteRegistrationService $registrationService, array $categoryIds): void
+    protected function finalize(WebsiteRegistrationService $registrationService, array $categoryIds, array $countryIds = []): void
     {
         $pending = PendingRegistration::query()
             ->where('token', $this->token)
@@ -280,6 +398,10 @@ class CompleteRegistrationPage extends Component
             $pending->update(['category_ids' => $categoryIds]);
         }
 
+        if (!empty($countryIds)) {
+            $pending->update(['country_ids' => $countryIds]);
+        }
+
         $registrationData = [
             'name' => $this->name,
             'email' => $pending->email,
@@ -288,17 +410,29 @@ class CompleteRegistrationPage extends Component
             'phone' => $pending->phone ?? $this->phone,
             'shop_name' => $this->shopName,
             'category_ids' => !empty($categoryIds) ? $categoryIds : null,
+            'country_ids' => !empty($countryIds) ? $countryIds : null,
             'profit_percentage' => (float) ($this->profitPercentage ?: 0),
             'domain_type' => $this->domainType,
             'custom_domain' => $this->customDomain,
             'package_id' => $pending->package_id,
             'gateway_code' => $pending->payment_data['gateway_code'] ?? null,
             'locale' => $pending->locale,
+            'affiliate_referral_id' => $pending->affiliate_referral_id,
         ];
+
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $pending->email) {
+            $registrationData['provider'] = $oauth['provider'] ?? null;
+            $registrationData['provider_id'] = $oauth['provider_id'] ?? null;
+            $registrationData['avatar'] = $oauth['avatar'] ?? null;
+        }
 
         $payment = !empty($pending->payment_data) ? $pending->payment_data : null;
 
         $tenant = $registrationService->finalize($registrationData, $payment);
+
+        session()->forget('website.register.oauth');
 
         $pending->markCompleted();
 
@@ -312,6 +446,26 @@ class CompleteRegistrationPage extends Component
         $this->hasDomainRequest = $this->domainType === 'custom';
         $this->registered = true;
         $this->dispatch('scrollToTop');
+
+        if (!$this->hasDomainRequest) {
+            $this->redirect(route('website.store.onboarding', [
+                'tenantId' => $tenant->getTenantKey(),
+            ]));
+            return;
+        }
+
+        $this->registeredTenantId = (string) $tenant->getTenantKey();
+    }
+
+    public function continueToOnboarding(): void
+    {
+        if (blank($this->registeredTenantId)) {
+            return;
+        }
+
+        $this->redirect(route('website.store.onboarding', [
+            'tenantId' => $this->registeredTenantId,
+        ]));
     }
 
     private function pruneEmptyCategories(\Illuminate\Database\Eloquent\Collection $categories): \Illuminate\Support\Collection
@@ -360,10 +514,23 @@ class CompleteRegistrationPage extends Component
             ? DnsRecord::query()->where('is_required', true)->orderBy('type')->orderBy('name')->get()
             : collect();
 
+        $countries = $this->step === 3
+            ? Country::query()
+                ->where('is_active_for_tenants', true)
+                ->orderByDesc('is_free')
+                ->orderBy('name')
+                ->get()
+                ->filter(fn (Country $country) => $this->countrySearch === ''
+                    || str_contains(strtolower((string) $country->name), strtolower($this->countrySearch)))
+                ->values()
+            : collect();
+
         return view('livewire.website.complete-registration', [
             'centralDomain' => $this->centralDomain,
             'rootCategories' => $rootCategories,
+            'countries' => $countries,
             'requiredDnsRecords' => $requiredDnsRecords,
+            'categoryPreviewTree' => $this->categoryPreviewTree,
         ])->layout('layouts.website', ['title' => __('Complete Your Registration') . ' — Ecommet']);
     }
 }

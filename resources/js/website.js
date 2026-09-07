@@ -1,4 +1,5 @@
 import "./bootstrap";
+import { initPhoneInputs } from "./phone-input";
 
 // ── Mobile nav ─────────────────────────────────────────────────────────────────
 function initMobileNav() {
@@ -117,8 +118,12 @@ function boot() {
     initFaq();
     initPricingTabs();
     initTemplateTabs();
+    initPhoneInputs(document);
 }
 
 document.addEventListener("DOMContentLoaded", boot);
 document.addEventListener("livewire:navigated", boot);
+document.addEventListener("livewire:init", () => {
+    window.Livewire?.hook("morphed", ({ el }) => initPhoneInputs(el));
+});
 

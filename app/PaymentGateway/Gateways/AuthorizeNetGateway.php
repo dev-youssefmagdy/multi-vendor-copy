@@ -87,4 +87,14 @@ class AuthorizeNetGateway extends AbstractPaymentGateway
         // Authorize.Net is synchronous; verification happens in charge().
         return PaymentResult::failure('Authorize.Net is synchronous — use charge() directly.');
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['USD', 'CAD', 'GBP', 'EUR', 'AUD'],
+            'merchant_countries' => ['US', 'CA', 'GB', 'AU'],
+            'customer_countries' => ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'SE', 'NZ'],
+            'payment_methods' => ['card', 'apple_pay', 'google_pay', 'echeck'],
+        ];
+    }
 }

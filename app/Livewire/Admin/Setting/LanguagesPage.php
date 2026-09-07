@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Setting;
 
 use App\Enums\LanguageDirection;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
+use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
+use App\Models\Language;
 use App\Repositories\LanguageRepository;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -11,7 +13,10 @@ use Livewire\WithPagination;
 class LanguagesPage extends Component
 {
     use AuthorizesAdminPermissions;
+    use InteractsWithAdminUi;
     use WithPagination;
+
+    protected int $perPage = 10;
 
     public string $search = '';
     public string $directionFilter = '';
@@ -45,6 +50,19 @@ class LanguagesPage extends Component
         session()->flash('status', 'Language deleted successfully.');
     }
 
+    public function updateOrder(array $orderedIds): void
+    {
+        $this->authorizePermission('settings.languages.manage');
+
+        $offset = ($this->getPage() - 1) * $this->perPage;
+
+        foreach ($orderedIds as $index => $languageId) {
+            Language::query()->where('id', (int) $languageId)->update(['sort_order' => $offset + $index]);
+        }
+
+        $this->toast('Language order saved.');
+    }
+
     public function render(LanguageRepository $languages)
     {
         return view('livewire.admin.setting.languages-page', [
@@ -52,7 +70,7 @@ class LanguagesPage extends Component
                 'search' => $this->search,
                 'direction' => $this->directionFilter,
                 'is_active' => $this->activeFilter,
-            ]),
+            ], $this->perPage),
             'stats' => $languages->stats(),
             'directionOptions' => LanguageDirection::cases(),
             'canManageLanguages' => $this->hasPermission('settings.languages.manage'),

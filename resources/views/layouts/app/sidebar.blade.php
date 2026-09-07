@@ -4,6 +4,15 @@
   $sections = AdminNavigation::visibleSections();
   $currentRoute = request()->route()?->getName();
   $childDotClasses = ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'];
+  $supportUnreadCount = auth('admin')->user()?->hasAnyPermission(['support.tickets.view', 'support.tickets.manage'])
+      ? \App\Models\SupportTicket::where('admin_has_unread', true)->count()
+      : 0;
+  $pendingEditRequestsCount = auth('admin')->user()?->hasPermission('catalog.product-edit-requests.manage')
+      ? \App\Models\ProductEditRequest::where('status', 'pending')->count()
+      : 0;
+  $productRequestsUnreadCount = auth('admin')->user()?->hasAnyPermission(['catalog.product-requests.view', 'catalog.product-requests.manage'])
+      ? \App\Models\ProductRequest::where('admin_has_unread', true)->count()
+      : 0;
 @endphp
 
 <aside id="sb">
@@ -39,6 +48,9 @@
         @endif
         @include('layouts.app.icon', ['name' => $item['icon']])
         {{ $item['label'] }}
+        @if (($item['route'] ?? null) === 'admin.support.index' && ($supportUnreadCount ?? 0) > 0)
+          <span class="ni-badge">{{ $supportUnreadCount }}</span>
+        @endif
       </a>
     @else
     @php($groupOpen = AdminNavigation::groupIsActive($item, $currentRoute))
@@ -57,6 +69,12 @@
             data-action="set-sub-active">
             <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
             {{ $child['label'] }}
+            @if (($child['route'] ?? null) === 'admin.products.edit-requests' && $pendingEditRequestsCount > 0)
+              <span class="ni-badge">{{ $pendingEditRequestsCount }}</span>
+            @endif
+            @if (($child['route'] ?? null) === 'admin.product-requests.index' && $productRequestsUnreadCount > 0)
+              <span class="ni-badge">{{ $productRequestsUnreadCount }}</span>
+            @endif
           </a>
         @endforeach
       </div>

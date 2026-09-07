@@ -20,12 +20,14 @@ class DatabaseSeeder extends Seeder
             WorldCountriesSeeder::class,
             WorldCitiesSeeder::class,
             CentralAdminSeeder::class,
+            AdminPermissionSeeder::class,
             CentralCatalogSeeder::class,
                 // TenantDemoSeeder::class,
             CentralPaymentGatewaySeeder::class,
             EmailTemplateSeeder::class,
             EmailTemplateTranslationSeeder::class,
             AddPaymentGatewayLimitPermissionSeeder::class,
+            AddReturnPolicyPermissionSeeder::class,
         ]);
 
         Artisan::call('currencies:update-rates');

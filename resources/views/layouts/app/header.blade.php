@@ -35,6 +35,8 @@ $adminUser = auth('admin')->user();
   </div>
 
 
+  <x-admin-notification-bell />
+
   <div class="av">
     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin&amp;backgroundColor=b6e3f4" class="avatar avatar-26" alt=""/>
     <div class="profile-meta xs-hide">

@@ -52,7 +52,7 @@
 
             {{-- Step progress --}}
             <div class="flex items-center gap-0 mb-8">
-                @foreach([1 => __('Your Details'), 2 => __('Payment')] as $n => $label)
+                @foreach($stepLabels as $n => $label)
                     <div class="flex-1 flex flex-col items-center gap-1.5">
                         <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all
                             {{ $step > $n ? 'bg-green-500 text-white' : ($step === $n ? 'bg-primary text-white ring-4 ring-primary/20' : 'bg-gray-100 text-gray-400') }}">
@@ -62,11 +62,11 @@
                                 {{ $n }}
                             @endif
                         </div>
-                        <span class="text-xs font-{{ $step === $n ? 'semibold' : 'normal' }} {{ $step === $n ? 'text-gray-900' : 'text-gray-400' }}">
+                        <span class="text-xs font-{{ $step === $n ? 'semibold' : 'normal' }} {{ $step === $n ? 'text-gray-900' : 'text-gray-400' }} text-center">
                             {{ $label }}
                         </span>
                     </div>
-                    @if($n < 2)
+                    @if($n < count($stepLabels))
                         <div class="flex-1 h-0.5 mb-5 {{ $step > $n ? 'bg-green-400' : 'bg-gray-200' }} transition-colors"></div>
                     @endif
                 @endforeach
@@ -75,9 +75,81 @@
             {{-- Card --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
 
-                {{-- ── STEP 1: Email + Phone + Plan ────────────────────────── --}}
+                {{-- ── STEP 1: Plan ─────────────────────────────────────────── --}}
                 @if($step === 1)
+                    <h2 class="text-lg font-extrabold text-gray-900 mb-6">{{ __('Choose Your Plan') }}</h2>
+
+                    <div class="space-y-2 mb-6">
+                        <label class="flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all
+                            {{ $packageId === '' ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
+                            <input wire:model.live="packageId" type="radio" value="" class="accent-primary">
+                            <div class="flex-1">
+                                <div class="font-semibold text-gray-900 text-sm">{{ __('Free Plan') }}</div>
+                                <div class="text-gray-500 text-xs">{{ __('Start free, upgrade later') }}</div>
+                            </div>
+                            <div class="font-extrabold text-green-600 text-sm">$0</div>
+                        </label>
+
+                        @foreach($packages as $pkg)
+                            <label class="flex items-center gap-3 p-4 rounded-xl cursor-pointer border-2 transition-all
+                                {{ $packageId == $pkg->id ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
+                                <input wire:model.live="packageId" type="radio" value="{{ $pkg->id }}" class="accent-primary">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900 text-sm">{{ $pkg->name }}</div>
+                                    @if($pkg->trial_days > 0)
+                                        <div class="text-xs text-green-600 mt-0.5">{{ $pkg->trial_days }} {{ __('days free trial') }}</div>
+                                    @endif
+                                </div>
+                                <div class="font-extrabold text-sm {{ $packageId == $pkg->id ? 'text-primary' : 'text-gray-900' }}">
+                                    ${{ number_format($pkg->price, 0) }}
+                                </div>
+                            </label>
+                        @endforeach
+                        @error('packageId')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    </div>
+
+                    <button wire:click="nextStep" type="button"
+                        class="btn-primary w-full py-3.5 font-bold text-sm rounded-xl">
+                        {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                    </button>
+                @endif
+
+                {{-- ── STEP 2: Email + Phone + Social ──────────────────────── --}}
+                @if($step === 2)
                     <h2 class="text-lg font-extrabold text-gray-900 mb-6">{{ __('Your Details') }}</h2>
+
+                    @if (session('social_login_error'))
+                        <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ session('social_login_error') }}</div>
+                    @endif
+
+                    <div class="flex flex-col gap-3 mb-5">
+                        <button type="button" onclick="openSocialPopup('google')"
+                            class="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+                            <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+                                <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+                                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+                                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+                            </svg>
+                            {{ __('Continue with Google') }}
+                        </button>
+                        <button type="button" onclick="openSocialPopup('apple')"
+                            class="w-full flex items-center justify-center gap-2 bg-black text-white rounded-xl py-3 text-sm font-semibold hover:bg-gray-900 transition">
+                            <svg class="w-4 h-4" viewBox="0 0 384 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                            </svg>
+                            {{ __('Continue with Apple') }}
+                        </button>
+                    </div>
+
+                    <div id="social-popup-error" class="hidden mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"></div>
+
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                        <span class="text-[11px] text-gray-400 uppercase tracking-wide">{{ __('or') }}</span>
+                        <div class="flex-1 h-px bg-gray-200"></div>
+                    </div>
+
                     <div class="space-y-5">
 
                         {{-- Email --}}
@@ -88,61 +160,37 @@
                             @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
-                        {{-- Phone --}}
+                        {{-- Phone — no wire:model on the display input; synced to a hidden input --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                                 {{ __('Phone') }} <span class="font-normal text-gray-400">({{ __('optional') }})</span>
                             </label>
-                            <input wire:model="phone" type="tel" placeholder="+1 555 000 0000"
-                                pattern="\+?[0-9]+" inputmode="tel"
-                                class="w-full px-4 py-3 rounded-xl border {{ $errors->has('phone') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20' }} text-sm outline-none transition-all">
+                            <input id="register-phone-display" type="tel" data-phone-input placeholder="+1 555 000 0000"
+                                class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all {{ $errors->has('phone') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20' }}">
+                            <input type="hidden" id="register-phone-hidden" wire:model="phone">
                             @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
-                        {{-- Plan --}}
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">{{ __('Choose Your Plan') }}</label>
-                            <div class="space-y-2">
-                                <label class="flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all
-                                    {{ $packageId === '' ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
-                                    <input wire:model.live="packageId" type="radio" value="" class="accent-primary">
-                                    <div class="flex-1">
-                                        <div class="font-semibold text-gray-900 text-sm">{{ __('Free Plan') }}</div>
-                                        <div class="text-gray-500 text-xs">{{ __('Start free, upgrade later') }}</div>
-                                    </div>
-                                    <div class="font-extrabold text-green-600 text-sm">$0</div>
-                                </label>
-
-                                @foreach($packages as $pkg)
-                                    <label class="flex items-center gap-3 p-4 rounded-xl cursor-pointer border-2 transition-all
-                                        {{ $packageId == $pkg->id ? 'border-primary bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-gray-300' }}">
-                                        <input wire:model.live="packageId" type="radio" value="{{ $pkg->id }}" class="accent-primary">
-                                        <div class="flex-1">
-                                            <div class="font-semibold text-gray-900 text-sm">{{ $pkg->name }}</div>
-                                            @if($pkg->trial_days > 0)
-                                                <div class="text-xs text-green-600 mt-0.5">{{ $pkg->trial_days }} {{ __('days free trial') }}</div>
-                                            @endif
-                                        </div>
-                                        <div class="font-extrabold text-sm {{ $packageId == $pkg->id ? 'text-primary' : 'text-gray-900' }}">
-                                            ${{ number_format($pkg->price, 0) }}
-                                        </div>
-                                    </label>
-                                @endforeach
-                                @error('packageId')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                            </div>
+                        <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                            <button wire:click="prevStep" type="button"
+                                class="w-full sm:flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:border-gray-300 transition-colors">
+                                <i class="fas fa-arrow-left me-1.5 text-xs"></i> {{ __('Back') }}
+                            </button>
+                            <button wire:click="proceed" type="button"
+                                wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed"
+                                wire:target="proceed"
+                                class="btn-primary w-full sm:flex-1 py-3.5 font-bold text-sm rounded-xl">
+                                <span wire:loading.remove wire:target="proceed">
+                                    {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
+                                </span>
+                                <span wire:loading wire:target="proceed">{{ __('Processing…') }}</span>
+                            </button>
                         </div>
-
-                        {{-- Category selection is handled after email verification on the complete-registration page --}}
-
-                        <button wire:click="nextStep" type="button"
-                            class="btn-primary w-full py-3.5 font-bold text-sm rounded-xl mt-1">
-                            {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                        </button>
                     </div>
                 @endif
 
-                {{-- ── STEP 2: Payment ──────────────────────────────────────── --}}
-                @if($step === 2)
+                {{-- ── STEP 3: Payment ──────────────────────────────────────── --}}
+                @if($step === 3)
                     @if($selectedPackage && (float) $selectedPackage->price > 0)
 
                         <h2 class="text-lg font-extrabold text-gray-900 mb-2">{{ __('Select Payment Method') }}</h2>
@@ -167,6 +215,32 @@
                             <div class="text-2xl font-extrabold text-primary">
                                 ${{ number_format($selectedPackage->price, 0) }}
                             </div>
+                        </div>
+
+                        {{-- Coupon code --}}
+                        <div class="mb-5">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">{{ __('Coupon Code') }} <span class="font-normal normal-case text-gray-400">({{ __('optional') }})</span></label>
+                            <div class="flex gap-2 mt-1.5">
+                                <input type="text" wire:model.defer="couponCode"
+                                       class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm uppercase focus:border-primary focus:outline-none"
+                                       placeholder="{{ __('Enter promo code') }}">
+                                <button type="button" wire:click="applyCoupon"
+                                        class="px-4 py-2 rounded-xl border-2 border-primary text-primary text-sm font-bold hover:bg-orange-50">
+                                    {{ __('Apply') }}
+                                </button>
+                            </div>
+                            @if($couponError)
+                                <p class="text-red-500 text-xs mt-1.5">{{ $couponError }}</p>
+                            @endif
+                            @if($couponDiscount !== null)
+                                <div class="mt-2 flex items-center gap-2 text-sm">
+                                    <span class="bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full text-xs">✓ {{ __('Coupon applied') }}</span>
+                                    <span class="text-green-700">
+                                        {{ __('Final price:') }} <strong>${{ number_format($couponDiscount, 2) }}</strong>
+                                        <span class="text-gray-400">({{ __('was') }} ${{ number_format($selectedPackage->price, 2) }})</span>
+                                    </span>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- Gateway list --}}
@@ -321,9 +395,7 @@
     </div>
 </div>
 
-@if ($hasStripe)
-    <script src="https://js.stripe.com/v3/"></script>
-@endif
+<script src="https://js.stripe.com/v3/"></script>
 @if ($hasAuthorizeNet)
     <script src="{{ $authNetSandbox ? 'https://jstest.authorize.net/v1/Accept.js' : 'https://js.authorize.net/v1/Accept.js' }}" charset="utf-8"></script>
 @endif
@@ -349,16 +421,31 @@
 
     async function initRegisterPaymentForms() {
         const container = document.getElementById('register-inline-card-form');
-        if (!container || container.dataset.initialized) return;
+        if (!container) return;
 
         const gateway = container.dataset.gateway;
 
         if (gateway === 'stripe') {
             const stripeKey = container.dataset.stripeKey;
-            if (!stripeKey) return;
+            if (!stripeKey) {
+                console.warn('Stripe: no publishable key found in data-stripe-key');
+                return;
+            }
 
+            if (registerStripeCard) {
+                try { registerStripeCard.unmount(); } catch (e) {}
+                registerStripeCard = null;
+                registerStripe = null;
+            }
+
+            let attempts = 0;
+            while (typeof Stripe === 'undefined' && attempts < 20) {
+                await new Promise(r => setTimeout(r, 100));
+                attempts++;
+            }
             if (typeof Stripe === 'undefined') {
-                try { await loadSdkScript('https://js.stripe.com/v3/'); } catch { return; }
+                console.error('Stripe.js failed to load');
+                return;
             }
 
             registerStripe = Stripe(stripeKey);
@@ -376,7 +463,15 @@
                 hidePostalCode: true,
             });
 
-            registerStripeCard.mount('#register-stripe-card-element');
+            await new Promise(r => setTimeout(r, 50));
+
+            const mountEl = document.getElementById('register-stripe-card-element');
+            if (!mountEl) {
+                console.error('Stripe: mount element #register-stripe-card-element not found');
+                return;
+            }
+
+            registerStripeCard.mount(mountEl);
             registerStripeCard.on('change', (event) => {
                 const errEl = document.getElementById('register-stripe-card-errors');
                 if (!errEl) return;
@@ -384,9 +479,10 @@
                 errEl.classList.toggle('hidden', !event.error);
             });
 
-            container.dataset.initialized = '1';
             return;
         }
+
+        if (container.dataset.initialized) return;
 
         if (gateway === 'authorize_net') {
             const sandbox = container.dataset.sandbox === '1';
@@ -432,16 +528,13 @@
     Livewire.on('registerPaymentMethodChanged', () => {
         registerStripe = null;
         registerStripeCard = null;
-        setTimeout(initRegisterPaymentForms, 50);
+        setTimeout(initRegisterPaymentForms, 150);
     });
 
     document.addEventListener('livewire:updated', () => {
-        const container = document.getElementById('register-inline-card-form');
-        if (container && !container.dataset.initialized) {
-            registerStripe = null;
-            registerStripeCard = null;
-        }
-        setTimeout(initRegisterPaymentForms, 50);
+        registerStripe = null;
+        registerStripeCard = null;
+        setTimeout(initRegisterPaymentForms, 100);
     });
 
     // Intercept the Proceed to Payment button to tokenize inline card gateways
@@ -563,6 +656,94 @@
 
     $wire.on('scrollToTop', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ── Phone input → hidden wire:model sync ─────────────────────────────
+    (function syncRegisterPhone() {
+        const displayInput = document.getElementById('register-phone-display');
+        const hiddenInput  = document.getElementById('register-phone-hidden');
+
+        if (!displayInput || !hiddenInput) return;
+
+        function pushToWire() {
+            const val = displayInput.value.trim();
+            if (val && typeof val === 'string' && !val.includes('[object')) {
+                hiddenInput.value = val;
+                hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+
+        displayInput.addEventListener('blur',          pushToWire);
+        displayInput.addEventListener('countrychange', pushToWire);
+        displayInput.addEventListener('change',        pushToWire);
+    })();
+
+    // ── Social OAuth popup ────────────────────────────────────────────────────
+    let _socialPopup = null;
+
+    window.openSocialPopup = function (provider) {
+        const packageId = @json($packageId ?? '');
+        const baseUrl = provider === 'google'
+            ? @json(route('website.social.google', ['intent' => 'register-popup']))
+            : @json(route('website.social.apple', ['intent' => 'register-popup']));
+
+        const url = baseUrl + (packageId ? '?package_id=' + encodeURIComponent(packageId) : '');
+
+        const w = 600, h = 700;
+        const left = Math.max(0, (screen.width  / 2) - (w / 2));
+        const top  = Math.max(0, (screen.height / 2) - (h / 2));
+
+        _socialPopup = window.open(
+            url,
+            'social_auth_popup',
+            'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top +
+            ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes'
+        );
+
+        if (!_socialPopup || _socialPopup.closed) {
+            window.location.href = url;
+        }
+    };
+
+    window.addEventListener('message', function (event) {
+        // Accept messages from same host only — validate by message type below
+        const msgHost = new URL(event.origin).hostname;
+        const pageHost = window.location.hostname;
+        if (msgHost !== pageHost) {
+            return;
+        }
+
+        const data = event.data;
+        if (!data || typeof data !== 'object') return;
+        if (data.type !== 'social_auth_success' && data.type !== 'social_auth_error') return;
+
+        if (_socialPopup && !_socialPopup.closed) {
+            _socialPopup.close();
+            _socialPopup = null;
+        }
+
+        const errEl = document.getElementById('social-popup-error');
+
+        if (data.type === 'social_auth_error') {
+            if (errEl) {
+                errEl.textContent = data.message || @json(__('Sign in failed. Please try again.'));
+                errEl.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (errEl) errEl.classList.add('hidden');
+
+        if (data.existing_account) {
+            if (errEl) {
+                errEl.textContent = @json(__('An account with this email already exists. Please sign in instead.'));
+                errEl.classList.remove('hidden');
+                errEl.classList.remove('border-red-200', 'bg-red-50', 'text-red-600');
+                errEl.classList.add('border-blue-200', 'bg-blue-50', 'text-blue-700');
+            }
+        }
+
+        $wire.call('socialAuthComplete', data.email, data.name, data.provider, data.provider_id || '', data.avatar || '');
     });
 </script>
 @endscript

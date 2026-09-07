@@ -24,8 +24,10 @@ class ProductsList extends Component
     public string $statusFilter = '';
     public string $categoryFilter = '';
     public string $deliveryScopeFilter = '';
-    public string $outOfStockFilter = '';
+    public string $stockFilter = '';
     public bool $showDeleted = false;
+    public array $imageSearchIds = [];
+    public bool $imageSearchActive = false;
 
     // ── Price list modal ───────────────────────────────────────────────────
     public bool $priceListOpen = false;
@@ -53,7 +55,7 @@ class ProductsList extends Component
         $this->resetPage();
     }
 
-    public function updatedOutOfStockFilter(): void
+    public function updatedStockFilter(): void
     {
         $this->resetPage();
     }
@@ -65,7 +67,22 @@ class ProductsList extends Component
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'categoryFilter', 'deliveryScopeFilter', 'outOfStockFilter', 'showDeleted']);
+        $this->reset(['search', 'statusFilter', 'categoryFilter', 'deliveryScopeFilter', 'stockFilter', 'showDeleted']);
+        $this->clearImageSearch();
+        $this->resetPage();
+    }
+
+    public function applyImageSearch(array $ids): void
+    {
+        $this->imageSearchIds = array_values(array_map('intval', $ids));
+        $this->imageSearchActive = !empty($this->imageSearchIds);
+        $this->resetPage();
+    }
+
+    public function clearImageSearch(): void
+    {
+        $this->imageSearchIds = [];
+        $this->imageSearchActive = false;
         $this->resetPage();
     }
 
@@ -148,8 +165,9 @@ class ProductsList extends Component
             'status' => $this->statusFilter,
             'category_id' => $this->categoryFilter,
             'delivery_scope' => $this->deliveryScopeFilter,
-            'out_of_stock' => $this->outOfStockFilter,
+            'stock' => $this->stockFilter,
             'show_deleted' => $this->showDeleted,
+            'image_search_ids' => $this->imageSearchIds,
         ]);
 
         return view('livewire.admin.product.products-list', [
@@ -159,6 +177,8 @@ class ProductsList extends Component
             'statusOptions' => ProductStatus::cases(),
             'deliveryScopes' => DeliveryScope::cases(),
             'canManageProducts' => $this->hasPermission('catalog.products.manage'),
+            'imageSearchIds' => $this->imageSearchIds,
+            'imageSearchActive' => $this->imageSearchActive,
             'priceListOpen' => $this->priceListOpen,
             'priceListProductName' => $this->priceListProductName,
             'priceListRows' => $this->priceListRows,

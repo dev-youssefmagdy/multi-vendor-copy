@@ -22,7 +22,7 @@ class AddEditShippingZone extends Component
 
     public function mount(?ShippingZone $shippingZone = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn (Language $language) => [
@@ -128,7 +128,7 @@ class AddEditShippingZone extends Component
     {
         return view('livewire.admin.shipping.add-edit-shipping-zone', [
             'pageTitle'     => $this->shippingZoneId ? 'Edit Delivery Zone' : 'Add Delivery Zone',
-            'languages'     => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages'     => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'statusOptions' => ShippingZoneStatus::cases(),
         ]);
     }

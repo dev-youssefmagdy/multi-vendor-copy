@@ -23,9 +23,11 @@ class Language extends Model
         'is_active',
         'is_free',
         'price',
+        'ai_translation_price',
         'countries',
         'image_file_id',
         'translation_progress',
+        'sort_order',
     ];
 
     protected $appends = ['image_url'];
@@ -38,8 +40,10 @@ class Language extends Model
             'is_active' => 'boolean',
             'is_free' => 'boolean',
             'price' => 'decimal:2',
+            'ai_translation_price' => 'decimal:2',
             'countries' => 'array',
             'translation_progress' => 'integer',
+            'sort_order' => 'integer',
         ];
     }
 
@@ -56,5 +60,17 @@ class Language extends Model
     public function getImageUrlAttribute(): ?string
     {
         return $this->imageFile?->full_path;
+    }
+
+    /** True when AI translation is offered for this language (price set, even if 0). */
+    public function offersAiTranslation(): bool
+    {
+        return $this->ai_translation_price !== null;
+    }
+
+    /** True when AI translation is free (price = 0). */
+    public function aiTranslationIsFree(): bool
+    {
+        return $this->ai_translation_price !== null && (float) $this->ai_translation_price === 0.0;
     }
 }

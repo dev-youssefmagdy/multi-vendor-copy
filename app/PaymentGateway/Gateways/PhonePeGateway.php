@@ -99,4 +99,14 @@ class PhonePeGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure($data['message'] ?? 'PhonePe verification failed.');
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['INR'],
+            'merchant_countries' => ['IN'],
+            'customer_countries' => ['IN'],
+            'payment_methods' => ['upi', 'card', 'netbanking', 'wallet'],
+        ];
+    }
 }

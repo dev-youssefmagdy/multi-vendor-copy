@@ -36,7 +36,7 @@ class AddEditCategory extends Component
 
     public function mount(?Category $category = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -193,7 +193,7 @@ class AddEditCategory extends Component
 
         return view('livewire.admin.category.add-edit-category', [
             'pageTitle' => $this->categoryId ? 'Edit Category' : 'Add Category',
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'categoryLevels' => $categoryLevels,
             'statusOptions' => CategoryStatus::cases(),
             'existingThumb' => $this->categoryId

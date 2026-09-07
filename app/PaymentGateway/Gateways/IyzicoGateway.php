@@ -125,4 +125,14 @@ class IyzicoGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('Iyzico payment failed: ' . $checkoutForm->getErrorMessage());
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['TRY', 'USD', 'EUR', 'GBP'],
+            'merchant_countries' => ['TR'],
+            'customer_countries' => ['TR', 'DE', 'NL', 'GB', 'FR', 'US'],
+            'payment_methods' => ['card', 'wallet'],
+        ];
+    }
 }

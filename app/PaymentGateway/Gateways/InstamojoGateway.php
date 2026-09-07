@@ -89,4 +89,14 @@ class InstamojoGateway extends AbstractPaymentGateway
             return PaymentResult::failure($e->getMessage());
         }
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['INR'],
+            'merchant_countries' => ['IN'],
+            'customer_countries' => ['IN'],
+            'payment_methods' => ['card', 'upi', 'netbanking', 'wallet'],
+        ];
+    }
 }

@@ -148,6 +148,9 @@
                                         <p class="text-xs text-zinc-500 font-['Outfit'] tracking-wide">{{ $subInfo }}</p>
                                     @endif
                                     <p class="text-base text-neutral-800 font-['Outfit']">{{ $fmt($item->sub_total) }}</p>
+                                    @if ($isDelivered)
+                                        @include('livewire.tenant.storefront.partials.return-item-action')
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

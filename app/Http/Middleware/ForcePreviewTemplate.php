@@ -3,37 +3,55 @@
 namespace App\Http\Middleware;
 
 use App\Models\Tenant\Theme;
+use App\Services\Preview\PreviewOverrides;
 use App\Services\Tenant\TemplateRegistryService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Allows the central admin to preview any installed template on the
- * dedicated preview tenant without permanently changing its active theme.
+ * Drives the theme preview system on the dedicated "preview" tenant, letting
+ * the tenant panel "Preview" button and the admin Templates page render the
+ * storefront with URL-supplied overrides without ever touching real tenant
+ * data:
  *
- * Only activates when ALL of the following conditions are met:
- *  1. A `?_tpl={slug}` query parameter is present.
- *  2. The current tenant has slug `preview` (the dedicated preview tenant).
- *  3. The requested slug is a registered template strategy.
+ *   /preview?theme=elora&homepage_variant=v2
  *
- * The override is request-scoped (static flag on TemplateRegistryService).
+ * Only activates when the current tenant has slug `preview`. `theme` (or the
+ * legacy `_tpl` alias) forces the template strategy and the tenant's
+ * "active" theme row; `homepage_variant` forces which HomeVariant is used,
+ * all for this request only.
  */
 class ForcePreviewTemplate
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $slug = (string) $request->query('_tpl', '');
+        if (!$this->isPreviewTenant()) {
+            return $next($request);
+        }
 
-        if (
-            $slug !== ''
-            && $this->isPreviewTenant()
-            && array_key_exists($slug, TemplateRegistryService::all())
-        ) {
+        PreviewOverrides::activate();
+
+        $slug = (string) ($request->query('theme') ?: $request->query('_tpl', ''));
+
+        if ($slug !== '' && array_key_exists($slug, TemplateRegistryService::all())) {
             TemplateRegistryService::force($slug);
 
             Theme::query()->whereSlug($slug)->update(['is_active' => 1]);
             Theme::query()->where('slug', '!=', $slug)->update(['is_active' => 0]);
+        }
+
+        $variant = $request->query('homepage_variant');
+        if (filled($variant)) {
+            PreviewOverrides::setHomepageVariantKey((string) $variant);
+        }
+
+        $sectionsRaw = $request->query('sections');
+        if (filled($sectionsRaw)) {
+            $keys = array_values(array_filter(array_map('trim', explode(',', (string) $sectionsRaw))));
+            if (!empty($keys)) {
+                PreviewOverrides::setSections($keys);
+            }
         }
 
         return $next($request);

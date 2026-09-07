@@ -39,11 +39,25 @@ return [
         'url' => env('CURRENCY_RATES_URL', 'https://open.er-api.com/v6/latest'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'apple' => [
+        'client_id' => env('APPLE_CLIENT_ID'),
+        'client_secret' => env('APPLE_CLIENT_SECRET'),
+        'redirect' => env('APPLE_REDIRECT_URI'),
+    ],
+
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
         'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
         'translation_model' => env('OPENAI_TRANSLATION_MODEL', 'gpt-4.1-mini'),
         'timeout' => (int) env('OPENAI_TIMEOUT', 12000),
+        // TODO: pricing not yet configured — placeholder for future AI Translation billing.
+        'translation_price_per_1k_tokens' => (float) env('OPENAI_TRANSLATION_PRICE_PER_1K_TOKENS', 0),
     ],
 
     'python_modules' => [

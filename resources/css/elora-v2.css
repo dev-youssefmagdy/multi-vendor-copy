@@ -1,0 +1,616 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #ff4d00; /* ELORA/MAin */
+  --color-secondary: #ff522c; /* Main Website/Main-clr */
+  --color-bg-main: #fdfdfd; /* ELORA/fill */
+  --color-text-primary: #121212; /* ELORA/Black */
+  --color-text-subtitle: #adadad; /* ELORA/Subttitle */
+  --color-gray: #8f8f8f; /* ELORA/GRAY */
+  --color-stroke: #d4d4d4; /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424; /* Black / Manti/Black */
+  --color-black-alt: #1b1b1b; /* black */
+  --color-white: #ffffff; /* Manti/White */
+  --color-success: #2aaf2f; /* Manti/Green */
+  --color-error: #de1709; /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8a38f5;
+  --color-accent-purple-dark: #51218f;
+  --color-accent-purple-light: #b57dff;
+  --color-accent-yellow: #ffd428;
+  --color-badge-purple: #9d00ff;
+  --color-surface: #f6f5f5;
+  --color-page-bg: #f4f4f4;
+  --color-yellow-bright: #ffe100; /* New In section glow (fades to transparent) + Best Seller section bg */
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4b4b4b;
+  --color-text-placeholder: #4c4c4c;
+  --color-hero-placeholder: #c3accf;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+  --shadow-card-active: 0 24px 48px 0 rgba(0, 0, 0, 0.18);
+  --shadow-card-active-mobile: 0 10px 20px 0 rgba(0, 0, 0, 0.16);
+  --shadow-heart: 0px 4px 2px 0 rgba(0, 0, 0, 0.15);
+  --shadow-heart-mobile: 0px 2px 1px 0 rgba(0, 0, 0, 0.15);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Recommended / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+/* New In / Trending Now: contained carousels — slides clip cleanly at the
+   row edge instead of bleeding past the section's padding, so they never
+   cause horizontal overflow on narrow viewports. */
+.new-in-swiper,
+.trending-swiper,
+.features-swiper {
+  overflow: hidden;
+}
+
+/* Trending Now: product card. Sizing is forced with !important, in plain
+   (unlayered) CSS rather than Tailwind utility classes, and applied
+   directly to the .swiper-slide element itself rather than a wrapped
+   child. Swiper's own bundled CSS sets `.swiper-slide{width:100%}` as a
+   plain, unlayered rule of its own — Tailwind wraps its utilities in
+   `@layer utilities`, and per the CSS cascade spec, unlayered rules always
+   beat layered ones on a tie regardless of source order, so a Tailwind
+   width class here would silently lose. !important on top of that settles
+   any remaining ambiguity in our favor at both breakpoints. */
+.product-card {
+  font-family: "Outfit", sans-serif;
+  display: flex;
+  flex-direction: row;
+  background: #fdfdfd;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 767px) {
+  .product-card {
+    width: 316px !important;
+    height: 140px !important;
+    border-radius: 6px !important;
+  }
+  .card-media {
+    position: relative;
+    width: 132px !important;
+    height: 140px !important;
+    flex-shrink: 0;
+  }
+  .product-image {
+    width: 132px !important;
+    height: 140px !important;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+  }
+  .top-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 132px !important;
+    padding: 3.77px !important;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .sale-badge {
+    background: #ffd428;
+    color: #242424;
+    font-size: 7.7px !important;
+    line-height: 10px !important;
+    padding: 3.3px 4.4px !important;
+    border-radius: 0 4.4px 4.4px 0 !important;
+  }
+  .heart-btn {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+  .heart-btn .icon {
+    width: 12.5px !important;
+    height: 12.5px !important;
+  }
+  .bottom-overlay {
+    position: absolute;
+    bottom: 3.77px;
+    right: 3.77px;
+  }
+  .cart-btn {
+    width: 35.8px !important;
+    height: 28.3px !important;
+    border-radius: 10px !important;
+    background: #fdfdfd;
+  }
+  .cart-btn .icon {
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 8px !important;
+    gap: 8px !important;
+    width: 184px !important;
+    height: 140px !important;
+    box-sizing: border-box;
+  }
+  .product-title {
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+  .weight-tag {
+    font-size: 15px !important;
+    line-height: 16px !important;
+  }
+  .product-subtitle {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .progress-bar {
+    width: 100% !important;
+    height: 5px !important;
+  }
+  .progress-text {
+    font-size: 10px !important;
+    line-height: 13px !important;
+  }
+  .stars {
+    font-size: 8px !important;
+  }
+  .rating-text {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .current-price {
+    font-size: 16px !important;
+    line-height: 20px !important;
+  }
+  .original-price {
+    font-size: 8.8px !important;
+    line-height: 11px !important;
+  }
+  .discount-badge {
+    font-size: 12px !important;
+    line-height: 15px !important;
+  }
+  .meta-item.delivery span {
+    font-size: 8px !important;
+    line-height: 10px !important;
+  }
+  .meta-item.stock span {
+    font-size: 7.5px !important;
+    line-height: 10px !important;
+  }
+  .meta-icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .product-card {
+    width: 460.83px !important;
+    height: 204.17px !important;
+    border-radius: 8.75px !important;
+  }
+  .card-media {
+    position: relative;
+    width: 192.5px !important;
+    height: 204.17px !important;
+    flex-shrink: 0;
+  }
+  .product-image {
+    width: 192.5px !important;
+    height: 204.17px !important;
+    object-fit: cover;
+    border-radius: 7.33px 7.33px 0 0;
+  }
+  .top-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 192.5px !important;
+    padding: 5.5px !important;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .sale-badge {
+    background: #ffd428;
+    color: #242424;
+    font-size: 11.25px !important;
+    line-height: 14px !important;
+    padding: 4.8px !important;
+    border-radius: 0 6.43px 6.43px 0 !important;
+  }
+  .heart-btn {
+    width: 29.33px !important;
+    height: 29.33px !important;
+    border-radius: 50%;
+    background: #ffffff;
+  }
+  .heart-btn .icon {
+    width: 18.33px !important;
+    height: 18.33px !important;
+  }
+  .bottom-overlay {
+    position: absolute;
+    bottom: 5.5px;
+    right: 5.5px;
+  }
+  .cart-btn {
+    width: 52.25px !important;
+    height: 41.25px !important;
+    border-radius: 14.67px !important;
+    background: #fdfdfd;
+  }
+  .cart-btn .icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 5.83px 11.67px !important;
+    gap: 11.67px !important;
+    width: 268.33px !important;
+    height: 204.17px !important;
+    box-sizing: border-box;
+  }
+  .product-title {
+    font-size: 20.42px !important;
+    line-height: 26px !important;
+  }
+  .weight-tag {
+    font-size: 21.88px !important;
+    line-height: 23px !important;
+  }
+  .product-subtitle {
+    font-size: 17.5px !important;
+    line-height: 22px !important;
+  }
+  .progress-bar {
+    width: 100% !important;
+    height: 7.29px !important;
+  }
+  .progress-text {
+    font-size: 14.58px !important;
+    line-height: 18px !important;
+  }
+  .stars {
+    font-size: 11px !important;
+  }
+  .rating-text {
+    font-size: 17.5px !important;
+    line-height: 22px !important;
+  }
+  .current-price {
+    font-size: 23.33px !important;
+    line-height: 29px !important;
+  }
+  .original-price {
+    font-size: 12.83px !important;
+    line-height: 16px !important;
+  }
+  .discount-badge {
+    font-size: 17.5px !important;
+  }
+  .meta-item.delivery span {
+    font-size: 11.67px !important;
+    line-height: 15px !important;
+  }
+  .meta-item.stock span {
+    font-size: 11px !important;
+    line-height: 14px !important;
+  }
+  .meta-icon {
+    width: 17.5px !important;
+    height: 17.5px !important;
+  }
+}
+
+/* Mobile: slides size to their own content (slidesPerView: "auto"). Desktop
+   switches to a numeric slidesPerView (3.5), where Swiper sets each slide's
+   width inline — this plain (non-!important) rule only fills in for mobile,
+   since inline styles naturally win over it once Swiper takes over. */
+.features-swiper .swiper-slide {
+  width: auto;
+}
+
+/* Swiper's own bundled CSS sets `.swiper-slide { display: block }` as a
+   plain, unlayered rule. Tailwind v4 wraps all of its utility classes
+   (including `flex`) inside `@layer utilities`, and per the CSS cascade
+   spec, unlayered rules always beat layered ones on an equal-specificity
+   tie regardless of source order — so the `flex` class on `.swiper-slide`
+   elements is silently overridden. Declaring the layout here directly
+   (also a plain rule) restores it. */
+.features-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .features-swiper .swiper-slide {
+    gap: 26.2px;
+  }
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 24px;
+  margin-bottom: 48px;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5.05px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 29px;
+  background: #d9d9d9;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-accent-purple);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13.47px;
+    width: 13.47px;
+    border-radius: 48.8421px;
+  }
+  .hero-dot.is-active {
+    width: 40.42px;
+  }
+}
+
+/* Best Seller: centered "card effect" carousel — the active (centered)
+   slide sits upright and full size; two rings of neighbors on either side
+   shrink progressively (no rotation). Scale/opacity/z-index are set
+   per-slide in JS (carousels.js) from index distance to the active slide —
+   opacity forces exactly 5 slides visible regardless of container size, so
+   this track's own width doesn't need to double as that guarantee. The
+   card itself reuses the Flash Sale card partial/component (same vertical
+   card — image on top, details below — matching the Best Seller reference
+   design almost exactly), so the slide is sized identically to
+   .flash-sale-slide. */
+.best-seller-swiper {
+  width: min(380px, 100%) !important;
+  margin: 0 auto;
+  /* Not overflow:hidden: the ring cards on either side need to extend past
+     this box's own edges without being clipped early — "exactly 5 visible"
+     is already guaranteed by JS opacity regardless of what this container
+     clips, and the section itself (best_seller.blade.php) has its own
+     overflow-hidden as the real backstop against page-level horizontal
+     scroll. */
+  overflow: visible;
+  padding: 25px 15px;
+}
+.best-seller-swiper .swiper-wrapper {
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+.best-seller-slide {
+  width: 158.52px;
+  height: 239.43px;
+  border-radius: 7.18px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  box-shadow: var(--shadow-card-active-mobile);
+}
+.best-seller-slide > a {
+  border-radius: 7.18px;
+}
+@media (min-width: 1024px) {
+  .best-seller-swiper {
+    width: 1093px !important;
+    max-width: 100%;
+    /* No forced height here: the card is 494.91px tall, and a shorter fixed
+       height on this box (448px was tried) can only show the full card by
+       either clipping it or scrolling. Letting height be content-driven
+       (card height + this padding) is what actually shows every slide
+       uncropped — and overflow:visible (see the mobile rule above for why)
+       does the same for the ring cards on the sides. */
+    overflow: visible;
+    padding: 20px;
+  }
+  .best-seller-swiper .swiper-wrapper {
+    align-items: center;
+    padding: 16px 24px;
+  }
+  .best-seller-slide {
+    width: 327.68px;
+    height: 494.91px;
+    border-radius: 14.85px;
+    box-shadow: var(--shadow-card-active);
+  }
+  .best-seller-slide > a {
+    border-radius: 14.85px;
+  }
+}
+
+/* Flash Sale: fanned-card carousel (scale/rotation set per-slide in JS from
+   live distance to the centered/active slide), sized to the
+   "elora-active-card" spec — 158.52x239.43 on mobile, 327.68x494.91 from
+   the lg breakpoint up. The track is a fixed width that fits exactly the
+   active card plus a sliver of each heavily-overlapped neighbor, and clips
+   everything else, so the carousel never bleeds into the text column next
+   to it and never shows a 4th card peeking in. */
+.flash-sale-swiper {
+  width: min(380px, 100%) !important;
+  overflow: hidden;
+  /* Extra padding on every side beyond the card's own box: rotating a tall
+     rectangle increases its visual bounding-box in both width and height
+     even though layout (and therefore this container's content size) is
+     computed from the un-rotated box, so without this the rotated side
+     cards get clipped — top/bottom AND left/right — by this container's
+     own overflow:hidden. Widening the container doesn't risk a 4th card
+     ever showing: those slides are forced to opacity:0 in JS regardless of
+     how much of them this box could otherwise fit. */
+  padding: 30px 15px;
+}
+.flash-sale-slide {
+  width: 158.52px;
+  height: 239.43px;
+  border-radius: 7.18px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  box-shadow: var(--shadow-card-active-mobile);
+}
+.flash-sale-slide > a {
+  border-radius: 7.18px;
+}
+@media (min-width: 1024px) {
+  .flash-sale-swiper {
+    width: 760px !important;
+    padding: 60px 30px;
+  }
+  .flash-sale-slide {
+    width: 327.68px;
+    height: 494.91px;
+    border-radius: 14.85px;
+    box-shadow: var(--shadow-card-active);
+  }
+  .flash-sale-slide > a {
+    border-radius: 14.85px;
+  }
+}
+
+/* New In: vertical product card, "auto" slidesPerView with a fixed
+   container width sized to show exactly N cards ("N slides per view" here
+   means visible width, not Swiper's slidesPerView option — see the
+   Flash Sale slidesPerView:3 comment history in carousels.js for why a
+   literal numeric slidesPerView would force Swiper to override this card's
+   width instead of the container adapting around it).
+
+   Only the outer slide box lives here (same reasoning as
+   .flash-sale-slide/.best-seller-slide/.trending_now's slide-sizing rules):
+   Swiper's own bundled CSS sets `.swiper-slide{width:100%}` as a plain,
+   unlayered rule, and Tailwind wraps its utilities in `@layer utilities` —
+   per the CSS cascade spec, unlayered rules always beat layered ones on a
+   tie regardless of source order, so a Tailwind width class here would
+   silently lose. Everything else inside the card (badge, buttons, text —
+   none of which Swiper's CSS targets) is plain Tailwind in
+   new_in_card.blade.php, same as every other card this session.
+
+   .new-in-slide is scoped (not bare `.product-card`) because that exact
+   name, at this same 768px breakpoint, is also used by the Trending Now
+   card with different dimensions. */
+.new-in-swiper {
+  width: min(350px, 100%) !important;
+}
+@media (min-width: 768px) {
+  .new-in-swiper {
+    width: 1340px !important;
+    max-width: 100%;
+  }
+}
+.new-in-slide {
+  width: 132px !important;
+  height: 200.03px !important;
+  border-radius: 6px !important;
+}
+@media (min-width: 768px) {
+  .new-in-slide {
+    width: 210px !important;
+    height: 321px !important;
+    border-radius: 8px !important;
+  }
+}

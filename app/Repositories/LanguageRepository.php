@@ -23,8 +23,8 @@ class LanguageRepository
             })
             ->when(filled($filters['direction'] ?? null), fn($query) => $query->where('direction', $filters['direction']))
             ->when(($filters['is_active'] ?? '') !== '', fn($query) => $query->where('is_active', (bool) $filters['is_active']))
+            ->orderBy('sort_order')
             ->orderByDesc('is_default')
-            
             ->paginate($perPage);
     }
 

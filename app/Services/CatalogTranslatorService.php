@@ -248,7 +248,7 @@ class CatalogTranslatorService
         $candidates = array_filter([
             $sourceLocale,
             Language::query()->where('code', '!=', $targetLocale)->where('is_default', true)->value('code'),
-            Language::query()->where('code', '!=', $targetLocale)->orderByDesc('is_default')->value('code'),
+            Language::query()->where('code', '!=', $targetLocale)->orderBy('sort_order')->orderByDesc('is_default')->value('code'),
             config('app.fallback_locale', 'en'),
         ]);
 

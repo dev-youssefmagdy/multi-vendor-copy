@@ -1,5 +1,6 @@
 {{-- Locale Switcher: inline trigger + modal overlay --}}
 <div>
+    @unless($hideTrigger)
     {{-- ── Desktop trigger ── --}}
     <button type="button"
         wire:click="openModal('currency')"
@@ -33,6 +34,7 @@
             </svg>
         </div>
     </button>
+    @endunless
 
     {{-- ── Modal overlay (teleported to <body> so it isn't hidden by ancestors like
          .navbar, which gets display:none on mobile viewports) ── --}}

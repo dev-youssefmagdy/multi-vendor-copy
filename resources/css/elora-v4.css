@@ -1,0 +1,656 @@
+:root {
+  /* Brand / primary palette (ELORA) */
+  --color-primary: #ff4d00; /* ELORA/MAin */
+  --color-secondary: #ff522c; /* Main Website/Main-clr */
+  --color-bg-main: #fdfdfd; /* ELORA/fill */
+  --color-text-primary: #121212; /* ELORA/Black */
+  --color-text-subtitle: #adadad; /* ELORA/Subttitle */
+  --color-gray: #8f8f8f; /* ELORA/GRAY */
+  --color-stroke: #d4d4d4; /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens) */
+  --color-black: #242424;
+  --color-black-alt: #1b1b1b;
+  --color-white: #ffffff;
+  --color-success: #2aaf2f;
+  --color-error: #de1709;
+
+  /* Accent palette */
+  --color-accent-purple: #8a38f5;
+  --color-accent-purple-dark: #51218f;
+  --color-accent-purple-light: #b57dff;
+  --color-accent-yellow: #ffd428;
+  --color-badge-purple: #9d00ff;
+  --color-surface: #f6f5f5;
+  --color-page-bg: #f4f4f4;
+
+  /* Additional raw-hex UI colors */
+  --color-text-muted: #636363;
+  --color-text-faint: #4b4b4b;
+  --color-text-placeholder: #4c4c4c;
+  --color-hero-placeholder: #c3accf;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ---- ELORA V4 ("New User" promo homepage) tokens ---- */
+  --color-brand-orange: #fb7701; /* feature bar bg, category pill bg, flash-sale/best-seller section fill */
+  --color-brand-orange-bright: #ff6a00; /* hero bg, "see all" links, cart badge, hero active dot */
+  --color-badge-pink: #fe3a6a; /* Best Seller card weight text color */
+  --color-progress-red: #e40307; /* "ordered last 30 min" progress bar fill + label */
+  --color-tile-outerwear: #d95f2b;
+  --color-tile-footwear: #2c7a6e;
+  --color-tile-bags: #e8a838;
+  --color-tile-watches: #2c1a0e;
+  --color-hero-subtitle: rgba(255, 255, 255, 0.8);
+  --color-icon-chip-bg: rgba(255, 255, 255, 0.25);
+  --color-greeting-muted: #777777;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+.newin-swiper,
+.trending-swiper,
+.best-seller-swiper,
+.categories-swiper {
+  overflow: hidden;
+}
+
+/* Trending Now: stacked full-width column on mobile, horizontal swiper from desktop up */
+.trending-swiper .swiper-wrapper {
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 1024px) {
+  .trending-swiper .swiper-wrapper {
+    flex-direction: row;
+    gap: 0;
+  }
+}
+
+/* Flash Sale mobile "card effect" carousel — Swiper's own unlayered CSS
+   sets `.swiper { position: relative }`, which beats Tailwind's layered
+   `absolute` utility on this element regardless of source order, so
+   `inset-0` silently did nothing and the container collapsed to its
+   content's height instead of filling the 262x191 card. !important forces
+   this past that tie. */
+.flash-mobile-swiper {
+  position: absolute !important;
+  inset: 0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ── Flash Sale pure-JS slider ─────────────────────────────── */
+.flash-viewport {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.flash-viewport:active {
+  cursor: grabbing;
+}
+
+.flash-track {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  /* Mobile: 2 cols × 2 rows of 148px cards */
+  height: 312px; /* (148 × 2) + (8 × 1 gap) + 8 extra */
+  gap: 8px;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.flash-slide {
+  /* Mobile: 2 columns */
+  width: calc(50% - 4px);
+  flex-shrink: 0;
+  height: 148px;
+}
+
+@media (min-width: 1024px) {
+  .flash-track {
+    /* Desktop: 3 rows × 148.51px + 2 gaps of 12px = 469.53px */
+    height: 469.53px;
+    gap: 12px;
+    /* flex-direction stays column, flex-wrap stays wrap */
+    /* Cards stack into columns of 3, track scrolls left/right */
+  }
+  .flash-slide {
+    /* Desktop: 3 cards per column, each card fixed width */
+    width: 470.8px;
+    height: 148.51px;
+  }
+}
+
+/* Arrows */
+.flash-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  transition: background 0.15s, opacity 0.15s;
+}
+.flash-arrow:hover { background: #f5f5f5; }
+.flash-arrow:disabled { opacity: 0.35; cursor: default; }
+.flash-prev { left: -20px; }
+.flash-next { right: -20px; }
+
+/* ── Flash sale card ────────────────────────────────────────── */
+.flash-card-wrap {
+  height: 120px;
+  width: 100%;
+}
+
+.flash-card {
+  display: flex;
+  flex-direction: row;
+  height: 120px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-bg-main);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Image section ── */
+.flash-card-img-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 100px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.flash-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flash-card-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--color-accent-yellow);
+  color: var(--color-black);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-bottom-left-radius: 6px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.flash-card-fav {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 26px;
+  height: 26px;
+  background: white;
+  border: none;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* ── Info section ── */
+.flash-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 8px 6px;
+  justify-content: space-between;
+}
+
+.flash-card-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+}
+
+.flash-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.flash-card-weight {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-brand-orange-bright);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.flash-card-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.flash-card-rating-text {
+  font-size: 10px;
+  color: var(--color-text-subtitle);
+  white-space: nowrap;
+}
+
+.flash-card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.flash-card-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.flash-card-old-price {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--color-text-subtitle);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+.flash-card-discount {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-secondary);
+  white-space: nowrap;
+}
+
+.flash-card-delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.flash-card-delivery-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.flash-card-delivery-text {
+  font-size: 8px;
+  font-weight: 500;
+  color: var(--color-success);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flash-card-cart {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.flash-card-cart-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Desktop overrides ── */
+@media (min-width: 1024px) {
+  .flash-card-wrap {
+    height: 148.51px;
+    width: 470.8px;
+  }
+
+  .flash-card {
+    height: 148.51px;
+    width: 470.8px;
+    border-radius: 9.9px;
+    gap: 4.95px;
+  }
+
+  .flash-card-img-wrap {
+    width: 204.17px;
+  }
+
+  .flash-card-img {
+    inset: 5.19px 6.23px;
+  }
+
+  .flash-card-badge {
+    width: 64.91px;
+    height: 25.47px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    padding: 5.46px;
+    border-top-right-radius: 7.28px;
+    border-bottom-left-radius: 7.28px;
+  }
+
+  .flash-card-fav {
+    width: 33.2px;
+    height: 33.2px;
+  }
+
+  .flash-card-info {
+    padding: 6.6px;
+    gap: 6.6px;
+  }
+
+  .flash-card-name {
+    font-size: 19.808px;
+    font-weight: 500;
+  }
+
+  .flash-card-weight {
+    font-size: 16.5067px;
+  }
+
+  .flash-card-rating-text {
+    font-size: 13.2053px;
+  }
+
+  .flash-card-price {
+    font-size: 19.808px;
+    color: #000000;
+  }
+
+  .flash-card-old-price {
+    font-size: 14.5259px;
+  }
+
+  .flash-card-discount {
+    font-size: 13.2053px;
+  }
+
+  .flash-card-delivery-icon {
+    width: 19.81px;
+    height: 19.81px;
+  }
+
+  .flash-card-delivery-text {
+    font-size: 13.2053px;
+  }
+
+  .flash-card-cart {
+    bottom: 8px;
+    right: 8px;
+    width: 59.14px;
+    height: 46.69px;
+    padding: 4.15px 12.45px;
+    border-radius: 16.6px;
+  }
+
+  .flash-card-cart-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-brand-orange-bright);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Textured section backgrounds (Flash Sale / Best Seller) */
+.texture-bg {
+  position: relative;
+  background-color: var(--color-brand-orange);
+}
+.texture-bg > .texture-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.58;
+}
+.texture-bg.texture-hard > .texture-overlay {
+  mix-blend-mode: hard-light;
+  opacity: 1;
+}
+
+/* Best Seller fanned/rotated card stack */
+#bestSellerWrapper.swiper-wrapper {
+  padding: 24px 0 32px;
+}
+#bestSellerWrapper .swiper-slide {
+  transition: transform 0.2s ease;
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 1) {
+  transform: rotate(-6deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 2) {
+  transform: rotate(4deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 3) {
+  transform: rotate(-3deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 4) {
+  transform: rotate(5deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 5) {
+  transform: rotate(-5deg);
+}
+#bestSellerWrapper .swiper-slide:nth-child(6n + 6) {
+  transform: rotate(3deg);
+}
+#bestSellerWrapper .swiper-slide:hover {
+  transform: rotate(0deg);
+}
+
+/* Best Seller mobile: 2-col x 2-row grid-swiper (Swiper's grid module).
+   The swiper needs an explicit height so Swiper's per-row math
+   (slide height = (100% - gap) / rows) has something real to divide. */
+.best-seller-mobile-swiper {
+  height: 561.42px !important; /* 2 * 268.71px card + 24px row gap */
+}
+#bestSellerMobileWrapper .swiper-slide {
+  transition: transform 0.2s ease;
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 1) {
+  transform: rotate(4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 2) {
+  transform: rotate(-4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 3) {
+  transform: rotate(-4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:nth-child(4n + 4) {
+  transform: rotate(4.68deg);
+}
+#bestSellerMobileWrapper .swiper-slide:active {
+  transform: rotate(0deg);
+}
+
+/* Shop by Category tile hover chip */
+.category-tile-chip {
+  background: var(--color-icon-chip-bg);
+}
+
+/* Shop by Category carousel: mobile pages 2x2 (Swiper grid module needs an
+   explicit container height so its per-row math — slide height =
+   (100% - gap) / rows — has something real to divide), desktop is a single
+   row of 6, so the container only needs to be one tile tall. */
+.shop-by-category-swiper {
+  height: 264px !important; /* 2 * 128px tile + 8px row gap */
+}
+@media (min-width: 1024px) {
+  .shop-by-category-swiper {
+    height: 128px !important;
+  }
+}
+
+/* New In: orange fill with concentric sunburst rings radiating from the heading corner */
+.pattern-newin {
+  background-color: var(--color-brand-orange);
+  background-image: repeating-radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.14) 0px,
+    rgba(255, 255, 255, 0.14) 24px,
+    transparent 24px,
+    transparent 68px
+  );
+}
+
+/* Trending Now: flat light-gray section fill */
+.pattern-trending {
+  background-color: var(--color-page-bg);
+}
+
+/* Tabbed products pills */
+.tabbed-pill.active {
+  background: var(--color-brand-orange-bright) !important;
+  border-color: var(--color-brand-orange-bright) !important;
+  color: #fff !important;
+}

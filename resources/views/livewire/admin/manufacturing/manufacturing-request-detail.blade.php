@@ -256,3 +256,16 @@
         @endif
     </section>
 </main>
+
+@script
+<script>
+    if (window.Echo) {
+        window.Echo.private('tenant.{{ $request->tenant_id }}.manufacturing.{{ $request->id }}')
+            .listen('.message.sent', (e) => {
+                if (e.sender_type === 'tenant') {
+                    $wire.$refresh();
+                }
+            });
+    }
+</script>
+@endscript

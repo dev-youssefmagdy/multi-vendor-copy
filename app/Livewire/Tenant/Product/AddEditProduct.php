@@ -2,8 +2,11 @@
 
 namespace App\Livewire\Tenant\Product;
 
+use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Product;
+use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -11,6 +14,8 @@ use Livewire\Component;
 
 class AddEditProduct extends Component
 {
+    use InteractsWithTenantUi;
+
     public ?int $productId = null;
     public ?int $centralProductId = null;
     public string $slug = '';
@@ -18,9 +23,11 @@ class AddEditProduct extends Component
     public bool $active = true;
     public bool $featured = false;
     public array $categoryIds = [];
+    public array $badgeIds = [];
     public array $translations = [];
     public array $variants = [];
     public string $activeLocale = 'en';
+    public ?array $pendingEditRequest = null;
 
     public function mount(?Product $product = null): void
     {
@@ -32,7 +39,7 @@ class AddEditProduct extends Component
             return;
         }
 
-        $product->load(['translations.language', 'categories', 'variants']);
+        $product->load(['translations.language', 'categories', 'variants', 'badges']);
         $this->productId = $product->id;
         $this->centralProductId = $product->central_product_id;
         $this->slug = $product->slug ?? '';
@@ -40,8 +47,15 @@ class AddEditProduct extends Component
         $this->active = $product->active;
         $this->featured = $product->featured;
         $this->categoryIds = $product->categories->pluck('id')->all();
+        $this->badgeIds = $product->badges->pluck('id')->all();
         $this->translations = array_replace_recursive($this->translations, $product->translationsByLocale(['name', 'description', 'meta_keywords', 'meta_description']));
         $this->syncVariantsFromCentral($this->centralProductId, $product);
+
+        $this->pendingEditRequest = tenancy()->central(fn() => \App\Models\ProductEditRequest::where('tenant_id', tenant()->getTenantKey())
+            ->where('product_id', $this->productId)
+            ->where('status', 'pending')
+            ->first(['id', 'requested_translations', 'created_at'])
+            ?->toArray());
     }
 
     public function setActiveLocale(string $locale): void
@@ -72,6 +86,14 @@ class AddEditProduct extends Component
 
     public function save(TenantPanelService $service)
     {
+        if (!$this->productId) {
+            $limitService = app(PlanLimitService::class);
+            if (!$limitService->canPerform(tenant(), PlanLimitService::FEATURE_PRODUCTS)) {
+                $this->toast($limitService->errorMessage(PlanLimitService::FEATURE_PRODUCTS), 'error');
+                return null;
+            }
+        }
+
         $validated = $this->validate($this->rules());
 
         if ($validated['centralProductId'] ?? null) {
@@ -140,6 +162,8 @@ class AddEditProduct extends Component
             'default_locale' => $this->activeLocale,
         ], $this->productId ? ($existingProduct ?? Product::query()->findOrFail($this->productId)) : null);
 
+        $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+
         if ($editRequestSubmitted) {
             session()->flash('status', 'Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.');
             session()->flash('status_type', 'info');
@@ -160,6 +184,8 @@ class AddEditProduct extends Component
             'featured' => ['boolean'],
             'categoryIds' => ['array'],
             'categoryIds.*' => ['integer', 'exists:categories,id'],
+            'badgeIds' => ['array'],
+            'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'variants' => ['array'],
             'variants.*.id' => ['nullable', 'integer', 'exists:product_variants,id'],
             'variants.*.central_product_variant_id' => ['nullable', 'integer'],
@@ -206,6 +232,7 @@ class AddEditProduct extends Component
             'centralProduct' => $centralProduct,
             'shippingCosts' => $shippingCosts,
             'weightGrams' => $centralProduct?->weight_grams ?? 0,
+            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
         ]);
     }
 

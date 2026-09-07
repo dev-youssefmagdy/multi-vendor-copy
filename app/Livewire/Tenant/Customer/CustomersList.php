@@ -4,13 +4,10 @@ namespace App\Livewire\Tenant\Customer;
 
 use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
-use App\Models\City;
-use App\Models\Country;
 use App\Models\Tenant\Customer;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Validation\Rule;
 use Livewire\WithPagination;
 
 class CustomersList extends ListPage
@@ -20,17 +17,6 @@ class CustomersList extends ListPage
 
     public string $search = '';
     public string $statusFilter = '';
-    public bool $showFormModal = false;
-    public ?int $customerId = null;
-    public string $fullName = '';
-    public string $email = '';
-    public string $phone = '';
-    public string $address = '';
-    public string $countryId = '';
-    public string $cityId = '';
-    public string $password = '';
-    public string $passwordConfirmation = '';
-    public bool $active = true;
 
     protected bool $exportable = true;
 
@@ -54,7 +40,7 @@ class CustomersList extends ListPage
         $stats = $repository->customerStats();
 
         return array_merge(parent::pageData(), [
-            'actionMethod' => 'openCreateModal',
+            'actionUrl' => route('tenant.customers.create'),
             'records' => $records,
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name, email, or phone'],
@@ -75,76 +61,10 @@ class CustomersList extends ListPage
                 '$' . e(number_format((float) $customer->orders->sum(fn($order) => $order->grand_total), 2)) . '<div class="entity-subtitle">Avg $' . e(number_format($customer->orders_count > 0 ? ((float) $customer->orders->sum(fn($order) => $order->grand_total) / $customer->orders_count) : 0, 2)) . '</div>',
                 e(optional($customer->orders->sortByDesc('created_at')->first()?->created_at)->format('M d, Y') ?: 'N/A'),
                 '<span class="badge ' . ($customer->active ? 'badge-green' : 'badge-amber') . '">' . e($customer->active ? 'Active' : 'Inactive') . '</span>',
-                '<div class="flex gap-2"><a href="' . route('tenant.customers.show', $customer->id) . '" class="btn btn-primary btn-sm">View</a><button type="button" class="btn btn-secondary btn-sm" wire:click="editCustomer(' . $customer->id . ')">Edit</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $customer->id . ')">Delete</button></div>',
+                '<div class="flex gap-2"><a href="' . route('tenant.customers.show', $customer->id) . '" class="btn btn-primary btn-sm">Edit</a><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $customer->id . ')">Delete</button></div>',
             ])->all(),
             'tableDescription' => $records->total() . ' customers matched the current CRM filters.',
-            'modalModel' => 'showFormModal',
-            'modalTitle' => $this->customerId ? 'Edit Customer' : 'Add Customer',
-            'modalCloseAction' => 'closeModal',
-            'modalSubmitAction' => 'save',
-            'modalSubmitLabel' => $this->customerId ? 'Update Customer' : 'Create Customer',
-            'modalContentView' => 'livewire.tenant.customer.partials.customer-form',
-            'modalContentData' => [
-                'countries' => Country::with('translations.language')->orderBy('name')->get(['id', 'name'])->pluck('name', 'id'),
-                'cities'    => $this->countryId
-                    ? City::where('country_id', $this->countryId)->orderBy('name')->pluck('name', 'id')
-                    : collect(),
-            ],
         ]);
-    }
-
-    public function openCreateModal(): void
-    {
-        $this->resetForm();
-        $this->showFormModal = true;
-    }
-
-    public function editCustomer(int $customerId): void
-    {
-        $customer = Customer::query()->findOrFail($customerId);
-        $this->customerId = $customer->id;
-        $this->fullName = $customer->full_name;
-        $this->email = $customer->email;
-        $this->phone = $customer->phone ?? '';
-        $this->address = $customer->address ?? '';
-        $this->countryId = (string) ($customer->country_id ?? '');
-        $this->cityId = (string) ($customer->city_id ?? '');
-        $this->password = '';
-        $this->passwordConfirmation = '';
-        $this->active = $customer->active;
-        $this->showFormModal = true;
-    }
-
-    public function save(TenantPanelService $service): void
-    {
-        $customerId = $this->customerId;
-        $validated = $this->validate([
-            'fullName'            => ['required', 'string', 'max:255'],
-            'email'               => ['required', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customerId)],
-            'phone'               => ['nullable', 'string', 'max:50'],
-            'address'             => ['nullable', 'string', 'max:255'],
-            'countryId'           => ['nullable', 'integer'],
-            'cityId'              => ['nullable', 'integer'],
-            'password'            => [$customerId ? 'nullable' : 'required', 'string', 'min:6', 'same:passwordConfirmation'],
-            'passwordConfirmation'=> ['nullable', 'string'],
-            'active'              => ['boolean'],
-        ]);
-
-        $service->saveCustomer([
-            'full_name'  => $validated['fullName'],
-            'email'      => $validated['email'],
-            'phone'      => $validated['phone'] ?? '',
-            'address'    => $validated['address'] ?? '',
-            'country_id' => filled($validated['countryId']) ? (int) $validated['countryId'] : null,
-            'city_id'    => filled($validated['cityId']) ? (int) $validated['cityId'] : null,
-            'password'   => $validated['password'] ?? null,
-            'active'     => $validated['active'],
-        ], $customerId ? Customer::query()->findOrFail($customerId) : null);
-
-        $this->closeModal();
-        $this->resetForm();
-        $this->toast($customerId ? 'Customer updated successfully.' : 'Customer created successfully.');
-        $this->resetPage();
     }
 
     public function confirmDelete(int $customerId): void
@@ -161,24 +81,6 @@ class CustomersList extends ListPage
         $service->deleteModel(Customer::query()->findOrFail($customerId));
         $this->toast('Customer deleted successfully.');
         $this->resetPage();
-    }
-
-    public function closeModal(): void
-    {
-        $this->showFormModal = false;
-        $this->resetErrorBag();
-    }
-
-    protected function resetForm(): void
-    {
-        $this->reset(['customerId', 'fullName', 'email', 'phone', 'address', 'countryId', 'cityId', 'password', 'passwordConfirmation']);
-        $this->active = true;
-        $this->resetErrorBag();
-    }
-
-    public function updatedCountryId(): void
-    {
-        $this->cityId = '';
     }
 
     public function updatedSearch(): void

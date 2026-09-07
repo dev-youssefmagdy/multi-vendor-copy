@@ -58,7 +58,7 @@ class Category extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withTimestamps();
+        return $this->belongsToMany(Product::class)->withPivot('sort_order')->withTimestamps()->orderByPivot('sort_order');
     }
 
     public function files(): MorphMany

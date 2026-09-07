@@ -68,7 +68,7 @@
             $scheme = parse_url(config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
             $centralDomain = config('tenancy.central_domains.0')
                 ?: (parse_url(config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
-            $previewBase = $scheme . '://preview.' . $centralDomain;
+            $previewBase = $scheme . '://' . $centralDomain . '/preview';
         @endphp
         <div class="tpl-grid section-gap">
             @foreach ($templates as $template)
@@ -112,7 +112,7 @@
 
                         {{-- Preview overlay --}}
                         <div class="tpl-preview-overlay">
-                            <a href="{{ $previewBase }}?_tpl={{ $template->slug }}" target="_blank" rel="noopener"
+                            <a href="{{ $previewBase }}?theme={{ $template->slug }}" target="_blank" rel="noopener"
                                 class="tpl-preview-open-btn">
                                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                     stroke-width="2.2">

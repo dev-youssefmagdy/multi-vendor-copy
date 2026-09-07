@@ -22,10 +22,16 @@ class PaymentGateway extends Model
         'is_active',
         'use_own',
         'hide',
+        'is_primary',
         'mode',
         'connection_status',
         'required_keys',
         'required_values',
+        'webhook_url',
+        'webhook_status',
+        'last_synced_at',
+        'last_transaction_at',
+        'last_error',
     ];
 
     protected function casts(): array
@@ -34,10 +40,13 @@ class PaymentGateway extends Model
             'is_active' => 'boolean',
             'use_own' => 'boolean',
             'hide' => 'boolean',
+            'is_primary' => 'boolean',
             'mode' => PaymentGatewayMode::class,
             'type' => PaymentGatewayType::class,
             'required_keys' => 'array',
-            'required_values' => 'array',
+            'required_values' => 'encrypted:array',
+            'last_synced_at' => 'datetime',
+            'last_transaction_at' => 'datetime',
         ];
     }
 
@@ -88,6 +97,12 @@ class PaymentGateway extends Model
         }
 
         return $credentials;
+    }
+
+    public function markAsPrimary(): void
+    {
+        static::query()->where('id', '!=', $this->id)->update(['is_primary' => false]);
+        $this->forceFill(['is_primary' => true])->save();
     }
 
     private function resolveCentralGateway(): ?CentralPaymentGateway

@@ -6,10 +6,6 @@
 <head>
     <meta charset="UTF-8" />
     {{-- Logo fonts (text-logo builder) --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Montserrat:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Tajawal:wght@400;700&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ $title ?? $storeName ?? config('app.name') }}</title>
     <meta name="description" content="{{ $metaDescription ?? '' }}">
@@ -44,16 +40,76 @@
     <meta name="twitter:image" content="{{ $ogImage }}" />
     <meta name="twitter:image:alt" content="{{ $title ?? $storeName ?? config('app.name') }}" />
     @endif
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+    @switch($storefrontThemeVariant?->key)
+        @case('v2') <!-- Purple Edition || public/elora-1 -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v2';
+                $footerKey = 'footer-v2';
+                $stylesKey = 'styles-v2';
+                $scriptsKey = 'scripts-v2';
+            @endphp
+            @break
+        @case('v3') <!-- Fresh Edition || public/elora-3 -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
+                $headerKey = 'header-v3';
+                $footerKey = 'footer-v3';
+                $stylesKey = 'styles-v3';
+                $scriptsKey = 'scripts-v3';
+            @endphp
+            @break
+        @case('v4') <!-- Bold Edition || public/elora-4 -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v4';
+                $footerKey = 'footer-v4';
+                $stylesKey = 'styles-v4';
+                $scriptsKey = 'scripts-v4';
+            @endphp
+            @break
+        @case('v5') <!-- Minimal Edition || public/elora-5 -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)]';
+                $headerKey = 'header-v5';
+                $footerKey = 'footer-v5';
+                $stylesKey = 'styles-v5';
+                $scriptsKey = 'scripts-v5';
+            @endphp
+            @break
+        @case('v6') <!-- New In Edition || public/elora-2 -->
+            @php
+                $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
+                $headerKey = 'header-v6';
+                $footerKey = 'footer-v6';
+                $stylesKey = 'styles-v6';
+                $scriptsKey = 'scripts-v6';
+            @endphp
+            @break
+        @default
+            @php
+                $bodyClass= 'bg-gray-50';
+                $headerKey = 'header';
+                $footerKey = 'footer';
+                $stylesKey = 'styles';
+                $scriptsKey = 'scripts';
+            @endphp
+    @endswitch
+
     @livewireStyles
-    @include('themes.elora.layout.styles')
+    @include('themes.elora.layout.' . $stylesKey)
+    @include('storefront.partials.theme-color-overrides')
+    @include('storefront.partials.tracking-scripts')
     @stack('head')
 </head>
 
+<body @stack('body-attrs') data-page="index" class="{{ $bodyClass }}">
 
-<body @stack('body-attrs') data-page="index" class="bg-gray-50">
+    @if (\App\Services\Preview\PreviewOverrides::active())
+        <x-preview-banner />
+    @endif
 
     {{-- Page preloader: shown until all scripts/styles/fonts are loaded. Added aria-hidden so screen readers ignore it --}}
     <div id="page-preloader" aria-hidden="true"
@@ -69,6 +125,20 @@
             }
         }
     </style>
+    <script>
+        (function () {
+            function revealPage() {
+                var el = document.getElementById('page-preloader');
+                if (el) { el.style.opacity = '0'; setTimeout(function () { el.style.display = 'none'; }, 320); }
+            }
+            if (document.readyState === 'complete') {
+                revealPage();
+            } else {
+                window.addEventListener('load', revealPage);
+                setTimeout(revealPage, 6000);
+            }
+        })();
+    </script>
 
     @php
         $storefrontFlashMessages = [];
@@ -117,15 +187,11 @@
         </script>
     @endif
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" type="header"
-        :cartCount="$cartCount" :rootCategories="$rootCategories" :socialLinks="$socialLinks"
-        fallback-view="themes.elora.layout.header" />
+    @include('themes.elora.partials.' . $headerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'cartCount' => $cartCount, 'rootCategories' => $rootCategories, 'socialLinks' => $socialLinks])
 
     {{ $slot }}
 
-    <x-theme-part :categories="$categories" :logoPath="$logoPath" :storeName="$storeName" :socialLinks="$socialLinks"
-        :cartCount="$cartCount" type="footer" fallback-view="themes.elora.layout.footer" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    @include('themes.elora.partials.' . $footerKey, ['categories' => $categories, 'logoPath' => $logoPath, 'storeName' => $storeName, 'socialLinks' => $socialLinks, 'cartCount' => $cartCount])
     {{-- Path-based tenancy: override Livewire's update URI so component updates
     are routed through InitializeTenancyBySlug on the central domain.
     The hidden element must appear before @livewireScripts in the DOM so
@@ -135,7 +201,7 @@
             style="display:none" aria-hidden="true"></div>
     @endif
     @livewireScripts
-    @include('themes.elora.layout.scripts')
+    @include('themes.elora.layout.' . $scriptsKey)
     @stack('scripts')
 
     {{-- Variant selection modal --}}
@@ -163,7 +229,7 @@
                     {{ __('Cancel') }}
                 </button>
                 <button id="variant-modal-confirm"
-                    class="flex-1 py-2 rounded-lg bg-[#242424] text-white text-[14px] hover:bg-[#3a3a3a] transition">
+                    class="flex-1 py-2 rounded-lg bg-[#111827] text-white text-[14px] hover:opacity-90 transition">
                     {{ __('Add to Cart') }}
                 </button>
             </div>

@@ -23,6 +23,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Collection;
 use App\Models\Tenant\Category;
 use App\Models\TenantLanguagePurchase;
+use App\Services\TenantNotificationService;
 use App\Models\Tenant\Currency;
 use App\Models\Tenant\EmailTemplate;
 use App\Models\Tenant\EmailTemplateTranslation;
@@ -114,13 +115,32 @@ class TenantCatalogSyncService
             'themes' => $this->syncThemes(),
             'email-templates' => $this->syncEmailTemplates(),
             'pages' => $this->syncPages(),
-            'categories' => $this->syncCategories($tenant->category_ids ?? []),
-            'products' => $this->syncProducts($tenant->category_ids ?? []),
+            'categories' => $this->syncCategories($this->normalizeCategoryIds($tenant->category_ids)),
+            'products' => $this->syncProducts($this->normalizeCategoryIds($tenant->category_ids)),
             'badges' => $this->syncBadges(),
             'flash-sales' => $this->syncFlashSales(),
             'coupons' => $this->syncCoupons(),
             default => throw new InvalidArgumentException("Unsupported sync section: {$section}"),
         };
+    }
+
+    /**
+     * Legacy data may hold category_ids as a (possibly multiply) JSON-encoded
+     * string instead of an array; unwrap it defensively before use.
+     *
+     * @return int[]
+     */
+    protected function normalizeCategoryIds(mixed $value): array
+    {
+        while (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return [];
+            }
+            $value = $decoded;
+        }
+
+        return is_array($value) ? array_values(array_map('intval', $value)) : [];
     }
 
     public function normalizeSections(?array $sections): array
@@ -187,6 +207,7 @@ class TenantCatalogSyncService
                         'direction' => $language->direction->value,
                         'is_active' => $language->is_active,
                         'is_default' => $language->is_default,
+                        'sort_order' => $language->sort_order,
                     ]
                 );
             });
@@ -342,7 +363,6 @@ class TenantCatalogSyncService
             );
 
             $this->syncThemeCountries($tenantTheme, $theme);
-            $this->syncThemePartsForTheme($tenantTheme, $theme);
         }
 
         Theme::query()
@@ -351,62 +371,6 @@ class TenantCatalogSyncService
             ->delete();
 
         return $themes->count();
-    }
-
-    /**
-     * Push central `template_parts` rows onto the tenant's `theme_parts` table.
-     *
-     * Rules:
-     *   - Match by `central_part_id`.
-     *   - Create missing rows verbatim.
-     *   - Skip updates for rows the tenant has locally customised
-     *     (`is_customized = true`) — we still keep the link, but never overwrite
-     *     their content/name/flags.
-     *   - Parts removed centrally are removed on the tenant (unless customised).
-     */
-    protected function syncThemePartsForTheme(Theme $tenantTheme, CentralTemplate $centralTemplate): void
-    {
-        $centralParts = $centralTemplate->parts; // eager-loaded
-        $centralIds = $centralParts->pluck('id')->map(fn($v) => (int) $v)->all();
-
-        // Delete tenant rows whose central counterpart vanished, unless customised.
-        \App\Models\Tenant\ThemePart::query()
-            ->where('theme_id', $tenantTheme->id)
-            ->whereNotNull('central_part_id')
-            ->when(
-                $centralIds,
-                fn($q) => $q->whereNotIn('central_part_id', $centralIds),
-                fn($q) => $q // empty: delete all central-linked rows
-            )
-            ->where('is_customized', false)
-            ->delete();
-
-        foreach ($centralParts as $cp) {
-            $existing = \App\Models\Tenant\ThemePart::query()
-                ->where('theme_id', $tenantTheme->id)
-                ->where('central_part_id', $cp->id)
-                ->first();
-
-            if ($existing && $existing->is_customized) {
-                continue;
-            }
-
-            \App\Models\Tenant\ThemePart::query()->updateOrCreate(
-                [
-                    'theme_id' => $tenantTheme->id,
-                    'central_part_id' => $cp->id,
-                ],
-                [
-                    'type' => $cp->type,
-                    'name' => $cp->name,
-                    'slug' => $cp->slug,
-                    'content' => $cp->content,
-                    'image' => $cp->image,
-                    'is_active' => (bool) $cp->is_active,
-                    'is_default' => (bool) $cp->is_default,
-                ]
-            );
-        }
     }
 
     /**
@@ -623,6 +587,10 @@ class TenantCatalogSyncService
                 ]
             );
 
+            if ($tenantCategory->wasRecentlyCreated) {
+                $tenantCategory->update(['order_number' => $category->order_number]);
+            }
+
             $tenantCategory->syncTranslations($this->mergeTranslatedFields(
                 $tenantCategory,
                 $category->translationsByLocale(['name', 'slug', 'description']),
@@ -683,6 +651,15 @@ class TenantCatalogSyncService
         $assignedProductIds = $assignedProducts->pluck('id')->flip();
 
         $variantIds = [];
+        $newlyFlaggedProductIds = [];
+
+        // Neozena covers AI translation for new products only when the tenant
+        // has at least one active language it has already paid to AI-translate.
+        $hasPaidTranslation = Language::query()
+            ->where('is_active', true)
+            ->where('translation_status', 'completed')
+            ->whereNotNull('central_language_id')
+            ->exists();
 
         foreach ($products as $product) {
             /** @var CentralProduct $product */
@@ -703,16 +680,24 @@ class TenantCatalogSyncService
                 'central_visible' => $product->isVisibleToTenants(),
                 'featured' => $isNewProduct ? false : $tenantProduct->featured,
                 'is_tenant_owned' => $isTenantOwned,
+                'order_number' => $isNewProduct ? $product->order_number : $tenantProduct->order_number,
             ]);
             $tenantProduct->save();
 
+            // A tenant's admin-approved name/description must survive future syncs;
+            // only meta_keywords (never approval-gated) and new locales still sync in.
             $tenantProduct->syncTranslations($this->mergeTranslatedFields(
                 $tenantProduct,
-                $product->translationsByLocale(['name', 'description']),
-                ['name', 'description'],
+                $tenantProduct->has_custom_translations ? [] : $product->translationsByLocale(['name', 'description']),
+                $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
                 ['name', 'description', 'meta_keywords']
             ));
             $tenantProduct->categories()->sync(Category::query()->whereIn('central_category_id', $product->categories->pluck('id'))->pluck('id')->all());
+
+            if ($isNewProduct && $hasPaidTranslation) {
+                $tenantProduct->update(['needs_ai_translation' => true]);
+                $newlyFlaggedProductIds[] = $tenantProduct->id;
+            }
 
             foreach ($product->variants as $variant) {
                 $variantIds[] = $variant->id;
@@ -767,7 +752,26 @@ class TenantCatalogSyncService
             ->whereNotIn('central_product_id', $allProductIds)
             ->delete();
 
+        if ($newlyFlaggedProductIds !== [] && $currentTenant = tenant()) {
+            $this->notifyNewCatalogProducts($currentTenant, $newlyFlaggedProductIds);
+        }
+
         return $products->count();
+    }
+
+    protected function notifyNewCatalogProducts(Tenant $tenant, array $productIds): void
+    {
+        $count = count($productIds);
+
+        app(TenantNotificationService::class)->notify(
+            $tenant,
+            'new_catalog_products',
+            __('New Products Available'),
+            $count === 1
+                ? __(':count new product has been added to your catalog — ready in your translated languages.', ['count' => $count])
+                : __(':count new products have been added to your catalog — ready in your translated languages.', ['count' => $count]),
+            ['product_ids' => $productIds],
+        );
     }
 
     public function syncProductToTenant(CentralProduct $centralProduct, Tenant $tenant): void
@@ -782,7 +786,7 @@ class TenantCatalogSyncService
 
         tenancy()->initialize($tenant);
 
-        $centralProduct->load(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files']);
+        $centralProduct->load(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files', 'countries']);
 
         $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $centralProduct->id]);
         $isNewProduct = !$tenantProduct->exists;
@@ -798,6 +802,11 @@ class TenantCatalogSyncService
             'weight_grams' => $tenantProduct->weight_grams ?? $centralProduct->weight_grams,
             'active' => $isNewProduct ? ($centralProduct->status->value === 'published') : $tenantProduct->active,
             'central_visible' => $centralProduct->isVisibleToTenants(),
+            // Denormalized from the central product_country pivot so the storefront
+            // can rank by country without a cross-database join. Empty = no preference.
+            'allowed_country_ids' => $centralProduct->countries->isEmpty()
+                ? null
+                : $centralProduct->countries->pluck('id')->map(fn ($id) => (int) $id)->values()->all(),
             'featured' => $isNewProduct ? false : $tenantProduct->featured,
             'is_tenant_owned' => true,
         ]);
@@ -805,13 +814,26 @@ class TenantCatalogSyncService
 
         $tenantProduct->syncTranslations($this->mergeTranslatedFields(
             $tenantProduct,
-            $centralProduct->translationsByLocale(['name', 'description']),
-            ['name', 'description'],
+            $tenantProduct->has_custom_translations ? [] : $centralProduct->translationsByLocale(['name', 'description']),
+            $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
             ['name', 'description', 'meta_keywords']
         ));
         $tenantProduct->categories()->sync(
             Category::query()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->all()
         );
+
+        if ($isNewProduct) {
+            $hasPaidTranslation = Language::query()
+                ->where('is_active', true)
+                ->where('translation_status', 'completed')
+                ->whereNotNull('central_language_id')
+                ->exists();
+
+            if ($hasPaidTranslation) {
+                $tenantProduct->update(['needs_ai_translation' => true]);
+                $this->notifyNewCatalogProducts($tenant, [$tenantProduct->id]);
+            }
+        }
 
         $existingVariants = ProductVariant::query()
             ->where('product_id', $tenantProduct->id)
@@ -985,6 +1007,7 @@ class TenantCatalogSyncService
                     'end_date' => $centralSale->end_date,
                     'active' => $centralSale->active,
                     'banner_image' => $centralSale->getBannerUrlAttribute(),
+                    'country_id' => $centralSale->country_id,
                 ]
             );
 
@@ -1003,7 +1026,13 @@ class TenantCatalogSyncService
     protected function syncBadges(): int
     {
         $centralBadges = tenancy()->central(
-            fn() => CentralProductBadge::query()->with('products:id')->get()
+            fn() => CentralProductBadge::query()->get()
+        );
+
+        $centralPivotRows = tenancy()->central(
+            fn() => \DB::table('product_badge_product')
+                ->whereIn('product_badge_id', $centralBadges->pluck('id'))
+                ->get()
         );
 
         $tenantProductIds = Product::withoutGlobalScope("centralVisible")
@@ -1016,14 +1045,44 @@ class TenantCatalogSyncService
                 ['active' => $centralBadge->active]
             );
 
-            $tenantBadge->products()->sync(
-                collect($centralBadge->products)
-                    ->pluck('id')
-                    ->map(fn($centralProductId) => $tenantProductIds[$centralProductId] ?? null)
-                    ->filter()
-                    ->values()
-                    ->all()
-            );
+            $rowsForBadge = $centralPivotRows->where('product_badge_id', $centralBadge->id);
+            $countryIds = $rowsForBadge->pluck('country_id')->unique()->all();
+
+            foreach ($countryIds as $countryId) {
+                $rowsForCountry = $rowsForBadge->filter(fn($r) => $r->country_id === $countryId);
+
+                // Preserve the tenant's own manual reordering (set via SortBadgeProducts)
+                // across re-syncs — only newly-attached products get a fresh order,
+                // appended after whatever the tenant already arranged.
+                $existingOrder = \DB::table('product_badge_product')
+                    ->where('product_badge_id', $tenantBadge->id)
+                    ->when($countryId === null, fn($q) => $q->whereNull('country_id'), fn($q) => $q->where('country_id', $countryId))
+                    ->pluck('sort_order', 'product_id');
+
+                $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
+
+                \DB::table('product_badge_product')
+                    ->where('product_badge_id', $tenantBadge->id)
+                    ->when($countryId === null, fn($q) => $q->whereNull('country_id'), fn($q) => $q->where('country_id', $countryId))
+                    ->delete();
+
+                $now = now();
+                foreach ($rowsForCountry as $centralRow) {
+                    $tenantProductId = $tenantProductIds[$centralRow->product_id] ?? null;
+                    if (!$tenantProductId) {
+                        continue;
+                    }
+
+                    \DB::table('product_badge_product')->insert([
+                        'product_badge_id' => $tenantBadge->id,
+                        'product_id'       => $tenantProductId,
+                        'country_id'       => $countryId,
+                        'sort_order'       => $existingOrder[$tenantProductId] ?? $nextOrder++,
+                        'created_at'       => $now,
+                        'updated_at'       => $now,
+                    ]);
+                }
+            }
         }
 
         ProductBadge::query()
@@ -1036,10 +1095,12 @@ class TenantCatalogSyncService
     protected function syncCoupons(): int
     {
         $centralCoupons = tenancy()->central(
-            fn() => CentralCoupon::query()->get()
+            fn() => CentralCoupon::query()->with('countries')->get()
         );
 
         foreach ($centralCoupons as $centralCoupon) {
+            $countryIds = $centralCoupon->countries->pluck('id')->values()->all();
+
             Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
                 [
@@ -1049,6 +1110,7 @@ class TenantCatalogSyncService
                     'minimum_spend' => $centralCoupon->minimum_spend,
                     'start_date' => $centralCoupon->start_date,
                     'end_date' => $centralCoupon->end_date,
+                    'allowed_country_ids' => empty($countryIds) ? null : $countryIds,
                 ]
             );
         }

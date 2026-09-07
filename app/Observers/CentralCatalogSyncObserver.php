@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\EmbedProductImagesJob;
 use App\Jobs\SyncCentralProductPriceToTenantsJob;
 use App\Jobs\SyncCentralProductWeightToTenantsJob;
 use App\Jobs\SyncProductFixedShippingCosts;
@@ -14,6 +15,17 @@ use App\Services\Tenant\CentralCatalogTenantSyncService;
 
 class CentralCatalogSyncObserver
 {
+    public function created(Product|ProductVariant $model): void
+    {
+        if ($model instanceof Product) {
+            EmbedProductImagesJob::dispatch($model->id);
+
+            return;
+        }
+
+        $model->product?->syncOutOfStockAt();
+    }
+
     public function updated(Product|ProductVariant $model): void
     {
         if ($model->wasChanged('weight_grams')) {
@@ -44,6 +56,12 @@ class CentralCatalogSyncObserver
 
         if ($model instanceof ProductVariant && $model->wasChanged('stock')) {
             app(CentralCatalogTenantSyncService::class)->syncProductVariant($model);
+
+            $model->product?->syncOutOfStockAt();
+        }
+
+        if ($model instanceof Product && $model->wasChanged(['stock', 'manage_stock'])) {
+            $model->syncOutOfStockAt();
         }
 
         // When a central product's publication status changes, immediately update
@@ -79,6 +97,10 @@ class CentralCatalogSyncObserver
             app(CentralCatalogTenantSyncService::class)->syncAllTenants(['categories', 'products']);
 
             return;
+        }
+
+        if ($model instanceof ProductVariant) {
+            $model->product?->syncOutOfStockAt();
         }
 
         app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);

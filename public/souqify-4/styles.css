@@ -1,0 +1,220 @@
+:root {
+  /* Brand / primary palette (Souqify) */
+  --color-primary: #EC910A;        /* Souqify brand orange (buttons, links, price, active states) */
+  --color-secondary: #FF522C;      /* Main Website/Main-clr (discount % text) */
+  --color-bg-main: #FDFDFD;        /* ELORA/fill */
+  --color-text-primary: #121212;   /* ELORA/Black */
+  --color-text-subtitle: #ADADAD;  /* ELORA/Subttitle */
+  --color-gray: #8F8F8F;           /* ELORA/GRAY */
+  --color-stroke: #D4D4D4;         /* ELORA/strock */
+
+  /* Secondary palette (Manti / Black tokens found on both screens) */
+  --color-black: #242424;          /* Black / Manti/Black */
+  --color-black-alt: #1B1B1B;      /* black */
+  --color-white: #FFFFFF;          /* Manti/White */
+  --color-success: #2AAF2F;        /* Manti/Green */
+  --color-error: #DE1709;          /* Manti/Red */
+
+  /* Accent palette (recurring raw hex fills, not exposed as named Figma variables) */
+  --color-accent-purple: #8A38F5;
+  --color-accent-purple-dark: #51218F;
+  --color-accent-purple-light: #B57DFF;
+  --color-accent-yellow: #FFD428;
+  --color-badge-purple: #9D00FF;
+  --color-surface: #F6F5F5;
+  --color-page-bg: #F4F4F4;
+  --color-footer-bg: #3B3B3B;
+  --color-footer-bar: #242424;
+  --color-footer-subbar: #5B5B5B;
+  --color-footer-text-muted: #F2F2F2;
+
+  /* Additional raw-hex UI colors found across screens */
+  --color-text-muted: #636363;
+  --color-text-faint: #4B4B4B;
+  --color-text-placeholder: #4C4C4C;
+  --color-hero-placeholder: #C3ACCF;
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 35px 58px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+
+  --font-reg-10: 400 10px/1 var(--font-family-base);
+  --font-reg-12: 400 12px/1 var(--font-family-base);
+  --font-reg-14: 400 14px/1 var(--font-family-base);
+  --font-reg-16: 400 16px/1 var(--font-family-base);
+  --font-light-14: 300 14px/1 var(--font-family-base);
+  --font-md-16: 500 16px/1 var(--font-family-base);
+  --font-md-18: 500 18px/1 var(--font-family-base);
+  --font-md-20: 500 20px/1 var(--font-family-base);
+  --font-semibold-16: 600 16px/1 var(--font-family-base);
+
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+
+  /* ============ New tokens added for Souqify Screen 4 (Home) ============ */
+  --color-navbar-dark: #101010;        /* top utility bar background */
+  --color-topbar-muted: #D1D5DC;       /* utility bar link text */
+  --color-hero-heading: #000000;       /* "New Products" black half of hero heading */
+  --color-flash-timer-blue: #0159ED;   /* Souqify/primary - flash sale countdown digits + sold progress text */
+  --color-price-alt-blue: #155DFC;     /* flash sale side-card price text */
+  --color-progress-track: #E5E7EB;     /* flash sale progress bar track */
+  --color-desc-gray: #6A7282;          /* flash sale card eyebrow / "Sold:" label text */
+  --color-strike-gray: #99A1AF;        /* flash sale strikethrough old price */
+  --color-navy-text: #1E2939;          /* flash sale side-card product title */
+  --color-charcoal-text: #191B23;      /* Deal Card product title (Trending/Best Seller/Recommended) */
+  --color-ribbon-red-1: #AC0202;       /* discount ribbon gradient stop 1 */
+  --color-ribbon-red-2: #E30000;       /* discount ribbon gradient stop 2 */
+  --color-ribbon-red-3: #9E0000;       /* discount ribbon gradient stop 3 */
+  --color-discount-orange: #FF570F;    /* Souqify/orange - alt discount badge bg */
+  --color-discount-yellow: #FFB00A;    /* Yellow - alt discount badge bg (dark text) */
+  --color-weight-tag: #FF4D00;         /* ELORA/MAin - "200g" weight tag text on Deal Card */
+  --color-card-bg-lavender: #F3F3FE;   /* Deal Card wrapper background behind product photo */
+  --color-placeholder-icon: #C7C7C7;   /* stroke color for product-image placeholder icon */
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (New In / Trending / Recommended / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Mobile drawer menu */
+.mobile-drawer {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}
+.mobile-drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 0;
+}
+@media (min-width: 1024px) {
+  .hero-pagination {
+    gap: 5px;
+  }
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-primary);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* Flash-sale discount ribbon gradient (reused across product cards) */
+.ribbon-red-gradient {
+  background: linear-gradient(255deg, var(--color-ribbon-red-1) 2%, var(--color-ribbon-red-2) 44%, var(--color-ribbon-red-3) 100%);
+}
+
+/* Flash-sale full-bleed swiper for mobile side-cards */
+.flash-swiper {
+  overflow: visible;
+}
+
+/* Product image placeholder box (used in place of downloaded product photography) */
+.product-placeholder {
+  background: var(--color-page-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-placeholder svg {
+  color: var(--color-placeholder-icon);
+  width: 36%;
+  height: 36%;
+}
+
+/* Mobile bottom tab bar */
+.mobile-tabbar {
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+}

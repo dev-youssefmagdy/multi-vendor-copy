@@ -1,0 +1,322 @@
+:root {
+  /* Brand / primary palette (ELORA — Theme #2 "Home") */
+  --color-primary: #132092; /* ELORA/Main-2 — headline accent, CTA text, active dot, featured bar */
+  --color-price-blue: #0018e8; /* Price text + New In progress bar fill */
+  --color-black: #121212; /* ELORA/Black — product titles */
+  --color-black-alt: #242424; /* Manti/Black — badge text on yellow badges */
+  --color-white: #ffffff;
+  --color-bg-main: #fdfdfd; /* ELORA/fill — card bg */
+  --color-subtitle: #adadad; /* ELORA/Subttitle — description / rating text */
+  --color-gray: #8f8f8f;
+  --color-stroke: #d4d4d4;
+
+  --color-secondary: #ff522c; /* Main Website/Main-clr — discount text */
+  --color-success: #2aaf2f; /* Manti/Green — delivery text */
+  --color-error: #de1709; /* Manti/Red — Best Seller alt delivery/stock state */
+  --color-yellow: #ffd428; /* Sale badge bg + Best Seller section bg */
+  --color-badge-orange: #ff4d00; /* ELORA/MAin — Best Seller alt "30% OFF" badge */
+
+  /* Section-specific fills */
+  --color-page-bg: #f4f4f4; /* Categories section bg */
+  --color-blob-blue: #0066ff; /* Category circle blob bg */
+  --color-newin-gold: #d7ad43; /* New In section bg */
+  --color-flash-from: #3949db;
+  --color-flash-via: #4d5fff;
+  --color-flash-to: #1f31c9;
+  --color-flash-rainbow-pink: #fa6a6f; /* Flash Sale section bg gradient — left edge */
+  --color-flash-rainbow-orange: #fa9a6d;
+  --color-flash-rainbow-yellow: #f9cf64;
+  --color-flash-rainbow-teal: #429fa0;
+  --color-flash-rainbow-purple: #6d77b0; /* Flash Sale section bg gradient — right edge */
+
+
+  /* Effects */
+  --shadow-card: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card-lg: 0 20px 40px 0 rgba(0, 0, 0, 0.16);
+
+  /* Typography */
+  --font-family-base: "Outfit", sans-serif;
+  --tracking-tight: 0;
+  --tracking-wide: 0.5px;
+}
+
+/* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--color-bg-main);
+  overflow-x: hidden;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper carousel arrows (Flash Sale / New In / Recommended / Best Seller) */
+.card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+/* New In / Trending: the nav buttons peek via their own negative left/right
+   offset on siblings outside .swiper, not through .card-swiper's shared
+   overflow:visible — so that visible overflow was serving no purpose here,
+   while letting the wrapper's un-clipped scrollable width (wider than the
+   container once several fixed-width wide cards are laid out) bleed out and
+   inflate the whole page's scroll width. Clip to the container instead. */
+.newin-swiper,
+.trending-swiper,
+.categories-swiper {
+  overflow: hidden;
+}
+
+/* Numeric slidesPerView makes these flex items that need this min-width/max-width/margin
+   reset (see the detailed comment on the same pattern in elora-v3.css) to stop them
+   collapsing or overflowing as a child of their section's flex-col layout — without it,
+   a flex item's default min-width:auto lets Swiper mis-measure its own container width,
+   which is exactly what broke Trending Now's layout when slidesPerView went below 1. */
+.newin-swiper,
+.trending-swiper,
+.categories-swiper {
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Trending: Swiper's Grid module (2 rows) needs an explicit wrapper height
+   for its per-slide height:calc(50% - gap) math — without a definite
+   height to resolve the percentage against, the two rows fell out of
+   alignment with each other by a few pixels. Height = 2 × the actual card
+   height (trending_card.blade.php: ~89.97px mobile, ~154.1px desktop) plus
+   one spaceBetween gap (18px) — must be kept in sync with the card's own
+   height or Grid allocates far more space per row than the card needs,
+   leaving a large empty gap above/below each card. */
+.trending-swiper .swiper-wrapper {
+  height: 198px;
+}
+@media (min-width: 1024px) {
+  .trending-swiper .swiper-wrapper {
+    height: 326px;
+  }
+}
+
+/* Best Seller section background — mobile only gets the navy/blue gradient
+   with a radial "light burst" texture layered on top (approximated in pure
+   CSS via repeating-conic-gradient, since there's no source texture asset
+   for this section); desktop keeps the original solid yellow. Using the
+   `background` shorthand (not just background-color) for the desktop
+   override is what actually matters here — background-image and
+   background-color are separate properties, so overriding only the color
+   while the gradient (set as background-image) stays active at every
+   breakpoint would leave the gradient visible on desktop regardless. */
+.bestseller-section-bg {
+  background:
+    repeating-radial-gradient(circle at left, rgba(255, 255, 255, 0.08) 0px, rgba(255, 255, 255, 0.08) 16px, transparent 16px, transparent 48px),
+    linear-gradient(270deg, #0b2575 0%, #1648e4 46.63%, #0b2575 100%);
+}
+@media (min-width: 1024px) {
+  .bestseller-section-bg {
+    background: var(--color-yellow);
+  }
+}
+
+/* Best Seller: draggable fan cascade — every slide is absolutely positioned
+   by carousels.js (mountBestSellerCarousel) from a fixed geometry table
+   indexed by distance-from-activeIndex, so dragging shifts which product
+   sits in the biggest/leftmost slot while the rest cascade down in size.
+   overflow:visible lets the fan's cards bleed past the swiper's own (much
+   smaller) auto-width box; the padding leaves breathing room below the row
+   and above it for the tallest (leftmost) card. */
+.bestseller-swiper {
+  overflow: visible;
+  padding: 0 0 24px;
+  cursor: grab;
+  width: 100% !important;
+}
+/* Every slide is position:absolute (taken out of normal flow) for the fan
+   cascade, so the wrapper has no in-flow content to size itself against and
+   collapses to width:0 without this. */
+.bestseller-swiper .swiper-wrapper {
+  width: 100%;
+}
+.bestseller-slide {
+  transition-property: transform;
+}
+
+/* Best Seller cascade (both breakpoints): every slide is this ONE fixed
+   base size (matching the Figma card exactly — scale=1 at cascade position
+   0, the active/biggest slot), and mountBestSellerCarousel
+   (elora-v5-carousels.js) applies `transform: translate(left, top)
+   scale(ratio)` per slide to produce every other cascade depth from it —
+   never by resizing the slide's raw width/height directly. Scaling the
+   whole card as one unit guarantees every child (text, icons, padding)
+   scales in lockstep; the old approach resized each slide's raw
+   width/height per depth and needed a matching per-depth CSS override to
+   rescale the inner content, but that override only ever existed for one
+   of five desktop depths (and none of mobile's three), so the rest
+   rendered full-size text crammed into a shrunk box. transform-origin
+   stays at the default top-left so translate/scale compose the way the
+   position tables (in JS) expect. */
+.fan-slide-base {
+  width: 206.23px;
+  height: 312.52px;
+  transform-origin: top left;
+}
+@media (min-width: 1024px) {
+  .fan-slide-base {
+    width: 256.37px;
+    height: 388.49px;
+  }
+}
+
+/* Best Seller mobile pagination dots (built by mountBestSellerCarousel). */
+.bestseller-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 29px;
+  background: #afafaf;
+  border: none;
+  padding: 0;
+  cursor: default;
+  transition: width 0.2s ease;
+}
+.bestseller-dot.is-active {
+  width: 24px;
+  background: #d7ad43;
+}
+
+.swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .swiper-nav-btn {
+    display: flex;
+  }
+}
+.swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.swiper-nav-prev {
+  left: -8px;
+}
+.swiper-nav-next {
+  right: -8px;
+}
+
+/* Hero carousel */
+.hero-swiper {
+  overflow: hidden;
+}
+.hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0;
+}
+.hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: #d9d9d9;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.hero-dot.is-active {
+  width: 24px;
+  background: var(--color-primary);
+}
+@media (min-width: 1024px) {
+  .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* New In textured gold section background */
+.newin-bg {
+  position: relative;
+  background-color: var(--color-newin-gold);
+}
+.newin-bg > .newin-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.21;
+}
+
+/* Category circle blob background */
+.category-blob {
+  background-image: url("/elora-5/assets/icons/cat-blob-1.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 92% 92%;
+}
+
+/* Shop by Category tile image */
+.shop-cat-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.shop-cat-tile img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.shop-cat-tile .shop-cat-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  text-align: center;
+  color: var(--color-white);
+  font-weight: 500;
+}
+@media (min-width: 1024px) {
+  .shop-cat-tile {
+    border-radius: 10.49px;
+  }
+  .shop-cat-tile .shop-cat-label {
+    bottom: 20.97px;
+  }
+}

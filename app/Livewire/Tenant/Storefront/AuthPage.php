@@ -33,6 +33,12 @@ class AuthPage extends Component
         }
     }
 
+    public function updatedTab(): void
+    {
+        // dispatch event to re-run intltel on on the frontend when switching tabs
+        $this->dispatch('storefront-auth-tab-changed', ['tab' => $this->tab]);
+    }
+
     public function login(): void
     {
         $data = $this->validate([

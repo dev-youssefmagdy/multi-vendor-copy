@@ -69,7 +69,7 @@ class VendorSettlementsPage extends ListPage
             ->filter()
             ->toArray();
 
-        $tenants = Tenant::query()->orderBy('name')->get()->mapWithKeys(
+        $tenants = Tenant::query()->orderBy('data->name')->get()->mapWithKeys(
             fn(Tenant $t) => [$t->getTenantKey() => $t->name ?? $t->getTenantKey()]
         )->toArray();
 

@@ -20,7 +20,7 @@ class AddEditVariation extends Component
 
     public function mount(?Variation $variation = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -65,7 +65,7 @@ class AddEditVariation extends Component
 
     public function addOption(): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
 
         $this->options[] = [
             'swatch' => '',
@@ -121,7 +121,7 @@ class AddEditVariation extends Component
     {
         return view('livewire.admin.variation.add-edit-variation', [
             'pageTitle' => $this->variationId ? 'Edit Variation' : 'Add Variation',
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
             'statusOptions' => VariationStatus::cases(),
         ]);
     }

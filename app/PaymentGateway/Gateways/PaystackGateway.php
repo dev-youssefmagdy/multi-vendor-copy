@@ -75,4 +75,14 @@ class PaystackGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure($data['message'] ?? 'Paystack verification failed.');
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['NGN', 'GHS', 'ZAR', 'KES', 'USD'],
+            'merchant_countries' => ['NG', 'GH', 'ZA', 'KE'],
+            'customer_countries' => ['NG', 'GH', 'ZA', 'KE', 'US', 'GB'],
+            'payment_methods' => ['card', 'bank_transfer', 'ussd', 'mobile_money'],
+        ];
+    }
 }
