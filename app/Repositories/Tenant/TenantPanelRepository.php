@@ -697,7 +697,6 @@ class TenantPanelRepository
         $metas = $activeGateways->map(fn(PaymentGateway $gateway) => $manager->meta($gateway->code));
 
         $merchantCountries = $metas->pluck('merchant_countries')->flatten()->unique();
-        $customerCountries = $metas->pluck('customer_countries')->flatten()->map(fn($c) => strtoupper($c))->unique();
         $currencies = $metas->pluck('currencies')->flatten()->map(fn($c) => strtoupper($c))->unique();
         $paymentMethods = $metas->pluck('payment_methods')->flatten()->unique();
 
@@ -707,25 +706,11 @@ class TenantPanelRepository
             ->map(fn($c) => strtoupper($c))
             ->unique();
 
-        $targetCountryCodes = collect();
-        if (tenant()) {
-            $targetCountryCodes = tenant()->tenantCountries()
-                ->where('is_active', true)
-                ->with('country')
-                ->get()
-                ->pluck('country.iso2')
-                ->filter()
-                ->map(fn($c) => strtoupper($c))
-                ->unique();
-        }
-
         $supportsInternational = $merchantCountries->count() > 1;
         $supportsApplePay = $paymentMethods->contains('apple_pay');
         $supportsGooglePay = $paymentMethods->contains('google_pay');
         $supportsTargetCurrencies = $targetCurrencyCodes->isNotEmpty()
             && $targetCurrencyCodes->diff($currencies)->isEmpty();
-        $canReceiveFromTargetCountries = $targetCountryCodes->isNotEmpty()
-            && $targetCountryCodes->diff($customerCountries)->isEmpty();
 
         return [
             [
@@ -758,13 +743,6 @@ class TenantPanelRepository
                 'caption' => $targetCurrencyCodes->isEmpty()
                     ? 'No active currencies configured yet.'
                     : ($supportsTargetCurrencies ? 'All your active currencies are supported.' : 'Some of your active currencies are not supported by connected gateways.'),
-            ],
-            [
-                'label' => 'Can receive from your target countries',
-                'ready' => $canReceiveFromTargetCountries,
-                'caption' => $targetCountryCodes->isEmpty()
-                    ? 'No target countries configured yet.'
-                    : ($canReceiveFromTargetCountries ? 'All your target countries are covered.' : 'Some of your target countries are not covered by connected gateways.'),
             ],
         ];
     }
