@@ -95,7 +95,7 @@
                 </svg>
                 <div class="">
                     <span id="elora-cart-badge"
-                        class="bg-main text-white text-[10px] rounded-full w-full h-[18px] min-w-5 flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
+                        class="elora-cart-badge bg-main text-white text-[10px] rounded-full w-full h-[18px] min-w-5 flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
                     <span class="text-xs hidden lg:block">{{ __('Cart') }}</span>
                 </div>
             </a>
@@ -264,7 +264,7 @@
                         stroke="#FDFDFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <span id="elora-mob-cart-badge"
-                    class="absolute -top-1 -right-1 bg-white text-main text-[10px] font-bold rounded-full min-w-4.5 h-4.5 flex items-center justify-center px-1 leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
+                    class="elora-cart-badge absolute -top-1 -right-1 bg-white text-main text-[10px] font-bold rounded-full min-w-4.5 h-4.5 flex items-center justify-center px-1 leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
             </div>
             <span>{{ __('My Cart') }}</span>
         </div>

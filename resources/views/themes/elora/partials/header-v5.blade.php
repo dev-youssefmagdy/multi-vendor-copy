@@ -195,7 +195,8 @@
             <img src="{{ asset('elora-5/assets/icons/cart.svg') }}" class="size-[24px]" alt="" />
             <span class="flex flex-col items-center">
               <span
-                class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center"
+                id="elora-v5-cart-badge"
+                class="elora-cart-badge text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
                 style="background: var(--color-primary)"
                 >{{ $cartCount }}</span
               >
@@ -365,7 +366,8 @@
             >Cart</span
           >
           <span
-            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center"
+            id="elora-v5-mob-cart-badge"
+            class="elora-cart-badge text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-primary)"
             >{{ $cartCount }}</span
           >

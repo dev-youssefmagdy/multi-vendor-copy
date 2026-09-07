@@ -148,7 +148,8 @@
             <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" class="size-[24px]" alt="" />
             <span class="flex flex-col items-center">
               <span
-                class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center"
+                id="elora-v6-cart-badge"
+                class="elora-cart-badge text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
                 style="background: var(--color-accent-green)"
                 >{{ $cartCount }}</span
               >
@@ -320,7 +321,8 @@
             >Cart</span
           >
           <span
-            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center"
+            id="elora-v6-mob-cart-badge"
+            class="elora-cart-badge text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-accent-green)"
             >{{ $cartCount }}</span
           >
@@ -362,7 +364,8 @@
       >
         <img src="{{ asset('elora-2/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px]" />
         <span
-          class="absolute -top-[4px] right-[2px] flex items-center justify-center h-[16px] w-[18px] rounded-full text-white text-[11px]"
+          id="elora-v6-cart-badge-alt"
+          class="elora-cart-badge absolute -top-[4px] right-[2px] flex items-center justify-center h-[16px] w-[18px] rounded-full text-white text-[11px] {{ $cartCount > 0 ? '' : 'hidden' }}"
           style="background: var(--color-accent-green)"
           >{{ $cartCount }}</span
         >

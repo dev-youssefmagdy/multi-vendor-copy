@@ -253,7 +253,8 @@
             />
           </svg>
           <span
-            class="absolute -top-[6px] -right-[10px] min-w-[18px] h-[16px] px-[3px] flex items-center justify-center rounded-full text-[10px] leading-none"
+            id="elora-v3-footer-cart-badge"
+            class="elora-cart-badge absolute -top-[6px] -right-[10px] min-w-[18px] h-[16px] px-[3px] flex items-center justify-center rounded-full text-[10px] leading-none {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-brand-pink); color: var(--color-bg-main); box-shadow: 0px 2px 1.1px rgba(0, 0, 0, 0.15)"
             >{{ $cartCount }}</span
           >

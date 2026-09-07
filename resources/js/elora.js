@@ -569,21 +569,11 @@ document.addEventListener('livewire:init', function () {
 
         showStorefrontToast(message, 'success');
 
-        var mobBadge = document.getElementById('elora-mob-cart-badge');
-        if (mobBadge) {
-            var current = parseInt(mobBadge.textContent, 10) || 0;
-            var next = current + qty;
-            mobBadge.textContent = next;
-            mobBadge.classList.remove('hidden');
-        }
-
-        var desktopBadge = document.getElementById('elora-cart-badge');
-        if (desktopBadge) {
-            var currentD = parseInt(desktopBadge.textContent, 10) || 0;
-            var nextD = currentD + qty;
-            desktopBadge.textContent = nextD;
-            desktopBadge.classList.remove('hidden');
-        }
+        document.querySelectorAll('.elora-cart-badge').forEach(function (badge) {
+            var current = parseInt(badge.textContent, 10) || 0;
+            badge.textContent = current + qty;
+            badge.classList.remove('hidden');
+        });
     });
 
     Livewire.on('storefront-toast', function (event) {

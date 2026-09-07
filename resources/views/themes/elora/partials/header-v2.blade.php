@@ -171,7 +171,7 @@
         <span class="flex flex-col items-center">
             <span
             id="elora-v2-cart-badge"
-            class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
+            class="elora-cart-badge text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-badge-purple)"
             >{{ $cartCount }}</span
             >
@@ -348,7 +348,7 @@
           >
           <span
             id="elora-v2-mob-cart-badge"
-            class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
+            class="elora-cart-badge text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}"
             style="background: var(--color-badge-purple)"
             >{{ $cartCount }}</span
           >

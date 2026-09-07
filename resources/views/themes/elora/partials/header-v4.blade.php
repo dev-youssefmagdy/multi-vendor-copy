@@ -228,7 +228,7 @@
           <span class="flex flex-col items-center">
             <span
               id="elora-v4-cart-badge"
-              class="text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ ($cartCount ?? 0) > 0 ? '' : 'hidden' }}"
+              class="elora-cart-badge text-white text-[14px] rounded-full w-[30px] h-[16px] flex items-center justify-center {{ ($cartCount ?? 0) > 0 ? '' : 'hidden' }}"
               style="background: var(--color-brand-orange-bright)"
               >{{ $cartCount ?? 0 }}</span
             >
@@ -401,7 +401,7 @@
       >
       <span
         id="elora-v4-cart-badge-mobile"
-        class="text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center"
+        class="elora-cart-badge text-white text-[12px] rounded-full w-[22px] h-[16px] flex items-center justify-center {{ ($cartCount ?? 0) > 0 ? '' : 'hidden' }}"
         style="background: var(--color-brand-orange-bright)"
         >{{ $cartCount ?? 0 }}</span
       >
