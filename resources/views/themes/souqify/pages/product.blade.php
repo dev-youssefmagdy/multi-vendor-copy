@@ -158,6 +158,17 @@
             </button>
         </div>
 
+        <style>
+            /* Explicit plain-CSS sizing for the gallery stage: the souqify theme
+               variants load different Tailwind CDN builds (v3 vs v4), so the
+               arbitrary-value width/height utilities on this element could be
+               compiled inconsistently between variants. Plain CSS avoids that. */
+            .sq-gallery-stage { width: 100%; }
+            @media (min-width: 640px) {
+                .sq-gallery-stage { width: 600px; height: 600px; }
+            }
+        </style>
+
         <div class="flex flex-col lg:flex-row gap-3 lg:gap-6 xl:gap-8">
 
             <!-- Gallery -->
@@ -195,7 +206,7 @@
                 </div>
 
                 <!-- Main stage -->
-                <div class="relative w-full aspect-square sm:w-[600px] sm:h-[600px] lg:w-[380px] lg:h-[380px] min-[1440px]:w-[600px] min-[1440px]:h-[600px] sm:aspect-auto max-w-full rounded-2xl overflow-hidden flex-none">{{--mx-auto--}}
+                <div class="sq-gallery-stage relative w-full aspect-square sm:aspect-auto max-w-full rounded-2xl overflow-hidden flex-none">{{--mx-auto--}}
                     <div class="product-preview-swiper relative w-full h-full rounded-xl bg-[#E6E6E6] overflow-hidden">
                         @foreach($mediaItems as $idx => $item)
                         @if($item['type'] === 'video')
