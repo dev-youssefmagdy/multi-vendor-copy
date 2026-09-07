@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
+use App\Models\HomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -21,17 +22,46 @@ class PageBuilderPage extends TenantPage
 
     public ?int $selectedThemeId = null;
 
+    // Null means the section order applies to the theme with no specific
+    // variant (legacy/theme-wide). Each Home Variant gets its own saved order.
+    public ?int $selectedHomeVariantId = null;
+
     public function mount(): void
     {
         $themes = app(TenantPanelRepository::class)->themes();
 
         $this->selectedThemeId = $themes->firstWhere('is_active', true)?->id
             ?? $themes->first()?->id;
+
+        $this->selectedHomeVariantId = $this->defaultVariantIdFor($this->selectedThemeId);
     }
 
     public function selectTheme(int $themeId): void
     {
         $this->selectedThemeId = $themeId;
+        $this->selectedHomeVariantId = $this->defaultVariantIdFor($themeId);
+    }
+
+    public function selectVariant(?int $homeVariantId): void
+    {
+        $this->selectedHomeVariantId = $homeVariantId;
+    }
+
+    protected function defaultVariantIdFor(?int $themeId): ?int
+    {
+        $theme = $themeId ? Theme::query()->find($themeId) : null;
+
+        if (!$theme) {
+            return null;
+        }
+
+        return tenancy()->central(fn() => HomeVariant::query()
+            ->forTheme($theme->slug)
+            ->where('is_active', true)
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->value('id')
+        );
     }
 
     public function updateOrder(array $orderedKeys): void
@@ -44,6 +74,7 @@ class PageBuilderPage extends TenantPage
             TenantPageSection::query()->updateOrCreate(
                 [
                     'theme_id' => $this->selectedThemeId,
+                    'home_variant_id' => $this->selectedHomeVariantId,
                     'page' => self::PAGE,
                     'section_key' => $key,
                 ],
@@ -70,6 +101,7 @@ class PageBuilderPage extends TenantPage
         $row = TenantPageSection::query()->firstOrCreate(
             [
                 'theme_id' => $this->selectedThemeId,
+                'home_variant_id' => $this->selectedHomeVariantId,
                 'page' => self::PAGE,
                 'section_key' => $sectionKey,
             ],
@@ -103,14 +135,28 @@ class PageBuilderPage extends TenantPage
         $themes = app(TenantPanelRepository::class)->themes();
 
         $sections = [];
+        $availableVariants = collect();
         $selectedTheme = $themes->firstWhere('id', $this->selectedThemeId);
 
         if ($selectedTheme) {
+            $availableVariants = tenancy()->central(fn() => HomeVariant::query()
+                ->forTheme($selectedTheme->slug)
+                ->where('is_active', true)
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get()
+            );
+
             $labels = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
             $defaultOrder = array_keys($labels);
 
             $rows = TenantPageSection::query()
                 ->where('theme_id', $selectedTheme->id)
+                ->when(
+                    $this->selectedHomeVariantId,
+                    fn($q) => $q->where('home_variant_id', $this->selectedHomeVariantId),
+                    fn($q) => $q->whereNull('home_variant_id')
+                )
                 ->where('page', self::PAGE)
                 ->get()
                 ->keyBy('section_key');
@@ -146,6 +192,8 @@ class PageBuilderPage extends TenantPage
 
         return array_merge(parent::pageData(), [
             'themes' => $themes,
+            'availableVariants' => $availableVariants,
+            'selectedHomeVariantId' => $this->selectedHomeVariantId,
             'sections' => $sections,
         ]);
     }

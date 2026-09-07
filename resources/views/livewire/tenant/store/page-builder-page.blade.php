@@ -30,6 +30,71 @@
         align-items: center;
         padding: 4px;
     }
+
+    .pb-switcher {
+        margin-bottom: 20px;
+    }
+    .pb-switcher-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--t2);
+        margin: 0 0 8px 2px;
+    }
+    .appearance-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 16px;
+        background: var(--card2);
+        border: 1px solid var(--border);
+        width: fit-content;
+    }
+    .appearance-tab {
+        padding: 8px 18px;
+        border-radius: 12px;
+        border: none;
+        background: transparent;
+        color: var(--t2);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.18s, color 0.18s;
+    }
+    .appearance-tab:hover:not(.act) {
+        background: rgba(255,255,255,0.05);
+        color: var(--t1);
+    }
+    .appearance-tab.act {
+        background: var(--card);
+        color: var(--t1);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Home Variant row: same shape, distinct accent so it reads as a second-level filter. */
+    .pb-variant-tabs {
+        background: transparent;
+        border-style: dashed;
+    }
+    .pb-variant-tabs .appearance-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .pb-variant-tabs .appearance-tab::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--border2);
+        transition: background 0.18s;
+    }
+    .pb-variant-tabs .appearance-tab.act::before {
+        background: var(--accent, #7c5cff);
+    }
 </style>
 
     {{-- Page header --}}
@@ -46,17 +111,36 @@
     </div>
 
     {{-- Theme switcher --}}
-    <div class="appearance-tabs fu d1 section-gap">
-        @foreach ($themes as $theme)
-            <button type="button"
-                class="appearance-tab {{ $selectedThemeId === $theme->id ? 'act' : '' }}"
-                wire:click="selectTheme({{ $theme->id }})">
-                {{ $theme->name }}
-            </button>
-        @endforeach
+    <div class="pb-switcher fu d1">
+        <p class="pb-switcher-label">Theme</p>
+        <div class="appearance-tabs">
+            @foreach ($themes as $theme)
+                <button type="button"
+                    class="appearance-tab {{ $selectedThemeId === $theme->id ? 'act' : '' }}"
+                    wire:click="selectTheme({{ $theme->id }})">
+                    {{ $theme->name }}
+                </button>
+            @endforeach
+        </div>
     </div>
 
-    <div class="card table-card-shell fu d2">
+    {{-- Home variant switcher: each variant has its own independent section order --}}
+    @if ($availableVariants->isNotEmpty())
+        <div class="pb-switcher fu d2">
+            <p class="pb-switcher-label">Home Variant</p>
+            <div class="appearance-tabs pb-variant-tabs">
+                @foreach ($availableVariants as $variant)
+                    <button type="button"
+                        class="appearance-tab {{ $selectedHomeVariantId === $variant->id ? 'act' : '' }}"
+                        wire:click="selectVariant({{ $variant->id }})">
+                        {{ $variant->name }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    <div class="card table-card-shell fu d3">
         <div class="table-header-shell">
             <div>
                 <h3 class="panel-title">Home Page Sections</h3>

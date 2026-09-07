@@ -38,7 +38,7 @@ class ThemesPage extends ListPage
         ];
     }
 
-    protected function buildPreviewUrl(string $themeSlug, int $themeId, ?string $variantKey): string
+    protected function buildPreviewUrl(string $themeSlug, int $themeId, ?string $variantKey, ?int $variantId = null): string
     {
         $query = ['theme' => $themeSlug];
 
@@ -46,10 +46,16 @@ class ThemesPage extends ListPage
             $query['homepage_variant'] = $variantKey;
         }
 
-        // Encode the tenant's current Page Builder section order for this theme.
-        // The preview tenant has its own isolated DB so we pass it as a URL param.
+        // Encode the tenant's current Page Builder section order for this theme
+        // and variant. The preview tenant has its own isolated DB so we pass it
+        // as a URL param.
         $sectionKeys = TenantPageSection::query()
             ->where('theme_id', $themeId)
+            ->when(
+                $variantId,
+                fn($q) => $q->where('home_variant_id', $variantId),
+                fn($q) => $q->whereNull('home_variant_id')
+            )
             ->where('page', 'home')
             ->where('is_visible', true)
             ->orderBy('sort_order')
@@ -131,7 +137,7 @@ class ThemesPage extends ListPage
             // Always build a live preview URL pointing at the preview tenant.
             // theme + homepage_variant + sections order are encoded as query params.
             $variantKey = tenancy()->central(fn() => $variant->key ?? null);
-            $previewUrl = $this->buildPreviewUrl(strtolower($theme->slug), $theme->id, $variantKey ?: null);
+            $previewUrl = $this->buildPreviewUrl(strtolower($theme->slug), $theme->id, $variantKey ?: null, $variant->id);
 
             $domain = tenant()?->domains()->first()?->domain;
             $storefrontUrl = $isActive && $domain

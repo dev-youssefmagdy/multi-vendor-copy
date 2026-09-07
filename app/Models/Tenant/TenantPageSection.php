@@ -14,6 +14,7 @@ class TenantPageSection extends Model
 
     protected $fillable = [
         'theme_id',
+        'home_variant_id',
         'page',
         'section_key',
         'sort_order',

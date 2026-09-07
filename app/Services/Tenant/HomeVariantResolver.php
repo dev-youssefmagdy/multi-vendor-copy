@@ -66,8 +66,8 @@ class HomeVariantResolver
     }
 
     /**
-     * @param string[]|null $fallback Tenant's Page Builder order, or null if the tenant
-     *                                hasn't customized this theme's sections.
+     * @param string[]|null $fallback Tenant's Page Builder order for the resolved variant,
+     *                                or null if the tenant hasn't customized it.
      * @return string[] section keys in order
      */
     public function sectionsFor(?HomeVariant $variant, string $themeSlug, ?array $fallback): array
@@ -76,11 +76,17 @@ class HomeVariantResolver
             return PreviewOverrides::sections();
         }
 
+        // The tenant's own per-variant Page Builder order wins over the variant's
+        // catalog default, since Page Builder exists to let tenants override it.
+        if ($fallback !== null) {
+            return $fallback;
+        }
+
         if ($variant && $variant->sections) {
             return $variant->sections;
         }
 
-        return $fallback ?? SectionRegistry::defaultsFor($themeSlug, 'home');
+        return SectionRegistry::defaultsFor($themeSlug, 'home');
     }
 
     /** @return array<string, string> variable key => hex value */

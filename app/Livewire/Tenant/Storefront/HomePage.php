@@ -119,6 +119,7 @@ class HomePage extends Component
 
         $rows = TenantPageSection::query()
             ->where('theme_id', $theme->id)
+            ->when($variant, fn($q) => $q->where('home_variant_id', $variant->id), fn($q) => $q->whereNull('home_variant_id'))
             ->where('page', 'home')
             ->orderBy('sort_order')
             ->get()
