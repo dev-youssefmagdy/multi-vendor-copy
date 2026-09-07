@@ -1279,7 +1279,7 @@
 
         var closeBtn = document.createElement('button');
         closeBtn.innerHTML = '&times;';
-        closeBtn.setAttribute('aria-label', window.trans('Close video'));
+        closeBtn.setAttribute('aria-label', (typeof window.trans === 'function') ? window.trans('Close video') : 'Close video');
         closeBtn.style.cssText = [
             'position:absolute',
             'top:6px',
