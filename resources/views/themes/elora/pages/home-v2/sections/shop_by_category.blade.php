@@ -37,7 +37,7 @@
             @foreach ([1, 2] as $i)
               <a
                 href="{{ $shopByCatData[$i]['url'] }}"
-                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pr-[44px] lg:pr-[44px] pb-[3px] lg:pb-[3px] pl-[43px] lg:pl-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
+                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
                 style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[$i]['image'] }}')"
               >
                 <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[$i]['name'] }}</span>
@@ -52,7 +52,7 @@
             @foreach ([3, 4] as $i)
               <a
                 href="{{ $shopByCatData[$i]['url'] }}"
-                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pr-[44px] lg:pr-[44px] pb-[3px] lg:pb-[3px] pl-[43px] lg:pl-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
+                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
                 style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[$i]['image'] }}')"
               >
                 <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[$i]['name'] }}</span>

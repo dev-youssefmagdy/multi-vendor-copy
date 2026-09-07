@@ -213,5 +213,27 @@
         letter-spacing: 0.516028px;
         white-space: nowrap;
     }
+
+    /* RTL: mirror the corner-pinned heart/cart/ribbon/tag positions. */
+    [dir="rtl"] .sqv5-deal__fav {
+        right: auto;
+        left: 2.79cqw;
+    }
+    [dir="rtl"] .sqv5-deal__cart {
+        left: auto;
+        /* Exact mirror of `left: 73.75%` for a 23.75cqw-wide button. */
+        right: calc(26.25% - 23.75cqw);
+    }
+    [dir="rtl"] .sqv5-deal__ribbon {
+        left: auto;
+        right: 0;
+        padding: 2.8254px 5.65079px 2.8254px 8cqw;
+        border-radius: 22.6032px 0px 0px 0px;
+    }
+    [dir="rtl"] .sqv5-deal__tag {
+        left: auto;
+        right: 0;
+        border-radius: 290px 0 0 999px;
+    }
 </style>
 @endonce

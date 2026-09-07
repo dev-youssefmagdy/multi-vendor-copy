@@ -72,7 +72,7 @@
                       class="category-tile-chip flex items-center justify-center rounded-full size-[24px]"
                       ><img
                         src="{{ asset('elora-4/assets/icons/icon-explore-arrow.svg') }}"
-                        class="size-[12px]"
+                        class="size-[12px] rtl:rotate-180"
                         alt=""
                     /></span>
                   </div>

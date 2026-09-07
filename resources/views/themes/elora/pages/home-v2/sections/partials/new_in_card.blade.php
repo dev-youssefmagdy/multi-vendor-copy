@@ -21,7 +21,7 @@
 
       @if (!empty($p['badgeLabel']))
         <span
-          class="absolute top-[3.14px] right-[3.77px] md:top-[5px] md:right-[6px] z-[1] flex items-center justify-center whitespace-nowrap px-[3.3px] md:px-[6px] w-[39.61px] md:w-[103px] h-[15.43px] md:h-[28px] rounded-tr-[4.41px] md:rounded-tr-[8px] rounded-bl-[4.41px] md:rounded-bl-[8px] font-normal text-[7.71px] md:text-[14px] leading-[10px] md:leading-[18px] tracking-[0.28px] md:tracking-[0.5px]"
+          class="absolute top-[3.14px] end-[3.77px] md:top-[5px] md:end-[6px] z-[1] flex items-center justify-center whitespace-nowrap px-[3.3px] md:px-[6px] w-[39.61px] md:w-[103px] h-[15.43px] md:h-[28px] rounded-tr-[4.41px] md:rounded-tr-[8px] rounded-bl-[4.41px] md:rounded-bl-[8px] font-normal text-[7.71px] md:text-[14px] leading-[10px] md:leading-[18px] tracking-[0.28px] md:tracking-[0.5px]"
           style="background: {{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color: {{ $p['badgeText'] ?? 'var(--color-black)' }}"
         >{{ $p['badgeLabel'] }}</span>
       @endif
@@ -35,7 +35,7 @@
           data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
           data-product-id="{{ $p['id'] ?? '' }}"
         @endif
-        class="absolute top-[3.14px] left-[3.77px] md:top-[5px] md:left-[6px] z-[1] flex items-center justify-center p-[5.03px] md:p-[8px] w-[20.11px] md:w-[32px] h-[20.11px] md:h-[32px] rounded-full border-0"
+        class="absolute top-[3.14px] start-[3.77px] md:top-[5px] md:start-[6px] z-[1] flex items-center justify-center p-[5.03px] md:p-[8px] w-[20.11px] md:w-[32px] h-[20.11px] md:h-[32px] rounded-full border-0"
         style="background: var(--color-white); box-shadow: 0px 2.51px 2.51px rgba(0, 0, 0, 0.15)"
       >
         <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="w-[12.57px] h-[12.57px] md:w-[20px] md:h-[20px]" />

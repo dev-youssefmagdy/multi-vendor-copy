@@ -26,7 +26,7 @@
     <button
       type="button"
       aria-label="{{ __('Add to cart') }}"
-      class="absolute bottom-[3.19px] right-[3.19px] lg:bottom-[5.47px] lg:right-[5.47px] flex items-center justify-center w-[30.26px] h-[23.89px] px-[6.37px] py-[2.12px] lg:w-[51.92px] lg:h-[40.99px] lg:px-[10.93px] lg:py-[3.64px] rounded-[8.49524px] lg:rounded-[14.5744px] transition-transform duration-150 ease active:scale-95"
+      class="absolute bottom-[3.19px] end-[3.19px] lg:bottom-[5.47px] lg:end-[5.47px] flex items-center justify-center w-[30.26px] h-[23.89px] px-[6.37px] py-[2.12px] lg:w-[51.92px] lg:h-[40.99px] lg:px-[10.93px] lg:py-[3.64px] rounded-[8.49524px] lg:rounded-[14.5744px] transition-transform duration-150 ease active:scale-95"
       style="background: var(--color-bg-main)"
     >
       <img src="{{ asset('elora-2/assets/icons/cart-add.svg') }}" alt="" class="size-[13px] lg:size-[22px]" />

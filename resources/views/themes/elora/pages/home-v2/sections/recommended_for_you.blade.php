@@ -115,7 +115,7 @@
 
       {{-- Right-edge fade hinting the grid continues --}}
       <div
-        class="hidden lg:block absolute top-0 right-0 h-full w-[120px] pointer-events-none"
+        class="hidden lg:block absolute top-0 end-0 h-full w-[120px] pointer-events-none"
         style="background: linear-gradient(91.97deg, rgba(255, 255, 255, 0) 1.85%, #F3F3F3 95.21%);"
       ></div>
     </section>

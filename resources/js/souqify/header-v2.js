@@ -2,7 +2,6 @@
 
 function initHeaderDrawer() {
   const menuBtn = document.getElementById("mobileMenuBtn");
-  const desktopMenuBtn = document.getElementById("desktopMenuBtn");
   const closeBtn = document.getElementById("drawerCloseBtn");
   const drawer = document.getElementById("mobileDrawer");
   const overlay = document.getElementById("mobileDrawerOverlay");
@@ -28,10 +27,6 @@ function initHeaderDrawer() {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeDrawer();
     });
-  }
-
-  if (desktopMenuBtn && drawer && overlay) {
-    desktopMenuBtn.addEventListener("click", openDrawer);
   }
 }
 

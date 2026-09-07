@@ -104,7 +104,7 @@
         >
           <img
             src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] rotate-90"
+            class="size-[14px] rotate-90 rtl:-rotate-90"
             alt=""
           />
         </button>
@@ -116,7 +116,7 @@
         >
           <img
             src="{{ asset('elora-1/assets/icons/arrow-down.svg') }}"
-            class="size-[14px] -rotate-90"
+            class="size-[14px] -rotate-90 rtl:rotate-90"
             alt=""
           />
         </button>

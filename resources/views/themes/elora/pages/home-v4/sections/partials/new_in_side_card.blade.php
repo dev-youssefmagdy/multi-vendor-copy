@@ -5,13 +5,13 @@
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 lg:inset-[6.74px_8.09px] h-full w-full lg:h-auto lg:w-auto object-cover" />
     <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
       data-fav='{{ $p['favData'] ?? '{}' }}'
-      aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] left-[5px] lg:top-[8px] lg:left-[8px] bg-white cursor-pointer shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.39px_5.39px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] lg:p-[10.79px] rounded-full size-[20.11px] lg:size-[43.15px]">
+      aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[8px] lg:start-[8px] bg-white cursor-pointer shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.39px_5.39px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] lg:p-[10.79px] rounded-full size-[20.11px] lg:size-[43.15px]">
       <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[26.97px]" />
     </button>
-    <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] w-[39.61px] lg:w-[84.18px] whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
+    <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] w-[39.61px] lg:w-[84.18px] whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
       aria-label="{{ __('Add to cart') }}"
-      class="absolute bottom-[5px] right-[5px] lg:bottom-[8px] lg:right-[8px] flex items-center justify-center rounded-[10.06px] lg:rounded-[21.57px] h-[28.29px] lg:h-[60.67px] w-[35.83px] lg:w-[76.85px] px-[7.54px] lg:px-[16.18px] py-[2.51px] lg:py-[5.39px] cursor-pointer bg-[var(--color-bg-main)]">
+      class="absolute bottom-[5px] end-[5px] lg:bottom-[8px] lg:end-[8px] flex items-center justify-center rounded-[10.06px] lg:rounded-[21.57px] h-[28.29px] lg:h-[60.67px] w-[35.83px] lg:w-[76.85px] px-[7.54px] lg:px-[16.18px] py-[2.51px] lg:py-[5.39px] cursor-pointer bg-[var(--color-bg-main)]">
       <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="size-[15.09px] lg:size-[32.36px]" />
     </button>
   </div>

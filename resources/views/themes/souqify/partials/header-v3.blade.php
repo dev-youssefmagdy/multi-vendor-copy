@@ -113,10 +113,10 @@
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
           data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
           class="flex flex-1 items-center justify-between h-[54px] px-[24px] rounded-[4px]" style="background: var(--color-surface)">
-        <div class="flex items-center gap-[8px] h-[38px] pr-[24px] border-r shrink-0" style="border-color: var(--color-gray)">
+        {{-- <div class="flex items-center gap-[8px] h-[38px] pr-[24px] border-r shrink-0" style="border-color: var(--color-gray)">
           <span class="text-[14px] tracking-[0.5px]" style="color: var(--color-text-navbar-category)">{{ __('All Category') }}</span>
           <img src="{{ asset('souqify-2/assets/icons/icon-chevron-down-dark.svg') }}" alt="" class="size-[18px]" />
-        </div>
+        </div> --}}
         <div class="flex flex-1 items-center gap-[8px] pl-[24px]">
           <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[22px] opacity-70" /></button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color: var(--color-text-placeholder)" />

@@ -6,7 +6,7 @@
         class="flex items-center gap-[24px] lg:gap-0 px-[16px] lg:px-[56px] py-[12px] lg:py-[13px] w-max lg:w-full lg:justify-between"
       >
         <div
-          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:pr-[26px] lg:border-r"
+          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:pe-[26px] lg:border-e"
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
@@ -20,7 +20,7 @@
           >
         </div>
         <div
-          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:px-[26px] lg:border-r"
+          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:px-[26px] lg:border-e"
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
@@ -34,7 +34,7 @@
           >
         </div>
         <div
-          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:px-[26px] lg:border-r"
+          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:px-[26px] lg:border-e"
           style="border-color: rgba(255, 255, 255, 0.5)"
         >
           <img
@@ -48,7 +48,7 @@
           >
         </div>
         <div
-          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:pl-[26px]"
+          class="flex items-center gap-[12px] lg:gap-[12px] shrink-0 lg:ps-[26px]"
         >
           <img
             src="{{ asset('elora-3/assets/icons/feature-bag.svg') }}"

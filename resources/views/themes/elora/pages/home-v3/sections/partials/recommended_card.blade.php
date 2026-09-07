@@ -2,15 +2,15 @@
 <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[8px] lg:rounded-[11px] shadow-[0_0_19px_rgba(0,0,0,0.16)] lg:shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
   <div class="relative w-full h-[140px] lg:h-[213px] shrink-0">
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
-    <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+    <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
       data-fav="{{ $p['favData'] ?? '' }}"
       data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
       data-product-id="{{ $p['id'] ?? '' }}"
-      class="absolute top-[6px] left-[6px] lg:top-[8px] lg:left-[8px] flex items-center justify-center size-[26px] lg:size-[37px] bg-white rounded-full shadow-[0_3px_3px_rgba(0,0,0,0.15)] lg:shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
+      class="absolute top-[6px] start-[6px] lg:top-[8px] lg:start-[8px] flex items-center justify-center size-[26px] lg:size-[37px] bg-white rounded-full shadow-[0_3px_3px_rgba(0,0,0,0.15)] lg:shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
       <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[16px] lg:size-[23px]" alt="" />
     </button>
-    <span class="absolute top-0 right-0 flex items-center justify-center font-normal text-[10px] lg:text-[14px] tracking-[0.4px] lg:tracking-[0.5px] px-[6px] lg:px-[10px] py-[3px] lg:py-[5px] rounded-bl-[8px] lg:rounded-bl-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
-    <div aria-hidden="true" class="absolute bottom-[6px] right-[6px] lg:bottom-[8px] lg:right-[8px] flex items-center justify-center w-[42px] h-[33px] lg:w-[66px] lg:h-[52px] bg-[#FDFDFD] rounded-[13px] lg:rounded-[19px] shadow-sm">
+    <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[10px] lg:text-[14px] tracking-[0.4px] lg:tracking-[0.5px] px-[6px] lg:px-[10px] py-[3px] lg:py-[5px] rounded-es-[8px] lg:rounded-es-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
+    <div aria-hidden="true" class="absolute bottom-[6px] end-[6px] lg:bottom-[8px] lg:end-[8px] flex items-center justify-center w-[42px] h-[33px] lg:w-[66px] lg:h-[52px] bg-[#FDFDFD] rounded-[13px] lg:rounded-[19px] shadow-sm">
       <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="size-[18px] lg:size-[28px]" alt="" />
     </div>
   </div>

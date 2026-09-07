@@ -6,17 +6,17 @@
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover rounded-t-[8px]" />
         @endif
         @if (!empty($p['delivery']))
-            <span class="delivery-ribbon absolute left-0 bottom-0 flex items-center gap-[6px] px-[6px] py-[3px] rounded-tr-[10px]">
+            <span class="delivery-ribbon absolute left-0 bottom-0 rtl:left-auto rtl:right-0 flex items-center gap-[6px] px-[6px] py-[3px] rounded-tr-[10px]">
                 <img src="{{ asset('souqify-5/assets/icons/truck-delivery.svg') }}" alt="" class="size-[13px]" />
                 <span class="text-[9px] font-medium whitespace-nowrap" style="color:var(--color-black)">{{ $p['delivery'] }}</span>
             </span>
         @endif
         @if (!empty($p['badge']))
-            <span class="absolute left-0 top-0 flex items-center gap-[4px] px-[8px] py-[4px] rounded-br-[12px]" style="background:var(--color-brand-pink)">
+            <span class="absolute left-0 top-0 rtl:left-auto rtl:right-0 flex items-center gap-[4px] px-[8px] py-[4px] rounded-br-[12px]" style="background:var(--color-brand-pink)">
                 <span class="text-[11px] font-medium text-white tracking-[0.4px] whitespace-nowrap">{{ $p['badge'] }}</span>
             </span>
         @endif
-        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[8px] right-[8px] bg-white rounded-full p-[7px] shadow-md">
+        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[8px] right-[8px] rtl:right-auto rtl:left-[8px] bg-white rounded-full p-[7px] shadow-md">
             <img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[16px]" alt="" />
         </button>
     </a>

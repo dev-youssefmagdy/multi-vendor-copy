@@ -280,5 +280,20 @@
         .sqv3-trend-card__statustext     { font-size: clamp(11px, 0.9663vw, 13.9144px); }
         .sqv3-trend-card__statustext--sm { font-size: clamp(10px, 0.9111vw, 13.1193px); }
     }
+
+    /* RTL: mirror the corner-pinned sale badge/heart/cart positions. */
+    [dir="rtl"] .sqv3-trend-card__sale {
+        right: auto;
+        left: 0;
+        border-radius: 7.66689px 0px;
+    }
+    [dir="rtl"] .sqv3-trend-card__heart {
+        left: auto;
+        right: 6.55965px;
+    }
+    [dir="rtl"] .sqv3-trend-card__cart {
+        right: auto;
+        left: 6.55965px;
+    }
 </style>
 @endonce

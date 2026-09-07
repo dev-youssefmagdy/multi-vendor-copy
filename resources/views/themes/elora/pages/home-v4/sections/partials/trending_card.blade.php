@@ -4,13 +4,13 @@
   <a href="{{ $p['url'] ?? '#' }}" class="flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden" style="text-decoration:none">
     <div class="relative w-[123.69px] lg:w-[222.51px] shrink-0 h-full lg:h-[236px] lg:px-[6.36px] lg:py-[5.3px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
-      <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
+      <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'
-        aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] left-[5px] lg:top-[6px] lg:left-[6px] bg-white rounded-full p-[5.03px] lg:p-[5px] shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow"><img src="{{ asset('elora-4/assets/icons/heart.svg') }}" class="size-[12.57px] lg:size-[22px]" alt="" /></button>
+        aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[6px] lg:start-[6px] bg-white rounded-full p-[5.03px] lg:p-[5px] shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow"><img src="{{ asset('elora-4/assets/icons/heart.svg') }}" class="size-[12.57px] lg:size-[22px]" alt="" /></button>
       <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
         aria-label="{{ __('Add to cart') }}"
-        class="absolute bottom-[5px] right-[5px] lg:bottom-[8px] lg:right-[8px] flex items-center justify-center bg-white rounded-[10.06px] lg:rounded-[14px] w-[35.83px] h-[28.29px] lg:size-[44px] shadow cursor-pointer"><img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" class="size-[15.09px] lg:size-[20px]" alt="" /></button>
+        class="absolute bottom-[5px] end-[5px] lg:bottom-[8px] lg:end-[8px] flex items-center justify-center bg-white rounded-[10.06px] lg:rounded-[14px] w-[35.83px] h-[28.29px] lg:size-[44px] shadow cursor-pointer"><img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" class="size-[15.09px] lg:size-[20px]" alt="" /></button>
     </div>
     <div class="flex-1 min-w-0 p-[4px] lg:px-[13.49px] lg:py-[6.74px] flex flex-col gap-[4px] lg:gap-[13.49px] lg:h-[193.86px] lg:justify-center">
 

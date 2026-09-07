@@ -85,7 +85,7 @@
             "
             >{{ __('Ends in') }}</span
           >
-          <div class="flex items-center gap-[3px] lg:gap-[5px] ml-1 lg:ml-2">
+          <div class="flex items-center gap-[3px] lg:gap-[5px] ms-1 lg:ms-2">
             <div
               class="border lg:border-2 border-white flex flex-col h-[44px] w-[46px] lg:h-[73px] lg:w-[76px] items-center justify-center rounded-[7px] lg:rounded-[12px] max-lg:p-2"
               style="background: var(--color-accent-green)"

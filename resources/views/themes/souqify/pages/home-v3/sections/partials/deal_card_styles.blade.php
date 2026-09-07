@@ -238,5 +238,26 @@
         white-space: nowrap;
         flex: none;
     }
+
+    /* RTL: mirror the corner-pinned badge/heart/cart/ribbon positions. */
+    [dir="rtl"] .sqv3-deal__badge {
+        left: auto;
+        right: 0;
+        border-radius: 0px 0px 0px 10cqw;
+    }
+    [dir="rtl"] .sqv3-deal__heart {
+        right: auto;
+        left: 2.79cqw;
+    }
+    [dir="rtl"] .sqv3-deal__cart {
+        right: auto;
+        left: 2.5cqw;
+    }
+    [dir="rtl"] .sqv3-deal__ribbon {
+        left: auto;
+        right: 0;
+        padding: 1.25cqw 2.5cqw 1.25cqw 4.5cqw;
+        border-radius: 10cqw 0px 0px 0px;
+    }
 </style>
 @endonce

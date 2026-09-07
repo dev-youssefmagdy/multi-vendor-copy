@@ -16,7 +16,7 @@
 
     @if (!empty($p['badge']))
       <span
-        class="absolute top-[3.76px] lg:top-[7.78px] right-[4.51px] lg:right-[9.33px] z-[1] flex items-center justify-center whitespace-nowrap px-[3.96px] lg:px-[8.18px] w-[46.91px] lg:w-[97.36px] h-[18.47px] lg:h-[38.17px] text-[9.23px] lg:text-[19.09px] leading-[12px] lg:leading-[24px] tracking-[0.33px] lg:tracking-[0.68px] rounded-tl-[5.28px] lg:rounded-tl-[10.91px] rounded-br-[5.28px] lg:rounded-br-[10.91px]"
+        class="absolute top-[3.76px] lg:top-[7.78px] end-[4.51px] lg:end-[9.33px] z-[1] flex items-center justify-center whitespace-nowrap px-[3.96px] lg:px-[8.18px] w-[46.91px] lg:w-[97.36px] h-[18.47px] lg:h-[38.17px] text-[9.23px] lg:text-[19.09px] leading-[12px] lg:leading-[24px] tracking-[0.33px] lg:tracking-[0.68px] rounded-tl-[5.28px] lg:rounded-tl-[10.91px] rounded-br-[5.28px] lg:rounded-br-[10.91px]"
         style="background: {{ $p['badgeBg'] }}; color: {{ $p['badgeText'] }}"
       >{{ $p['badge'] }}</span>
     @endif
@@ -30,7 +30,7 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
       @endif
-      class="absolute top-[3.76px] lg:top-[7.78px] left-[4.51px] lg:left-[9.33px] z-[1] flex items-center justify-center rounded-full p-[6.02px] lg:p-[12.44px]"
+      class="absolute top-[3.76px] lg:top-[7.78px] start-[4.51px] lg:start-[9.33px] z-[1] flex items-center justify-center rounded-full p-[6.02px] lg:p-[12.44px]"
       style="background: var(--color-white); box-shadow: var(--shadow-heart-mobile)"
     >
       <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="size-[15.05px] lg:size-[31.1px]" />
@@ -39,7 +39,7 @@
     @if (!empty($p['isOutOfStock']))
       <button
         type="button" disabled onclick="event.preventDefault()"
-        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] right-[4.51px] lg:right-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px] cursor-not-allowed"
+        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] end-[4.51px] lg:end-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px] cursor-not-allowed"
         style="background: var(--color-bg-main)"
       >
         <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[18.06px] lg:size-[37.33px] opacity-40" />
@@ -48,7 +48,7 @@
       <button
         type="button"
         onclick="event.preventDefault(); openVariantModal({{ $p['id'] ?? 'null' }}, {{ \Illuminate\Support\Js::from($p['fullName'] ?? ($p['name'] ?? '')) }}, {{ \Illuminate\Support\Js::from($p['variantModalData'] ?? []) }})"
-        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] right-[4.51px] lg:right-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px]"
+        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] end-[4.51px] lg:end-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px]"
         style="background: var(--color-bg-main)"
       >
         <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[18.06px] lg:size-[37.33px]" />
@@ -56,7 +56,7 @@
     @else
       <button
         type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault()"
-        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] right-[4.51px] lg:right-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px]"
+        class="absolute z-[1] top-[120.76px] lg:top-[249.61px] end-[4.51px] lg:end-[9.33px] flex items-center justify-center rounded-[12.04px] lg:rounded-[24.88px] px-[9.03px] lg:px-[18.66px] py-[3.01px] lg:py-[6.22px]"
         style="background: var(--color-bg-main)"
       >
         <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[18.06px] lg:size-[37.33px]" />

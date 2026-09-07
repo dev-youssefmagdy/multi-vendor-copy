@@ -221,6 +221,21 @@
         color: #2AAF2F;
         white-space: nowrap;
     }
+
+    /* RTL: mirror the corner-pinned sale/heart/cart positions. */
+    [dir="rtl"] .sqv6-mob__sale {
+        right: auto;
+        left: 0;
+        border-radius: 0 1.545cqw;
+    }
+    [dir="rtl"] .sqv6-mob__fav {
+        left: auto;
+        right: 1.1cqw;
+    }
+    [dir="rtl"] .sqv6-mob__cart {
+        right: auto;
+        left: 1.1cqw;
+    }
 </style>
 @endonce
 

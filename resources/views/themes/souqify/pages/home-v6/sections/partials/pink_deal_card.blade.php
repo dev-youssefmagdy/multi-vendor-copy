@@ -229,6 +229,30 @@
         letter-spacing: 0.23cqw;
         white-space: nowrap;
     }
+
+    /* RTL: mirror the corner-pinned tag/heart/cart/ribbon positions. */
+    [dir="rtl"] .sqv6-deal__tag {
+        left: auto;
+        right: 0;
+        border-radius: 40px 0 0 999px;
+    }
+    [dir="rtl"] .sqv6-deal__fav {
+        right: auto;
+        left: 2.9cqw;
+    }
+    [dir="rtl"] .sqv6-deal__cart {
+        left: auto;
+        /* Exact mirror of `left: 75.2%` for a 24.22cqw-wide button: both terms
+           are relative to the container's inline-size, so this stays exact at
+           any card width. */
+        right: calc(24.8% - 24.22cqw);
+    }
+    [dir="rtl"] .sqv6-deal__ribbon {
+        left: auto;
+        right: 0;
+        padding: 1.27cqw 2.55cqw 1.27cqw 8cqw;
+        border-radius: 10.2cqw 0px 0px 0px;
+    }
 </style>
 @endonce
 

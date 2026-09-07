@@ -12,6 +12,8 @@
               $__heroImgUrl = $__heroImg
                   ? (filter_var($__heroImg, FILTER_VALIDATE_URL) ? $__heroImg : asset('storage/' . ltrim($__heroImg, '/')))
                   : asset('elora-2/assets/images/hero-desktop.png');
+              $__heroTitle = $banner->translationValue('title') ?? $storeName;
+              $__heroButtonText = $banner->translationValue('button_text') ?? __('Shop Now');
             @endphp
             <div class="swiper-slide">
               <a href="{{ $banner->url ?? '#' }}"
@@ -19,12 +21,12 @@
               >
                 <img
                   src="{{ $__heroImgUrl }}"
-                  alt="{{ $banner->title ?? $storeName }}"
+                  alt="{{ $__heroTitle }}"
                   class="lg:hidden absolute inset-0 h-full w-full object-cover"
                 />
                 <img
                   src="{{ $__heroImgUrl }}"
-                  alt="{{ $banner->title ?? $storeName }}"
+                  alt="{{ $__heroTitle }}"
                   class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                 />
                 <div
@@ -43,7 +45,7 @@
                   <h1
                     class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05] lg:leading-[80px]"
                   >
-                    {{ $banner->title ?? $storeName }}
+                    {{ $__heroTitle }}
                   </h1>
                   <button
                     type="button"
@@ -52,7 +54,7 @@
                     <span
                       class="font-medium text-[14px] lg:text-[24px] lg:leading-[25px] tracking-[0.5px]"
                       style="color: var(--color-accent-green)"
-                      >{{ $banner->button_text ?? __('Shop Now') }}</span
+                      >{{ $__heroButtonText }}</span
                     >
                   </button>
                 </div>

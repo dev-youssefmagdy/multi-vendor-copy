@@ -170,7 +170,7 @@
       @if ($firstFlashProduct && !empty($firstFlashProduct['discount']))
         <span
           id="flashMobileBadge"
-          class="absolute -top-[10px] -right-[14px] z-10 flex items-center justify-center px-[10px] h-[32px] rounded-[30px] border border-white text-[14px] font-normal text-white whitespace-nowrap"
+          class="absolute -top-[10px] -end-[14px] z-10 flex items-center justify-center px-[10px] h-[32px] rounded-[30px] border border-white text-[14px] font-normal text-white whitespace-nowrap"
           style="background: var(--color-brand-orange)"
         >{{ $firstFlashProduct['discount'] }}</span>
       @endif
@@ -178,7 +178,7 @@
       @if ($firstFlashProduct)
         <span
           id="flashMobilePrice"
-          class="absolute -bottom-[10px] -left-[10px] z-10 flex items-center justify-center px-[10px] h-[32px] rounded-[30px] border border-black bg-white text-[14px] font-bold whitespace-nowrap"
+          class="absolute -bottom-[10px] -start-[10px] z-10 flex items-center justify-center px-[10px] h-[32px] rounded-[30px] border border-black bg-white text-[14px] font-bold whitespace-nowrap"
           style="color: var(--color-brand-orange)"
           data-template="{{ __('Only :price', ['price' => '%s']) }}"
         >{{ __('Only :price', ['price' => $firstFlashProduct['price']]) }}</span>

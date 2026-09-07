@@ -6,7 +6,7 @@
       <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover" />
     @endif
     @if (!empty($p['badge']))
-      <span class="absolute top-0 left-0 text-[9px] lg:text-[11px] px-[6px] py-[3px] rounded-br-[6px] rounded-tl-[7px] tracking-[0.3px]" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>
+      <span class="absolute top-0 left-0 rtl:left-auto rtl:right-0 text-[9px] lg:text-[11px] px-[6px] py-[3px] rounded-br-[6px] rounded-tl-[7px] tracking-[0.3px]" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>
     @endif
   </a>
   <div class="flex-1 flex flex-col gap-[4px] p-[5px] min-w-0">

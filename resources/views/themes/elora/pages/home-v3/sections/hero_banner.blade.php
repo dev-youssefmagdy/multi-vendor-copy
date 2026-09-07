@@ -9,6 +9,9 @@
               $imgUrl = $img
                   ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/')))
                   : asset('elora-3/assets/images/hero-desktop.jpg');
+              $bannerTitle = $banner->translationValue('title') ?? $storeName;
+              $bannerSubtitle = $banner->translationValue('subtitle');
+              $bannerButtonText = $banner->translationValue('button_text') ?? __('Shop Now');
             @endphp
             <div class="swiper-slide">
               <a href="{{ $banner->url ?? '#' }}"
@@ -16,13 +19,13 @@
               >
                 <img
                   src="{{ $imgUrl }}"
-                  alt="{{ $banner->title ?? $storeName }}"
+                  alt="{{ $bannerTitle }}"
                   class="lg:hidden absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"
                 />
                 <img
                   src="{{ $imgUrl }}"
-                  alt="{{ $banner->title ?? $storeName }}"
+                  alt="{{ $bannerTitle }}"
                   class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"
                 />
@@ -48,14 +51,14 @@
                   <h1
                     class="font-black text-[26px] lg:text-[68px] text-white leading-[1.1]"
                   >
-                    {{ $banner->title ?? $storeName }}
+                    {{ $bannerTitle }}
                   </h1>
-                  @if ($banner->subtitle)
+                  @if ($bannerSubtitle)
                     <p
                       class="text-[11px] lg:text-[29px] leading-tight"
                       style="color: var(--color-hero-subtitle)"
                     >
-                      {{ $banner->subtitle }}
+                      {{ $bannerSubtitle }}
                     </p>
                   @endif
                   <button
@@ -64,7 +67,7 @@
                     style="background: var(--color-brand-pink)"
                   >
                     <span class="font-bold text-[12px] lg:text-[31px] text-white"
-                      >{{ $banner->button_text ?? __('Shop Now') }}</span
+                      >{{ $bannerButtonText }}</span
                     >
                   </button>
                 </div>

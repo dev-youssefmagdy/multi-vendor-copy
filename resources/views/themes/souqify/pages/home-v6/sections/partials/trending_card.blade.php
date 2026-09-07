@@ -5,11 +5,11 @@
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
         @endif
-        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[6px] left-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[14px]" alt="" /></button>
+        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[6px] left-[6px] rtl:left-auto rtl:right-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[14px]" alt="" /></button>
         @if (empty($p['outOfStock']))
-            <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="absolute bottom-[6px] right-[6px] rounded-[8px] p-[5px] shadow" style="background:var(--color-black-alt)"><img src="{{ asset('souqify-5/assets/icons/cart-add.svg') }}" class="size-[16px] invert" alt="" /></button>
+            <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="absolute bottom-[6px] right-[6px] rtl:right-auto rtl:left-[6px] rounded-[8px] p-[5px] shadow" style="background:var(--color-black-alt)"><img src="{{ asset('souqify-5/assets/icons/cart-add.svg') }}" class="size-[16px] invert" alt="" /></button>
         @else
-            <span class="absolute bottom-[6px] right-[6px] rounded-[8px] p-[5px] shadow" style="background:var(--color-black-alt)" aria-hidden="true"><img src="{{ asset('souqify-5/assets/icons/cart-add.svg') }}" class="size-[16px] invert" alt="" /></span>
+            <span class="absolute bottom-[6px] right-[6px] rtl:right-auto rtl:left-[6px] rounded-[8px] p-[5px] shadow" style="background:var(--color-black-alt)" aria-hidden="true"><img src="{{ asset('souqify-5/assets/icons/cart-add.svg') }}" class="size-[16px] invert" alt="" /></span>
         @endif
     </a>
     <div class="flex-1 p-[10px] flex flex-col gap-[6px] min-w-0">

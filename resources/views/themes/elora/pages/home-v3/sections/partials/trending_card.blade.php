@@ -3,15 +3,15 @@
   <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[11px] shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
     <div class="relative w-full h-[213px] shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
-      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+      <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
-        class="absolute top-[8px] left-[8px] flex items-center justify-center size-[37px] bg-white rounded-full shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
+        class="absolute top-[8px] start-[8px] flex items-center justify-center size-[37px] bg-white rounded-full shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[23px]" alt="" />
       </button>
-      <span class="absolute top-0 right-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-bl-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
-      <div aria-hidden="true" class="absolute bottom-[8px] right-[8px] flex items-center justify-center w-[66px] h-[52px] bg-[#FDFDFD] rounded-[19px] shadow-sm">
+      <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-es-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
+      <div aria-hidden="true" class="absolute bottom-[8px] end-[8px] flex items-center justify-center w-[66px] h-[52px] bg-[#FDFDFD] rounded-[19px] shadow-sm">
         <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="size-[28px]" alt="" />
       </div>
     </div>

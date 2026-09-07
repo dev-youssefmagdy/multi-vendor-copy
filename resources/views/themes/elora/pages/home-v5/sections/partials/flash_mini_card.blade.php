@@ -7,15 +7,15 @@
         data-fav="{{ $p['favData'] }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
-        class="absolute top-[6px] left-[6px] lg:top-[7.08px] lg:left-[7.08px] bg-white cursor-pointer shadow lg:shadow-[0_4.72px_4.72px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[9.44px] rounded-full">
+        class="absolute top-[6px] start-[6px] lg:top-[7.08px] lg:start-[7.08px] bg-white cursor-pointer shadow lg:shadow-[0_4.72px_4.72px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[9.44px] rounded-full">
         <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[23.61px]" />
       </button>
     @else
-      <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[6px] left-[6px] lg:top-[7.08px] lg:left-[7.08px] bg-white cursor-pointer shadow lg:shadow-[0_4.72px_4.72px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[9.44px] rounded-full">
+      <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[6px] start-[6px] lg:top-[7.08px] lg:start-[7.08px] bg-white cursor-pointer shadow lg:shadow-[0_4.72px_4.72px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[9.44px] rounded-full">
         <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[23.61px]" />
       </button>
     @endif
-    <div class="absolute top-0 right-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[6.21px] rounded-tl-[6px] rounded-br-[6px] lg:rounded-tl-[8.28px] lg:rounded-br-[8.28px]" style="background:var(--color-yellow)">
+    <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[6.21px] rounded-tl-[6px] rounded-br-[6px] lg:rounded-tl-[8.28px] lg:rounded-br-[8.28px]" style="background:var(--color-yellow)">
       <p class="font-normal text-[10px] lg:text-[14.49px] tracking-[0.3px] lg:tracking-[0.52px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : __('70% Sold') }}</p>
     </div>
   </div>

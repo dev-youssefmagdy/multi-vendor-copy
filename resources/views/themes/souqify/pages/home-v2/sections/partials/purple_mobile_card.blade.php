@@ -219,6 +219,20 @@
         color: #2AAF2F;
         white-space: nowrap;
     }
+
+    /* RTL: mirror the corner-pinned badge/heart/cart positions. */
+    [dir="rtl"] .sqv2-mob__sale {
+        right: auto;
+        left: 0;
+    }
+    [dir="rtl"] .sqv2-mob__fav {
+        left: auto;
+        right: 0.92cqw;
+    }
+    [dir="rtl"] .sqv2-mob__cart {
+        right: auto;
+        left: 0.92cqw;
+    }
 </style>
 @endonce
 

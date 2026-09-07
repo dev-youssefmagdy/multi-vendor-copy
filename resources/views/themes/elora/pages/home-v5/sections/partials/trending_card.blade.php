@@ -9,30 +9,30 @@
         data-fav="{{ $p['favData'] }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
-        class="absolute top-[3.77px] left-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
+        class="absolute top-[3.77px] start-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
         <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[22px]" />
       </button>
     @else
-      <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[3.77px] left-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
+      <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[3.77px] start-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
         <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[22px]" />
       </button>
     @endif
-    <div class="absolute top-0 right-0 flex items-center justify-center p-[3.31px] rounded-tl-[4.41px] rounded-br-[4.41px] shrink-0" style="background:var(--color-yellow)">
+    <div class="absolute top-0 end-0 flex items-center justify-center p-[3.31px] rounded-tl-[4.41px] rounded-br-[4.41px] shrink-0" style="background:var(--color-yellow)">
       <p class="font-normal text-[7.71px] lg:text-[13px] leading-[10px] tracking-[0.28px] lg:tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : __('70% Sold') }}</p>
     </div>
     @if (!empty($p['isOutOfStock']))
-      <div class="absolute bottom-[3.77px] right-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow opacity-50 cursor-not-allowed">
+      <div class="absolute bottom-[3.77px] end-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow opacity-50 cursor-not-allowed">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15.09px] lg:size-[26px]" />
       </div>
     @elseif (!empty($p['hasMultipleVariants']))
       <button type="button"
         onclick="event.preventDefault(); event.stopPropagation(); openVariantModal({{ $p['id'] ?? 'null' }}, {{ \Illuminate\Support\Js::from($p['nameJs'] ?? ($p['name'] ?? '')) }}, {{ \Illuminate\Support\Js::from($p['variantModalData'] ?? []) }})"
-        class="absolute bottom-[3.77px] right-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow">
+        class="absolute bottom-[3.77px] end-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15.09px] lg:size-[26px]" />
       </button>
     @else
       <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault(); event.stopPropagation()"
-        class="absolute bottom-[3.77px] right-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow">
+        class="absolute bottom-[3.77px] end-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15.09px] lg:size-[26px]" />
       </button>
     @endif

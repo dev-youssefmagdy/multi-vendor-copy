@@ -5,19 +5,19 @@
     <button
       type="button"
       aria-label="{{ __('Add to favorites') }}"
-      class="flex absolute top-[3.77px] lg:top-1.5 left-[3.77px] lg:left-1.5 items-center justify-center w-[20.11px] h-[20.11px] lg:w-8.75 lg:h-8.75 p-[5.03px] lg:p-1.25 bg-white rounded-full shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow"
+      class="flex absolute top-[3.77px] lg:top-1.5 start-[3.77px] lg:start-1.5 items-center justify-center w-[20.11px] h-[20.11px] lg:w-8.75 lg:h-8.75 p-[5.03px] lg:p-1.25 bg-white rounded-full shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow"
     >
       <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-5.25" />
     </button>
     <span
-      class="absolute flex items-center justify-center top-0 right-0 h-[15.43px] lg:h-auto px-[3.31px] lg:px-[6px] lg:py-[4px] text-[7.71px] lg:text-[12px] font-normal max-lg:leading-[10px] max-lg:tracking-[0.2755px] rounded-tr-none rounded-bl-[4.41px] lg:rounded-tr-[8px] lg:rounded-bl-[8px]"
+      class="absolute flex items-center justify-center top-0 end-0 h-[15.43px] lg:h-auto px-[3.31px] lg:px-[6px] lg:py-[4px] text-[7.71px] lg:text-[12px] font-normal max-lg:leading-[10px] max-lg:tracking-[0.2755px] rounded-tr-none rounded-bl-[4.41px] lg:rounded-tr-[8px] lg:rounded-bl-[8px]"
       style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
       >{{ $p['badge'] ?? __('70% Sold') }}</span
     >
     <button
       type="button"
       aria-label="{{ __('Add to cart') }}"
-      class="flex absolute bottom-[3.77px] lg:bottom-1.5 right-[3.77px] lg:right-1.5 items-center justify-center w-[35.83px] lg:w-auto h-[28.29px] lg:h-12 px-[7.54px] lg:px-3 py-[2.51px] rounded-[10.06px] lg:rounded-[17px]"
+      class="flex absolute bottom-[3.77px] lg:bottom-1.5 end-[3.77px] lg:end-1.5 items-center justify-center w-[35.83px] lg:w-auto h-[28.29px] lg:h-12 px-[7.54px] lg:px-3 py-[2.51px] rounded-[10.06px] lg:rounded-[17px]"
       style="background: var(--color-bg-main)"
     >
       <img src="{{ asset('elora-2/assets/icons/cart-add-blue.svg') }}" alt="" class="size-[15.09px] lg:size-6.5" />

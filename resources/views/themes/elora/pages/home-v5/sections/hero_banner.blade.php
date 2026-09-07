@@ -13,6 +13,8 @@
               $imgUrl = $img
                   ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/')))
                   : asset('elora-5/assets/images/hero-desktop.png');
+              $bannerTitle = $banner->translationValue('title') ?? $storeName;
+              $bannerButtonText = $banner->translationValue('button_text');
             @endphp
             <div class="swiper-slide">
               <a
@@ -21,7 +23,7 @@
               >
                 <img
                   src="{{ $imgUrl }}"
-                  alt="{{ $banner->title ?? $storeName }}"
+                  alt="{{ $bannerTitle }}"
                   class="absolute inset-0 h-full w-full object-cover"
                 />
                 <div
@@ -41,7 +43,7 @@
                     class="font-bold text-[24px] lg:text-[64px] leading-[1.05] text-white tracking-[0.5px]"
                   >
                     @if ($banner->title)
-                      {{ $banner->title }}
+                      {{ $bannerTitle }}
                     @else
                       <span style="color: var(--color-primary)">{{ $heroLead[$loop->index % 3] }}</span>{{ $heroRest[$loop->index % 3] }}
                     @endif
@@ -53,7 +55,7 @@
                     <span
                       class="font-medium text-[14px] lg:text-[24px] tracking-[0.5px]"
                       style="color: var(--color-primary)"
-                      >{{ $banner->button_text ?? $heroCta[$loop->index % 3] }}</span
+                      >{{ $bannerButtonText ?? $heroCta[$loop->index % 3] }}</span
                     >
                   </button>
                 </div>

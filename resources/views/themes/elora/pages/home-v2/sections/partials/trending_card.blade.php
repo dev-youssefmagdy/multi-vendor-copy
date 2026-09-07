@@ -64,7 +64,7 @@
       @if (isset($p['progress']))
         <div class="flex flex-col items-start w-full" style="gap: 1px">
           <div class="progress-bar relative w-full overflow-hidden" style="background: var(--color-stroke); border-radius: 24px">
-            <div class="absolute top-0 left-0 h-full" style="background: var(--color-accent-purple); width: {{ $p['progress'] }}%; border-radius: 24px"></div>
+            <div class="absolute top-0 start-0 h-full" style="background: var(--color-accent-purple); width: {{ $p['progress'] }}%; border-radius: 24px"></div>
           </div>
           @if (!empty($p['ordered']))
             <p class="progress-text font-normal" style="letter-spacing: 0.31px; color: var(--color-accent-purple)">{{ $p['ordered'] }}</p>

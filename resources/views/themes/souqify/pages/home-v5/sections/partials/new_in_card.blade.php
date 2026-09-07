@@ -220,6 +220,21 @@
         color: #2AAF2F;
         white-space: nowrap;
     }
+
+    /* RTL: mirror the corner-pinned sale/heart/cart positions. */
+    [dir="rtl"] .sqv5-new__sale {
+        left: auto;
+        right: 0;
+        border-radius: 1.285cqw 0;
+    }
+    [dir="rtl"] .sqv5-new__fav {
+        left: auto;
+        right: 1.1cqw;
+    }
+    [dir="rtl"] .sqv5-new__cart {
+        right: auto;
+        left: 1.1cqw;
+    }
 </style>
 @endonce
 

@@ -13,7 +13,7 @@
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
 
     <span
-      class="absolute top-0 right-0 flex items-center justify-center px-[4.08px] h-[19.05px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
+      class="absolute top-0 end-0 flex items-center justify-center px-[4.08px] h-[19.05px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
       style="background: var(--color-accent-yellow)"
     >
       <p class="font-normal text-[9.52px] leading-[12px] tracking-[0.34px] whitespace-nowrap" style="color: var(--color-black)">{{ __('70% Sold') }}</p>
@@ -24,7 +24,7 @@
       onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
       data-fav='{{ $p['favData'] ?? '{}' }}'
       aria-label="{{ __('Add to favorites') }}"
-      class="elora-v4-heart-btn absolute top-[5px] left-[5px] flex items-center justify-center size-[24.83px] rounded-full bg-white shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]"
+      class="elora-v4-heart-btn absolute top-[5px] start-[5px] flex items-center justify-center size-[24.83px] rounded-full bg-white shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]"
     >
       <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[15.52px]" />
     </button>
@@ -34,7 +34,7 @@
       wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})"
       onclick="event.stopPropagation()"
       aria-label="{{ __('Add to cart') }}"
-      class="absolute bottom-[5px] right-[5px] flex items-center justify-center w-[44.24px] h-[34.92px] rounded-[12.42px]"
+      class="absolute bottom-[5px] end-[5px] flex items-center justify-center w-[44.24px] h-[34.92px] rounded-[12.42px]"
       style="background: var(--color-bg-main)"
     >
       <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="size-[18.63px]" />
