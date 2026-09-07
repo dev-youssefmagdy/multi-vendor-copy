@@ -27,19 +27,45 @@
 
     <button
       type="button"
-      aria-label="Add to favorites"
+      aria-label="{{ __('Add to favorites') }}"
+      @if (!empty($p['favData']))
+        onclick="event.preventDefault(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] }}"
+        data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+        data-product-id="{{ $p['id'] ?? '' }}"
+      @endif
       class="absolute top-[4px] left-[4px] lg:top-[6px] lg:left-[6px] z-[1] flex items-center justify-center p-[5px] lg:p-[8px] size-[20px] lg:size-[32px] rounded-full border-0"
       style="background: var(--color-white); box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15)"
     >
       <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[20px]" />
     </button>
 
-    <div
-      class="relative z-[1] flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] w-[36px] lg:w-[57px] h-[28px] lg:h-[45px] rounded-[10px] lg:rounded-[16px]"
-      style="background: var(--color-bg-main)"
-    >
-      <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="Add to cart" class="size-[15px] lg:size-[24px]" />
-    </div>
+    @if (!empty($p['isOutOfStock']))
+      <div
+        role="button" aria-disabled="true" onclick="event.preventDefault()"
+        class="relative z-[1] flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] w-[36px] lg:w-[57px] h-[28px] lg:h-[45px] rounded-[10px] lg:rounded-[16px] cursor-not-allowed"
+        style="background: var(--color-bg-main)"
+      >
+        <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15px] lg:size-[24px] opacity-40" />
+      </div>
+    @elseif (!empty($p['hasMultipleVariants']))
+      <div
+        role="button" tabindex="0"
+        onclick="event.preventDefault(); openVariantModal({{ $p['id'] ?? 'null' }}, {{ \Illuminate\Support\Js::from($p['fullName'] ?? ($p['name'] ?? '')) }}, {{ \Illuminate\Support\Js::from($p['variantModalData'] ?? []) }})"
+        class="relative z-[1] flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] w-[36px] lg:w-[57px] h-[28px] lg:h-[45px] rounded-[10px] lg:rounded-[16px]"
+        style="background: var(--color-bg-main)"
+      >
+        <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15px] lg:size-[24px]" />
+      </div>
+    @else
+      <div
+        role="button" tabindex="0" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault()"
+        class="relative z-[1] flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] w-[36px] lg:w-[57px] h-[28px] lg:h-[45px] rounded-[10px] lg:rounded-[16px]"
+        style="background: var(--color-bg-main)"
+      >
+        <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15px] lg:size-[24px]" />
+      </div>
+    @endif
   </div>
 
   {{-- Body --}}

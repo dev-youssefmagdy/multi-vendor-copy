@@ -41,7 +41,7 @@
                   <h1
                     class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05]"
                   >
-                    {{ $banner->title ?? $storeName ?? 'Explore New Products' }}
+                    {{ $banner->title ?? $storeName ?? __('Explore New Products') }}
                   </h1>
                   <button
                     type="button"
@@ -50,7 +50,7 @@
                   >
                     <span
                       class="font-medium text-[14px] lg:text-[24px] text-black tracking-[0.5px]"
-                      >{{ $banner->button_text ?? 'Shop Now' }}</span
+                      >{{ $banner->button_text ?? __('Shop Now') }}</span
                     >
                   </button>
                 </div>
@@ -89,7 +89,7 @@
                   <h1
                     class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05]"
                   >
-                    {{ $storeName ?? 'Explore New Products' }}
+                    {{ $storeName ?? __('Explore New Products') }}
                   </h1>
                   <button
                     type="button"
@@ -98,7 +98,7 @@
                   >
                     <span
                       class="font-medium text-[14px] lg:text-[24px] text-black tracking-[0.5px]"
-                      >Shop Now</span
+                      >{{ __('Shop Now') }}</span
                     >
                   </button>
                 </div>

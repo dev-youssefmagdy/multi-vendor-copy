@@ -1,9 +1,10 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; ordered/progress optional --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto w-full lg:w-auto">
   <a href="{{ $p['url'] ?? '#' }}" class="flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden" style="text-decoration:none">
     <div class="relative w-[123.69px] lg:w-[222.51px] shrink-0 h-full lg:h-[236px] lg:px-[6.36px] lg:py-[5.3px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
-      <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">70% Sold</span>
+      <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'
         aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] left-[5px] lg:top-[6px] lg:left-[6px] bg-white rounded-full p-[5.03px] lg:p-[5px] shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow"><img src="{{ asset('elora-4/assets/icons/heart.svg') }}" class="size-[12.57px] lg:size-[22px]" alt="" /></button>
@@ -17,7 +18,7 @@
       <div class="flex flex-col gap-[2.51px] lg:gap-[4.24px] w-full">
         <div class="flex items-center justify-between gap-[1.26px] lg:gap-[2.12px] w-full">
           <p class="font-medium text-[12px] leading-[15px] lg:text-[23.6px] lg:leading-[30px] tracking-[0.31px] lg:tracking-[0.53px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-          <p class="text-[10px] leading-[16px] lg:text-[25.29px] lg:leading-[26px] tracking-[0.31px] lg:tracking-[0.53px] lg:text-center shrink-0 whitespace-nowrap" style="color:#CD0032">{{ $p['weight'] ?? '250g' }}</p>
+          <p class="text-[10px] leading-[16px] lg:text-[25.29px] lg:leading-[26px] tracking-[0.31px] lg:tracking-[0.53px] lg:text-center shrink-0 whitespace-nowrap" style="color:#CD0032">{{ $p['weight'] ?? __(':n g', ['n' => 250]) }}</p>
         </div>
         <p class="text-[10px] leading-[13px] lg:text-[20.23px] lg:leading-[25px] tracking-[0.31px] lg:tracking-[0.53px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
       </div>
@@ -50,7 +51,7 @@
       {{-- Delivery estimate --}}
       <div class="flex items-center gap-[4px] lg:gap-[6.74px]">
         <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="w-[12px] h-[12px] lg:w-[20.23px] lg:h-[20.23px] shrink-0" />
-        <span class="font-medium text-[8px] leading-[10px] lg:text-[13.49px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by 24 March') }}</span>
+        <span class="font-medium text-[8px] leading-[10px] lg:text-[13.49px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</span>
       </div>
 
     </div>

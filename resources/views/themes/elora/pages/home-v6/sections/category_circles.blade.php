@@ -8,13 +8,13 @@
           class="font-medium text-[22px] lg:text-[32px] lg:leading-[40px]"
           style="color: #000000"
         >
-          Categories
+          {{ __('Categories') }}
         </h2>
         <a
           href="#"
           class="font-normal text-[14px] lg:text-[24px] lg:leading-[30px] tracking-[0.5px]"
           style="color: var(--color-accent-green)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div class="swiper categories-swiper">

@@ -1,5 +1,9 @@
     @php
-      $newInCards = ($newInProducts ?? collect())->map(fn ($product) => $product->toEloraV4Card($currentCurrency ?? null))->all();
+      $newInCards = ($newInProducts ?? collect())->map(function ($product) use ($currentCurrency) {
+        $card = $product->toEloraV4Card($currentCurrency ?? null);
+        $card['desc'] = $product->centralProduct?->category?->name;
+        return $card;
+      })->all();
       $newInGroups = array_chunk($newInCards, 3);
     @endphp
     @if (!empty($newInCards))

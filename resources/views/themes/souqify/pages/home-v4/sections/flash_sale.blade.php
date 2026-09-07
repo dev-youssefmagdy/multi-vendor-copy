@@ -15,18 +15,35 @@
         $rating = (float) ($product->average_rating ?? 0);
         $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
         $chip = $__chipPalettes[$index % count($__chipPalettes)];
+        $__name = \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30);
+        $__img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
+        $__url = route('tenant.storefront.product', $product->slug);
+        $__outOfStock = $product->stockStatus() === 'out_of_stock';
 
         return [
             'id' => $product->id,
-            'url' => route('tenant.storefront.product', $product->slug),
-            'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+            'slug' => $product->slug,
+            'url' => $__url,
+            'image' => $__img,
+            'name' => $__name,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : null,
             'discountBg' => $chip['bg'],
             'discountColor' => $chip['color'],
+            'outOfStock' => $__outOfStock,
+            'favData' => json_encode([
+                'slug' => $product->slug,
+                'name' => $__name,
+                'price' => round((float) $pricing['current_price'] * $rate, 2),
+                'old_price' => $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null,
+                'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+                'rating' => $rating,
+                'image' => $__img,
+                'url' => $__url,
+                'added' => time(),
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
             // Design-only fields with no backing data yet.
             'weight' => null,
             'badge' => '🔥 ' . __('Trending Now'),

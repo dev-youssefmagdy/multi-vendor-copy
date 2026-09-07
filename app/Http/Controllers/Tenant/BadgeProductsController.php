@@ -19,6 +19,7 @@ class BadgeProductsController extends Controller
             'best-selling' => 'Best Selling Products',
             'featured'     => 'Featured Products',
             'recommended'  => 'Recommended Products',
+            'trending-now' => 'Trending Now Products',
             default        => ucwords(str_replace('-', ' ', $badge->text)) . ' Products',
         };
 

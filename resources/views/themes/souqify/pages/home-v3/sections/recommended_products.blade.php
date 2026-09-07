@@ -18,11 +18,14 @@
 
             return [
                 'id' => $product->id,
+                'slug' => $product->slug,
                 'url' => route('tenant.storefront.product', $product->slug),
                 'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
                 'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
                 'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
+                'ratingValue' => $rating,
                 'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+                'rawPrice' => round((float) $pricing['current_price'] * $rate, 2),
                 'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
                 'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : null,
                 'discountBg' => $chip['bg'],

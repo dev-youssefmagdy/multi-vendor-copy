@@ -1,5 +1,9 @@
     @php
-      $bestSellerProducts = ($bestSelling ?? collect())->map(fn ($product) => $product->toEloraV4Card($currentCurrency ?? null));
+      $bestSellerProducts = ($bestSelling ?? collect())->map(function ($product) use ($currentCurrency) {
+        $card = $product->toEloraV4Card($currentCurrency ?? null);
+        $card['desc'] = $product->centralProduct?->category?->name;
+        return $card;
+      });
     @endphp
     @if ($bestSellerProducts->isNotEmpty())
     <!-- ============ BEST SELLER ============ -->

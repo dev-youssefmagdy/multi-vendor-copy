@@ -12,20 +12,38 @@
             ['bg' => '#FFB00A', 'color' => '#121212'],
         ][$index % 3];
 
+        $__name = \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30);
+        $__img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
+        $__url = route('tenant.storefront.product', $product->slug);
+        $__sellPrice = round((float) $pricing['current_price'] * $rate, 2);
+        $__oldPrice = $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null;
+
         return [
             'id' => $product->id,
-            'url' => route('tenant.storefront.product', $product->slug),
-            'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
+            'slug' => $product->slug,
+            'url' => $__url,
+            'image' => $__img,
             'tag' => '🔥 ' . __('Trending Now'),
             'stock' => __('Only 5 left - Hurry up'),
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+            'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
-            'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
-            'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
+            'price' => $symbol . number_format($__sellPrice, 2),
+            'oldPrice' => $__oldPrice !== null ? $symbol . number_format($__oldPrice, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
             'discountBg' => $chip['bg'],
             'discountColor' => $chip['color'],
+            'favData' => json_encode([
+                'slug' => $product->slug,
+                'name' => $__name,
+                'price' => $__sellPrice,
+                'old_price' => $__oldPrice,
+                'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+                'rating' => $rating,
+                'image' => $__img,
+                'url' => $__url,
+                'added' => time(),
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
         ];
     });
 @endphp

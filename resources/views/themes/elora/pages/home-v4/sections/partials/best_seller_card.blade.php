@@ -1,4 +1,5 @@
 {{-- Expects $p: image, name, weight, price, oldPrice, discount, rating, url --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto !w-[192.65px]">
   <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col items-start rounded-[8.73px] shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main); text-decoration:none">
     <div class="flex flex-col gap-[7.31px] h-[167.33px] items-end justify-end px-[5.49px] py-[4.57px] relative shrink-0 w-full">
@@ -8,7 +9,7 @@
             <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div class="flex h-[22.44px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">
-            <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">70% Sold</p>
+            <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ __('70% Sold') }}</p>
           </div>
         </div>
         <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
@@ -29,13 +30,13 @@
           <p class="font-medium text-[17.46px] leading-[22px] tracking-[0.46px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
           <p class="font-normal text-[14.55px] leading-[23px] tracking-[0.46px] text-center shrink-0 whitespace-nowrap" style="color:var(--color-badge-pink)">{{ $p['weight'] }}</p>
         </div>
-        <p class="font-normal text-[14.55px] leading-[18px] tracking-[0.46px] w-full truncate" style="color:var(--color-text-subtitle)">Premium cotton blend</p>
+        <p class="font-normal text-[14.55px] leading-[18px] tracking-[0.46px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium cotton blend') }}</p>
       </div>
       <div class="flex flex-col gap-[1px] items-start w-full">
         <div class="h-[5.02px] w-full rounded-full" style="background:var(--color-stroke)">
           <div class="h-full rounded-full" style="background:var(--color-progress-red); width:{{ $p['progress'] ?? 83 }}%"></div>
         </div>
-        <p class="text-[10.03px] leading-[13px] tracking-[0.32px] w-full truncate" style="color:var(--color-progress-red)">{{ $p['ordered'] ?? '5 ordered last 30 min' }}</p>
+        <p class="text-[10.03px] leading-[13px] tracking-[0.32px] w-full truncate" style="color:var(--color-progress-red)">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
       </div>
       <div class="flex flex-col gap-[3.66px] items-start">
         <div class="flex gap-[7.31px] items-center justify-center">
@@ -54,7 +55,7 @@
       </div>
       <div class="flex gap-[5.82px] items-center w-full min-w-0">
         <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[17.46px] shrink-0" />
-        <p class="font-medium text-[11.64px] leading-[15px] truncate" style="color:var(--color-success)">Delivered by 24 March</p>
+        <p class="font-medium text-[11.64px] leading-[15px] truncate" style="color:var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</p>
       </div>
     </div>
   </a>

@@ -11,9 +11,9 @@
               <div
                 class="flex flex-col text-[12px] lg:text-[19.648px] leading-[15px] lg:leading-[25px] tracking-[0.5px] lg:tracking-[0.818667px] whitespace-nowrap"
               >
-                <span class="font-semibold text-black">Free Shipping</span>
+                <span class="font-semibold text-black">{{ __('Free Shipping') }}</span>
                 <span class="font-normal text-[var(--color-text-muted)]"
-                  >Free shipping on all your order</span
+                  >{{ __('Free shipping on all your order') }}</span
                 >
               </div>
             </div>
@@ -26,9 +26,9 @@
               <div
                 class="flex flex-col text-[12px] lg:text-[19.648px] leading-[15px] lg:leading-[25px] tracking-[0.5px] lg:tracking-[0.818667px] whitespace-nowrap"
               >
-                <span class="font-semibold text-black">Customer Support 24/7</span>
+                <span class="font-semibold text-black">{{ __('Customer Support 24/7') }}</span>
                 <span class="font-normal text-[var(--color-text-muted)]"
-                  >Instant access to Support</span
+                  >{{ __('Instant access to Support') }}</span
                 >
               </div>
             </div>
@@ -41,9 +41,9 @@
               <div
                 class="flex flex-col text-[12px] lg:text-[19.648px] leading-[15px] lg:leading-[25px] tracking-[0.5px] lg:tracking-[0.818667px] whitespace-nowrap"
               >
-                <span class="font-semibold text-black">100% Secure Payment</span>
+                <span class="font-semibold text-black">{{ __('100% Secure Payment') }}</span>
                 <span class="font-normal text-[var(--color-text-muted)]"
-                  >We ensure your money is save</span
+                  >{{ __('We ensure your money is save') }}</span
                 >
               </div>
             </div>
@@ -56,9 +56,9 @@
               <div
                 class="flex flex-col text-[12px] lg:text-[19.648px] leading-[15px] lg:leading-[25px] tracking-[0.5px] lg:tracking-[0.818667px] whitespace-nowrap"
               >
-                <span class="font-semibold text-black">Money-Back Guarantee</span>
+                <span class="font-semibold text-black">{{ __('Money-Back Guarantee') }}</span>
                 <span class="font-normal text-[var(--color-text-muted)]"
-                  >30 Days Money-Back Guarantee</span
+                  >{{ __('30 Days Money-Back Guarantee') }}</span
                 >
               </div>
             </div>

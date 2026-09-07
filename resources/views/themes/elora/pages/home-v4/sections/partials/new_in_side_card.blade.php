@@ -1,4 +1,5 @@
 {{-- New In composite slide's right-side mini card. Expects $p: image, name, weight, price, oldPrice, discount, rating, url --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex items-stretch gap-[3px] lg:gap-[6.44px] rounded-[6px] lg:rounded-[12.87px] h-full lg:h-[192.98px] w-[285.22px] lg:w-[611.81px] shadow-[var(--shadow-card-lg)] overflow-hidden" style="text-decoration:none">
   <div class="relative shrink-0 w-[123.69px] lg:w-[265.32px]">
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 lg:inset-[6.74px_8.09px] h-full w-full lg:h-auto lg:w-auto object-cover" />
@@ -7,7 +8,7 @@
       aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] left-[5px] lg:top-[8px] lg:left-[8px] bg-white cursor-pointer shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.39px_5.39px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] lg:p-[10.79px] rounded-full size-[20.11px] lg:size-[43.15px]">
       <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[26.97px]" />
     </button>
-    <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] w-[39.61px] lg:w-[84.18px] whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">70% Sold</span>
+    <span class="absolute top-0 right-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] w-[39.61px] lg:w-[84.18px] whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ __('70% Sold') }}</span>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
       aria-label="{{ __('Add to cart') }}"
       class="absolute bottom-[5px] right-[5px] lg:bottom-[8px] lg:right-[8px] flex items-center justify-center rounded-[10.06px] lg:rounded-[21.57px] h-[28.29px] lg:h-[60.67px] w-[35.83px] lg:w-[76.85px] px-[7.54px] lg:px-[16.18px] py-[2.51px] lg:py-[5.39px] cursor-pointer bg-[var(--color-bg-main)]">
@@ -22,7 +23,7 @@
         <p class="font-medium text-[12px] leading-[15px] lg:text-[25.74px] lg:leading-[32px] tracking-[0.31px] lg:tracking-[0.67px] truncate" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
         <p class="font-normal text-[10px] leading-[16px] lg:text-[21.45px] lg:leading-[34px] tracking-[0.31px] lg:tracking-[0.67px] lg:text-center shrink-0 text-[#132092] lg:text-[#F87601]">{{ $p['weight'] }}</p>
       </div>
-      <p class="font-normal text-[10px] leading-[13px] lg:text-[21.45px] lg:leading-[27px] tracking-[0.31px] lg:tracking-[0.67px] truncate" style="color:var(--color-text-subtitle)">Premium cotton blend</p>
+      <p class="font-normal text-[10px] leading-[13px] lg:text-[21.45px] lg:leading-[27px] tracking-[0.31px] lg:tracking-[0.67px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium cotton blend') }}</p>
     </div>
 
     {{-- Rating + price --}}
@@ -45,7 +46,7 @@
     {{-- Delivery estimate --}}
     <div class="flex gap-[4px] lg:gap-[8.58px] items-center w-full min-w-0">
       <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[12px] lg:size-[25.74px] shrink-0" />
-      <p class="font-medium text-[8px] leading-[10px] lg:text-[17.16px] lg:leading-[22px] truncate" style="color:var(--color-success)">Delivered by 24 March</p>
+      <p class="font-medium text-[8px] leading-[10px] lg:text-[17.16px] lg:leading-[22px] truncate" style="color:var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</p>
     </div>
 
   </div>

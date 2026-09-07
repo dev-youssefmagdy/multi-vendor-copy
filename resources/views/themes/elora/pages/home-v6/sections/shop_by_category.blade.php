@@ -9,7 +9,7 @@
             class="vertical-heading font-semibold text-[32px] lg:text-[43.9144px] leading-[48px] lg:leading-[66px] tracking-[0.5px] lg:tracking-[0.686163px] whitespace-nowrap"
             style="color: var(--color-accent-green)"
           >
-            Shop by Category
+            {{ __('Shop by Category') }}
           </p>
         </div>
         <div
@@ -71,7 +71,7 @@
             color: var(--color-text-primary);
           "
         >
-          Explore all
+          {{ __('Explore all') }}
         </a>
       </div>
     </section>

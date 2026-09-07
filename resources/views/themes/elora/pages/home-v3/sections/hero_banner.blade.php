@@ -2,7 +2,7 @@
     <section class="relative" wire:ignore>
       <div class="swiper hero-swiper">
         <div class="swiper-wrapper">
-          @php $heroBadges = ['NEW USER', 'FLASH SALE', 'NEW SEASON']; @endphp
+          @php $heroBadges = [__('NEW USER'), __('FLASH SALE'), __('NEW SEASON')]; @endphp
           @forelse ($banners as $banner)
             @php
               $img = $banner->image_path ?? null;

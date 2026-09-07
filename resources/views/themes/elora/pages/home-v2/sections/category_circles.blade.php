@@ -16,13 +16,13 @@
     >
       <div class="flex flex-row items-center justify-between gap-[8px] h-[23px] lg:h-[40px]">
         <h2 class="font-medium text-[18px] lg:text-[32px] leading-[23px] lg:leading-[40px] text-black">
-          Categories
+          {{ __('Categories') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.category') }}"
           class="font-normal text-[12px] lg:text-[20px] leading-[15px] lg:leading-[25px] tracking-[0.5px]"
           style="color: var(--color-accent-purple)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div
@@ -36,11 +36,11 @@
             class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0"
             style="color: var(--color-accent-purple)"
           >
-            {{ $circleCatData[0]['name'] ?? 'Women bags' }}
+            {{ $circleCatData[0]['name'] ?? __('Women bags') }}
           </p>
           <img
             src="{{ $circleCatData[0]['image'] ?? asset('elora-1/assets/images/cat-bag.png') }}"
-            alt="{{ $circleCatData[0]['name'] ?? 'Women bags' }}"
+            alt="{{ $circleCatData[0]['name'] ?? __('Women bags') }}"
             class="absolute z-[1] w-[71px] h-[77px] left-[18px] top-[43px] lg:w-[140.15px] lg:h-[151.99px] lg:left-[35.53px] lg:top-[84.88px] object-contain"
           />
         </a>
@@ -53,11 +53,11 @@
               class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0"
               style="color: var(--color-accent-purple)"
             >
-              {{ $circleCatData[1]['name'] ?? 'Home Accessories' }}
+              {{ $circleCatData[1]['name'] ?? __('Home Accessories') }}
             </p>
             <img
               src="{{ $circleCatData[1]['image'] ?? asset('elora-1/assets/images/cat-lamp.png') }}"
-              alt="{{ $circleCatData[1]['name'] ?? 'Home Accessories' }}"
+              alt="{{ $circleCatData[1]['name'] ?? __('Home Accessories') }}"
               class="absolute z-[1] w-[40px] h-[65px] left-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:left-[173.7px] lg:top-[-21.71px] object-contain"
             />
           </a>
@@ -69,11 +69,11 @@
               class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0"
               style="color: var(--color-accent-purple)"
             >
-              {{ $circleCatData[2]['name'] ?? 'Electronics' }}
+              {{ $circleCatData[2]['name'] ?? __('Electronics') }}
             </p>
             <img
               src="{{ $circleCatData[2]['image'] ?? asset('elora-1/assets/images/cat-laptop.png') }}"
-              alt="{{ $circleCatData[2]['name'] ?? 'Electronics' }}"
+              alt="{{ $circleCatData[2]['name'] ?? __('Electronics') }}"
               class="absolute z-[1] w-[53px] h-[47px] left-[79px] top-[-3px] lg:w-[104.62px] lg:h-[92.77px] lg:left-[155.94px] lg:top-[-5.92px] object-contain"
             />
           </a>
@@ -86,11 +86,11 @@
             class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0"
             style="color: var(--color-accent-purple)"
           >
-            {{ $circleCatData[3]['name'] ?? 'Gaming' }}
+            {{ $circleCatData[3]['name'] ?? __('Gaming') }}
           </p>
           <img
             src="{{ $circleCatData[3]['image'] ?? asset('elora-1/assets/images/cat-controller.png') }}"
-            alt="{{ $circleCatData[3]['name'] ?? 'Gaming' }}"
+            alt="{{ $circleCatData[3]['name'] ?? __('Gaming') }}"
             class="absolute z-[1] w-[74.88px] h-[69.18px] left-[12px] top-[43px] lg:w-[147.81px] lg:h-[136.55px] lg:left-[23.69px] lg:top-[84.88px] object-contain [transform:matrix(-0.96,-0.26,-0.26,0.96,0,0)]"
           />
         </a>

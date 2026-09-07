@@ -292,6 +292,7 @@ Route::group([
         Route::get('/best-selling', [BadgeProductsController::class, 'show'])->name('best-selling');
         Route::get('/featured', [BadgeProductsController::class, 'show'])->name('featured');
         Route::get('/recommended', [BadgeProductsController::class, 'show'])->name('recommended');
+        Route::get('/trending-now', [BadgeProductsController::class, 'show'])->name('trending-now');
         Route::get('/{badge}/search', [BadgeProductsController::class, 'searchProducts'])->name('search');
         Route::get('/{badge}/sort', SortBadgeProducts::class)->name('sort');
         Route::post('/{badge}/assign-category', [BadgeProductsController::class, 'assignCategory'])->name('assign-category');

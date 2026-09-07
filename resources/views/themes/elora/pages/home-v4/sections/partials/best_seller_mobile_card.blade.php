@@ -3,6 +3,7 @@
      .swiper-slide (Swiper's grid module sets slide width/height inline;
      rotation comes from the nth-child rules in elora-v4.css) — this card
      just fills 100% of that slide. --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
   class="relative flex flex-col items-start w-full h-full rounded-[7.41px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)]"
@@ -48,7 +49,7 @@
           <p class="font-normal text-[12.35px] leading-[19px] tracking-[0.39px] text-center shrink-0 whitespace-nowrap" style="color: var(--color-badge-pink)">{{ $p['weight'] }}</p>
         @endif
       </div>
-      <p class="font-normal text-[12.35px] leading-[16px] tracking-[0.39px] w-full truncate" style="color: var(--color-text-subtitle)">{{ __('Premium cotton blend') }}</p>
+      <p class="font-normal text-[12.35px] leading-[16px] tracking-[0.39px] w-full truncate" style="color: var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium cotton blend') }}</p>
     </div>
 
     <div class="flex flex-col gap-[1px] items-start w-full">
@@ -76,7 +77,7 @@
 
     <div class="flex gap-[4.94px] items-center w-full min-w-0">
       <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[14.82px] shrink-0" />
-      <p class="font-medium text-[9.88px] leading-[12px] truncate" style="color: var(--color-success)">{{ __('Delivered by 24 March') }}</p>
+      <p class="font-medium text-[9.88px] leading-[12px] truncate" style="color: var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</p>
     </div>
   </div>
 </a>

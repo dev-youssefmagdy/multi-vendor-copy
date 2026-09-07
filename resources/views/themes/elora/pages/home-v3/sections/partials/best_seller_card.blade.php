@@ -5,7 +5,11 @@
   <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
     <div class="relative w-full h-[142px] lg:h-[269px] shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
-      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault()" class="absolute top-[4.66px] left-[4.66px] lg:top-[9px] lg:left-[9px] flex items-center justify-center size-[24.83px] lg:size-[47px] bg-white rounded-full shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]">
+      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] ?? '' }}"
+        data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+        data-product-id="{{ $p['id'] ?? '' }}"
+        class="absolute top-[4.66px] left-[4.66px] lg:top-[9px] lg:left-[9px] flex items-center justify-center size-[24.83px] lg:size-[47px] bg-white rounded-full shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[15.52px] lg:size-[29px]" alt="" />
       </button>
       <span class="absolute top-0 right-0 flex items-center justify-center font-normal text-[9.52px] lg:text-[18px] leading-[12px] tracking-[0.34px] lg:tracking-[0.64px] px-[4.08px] lg:px-[8px] py-[4.08px] lg:py-[6px] rounded-bl-[5.44px] lg:rounded-bl-[10px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
@@ -17,7 +21,7 @@
       <div class="flex flex-col gap-[3.1px] lg:gap-[6px] w-full">
         <div class="flex items-center justify-between gap-[1.55px] w-full">
           <p class="font-medium text-[14.82px] lg:text-[28px] leading-[19px] tracking-[0.39px] lg:tracking-[0.73px] truncate min-w-0" style="color:#121212">{{ $p['name'] }}</p>
-          <p class="font-normal text-[12.35px] lg:text-[23px] leading-[19px] tracking-[0.39px] lg:tracking-[0.73px] shrink-0" style="color:#FE3A6A">{{ $p['weight'] ?? '200g' }}</p>
+          <p class="font-normal text-[12.35px] lg:text-[23px] leading-[19px] tracking-[0.39px] lg:tracking-[0.73px] shrink-0" style="color:#FE3A6A">{{ $p['weight'] ?? '' }}</p>
         </div>
         <p class="font-normal text-[12.35px] lg:text-[23px] leading-[16px] tracking-[0.39px] lg:tracking-[0.73px] truncate w-full" style="color:#ADADAD">{{ $p['desc'] ?? __('Premium quality') }}</p>
       </div>
@@ -48,7 +52,7 @@
       <div class="flex flex-col gap-[3.1px] lg:gap-[3px] w-full">
         <div class="flex items-center gap-[4.94px] lg:gap-[9px] w-full">
           <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[14.82px] lg:size-[28px] shrink-0" />
-          <span class="font-medium text-[9.88px] lg:text-[19px] leading-[12px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
+          <span class="font-medium text-[9.88px] lg:text-[19px] leading-[12px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</span>
         </div>
       </div>
     </div>

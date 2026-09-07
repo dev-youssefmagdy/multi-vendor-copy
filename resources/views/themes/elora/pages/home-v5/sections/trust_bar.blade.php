@@ -15,12 +15,12 @@
               />
               <div class="flex flex-col leading-tight">
                 <span class="font-semibold text-[19.648px] tracking-[0.818667px] text-white whitespace-nowrap"
-                  >Free Shipping</span
+                  >{{ __('Free Shipping') }}</span
                 >
                 <span
                   class="font-normal text-[19.648px] tracking-[0.818667px] whitespace-nowrap"
                   style="color: #BCBCBC"
-                  >Free shipping on all your order</span
+                  >{{ __('Free shipping on all your order') }}</span
                 >
               </div>
             </div>
@@ -34,12 +34,12 @@
               />
               <div class="flex flex-col leading-tight">
                 <span class="font-semibold text-[19.648px] tracking-[0.818667px] text-white whitespace-nowrap"
-                  >Customer Support 24/7</span
+                  >{{ __('Customer Support 24/7') }}</span
                 >
                 <span
                   class="font-normal text-[19.648px] tracking-[0.818667px] whitespace-nowrap"
                   style="color: #BCBCBC"
-                  >Instant access to Support</span
+                  >{{ __('Instant access to Support') }}</span
                 >
               </div>
             </div>
@@ -53,12 +53,12 @@
               />
               <div class="flex flex-col leading-tight">
                 <span class="font-semibold text-[19.648px] tracking-[0.818667px] text-white whitespace-nowrap"
-                  >100% Secure Payment</span
+                  >{{ __('100% Secure Payment') }}</span
                 >
                 <span
                   class="font-normal text-[19.648px] tracking-[0.818667px] whitespace-nowrap"
                   style="color: #BCBCBC"
-                  >We ensure your money is save</span
+                  >{{ __('We ensure your money is save') }}</span
                 >
               </div>
             </div>
@@ -72,12 +72,12 @@
               />
               <div class="flex flex-col leading-tight">
                 <span class="font-semibold text-[19.648px] tracking-[0.818667px] text-white whitespace-nowrap"
-                  >Money-Back Guarantee</span
+                  >{{ __('Money-Back Guarantee') }}</span
                 >
                 <span
                   class="font-normal text-[19.648px] tracking-[0.818667px] whitespace-nowrap"
                   style="color: #BCBCBC"
-                  >30 Days Money-Back Guarantee</span
+                  >{{ __('30 Days Money-Back Guarantee') }}</span
                 >
               </div>
             </div>
@@ -92,29 +92,29 @@
         <div class="feature-strip-item flex items-center gap-[10px]">
           <img src="{{ asset('elora-5/assets/icons/icon-feature-truck.svg') }}" alt="" class="size-[26px] shrink-0" />
           <div class="flex flex-col leading-tight">
-            <span class="font-semibold text-[13px] text-white whitespace-nowrap">Free Shipping</span>
-            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">Free shipping on all your order</span>
+            <span class="font-semibold text-[13px] text-white whitespace-nowrap">{{ __('Free Shipping') }}</span>
+            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">{{ __('Free shipping on all your order') }}</span>
           </div>
         </div>
         <div class="feature-strip-item hidden items-center gap-[10px]">
           <img src="{{ asset('elora-5/assets/icons/icon-feature-headphones.svg') }}" alt="" class="size-[26px] shrink-0" />
           <div class="flex flex-col leading-tight">
-            <span class="font-semibold text-[13px] text-white whitespace-nowrap">Customer Support 24/7</span>
-            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">Instant access to Support</span>
+            <span class="font-semibold text-[13px] text-white whitespace-nowrap">{{ __('Customer Support 24/7') }}</span>
+            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">{{ __('Instant access to Support') }}</span>
           </div>
         </div>
         <div class="feature-strip-item hidden items-center gap-[10px]">
           <img src="{{ asset('elora-5/assets/icons/icon-feature-bag.svg') }}" alt="" class="size-[26px] shrink-0" />
           <div class="flex flex-col leading-tight">
-            <span class="font-semibold text-[13px] text-white whitespace-nowrap">100% Secure Payment</span>
-            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">We ensure your money is save</span>
+            <span class="font-semibold text-[13px] text-white whitespace-nowrap">{{ __('100% Secure Payment') }}</span>
+            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">{{ __('We ensure your money is save') }}</span>
           </div>
         </div>
         <div class="feature-strip-item hidden items-center gap-[10px]">
           <img src="{{ asset('elora-5/assets/icons/icon-feature-package.svg') }}" alt="" class="size-[26px] shrink-0" />
           <div class="flex flex-col leading-tight">
-            <span class="font-semibold text-[13px] text-white whitespace-nowrap">Money-Back Guarantee</span>
-            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">30 Days Money-Back Guarantee</span>
+            <span class="font-semibold text-[13px] text-white whitespace-nowrap">{{ __('Money-Back Guarantee') }}</span>
+            <span class="font-normal text-[11px] whitespace-nowrap" style="color: var(--color-stroke)">{{ __('30 Days Money-Back Guarantee') }}</span>
           </div>
         </div>
       </div>

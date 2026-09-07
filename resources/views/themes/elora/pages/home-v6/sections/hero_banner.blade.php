@@ -1,6 +1,6 @@
     @php
-      $__heroFallbackTitles = ['Explore New Products', 'Flash Sale Up To 50%', 'New Season Arrivals', 'Free Shipping On Every Order'];
-      $__heroFallbackCtas = ['Shop Now', 'Shop Deals', 'Discover More', 'Start Shopping'];
+      $__heroFallbackTitles = [__('Explore New Products'), __('Flash Sale Up To 50%'), __('New Season Arrivals'), __('Free Shipping On Every Order')];
+      $__heroFallbackCtas = [__('Shop Now'), __('Shop Deals'), __('Discover More'), __('Start Shopping')];
     @endphp
     <!-- ============ HERO ============ -->
     <section class="relative">
@@ -52,7 +52,7 @@
                     <span
                       class="font-medium text-[14px] lg:text-[24px] lg:leading-[25px] tracking-[0.5px]"
                       style="color: var(--color-accent-green)"
-                      >{{ $banner->button_text ?? 'Shop Now' }}</span
+                      >{{ $banner->button_text ?? __('Shop Now') }}</span
                     >
                   </button>
                 </div>

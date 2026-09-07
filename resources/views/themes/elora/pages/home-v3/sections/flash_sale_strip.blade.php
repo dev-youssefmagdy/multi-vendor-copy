@@ -10,14 +10,29 @@
           $pricing = $product->storefrontPricing($variant);
           $hasDiscount = (bool) $pricing['has_discount'];
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-3/assets/images/product-placeholder.svg');
+          $rating = (float) ($product->average_rating ?? 0);
+          $favData = json_encode([
+              'slug' => $product->slug,
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'price' => round((float) $pricing['current_price'] * $rate, 2),
+              'old_price' => $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null,
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+              'rating' => $rating,
+              'image' => $img,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'badge' => null,
+              'added' => time(),
+          ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
           return [
+              'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? '-' . (int) round((float) $pricing['discount_percentage']) . '%' : '',
+              'favData' => $favData,
           ];
       });
 
@@ -176,7 +191,7 @@
           <button
             id="flashSaleNext"
             type="button"
-            aria-label="Next"
+            aria-label="{{ __('Next') }}"
             class="elora-v3-flash__next hidden lg:block cursor-pointer"
           >
             <img

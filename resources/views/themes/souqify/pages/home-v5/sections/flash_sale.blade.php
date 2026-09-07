@@ -5,17 +5,38 @@
         $pricing = $product->storefrontPricing($variant);
         $hasDiscount = (bool) $pricing['has_discount'];
 
+        $__rating = (float) ($product->average_rating ?? 0);
+        $__sellPrice = (float) $pricing['current_price'];
+        $__realPrice = $pricing['original_price'];
+        $__displayReal = $hasDiscount && $__realPrice !== null ? number_format($__realPrice * $rate, 2) : null;
+        $__img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
+        $__name = \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 40);
+        $__url = route('tenant.storefront.product', $product->slug);
+
         return [
             'id' => $product->id,
-            'url' => route('tenant.storefront.product', $product->slug),
-            'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
+            'slug' => $product->slug,
+            'url' => $__url,
+            'image' => $__img,
             'brand' => $product->brand?->translationValue('name') ?? $product->vendor?->name ?? null,
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 40),
-            'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+            'name' => $__name,
+            'price' => $symbol . number_format($__sellPrice * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? '-' . (int) round((float) $pricing['discount_percentage']) . '%' : null,
             'sold' => $product->orders_count ?? null,
             'stock' => $variant?->quantity,
+            'outOfStock' => $product->stockStatus() === 'out_of_stock',
+            'favData' => json_encode([
+                'slug' => $product->slug,
+                'name' => $__name,
+                'price' => round($__sellPrice * $rate, 2),
+                'old_price' => $__displayReal,
+                'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+                'rating' => $__rating,
+                'image' => $__img,
+                'url' => $__url,
+                'added' => time(),
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
         ];
     });
 
@@ -528,9 +549,17 @@
                     @if ($p['discount'])
                       <span class="sqv5-flash__ribbon">{{ $p['discount'] }}</span>
                     @endif
-                    <span class="sqv5-flash__cart">
-                      <img src="{{ asset('souqify-4/assets/icons/flash-cart.svg') }}" alt="" />
-                    </span>
+                    @if ($p['outOfStock'])
+                      <span class="sqv5-flash__cart" aria-disabled="true" onclick="event.preventDefault();event.stopPropagation();" style="opacity:.5;cursor:not-allowed">
+                        <img src="{{ asset('souqify-4/assets/icons/flash-cart.svg') }}" alt="" />
+                      </span>
+                    @else
+                      <span class="sqv5-flash__cart" role="button" aria-label="{{ __('Add to cart') }}"
+                        wire:click="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})"
+                        onclick="event.preventDefault();event.stopPropagation();">
+                        <img src="{{ asset('souqify-4/assets/icons/flash-cart.svg') }}" alt="" />
+                      </span>
+                    @endif
                   </a>
 
                   <div class="sqv5-flash__info">

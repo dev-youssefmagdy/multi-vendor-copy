@@ -4,6 +4,12 @@
       $symbol = data_get($currency, 'symbol', '$');
       $rate = (float) data_get($currency, 'conversion_rate', 1.0);
 
+      // Initial countdown digits (JS takes over ticking via data-countdown/data-flash-timer)
+      $__flashSecondsLeft = ($flashBanner?->end_date ?? null) ? max(0, now()->diffInSeconds($flashBanner->end_date, false)) : 0;
+      $flashHours = str_pad((string) intdiv($__flashSecondsLeft, 3600), 2, '0', STR_PAD_LEFT);
+      $flashMinutes = str_pad((string) intdiv($__flashSecondsLeft % 3600, 60), 2, '0', STR_PAD_LEFT);
+      $flashSeconds = str_pad((string) ($__flashSecondsLeft % 60), 2, '0', STR_PAD_LEFT);
+
       $flashSaleProducts = $flashProducts->take(6)->map(function ($product) use ($symbol, $rate) {
           $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
           $pricing = $product->storefrontPricing($variant);
@@ -22,11 +28,42 @@
           $stockQty = (int) ($centralProd?->stock ?? 0);
           $showLowStock = $manageStock && $stockQty > 0 && $stockQty <= 5;
 
+          // Favorite / cart wiring (mirrors _product-card.blade.php)
+          $activeVariants = $product->variants->where('active', true)->values();
+          $hasMultipleVariants = $activeVariants->count() > 1;
+          $variantModalData = $hasMultipleVariants
+              ? $activeVariants->map(fn($v) => [
+                  'id' => $v->id,
+                  'label' => $v->centralVariant?->title ?? __('Variant #:id', ['id' => $v->id]),
+                  'price' => $symbol . number_format((float) $product->storefrontPricing($v)['current_price'] * $rate, 2),
+                  'inStock' => (int) $v->stock > 0,
+              ])->values()->all()
+              : null;
+          $isOutOfStock = $product->stockStatus() === 'out_of_stock';
+          $sellPrice = (float) $pricing['current_price'];
+          $displayReal = $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null;
+          $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
+          $favData = json_encode([
+              'slug' => $product->slug,
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'price' => round($sellPrice * $rate, 2),
+              'old_price' => $displayReal,
+              'discount' => $hasDiscount ? $discountPct . '% Off' : null,
+              'rating' => $rating,
+              'image' => $img,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'badge' => null,
+              'added' => time(),
+          ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+          $deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F');
+
           return [
               'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'nameJs' => $product->translationValue('name') ?? $product->slug,
+              'description' => $centralProd?->category?->name ?? '',
               'weight' => $weightLabel,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
@@ -34,6 +71,11 @@
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
               'stock' => '',
               'left' => $showLowStock ? __('Only :count left', ['count' => $stockQty]) : '',
+              'delivery' => __('Delivered by') . ' ' . $deliveryDate,
+              'favData' => $favData,
+              'isOutOfStock' => $isOutOfStock,
+              'hasMultipleVariants' => $hasMultipleVariants,
+              'variantModalData' => $variantModalData,
           ];
       })->values();
     @endphp
@@ -61,7 +103,7 @@
         <h2
           class="font-semibold text-[26px] lg:text-[50.39px] text-white tracking-[0.5px] lg:tracking-[0.79px] lg:leading-[150%]"
         >
-          Flash Sale
+          {{ __('Flash Sale') }}
         </h2>
         <img
           src="{{ asset('elora-5/assets/icons/icon-flash.svg') }}"
@@ -81,15 +123,15 @@
               <div class="swiper-slide !w-[362px] lg:!w-[536px] !h-[302px] lg:!h-[450px]">
                 <div class="flex flex-col gap-[10px] lg:gap-[18.78px] items-start h-full">
                   <div class="flex items-center gap-[6px] lg:gap-[5.4px]" @if($flashBanner?->end_date ?? null) data-countdown="{{ $flashBanner->end_date->timestamp }}" @endif>
-                    <span class="font-semibold text-[12px] lg:text-[21.61px] tracking-[0.6px] lg:tracking-[0.9px] lg:leading-[150%] -rotate-90 w-0 lg:w-[32px] shrink-0 whitespace-nowrap" style="color:var(--color-yellow)">Ends in</span>
+                    <span class="font-semibold text-[12px] lg:text-[21.61px] tracking-[0.6px] lg:tracking-[0.9px] lg:leading-[150%] -rotate-90 w-0 lg:w-[32px] shrink-0 whitespace-nowrap" style="color:var(--color-yellow)">{{ __('Ends in') }}</span>
                     <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[79.22px] lg:w-[82.82px] rounded-[8px] lg:rounded-[12.6px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>03</span>
+                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>{{ $flashHours }}</span>
                     </div>
                     <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[79.22px] lg:w-[82.82px] rounded-[8px] lg:rounded-[12.6px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>06</span>
+                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>{{ $flashMinutes }}</span>
                     </div>
                     <div class="flex items-center justify-center h-[36px] w-[38px] lg:h-[79.22px] lg:w-[82.82px] rounded-[8px] lg:rounded-[12.6px]" style="background:linear-gradient(180deg, #FFFFFF 51%, #E5E5E5 51%)">
-                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>25</span>
+                      <span class="font-semibold text-[18px] lg:text-[43.21px] lg:tracking-[0.9px] lg:leading-[150%]" style="color:var(--color-price-blue)" data-flash-timer>{{ $flashSeconds }}</span>
                     </div>
                   </div>
                   @if ($flashSaleProducts->get(1))

@@ -3,7 +3,11 @@
   <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[11px] shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
     <div class="relative w-full h-[213px] shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
-      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault()" class="absolute top-[8px] left-[8px] flex items-center justify-center size-[37px] bg-white rounded-full shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
+      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] ?? '' }}"
+        data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+        data-product-id="{{ $p['id'] ?? '' }}"
+        class="absolute top-[8px] left-[8px] flex items-center justify-center size-[37px] bg-white rounded-full shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[23px]" alt="" />
       </button>
       <span class="absolute top-0 right-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-bl-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
@@ -15,7 +19,7 @@
       <div class="flex flex-col gap-[5px] w-full">
         <div class="flex items-center justify-between gap-[2px] w-full">
           <p class="font-medium text-[22px] tracking-[0.58px] truncate min-w-0" style="color:#121212">{{ $p['name'] }}</p>
-          <p class="font-normal text-[18.5px] tracking-[0.58px] shrink-0" style="color:#FE3A6A">{{ $p['weight'] ?? '200g' }}</p>
+          <p class="font-normal text-[18.5px] tracking-[0.58px] shrink-0" style="color:#FE3A6A">{{ $p['weight'] ?? '' }}</p>
         </div>
         <p class="font-normal text-[18.5px] tracking-[0.58px] truncate w-full" style="color:#ADADAD">{{ $p['desc'] ?? __('Premium quality') }}</p>
       </div>
@@ -45,7 +49,7 @@
 
       <div class="flex items-center gap-[7px] w-full">
         <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px] shrink-0" />
-        <span class="font-medium text-[15px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Delivered by 24 March') }}</span>
+        <span class="font-medium text-[15px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</span>
       </div>
     </div>
   </a>

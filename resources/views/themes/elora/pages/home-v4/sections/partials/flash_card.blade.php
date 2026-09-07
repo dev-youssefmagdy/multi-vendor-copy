@@ -8,6 +8,7 @@
 
   $p keys: id, url, favData, image, name, weight, price, oldPrice, discount, rating
 --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="flash-card-wrap">
   <a href="{{ $p['url'] ?? '#' }}"
      class="flash-card"
@@ -90,7 +91,7 @@
       {{-- Delivery estimate --}}
       <div class="flash-card-delivery-row">
         <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="flash-card-delivery-icon" />
-        <span class="flash-card-delivery-text">{{ __('Delivered by 24 March') }}</span>
+        <span class="flash-card-delivery-text">{{ __('Delivered by') }} {{ $__deliveryDate }}</span>
       </div>
 
     </div>

@@ -1,6 +1,19 @@
 {{-- Figma "Deal Card" (319.97x511.14). Styles live in deal_card_styles under the
-     .sqv3-deal-* namespace. $p keys: id, url, image, name, weight, rating, price,
-     oldPrice, discount, badge, stock. --}}
+     .sqv3-deal-* namespace. $p keys: id, slug, url, image, name, weight, rating,
+     ratingValue, price, rawPrice, oldPrice, discount, badge, stock. --}}
+@php
+    $__favData = json_encode([
+        'slug' => $p['slug'] ?? null,
+        'name' => $p['name'] ?? null,
+        'price' => $p['rawPrice'] ?? null,
+        'old_price' => $p['oldPrice'] ?? null,
+        'discount' => $p['discount'] ?? null,
+        'rating' => $p['ratingValue'] ?? 0,
+        'image' => $p['image'] ?? null,
+        'url' => $p['url'] ?? null,
+        'added' => time(),
+    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+@endphp
 <div class="sqv3-deal" wire:key="flash-v3-{{ $p['id'] }}">
   <a href="{{ $p['url'] }}" class="sqv3-deal__media">
     @if ($p['image'])
@@ -11,11 +24,11 @@
       <span class="sqv3-deal__badge">{{ $p['badge'] }}</span>
     @endif
 
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv3-deal__heart">
+    <button type="button" onclick="event.preventDefault();event.stopPropagation();souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $__favData }}' aria-label="{{ __('Add to favorites') }}" class="sqv3-deal__heart souqify-fav-btn">
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </button>
 
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-deal__cart">
+    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-deal__cart">
       <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
     </button>
 

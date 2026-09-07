@@ -6,20 +6,38 @@
         $rating = (float) ($product->average_rating ?? 0);
         $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
+        $__name = \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 22);
+        $__img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
+        $__url = route('tenant.storefront.product', $product->slug);
+        $__sellPrice = round((float) $pricing['current_price'] * $rate, 2);
+        $__oldPrice = $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null;
+
         return [
             'id' => $product->id,
-            'url' => route('tenant.storefront.product', $product->slug),
-            'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
+            'slug' => $product->slug,
+            'url' => $__url,
+            'image' => $__img,
             'sold' => __('70% Sold'),
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 22),
+            'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'subtitle' => $product->centralProduct?->category?->name ?? '',
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
-            'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
-            'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
+            'price' => $symbol . number_format($__sellPrice, 2),
+            'oldPrice' => $__oldPrice !== null ? $symbol . number_format($__oldPrice, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
             'delivery' => __('Delivered by 24 March'),
             'stock' => __('Only 5 left'),
+            'favData' => json_encode([
+                'slug' => $product->slug,
+                'name' => $__name,
+                'price' => $__sellPrice,
+                'old_price' => $__oldPrice,
+                'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+                'rating' => $rating,
+                'image' => $__img,
+                'url' => $__url,
+                'added' => time(),
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
         ];
     });
     // Figma stacks three Mobile Cards per column, 9.61px apart.

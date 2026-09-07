@@ -7,12 +7,12 @@
           <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
         </div>
       </div>
-      <button type="button" aria-label="Add to favorites" class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px] ml-auto">
+      <button type="button" aria-label="{{ __('Add to favorites') }}" class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px] ml-auto">
         <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[20px]" />
       </button>
     </div>
     <div class="bg-[var(--color-bg-main)] flex h-[40px] items-center justify-center px-[10px] py-[4px] relative rounded-[16px] shrink-0 w-[50px]">
-      <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" alt="Add to cart" class="size-[20px]" />
+      <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" alt="{{ __('Add to cart') }}" class="size-[20px]" />
     </div>
   </div>
   <div class="flex flex-col gap-[6px] items-start p-[8px] relative shrink-0 w-full">

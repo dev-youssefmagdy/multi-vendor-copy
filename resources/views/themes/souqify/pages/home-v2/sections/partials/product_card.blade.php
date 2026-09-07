@@ -7,9 +7,15 @@
         <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover" />
       @endif
     </a>
-    <button type="button" wire:click="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="absolute top-[7px] right-[7px] lg:top-[10px] lg:right-[10px] bg-white rounded-full p-[9px] lg:p-[13px] shadow cursor-pointer">
-      <img src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" class="size-[15px] lg:size-[22px]" alt="" />
-    </button>
+    @if (!empty($p['slug']) && !empty($p['favData']))
+      <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] }}" data-fav='{{ $p['favData'] }}' aria-label="{{ __('Add to favorites') }}" class="absolute top-[7px] right-[7px] lg:top-[10px] lg:right-[10px] bg-white rounded-full p-[9px] lg:p-[13px] shadow cursor-pointer">
+        <img class="fav-icon size-[15px] lg:size-[22px]" src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" alt="" />
+      </button>
+    @else
+      <button type="button" wire:click="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="absolute top-[7px] right-[7px] lg:top-[10px] lg:right-[10px] bg-white rounded-full p-[9px] lg:p-[13px] shadow cursor-pointer">
+        <img src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" class="size-[15px] lg:size-[22px]" alt="" />
+      </button>
+    @endif
     <div class="absolute bottom-[8px] right-[8px] lg:bottom-[14px] lg:right-[14px] bg-white rounded-[5px] p-[8px] lg:p-[11px] shadow flex items-center justify-center">
       <button type="button" wire:click="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}">
         <img src="{{ asset('souqify-1/assets/icons/icon-cart-add.svg') }}" class="size-[22px] lg:size-[33px]" alt="" />

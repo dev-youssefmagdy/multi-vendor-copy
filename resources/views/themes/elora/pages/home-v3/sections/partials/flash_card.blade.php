@@ -6,7 +6,11 @@
       @if (!empty($p['discount']))
         <span class="absolute top-[5px] left-[5px] lg:top-[8px] lg:left-[8px] font-extrabold text-[9px] lg:text-[14px] text-white px-[4px] lg:px-[7px] py-[1px] rounded-[2px] lg:rounded-[3px]" style="background:var(--color-brand-pink)">{{ $p['discount'] }}</span>
       @endif
-      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault()" class="absolute top-[5px] right-[5px] lg:top-[8px] lg:right-[8px] bg-white/90 rounded-full p-[6px] lg:p-[9px] shadow">
+      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] ?? '' }}"
+        data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+        data-product-id="{{ $p['id'] ?? '' }}"
+        class="absolute top-[5px] right-[5px] lg:top-[8px] lg:right-[8px] bg-white/90 rounded-full p-[6px] lg:p-[9px] shadow">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[9.5px] lg:size-[15px]" alt="" />
       </button>
     </div>

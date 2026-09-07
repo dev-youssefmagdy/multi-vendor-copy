@@ -19,11 +19,12 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : 'New',
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('New'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
               'badgeColor' => $hasDiscount ? '#fff' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 25),
               'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
+              'desc' => \Illuminate\Support\Str::limit(strip_tags((string) ($product->translationValue('description') ?? '')), 40) ?: null,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
@@ -41,13 +42,13 @@
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
         >
-          New In
+          {{ __('New In') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.new-in') }}"
           class="text-[14px] lg:text-[24px] tracking-[0.5px] lg:tracking-[0.9px]"
           style="color: var(--color-text-primary)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div class="relative ps-[16px] lg:ps-[56px]">

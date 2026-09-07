@@ -19,7 +19,7 @@
     <section class="flex flex-col items-center px-[16px] lg:px-0 py-[32px] gap-[16px] lg:gap-[24px] w-full max-w-[375px] lg:max-w-[1328px] mx-auto bg-white box-border" style="font-family: 'Outfit', sans-serif">
       <div class="flex flex-col justify-center items-center w-[265px] lg:w-auto h-[48px]">
         <h2 class="m-0 font-semibold text-[32px] leading-[150%] tracking-[0.5px] lg:whitespace-nowrap" style="color: var(--color-text-primary)">
-          Shop by Category
+          {{ __('Shop by Category') }}
         </h2>
       </div>
 
@@ -74,7 +74,7 @@
         class="group box-border flex flex-row justify-center items-center p-[8px] gap-[8px] w-[121px] h-[38px] rounded-[34px] border border-solid bg-transparent cursor-pointer transition-all duration-200 ease-in-out hover:bg-[var(--color-accent-purple)]"
         style="border-color: var(--color-accent-purple)"
       >
-        <span class="font-medium text-[14px] leading-[25px] tracking-[0.5px] text-[var(--color-accent-purple)] group-hover:text-white">Explore all</span>
+        <span class="font-medium text-[14px] leading-[25px] tracking-[0.5px] text-[var(--color-accent-purple)] group-hover:text-white">{{ __('Explore all') }}</span>
       </a>
     </section>
     @endif

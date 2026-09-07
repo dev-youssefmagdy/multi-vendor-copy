@@ -20,14 +20,21 @@
             </span>
         @endif
 
-        <span class="sqv5-deal__cart">
+        <span class="sqv5-deal__cart" role="button" aria-label="{{ __('Add to cart') }}"
+            @if (!empty($p['outOfStock']))
+                aria-disabled="true" onclick="event.preventDefault();event.stopPropagation();" style="opacity:.5;cursor:not-allowed"
+            @else
+                wire:click="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})"
+                onclick="event.preventDefault();event.stopPropagation();"
+            @endif>
             {{-- The cart glyph carries its colour in the file, so a section that
                  overrides the accent (Best Seller) needs its own asset. --}}
             <img src="{{ asset('souqify-4/assets/icons/' . ($p['cartIcon'] ?? 'trending-cart.svg')) }}" alt="{{ __('Add to cart') }}" />
         </span>
     </a>
 
-    <button type="button" wire:click.stop="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv5-deal__fav">
+    <button type="button" class="sqv5-deal__fav souqify-fav-btn" onclick="souqifyToggleFavorite(this)"
+        data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['favData'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}">
         <img src="{{ asset('souqify-4/assets/icons/trending-heart.svg') }}" alt="" />
     </button>
 

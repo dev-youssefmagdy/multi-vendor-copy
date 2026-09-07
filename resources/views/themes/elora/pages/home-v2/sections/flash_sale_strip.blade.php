@@ -10,26 +10,57 @@
           $weightLabel = $weightGrams
               ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
               : '';
+          $deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F');
+          $sellPrice = (float) $pricing['current_price'];
+          $activeVariants = $product->variants->where('active', true)->values();
+          $hasMultipleVariants = $activeVariants->count() > 1;
+          $variantModalData = $hasMultipleVariants
+              ? $activeVariants->map(fn($v) => [
+                  'id' => $v->id,
+                  'label' => $v->centralVariant?->title ?? __('Variant #:id', ['id' => $v->id]),
+                  'price' => $symbol . number_format((float) $product->storefrontPricing($v)['current_price'] * $rate, 2),
+                  'inStock' => (int) $v->stock > 0,
+              ])->values()->all()
+              : null;
+          $productName = $product->translationValue('name') ?? $product->slug;
 
           return [
+              'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'name' => \Illuminate\Support\Str::limit($productName, 30),
+              'fullName' => $productName,
               'weight' => $weightLabel,
-              'desc' => $product->centralProduct?->category?->name ?? '',
+              'desc' => $product->centralProduct?->category?->name ?? __('Premium cotton blend'),
               'rating' => $rating,
               'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
-              'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
+              'price' => $symbol . number_format($sellPrice * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Flash Sale'),
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('OFF') : __('Flash Sale'),
               'badgeBg' => 'var(--color-accent-yellow)',
               'badgeText' => 'var(--color-text-primary)',
-              'delivered' => 'Delivered by 24 March',
+              'delivered' => __('Delivered by :date', ['date' => $deliveryDate]),
+              'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
+              'hasMultipleVariants' => $hasMultipleVariants,
+              'variantModalData' => $variantModalData,
+              'favData' => json_encode([
+                  'slug' => $product->slug,
+                  'name' => $productName,
+                  'price' => round($sellPrice * $rate, 2),
+                  'old_price' => $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null,
+                  'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+                  'rating' => $rating,
+                  'image' => $img,
+                  'url' => route('tenant.storefront.product', $product->slug),
+                  'badge' => null,
+                  'added' => time(),
+              ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
           ];
       })->values();
 
       $firstSale = $flashSales->first();
+      $maxDiscountPct = (int) round((float) $flashSales->max('discount_percentage'));
       $countdownRemaining = $firstSale && $firstSale->end_date ? max(0, now()->diffInSeconds($firstSale->end_date, false)) : 0;
       $countdownH = str_pad((string) intdiv($countdownRemaining, 3600), 2, '0', STR_PAD_LEFT);
       $countdownM = str_pad((string) intdiv($countdownRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
@@ -58,13 +89,13 @@
             <p
               class="font-semibold text-white text-[40px] lg:text-[100px] leading-[1.1]"
             >
-              Flash Sale
+              {{ __('Flash Sale') }}
             </p>
             <p
               class="font-medium text-[20px] lg:text-[50px]"
               style="color: var(--color-accent-yellow)"
             >
-              up to 50%
+              {{ $maxDiscountPct > 0 ? __('up to :pct%', ['pct' => $maxDiscountPct]) : __('Limited time only') }}
             </p>
           </div>
           <div
@@ -89,7 +120,7 @@
           >
             <span
               class="font-medium text-white text-[16px] lg:text-[29px] tracking-[1px]"
-              >Explore all</span
+              >{{ __('Explore all') }}</span
             >
           </a>
         </div>
@@ -113,7 +144,7 @@
           >
             <span
               class="font-medium text-white text-[16px] lg:text-[29px] tracking-[1px]"
-              >Explore all</span
+              >{{ __('Explore all') }}</span
             >
           </a>
       </div>

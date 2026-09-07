@@ -33,13 +33,13 @@
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
         >
-          Recommended For You
+          {{ __('Recommended For You') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-green)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div

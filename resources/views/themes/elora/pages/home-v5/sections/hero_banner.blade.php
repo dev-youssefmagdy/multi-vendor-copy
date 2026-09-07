@@ -1,6 +1,6 @@
     @php
-      $heroLead = ['Explore', 'Flash', 'Best'];
-      $heroRest = [' New Products', ' Sale Up To 50%', ' Sellers Are Here'];
+      $heroLead = [__('Explore'), __('Flash'), __('Best')];
+      $heroRest = [__(' New Products'), __(' Sale Up To 50%'), __(' Sellers Are Here')];
       $heroCta = [__('Shop Now'), __('Shop Deals'), __('Discover More')];
     @endphp
     <!-- ============ HERO (carousel) ============ -->

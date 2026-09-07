@@ -9,10 +9,16 @@
     @if (!empty($p['sold']))
       <span class="sqv4-trend-card__sale">{{ $p['sold'] }}</span>
     @endif
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv4-trend-card__heart">
+    <button type="button" onclick="event.preventDefault(); event.stopPropagation(); souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['favData'] ?? '{}' }}' aria-label="{{ __('Add to favorites') }}" class="sqv4-trend-card__heart">
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </button>
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv4-trend-card__cart">
+    <button type="button"
+      @if (empty($p['outOfStock']))
+        wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})"
+      @else
+        disabled onclick="event.preventDefault(); event.stopPropagation();"
+      @endif
+      aria-label="{{ __('Add to cart') }}" class="sqv4-trend-card__cart">
       <img src="{{ asset('souqify-3/assets/icons/icon-cart.svg') }}" alt="" />
     </button>
   </a>

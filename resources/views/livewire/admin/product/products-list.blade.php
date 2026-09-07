@@ -351,6 +351,7 @@
                                                         'recommended' => 'badge badge-green',
                                                         'best-selling' => 'badge badge-amber',
                                                         'new-in' => 'badge badge-cyan',
+                                                        'trending-now' => 'badge badge-red',
                                                         default => 'badge badge-amber',
                                                     };
                                                 @endphp

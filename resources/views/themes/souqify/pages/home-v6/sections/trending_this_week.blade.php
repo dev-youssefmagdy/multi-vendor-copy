@@ -6,11 +6,27 @@
         $rating = (float) ($product->average_rating ?? 0);
         $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
+        $__url = route('tenant.storefront.product', $product->slug);
+        $__img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
+        $__name = \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 22);
+        $__fav = json_encode([
+            'slug' => $product->slug,
+            'name' => $__name,
+            'price' => round((float) $pricing['current_price'] * $rate, 2),
+            'old_price' => $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null,
+            'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+            'rating' => $rating,
+            'image' => $__img,
+            'url' => $__url,
+            'added' => time(),
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+
         return [
             'id' => $product->id,
-            'url' => route('tenant.storefront.product', $product->slug),
-            'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
-            'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 22),
+            'slug' => $product->slug,
+            'url' => $__url,
+            'image' => $__img,
+            'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'subtitle' => \Illuminate\Support\Str::limit(strip_tags($product->translationValue('short_description') ?? $product->translationValue('description') ?? ''), 34) ?: null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
@@ -20,6 +36,8 @@
             'sold' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Sold') : null,
             'delivery' => __('Delivered by') . ' ' . now()->addDays(5)->translatedFormat('j F'),
             'stock' => __('Only 5 left'),
+            'outOfStock' => $product->stockStatus() === 'out_of_stock',
+            'fav' => $__fav,
         ];
     });
 

@@ -15,11 +15,42 @@
               ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
               : '';
 
+          // Favorite / cart wiring (mirrors _product-card.blade.php)
+          $activeVariants = $product->variants->where('active', true)->values();
+          $hasMultipleVariants = $activeVariants->count() > 1;
+          $variantModalData = $hasMultipleVariants
+              ? $activeVariants->map(fn($v) => [
+                  'id' => $v->id,
+                  'label' => $v->centralVariant?->title ?? __('Variant #:id', ['id' => $v->id]),
+                  'price' => $symbol . number_format((float) $product->storefrontPricing($v)['current_price'] * $rate, 2),
+                  'inStock' => (int) $v->stock > 0,
+              ])->values()->all()
+              : null;
+          $isOutOfStock = $product->stockStatus() === 'out_of_stock';
+          $sellPrice = (float) $pricing['current_price'];
+          $displayReal = $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null;
+          $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
+          $favData = json_encode([
+              'slug' => $product->slug,
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'price' => round($sellPrice * $rate, 2),
+              'old_price' => $displayReal,
+              'discount' => $hasDiscount ? $discountPct . '% Off' : null,
+              'rating' => $rating,
+              'image' => $img,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'badge' => null,
+              'added' => time(),
+          ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+          $deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F');
+
           return [
               'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
+              'nameJs' => $product->translationValue('name') ?? $product->slug,
+              'description' => $product->centralProduct?->category?->name ?? '',
               'weight' => $weightLabel,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
@@ -27,6 +58,11 @@
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
               'alt' => $index % 3 === 0,
               'stock' => '',
+              'delivery' => __('Delivered by') . ' ' . $deliveryDate,
+              'favData' => $favData,
+              'isOutOfStock' => $isOutOfStock,
+              'hasMultipleVariants' => $hasMultipleVariants,
+              'variantModalData' => $variantModalData,
           ];
       });
       $bestSellerMobile = $bestSellerCards->take(3);

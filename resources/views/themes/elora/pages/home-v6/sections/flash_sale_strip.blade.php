@@ -21,11 +21,12 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : '70% Sold',
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('70% Sold'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
               'badgeColor' => $hasDiscount ? '#fff' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
+              'desc' => \Illuminate\Support\Str::limit(strip_tags((string) ($product->translationValue('description') ?? '')), 40) ?: null,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
@@ -47,7 +48,7 @@
           <h2
             class="font-medium lg:font-semibold text-[18px] lg:text-[40px] max-lg:leading-5.75 text-white whitespace-nowrap"
           >
-            Flash Sale
+            {{ __('Flash Sale') }}
           </h2>
           <img
             src="{{ asset('elora-2/assets/icons/oi-flash.svg') }}"
@@ -58,7 +59,7 @@
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
           class="font-normal text-[12px] lg:text-[24px] max-lg:leading-3.75 tracking-[0.5px] lg:tracking-[0.8px] text-white whitespace-nowrap"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
 
@@ -82,7 +83,7 @@
               color: var(--color-accent-yellow);
               transform: rotate(-90deg) translateY(20px);
             "
-            >Ends in</span
+            >{{ __('Ends in') }}</span
           >
           <div class="flex items-center gap-[3px] lg:gap-[5px] ml-1 lg:ml-2">
             <div
@@ -124,7 +125,7 @@
           <span
             class="font-medium text-[14px] lg:text-[23px] max-lg:leading-[25px] tracking-[0.5px] lg:tracking-[0.8px]"
             style="color: var(--color-accent-green)"
-            >Shop now</span
+            >{{ __('Shop now') }}</span
           >
         </a>
       </div>

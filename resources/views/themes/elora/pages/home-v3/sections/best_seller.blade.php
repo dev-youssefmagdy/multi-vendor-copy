@@ -10,16 +10,33 @@
           $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-3/assets/images/product-placeholder.svg');
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
+          $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;
+          $weightLabel = $weightGrams ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g')) : null;
+          $favData = json_encode([
+              'slug' => $product->slug,
+              'name' => $product->translationValue('name') ?? $product->slug,
+              'price' => round((float) $pricing['current_price'] * $rate, 2),
+              'old_price' => $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null,
+              'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : null,
+              'rating' => $rating,
+              'image' => $img,
+              'url' => route('tenant.storefront.product', $product->slug),
+              'badge' => null,
+              'added' => time(),
+          ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
           return [
+              'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'desc' => $product->centralProduct?->category?->name,
+              'weight' => $weightLabel,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'favData' => $favData,
           ];
       });
     @endphp

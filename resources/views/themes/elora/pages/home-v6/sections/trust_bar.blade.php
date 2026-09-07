@@ -12,7 +12,7 @@
           <p
             class="font-normal text-[13px] lg:text-[16.6px] lg:leading-[21px] tracking-[0.5px] lg:tracking-[0.7px] whitespace-nowrap text-white"
           >
-            Free Shipping
+            {{ __('Free Shipping') }}
           </p>
         </div>
         <div class="flex flex-col items-center gap-[12px]">
@@ -24,7 +24,7 @@
           <p
             class="font-normal text-[13px] lg:text-[16.6px] lg:leading-[21px] tracking-[0.5px] lg:tracking-[0.7px] whitespace-nowrap text-white"
           >
-            Customer Support 24/7
+            {{ __('Customer Support 24/7') }}
           </p>
         </div>
       </div>

@@ -16,18 +16,23 @@
               ? $variantWeight
               : (int) ($product->centralProduct->weight_grams ?? $product->weight_grams ?? 0);
 
+          $manageStock = (bool) ($product->centralProduct?->manage_stock ?? false);
+          $stockQty = (int) ($product->centralProduct?->stock ?? $product->stock ?? 0);
+
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : 'Best-Selling',
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Best-Selling'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
               'badgeColor' => $hasDiscount ? 'var(--color-white)' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
               'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
+              'desc' => \Illuminate\Support\Str::limit(strip_tags((string) ($product->translationValue('description') ?? '')), 40) ?: null,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% Off' : '',
+              'stockQty' => $manageStock ? $stockQty : null,
           ];
       });
       $bestSellerGroups = $bestSellerCards->values()->chunk(4)->filter(fn($g) => $g->count() === 4)->map(fn($g) => $g->values()->all())->all();
@@ -42,13 +47,13 @@
           class="font-medium text-[22px] lg:text-[32px]"
           style="color: var(--color-text-primary)"
         >
-          Best Seller
+          {{ __('Best Seller') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-text-secondary-dark)"
-          >see all</a
+          >{{ __('see all') }}</a
         >
       </div>
       <div class="relative ps-[16px] lg:ps-[56px]">

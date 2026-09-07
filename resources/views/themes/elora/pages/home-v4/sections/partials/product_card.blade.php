@@ -1,4 +1,5 @@
 {{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
+@php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.71px] lg:rounded-[12.25px] h-full lg:h-[408.48px] lg:w-[270.45px] shadow-[0px_13.52px_45.02px_rgba(0,0,0,0.16)] lg:shadow-[0px_29px_96.56px_rgba(0,0,0,0.16)]" style="text-decoration:none">
   <div class="flex flex-col gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-end justify-end px-[3.59px] lg:px-[7.7px] py-[2.99px] lg:py-[6.42px] relative shrink-0 w-full">
     <div class="absolute flex gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-start left-0 p-[3.59px] lg:p-[7.7px] top-0 w-full">
@@ -7,7 +8,7 @@
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
         </div>
         <div class="flex h-[14.69px] lg:h-[31.51px] items-center justify-center p-[3.15px] lg:p-[6.75px] relative rounded-bl-[4.2px] lg:rounded-bl-[9px] rounded-tr-[4.2px] lg:rounded-tr-[9px] shrink-0 w-[37.29px] lg:w-[80.5px]" style="background:var(--color-accent-yellow)">
-          <p class="font-normal text-[7.34px] leading-[9px] lg:text-[15.75px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? '70% Sold' }}</p>
+          <p class="font-normal text-[7.34px] leading-[9px] lg:text-[15.75px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? __('70% Sold') }}</p>
         </div>
       </div>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
@@ -30,7 +31,7 @@
         <p class="font-medium text-[11.42px] leading-[14px] lg:text-[24.51px] lg:leading-[31px] tracking-[0.3px] lg:tracking-[0.64px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
         <p class="font-normal text-[9.52px] leading-[15px] lg:text-[20.42px] lg:leading-[32px] tracking-[0.3px] lg:tracking-[0.64px] lg:text-center shrink-0 whitespace-nowrap text-[#0018E8] lg:text-[#F67501]">{{ $p['weight'] }}</p>
       </div>
-      <p class="font-normal text-[9.52px] leading-[12px] lg:text-[20.42px] lg:leading-[26px] tracking-[0.3px] lg:tracking-[0.64px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? 'Premium cotton blend' }}</p>
+      <p class="font-normal text-[9.52px] leading-[12px] lg:text-[20.42px] lg:leading-[26px] tracking-[0.3px] lg:tracking-[0.64px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium cotton blend') }}</p>
     </div>
 
     {{-- Rating + price --}}
@@ -53,7 +54,7 @@
     {{-- Delivery estimate --}}
     <div class="flex gap-[3.81px] lg:gap-[8.17px] items-center w-full min-w-0">
       <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[11.42px] lg:size-[24.51px] shrink-0" />
-      <p class="font-medium text-[7.62px] leading-[10px] lg:text-[16.34px] lg:leading-[21px] truncate" style="color:var(--color-success)">Delivered by 24 March</p>
+      <p class="font-medium text-[7.62px] leading-[10px] lg:text-[16.34px] lg:leading-[21px] truncate" style="color:var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</p>
     </div>
 
   </div>

@@ -16,7 +16,7 @@
                 <span class="text-[11px] font-medium text-white tracking-[0.4px] whitespace-nowrap">{{ $p['badge'] }}</span>
             </span>
         @endif
-        <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="absolute top-[8px] right-[8px] bg-white rounded-full p-[7px] shadow-md">
+        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[8px] right-[8px] bg-white rounded-full p-[7px] shadow-md">
             <img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[16px]" alt="" />
         </button>
     </a>

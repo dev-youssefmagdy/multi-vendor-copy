@@ -1,5 +1,9 @@
     @php
-      $trendingCards = ($trendingNowProducts ?? collect())->map(fn ($product) => $product->toEloraV4Card($currentCurrency ?? null));
+      $trendingCards = ($trendingNowProducts ?? collect())->map(function ($product) use ($currentCurrency) {
+        $card = $product->toEloraV4Card($currentCurrency ?? null);
+        $card['desc'] = $product->centralProduct?->category?->name;
+        return $card;
+      });
     @endphp
     @if ($trendingCards->isNotEmpty())
     <!-- ============ TRENDING NOW ============ -->

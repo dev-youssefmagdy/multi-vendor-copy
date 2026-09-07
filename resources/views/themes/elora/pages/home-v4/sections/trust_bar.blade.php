@@ -11,7 +11,7 @@
         <p
           class="font-normal text-[14px] lg:text-[18px] tracking-[0.4px] lg:tracking-[0.7px] text-white whitespace-nowrap"
         >
-          Money-Back Guarantee
+          {{ __('Money-Back Guarantee') }}
         </p>
       </div>
     </section>

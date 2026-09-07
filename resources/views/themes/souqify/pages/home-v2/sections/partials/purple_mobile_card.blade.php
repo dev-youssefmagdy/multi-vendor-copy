@@ -230,14 +230,21 @@
         @if (!empty($p['sold']))
             <span class="sqv2-mob__sale">{{ $p['sold'] }}</span>
         @endif
-        <span class="sqv2-mob__cart">
+        <span class="sqv2-mob__cart" role="button" tabindex="0" aria-label="{{ __('Add to cart') }}"
+            wire:click.stop.prevent="addToCart({{ $p['id'] }})">
             <img src="{{ asset('souqify-1/assets/icons/icon-cart-navy.svg') }}" alt="{{ __('Add to cart') }}" />
         </span>
     </a>
 
-    <button type="button" wire:click.stop="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv2-mob__fav">
-        <img src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" alt="" />
-    </button>
+    @if (!empty($p['slug']) && !empty($p['favData']))
+        <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] }}" data-fav='{{ $p['favData'] }}' aria-label="{{ __('Add to favorites') }}" class="sqv2-mob__fav">
+            <img class="fav-icon" src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" alt="" />
+        </button>
+    @else
+        <button type="button" wire:click.stop="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv2-mob__fav">
+            <img src="{{ asset('souqify-1/assets/icons/icon-heart-outline.svg') }}" alt="" />
+        </button>
+    @endif
 
     <div class="sqv2-mob__info">
         <div class="sqv2-mob__head">

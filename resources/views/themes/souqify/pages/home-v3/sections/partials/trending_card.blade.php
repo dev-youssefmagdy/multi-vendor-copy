@@ -1,6 +1,19 @@
-{{-- Figma "Mobile Card" (496.21x156.48). $p keys: id, url, image, name, weight, desc,
-     rating, price, oldPrice, discount, sold, delivery, stock.
+{{-- Figma "Mobile Card" (496.21x156.48). $p keys: id, slug, url, image, name, weight,
+     desc, rating, ratingValue, price, rawPrice, oldPrice, discount, sold, delivery, stock.
      Styles live in the parent section under the .sqv3-trend-* namespace. --}}
+@php
+    $__favData = json_encode([
+        'slug' => $p['slug'] ?? null,
+        'name' => $p['name'] ?? null,
+        'price' => $p['rawPrice'] ?? null,
+        'old_price' => $p['oldPrice'] ?? null,
+        'discount' => $p['discount'] ?? null,
+        'rating' => $p['ratingValue'] ?? 0,
+        'image' => $p['image'] ?? null,
+        'url' => $p['url'] ?? null,
+        'added' => time(),
+    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+@endphp
 <div class="sqv3-trend-card" wire:key="trending-v3-{{ $p['id'] }}">
   <a href="{{ $p['url'] }}" class="sqv3-trend-card__media">
     @if ($p['image'])
@@ -9,10 +22,10 @@
     @if (!empty($p['sold']))
       <span class="sqv3-trend-card__sale">{{ $p['sold'] }}</span>
     @endif
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to favorites') }}" class="sqv3-trend-card__heart">
+    <button type="button" onclick="event.preventDefault();event.stopPropagation();souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $__favData }}' aria-label="{{ __('Add to favorites') }}" class="sqv3-trend-card__heart souqify-fav-btn">
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </button>
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-trend-card__cart">
+    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-trend-card__cart">
       <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
     </button>
   </a>

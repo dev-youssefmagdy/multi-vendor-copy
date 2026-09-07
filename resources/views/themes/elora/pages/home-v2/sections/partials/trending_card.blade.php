@@ -8,7 +8,13 @@
       <div class="top-overlay">
         <button
           type="button"
-          aria-label="Add to favorites"
+          aria-label="{{ __('Add to favorites') }}"
+          @if (!empty($p['favData']))
+            onclick="event.preventDefault(); eloraHeartToggle(this)"
+            data-fav="{{ $p['favData'] }}"
+            data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+            data-product-id="{{ $p['id'] ?? '' }}"
+          @endif
           class="heart-btn flex items-center justify-center border-0 cursor-pointer"
           style="box-shadow: 0px 2.5px 2.5px rgba(0, 0, 0, 0.15)"
         >
@@ -23,9 +29,21 @@
       </div>
 
       <div class="bottom-overlay">
-        <div class="cart-btn flex items-center justify-center">
-          <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="Add to cart" class="icon" />
-        </div>
+        @if (!empty($p['isOutOfStock']))
+          <div role="button" aria-disabled="true" onclick="event.preventDefault()" class="cart-btn flex items-center justify-center cursor-not-allowed">
+            <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="icon opacity-40" />
+          </div>
+        @elseif (!empty($p['hasMultipleVariants']))
+          <div role="button" tabindex="0"
+            onclick="event.preventDefault(); openVariantModal({{ $p['id'] ?? 'null' }}, {{ \Illuminate\Support\Js::from($p['fullName'] ?? ($p['name'] ?? '')) }}, {{ \Illuminate\Support\Js::from($p['variantModalData'] ?? []) }})"
+            class="cart-btn flex items-center justify-center">
+            <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="icon" />
+          </div>
+        @else
+          <div role="button" tabindex="0" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault()" class="cart-btn flex items-center justify-center">
+            <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="icon" />
+          </div>
+        @endif
       </div>
     </div>
 

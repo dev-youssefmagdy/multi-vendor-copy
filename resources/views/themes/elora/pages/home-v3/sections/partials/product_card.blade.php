@@ -11,12 +11,16 @@
           <p class="font-normal text-[14px] tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</p>
         </div>
       </div>
-      <button type="button" aria-label="Add to favorites" class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px]">
+      <button type="button" aria-label="Add to favorites" onclick="event.preventDefault(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] ?? '' }}"
+        data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
+        data-product-id="{{ $p['id'] ?? '' }}"
+        class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" alt="" class="size-[20px]" />
       </button>
     </div>
     <div class="flex h-[45px] items-center justify-center px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[57px]" style="background:var(--color-text-primary)">
-      <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="Add to cart" class="size-[24px]" />
+      <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="size-[24px]" />
     </div>
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">
@@ -55,7 +59,7 @@
     <div class="flex flex-col gap-[4px] items-start w-full">
       <div class="flex gap-[4px] items-center w-full">
         <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px]" />
-        <p class="font-medium text-[12px] whitespace-nowrap" style="color:{{ $p['urgency'] ?? 'var(--color-success)' }}">Delivered by 24 March</p>
+        <p class="font-medium text-[12px] whitespace-nowrap" style="color:{{ $p['urgency'] ?? 'var(--color-success)' }}">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</p>
       </div>
     </div>
   </div>
