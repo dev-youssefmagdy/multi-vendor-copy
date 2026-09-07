@@ -1,0 +1,1 @@
+function e(){new Swiper(`.hero-swiper`,{loop:!0,autoplay:{delay:5e3,disableOnInteraction:!1},speed:600,pagination:{el:`.hero-pagination`,clickable:!0,bulletClass:`hero-dot`,bulletActiveClass:`is-active`}})}var t=!1;function n(){t||(t=!0,e())}document.readyState===`loading`?document.addEventListener(`DOMContentLoaded`,n):n(),window.addEventListener(`load`,n);
