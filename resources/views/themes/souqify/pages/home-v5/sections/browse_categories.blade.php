@@ -1,6 +1,10 @@
 @php
-    // Figma shows 8 tiles (the 4 designed categories repeated); take 8 real ones.
-    $__categories = ($categories ?? $rootCategories ?? collect())->take(8)->values();
+    // Figma shows 8 tiles (the 4 designed categories repeated), but capping to
+    // exactly 8 here made the desktop breakpoint (slidesPerView: 8) always fit
+    // the whole row with nothing left to swipe - the carousel looked dead on
+    // desktop for any store with more than 8 categories. Taking more than the
+    // desktop slidesPerView guarantees there's always overflow to drag through.
+    $__categories = ($categories ?? $rootCategories ?? collect())->take(20)->values();
     $__catFallbackImages = [
         asset('souqify-4/assets/images/cat-women-bags.png'),
         asset('souqify-4/assets/images/cat-accessories.png'),

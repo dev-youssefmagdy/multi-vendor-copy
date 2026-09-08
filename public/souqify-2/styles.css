@@ -213,15 +213,27 @@ body {
   }
 }
 
-/* Mobile category filter pills */
+/* Mobile category filter pills - the row scroll-snaps like the site's other
+   carousels (a peek of the next pill, momentum settles on a pill edge)
+   instead of a plain unassisted overflow scroll. */
+.category-pill-row {
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Without this, the snap engine treats the row's own padding-box edge as
+     the snap target and auto-scrolls "All" flush against it on load,
+     silently cancelling out the row's px-[16px] + the pill's own ms-[8px] -
+     this reserves that same 24px so the leading gap survives snapping. */
+  scroll-padding-inline-start: 24px;
+}
 .category-pill {
+  scroll-snap-align: start;
+  border-bottom: 2px solid transparent;
   color: var(--color-text-muted);
-  border-color: var(--color-stroke);
 }
 .category-pill.is-active-pill {
-  background: var(--color-souqify-teal);
-  border-color: var(--color-souqify-teal);
-  color: var(--color-white);
+  border-bottom-color: var(--color-souqify-teal);
+  color: var(--color-souqify-teal);
 }
 
 /* Mobile bottom tab bar active state */

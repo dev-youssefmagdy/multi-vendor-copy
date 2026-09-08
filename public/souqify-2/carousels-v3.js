@@ -3,6 +3,16 @@
 // server-rendered by Blade with real product data, so this file ONLY initializes Swiper
 // on the existing DOM nodes — it no longer injects any hardcoded card HTML.
 
+// One section's mount failing (e.g. missing DOM, a bad selector) must never
+// silently skip every mount call that comes after it in initCarouselsV3().
+function safeMount(name, fn) {
+  try {
+    fn();
+  } catch (e) {
+    console.error(`${name} failed`, e);
+  }
+}
+
 function mountSwiper(wrapperId, prevId, nextId) {
   const wrapper = document.getElementById(wrapperId);
   if (!wrapper) return;
@@ -85,6 +95,153 @@ function mountCategories() {
   });
 }
 
+// Best Seller uses a draggable fan cascade — same technique as Green Edition
+// (elora-v5-carousels.js's mountBestSellerCarousel). Geometry is captured
+// from Souqify's own Figma card stack, indexed by DISTANCE from the
+// swiper's activeIndex (0 = the "front" slot ... down to the last), not by
+// a fixed product index. Every slide is absolutely positioned from a table
+// each time activeIndex changes, so dragging shifts which product lands in
+// the distance-0 slot while the rest cascade around it: the front card is
+// biggest and the rest recede in size behind it.
+const SQV3_CASCADE_POSITIONS_DESKTOP = [
+  { left: 0, top: 0, width: 295.45, height: 472.89 },
+  { left: 273, top: 9, width: 283.96, height: 454.2 },
+  { left: 524.18, top: 31, width: 255.24, height: 409 },
+  { left: 755, top: 57, width: 229.29, height: 367 },
+  { left: 965, top: 75, width: 210.06, height: 336 },
+  { left: 1162, top: 95, width: 192.21, height: 308 },
+];
+const SQV3_CASCADE_POSITIONS_MOBILE = [
+  { left: 0, top: 0, width: 154.5, height: 223.1 },
+  { left: 120.75, top: 13.39, width: 141, height: 203.02 },
+  { left: 248.25, top: 26.77, width: 127.5, height: 182.94 },
+];
+const SQV3_CASCADE_BASE_WIDTH_DESKTOP = 295.45;
+const SQV3_CASCADE_BASE_WIDTH_MOBILE = 154.5;
+
+function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null } = {}) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.style.position = "relative";
+  // Best Seller's slots each carry their own height (cards shrink by
+  // distance); Flash Sale's slots don't (every card is baseHeight), so fall
+  // back to the tallest slot's top + baseHeight when a slot has no height.
+  container.style.height = `${Math.max(...positions.map((p) => p.top + (p.height ?? baseHeight)))}px`;
+
+  // Only the ORIGINAL slides (captured before Swiper's loop mode injects its
+  // own clone slides) get positioned here — clones are neutralized separately
+  // below, since our own modulo wrap already makes the cascade infinite
+  // without needing Swiper's duplicated DOM nodes to be visually meaningful.
+  const slideEls = [...container.children];
+  const count = slideEls.length;
+
+  const dotsEl = dotsContainerId ? document.getElementById(dotsContainerId) : null;
+  if (dotsEl) {
+    dotsEl.innerHTML = "";
+    for (let i = 0; i < count; i++) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "best-seller-dot" + (i === 0 ? " is-active" : "");
+      dot.setAttribute("aria-label", `Product ${i + 1}`);
+      dotsEl.appendChild(dot);
+    }
+  }
+  const updateDots = (sw) => {
+    if (!dotsEl) return;
+    dotsEl.querySelectorAll(".best-seller-dot").forEach((dot, i) => {
+      dot.classList.toggle("is-active", i === sw.realIndex);
+    });
+  };
+
+  const applyPositions = (sw) => {
+    slideEls.forEach((slideEl, i) => {
+      const distance = (((i - sw.realIndex) % count) + count) % count;
+      const box = positions[distance];
+      if (!box) {
+        // more products than fan slots: park the rest off-screen rather
+        // than stacking them at position 0 on top of the active card.
+        slideEl.style.opacity = "0";
+        slideEl.style.pointerEvents = "none";
+        slideEl.style.zIndex = "0";
+        return;
+      }
+      slideEl.style.opacity = "1";
+      slideEl.style.pointerEvents = "";
+      // Every slide is the SAME base size (a .sqv3-*__deal-base class),
+      // positioned and resized purely via transform — scaling the whole
+      // card as one unit guarantees every child scales in lockstep. A slot
+      // with no `width` (Flash Sale) stays at scale 1 - every card there is
+      // already the base size, only rotated/offset.
+      const scale = box.width != null ? box.width / baseWidth : 1;
+      const rotate = box.rot ? ` rotate(${box.rot}deg)` : "";
+      slideEl.style.transform = `translate(${box.left}px, ${box.top}px)${rotate} scale(${scale})`;
+      slideEl.style.zIndex = String(positions.length - distance);
+    });
+    // Loop mode clones aren't part of slideEls and never get positioned —
+    // hide them so they don't sit stacked at their default top:0/left:0.
+    container.querySelectorAll(".swiper-slide-duplicate").forEach((clone) => {
+      clone.style.opacity = "0";
+      clone.style.pointerEvents = "none";
+    });
+  };
+
+  return new Swiper(container.closest(".swiper"), {
+    slidesPerView: "auto",
+    virtualTranslate: true,
+    loop: true,
+    // Swiper's own loop mode needs enough duplicated slides to cover
+    // slidesPerView on both sides of the real ones; with slidesPerView:"auto"
+    // and as few as 3 real slides (mobile), count alone isn't enough - Swiper
+    // warns "not enough slides for loop mode" and the first paint can render
+    // slides outside their cascade position until a swipe forces a relayout.
+    // Our own applyPositions() already hides every .swiper-slide-duplicate,
+    // so asking for extra loop clones here is free - it just satisfies
+    // Swiper's internal loop bookkeeping.
+    loopedSlides: count * 4,
+    on: {
+      init(sw) {
+        applyPositions(sw);
+        updateDots(sw);
+      },
+      slideChange(sw) {
+        applyPositions(sw);
+        updateDots(sw);
+      },
+      transitionEnd: applyPositions,
+      // Without this, resizing the viewport (rotating a phone, resizing a
+      // desktop window, or a DevTools device-toolbar resize without a full
+      // reload) leaves the translate() offsets computed for the OLD width
+      // while the box's own CSS width/height already shrank via the media
+      // query - cards fly outside the frame instead of rescaling with it.
+      resize: applyPositions,
+      setTransition(sw, duration) {
+        slideEls.forEach((s) => (s.style.transitionDuration = `${duration}ms`));
+      },
+    },
+  });
+}
+
+function mountBestSeller() {
+  // Guarded independently — a failure mounting one breakpoint's instance
+  // must never prevent the other from mounting.
+  try {
+    mountFanCascadeCarousel("bestSellerMobileWrapper", SQV3_CASCADE_POSITIONS_MOBILE, {
+      baseWidth: SQV3_CASCADE_BASE_WIDTH_MOBILE,
+      dotsContainerId: "bestSellerMobileDots",
+    });
+  } catch (e) {
+    console.error("mountBestSeller (mobile) failed", e);
+  }
+  try {
+    mountFanCascadeCarousel("bestSellerDesktopWrapper", SQV3_CASCADE_POSITIONS_DESKTOP, {
+      baseWidth: SQV3_CASCADE_BASE_WIDTH_DESKTOP,
+      dotsContainerId: "bestSellerDesktopDots",
+    });
+  } catch (e) {
+    console.error("mountBestSeller (desktop) failed", e);
+  }
+}
+
 function mountFlash() {
   const swiperEl = document.querySelector(".flash-swiper");
   if (!swiperEl) return;
@@ -97,23 +254,6 @@ function mountFlash() {
     breakpoints: {
       // 21.48px is the Figma gap inside Frame 1984079776.
       1024: { spaceBetween: 21.48 },
-    },
-  });
-}
-
-function mountBestSeller() {
-  const swiperEl = document.querySelector(".bestseller-swiper");
-  if (!swiperEl) return;
-
-  new Swiper(swiperEl, {
-    // Mobile: two whole cards plus a sliver of the third.
-    slidesPerView: 2.15,
-    spaceBetween: 12,
-    breakpoints: {
-      640: { slidesPerView: 3.15, spaceBetween: 16 },
-      // 20.18px is the Figma gap inside Frame 1984079779; the .5 leaves the last
-      // card half-visible so the row reads as swipeable.
-      1024: { slidesPerView: 4.5, spaceBetween: 20.18 },
     },
   });
 }
@@ -154,13 +294,13 @@ function mountShopCategory() {
 }
 
 function initCarouselsV3() {
-  mountTrustBar();
-  mountFlash();
-  mountNewIn();
-  mountTrending();
-  mountCategories();
-  mountShopCategory();
-  mountBestSeller();
+  safeMount("mountTrustBar", mountTrustBar);
+  safeMount("mountFlash", mountFlash);
+  safeMount("mountNewIn", mountNewIn);
+  safeMount("mountTrending", mountTrending);
+  safeMount("mountCategories", mountCategories);
+  safeMount("mountShopCategory", mountShopCategory);
+  safeMount("mountBestSeller", mountBestSeller);
 
   // Flash-sale countdown: prefer the server-provided end timestamp (data-flash-end on the
   // section), falling back to the design's captured 03:06:25 if no active flash sale.

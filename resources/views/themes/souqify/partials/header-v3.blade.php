@@ -25,23 +25,28 @@
     </div>
     <form action="{{ route('tenant.storefront.search') }}" method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-        class="flex items-center gap-[8px] mx-[16px] mb-[16px] h-[44px] rounded-[8px] px-[16px]" style="background: var(--color-surface)">
+        class="flex items-center gap-[8px] mx-[16px] mb-[16px] h-[48px] rounded-full px-[16px]" style="background: var(--color-surface)">
       <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color: var(--color-text-placeholder)" />
       <button type="button" data-image-search-trigger="storefront-image-search-modal-v3-mobile" aria-label="{{ __('Search by Image') }}">
-        <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="size-[18px] opacity-70" />
+        {{-- icon-camera.svg already draws its own divider line at the left edge
+             of its 33x24 viewBox, and it's preserveAspectRatio="none" - a
+             square size-[] box stretches it unevenly and thickens that line
+             on top of it looking doubled. Sizing to the icon's own 33:24
+             ratio keeps that single built-in line correct. --}}
+        <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="w-[25px] h-[18px] opacity-70" />
       </button>
     </form>
     <x-image-search-modal id="storefront-image-search-modal-v3-mobile" :action="route('tenant.storefront.search.image')" />
     <!-- Category filter pills -->
-    <div class="flex items-center gap-[8px] px-[16px] pb-[12px] overflow-x-auto no-scrollbar">
+    <div class="category-pill-row flex items-center gap-[24px] px-[16px] pb-[12px] overflow-x-auto no-scrollbar">
       <a href="{{ route('tenant.home') }}" data-category-pill
-          class="category-pill {{ request()->routeIs('tenant.home') ? 'is-active-pill' : '' }} shrink-0 h-[32px] px-[16px] rounded-full border text-[13px] font-medium whitespace-nowrap cursor-pointer">
+          class="category-pill {{ request()->routeIs('tenant.home') ? 'is-active-pill' : '' }} shrink-0 ms-[8px] pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
         {{ __('All') }}
       </a>
       @foreach ($rootCategories as $category)
         <a href="{{ route('tenant.storefront.category', $category->slug) }}" data-category-pill
-            class="category-pill shrink-0 h-[32px] px-[16px] rounded-full border text-[13px] font-medium whitespace-nowrap cursor-pointer">
+            class="category-pill shrink-0 pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
           {{ \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 20) }}
         </a>
       @endforeach

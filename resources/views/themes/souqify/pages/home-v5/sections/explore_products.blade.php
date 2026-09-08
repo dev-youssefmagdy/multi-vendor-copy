@@ -1,6 +1,9 @@
 @php
-    // Figma shows seven tiles in the 1328px row.
-    $__tiles = collect($categories ?? $rootCategories ?? [])->take(7)->values();
+    // Figma shows seven tiles in the 1328px row, but capping to exactly 7 here
+    // made the desktop breakpoint (slidesPerView: 7) always fit the whole row
+    // with nothing left to swipe. Taking more than the desktop slidesPerView
+    // guarantees there's always overflow to drag through.
+    $__tiles = collect($categories ?? $rootCategories ?? [])->take(20)->values();
     $__tileImages = [
         asset('souqify-4/assets/images/shop-footwear.png'),
         asset('souqify-4/assets/images/shop-electronics.png'),

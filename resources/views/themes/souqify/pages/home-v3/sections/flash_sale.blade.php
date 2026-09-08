@@ -128,8 +128,12 @@
         width: 46px;
         height: 44px;
         background: var(--color-souqify-teal);
-        border: 2.7516px solid #FFFFFF;
-        border-radius: 19.2612px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        /* Keeping the desktop radius (19.2612px) at this small mobile box size
+           reads as a circle/pill instead of the desktop's square-with-rounded-
+           corners look - scaled down to the same proportion of the box here so
+           mobile and desktop match. */
+        border-radius: 8px;
     }
     .sqv3-flash__digit {
         font-family: 'Outfit', sans-serif;
@@ -241,6 +245,7 @@
             /* 126.57 x 121.07 */
             width: clamp(64px, 8.79vw, 126.57px);
             height: clamp(60px, 8.408vw, 121.07px);
+            border-radius: 19.2612px;
         }
         .sqv3-flash__digit {
             /* 66.0385px */

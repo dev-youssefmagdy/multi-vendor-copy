@@ -47,6 +47,8 @@
             ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
         ];
     });
+
+    $__bestSellerMobile = $__bestSellerCards->take(3);
 @endphp
 
 {{-- Figma: Frame 1984080385 (1440x681) - a full-bleed #EC910A panel whose top and
@@ -69,6 +71,10 @@
            orange columns below. */
         background: transparent;
         isolation: isolate;
+        /* Without this, the fan cascade's absolutely-positioned cards (see
+           .sqv5-best__row below) render past this section's own box instead
+           of stopping at it. */
+        overflow: hidden;
     }
     /* Rectangles 5967-5981: fifteen 101.01-wide full-height columns, each with a
        0/86 radius (rounded top-right and bottom-left only), stepped 95.64 apart
@@ -121,30 +127,106 @@
         white-space: nowrap;
     }
 
-    /* ---------- Fanned card row ---------- */
+    .sqv5-best__group {
+        position: relative;
+        width: 100%;
+    }
+
+    /* ---------- Mobile: card-effect carousel ----------
+       Same technique as Green Edition's Flash Sale mobile carousel (see
+       mountCardFanMobile() in carousels-v5.js): every slide's CSS base
+       position is centered directly (left: calc(50% - 77.25px), 77.25 =
+       half the 154.5px card width), so with translateX(0) the active card
+       sits exactly centered; JS then offsets each neighbor from that
+       centered base by a fixed pixel amount, rotated. */
+    .sqv5-best__mobile-row {
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        padding: 0 0 24px;
+        width: 100%;
+    }
+    .sqv5-best__mobile-row .swiper-wrapper {
+        position: relative;
+        height: 223.1px;
+    }
+    .sqv5-best__mobile-deal-base {
+        position: absolute;
+        top: 0;
+        left: calc(50% - 77.25px);
+        width: 154.5px;
+        height: 223.1px;
+        transition-property: transform;
+    }
+    .sqv5-best__mobile-deal-base .sqv5-deal {
+        position: static;
+        width: 100%;
+        height: 100%;
+        box-shadow: none;
+        filter: drop-shadow(0px 0px 30px rgba(0, 0, 0, 0.18));
+    }
+
+    /* ---------- Desktop: draggable rotated fan cascade ----------
+       Same technique as Green Edition's Flash Sale desktop card fan (see
+       mountFanCascadeCarousel() in carousels-v5.js): every slide is
+       absolutely positioned from a fixed geometry table indexed by distance
+       from the active slide, so dragging shifts which product sits in the
+       front slot while the rest cascade around it - every card stays the
+       same size, only rotated and offset. */
     .sqv5-best__row {
         position: relative;
         z-index: 1;
-        width: 100%;
-        min-width: 0;
-        /* The rotated cards need vertical room: the swiper clips its own box, so
-           the padding keeps the tilted corners inside it. */
-        /* The cards are tilted, so the swiper - which clips its own box - needs
-           room on every side or the first card loses its left corner. */
-        padding: 28px 20px;
-        overflow: hidden;
+        /* overflow:visible lets the fan's cards bleed past the swiper's own
+           (much smaller) auto-width box. */
+        overflow: visible;
+        padding: 0 0 24px;
+        cursor: grab;
+        width: 100% !important;
     }
-    .sqv5-best__row .swiper-wrapper { align-items: center; }
-    .sqv5-best__slide { height: auto; }
-    /* No shadow in this section: the tilted cards overlap, and any shadow pools
-       into a dark smear on the orange instead of reading as depth. */
-    .sqv5-best__slide .sqv5-deal { box-shadow: none; }
+    .sqv5-best__deal-base {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 295.45px;
+        height: 472.89px;
+    }
+    .sqv5-best__deal-base .sqv5-deal {
+        position: static;
+        width: 100%;
+        height: 100%;
+        box-shadow: none;
+        filter: drop-shadow(0px 0px 30px rgba(0, 0, 0, 0.18));
+    }
 
-    /* Group 58 fans the cards at every size: they overlap and alternate
-       rotation. The cycle is per slide, so it survives any product count. */
-    .sqv5-best__slide:nth-child(3n + 1) { transform: rotate(-11.98deg); }
-    .sqv5-best__slide:nth-child(3n + 2) { transform: rotate(0deg); }
-    .sqv5-best__slide:nth-child(3n + 3) { transform: rotate(8.97deg); }
+    /* ---------- Pagination ---------- */
+    .sqv5-best__dots {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        height: 8px;
+        font-size: 0;
+        line-height: 0;
+    }
+    .sqv5-best__dots .best-seller-dot {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 1.5px;
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.4);
+        border: 0;
+        border-radius: 29px;
+        padding: 0;
+        opacity: 1;
+        transition: width 0.2s ease, background-color 0.2s ease;
+        cursor: pointer;
+    }
+    .sqv5-best__dots .best-seller-dot.is-active {
+        width: 24px;
+        background: #FFFFFF;
+    }
 
     @media (min-width: 1024px) {
         .sqv5-best {
@@ -173,15 +255,35 @@
   </div>
 
   @if ($__bestSellerCards->isNotEmpty())
-    <div class="swiper bestseller-swiper sqv5-best__row">
-      <div class="swiper-wrapper" id="bestSellerWrapper">
+    {{-- Mobile: card-effect carousel, same technique as Green Edition's
+         Flash Sale mobile carousel (see mountCardFanMobile() in
+         carousels-v5.js). --}}
+    <div class="sqv5-best__group lg:!hidden">
+      <div class="swiper sqv5-best__mobile-row w-full">
+        <div class="swiper-wrapper" id="bestSellerMobileWrapper">
+          @foreach ($__bestSellerMobile as $p)
+            <div class="swiper-slide sqv5-best__mobile-deal-base" wire:key="best-seller-mobile-v5-{{ $p['id'] }}">
+              @include('themes.souqify.pages.home-v5.sections.partials.deal_card', ['p' => $p])
+            </div>
+          @endforeach
+        </div>
+      </div>
+    </div>
+    <div class="sqv5-best__dots lg:!hidden" id="bestSellerMobileDots"></div>
+
+    {{-- Desktop: draggable rotated fan cascade, matching Green Edition's
+         Flash Sale desktop card fan (see mountFanCascadeCarousel() in
+         carousels-v5.js). --}}
+    <div class="swiper bestseller-swiper sqv5-best__row !hidden lg:!block w-full">
+      <div class="swiper-wrapper sqv5-best__group" id="bestSellerDesktopWrapper">
         @foreach ($__bestSellerCards as $p)
-          <div class="swiper-slide sqv5-best__slide" wire:key="best-seller-v5-{{ $p['id'] }}">
+          <div class="swiper-slide sqv5-best__deal-base" style="position:absolute; top:0; left:0;" wire:key="best-seller-desktop-v5-{{ $p['id'] }}">
             @include('themes.souqify.pages.home-v5.sections.partials.deal_card', ['p' => $p])
           </div>
         @endforeach
       </div>
     </div>
+    <div class="sqv5-best__dots !hidden lg:!block" id="bestSellerDesktopDots"></div>
   @else
     <p class="relative text-white/80 text-sm py-6">{{ __('No best sellers yet.') }}</p>
   @endif

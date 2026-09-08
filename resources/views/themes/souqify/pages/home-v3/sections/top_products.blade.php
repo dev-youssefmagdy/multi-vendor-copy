@@ -6,7 +6,7 @@
         ['bg' => '#FFB00A', 'color' => '#121212'],
     ];
 
-    $__bestSellerCards = collect($bestSelling ?? [])->values()->map(function ($product, $index) use ($symbol, $rate, $__chipPalettes) {
+    $__bestSellerCards = collect($bestSelling ?? [])->take(6)->values()->map(function ($product, $index) use ($symbol, $rate, $__chipPalettes) {
         $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
         $pricing = $product->storefrontPricing($variant);
         $hasDiscount = (bool) $pricing['has_discount'];
@@ -34,6 +34,8 @@
             'stock' => __('Only 5 left - Hurry up'),
         ];
     });
+
+    $__bestSellerMobile = $__bestSellerCards->take(3);
 @endphp
 
 {{-- Figma: Frame 1984080343 (1440x632.15) - 24px 56px padding, #199387 with an
@@ -82,19 +84,91 @@
         margin: 0;
     }
 
-    /* ---------- Carousel ---------- */
-    .sqv3-best__row {
+    /* ---------- Draggable fan cascade ----------
+       Same technique as Green Edition's Best Seller carousel (see
+       mountFanCascadeCarousel() in carousels-v3.js): every slide is
+       absolutely positioned from a fixed geometry table indexed by distance
+       from the active slide, so dragging shifts which product sits in the
+       biggest/leftmost slot while the rest cascade down in size behind it. */
+    .sqv3-best__swiper {
+        /* overflow:visible lets the fan's cards bleed past the swiper's own
+           (much smaller) auto-width box. */
+        overflow: visible;
+        padding: 0 0 24px;
+        cursor: grab;
+        width: 100% !important;
+    }
+    @media (max-width: 1023.98px) {
+        /* The mobile cascade table (SQV3_CASCADE_POSITIONS_MOBILE) spans
+           ~375.75px, sized for the section's full width. Inside the
+           section's 16px side padding that only leaves 343px, so the last
+           card's peek slice got clipped mid-card (through its heart/cart
+           badges) instead of at a clean edge. Bleeding the swiper out past
+           the padding on both sides gives the cascade its full width back. */
+        .sqv3-best__swiper {
+            width: calc(100% + 32px) !important;
+            margin-left: -16px;
+            margin-right: -16px;
+        }
+    }
+    .sqv3-best__group {
+        position: relative;
         width: 100%;
-        min-width: 0;
-        overflow: hidden;
     }
-    .sqv3-best__row .swiper-wrapper {
-        align-items: stretch;
+    /* Every slide is this ONE fixed base size (matching the biggest/active
+       card exactly); mountFanCascadeCarousel applies
+       `transform: translate(left, top) scale(ratio)` per slide to produce
+       every other cascade depth from it, so content never gets crammed into
+       a shrunk box - the whole card scales as one unit. */
+    .sqv3-best__deal-base {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 154.5px;
+        height: 223.1px;
+        transform-origin: top left;
     }
-    /* Deal Card slide: 269.05 x 430.15. Width comes from Swiper's slidesPerView
-       (4.5 on desktop), so only the height behaviour is set here. */
-    .sqv3-best__slide {
-        height: auto;
+    @media (min-width: 1024px) {
+        .sqv3-best__deal-base {
+            width: 295.45px;
+            height: 472.89px;
+        }
+    }
+    .sqv3-best__deal-base .sqv3-deal {
+        position: static;
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0px 0px 30px rgba(0, 0, 0, 0.18));
+    }
+
+    /* ---------- Pagination ---------- */
+    .sqv3-best__dots {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        height: 8px;
+        font-size: 0;
+        line-height: 0;
+    }
+    .sqv3-best__dots .best-seller-dot {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 1.5px;
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.4);
+        border: 0;
+        border-radius: 29px;
+        padding: 0;
+        opacity: 1;
+        transition: width 0.2s ease, background-color 0.2s ease;
+        cursor: pointer;
+    }
+    .sqv3-best__dots .best-seller-dot.is-active {
+        width: 24px;
+        background: #FFFFFF;
     }
     .sqv3-best__empty {
         font-family: 'Outfit', sans-serif;
@@ -164,15 +238,29 @@
     <h2 class="sqv3-best__title">{{ __('Best Seller') }}</h2>
 
     @if ($__bestSellerCards->isNotEmpty())
-      <div class="swiper bestseller-swiper sqv3-best__row">
-        <div id="bestSellerWrapper" class="swiper-wrapper">
-          @foreach ($__bestSellerCards as $p)
-            <div class="swiper-slide sqv3-best__slide" wire:key="best-seller-v3-{{ $p['id'] }}">
+      {{-- Same draggable fan-cascade carousel as Green Edition's Best Seller
+           (see mountFanCascadeCarousel() in carousels-v3.js). --}}
+      <div class="swiper sqv3-best__swiper lg:!hidden w-full">
+        <div class="swiper-wrapper sqv3-best__group" id="bestSellerMobileWrapper">
+          @foreach ($__bestSellerMobile as $p)
+            <div class="swiper-slide sqv3-best__deal-base" style="position:absolute; top:0; left:0;" wire:key="best-seller-mobile-v3-{{ $p['id'] }}">
               @include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])
             </div>
           @endforeach
         </div>
       </div>
+      <div class="sqv3-best__dots lg:!hidden" id="bestSellerMobileDots"></div>
+
+      <div class="swiper sqv3-best__swiper !hidden lg:!block w-full">
+        <div class="swiper-wrapper sqv3-best__group" id="bestSellerDesktopWrapper">
+          @foreach ($__bestSellerCards as $p)
+            <div class="swiper-slide sqv3-best__deal-base" style="position:absolute; top:0; left:0;" wire:key="best-seller-desktop-v3-{{ $p['id'] }}">
+              @include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])
+            </div>
+          @endforeach
+        </div>
+      </div>
+      <div class="sqv3-best__dots !hidden lg:!block" id="bestSellerDesktopDots"></div>
 
       <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv3-best__cta">
         <span class="sqv3-best__cta-label">{{ __('Explore all') }}</span>
