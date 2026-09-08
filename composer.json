@@ -105,10 +105,6 @@
         "platform-check": false
     },
     "minimum-stability": "stable",
-<<<<<<< HEAD
-    "prefer-stable": true
-=======
     "prefer-stable": true,
     "platform-check": false
->>>>>>> 4c6a69b16b6595ab19b87163119116edb79228a4
 }
