@@ -244,6 +244,7 @@ function mountBestSeller() {
   try {
     mountFanCascadeCarousel("bestSellerDesktopWrapper", SQV4_BEST_SELLER_POSITIONS_DESKTOP, {
       baseWidth: 295.45,
+      dotsContainerId: "bestSellerDesktopDots",
     });
   } catch (e) {
     console.error("mountBestSeller (desktop) failed", e);

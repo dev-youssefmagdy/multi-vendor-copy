@@ -259,6 +259,7 @@
         @endforeach
       </div>
     </div>
+    <div class="sqv4-best__dots !hidden lg:!block" id="bestSellerDesktopDots"></div>
   @else
     <p class="sqv4-best__empty">{{ __('No best sellers yet.') }}</p>
   @endif
