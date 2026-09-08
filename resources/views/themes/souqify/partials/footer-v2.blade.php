@@ -103,7 +103,7 @@
   <a href="{{ route('tenant.storefront.cart') }}" class="flex flex-col items-center gap-[4px] relative">
     <span class="relative">
       <img src="{{ asset('souqify-1/assets/icons/icon-nav-cart.svg') }}" alt="" class="size-[24px]" />
-      <span class="souqify-cart-badge absolute -top-[2px] -right-[10px] flex items-center justify-center rounded-full text-white text-[10px] font-semibold h-[11px] w-[15px] {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-accent-purple-bright)">{{ $cartCount }}</span>
+      <span class="souqify-cart-badge absolute -top-[2px] -right-[4px] flex items-center justify-center rounded-full text-white text-[10px] font-semibold h-[11px] w-[15px]" style="background:var(--color-accent-purple-bright)">{{ $cartCount }}</span>
     </span>
     <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-gray)">{{ __('My Cart') }}</span>
   </a>

@@ -128,9 +128,18 @@
        wrapper with slidesPerView:"auto" before the mount below runs, and an
        auto slide with no width blows the card up to the full row. */
     .sqv2-best__slide { height: auto; }
-    /* Phones show the Deal Card whole and about half of the Mobile column. */
+    /* Phones show the Deal Card whole and most of the Mobile column.
+       align-items:stretch only stretches the SLIDE box to match heights, not
+       the individual Mobile Cards inside it - each is its own fixed
+       aspect-ratio (411.94:108.05), sized off its own width, with an
+       11.27px gap between the three. So the Mobile column's width isn't a
+       simple multiple of the Deal Card's width (236.19:377.33): it has to
+       solve deal-width * (377.33/236.19) = 3 * mobile-width * (108.05/411.94)
+       + 2*11.27 for mobile-width, which is why the coefficient below isn't
+       the Figma frames' own 251.7:401.64 ratio - that ratio ignores the
+       fixed 22.54px the two gaps take out of the three-card stack. */
     .sqv2-best__slide--deal { width: 50%; }
-    .sqv2-best__slide--mobile { width: 88%; }
+    .sqv2-best__slide--mobile { width: calc(101.512% - 28.6445px); }
     /* Frame 1984080244: three Mobile Cards, 11.27px apart. */
     .sqv2-best__col {
         display: flex;
@@ -170,8 +179,10 @@
     }
 
     @media (min-width: 640px) and (max-width: 1023px) {
+        /* Same height-matching equation as the mobile width above, solved
+           for a 32% Deal Card instead of 50%. */
         .sqv2-best__slide--deal { width: 32%; }
-        .sqv2-best__slide--mobile { width: 52%; }
+        .sqv2-best__slide--mobile { width: calc(64.9677% - 28.6445px); }
     }
 
     @media (min-width: 1024px) {
@@ -182,10 +193,17 @@
         }
         .sqv2-best__title { font-size: clamp(32px, 2.778vw, 40px); }
         .sqv2-best__seeall { font-size: clamp(15px, 1.389vw, 20px); }
-        /* Two Deal Cards and two Mobile columns fill the row exactly - the
-           251.7 : 401.64 ratio, scaled so nothing of a fifth group shows. */
-        .sqv2-best__slide--deal { width: calc((100% - 3 * 16.9px) * 0.19262); }
-        .sqv2-best__slide--mobile { width: calc((100% - 3 * 16.9px) * 0.30738); }
+        /* Two Deal Cards and two Mobile columns need to both (a) fill the
+           row exactly, so nothing of a fifth group shows, and (b) still
+           satisfy the height-matching equation from the mobile width above
+           (deal-height == the three stacked Mobile Cards' height). The old
+           251.7:401.64 Figma-frame ratio only solved (a) - it ignored the
+           22.54px the two gaps between Mobile Cards take out of that
+           equation, which is what left the Mobile column visibly shorter
+           than the Deal Card. These two widths are the simultaneous
+           solution to both equations together. */
+        .sqv2-best__slide--deal { width: calc(16.5003% + 1.0872px); }
+        .sqv2-best__slide--mobile { width: calc(33.4997% - 26.4372px); }
     }
 </style>
 

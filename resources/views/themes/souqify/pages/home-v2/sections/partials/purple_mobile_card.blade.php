@@ -246,7 +246,7 @@
         @endif
         <span class="sqv2-mob__cart" role="button" tabindex="0" aria-label="{{ __('Add to cart') }}"
             wire:click.stop.prevent="addToCart({{ $p['id'] }})">
-            <img src="{{ asset('souqify-1/assets/icons/icon-cart-navy.svg') }}" alt="{{ __('Add to cart') }}" />
+            <img src="{{ asset('souqify-1/assets/icons/icon-cart-add.svg') }}" alt="{{ __('Add to cart') }}" />
         </span>
     </a>
 
