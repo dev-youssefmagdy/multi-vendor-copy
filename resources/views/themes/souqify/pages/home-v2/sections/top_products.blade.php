@@ -227,7 +227,7 @@
               <div class="sqv2-best__col">
                 @foreach ($__group['items'] as $p)
                   <div wire:key="best-seller-v2-{{ $p['id'] }}">
-                    @include('themes.souqify.pages.home-v2.sections.partials.purple_mobile_card', ['p' => $p])
+                    @include('themes.souqify.pages.home-v2.sections.partials.purple_mobile_card', ['p' => $p, 'cartIcon' => 'icon-cart-add.svg'])
                   </div>
                 @endforeach
               </div>
