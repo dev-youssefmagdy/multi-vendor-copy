@@ -49,24 +49,7 @@
         ];
     });
 
-    // Figma "Group 57" (1354.21 x 472.89). Unlike Flash Sale these cards are not
-    // rotated - they recede in size left to right. Each entry is left/top/width/height
-    // as a percentage of the group, plus the stacking order (the biggest card is on
-    // top and each following card sits behind it).
-    //   Deal 18  295.45x472.89  left 56      top 98
-    //   Deal 19  283.96x454.2   left 329     top 107
-    //   Deal 4   255.24x409     left 580.18  top 129
-    //   Deal 17  229.29x367     left 811     top 155
-    //   Deal 16  210.06x336     left 1021    top 173
-    //   Deal 20  192.21x308     left 1218    top 193
-    $__fan = [
-        ['left' => 4.135,  'top' => 20.723, 'w' => 21.816, 'h' => 100.000],
-        ['left' => 24.294, 'top' => 22.626, 'w' => 20.968, 'h' => 96.048],
-        ['left' => 42.843, 'top' => 27.279, 'w' => 18.847, 'h' => 86.489],
-        ['left' => 59.887, 'top' => 32.777, 'w' => 16.931, 'h' => 77.607],
-        ['left' => 75.395, 'top' => 36.583, 'w' => 15.511, 'h' => 71.053],
-        ['left' => 89.942, 'top' => 40.813, 'w' => 14.193, 'h' => 65.132],
-    ];
+    $__bestSellerMobile = $__bestSellerCards->take(3);
 @endphp
 
 @include('themes.souqify.pages.home-v4.sections.partials.deal_card_styles')
@@ -148,17 +131,49 @@
         text-decoration: none;
     }
 
-    /* ---------- Receding card group (Group 57, 1354.21 x 472.89) ---------- */
+    /* ---------- Draggable fan cascade ----------
+       Same technique as ELORA Minimal Edition's Best Seller carousel (see
+       mountBestSellerCarousel() in carousels-v4.js): every slide is
+       absolutely positioned from a fixed geometry table indexed by distance
+       from the active slide, so dragging shifts which product sits in the
+       biggest/leftmost slot while the rest cascade down in size behind it. */
+    .sqv4-best__swiper {
+        /* overflow:visible lets the fan's cards bleed past the swiper's own
+           (much smaller) auto-width box. */
+        overflow: visible;
+        padding: 0 0 24px;
+        cursor: grab;
+        width: 100% !important;
+    }
     .sqv4-best__group {
         /* Best Seller accent: the theme green. */
         --sqv4-deal-accent: #5A9B00;
         position: relative;
         width: 100%;
-        aspect-ratio: 1354.21 / 472.89;
-        /* The tallest card (top 98 + height 472.89 = 570.89) overhangs the group by
-           98px; reserve that below so it clears the pagination.
-           Percentage margins resolve against the width, so 98/1354.21. */
-        margin-bottom: 7.24%;
+    }
+    /* Every slide is this ONE fixed base size (matching the biggest/active
+       Figma card exactly); mountBestSellerCarousel applies
+       `transform: translate(left, top) scale(ratio)` per slide to produce
+       every other cascade depth from it, so content never gets crammed into
+       a shrunk box - the whole card scales as one unit. */
+    .sqv4-best__deal-base {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 154.5px;
+        height: 223.1px;
+        transform-origin: top left;
+    }
+    @media (min-width: 1024px) {
+        .sqv4-best__deal-base {
+            width: 295.45px;
+            height: 472.89px;
+        }
+    }
+    .sqv4-best__deal-base .sqv4-deal {
+        position: static;
+        width: 100%;
+        height: 100%;
     }
 
     /* ---------- Pagination (Frame 1984080197) ---------- */
@@ -192,44 +207,6 @@
         color: rgba(255, 255, 255, 0.8);
     }
 
-    /* ---------- Mobile comp ----------
-       The phone layout is not the desktop fan scaled down: the cards are close to
-       square (~53% wide, ~54% tall against the screen) and overlap by roughly two
-       thirds, so only a slice of each trailing card shows. These per-card values
-       override the inline percentages the desktop fan writes. */
-    @media (max-width: 1023.98px) {
-        .sqv4-best__group {
-            width: 100%;
-            /* An explicit height beats aspect-ratio here: the base rule already
-               sets the desktop 1354.21/472.89 ratio, and that squashed group is
-               what was flattening the cards. */
-            aspect-ratio: auto;
-            height: 59.5vw;
-            margin-bottom: 0;
-            /* Three cards sit inside the gutters; the rest of the fan is reached by
-               swiping. Absolutely positioned cards still contribute to the scroll
-               width, so no extra wrapper is needed. */
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            overscroll-behavior-x: contain;
-        }
-        .sqv4-best__group::-webkit-scrollbar { display: none; }
-        /* Snap per page of three, not per card: card 4 starts at ~98% of the group,
-           so one viewport of scroll lands it flush at the left edge. */
-        .sqv4-best__group .sqv4-deal:nth-child(3n + 1) { scroll-snap-align: start; }
-        /* Three cards make a page - big, medium, small - and the pattern restarts
-           one full page (100%) to the right, so every swipe brings the next three
-           in at exactly the same widths as the first three. */
-        .sqv4-best__group .sqv4-deal:nth-child(1) { left: 0% !important;     top: 0% !important;  width: 41.2% !important; height: 100% !important; }
-        .sqv4-best__group .sqv4-deal:nth-child(2) { left: 32.2% !important;  top: 6% !important;  width: 37.6% !important; height: 91% !important; }
-        .sqv4-best__group .sqv4-deal:nth-child(3) { left: 66.2% !important;  top: 12% !important; width: 34% !important;   height: 82% !important; }
-        .sqv4-best__group .sqv4-deal:nth-child(4) { left: 100% !important;   top: 0% !important;  width: 41.2% !important; height: 100% !important; }
-        .sqv4-best__group .sqv4-deal:nth-child(5) { left: 132.2% !important; top: 6% !important;  width: 37.6% !important; height: 91% !important; }
-        .sqv4-best__group .sqv4-deal:nth-child(6) { left: 166.2% !important; top: 12% !important; width: 34% !important;   height: 82% !important; }
-    }
-
     @media (min-width: 1024px) {
         .sqv4-best {
             /* 24px 56px padding, 24px gap */
@@ -260,22 +237,27 @@
   </div>
 
   @if ($__bestSellerCards->isNotEmpty())
-    <div id="bestSellerWrapper" class="sqv4-best__group">
-      @foreach ($__bestSellerCards as $index => $p)
-        @php
-          $__pos = $__fan[$index % count($__fan)];
-          // Biggest card sits on top; each subsequent card falls behind it.
-          $__z = count($__fan) - $index;
-          $__style = "left:{$__pos['left']}%; top:{$__pos['top']}%; width:{$__pos['w']}%; height:{$__pos['h']}%; z-index:{$__z};";
-        @endphp
-        @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => $__style, 'cartIcon' => 'icon-cart-green.svg'])
-      @endforeach
+    {{-- Same draggable fan-cascade carousel as ELORA Minimal Edition's Best
+         Seller (see mountBestSellerCarousel() in carousels-v4.js). --}}
+    <div class="swiper sqv4-best__swiper lg:!hidden w-full">
+      <div class="swiper-wrapper sqv4-best__group" id="bestSellerMobileWrapper">
+        @foreach ($__bestSellerMobile as $p)
+          <div class="swiper-slide sqv4-best__deal-base" style="position:absolute; top:0; left:0;" wire:key="bestseller-mobile-v4-{{ $p['id'] }}">
+            @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => '', 'cartIcon' => 'icon-cart-green.svg'])
+          </div>
+        @endforeach
+      </div>
     </div>
+    <div class="sqv4-best__dots lg:!hidden" id="bestSellerMobileDots"></div>
 
-    <div class="sqv4-best__dots">
-      @foreach ($__bestSellerCards as $index => $p)
-        <span class="best-seller-dot @if ($index === 0) is-active @endif"></span>
-      @endforeach
+    <div class="swiper sqv4-best__swiper !hidden lg:!block w-full">
+      <div class="swiper-wrapper sqv4-best__group" id="bestSellerDesktopWrapper">
+        @foreach ($__bestSellerCards as $p)
+          <div class="swiper-slide sqv4-best__deal-base" style="position:absolute; top:0; left:0;" wire:key="bestseller-desktop-v4-{{ $p['id'] }}">
+            @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => '', 'cartIcon' => 'icon-cart-green.svg'])
+          </div>
+        @endforeach
+      </div>
     </div>
   @else
     <p class="sqv4-best__empty">{{ __('No best sellers yet.') }}</p>

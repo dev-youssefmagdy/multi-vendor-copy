@@ -1,7 +1,7 @@
 @php
     $__flashEnd = optional($flashSales ?? collect())->first()?->end_at;
 
-    // Figma cycles three discount-chip palettes across the fanned cards.
+    // Figma cycles three discount-chip palettes across the flash sale cards.
     $__chipPalettes = [
         ['bg' => '#FFB00A', 'color' => '#121212'],
         ['bg' => '#DE1709', 'color' => '#FDFDFD'],
@@ -51,28 +51,11 @@
         ];
     });
 
-    // Figma "Group 57" (1176.38 x 456.33): each card's left/top as a percentage of
-    // the group, plus its rotation.
-    // Verbatim Figma coordinates, as percentages of Group 57 (1176.38 x 456.33):
-    //   Deal 4  left 0       top 129.49  rotate -11.98
-    //   Deal 17 left 233     top 96      rotate 0
-    //   Deal 16 left 388.33  top 130.49  rotate 8.97
-    //   Deal 20 left 535.33  top 111.49  rotate -11.98
-    //   Deal 18 left 759.33  top 104.49  rotate 0
-    //   Deal 19 left 893.33  top 155     rotate 8.97
-    $__fan = [
-        ['left' => 0.000,  'top' => 28.38, 'rot' => -11.98],
-        ['left' => 19.807, 'top' => 21.04, 'rot' => 0],
-        ['left' => 33.010, 'top' => 28.60, 'rot' => 8.97],
-        ['left' => 45.506, 'top' => 24.43, 'rot' => -11.98],
-        ['left' => 64.548, 'top' => 22.90, 'rot' => 0],
-        ['left' => 75.938, 'top' => 33.97, 'rot' => 8.97],
-    ];
 @endphp
 
 {{-- Figma: Frame 1984080356 (1440x700.33) - row, 24px 56px padding, 32px gap,
      background #5A9B00, border-radius 200px 200px 0 0. Left: the rotated countdown.
-     Right: Flash Sale title, the fanned card group, and the Shop now button. --}}
+     Right: Flash Sale title, the card carousel, and the Shop now button. --}}
 <style>
     .sqv4-flash {
         --sqv4-flash-pad: max(16px, calc((100% - 1440px) / 2 + 16px));
@@ -189,24 +172,48 @@
         white-space: nowrap;
     }
 
-    /* ---------- Fanned card group (Group 57, 1176.38 x 456.33) ---------- */
+    /* ---------- Carousel ----------
+       Mobile: swipeable 2-col x 2-row grid (Swiper's grid module, same
+       technique as ELORA Bold Edition's Best Seller carousel). Desktop: a
+       draggable rotated fan cascade matching Souqify's own original card
+       fan (see the .sqv4-flash__desktop-swiper rules below). */
     .sqv4-flash__group {
-        /* Flash Sale accent: the comp's purple. */
         --sqv4-deal-accent: #8B03BD;
         position: relative;
         width: 100%;
-        /* Group 57: 1176.38 x 456.33 */
-        aspect-ratio: 1176.38 / 456.33;
-        /* The lowest card (top 155 + height 366.14 = 521) overhangs the group by
-           64.67px; reserve that below so it never lands on the Shop now button.
-           Percentage margins resolve against the width, so 64.67/1176.38. */
-        margin-bottom: 5.5%;
+        overflow: visible;
     }
-    /* Card footprint inside this section's group. */
     .sqv4-flash__group .sqv4-deal {
-        /* 228.76 / 1176.38 wide, 366.14 / 456.33 tall */
-        width: 19.446%;
-        height: 80.24%;
+        position: static;
+        width: 100%;
+        height: 100%;
+    }
+    .sqv4-flash__mobile-swiper {
+        /* Swiper's grid module needs a real height to divide into rows -
+           sized from the deal card's own aspect ratio (228.76 x 366.14) at
+           this carousel's ~2-column mobile width. */
+        height: 542px;
+    }
+    /* Desktop: draggable rotated fan cascade (Figma "Group 57", matching
+       Souqify's own original card fan) - every card stays the SAME size
+       (228.76 x 366.14) and only rotates/translates per fan slot (see
+       mountFlashSaleDesktop() in carousels-v4.js). overflow:visible lets
+       the fan's cards bleed past the swiper's own auto-width box. */
+    .sqv4-flash__desktop-swiper {
+        overflow: visible;
+        padding-bottom: 24px;
+        cursor: grab;
+        width: 100% !important;
+    }
+    .sqv4-flash__desktop-swiper .swiper-wrapper {
+        width: 100%;
+    }
+    .sqv4-flash__deal-base {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 228.76px;
+        height: 366.14px;
     }
     /* ---------- Shop now (Frame 1984080355) ---------- */
     .sqv4-flash__cta {
@@ -272,43 +279,6 @@
         .sqv4-flash__group,
         .sqv4-flash__empty    { order: 3; }
         .sqv4-flash__cta      { order: 4; }
-        /* Three overlapping cards make a page and the pattern restarts 100% to the
-           right, so a swipe brings the next three in at the same size and tilt. */
-        .sqv4-flash__group {
-            width: 100%;
-            aspect-ratio: auto;
-            height: 70vw;
-            margin-bottom: 6%;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            overscroll-behavior-x: contain;
-        }
-        .sqv4-flash__group::-webkit-scrollbar { display: none; }
-        /* Pin the scroll width to a whole number of pages. Without this the width
-           is decided by the last card's tilted corner, the scroll can never reach
-           100%, and page two lands short - leaving a slice of the previous card. */
-        .sqv4-flash__group::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 1px;
-            pointer-events: none;
-        }
-        .sqv4-flash__group .sqv4-deal:nth-child(3n + 1) { scroll-snap-align: start; }
-        /* Three cards face on, overlapping like the comp: the middle one is the
-           biggest and sits on top, the outer two tuck behind it. Only position,
-           size and stacking are overridden - the inline transform keeps each
-           card's Figma tilt. The next three start one row width to the right. */
-        .sqv4-flash__group .sqv4-deal:nth-child(1) { left: 7% !important;   top: 18% !important; width: 37% !important; height: 78% !important; z-index: 1 !important; }
-        .sqv4-flash__group .sqv4-deal:nth-child(2) { left: 32% !important;  top: 8% !important;  width: 40% !important; height: 88% !important; z-index: 3 !important; }
-        .sqv4-flash__group .sqv4-deal:nth-child(3) { left: 57% !important;  top: 18% !important; width: 37% !important; height: 78% !important; z-index: 2 !important; }
-        .sqv4-flash__group .sqv4-deal:nth-child(4) { left: 107% !important; top: 18% !important; width: 37% !important; height: 78% !important; z-index: 1 !important; }
-        .sqv4-flash__group .sqv4-deal:nth-child(5) { left: 132% !important; top: 8% !important;  width: 40% !important; height: 88% !important; z-index: 3 !important; }
-        .sqv4-flash__group .sqv4-deal:nth-child(6) { left: 157% !important; top: 18% !important; width: 37% !important; height: 78% !important; z-index: 2 !important; }
         .sqv4-flash__cta {
             width: 100%;
             max-width: 360px;
@@ -416,15 +386,31 @@
     </div>
 
     @if ($__flashCards->isNotEmpty())
-      <div id="flashStack" class="sqv4-flash__group">
-        @foreach ($__flashCards as $index => $p)
-          @php
-            $__pos = $__fan[$index % count($__fan)];
-            $__z = $index + 1;
-            $__style = "left:{$__pos['left']}%; top:{$__pos['top']}%; z-index:{$__z}; transform:rotate({$__pos['rot']}deg);";
-          @endphp
-          @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => $__style])
-        @endforeach
+      {{-- Mobile: swipeable 2-col x 2-row grid (same technique as ELORA Bold
+           Edition's Best Seller carousel). --}}
+      <div class="sqv4-flash__group lg:!hidden">
+        <div class="swiper sqv4-flash__mobile-swiper">
+          <div class="swiper-wrapper" id="flashMobileWrapper">
+            @foreach ($__flashCards as $p)
+              <div class="swiper-slide">
+                @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => ''])
+              </div>
+            @endforeach
+          </div>
+        </div>
+      </div>
+
+      {{-- Desktop: draggable rotated fan cascade, matching Souqify's own
+           original Flash Sale card fan (see mountFlashSaleDesktop() in
+           carousels-v4.js). --}}
+      <div class="swiper sqv4-flash__desktop-swiper !hidden lg:!block">
+        <div class="sqv4-flash__group swiper-wrapper" id="flashDesktopWrapper">
+          @foreach ($__flashCards as $p)
+            <div class="swiper-slide sqv4-flash__deal-base" style="position:absolute; top:0; left:0;">
+              @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => ''])
+            </div>
+          @endforeach
+        </div>
       </div>
     @else
       <p class="sqv4-flash__empty">{{ __('No flash deals right now.') }}</p>
