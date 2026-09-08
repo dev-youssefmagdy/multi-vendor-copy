@@ -14,9 +14,11 @@ use App\Models\PaymentGateway;
 use App\Models\PaymentLog;
 use App\Models\Tenant;
 use App\Models\Tenant\Subscription;
+use App\Models\TenantCountry;
 use App\Models\TenantOwner;
 use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Language;
+use App\Services\AdminNotificationService;
 use App\Services\Mail\TemplateMailService;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -26,6 +28,7 @@ class WebsiteRegistrationService
     public function __construct(
         protected TenantService $tenantService,
         protected TemplateMailService $templateMailService,
+        protected AdminNotificationService $adminNotifier,
     ) {
     }
 
@@ -51,7 +54,7 @@ class WebsiteRegistrationService
         $candidate = $base;
         $counter = 2;
 
-        while (Tenant::query()->where('slug', $candidate)->exists()) {
+        while (Tenant::query()->where('data->slug', $candidate)->exists()) {
             $candidate = $base . '-' . $counter;
             $counter++;
         }
@@ -114,6 +117,21 @@ class WebsiteRegistrationService
 
         $tenant = $this->tenantService->save($tenantAttributes);
 
+        if (filled($registrationData['affiliate_referral_id'] ?? null)) {
+            $referral = \App\Models\AffiliateReferral::query()->find((int) $registrationData['affiliate_referral_id']);
+
+            if ($referral && !$referral->converted_at) {
+                app(AffiliateService::class)->markReferralConverted($referral, $tenant->id);
+            }
+        }
+
+        foreach ((array) ($registrationData['country_ids'] ?? []) as $countryId) {
+            TenantCountry::query()->updateOrCreate(
+                ['tenant_id' => $tenant->id, 'country_id' => (int) $countryId],
+                ['is_active' => true]
+            );
+        }
+
         if ($package && $payment && (float) ($payment['amount'] ?? 0) > 0) {
             $paymentLog = $this->createCentralPaymentLog($tenant, $package, $payment);
             $this->createTenantBillingRecords($tenant, $package, $payment);
@@ -121,6 +139,23 @@ class WebsiteRegistrationService
             if ($paymentLog) {
                 $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
                 $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
+
+                $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
+                $affiliateCoupon   = null;
+                $couponAffiliateId = null;
+
+                if ($affiliateCouponId) {
+                    $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
+                    $couponAffiliateId = $affiliateCoupon?->affiliate_id;
+                }
+
+                // URL-referral commission — suppressed when an affiliate coupon was used
+                app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
+
+                // Affiliate coupon commission — fires only when an affiliate coupon was applied
+                if ($affiliateCoupon) {
+                    app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
+                }
             }
         } else {
             // Free plan: create the tenant admin synchronously in the HTTP request,
@@ -141,10 +176,13 @@ class WebsiteRegistrationService
 
         TenantOwner::updateOrCreate(
             ['email' => strtolower(trim((string) $registrationData['email']))],
-            [
+            array_filter([
                 'tenant_id' => $tenant->id,
                 'password' => bcrypt((string) $registrationData['password']),
-            ]
+                'provider' => $registrationData['provider'] ?? null,
+                'provider_id' => $registrationData['provider_id'] ?? null,
+                'avatar' => $registrationData['avatar'] ?? null,
+            ], fn ($value) => $value !== null)
         );
 
         $tenant = $tenant->fresh(['domains', 'package.translations.language']);
@@ -153,6 +191,13 @@ class WebsiteRegistrationService
         $adminLoginUrl = 'https://' . $subdomain . '/admin/login';
         $storeUrl = $customDomain ? 'https://' . $customDomain : $subdomainUrl;
         $this->templateMailService->sendTenantWelcome($tenant, $storeUrl, $adminLoginUrl, $customDomain ? $subdomainUrl : null, $locale);
+
+        $this->adminNotifier->notify(
+            type: 'tenant',
+            title: 'New Tenant Registered',
+            message: sprintf('A new store "%s" has registered and is awaiting activation.', $tenant->shop_name ?? $tenant->id),
+            data: ['tenant_id' => $tenant->getTenantKey(), 'email' => $tenant->email ?? null],
+        );
 
         return $tenant;
     }

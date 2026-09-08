@@ -6,6 +6,7 @@ use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Country;
 use App\Models\FixedShippingCost;
+use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
@@ -21,7 +22,10 @@ class ProductsList extends ListPage
 
     public string $search = '';
     public string $statusFilter = '';
-    public string $outOfStockFilter = '';
+    public string $stockFilter = '';
+    public string $categoryFilter = '';
+    public array $imageSearchIds = [];
+    public bool $imageSearchActive = false;
 
     // ── Social-post modal state ────────────────────────────────────────────
     public bool $socialModalOpen = false;
@@ -62,6 +66,11 @@ class ProductsList extends ListPage
     public ?string $shareImageUrl = null;
     public bool $hasAiContent = false;
 
+    // ── Video Ad modal state ───────────────────────────────────────────────
+    public bool $videoAdModalOpen = false;
+    public ?int $videoAdProductId = null;
+    public string $videoAdProductName = '';
+
     // ── Price list modal state ─────────────────────────────────────────────
     public bool $priceListOpen = false;
     public ?int $priceListProductId = null;
@@ -88,6 +97,8 @@ class ProductsList extends ListPage
             'description' => 'Manage tenant-scoped product details, pricing, availability, and featured status.',
             // 'actionLabel' => 'Add Product',
             // 'actionUrl' => route('tenant.products.create'),
+            'secondaryActionLabel' => 'Sort Products',
+            'secondaryActionUrl' => route('tenant.products.sort'),
             'tableTitle' => 'Vendor Products',
             'headers' => ['Product', 'Central Price', 'Vendor Price', 'AI Price', 'Stock', 'Status', 'Categories', 'Updated At', 'Actions'],
         ];
@@ -96,8 +107,15 @@ class ProductsList extends ListPage
     protected function pageData(): array
     {
         $repository = app(TenantPanelRepository::class);
-        $records = $repository->paginateProducts(['search' => $this->search, 'status' => $this->statusFilter, 'out_of_stock' => $this->outOfStockFilter]);
+        $records = $repository->paginateProducts([
+            'search' => $this->search,
+            'status' => $this->statusFilter,
+            'stock' => $this->stockFilter,
+            'category' => $this->categoryFilter,
+            'image_search_ids' => $this->imageSearchIds,
+        ]);
         $stats = $repository->productStats();
+        $categoryOptions = $this->categoryOptions();
         $centralProducts = $repository->centralProductSnapshots(
             collect($records->items())->pluck('central_product_id')->all()
         );
@@ -105,16 +123,25 @@ class ProductsList extends ListPage
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
             'records' => $records,
+            'imageSearchModal' => true,
+            'imageSearchIds' => $this->imageSearchIds,
+            'imageSearchActive' => $this->imageSearchActive,
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
-                ['label' => 'Stock', 'model' => 'outOfStockFilter', 'type' => 'select', 'options' => ['' => 'All stock levels', '1' => 'Out of stock']],
+                ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
+                ['label' => 'Category', 'model' => 'categoryFilter', 'type' => 'select', 'options' => $categoryOptions],
             ],
             'statistics' => [
                 ['label' => 'Products', 'value' => number_format($stats['total']), 'caption' => 'Products in this tenant catalog', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently saleable products', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Featured', 'value' => number_format($stats['featured']), 'caption' => 'Homepage promoted products', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
+            'rowClasses' => collect($records->items())->map(fn(Product $product) => match ($product->stockStatus()) {
+                'out_of_stock' => 'row-out-of-stock',
+                'partial' => 'row-partial-stock',
+                default => '',
+            })->values()->all(),
             'rows' => collect($records->items())->map(function (Product $product) use ($centralProducts) {
                 $central = $centralProducts[$product->central_product_id] ?? null;
                 $imageUrl = $central['image_url'] ?? $product->primary_image_url;
@@ -130,13 +157,34 @@ class ProductsList extends ListPage
                 $stockQty = $product->variants->isNotEmpty()
                     ? $product->variants->sum('stock')
                     : ($product->stock ?? 0);
-                $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>';
+                $stockStatus = $product->stockStatus();
+                $stockBadge = match ($stockStatus) {
+                    'out_of_stock' => '<div class="entity-subtitle" style="color:var(--red);">Out of stock</div>',
+                    'partial' => '<div class="entity-subtitle" style="color:var(--amber);">Partial</div>',
+                    default => '',
+                };
+                $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>' . $stockBadge;
+
+                $titleStockBadge = match ($stockStatus) {
+                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>',
+                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>',
+                    default => '',
+                };
+
+                $badgeTones = [
+                    'featured' => 'badge-violet',
+                    'recommended' => 'badge-green',
+                    'best-selling' => 'badge-amber',
+                    'new-in' => 'badge-cyan',
+                ];
+                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(ucfirst(str_replace('-', ' ', $badge->text))) . '</span>')->implode(' ');
+                $badgeCell = $badgePills !== '' ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">' . $badgePills . '</div>' : '';
 
                 return [
                     ($imageUrl
                         ? '<img src="' . e($imageUrl) . '" alt="' . e($product->translationValue('name') ?? $product->slug ?? 'Product') . '" style="width:44px;height:44px;object-fit:cover;border-radius:10px;display:inline-block;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);">'
                         : '<span style="width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);">' . e(strtoupper(substr($product->translationValue('name') ?? $product->slug ?? 'P', 0, 1))) . '</span>'
-                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div></span>',
+                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div>' . $titleStockBadge . $badgeCell . '</span>',
                     $central
                     ? '<div class="entity-title">$' . e(number_format((float) $centralPrice, 2)) . '</div><div class="entity-subtitle">Base $' . e(number_format((float) ($central['base_price'] ?? $centralPrice), 2)) . '</div>'
                     : '<span class="entity-subtitle">Not linked</span>',
@@ -161,6 +209,9 @@ class ProductsList extends ListPage
                     . '</button>'
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openPriceListModal(' . $product->id . ')" title="Edit per-country prices">'
                     . '&#9776; Prices'
+                    . '</button>'
+                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openVideoAdModal(' . $product->id . ')" title="Generate a video ad for this product">'
+                    . '&#127909; Video Ad'
                     . '</button>'
                     . '</div>',
                 ];
@@ -234,6 +285,12 @@ class ProductsList extends ListPage
                         'shippingByCountry' => $this->priceListShippingByCountry,
                     ],
                 ],
+                [
+                    'model' => 'videoAdModalOpen',
+                    'title' => 'Generate new Video Ad',
+                    'closeAction' => 'closeVideoAdModal',
+                    'maxWidth' => '2xl',
+                ],
             ],
         ]);
     }
@@ -245,7 +302,7 @@ class ProductsList extends ListPage
         $product = Product::query()->with('translations.language')->findOrFail($productId);
         $enabledLanguages = Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
             ->orderBy('name')
             ->get(['code', 'name', 'native_name']);
 
@@ -299,6 +356,24 @@ class ProductsList extends ListPage
         $this->socialSelectedLanguage = 'all';
         $this->socialIncludeImage = 'on';
         $this->socialSelectedPlatform = 'all';
+    }
+
+    // ── Video Ad actions ───────────────────────────────────────────────────
+
+    public function openVideoAdModal(int $productId): void
+    {
+        $product = Product::query()->with('translations.language')->findOrFail($productId);
+
+        $this->videoAdProductId = $productId;
+        $this->videoAdProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->videoAdModalOpen = true;
+    }
+
+    public function closeVideoAdModal(): void
+    {
+        $this->videoAdModalOpen = false;
+        $this->videoAdProductId = null;
+        $this->videoAdProductName = '';
     }
 
     public function generateSocialPosts(SocialPostService $service): void
@@ -497,14 +572,65 @@ class ProductsList extends ListPage
         $this->resetPage();
     }
 
-    public function updatedOutOfStockFilter(): void
+    public function updatedStockFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedCategoryFilter(): void
     {
         $this->resetPage();
     }
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'statusFilter', 'outOfStockFilter']);
+        $this->reset(['search', 'statusFilter', 'stockFilter', 'categoryFilter']);
+        $this->clearImageSearch();
+        $this->resetPage();
+    }
+
+    /**
+     * Flat, hierarchical option list for the category filter: root categories
+     * followed by their descendants indented, so picking any node (parent or
+     * child) filters by that category plus its own sub-tree.
+     *
+     * @return array<string, string>
+     */
+    private function categoryOptions(): array
+    {
+        $options = ['' => 'All Categories'];
+
+        $roots = Category::query()
+            ->with(['translations.language', 'children.translations.language', 'children.children.translations.language', 'children.children.children.translations.language'])
+            ->whereNull('parent_id')
+            ->orderBy('order_number')
+            ->get();
+
+        $flatten = function ($categories, int $depth) use (&$flatten, &$options): void {
+            foreach ($categories as $category) {
+                $options[(string) $category->id] = str_repeat('— ', $depth) . ($category->translationValue('name') ?: ('#' . $category->id));
+                if ($category->children->isNotEmpty()) {
+                    $flatten($category->children, $depth + 1);
+                }
+            }
+        };
+
+        $flatten($roots, 0);
+
+        return $options;
+    }
+
+    public function applyImageSearch(array $ids): void
+    {
+        $this->imageSearchIds = array_values(array_map('intval', $ids));
+        $this->imageSearchActive = !empty($this->imageSearchIds);
+        $this->resetPage();
+    }
+
+    public function clearImageSearch(): void
+    {
+        $this->imageSearchIds = [];
+        $this->imageSearchActive = false;
         $this->resetPage();
     }
 

@@ -30,29 +30,39 @@
                     'green' => 'badge-green',
                     'blue'  => 'badge-blue',
                     'red'   => 'badge-red',
+                    'gray'  => 'badge-gray',
                     default => 'badge-yellow',
                 };
+                $status = $returnRecord['status'] ?? null;
+                $isOpen = $status?->isOpen() ?? false;
+                $value  = $status?->value;
             @endphp
             <span class="badge {{ $badgeClass }}" style="font-size:14px;padding:6px 14px">
                 {{ $returnRecord['status_label'] ?? '-' }}
             </span>
 
-            @if(($returnRecord['status'] ?? null)?->value === 'pending' || ($returnRecord['status'] ?? null)?->value === 'approved')
-                <x-btn type="button" wire:click="$set('showApproveModal', true)"
-                    style="background:var(--blue);color:#fff">
-                    Approve Return
-                </x-btn>
-                <x-btn type="button" wire:click="$set('showRejectModal', true)"
-                    style="background:var(--red);color:#fff">
-                    Reject Return
-                </x-btn>
-            @endif
+            @if($isOpen)
+                @if(in_array($value, ['pending', 'awaiting_merchant_review', 'awaiting_info']))
+                    <x-btn type="button" wire:click="approve" style="background:var(--blue);color:#fff">Approve</x-btn>
+                    <x-btn type="button" wire:click="$set('showRejectModal', true)" style="background:var(--red);color:#fff">Reject</x-btn>
+                    <x-btn type="button" wire:click="$set('showInfoModal', true)" variant="secondary">Request More Info</x-btn>
+                @endif
 
-            @if(($returnRecord['status'] ?? null)?->value === 'approved')
-                <x-btn type="button" wire:click="$set('showRefundModal', true)"
-                    style="background:var(--green);color:#fff">
-                    Mark as Refunded
-                </x-btn>
+                @if(in_array($value, ['pending', 'approved']))
+                    <x-btn type="button" wire:click="markAwaitingMerchantReview" variant="secondary">Forward to Merchant</x-btn>
+                @endif
+
+                @if($value === 'approved')
+                    <x-btn type="button" wire:click="markItemReceived" style="background:var(--blue);color:#fff">Mark Item Received</x-btn>
+                @endif
+
+                @if(in_array($value, ['approved', 'item_received']))
+                    <x-btn type="button" wire:click="$set('showRefundModal', true)" style="background:var(--green);color:#fff">Mark as Refunded</x-btn>
+                @endif
+
+                @if($value === 'refunded')
+                    <x-btn type="button" wire:click="close" variant="secondary">Close Request</x-btn>
+                @endif
             @endif
 
             @if($returnRecord['reviewed_by'] ?? false)
@@ -74,8 +84,8 @@
                 </div>
             </div>
             <div>
-                <div class="field-label">Tenant / Store ID</div>
-                <div class="D" style="font-size:13px;color:var(--muted)">{{ $returnRecord['tenant_id'] ?? '-' }}</div>
+                <div class="field-label">Tenant / Store</div>
+                <div class="D" style="font-size:13px">{{ $returnRecord['tenant_name'] ?? '-' }}</div>
             </div>
             <div>
                 <div class="field-label">Return Submitted</div>
@@ -98,27 +108,56 @@
             </div>
         </div>
 
-        @if($returnRecord['customer_notes'] ?? false)
+        @if($returnRecord['description'] ?? false)
         <div style="margin-top:12px">
-            <div class="field-label">Customer Notes</div>
+            <div class="field-label">Customer Description</div>
             <div class="D" style="background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:4px;line-height:1.6;color:var(--muted)">
-                {{ $returnRecord['customer_notes'] }}
+                {{ $returnRecord['description'] }}
+            </div>
+        </div>
+        @endif
+
+        @if(!empty($returnRecord['media']))
+        <div style="margin-top:16px">
+            <div class="field-label">Evidence</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+                @foreach($returnRecord['media'] as $m)
+                    @if($m['type'] === 'photo')
+                        <a href="{{ $m['url'] }}" target="_blank">
+                            <img src="{{ $m['url'] }}" style="width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
+                        </a>
+                    @else
+                        <a href="{{ $m['url'] }}" target="_blank" class="link-btn">Watch Video</a>
+                    @endif
+                @endforeach
             </div>
         </div>
         @endif
     </div>
 
-    {{-- Admin Notes --}}
+    {{-- Notes Thread --}}
     <div class="card fu d3 section-gap">
-        <h4 class="panel-title">Admin Notes</h4>
+        <h4 class="panel-title">Notes</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            @forelse($returnRecord['notes'] ?? [] as $note)
+                <div style="background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+                    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">
+                        {{ ucfirst($note['author_type']) }} · {{ $note['created_at'] }}
+                    </div>
+                    <div class="D">{{ $note['note'] }}</div>
+                </div>
+            @empty
+                <p class="field-hint">No notes yet.</p>
+            @endforelse
+        </div>
         <div>
-            <label class="field-label">Internal Notes</label>
-            <textarea wire:model.defer="adminNotes" rows="4"
-                class="input" placeholder="Add internal notes about this return…"
+            <label class="field-label">Add Note</label>
+            <textarea wire:model.defer="noteText" rows="4"
+                class="input" placeholder="Add an internal note about this return…"
                 style="resize:vertical"></textarea>
         </div>
         <div style="margin-top:10px">
-            <x-btn type="button" wire:click="saveNotes">Save Notes</x-btn>
+            <x-btn type="button" wire:click="addNote">Add Note</x-btn>
         </div>
     </div>
 
@@ -135,33 +174,32 @@
     </div>
     @endif
 
-    {{-- Approve Modal --}}
-    @if($showApproveModal)
-    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center">
-        <div class="card" style="width:420px;max-width:95vw;padding:24px">
-            <h3 class="D" style="font-size:16px;margin-bottom:8px">Approve Return</h3>
-            <p style="color:var(--muted);margin-bottom:20px;font-size:13px">
-                This will mark the return as approved. You can issue a refund in the next step.
-            </p>
-            <div style="display:flex;gap:10px;justify-content:flex-end">
-                <x-btn type="button" wire:click="$set('showApproveModal', false)" variant="secondary">Cancel</x-btn>
-                <x-btn type="button" wire:click="approve" style="background:var(--blue);color:#fff">Confirm Approve</x-btn>
-            </div>
-        </div>
-    </div>
-    @endif
-
     {{-- Reject Modal --}}
     @if($showRejectModal)
     <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center">
         <div class="card" style="width:420px;max-width:95vw;padding:24px">
             <h3 class="D" style="font-size:16px;margin-bottom:8px">Reject Return</h3>
-            <p style="color:var(--muted);margin-bottom:20px;font-size:13px">
-                This will mark the return as rejected. Please add admin notes explaining the reason before confirming.
+            <p style="color:var(--muted);margin-bottom:16px;font-size:13px">
+                Explain the rejection reason — this note is visible to the customer.
             </p>
-            <div style="display:flex;gap:10px;justify-content:flex-end">
+            <textarea wire:model.defer="rejectReason" rows="3" class="input" placeholder="Reason for rejection…" style="resize:vertical"></textarea>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
                 <x-btn type="button" wire:click="$set('showRejectModal', false)" variant="secondary">Cancel</x-btn>
                 <x-btn type="button" wire:click="reject" style="background:var(--red);color:#fff">Confirm Reject</x-btn>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Request Info Modal --}}
+    @if($showInfoModal)
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center">
+        <div class="card" style="width:420px;max-width:95vw;padding:24px">
+            <h3 class="D" style="font-size:16px;margin-bottom:8px">Request More Information</h3>
+            <textarea wire:model.defer="infoMessage" rows="3" class="input" placeholder="What do you need from the customer?" style="resize:vertical"></textarea>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+                <x-btn type="button" wire:click="$set('showInfoModal', false)" variant="secondary">Cancel</x-btn>
+                <x-btn type="button" wire:click="requestMoreInfo">Send Request</x-btn>
             </div>
         </div>
     </div>

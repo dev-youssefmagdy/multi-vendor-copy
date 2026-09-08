@@ -23,7 +23,14 @@ class Country extends Model
         'language_direction',
         'phone_code',
         'flag_emoji',
+        'is_active_for_tenants',
+        'is_free',
         'default_language_id',
+    ];
+
+    protected $casts = [
+        'is_active_for_tenants' => 'boolean',
+        'is_free' => 'boolean',
     ];
 
     public function defaultLanguage(): BelongsTo

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Manufacturing;
 
 use App\Enums\ManufacturingPaymentRequestStatus;
 use App\Enums\ManufacturingRequestStatus;
+use App\Events\ManufacturingMessageSent;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\ManufacturingPaymentRequest;
@@ -95,12 +96,14 @@ class ManufacturingRequestDetail extends Component
         $this->validate(['chatMessage' => 'required|string|max:2000']);
 
         $adminUser = auth('admin')->user();
+        $senderName = $adminUser?->name ?? 'Admin';
+        $body = trim($this->chatMessage);
 
         ManufacturingRequestMessage::create([
             'manufacturing_request_id' => $this->requestId,
             'sender_type' => 'admin',
-            'sender_name' => $adminUser?->name ?? 'Admin',
-            'message' => trim($this->chatMessage),
+            'sender_name' => $senderName,
+            'message' => $body,
         ]);
 
         $request = ManufacturingRequest::findOrFail($this->requestId);
@@ -112,6 +115,18 @@ class ManufacturingRequestDetail extends Component
             'The admin sent a message on your manufacturing request for "' . $request->product_name . '".',
             ['request_id' => $request->id]
         );
+
+        try {
+            event(new ManufacturingMessageSent(
+                requestId: $request->id,
+                tenantId: $request->tenant_id,
+                senderType: 'admin',
+                senderName: $senderName,
+                body: $body,
+                sentAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->chatMessage = '';
         $this->dispatch('chat-scrolled');

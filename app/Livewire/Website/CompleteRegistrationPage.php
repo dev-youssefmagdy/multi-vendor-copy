@@ -45,12 +45,14 @@ class CompleteRegistrationPage extends Component
 
     // Step 2 – Category selection
     public array $selectedCategoryIds = [];
+    public array $categoryPreviewTree = [];
 
     // State flags
     public bool $shopNameTaken = false;
     public bool $invalid = false;
     public bool $registered = false;
     public bool $hasDomainRequest = false;
+    public string $registeredTenantId = '';
     public string $tenantDomain = '';
     public string $centralDomain = '';
 
@@ -123,6 +125,13 @@ class CompleteRegistrationPage extends Component
         }
 
         $this->loadDnsRecords();
+        $this->buildCategoryPreview();
+
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $this->email) {
+            $this->name = (string) ($oauth['name'] ?? '');
+        }
     }
 
     public function updatedDomainType(): void
@@ -134,6 +143,80 @@ class CompleteRegistrationPage extends Component
     public function updatedShopName(): void
     {
         $this->checkShopNameAvailability();
+    }
+
+    public function updatedSelectedCategoryIds(): void
+    {
+        $this->buildCategoryPreview();
+    }
+
+    public function buildCategoryPreview(): void
+    {
+        if (empty($this->selectedCategoryIds)) {
+            $this->categoryPreviewTree = [];
+            return;
+        }
+
+        $rootIds = array_map('intval', $this->selectedCategoryIds);
+
+        $allIds = $rootIds;
+        $check = $rootIds;
+
+        while (!empty($check)) {
+            $children = Category::whereIn('parent_id', $check)
+                ->where('status', 'published')
+                ->pluck('id')
+                ->toArray();
+            $new = array_diff($children, $allIds);
+            $allIds = array_merge($allIds, $new);
+            $check = $new;
+        }
+
+        $all = Category::query()
+            ->with('translations.language')
+            ->whereIn('id', $allIds)
+            ->orderBy('parent_id')
+            ->orderBy('order_number')
+            ->get()
+            ->keyBy('id');
+
+        $tree = [];
+        foreach ($all as $cat) {
+            if (in_array($cat->id, $rootIds, true)) {
+                $tree[$cat->id] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => [],
+                ];
+            }
+        }
+
+        foreach ($all as $cat) {
+            if ($cat->parent_id && isset($tree[$cat->parent_id])) {
+                $tree[$cat->parent_id]['children'][] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+
+        $this->categoryPreviewTree = array_values($tree);
+    }
+
+    private function buildSubTree(int $parentId, $all, array $rootIds): array
+    {
+        $children = [];
+        foreach ($all as $cat) {
+            if ($cat->parent_id === $parentId && !in_array($cat->id, $rootIds, true)) {
+                $children[] = [
+                    'id' => $cat->id,
+                    'name' => $cat->translationValue('name') ?: (string) $cat->id,
+                    'children' => $this->buildSubTree($cat->id, $all, $rootIds),
+                ];
+            }
+        }
+        return $children;
     }
 
     private function checkShopNameAvailability(): void
@@ -150,7 +233,7 @@ class CompleteRegistrationPage extends Component
             return;
         }
 
-        $this->shopNameTaken = Tenant::query()->where('slug', $slug)->exists()
+        $this->shopNameTaken = Tenant::query()->where('data->slug', $slug)->exists()
             || DB::table('domains')->where('domain', 'like', $slug . '.%')->exists();
     }
 
@@ -168,11 +251,10 @@ class CompleteRegistrationPage extends Component
     }
 
     /**
-     * Step 1 – validate shop details.
-     * If the plan requires category selection, advance to step 2.
-     * Otherwise, finalize the registration immediately.
+     * Step 1 – validate shop details, then advance to category selection
+     * (if the plan requires it) or straight to the target countries step.
      */
-    public function submitStep1(WebsiteRegistrationService $registrationService): void
+    public function submitStep1(): void
     {
 
         $this->checkShopNameAvailability();
@@ -206,11 +288,12 @@ class CompleteRegistrationPage extends Component
             return;
         }
 
-        $this->finalize($registrationService, []);
+        $this->finalize(app(WebsiteRegistrationService::class), []);
     }
 
     /**
-     * Step 2 – validate category selection, then finalize.
+     * Step 2 – validate category selection, then finalize registration.
+     * Target countries are selected afterward, on the store setup wizard.
      */
     public function submitStep2(WebsiteRegistrationService $registrationService): void
     {
@@ -294,11 +377,22 @@ class CompleteRegistrationPage extends Component
             'package_id' => $pending->package_id,
             'gateway_code' => $pending->payment_data['gateway_code'] ?? null,
             'locale' => $pending->locale,
+            'affiliate_referral_id' => $pending->affiliate_referral_id,
         ];
+
+        $oauth = session('website.register.oauth');
+
+        if (is_array($oauth) && ($oauth['email'] ?? null) === $pending->email) {
+            $registrationData['provider'] = $oauth['provider'] ?? null;
+            $registrationData['provider_id'] = $oauth['provider_id'] ?? null;
+            $registrationData['avatar'] = $oauth['avatar'] ?? null;
+        }
 
         $payment = !empty($pending->payment_data) ? $pending->payment_data : null;
 
         $tenant = $registrationService->finalize($registrationData, $payment);
+
+        session()->forget('website.register.oauth');
 
         $pending->markCompleted();
 
@@ -312,6 +406,26 @@ class CompleteRegistrationPage extends Component
         $this->hasDomainRequest = $this->domainType === 'custom';
         $this->registered = true;
         $this->dispatch('scrollToTop');
+
+        if (!$this->hasDomainRequest) {
+            $this->redirect(route('website.store.onboarding', [
+                'tenantId' => $tenant->getTenantKey(),
+            ]));
+            return;
+        }
+
+        $this->registeredTenantId = (string) $tenant->getTenantKey();
+    }
+
+    public function continueToOnboarding(): void
+    {
+        if (blank($this->registeredTenantId)) {
+            return;
+        }
+
+        $this->redirect(route('website.store.onboarding', [
+            'tenantId' => $this->registeredTenantId,
+        ]));
     }
 
     private function pruneEmptyCategories(\Illuminate\Database\Eloquent\Collection $categories): \Illuminate\Support\Collection
@@ -364,6 +478,7 @@ class CompleteRegistrationPage extends Component
             'centralDomain' => $this->centralDomain,
             'rootCategories' => $rootCategories,
             'requiredDnsRecords' => $requiredDnsRecords,
+            'categoryPreviewTree' => $this->categoryPreviewTree,
         ])->layout('layouts.website', ['title' => __('Complete Your Registration') . ' — Ecommet']);
     }
 }

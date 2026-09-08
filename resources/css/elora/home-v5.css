@@ -1,0 +1,186 @@
+/* ================================================================
+   ELORA V5 — section-specific style overrides, scoped under the
+   page's single root wrapper (.elora-v5-root).
+   ================================================================ */
+
+/* Swiper carousel arrows (Flash Sale / New In / Trending) */
+.elora-v5-root .card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+.elora-v5-root .card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+/* New In / Trending: clip to the container so the un-clipped scrollable
+   width of several fixed-width wide cards doesn't bleed out and inflate
+   the whole page's scroll width. */
+.elora-v5-root .newin-swiper,
+.elora-v5-root .trending-swiper {
+  overflow: hidden;
+}
+
+/* Trending: Swiper's Grid module (2 rows) needs an explicit wrapper height
+   for its per-slide height:calc(50% - gap) math. */
+.elora-v5-root .trending-swiper .swiper-wrapper {
+  height: 378px;
+}
+@media (min-width: 1024px) {
+  .elora-v5-root .trending-swiper .swiper-wrapper {
+    height: 370px;
+  }
+}
+
+/* Best Seller: draggable fan cascade — every slide is absolutely positioned
+   by carousels.js (mountBestSellerCarousel) from a fixed geometry table
+   indexed by distance-from-activeIndex. */
+.elora-v5-root .bestseller-swiper {
+  overflow: visible;
+  padding: 0 0 24px;
+  cursor: grab;
+  width: 100% !important;
+}
+.elora-v5-root .bestseller-swiper .swiper-wrapper {
+  width: 100%;
+}
+.elora-v5-root .bestseller-slide {
+  transition-property: left, top, width, height;
+}
+
+/* Flash Sale: fixed-width slides, no fixed 3-per-view clipping needed since
+   slidesPerView stays "auto" — keep overflow visible so nav buttons read. */
+.elora-v5-root .flash-swiper {
+  overflow: hidden;
+}
+
+.elora-v5-root .swiper-nav-btn {
+  display: none;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--color-white);
+  box-shadow: var(--shadow-card);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+@media (min-width: 1024px) {
+  .elora-v5-root .swiper-nav-btn {
+    display: flex;
+  }
+}
+.elora-v5-root .swiper-nav-btn:hover {
+  background: var(--color-page-bg);
+}
+.elora-v5-root .swiper-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.elora-v5-root .swiper-nav-prev {
+  left: -8px;
+}
+.elora-v5-root .swiper-nav-next {
+  right: -8px;
+}
+
+/* Hero carousel */
+.elora-v5-root .hero-swiper {
+  overflow: hidden;
+}
+.elora-v5-root .hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0;
+}
+.elora-v5-root .hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: #d9d9d9;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.elora-v5-root .hero-dot.is-active {
+  width: 24px;
+  background: var(--color-primary);
+}
+@media (min-width: 1024px) {
+  .elora-v5-root .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .elora-v5-root .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* New In textured gold section background */
+.elora-v5-root .newin-bg {
+  position: relative;
+  background-color: var(--color-newin-gold);
+}
+.elora-v5-root .newin-bg > .newin-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.21;
+}
+
+/* Category circle blob background */
+.elora-v5-root .category-blob {
+  background-image: url("/elora-5/assets/icons/cat-blob-1.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 92% 92%;
+}
+
+/* Shop by Category tile image */
+.elora-v5-root .shop-cat-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.elora-v5-root .shop-cat-tile img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.elora-v5-root .shop-cat-tile .shop-cat-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  text-align: center;
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+/* Tabbed Products (v5-specific: no direct mockup counterpart) */
+.elora-v5-root .v5-tab-pill {
+  background: var(--color-white);
+  border: 1px solid var(--color-stroke);
+  color: var(--color-black);
+}
+.elora-v5-root .v5-tab-pill.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}

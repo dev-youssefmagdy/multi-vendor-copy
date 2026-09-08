@@ -110,6 +110,78 @@ class PayPalGateway extends AbstractPaymentGateway
         }
     }
 
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        try {
+            $result = $this->paypalRequest('post', "/v2/payments/captures/{$transactionId}/refund", [
+                'amount' => [
+                    'value' => $this->formatAmount($amount),
+                    'currency_code' => strtoupper($currency),
+                ],
+            ]);
+
+            return PaymentResult::success((string) $result->json('id', $transactionId), $result->body());
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
+    }
+
+    public function createWebhook(): array
+    {
+        $url = route('payment.webhook', 'paypal');
+
+        try {
+            $result = $this->paypalRequest('post', '/v1/notifications/webhooks', [
+                'url' => $url,
+                'event_types' => [
+                    ['name' => 'PAYMENT.CAPTURE.COMPLETED'],
+                    ['name' => 'PAYMENT.CAPTURE.REFUNDED'],
+                    ['name' => 'PAYMENT.CAPTURE.DENIED'],
+                ],
+            ]);
+
+            return [
+                'url' => $url,
+                'events' => ['PAYMENT.CAPTURE.COMPLETED', 'PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.CAPTURE.DENIED'],
+                'id' => $result->json('id'),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'url' => $url,
+                'events' => ['PAYMENT.CAPTURE.COMPLETED', 'PAYMENT.CAPTURE.REFUNDED', 'PAYMENT.CAPTURE.DENIED'],
+            ];
+        }
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        try {
+            $result = $this->paypalRequest('post', '/v1/notifications/verify-webhook-signature', [
+                'transmission_id' => $request->header('Paypal-Transmission-Id'),
+                'transmission_time' => $request->header('Paypal-Transmission-Time'),
+                'cert_url' => $request->header('Paypal-Cert-Url'),
+                'auth_algo' => $request->header('Paypal-Auth-Algo'),
+                'transmission_sig' => $request->header('Paypal-Transmission-Sig'),
+                'webhook_id' => $this->cfg('webhook_id'),
+                'webhook_event' => $request->json()->all(),
+            ]);
+
+            return $result->json('verification_status') === 'SUCCESS';
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'SGD', 'AED'],
+            'merchant_countries' => ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'IE', 'SG'],
+            'customer_countries' => ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'IE', 'SE', 'SG', 'JP', 'IN', 'BR', 'MX', 'ZA', 'AE'],
+            'payment_methods' => ['card', 'wallet', 'paypal_balance'],
+        ];
+    }
+
     private function paypalRequest(string $method, string $uri, array $payload = [])
     {
         $response = Http::baseUrl($this->baseUrl())

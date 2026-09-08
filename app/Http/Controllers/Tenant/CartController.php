@@ -96,4 +96,41 @@ class CartController extends Controller
             'remainingForFreeShipping' => $remainingForFreeShipping,
         ]);
     }
+
+    /** POST /cart/remove — removes a line item entirely. */
+    public function remove(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['key' => 'required|string']);
+
+        $cart = session('storefront_cart', []);
+        unset($cart[$validated['key']]);
+        session(['storefront_cart' => $cart]);
+
+        return response()->json([
+            'success' => true,
+            'cart_count' => collect($cart)->sum('qty'),
+        ]);
+    }
+
+    /** POST /cart/update — changes the quantity of an existing line item. */
+    public function update(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'key' => 'required|string',
+            'qty' => 'required|integer|min:1|max:99',
+        ]);
+
+        $cart = session('storefront_cart', []);
+        if (!isset($cart[$validated['key']])) {
+            return response()->json(['success' => false, 'message' => __('Item not in cart.')], 404);
+        }
+
+        $cart[$validated['key']]['qty'] = $validated['qty'];
+        session(['storefront_cart' => $cart]);
+
+        return response()->json([
+            'success' => true,
+            'cart_count' => collect($cart)->sum('qty'),
+        ]);
+    }
 }

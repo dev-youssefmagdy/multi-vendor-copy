@@ -82,6 +82,9 @@ class CentralAdminSeeder extends Seeder
         $this->seedMaintenanceWindowScheduled();
         $this->seedProductBadgeNewIn();
         $this->seedProductBadgeBestSelling();
+        $this->seedProductBadgeFeatured();
+        $this->seedProductBadgeRecommended();
+        $this->seedProductBadgeTrendingNow();
 
         // $this->syncTenantsFromCentral();
     }
@@ -414,6 +417,21 @@ class CentralAdminSeeder extends Seeder
     protected function seedProductBadgeBestSelling(): ProductBadge
     {
         return ProductBadge::query()->firstOrCreate(['text' => 'best-selling'], ['active' => true]);
+    }
+
+    protected function seedProductBadgeFeatured(): ProductBadge
+    {
+        return ProductBadge::query()->firstOrCreate(['text' => 'featured'], ['active' => true]);
+    }
+
+    protected function seedProductBadgeRecommended(): ProductBadge
+    {
+        return ProductBadge::query()->firstOrCreate(['text' => 'recommended'], ['active' => true]);
+    }
+
+    protected function seedProductBadgeTrendingNow(): ProductBadge
+    {
+        return ProductBadge::query()->firstOrCreate(['text' => 'trending-now'], ['active' => true]);
     }
 
     protected function seedTenantAdminAccess(Tenant $tenant, string $password): void

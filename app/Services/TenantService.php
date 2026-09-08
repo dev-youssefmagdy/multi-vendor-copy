@@ -50,9 +50,7 @@ class TenantService
                     ? ($tenant->activated_at ?? now())
                     : null,
                 'profit_percentage' => max(0, (float) ($attributes['profit_percentage'] ?? 0)),
-                'data' => array_merge($tenant->data ?? [], [
-                    'shop_name' => $attributes['shop_name'] ?? null,
-                ]),
+                'shop_name' => $attributes['shop_name'] ?? null,
             ]);
 
             // saveQuietly suppresses Eloquent-dispatched events (including TenantCreated),
@@ -146,7 +144,7 @@ class TenantService
 
         $admin->save();
 
-        $shopName = (string) ($attributes['shop_name'] ?? data_get($tenant, 'data.shop_name', $tenant->name ?? ''));
+        $shopName = (string) ($attributes['shop_name'] ?? $tenant->shop_name ?? $tenant->name ?? '');
         $this->tenantPanelService->seedAppearanceDefaults($shopName);
         //        } finally {
         tenancy()->end();

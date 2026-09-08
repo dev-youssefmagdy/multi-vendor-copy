@@ -1,3 +1,21 @@
+import { initPhoneInputs } from "./phone-input";
+
+function bootPhoneInputs() {
+    initPhoneInputs(document);
+}
+
+// Exposed so theme blade views (e.g. auth.blade.php) can (re)init phone
+// inputs from inline scripts after their own DOM/tab swaps, without waiting
+// on the DOMContentLoaded/livewire:navigated hooks below.
+window.initPhoneInputs = initPhoneInputs;
+window.bootPhoneInputs = bootPhoneInputs;
+
+document.addEventListener("DOMContentLoaded", bootPhoneInputs);
+document.addEventListener("livewire:navigated", bootPhoneInputs);
+document.addEventListener("livewire:init", () => {
+    window.Livewire?.hook("morphed", ({ el }) => initPhoneInputs(el));
+});
+
 // Shared add-to-cart helper used by every storefront theme's product page.
 // Posts directly to the cart-add endpoint (no Livewire round trip) and then
 // re-uses the existing Livewire event bus so the cart badge/toast keep

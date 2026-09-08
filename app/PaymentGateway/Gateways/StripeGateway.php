@@ -65,4 +65,53 @@ class StripeGateway extends AbstractPaymentGateway
     {
         return PaymentResult::failure('Use charge() for synchronous Stripe payments.');
     }
+
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        try {
+            Stripe::setApiKey($this->cfg('secret'));
+
+            $refund = \Stripe\Refund::create([
+                'charge' => $transactionId,
+                'amount' => (int) round($amount * 100),
+            ]);
+
+            return PaymentResult::success($refund->id, json_encode($refund->toArray()));
+        } catch (\Throwable $e) {
+            return PaymentResult::failure($e->getMessage());
+        }
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', 'stripe'),
+            'events' => ['charge.succeeded', 'charge.refunded', 'charge.failed'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        try {
+            \Stripe\Webhook::constructEvent(
+                $request->getContent(),
+                $request->header('Stripe-Signature'),
+                $this->cfg('webhook_secret')
+            );
+
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['USD', 'EUR', 'GBP', 'AED', 'SAR', 'EGP', 'CAD', 'AUD', 'SGD', 'INR'],
+            'merchant_countries' => ['US', 'GB', 'CA', 'AU', 'IE', 'FR', 'DE', 'ES', 'IT', 'NL', 'SE', 'SG', 'JP', 'AE'],
+            'customer_countries' => ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'SE', 'AE', 'SA', 'SG', 'JP', 'IN', 'EG', 'BR', 'MX', 'ZA', 'NZ'],
+            'payment_methods' => ['card', 'apple_pay', 'google_pay', 'wallets'],
+        ];
+    }
 }

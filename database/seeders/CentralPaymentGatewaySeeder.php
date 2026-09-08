@@ -8,6 +8,7 @@ use App\Enums\PaymentGatewayType;
 use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Crypt;
 
 class CentralPaymentGatewaySeeder extends Seeder
 {
@@ -263,7 +264,106 @@ class CentralPaymentGatewaySeeder extends Seeder
                     'secret_word' => '',
                     'sandbox' => true,
                 ],
-            ]
+            ],
+            [
+                'name' => 'Checkout.com',
+                'code' => 'checkout_com',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'secret_key' => '',
+                    'public_key' => '',
+                    'processing_channel_id' => '',
+                    'webhook_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Adyen',
+                'code' => 'adyen',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'api_key' => '',
+                    'merchant_account' => '',
+                    'client_key' => '',
+                    'webhook_hmac_key' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Moyasar',
+                'code' => 'moyasar',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'secret_key' => '',
+                    'publishable_key' => '',
+                    'webhook_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'HyperPay',
+                'code' => 'hyperpay',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'access_token' => '',
+                    'entity_id' => '',
+                    'webhook_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Tap Payments',
+                'code' => 'tap',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'secret_key' => '',
+                    'webhook_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Amazon Payment Services',
+                'code' => 'amazon_payment_services',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'access_code' => '',
+                    'merchant_identifier' => '',
+                    'sha_request_phrase' => '',
+                    'sha_response_phrase' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Paymob',
+                'code' => 'paymob',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'api_key' => '',
+                    'integration_id' => '',
+                    'iframe_id' => '',
+                    'hmac_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
+            [
+                'name' => 'Cashfree',
+                'code' => 'cashfree',
+                'status' => ActivationStatus::Inactive->value,
+                'mode' => PaymentGatewayMode::Test->value,
+                'credentials' => [
+                    'app_id' => '',
+                    'secret_key' => '',
+                    'webhook_secret' => '',
+                    'sandbox' => true,
+                ],
+            ],
         ];
 
         foreach ($gateways as $gateway) {
@@ -277,7 +377,7 @@ class CentralPaymentGatewaySeeder extends Seeder
                         'type' => $type,
                         'status' => $gateway['status'],
                         'mode' => $gateway['mode'],
-                        'credentials' => json_encode($gateway['credentials']),
+                        'credentials' => Crypt::encryptString(json_encode($gateway['credentials'])),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]

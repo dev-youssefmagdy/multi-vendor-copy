@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Store;
 
 use App\Livewire\Tenant\Base\ListPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
+use App\Models\Country;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -17,6 +18,8 @@ class FlashSalesPage extends ListPage
     use InteractsWithTenantUi;
     use WithPagination;
     use WithFileUploads;
+
+    public ?int $countryId = null;
 
     public bool $showFormModal = false;
     public ?int $flashSaleId = null;
@@ -37,12 +40,21 @@ class FlashSalesPage extends ListPage
     public array $productSearchImages = [];   // [id => url] for search results
     public array $selectedProductImages = [];  // [id => url] for selected chips
 
+    public function mount(?int $countryId = null): void
+    {
+        $this->countryId = $countryId;
+    }
+
     protected function pageMeta(): array
     {
+        $country = $this->countryId ? Country::query()->find($this->countryId) : null;
+
         return [
-            'title' => 'Flash Sales',
+            'title' => $country ? "Flash Sales — {$country->flag_emoji} {$country->name}" : 'Flash Sales — Default',
             'badge' => 'Storefront',
-            'description' => 'Schedule limited-time product discounts for this tenant storefront.',
+            'description' => $country
+                ? "Flash sale campaigns for visitors from {$country->name}."
+                : 'Default flash sales shown when no country-specific campaigns exist.',
             'actionLabel' => 'Add Flash Sale',
             'tableTitle' => 'Flash Sale Campaigns',
             'headers' => ['Product', 'Banner', 'Discount', 'Window', 'Source', 'Status', 'Actions'],
@@ -52,11 +64,13 @@ class FlashSalesPage extends ListPage
     protected function pageData(): array
     {
         $repository = app(TenantPanelRepository::class);
-        $records = $repository->paginateFlashSales();
-        $stats = $repository->flashSaleStats();
+        $records = $repository->paginateFlashSales($this->countryId);
+        $stats = $repository->flashSaleStats($this->countryId);
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
+            'secondaryActionLabel' => '← All Countries',
+            'secondaryActionUrl' => route('tenant.store.flash-sales.index'),
             'records' => $records,
             'statistics' => [
                 ['label' => 'Flash Sales', 'value' => number_format($stats['total']), 'caption' => 'Discount campaigns configured', 'dot' => 'dot-cyan'],
@@ -154,6 +168,7 @@ class FlashSalesPage extends ListPage
             'end_date' => $validated['endDate'] ?? null,
             'active' => $validated['active'],
             'banner_image' => $this->bannerImagePath,
+            'country_id' => $this->countryId,
         ], $flashSaleId ? FlashSale::query()->findOrFail($flashSaleId) : null);
 
         if ($this->bannerImage) {

@@ -134,7 +134,10 @@
 
                     <input type="hidden" name="remove_primary_image" id="remove_primary_image_input" value="0">
 
-                    <div class="w-full relative group" data-dropzone>
+                    <div class="w-full relative group" data-dropzone
+                        data-expect-w="{{ config('image_dimensions.product.width') }}"
+                        data-expect-h="{{ config('image_dimensions.product.height') }}">
+                        <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                         <label class="relative flex flex-col items-center justify-center w-full py-4 px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">
                             <div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                             <div class="relative w-8 h-8 mb-2 rounded-full bg-(--surface) border border-(--border2) flex items-center justify-center text-(--cyan) shadow-sm group-hover:scale-110 transition-transform duration-300 z-10">
@@ -161,9 +164,17 @@
                 :start-open="true">
 
                 @if ($existingGallery->isNotEmpty())
+                    <input type="hidden" name="gallery_order" id="gallery-order-input" value="">
                     <div class="gallery-grid" id="existing-gallery">
                         @foreach ($existingGallery as $file)
-                            <div class="gallery-item" id="gallery-item-{{ $file->id }}">
+                            <div class="gallery-item" id="gallery-item-{{ $file->id }}" data-file-id="{{ $file->id }}">
+                                <div class="gallery-item-handle" title="Drag to reorder">
+                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/>
+                                        <circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/>
+                                        <circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>
+                                    </svg>
+                                </div>
                                 @if ($file->file_type->value === 'video')
                                     <div class="gallery-item-video"
                                          style="cursor:pointer"
@@ -191,7 +202,10 @@
 
                 <div id="gallery-remove-inputs"></div>
 
-                <div class="w-full relative group" style="{{ $existingGallery->isNotEmpty() ? 'margin-top:16px' : '' }}" data-dropzone>
+                <div class="w-full relative group" style="{{ $existingGallery->isNotEmpty() ? 'margin-top:16px' : '' }}" data-dropzone
+                    data-expect-w="{{ config('image_dimensions.product.width') }}"
+                    data-expect-h="{{ config('image_dimensions.product.height') }}">
+                    <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                     <label class="relative flex flex-col items-center justify-center w-full py-10 px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">
                         <div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                         <div class="relative w-12 h-12 mb-4 rounded-full bg-(--surface) border border-(--border2) flex items-center justify-center text-(--cyan) shadow-sm group-hover:scale-110 transition-transform duration-300 z-10">
@@ -495,6 +509,26 @@
                 </script>
             </x-card-collapse>
 
+            {{-- ── Badges ─────────────────────────────────────────────────── --}}
+            <x-card-collapse class="form-card span-6" title="Badges"
+                subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront."
+                :start-open="true">
+                @if ($badges->isEmpty())
+                    <div class="notice-muted">No badges available yet.</div>
+                @else
+                    @php $selectedBadgeIds = old('badge_ids', $selectedBadgeIds ?? []); @endphp
+                    <x-select multiple searchable name="badge_ids[]" placeholder="Search and select badges">
+                        @foreach ($badges as $badge)
+                            <option value="{{ $badge->id }}"
+                                {{ in_array($badge->id, $selectedBadgeIds) ? 'selected' : '' }}>
+                                {{ ucfirst(str_replace('-', ' ', $badge->text)) }}
+                            </option>
+                        @endforeach
+                    </x-select>
+                    @error('badge_ids') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
             {{-- ── Product Variants ──────────────────────────────────────── --}}
             <x-card-collapse class="form-card span-12" title="Product Variants"
                 subtitle="Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image."
@@ -520,7 +554,7 @@
                     @json($vjson)
                 </script>
 
-                <div id="variants-list">
+                <div id="variants-list" class="vrow-list">
                     @foreach ($variants as $vIdx => $variant)
                         @include('tenant.product._variant-row', [
                             'vIdx'       => $vIdx,
@@ -722,61 +756,62 @@
                 + '</svg></button>'
             : '';
 
-        return '<div class="form-grid form-grid-2 variant-pair-row" style="gap:8px;align-items:end">'
-            + '<div><select class="field-control" name="variants[' + vIdx + '][pairs][' + pIdx + '][variation_id]" onchange="onVariationChange(this)">'
-            + variationOptions + '</select></div>'
-            + '<div class="var-options" style="display:flex;gap:6px;align-items:center">'
-            + '<div style="flex:1"><select class="field-control" name="variants[' + vIdx + '][pairs][' + pIdx + '][option_id]">'
-            + optionOptions + '</select></div>'
+        return '<div class="variant-pair-row">'
+            + '<select class="field-control" name="variants[' + vIdx + '][pairs][' + pIdx + '][variation_id]" onchange="onVariationChange(this)">' + variationOptions + '</select>'
+            + '<div class="var-options">'
+            + '<select class="field-control" name="variants[' + vIdx + '][pairs][' + pIdx + '][option_id]">' + optionOptions + '</select>'
+            + '</div>'
             + removeBtn
-            + '</div></div>';
+            + '</div>';
     }
 
     function buildVariantRow(vIdx) {
-        var dropzoneHtml = '<div class="w-full relative group" data-dropzone>'
-            + '<label class="relative flex flex-col items-center justify-center w-full py-4 px-4 border-2 border-dashed border-(--border2) rounded-xl bg-(--surface) hover:border-(--cyan) transition-all duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-(--cyan) focus-within:ring-offset-2 overflow-hidden">'
-            + '<div class="absolute inset-0 bg-(--elevated) opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>'
-            + '<div class="relative w-8 h-8 mb-2 rounded-full bg-(--surface) border border-(--border2) flex items-center justify-center text-(--cyan) shadow-sm group-hover:scale-110 transition-transform duration-300 z-10">'
-            + '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">'
-            + '<path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>'
-            + '</svg></div>'
-            + '<div class="relative text-center z-10"><h4 class="text-[12px] font-semibold text-(--t1) mb-1">Upload variant image</h4>'
-            + '<p class="text-[11px] text-(--t3)">PNG, JPG, WEBP up to 5MB</p></div>'
+        var thumbHtml = '<label class="vrow-thumb-placeholder">'
+            + '<span>IMG</span>'
             + '<input type="file" name="variants[' + vIdx + '][image]" accept="image/*" class="dropzone-input sr-only">'
-            + '</label><div class="dropzone-files mt-4 space-y-2 empty:hidden" data-dropzone-files></div></div>';
+            + '</label>';
 
-        return '<div class="vgroup-card" data-vcard>'
+        return '<div class="vrow" data-vcard>'
             + '<input type="hidden" name="variants[' + vIdx + '][id]" value="">'
+            + '<input type="hidden" name="variants[' + vIdx + '][position]" class="v-position-input" value="' + vIdx + '">'
             + '<input type="hidden" name="variants[' + vIdx + '][remove_image]" value="0" class="v-remove-img-flag">'
-            + '<div class="vgroup-header">'
-            + '<span class="vgroup-title">Variant #<span class="v-num"></span></span>'
-            + '<button type="button" class="btn btn-secondary btn-sm btn-danger" onclick="removeVariant(this)">'
+
+            + '<div class="vrow-lead">'
+            + '<div class="vrow-handle" title="Drag to reorder">'
+            + '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
+            + '<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/>'
+            + '<circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>'
+            + '</svg></div>'
+            + '<span class="vrow-num">#<span class="v-num"></span></span>'
+            + '<div class="vrow-thumb-wrap" data-dropzone>' + thumbHtml + '</div>'
+            + '</div>'
+
+            + '<div class="vrow-pairs-col">'
+            + '<span class="vrow-pairs-label">Options</span>'
+            + '<div class="v-pairs">' + buildPairRow(vIdx, 0, '', '') + '</div>'
+            + '<button type="button" class="btn btn-secondary btn-sm vrow-add-pair-btn" onclick="addOptionPair(this)">'
+            + '<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
+            + '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'
+            + '</svg>'
+            + 'Add another group'
+            + '</button>'
+            + '</div>'
+
+            + '<div class="vrow-meta">'
+            + '<input type="text" name="variants[' + vIdx + '][title]" class="field-control vrow-meta-name" value="" placeholder="Variant name (auto-generated if blank)">'
+            + '<input type="number" step="0.01" min="0" name="variants[' + vIdx + '][price]" value="" class="field-control" placeholder="Price">'
+            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][stock]" value="0" class="field-control" placeholder="Stock">'
+            + '<input type="text" name="variants[' + vIdx + '][sku]" value="" placeholder="SKU (auto)" class="field-control">'
+            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][weight_grams]" value="" placeholder="Weight (g)" class="field-control">'
+            + '<label class="toggle-field vrow-meta-name"><input type="hidden" name="variants[' + vIdx + '][active]" value="0">'
+            + '<input type="checkbox" name="variants[' + vIdx + '][active]" value="1" checked><span>Active</span></label>'
+            + '</div>'
+
+            + '<button type="button" class="btn btn-secondary btn-sm btn-danger vrow-remove" onclick="removeVariant(this)" title="Remove variant">'
             + '<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
             + '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>'
-            + '</svg> Remove</button></div>'
-            + '<div class="vgroup-body">'
-            + '<div class="form-grid form-grid-2" style="margin-bottom:12px"><div>'
-            + '<label class="field-label">Variant Image</label>' + dropzoneHtml + '</div></div>'
-            + '<div style="margin-bottom:12px"><label class="field-label">Variant Name</label>'
-            + '<input type="text" name="variants[' + vIdx + '][title]" class="field-control" value="" placeholder="Auto-generated from options if left blank"></div>'
-            + '<label class="field-label">Variant Composition *</label>'
-            + '<div class="v-pairs" style="display:flex;flex-direction:column;gap:8px">'
-            + buildPairRow(vIdx, 0, '', '')
-            + '</div>'
-            + '<div style="margin-top:8px"><button type="button" class="btn btn-secondary btn-sm" onclick="addOptionPair(this)">'
-            + '<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
-            + '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'
-            + '</svg> Add another group</button></div>'
-            + '<div class="form-grid form-grid-3" style="margin-top:14px">'
-            + '<div><label class="field-label">Price *</label><input type="number" step="0.01" min="0" name="variants[' + vIdx + '][price]" value="" class="field-control"></div>'
-            + '<div><label class="field-label">Stock</label><input type="number" min="0" step="1" name="variants[' + vIdx + '][stock]" value="0" class="field-control"></div>'
-            + '<div><label class="field-label">SKU (optional)</label><input type="text" name="variants[' + vIdx + '][sku]" value="" placeholder="Auto-generated if blank" class="field-control"></div>'
-            + '<div><label class="field-label">Weight (grams)</label><input type="number" min="0" step="1" name="variants[' + vIdx + '][weight_grams]" value="" placeholder="0" class="field-control"></div>'
-            + '<div><label class="field-label">Status</label>'
-            + '<label class="toggle-field"><input type="hidden" name="variants[' + vIdx + '][active]" value="0">'
-            + '<input type="checkbox" name="variants[' + vIdx + '][active]" value="1" checked><span>Active</span></label></div>'
-            + '</div>'
-            + '</div></div>';
+            + '</svg></button>'
+            + '</div>';
     }
 
     window.addVariant = function () {
@@ -853,6 +888,8 @@
         document.querySelectorAll('[data-vcard]').forEach(function (card, idx) {
             var numEl = card.querySelector('.v-num');
             if (numEl) numEl.textContent = idx + 1;
+            var posInput = card.querySelector('.v-position-input');
+            if (posInput) posInput.value = idx;
         });
     }
 
@@ -894,7 +931,47 @@
         document.querySelectorAll('[data-vcard]').forEach(function (card) {
             renumberPairs(card);
         });
+        initGallerySortable();
+        initVariantsSortable();
     });
+
+    // ── Gallery drag & drop ────────────────────────────────────────────────
+    function initGallerySortable() {
+        var grid = document.getElementById('existing-gallery');
+        if (!grid || !window.Sortable) return;
+
+        function syncGalleryOrder() {
+            var ids = Array.from(grid.children).map(function (el) {
+                return el.dataset.fileId;
+            });
+            var input = document.getElementById('gallery-order-input');
+            if (input) input.value = ids.join(',');
+        }
+
+        Sortable.create(grid, {
+            handle: '.gallery-item-handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: syncGalleryOrder,
+        });
+
+        syncGalleryOrder();
+    }
+
+    // ── Variant drag & drop ─────────────────────────────────────────────────
+    function initVariantsSortable() {
+        var list = document.getElementById('variants-list');
+        if (!list || !window.Sortable) return;
+
+        Sortable.create(list, {
+            handle: '.vrow-handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: updateVariantNumbers,
+        });
+    }
 
     // ── AJAX pre-submit validation ───────────────────────────────────────────
     (function () {

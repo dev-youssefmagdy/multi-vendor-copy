@@ -5,22 +5,58 @@ namespace App\Services\Tenant;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Models\Tenant\Order;
+use App\Models\Tenant\Product;
 use App\Services\Mail\TemplateMailService;
+use App\Services\AdminNotificationService;
+use App\Services\TenantNotificationService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class OrderLifecycleService
 {
-    public function __construct(private readonly TemplateMailService $templateMailService)
-    {
+    public function __construct(
+        private readonly TemplateMailService $templateMailService,
+        private readonly TenantNotificationService $tenantNotifier,
+        private readonly AdminNotificationService $adminNotifier,
+    ) {
     }
 
     public function recordPlaced(Order $order): void
     {
         $this->appendActivity($order, 'Order placed', 'Your order has been placed and is waiting for confirmation.');
+        $this->incrementOrdersCount($order);
         $freshOrder = $order->fresh();
         $this->templateMailService->sendTenantOrderPlaced($freshOrder);
         $this->templateMailService->sendAdminOrderAlert($freshOrder);
+
+        $this->adminNotifier->notify(
+            type: 'order',
+            title: 'New Order Received',
+            message: sprintf(
+                'Tenant "%s" received a new order #%s worth %s.',
+                tenant()?->getTenantKey() ?? 'unknown',
+                $order->uuid,
+                number_format((float) ($order->total ?? 0), 2),
+            ),
+            data: [
+                'tenant_id' => tenant()?->getTenantKey(),
+                'order_number' => $order->uuid,
+            ],
+        );
+    }
+
+    protected function incrementOrdersCount(Order $order): void
+    {
+        $productIds = $order->items()
+            ->with('variant')
+            ->get()
+            ->map(fn($item) => $item->product_id ?? $item->variant?->product_id)
+            ->filter()
+            ->unique();
+
+        if ($productIds->isNotEmpty()) {
+            Product::whereIn('id', $productIds)->increment('orders_count');
+        }
     }
 
     public function recordProcessing(Order $order): void
@@ -29,6 +65,14 @@ class OrderLifecycleService
         $freshOrder = $order->fresh();
         $this->templateMailService->sendTenantPaymentConfirmed($freshOrder);
         $this->templateMailService->sendVendorOrderInvoice($freshOrder);
+
+        $this->tenantNotifier->notify(
+            tenant: tenant(),
+            type: 'payment',
+            title: 'Payment Confirmed',
+            message: sprintf('Payment for order #%s has been confirmed.', $order->uuid),
+            data: ['order_number' => $order->uuid],
+        );
     }
 
     public function updateShippingStatus(Order $order, OrderShippingStatus $shippingStatus): Order
@@ -56,6 +100,18 @@ class OrderLifecycleService
         if ($shippingStatus === OrderShippingStatus::Cancelled) {
             $this->templateMailService->sendAdminShippingEscalation($updatedOrder, $shippingStatus);
         }
+
+        $this->tenantNotifier->notify(
+            tenant: tenant(),
+            type: 'order',
+            title: 'Order Shipping Status Updated',
+            message: sprintf(
+                'Order #%s shipping status changed to %s.',
+                $order->uuid,
+                $shippingStatus->label(),
+            ),
+            data: ['order_number' => $order->uuid, 'shipping_status' => $shippingStatus->value],
+        );
 
         return $updatedOrder;
     }
@@ -99,6 +155,14 @@ class OrderLifecycleService
         if (in_array($orderStatus, [OrderStatus::Cancelled, OrderStatus::Rejected], true)) {
             $this->templateMailService->sendTenantRefundProcessed($updatedOrder);
         }
+
+        $this->tenantNotifier->notify(
+            tenant: tenant(),
+            type: 'order',
+            title: 'Order Status Updated',
+            message: sprintf('Order #%s status changed to %s.', $order->uuid, $orderStatus->label()),
+            data: ['order_number' => $order->uuid, 'status' => $orderStatus->value],
+        );
 
         return $updatedOrder;
     }

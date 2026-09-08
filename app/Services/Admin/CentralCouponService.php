@@ -21,6 +21,7 @@ class CentralCouponService
                 'start_date' => filled($attributes['start_date'] ?? null) ? $attributes['start_date'] : null,
                 'end_date' => filled($attributes['end_date'] ?? null) ? $attributes['end_date'] : null,
                 'active' => (bool) ($attributes['active'] ?? true),
+                'country_id' => $attributes['country_id'] ?? $coupon->country_id,
             ]);
 
             $coupon->save();

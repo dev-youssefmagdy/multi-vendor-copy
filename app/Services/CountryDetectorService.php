@@ -74,7 +74,9 @@ class CountryDetectorService
         //    nothing for visitors not behind a country-aware proxy.
         $acceptLang = (string) $request->header('Accept-Language', '');
         if ($acceptLang !== '' && preg_match('/[a-z]{2,3}-([A-Z]{2})/', $acceptLang, $m)) {
-            return strtoupper($m[1]);
+            $iso2 = strtoupper($m[1]);
+            $request->session()?->put('storefront_detected_country', $iso2);
+            return $iso2;
         }
 
         return null;

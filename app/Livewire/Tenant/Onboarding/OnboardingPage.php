@@ -13,6 +13,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 
 class OnboardingPage extends Component
@@ -38,9 +39,19 @@ class OnboardingPage extends Component
     public $logoUploadAr = null;
     public $logoUploadEn = null;
 
+    // ── Payment readiness ───────────────────────────────────────────────────
+    public bool $paymentReadinessSkipped = false;
+
     public function mount(string $tab = 'tour'): void
     {
         $this->tab = in_array($tab, ['tour', 'setup']) ? $tab : 'tour';
+
+        // Reaching the setup tab by any route (tab switch, direct link, sidebar)
+        // means the forced first-run tour no longer needs to intercept navigation
+        // away from this page — see OnboardingTour::maybeRedirectToOnboarding().
+        if ($this->tab === 'setup') {
+            $this->markTourSeen();
+        }
 
         $settings = Setting::query()
             ->whereIn('name', [
@@ -67,6 +78,10 @@ class OnboardingPage extends Component
         $this->logoFontEn = ($settings['logo_font_en'] ?? '') ?: 'poppins';
         $this->logoPathAr = ($settings['logo_path_ar'] ?? '') ?: null;
         $this->logoPathEn = ($settings['logo_path_en'] ?? '') ?: null;
+
+        /** @var AdminUser|null $admin */
+        $admin = Auth::guard('tenant')->user();
+        $this->paymentReadinessSkipped = $admin?->payment_readiness_skipped_at !== null;
     }
 
     public function goToTab(string $tab): void
@@ -115,7 +130,32 @@ class OnboardingPage extends Component
         $admin = Auth::guard('tenant')->user();
         $admin?->forceFill(['setup_dismissed_at' => now()])->save();
 
+        // Permanently unlock the storefront so StoreLaunchGate passes immediately
+        // on every future request without needing to re-check all 8 steps.
+        $tenantId = tenant()?->getTenantKey();
+        if ($tenantId) {
+            \App\Models\Tenant::saveData($tenantId, ['launch_ready' => true]);
+        }
+
         $this->redirectRoute('tenant.dashboard', navigate: true);
+    }
+
+    public function skipPaymentReadiness(): void
+    {
+        /** @var AdminUser|null $admin */
+        $admin = Auth::guard('tenant')->user();
+        $admin?->forceFill(['payment_readiness_skipped_at' => now()])->save();
+        $this->paymentReadinessSkipped = true;
+    }
+
+    public function paymentReadinessItems(): array
+    {
+        $items = app(TenantPanelRepository::class)->paymentReadiness();
+
+        return array_values(array_filter(
+            $items,
+            fn (array $item) => !str_contains(strtolower($item['label']), 'target currencies')
+        ));
     }
 
     public function saveLogo(TenantPanelService $service): void
@@ -162,7 +202,13 @@ class OnboardingPage extends Component
 
     public function allItemsDone(): bool
     {
-        return $this->logoIsSet() && $this->activeTheme() !== null && $this->paymentGatewayConfigured() && $this->languageConfigured();
+        return $this->logoIsSet()
+            && $this->activeTheme() !== null
+            && $this->paymentGatewayConfigured()
+            && $this->languageConfigured()
+            && TenantNavigation::profileComplete()
+            && TenantNavigation::storeDetailsComplete()
+            && TenantNavigation::complianceComplete();
     }
 
     public function logoIsSet(): bool
@@ -223,7 +269,7 @@ class OnboardingPage extends Component
                     : 'Enable a payment gateway so customers can complete purchases.',
                 'mandatory' => false,
                 'done' => $this->paymentGatewayConfigured(),
-                'action_url' => route('tenant.settings.payment-gateways'),
+                'action_url' => route('tenant.settings.payment-gateways', ['from' => 'onboarding']),
                 'action_label' => 'Configure Payments',
                 'icon' => 'payment',
             ],
@@ -238,6 +284,42 @@ class OnboardingPage extends Component
                 'action_url' => route('tenant.settings.languages'),
                 'action_label' => 'Manage Languages',
                 'icon' => 'languages',
+            ],
+            [
+                'key' => 'profile',
+                'label' => 'Complete Your Profile',
+                'detail' => TenantNavigation::profileComplete()
+                    ? 'Your business name, logo, and contact info are set.'
+                    : 'Add your business name, logo, and contact info.',
+                'mandatory' => true,
+                'done' => TenantNavigation::profileComplete(),
+                'action_url' => route('tenant.settings.account', ['from' => 'onboarding']),
+                'action_label' => 'Go to Account Settings',
+                'icon' => 'logo',
+            ],
+            [
+                'key' => 'store_details',
+                'label' => 'Complete Store Details',
+                'detail' => TenantNavigation::storeDetailsComplete()
+                    ? 'Your store name, description, and address are set.'
+                    : 'Add your store name, description, and address.',
+                'mandatory' => true,
+                'done' => TenantNavigation::storeDetailsComplete(),
+                'action_url' => route('tenant.settings.account', ['from' => 'onboarding']) . '#store-details',
+                'action_label' => 'Go to Store Details',
+                'icon' => 'storefront',
+            ],
+            [
+                'key' => 'compliance',
+                'label' => 'Complete Compliance Information',
+                'detail' => TenantNavigation::complianceComplete()
+                    ? 'Owner details, business registration, and bank info are on file.'
+                    : 'Add owner details, business registration, and bank info in the Compliance Center.',
+                'mandatory' => true,
+                'done' => TenantNavigation::complianceComplete(),
+                'action_url' => route('tenant.settings.compliance', ['from' => 'onboarding']),
+                'action_label' => 'Go to Compliance Center',
+                'icon' => 'settings',
             ],
         ];
     }
@@ -321,6 +403,8 @@ class OnboardingPage extends Component
             'setupItems' => $this->setupItems(),
             'totalSteps' => count($steps),
             'allItemsDone' => $this->allItemsDone(),
+            'paymentReadinessItems' => $this->paymentReadinessItems(),
+            'paymentReadinessSkipped' => $this->paymentReadinessSkipped,
         ]);
     }
 }

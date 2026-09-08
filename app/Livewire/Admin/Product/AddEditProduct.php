@@ -4,14 +4,18 @@ namespace App\Livewire\Admin\Product;
 
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
+use App\Jobs\NotifyTenantsForProductCategories;
 use App\Models\Category;
+use App\Models\Country;
 use App\Models\Language;
 use App\Models\Product;
+use App\Models\ProductBadge;
 use App\Models\ProductTenantAssignment;
 use App\Models\ShippingZone;
 use App\Models\Tenant;
 use App\Models\Variation;
 use App\Repositories\ProductRepository;
+use App\Services\ProductMediaService;
 use App\Services\ProductService;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
 use App\Services\TenantNotificationService;
@@ -40,8 +44,13 @@ class AddEditProduct extends Component
     public string $factory = '';
     public ?int $weightGrams = null;
 
+    /** Country targeting — independent of $deliveryScope, which governs shipping zones. */
+    public array $assignedCountryIds = [];
+    public bool $allCountries = true;
+
     public array $categoryIds = [];
     public array $shippingZoneIds = [];
+    public array $badgeIds = [];
     public array $translations = [];
     public string $activeLocale = 'en';
 
@@ -78,7 +87,7 @@ class AddEditProduct extends Component
 
     public function mount(?Product $product = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -116,6 +125,9 @@ class AddEditProduct extends Component
         $this->weightGrams = $loaded->weight_grams;
         $this->categoryIds = $loaded->categories->pluck('id')->all();
         $this->shippingZoneIds = $loaded->shippingZones->pluck('id')->all();
+        $this->assignedCountryIds = $loaded->countries()->pluck('countries.id')->map(fn ($id) => (int) $id)->all();
+        $this->allCountries = $this->assignedCountryIds === [];
+        $this->badgeIds = $loaded->badges->pluck('id')->all();
 
         $this->translations = array_replace_recursive(
             $this->translations,
@@ -188,6 +200,19 @@ class AddEditProduct extends Component
     public function markGalleryForRemoval(int $fileId): void
     {
         $this->removeGalleryIds[] = $fileId;
+    }
+
+    /**
+     * @param list<int|string> $orderedIds gallery file IDs in the desired display order
+     */
+    public function updateGalleryOrder(array $orderedIds, ProductMediaService $mediaService): void
+    {
+        if (!$this->productId) {
+            return;
+        }
+
+        $product = Product::query()->findOrFail($this->productId);
+        $mediaService->reorderGalleryFiles($product, array_map('intval', $orderedIds));
     }
 
     public function removeCategory(int $categoryId): void
@@ -277,6 +302,12 @@ class AddEditProduct extends Component
 
         $existingProduct = $this->productId ? Product::query()->findOrFail($this->productId) : null;
 
+        $isNew = $existingProduct === null;
+        $previousCatIds = $existingProduct
+            ? $existingProduct->categories()->pluck('categories.id')->map(fn ($id) => (int) $id)->all()
+            : [];
+        $prevVariantCount = $existingProduct ? $existingProduct->variants()->count() : 0;
+
         $product = $service->save([
             'sku' => $validated['sku'],
             'slug' => $validated['slug'] ?? null,
@@ -301,7 +332,19 @@ class AddEditProduct extends Component
             'remove_gallery_ids' => $this->removeGalleryIds,
         ], $existingProduct);
 
+        $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+
+        // Country targeting — empty pivot means "no preference / available everywhere".
+        // Synced before the tenant push so syncProductToTenant() denormalizes the new list.
+        $product->countries()->sync(
+            $this->allCountries
+                ? []
+                : array_values(array_filter(array_map('intval', (array) $this->assignedCountryIds)))
+        );
+        $product->load('countries');
+
         $tenantSyncService->syncProduct($product);
+        $tenantSyncService->syncAllTenants(['badges']);
 
         // ── Tenant Assignments ──────────────────────────────────────────────
         $previousAssignedTenantIds = ProductTenantAssignment::where('product_id', $product->id)
@@ -342,6 +385,16 @@ class AddEditProduct extends Component
         $affectedTenantIds = array_unique(array_merge($previousAssignedTenantIds, array_values($newTenantIds)));
         $tenantSyncService->syncProductToAssignedTenants($product, $affectedTenantIds);
 
+        // Notify tenants whose category tree covers this product, even without
+        // an explicit assignment (skip tenants already notified above).
+        NotifyTenantsForProductCategories::dispatch(
+            productId: $product->id,
+            isNew: $isNew,
+            previousCatIds: $previousCatIds,
+            prevVariantCount: $prevVariantCount,
+            alreadyNotifiedIds: array_values($newTenantIds),
+        );
+
         session()->flash('status', $this->productId ? 'Product updated successfully.' : 'Product created successfully.');
 
         return redirect()->route('admin.products.edit', $product);
@@ -369,6 +422,11 @@ class AddEditProduct extends Component
             'categoryIds.*' => ['integer', 'exists:categories,id'],
             'shippingZoneIds' => ['array'],
             'shippingZoneIds.*' => ['integer', 'exists:shipping_zones,id'],
+            'allCountries' => ['boolean'],
+            'assignedCountryIds' => ['array'],
+            'assignedCountryIds.*' => ['integer', 'exists:countries,id'],
+            'badgeIds' => ['array'],
+            'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'assignedTenantIds' => ['array'],
             'assignedTenantIds.*' => ['string', 'exists:tenants,id'],
             'removePrimaryImage' => ['boolean'],
@@ -411,6 +469,7 @@ class AddEditProduct extends Component
             'weightGrams' => 'weight (grams)',
             'categoryIds' => 'categories',
             'shippingZoneIds' => 'shipping zones',
+            'badgeIds' => 'badges',
             'primaryImage' => 'primary image',
         ];
     }
@@ -489,7 +548,7 @@ class AddEditProduct extends Component
 
     public function render()
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
 
         $existingGallery = $this->productId
             ? Product::query()->with('files')->find($this->productId)?->files->where('key', 'gallery')->values()
@@ -508,12 +567,17 @@ class AddEditProduct extends Component
 
                 ->get(),
             'shippingZones' => ShippingZone::query()->orderBy('name')->get(),
+            'countries' => Country::query()
+                ->where('is_active_for_tenants', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'iso2', 'flag_emoji']),
             'variations' => Variation::query()->with(['translations.language', 'options.translations.language'])->get(),
             'statusOptions' => ProductStatus::cases(),
             'deliveryScopes' => DeliveryScope::cases(),
             'existingImage' => $this->productId ? Product::query()->with('files')->find($this->productId)?->primary_image_url : null,
             'existingGallery' => $existingGallery,
-            'tenants' => Tenant::query()->orderBy('name')->get(),
+            'tenants' => Tenant::query()->orderBy('data->name')->get(),
+            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
         ]);
     }
 }

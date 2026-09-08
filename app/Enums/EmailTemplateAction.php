@@ -21,6 +21,7 @@ enum EmailTemplateAction: string
     case TenantPaymentReceipt = 'tenant.payment_receipt';
     case TenantRefundProcessed = 'tenant.refund_processed';
     case TenantWalletTransactionReceipt = 'tenant.wallet_transaction_receipt';
+    case TenantReturnUpdate = 'tenant.return_update';
     case TenantSubscriptionActivated = 'tenant.subscription_activated';
     case TenantSubscriptionRenewalReminder = 'tenant.subscription_renewal_reminder';
     case CentralRegistrationCompleteLink = 'central.registration_complete_link';
@@ -46,6 +47,7 @@ enum EmailTemplateAction: string
             self::TenantPaymentReceipt => 'Payment Receipt',
             self::TenantRefundProcessed => 'Refund Processed',
             self::TenantWalletTransactionReceipt => 'Wallet Transaction Receipt',
+            self::TenantReturnUpdate => 'Return Request Update',
             self::TenantSubscriptionActivated => 'Store Subscription Activated',
             self::TenantSubscriptionRenewalReminder => 'Store Subscription Renewal Reminder',
             self::CentralRegistrationCompleteLink => 'Registration Complete Link',
@@ -73,6 +75,7 @@ enum EmailTemplateAction: string
             self::TenantPaymentReceipt => 'Payment Receipt',
             self::TenantRefundProcessed => 'Refund Processed',
             self::TenantWalletTransactionReceipt => 'Wallet Transaction Receipt',
+            self::TenantReturnUpdate => 'Return Request Update',
             self::TenantSubscriptionActivated => 'Store Subscription Activated',
             self::TenantSubscriptionRenewalReminder => 'Store Subscription Renewal Reminder',
             self::CentralRegistrationCompleteLink => 'Complete Your Registration',

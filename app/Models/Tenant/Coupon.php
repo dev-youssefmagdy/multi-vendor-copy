@@ -22,6 +22,7 @@ class Coupon extends Model
         'start_date',
         'end_date',
         'minimum_spend',
+        'country_id',
     ];
 
     protected function casts(): array
@@ -33,5 +34,18 @@ class Coupon extends Model
             'start_date' => 'datetime',
             'end_date' => 'datetime',
         ];
+    }
+
+    /**
+     * Whether this tenant coupon is usable in the given country.
+     * NULL country_id (Default) = available everywhere.
+     */
+    public function availableInCountry(?int $countryId): bool
+    {
+        if ($this->country_id === null) {
+            return true;
+        }
+
+        return $countryId !== null && (int) $countryId === (int) $this->country_id;
     }
 }

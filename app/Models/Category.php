@@ -26,6 +26,7 @@ class Category extends Model
         'parent_id',
         'status',
         'is_featured',
+        'order_number',
     ];
 
     protected $appends = ['thumb_url'];
@@ -45,12 +46,12 @@ class Category extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_id');
+        return $this->hasMany(self::class, 'parent_id')->orderBy('order_number');
     }
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withTimestamps();
+        return $this->belongsToMany(Product::class)->withPivot('sort_order')->withTimestamps()->orderByPivot('sort_order');
     }
 
     public function files(): MorphMany

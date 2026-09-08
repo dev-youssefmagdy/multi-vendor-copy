@@ -1,5 +1,5 @@
 @php
-    $pageTitle = $isSearchRoute ? __('Search Results') : __('Best-Selling Items');
+    $pageTitle = $isImageSearch ?? false ? __('Products similar to your image') : ($isSearchRoute ? __('Search Results') : __('Best-Selling Items'));
     $searchAction = $isSearchRoute ? route('tenant.storefront.search') : route('tenant.storefront.best-selling');
     $searchParam = $isSearchRoute ? 'q' : 'keyword';
     $dayOptions = [30, 14, 7];

@@ -16,6 +16,8 @@ class CouponsPage extends ListPage
     use InteractsWithAdminUi;
     use WithPagination;
 
+    public ?int $countryId = null;
+
     public bool $showFormModal = false;
     public ?int $couponId = null;
     public string $code = '';
@@ -27,12 +29,22 @@ class CouponsPage extends ListPage
     public ?string $endDate = null;
     public bool $active = true;
 
+    public function mount(?int $countryId = null): void
+    {
+        $this->authorizePermission('store.coupons.manage');
+        $this->countryId = $countryId;
+    }
+
     protected function pageMeta(): array
     {
+        $country = $this->countryId ? \App\Models\Country::query()->find($this->countryId) : null;
+
         return [
-            'title' => 'Central Coupons',
+            'title' => $country ? "Central Coupons — {$country->flag_emoji} {$country->name}" : 'Central Coupons — Default',
             'badge' => 'Store',
-            'description' => 'Create platform-wide discount codes that are automatically synced to all tenant storefronts.',
+            'description' => $country
+                ? "Discount codes synced to tenants targeting {$country->name}."
+                : 'Default discount codes synced to every tenant with no country-specific coupons.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
             'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Status', 'Actions'],
@@ -44,16 +56,17 @@ class CouponsPage extends ListPage
         $this->authorizePermission('store.coupons.manage');
 
         $records = CentralCoupon::query()
+            ->where('country_id', $this->countryId)
             ->orderByDesc('id')
             ->paginate(15);
 
-        $total = CentralCoupon::query()->count();
+        $total = CentralCoupon::query()->where('country_id', $this->countryId)->count();
         $now = Carbon::now();
-        $active = CentralCoupon::query()->where('active', true)
+        $active = CentralCoupon::query()->where('country_id', $this->countryId)->where('active', true)
             ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', $now))
             ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $now))
             ->count();
-        $scheduled = CentralCoupon::query()->where('active', true)->where('start_date', '>', $now)->count();
+        $scheduled = CentralCoupon::query()->where('country_id', $this->countryId)->where('active', true)->where('start_date', '>', $now)->count();
 
         $rows = collect($records->items())->map(fn(CentralCoupon $coupon) => [
             '<div class="entity-title">' . e($coupon->code) . '</div>' . ($coupon->name ? '<div class="entity-subtitle">' . e($coupon->name) . '</div>' : ''),
@@ -72,6 +85,8 @@ class CouponsPage extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
+            'secondaryActionLabel' => '← All Countries',
+            'secondaryActionUrl' => route('admin.store.coupons.index'),
             'records' => $records,
             'rows' => $rows,
             'statistics' => [
@@ -130,6 +145,7 @@ class CouponsPage extends ListPage
         $this->startDate = optional($coupon->start_date)->format('Y-m-d\TH:i');
         $this->endDate = optional($coupon->end_date)->format('Y-m-d\TH:i');
         $this->active = $coupon->active;
+
         $this->showFormModal = true;
     }
 
@@ -167,6 +183,7 @@ class CouponsPage extends ListPage
             'start_date' => $this->startDate,
             'end_date' => $this->endDate,
             'active' => $this->active,
+            'country_id' => $this->countryId,
         ], $coupon);
 
         // Observer triggers sync automatically; explicit call is a safety net.

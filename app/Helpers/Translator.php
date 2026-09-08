@@ -85,10 +85,31 @@ trait Translator
         return $this->t($field, $locale);
     }
 
+    public function getTranslatedKeys(): array
+    {
+        $translations = [];
+
+        foreach ($this->translated ?? [] as $field) {
+            $translations[$field] = $this->t($field, 'en');
+        }
+
+        return [
+            'id' => $this->getKey(),
+            'translations' => $translations,
+        ];
+    }
+
     public function translationsByLocale(array $fields): array
     {
         $languageModel = $this->translationLanguageModelClass();
-        $languages = $languageModel::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = $languageModel::query()
+            ->where('is_active', true)
+            ->when(
+                \Illuminate\Support\Facades\Schema::hasColumn((new $languageModel())->getTable(), 'sort_order'),
+                fn($q) => $q->orderBy('sort_order')
+            )
+            ->orderByDesc('is_default')
+            ->get();
         $translations = $this->relationLoaded('translations')
             ? $this->getRelation('translations')
             : $this->translations()->with('language')->get();

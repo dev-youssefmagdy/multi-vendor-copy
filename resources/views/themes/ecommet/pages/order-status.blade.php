@@ -124,6 +124,9 @@
                             </div>
                             <div class="text-[14px] font-bold text-[#242424] shrink-0">
                                 {{ $fmt($item->sub_total) }}
+                                @if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))
+                                    <div>@include('livewire.tenant.storefront.partials.return-item-action')</div>
+                                @endif
                             </div>
                         </div>
                     @endforeach

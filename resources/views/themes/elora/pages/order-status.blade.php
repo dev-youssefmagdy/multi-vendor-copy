@@ -157,6 +157,9 @@ $order Order (with items, activities, paymentGateway)
                                         @endif
                                         <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }}</p>
                                         <p class="text-base text-[#242424] leading-6">{{ $fmt($item->sub_total) }}</p>
+                                        @if ($isCompleted)
+                                            @include('livewire.tenant.storefront.partials.return-item-action')
+                                        @endif
                                     </div>
                                 </div>
                                 @endforeach

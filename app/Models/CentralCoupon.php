@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CentralCoupon extends Model
 {
@@ -21,6 +22,7 @@ class CentralCoupon extends Model
         'end_date',
         'minimum_spend',
         'active',
+        'country_id',
     ];
 
     protected function casts(): array
@@ -34,6 +36,18 @@ class CentralCoupon extends Model
             'active' => 'boolean',
         ];
     }
+
+    // ── Relationships ────────────────────────────────────────────────
+
+    /**
+     * The single country this coupon is scoped to. Null = Default (available everywhere).
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    // ── Scopes ───────────────────────────────────────────────────────
 
     public function scopeActive(Builder $query, ?CarbonInterface $moment = null): Builder
     {

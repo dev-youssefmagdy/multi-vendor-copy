@@ -30,27 +30,82 @@ class CatalogTranslatorService
 
     public function translateNewLanguage(Language $language, ?string $sourceLocale = null): void
     {
+        $sourceLocale = $this->prepareTranslation($language, $sourceLocale);
+
+        if ($sourceLocale === null) {
+            return;
+        }
+
+        // Weight: resources = 20%, catalog models = 70%, tenant sync = 10%
+        $this->translateLanguageResources($sourceLocale, $language);
+        $language->forceFill(['translation_progress' => 20])->save();
+
+        $this->translateCatalogModels($sourceLocale, strtolower((string) $language->code), $language);
+
+        $this->syncTranslatedCatalog();
+        $this->finalizeTranslation($language);
+    }
+
+    /**
+     * Validate the language is translatable and resolve the source locale.
+     * Returns null (after marking the language complete) when no translation is needed.
+     */
+    public function prepareTranslation(Language $language, ?string $sourceLocale = null): ?string
+    {
         if (!$this->openAi->configured()) {
             throw new RuntimeException('OpenAI translation is not configured.');
         }
 
         $targetLocale = strtolower((string) $language->code);
-        $sourceLocale = $this->resolveSourceLocale($targetLocale, $sourceLocale);
+        $resolved = $this->resolveSourceLocale($targetLocale, $sourceLocale);
 
-        if ($sourceLocale === null || $sourceLocale === $targetLocale) {
-            $language->forceFill(['translation_progress' => 100])->save();
-            return;
+        if ($resolved === null || $resolved === $targetLocale) {
+            $language->forceFill([
+                'translation_progress' => 100,
+                'translation_status' => 'completed',
+                'translation_error' => null,
+                'ai_tokens_used' => 0,
+            ])->save();
+            return null;
         }
 
-        // Weight: resources = 20%, catalog models = 70%, tenant sync = 10%
-        $this->translateLanguageResources($sourceLocale, $targetLocale, $language->name);
-        $language->forceFill(['translation_progress' => 20])->save();
+        $language->forceFill([
+            'translation_progress' => 0,
+            'translation_status' => 'processing',
+            'translation_source_locale' => $resolved,
+            'translation_error' => null,
+            'ai_tokens_used' => 0,
+        ])->save();
 
-        $this->translateCatalogModels($sourceLocale, $targetLocale, $language->name);
+        return $resolved;
+    }
 
-        $language->forceFill(['translation_progress' => 90])->save();
+    /** @return array<class-string> */
+    public function catalogModelClasses(): array
+    {
+        return array_keys(self::MODEL_FIELDS);
+    }
+
+    public function syncTranslatedCatalog(): void
+    {
         $this->tenantSyncService->syncAllTenants(['languages', 'categories', 'products']);
-        $language->forceFill(['translation_progress' => 100])->save();
+    }
+
+    public function finalizeTranslation(Language $language): void
+    {
+        $language->forceFill([
+            'translation_progress' => 100,
+            'translation_status' => 'completed',
+            'translation_error' => null,
+        ])->save();
+    }
+
+    public function markTranslationFailed(Language $language, string $error): void
+    {
+        $language->forceFill([
+            'translation_status' => 'failed',
+            'translation_error' => mb_substr($error, 0, 1000),
+        ])->save();
     }
 
     public function copyNewLanguage(Language $language, ?string $sourceLocale = null): void
@@ -125,8 +180,11 @@ class CatalogTranslatorService
         }
     }
 
-    protected function translateLanguageResources(string $sourceLocale, string $targetLocale, string $targetLanguage): void
+    public function translateLanguageResources(string $sourceLocale, Language $language): void
     {
+        $targetLocale = strtolower((string) $language->code);
+        $targetLanguage = $language->name;
+
         foreach ($this->translationFiles->resources() as $resource) {
             $payload = $this->translationFiles->read((string) $resource['key']);
             $rows = $payload['rows'] ?? [];
@@ -141,7 +199,8 @@ class CatalogTranslatorService
                 }
 
                 $pending[] = [
-                    'index' => $index,
+                    'group' => $index,
+                    'field' => 'value',
                     'text' => $sourceValue,
                 ];
             }
@@ -150,8 +209,8 @@ class CatalogTranslatorService
                 continue;
             }
 
-            $translations = $this->openAi->translateBatch(
-                array_map(fn(array $item) => $item['text'], $pending),
+            $translated = $this->openAi->translateGroupedPending(
+                $pending,
                 $sourceLocale,
                 $targetLocale,
                 $targetLanguage,
@@ -159,69 +218,120 @@ class CatalogTranslatorService
             );
 
             foreach ($pending as $offset => $item) {
-                $rows[$item['index']]['values'][$targetLocale] = trim((string) ($translations[$offset] ?? $item['text']));
+                $rows[$item['group']]['values'][$targetLocale] = trim((string) ($translated[$offset] ?? $item['text']));
             }
 
             $this->translationFiles->save((string) $resource['key'], $rows);
         }
+
+        $this->recordTokenUsage($language);
     }
 
-    protected function translateCatalogModels(string $sourceLocale, string $targetLocale, string $targetLanguage): void
+    protected function translateCatalogModels(string $sourceLocale, string $targetLocale, Language $language): void
     {
-        foreach (self::MODEL_FIELDS as $modelClass => $fields) {
-            $modelClass::query()
-                ->with('translations.language')
-                ->chunkById(50, function ($models) use ($fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
-                    $pending = [];
-                    $states = [];
+        $modelClasses = $this->catalogModelClasses();
+        $totalModels = count($modelClasses);
 
-                    foreach ($models as $model) {
-                        $translations = $this->existingTranslations($model);
-                        $modelKey = $this->modelKey($model);
+        foreach ($modelClasses as $modelIndex => $modelClass) {
+            $this->translateCatalogModelClass($modelClass, $sourceLocale, $targetLocale, $language, $modelIndex, $totalModels);
+        }
+    }
 
-                        foreach ($fields as $field) {
-                            $sourceValue = trim((string) ($translations[$sourceLocale][$field] ?? ''));
-                            $targetValue = trim((string) ($translations[$targetLocale][$field] ?? ''));
+    /**
+     * Translate a single catalog model class and advance the language's
+     * translation_progress within the 20-90% band, based on this model's
+     * position among $totalModels.
+     */
+    public function translateCatalogModelClass(
+        string $modelClass,
+        string $sourceLocale,
+        string $targetLocale,
+        Language $language,
+        int $modelIndex,
+        int $totalModels,
+    ): void {
+        $targetLanguage = $language->name;
+        $fields = self::MODEL_FIELDS[$modelClass];
+        $progressStart = 20;
+        $progressEnd = 90;
 
-                            if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
-                                continue;
-                            }
+        $modelClass::query()
+            ->with('translations.language')
+            ->chunkById(100, function ($models) use ($fields, $modelClass, $sourceLocale, $targetLocale, $targetLanguage) {
+                $items = [];
+                $states = [];
 
-                            $states[$modelKey] ??= [
-                                'model' => $model,
-                                'translations' => $translations,
-                            ];
+                foreach ($models as $model) {
+                    $translations = $this->existingTranslations($model);
+                    $modelKey = $this->modelKey($model);
+                    $pendingFields = [];
 
-                            $pending[] = [
-                                'model_key' => $modelKey,
-                                'field' => $field,
-                                'text' => $sourceValue,
-                            ];
+                    foreach ($fields as $field) {
+                        $sourceValue = trim((string) ($translations[$sourceLocale][$field] ?? ''));
+                        $targetValue = trim((string) ($translations[$targetLocale][$field] ?? ''));
+
+                        if ($sourceValue === '' || !$this->shouldTranslate($sourceValue, $targetValue)) {
+                            continue;
                         }
+
+                        $pendingFields[$field] = $sourceValue;
                     }
 
-                    if ($pending === []) {
-                        return;
+                    if ($pendingFields === []) {
+                        continue;
                     }
 
-                    $translated = $this->openAi->translateBatch(
-                        array_map(fn(array $item) => $item['text'], $pending),
-                        $sourceLocale,
-                        $targetLocale,
-                        $targetLanguage,
-                        'Central catalog model: ' . class_basename($modelClass),
-                    );
+                    $states[$modelKey] = [
+                        'model' => $model,
+                        'translations' => $translations,
+                    ];
 
-                    foreach ($pending as $offset => $item) {
-                        $states[$item['model_key']]['translations'][$targetLocale][$item['field']] = trim((string) ($translated[$offset] ?? $item['text']));
-                    }
+                    $items[] = ['id' => $modelKey, 'translations' => $pendingFields];
+                }
 
-                    foreach ($states as $state) {
-                        /** @var \Illuminate\Database\Eloquent\Model $model */
-                        $model = $state['model'];
-                        $model->syncTranslations($state['translations']);
+                if ($items === []) {
+                    return;
+                }
+
+                $translated = $this->openAi->translateStructuredBatch(
+                    $items,
+                    $sourceLocale,
+                    $targetLocale,
+                    $targetLanguage,
+                    'Central catalog model: ' . class_basename($modelClass),
+                );
+
+                foreach ($translated as $modelKey => $translatedFields) {
+                    foreach ($translatedFields as $field => $value) {
+                        $states[$modelKey]['translations'][$targetLocale][$field] = $value;
                     }
-                });
+                }
+
+                foreach ($states as $state) {
+                    /** @var \Illuminate\Database\Eloquent\Model $model */
+                    $model = $state['model'];
+                    $model->syncTranslations($state['translations']);
+                }
+            });
+
+        $this->recordTokenUsage($language);
+
+        $progress = $progressStart + (int) round(($progressEnd - $progressStart) * ($modelIndex + 1) / $totalModels);
+        $language->forceFill(['translation_progress' => $progress])->save();
+    }
+
+    /**
+     * Add the OpenAI tokens consumed since the last reset to the language's
+     * running total, then reset the counter. Safe to call repeatedly across
+     * separate queued jobs since each job resolves its own OpenAiTranslationService.
+     */
+    protected function recordTokenUsage(Language $language): void
+    {
+        $used = $this->openAi->totalTokensUsed();
+        $this->openAi->resetUsage();
+
+        if ($used > 0) {
+            $language->increment('ai_tokens_used', $used);
         }
     }
 
@@ -248,7 +358,7 @@ class CatalogTranslatorService
         $candidates = array_filter([
             $sourceLocale,
             Language::query()->where('code', '!=', $targetLocale)->where('is_default', true)->value('code'),
-            Language::query()->where('code', '!=', $targetLocale)->orderByDesc('is_default')->value('code'),
+            Language::query()->where('code', '!=', $targetLocale)->orderBy('sort_order')->orderByDesc('is_default')->value('code'),
             config('app.fallback_locale', 'en'),
         ]);
 

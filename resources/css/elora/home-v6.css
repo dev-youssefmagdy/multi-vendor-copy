@@ -1,0 +1,194 @@
+/* Section-specific overrides for the ELORA "v6 — New In" home variant, ported
+   from public/elora-2/styles.css and scoped under .elora-v6-root. */
+
+.elora-v6-root .no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.elora-v6-root .no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Base swiper padding shared by New In / Trending / Best Seller / Recommended.
+   NOTE: overflow:visible here was originally believed necessary for Best
+   Seller's prev/next arrow buttons, but those buttons are DOM siblings of
+   .swiper (positioned absolute relative to the outer .relative wrapper, not
+   to the swiper itself) — clipping the swiper's own box has no effect on
+   them (verified: arrows stay fully visible with overflow:hidden). Every
+   carousel using this class gets its own scoped overflow:hidden below, since
+   leaving it visible lets every off-screen slide inflate the whole
+   document's scrollable width even though body{overflow-x:hidden} hides the
+   symptom visually (measured 1808px scrollWidth on a 390px viewport for New
+   In before this was scoped). */
+.elora-v6-root .card-swiper {
+  overflow: visible;
+  padding-bottom: 4px;
+}
+/* Container needs the same width-pinning as .trending-swiper/.categories-swiper
+   below — without it a flex child with overflow:hidden can inflate via a
+   ResizeObserver feedback loop, showing up as slides overlapping/misaligning. */
+.elora-v6-root .new-in-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+/* new_in_card carries its own fixed px width (192.01px mobile /
+   282.43px desktop), so the slide itself must size to that content ("auto"
+   mode) rather than swiper-bundle's own default ".swiper-slide{width:100%}"
+   — beats it via selector specificity, not !important, matching the
+   .best-seller-swiper pattern above. */
+.elora-v6-root .new-in-swiper .swiper-slide {
+  width: auto;
+}
+/* Container needs the same width-pinning as .trending-swiper/.categories-swiper
+   — without an explicit width, a flex child with overflow:hidden can inflate
+   via a ResizeObserver feedback loop, producing a mismatch between Swiper's
+   tracked slide width and the actual rendered width, which shows up as
+   slides overlapping/misaligning. */
+.elora-v6-root .best-seller-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+/* Each composite slide's cards (product_card / best_seller_small_card /
+   best_seller_wide_card) now carry their own fixed px width, so the slide
+   itself must size to that content ("auto" mode) rather than swiper-bundle's
+   own default ".swiper-slide{width:100%}" — beats it via selector
+   specificity, not !important, matching the .categories-swiper pattern
+   below. */
+.elora-v6-root .best-seller-swiper .swiper-slide {
+  width: auto;
+}
+/* Trending Now: fractional slidesPerView (1.25 mobile / 2.5 desktop) needs
+   its own clipped, width-pinned container — same ResizeObserver
+   feedback-loop fix as .categories-swiper below (a flex-column child
+   without an explicit width inflates itself when Swiper measures it to
+   compute numeric slide widths). Slide width itself is JS-computed at both
+   breakpoints now, so no CSS width override is needed on .swiper-slide. */
+.elora-v6-root .trending-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Categories: numeric slidesPerView (7 on desktop) needs its own clipped
+   container — unlike .card-swiper's overflow:visible (used for New In/Best
+   Seller's shadow bleed), visible overflow here creates a ResizeObserver
+   feedback loop where slide width and container width inflate each other. */
+.elora-v6-root .categories-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+/* Beats swiper-bundle's own default ".swiper-slide{width:100%}" at mobile
+   ("auto" mode) via selector specificity, not !important — so Swiper's own
+   JS-computed inline width still wins at desktop (slidesPerView:7). */
+.elora-v6-root .categories-swiper .swiper-slide {
+  width: auto;
+}
+
+/* Flash Sale: Swiper Grid module — each slide is a column of 3 stacked
+   products (grid rows:3) at every breakpoint (slidesPerView:1.5 mobile / 3
+   desktop just changes how many columns peek). The wrapper needs an
+   explicit height for the Grid module's per-slide height:calc(33.33%) math
+   to resolve against. min-width:0 for the same reason as .best-seller-swiper
+   / .categories-swiper above — numeric slidesPerView on an overflow:hidden
+   flex child without it can inflate via a ResizeObserver feedback loop,
+   showing up as slides overlapping/misaligning. */
+.elora-v6-root .flash-swiper {
+  overflow: hidden;
+  min-width: 0;
+}
+.elora-v6-root .flash-swiper .swiper-wrapper {
+  height: 336px;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .flash-swiper .swiper-wrapper {
+    height: 396px;
+  }
+}
+.elora-v6-root .card-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+/* Hero carousel */
+.elora-v6-root .hero-swiper {
+  overflow: hidden;
+}
+.elora-v6-root .hero-pagination {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 24px;
+  margin-bottom: 48px;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .hero-pagination {
+    gap: 5px;
+  }
+}
+.elora-v6-root .hero-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--color-stroke);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.elora-v6-root .hero-dot.is-active {
+  width: 24px;
+  background: var(--color-accent-green);
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .hero-dot {
+    height: 13px;
+    width: 13px;
+  }
+  .elora-v6-root .hero-dot.is-active {
+    width: 40px;
+  }
+}
+
+/* "Shop by Category" vertical rotated heading (desktop) */
+.elora-v6-root .vertical-heading {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Flash Sale section diagonal stripe background */
+.elora-v6-root .flash-sale-stripes {
+  background-color: var(--color-accent-green);
+  background-image: repeating-linear-gradient(
+    65deg,
+    var(--color-flash-stripe) 0px,
+    var(--color-flash-stripe) 18px,
+    transparent 18px,
+    transparent 90px
+  );
+}
+
+/* Tabbed Products (invented section) */
+.elora-v6-root .tabbed-tab-btn {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid var(--color-stroke);
+  background: var(--color-bg-main);
+  color: var(--color-text-primary);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.elora-v6-root .tabbed-tab-btn.is-active {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+  color: #fff;
+}

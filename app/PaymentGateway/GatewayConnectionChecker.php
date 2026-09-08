@@ -31,6 +31,14 @@ class GatewayConnectionChecker
                 'midtrans' => $this->midtrans($config),
                 'paytabs' => $this->paytabs($config),
                 'toyyibpay' => $this->toyyibpay($config),
+                'checkout_com' => $this->checkoutCom($config),
+                'adyen' => $this->adyen($config),
+                'moyasar' => $this->moyasar($config),
+                'hyperpay' => $this->hyperpay($config),
+                'tap' => $this->tap($config),
+                'amazon_payment_services' => $this->amazonPaymentServices($config),
+                'paymob' => $this->paymob($config),
+                'cashfree' => $this->cashfree($config),
                 default => $this->credentialPresenceCheck($config),
             };
         } catch (\Throwable $e) {
@@ -379,6 +387,160 @@ class GatewayConnectionChecker
 
         $error = is_array($body) ? ($body[0]['status'] ?? $response->body()) : $response->body();
         return $this->fail('ToyyibPay: ' . $error);
+    }
+
+    private function checkoutCom(array $cfg): array
+    {
+        if (empty($cfg['secret_key'])) {
+            return $this->fail('Secret key is missing.');
+        }
+
+        $base = ($cfg['sandbox'] ?? false)
+            ? 'https://api.sandbox.checkout.com'
+            : 'https://api.checkout.com';
+
+        $response = Http::withToken($cfg['secret_key'])
+            ->timeout(10)
+            ->get("{$base}/balances");
+
+        if ($response->successful()) {
+            return $this->ok('Connected to Checkout.com.');
+        }
+
+        $error = $response->json('error_type') ?? $response->body();
+        return $this->fail('Checkout.com: ' . $error);
+    }
+
+    private function adyen(array $cfg): array
+    {
+        if (empty($cfg['api_key']) || empty($cfg['merchant_account'])) {
+            return $this->fail('API key or merchant account is missing.');
+        }
+
+        $base = ($cfg['sandbox'] ?? false)
+            ? 'https://checkout-test.adyen.com/v71'
+            : 'https://checkout-live.adyen.com/v71';
+
+        $response = Http::withHeaders(['x-API-key' => $cfg['api_key']])
+            ->timeout(10)
+            ->post("{$base}/paymentMethods", ['merchantAccount' => $cfg['merchant_account']]);
+
+        if ($response->successful()) {
+            return $this->ok('Connected to Adyen.');
+        }
+
+        $error = $response->json('message') ?? $response->body();
+        return $this->fail('Adyen: ' . $error);
+    }
+
+    private function moyasar(array $cfg): array
+    {
+        if (empty($cfg['secret_key'])) {
+            return $this->fail('Secret key is missing.');
+        }
+
+        $response = Http::withBasicAuth($cfg['secret_key'], '')
+            ->timeout(10)
+            ->get('https://api.moyasar.com/v1/payments', ['limit' => 1]);
+
+        if ($response->successful()) {
+            return $this->ok('Connected to Moyasar.');
+        }
+
+        $error = $response->json('message') ?? $response->body();
+        return $this->fail('Moyasar: ' . $error);
+    }
+
+    private function hyperpay(array $cfg): array
+    {
+        if (empty($cfg['access_token']) || empty($cfg['entity_id'])) {
+            return $this->fail('Access token or entity ID is missing.');
+        }
+
+        $base = ($cfg['sandbox'] ?? false)
+            ? 'https://eu-test.oppwa.com'
+            : 'https://eu-prod.oppwa.com';
+
+        $response = Http::withToken($cfg['access_token'])
+            ->timeout(10)
+            ->get("{$base}/v1/checkouts/00000000000000000000000000000000/payment", [
+                'entityId' => $cfg['entity_id'],
+            ]);
+
+        if (is_array($response->json())) {
+            return $this->ok('Connected to HyperPay.');
+        }
+
+        return $this->fail('HyperPay: ' . $response->body());
+    }
+
+    private function tap(array $cfg): array
+    {
+        if (empty($cfg['secret_key'])) {
+            return $this->fail('Secret key is missing.');
+        }
+
+        $response = Http::withToken($cfg['secret_key'])
+            ->timeout(10)
+            ->get('https://api.tap.company/v2/charges', ['limit' => 1]);
+
+        if ($response->successful()) {
+            return $this->ok('Connected to Tap.');
+        }
+
+        $error = $response->json('message') ?? $response->body();
+        return $this->fail('Tap: ' . $error);
+    }
+
+    private function amazonPaymentServices(array $cfg): array
+    {
+        if (empty($cfg['merchant_identifier']) || empty($cfg['access_code']) || empty($cfg['sha_request_phrase']) || empty($cfg['sha_response_phrase'])) {
+            return $this->fail('Merchant identifier, access code, or SHA phrases are missing.');
+        }
+
+        return $this->ok('All credentials are present. Live verification is not available for this gateway.');
+    }
+
+    private function paymob(array $cfg): array
+    {
+        if (empty($cfg['api_key'])) {
+            return $this->fail('API key is missing.');
+        }
+
+        $response = Http::timeout(10)->post('https://accept.paymob.com/api/auth/tokens', [
+            'api_key' => $cfg['api_key'],
+        ]);
+
+        if ($response->successful() && $response->json('token')) {
+            return $this->ok('Connected to Paymob.');
+        }
+
+        $error = $response->json('message') ?? $response->body();
+        return $this->fail('Paymob: ' . $error);
+    }
+
+    private function cashfree(array $cfg): array
+    {
+        if (empty($cfg['app_id']) || empty($cfg['secret_key'])) {
+            return $this->fail('App ID or secret key is missing.');
+        }
+
+        $base = ($cfg['sandbox'] ?? false)
+            ? 'https://sandbox.cashfree.com/pg'
+            : 'https://api.cashfree.com/pg';
+
+        $response = Http::withHeaders([
+            'x-client-id' => $cfg['app_id'],
+            'x-client-secret' => $cfg['secret_key'],
+            'x-api-version' => '2023-08-01',
+        ])->timeout(10)->get("{$base}/orders/connection-ping-test");
+
+        if ($response->status() === 200 || $response->status() === 404) {
+            return $this->ok('Connected to Cashfree.');
+        }
+
+        $error = $response->json('message') ?? $response->body();
+        return $this->fail('Cashfree: ' . $error);
     }
 
     // ─── Fallback for gateways without a simple ping endpoint ────────────────

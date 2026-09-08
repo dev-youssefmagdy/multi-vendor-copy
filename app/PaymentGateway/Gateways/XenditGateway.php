@@ -76,4 +76,45 @@ class XenditGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('Xendit invoice status: ' . ($data['status'] ?? 'unknown'));
     }
+
+    public function refund(string $transactionId, float $amount, string $currency, array $context = []): PaymentResult
+    {
+        $response = Http::withBasicAuth($this->cfg('secret_key'), '')
+            ->post('https://api.xendit.co/refunds', [
+                'invoice_id' => $transactionId,
+                'amount' => $amount,
+                'reason' => 'requested_by_customer',
+            ]);
+
+        $data = $response->json();
+
+        if ($response->successful() && !empty($data['id'])) {
+            return PaymentResult::success($data['id'], json_encode($data));
+        }
+
+        return PaymentResult::failure($data['message'] ?? 'Xendit refund failed.');
+    }
+
+    public function createWebhook(): array
+    {
+        return [
+            'url' => route('payment.webhook', 'xendit'),
+            'events' => ['invoice.paid', 'invoice.expired', 'refund.succeeded'],
+        ];
+    }
+
+    public function verifyWebhook(Request $request): bool
+    {
+        return hash_equals((string) ($this->cfg('webhook_secret') ?? ''), (string) ($request->header('x-callback-token') ?? ''));
+    }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['IDR', 'PHP', 'VND', 'THB', 'MYR', 'USD'],
+            'merchant_countries' => ['ID', 'PH', 'VN', 'TH', 'MY'],
+            'customer_countries' => ['ID', 'PH', 'VN', 'TH', 'MY', 'SG', 'US', 'GB', 'AU', 'JP', 'IN', 'DE', 'FR', 'NL', 'AE'],
+            'payment_methods' => ['card', 'ewallet', 'bank_transfer', 'qr_code'],
+        ];
+    }
 }

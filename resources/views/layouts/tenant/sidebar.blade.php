@@ -2,6 +2,10 @@
     $sections = \App\Helpers\TenantNavigation::visibleSections();
     $currentRoute = request()->route()?->getName();
     $childDotClasses = ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'];
+    $currentTenantKey = tenant()?->getTenantKey();
+    $supportUnreadCount = $currentTenantKey
+        ? tenancy()->central(fn () => \App\Models\SupportTicket::forTenant($currentTenantKey)->where('tenant_has_unread', true)->count())
+        : 0;
 @endphp
 
 <aside id="sb">
@@ -51,6 +55,9 @@
                     @php($progress = \App\Helpers\TenantNavigation::onboardingSetupProgress())
                     <span class="ni-badge {{ $progress['done'] === $progress['total'] ? 'ni-badge-done' : '' }}">{{ $progress['done'] }}/{{ $progress['total'] }}</span>
                 @endif
+                @if (($item['route'] ?? null) === 'tenant.support.index' && ($supportUnreadCount ?? 0) > 0)
+                    <span class="ni-badge">{{ $supportUnreadCount }}</span>
+                @endif
             </a>
         @else
         @php($groupOpen = \App\Helpers\TenantNavigation::groupIsActive($item, $currentRoute))
@@ -70,6 +77,9 @@
                         data-action="set-sub-active">
                         <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
                         {{ $child['label'] }}
+                        @if (!empty($child['badge']))
+                            <span class="ni-badge">{{ $child['badge'] }}</span>
+                        @endif
                     </a>
                 @endforeach
             </div>
@@ -82,6 +92,10 @@
         @endif
         @endforeach
     </div>
+
+    @auth('tenant')
+        @livewire('tenant.widgets.account-setup-progress')
+    @endauth
 
     <div class="sb-user">
         <div class="su-inner">

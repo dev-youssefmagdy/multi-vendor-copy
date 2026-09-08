@@ -179,6 +179,8 @@ window.eloraOpenDeliveryModal = function () {
 
         (function () {
             'use strict';
+            // Persists across re-mounts (e.g. Livewire re-renders) for the current page view only.
+            let videoModalDismissed = false;
             // --- full screen images handler -------------------------------------------
             const productPreviewButton = document.getElementById('product-preview-button');
             const preview = document.getElementById('product-preview');
@@ -254,12 +256,16 @@ window.eloraOpenDeliveryModal = function () {
                 function destroyFixedModal() {
                     if (mobileFixedModal && mobileFixedModal.parentNode) {
                         mobileFixedModal.parentNode.removeChild(mobileFixedModal);
-                        mobileFixedModal = null;
                     }
+                    mobileFixedModal = null;
+                    // Guard against a stray leftover node from a previous mount/init call.
+                    const stray = document.getElementById('mantiFixedVideoModal');
+                    if (stray && stray.parentNode) stray.parentNode.removeChild(stray);
                 }
 
                 function showFixedVideoModal(item) {
-                    if (mobileFixedModal) return; // already shown
+                    if (videoModalDismissed) return; // user closed it on this page view
+                    if (mobileFixedModal || document.getElementById('mantiFixedVideoModal')) return; // already shown
 
                     const modal = document.createElement('div');
                     modal.id = 'mantiFixedVideoModal';
@@ -309,6 +315,7 @@ window.eloraOpenDeliveryModal = function () {
                     closeBtn.onclick = () => {
                         stopActiveVideo();
                         destroyFixedModal();
+                        videoModalDismissed = true;
                     };
 
                     const vid = document.createElement('video');
@@ -495,6 +502,43 @@ window.eloraOpenDeliveryModal = function () {
                 });
             }
 
+            // ── Description read more / show less ────────────────────────────────
+            function initReadMore() {
+                document.querySelectorAll('.desc-readmore:not([data-readmore-init])').forEach((wrap) => {
+                    wrap.setAttribute('data-readmore-init', '1');
+                    const btn = wrap.parentElement && wrap.parentElement.querySelector('.desc-readmore-btn');
+                    const content = wrap.firstElementChild;
+                    if (!btn || !content) return;
+
+                    const lines = parseInt(wrap.getAttribute('data-lines') || '4', 10);
+                    let lineHeight = parseFloat(getComputedStyle(content).lineHeight);
+                    if (!lineHeight || Number.isNaN(lineHeight)) lineHeight = 20;
+                    const collapsedHeight = Math.ceil(lineHeight * lines);
+                    const fullHeight = wrap.scrollHeight;
+
+                    if (fullHeight <= collapsedHeight + 8) {
+                        btn.style.display = 'none';
+                        return;
+                    }
+
+                    wrap.style.maxHeight = collapsedHeight + 'px';
+                    wrap.classList.add('is-collapsed');
+
+                    btn.addEventListener('click', () => {
+                        const isCollapsed = wrap.classList.contains('is-collapsed');
+                        if (isCollapsed) {
+                            wrap.style.maxHeight = fullHeight + 'px';
+                            wrap.classList.remove('is-collapsed');
+                            btn.textContent = btn.getAttribute('data-less-text');
+                        } else {
+                            wrap.style.maxHeight = collapsedHeight + 'px';
+                            wrap.classList.add('is-collapsed');
+                            btn.textContent = btn.getAttribute('data-more-text');
+                        }
+                    });
+                });
+            }
+
             // ── Init ───────────────────────────────────────────────────────────────
             function initProductPage() {
                 bindCartModal();
@@ -504,6 +548,7 @@ window.eloraOpenDeliveryModal = function () {
                     slider.__mantiMounted = false; // allow re-mount on navigation
                     mountGallery(slider);
                 }
+                initReadMore();
             }
 
             if (document.readyState === 'loading') {
@@ -516,6 +561,7 @@ window.eloraOpenDeliveryModal = function () {
                 // Clean up fixed video modal before Livewire navigation
                 const existingModal = document.getElementById('mantiFixedVideoModal');
                 if (existingModal) existingModal.remove();
+                videoModalDismissed = false; // reset for the incoming page
             });
 
             document.addEventListener('livewire:navigated', () => {

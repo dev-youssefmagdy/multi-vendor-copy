@@ -82,4 +82,14 @@ class MercadopagoGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('MercadoPago payment status: ' . ($status ?? 'unknown'));
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['ARS', 'BRL', 'CLP', 'COP', 'MXN', 'PEN', 'UYU'],
+            'merchant_countries' => ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY'],
+            'customer_countries' => ['AR', 'BR', 'CL', 'CO', 'MX', 'PE', 'UY'],
+            'payment_methods' => ['card', 'pix', 'ticket', 'wallet'],
+        ];
+    }
 }

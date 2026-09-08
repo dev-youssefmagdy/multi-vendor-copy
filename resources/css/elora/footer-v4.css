@@ -1,0 +1,7 @@
+/* Elora footer-v4 styles — shared footer color tokens */
+:root {
+    --color-footer-bg: #3b3b3b;
+    --color-footer-bar: #242424;
+    --color-footer-subbar: #5b5b5b;
+    --color-footer-text-muted: #f2f2f2;
+}

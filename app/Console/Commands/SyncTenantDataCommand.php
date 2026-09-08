@@ -90,8 +90,8 @@ class SyncTenantDataCommand extends Command
     {
         $tenant = Tenant::query()
             ->where('id', $identifier)
-            ->orWhere('slug', $identifier)
-            ->orWhere('email', $identifier)
+            ->orWhereJsonContains('data->slug', $identifier)
+            ->orWhereJsonContains('data->email', $identifier)
             ->orWhereHas('domains', fn ($query) => $query->where('domain', $identifier))
             ->first();
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Store;
 use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\CentralFlashSale;
+use App\Models\Country;
 use App\Repositories\ProductRepository;
 use App\Services\Admin\CentralFlashSaleService;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
@@ -16,6 +17,8 @@ class FlashSalesPage extends ListPage
     use InteractsWithAdminUi;
     use WithPagination;
     use WithFileUploads;
+
+    public ?int $countryId = null;
 
     public bool $showFormModal = false;
     public ?int $flashSaleId = null;
@@ -32,12 +35,22 @@ class FlashSalesPage extends ListPage
     public bool $hasMoreProducts = false;
     public array $selectedProductLabels = [];
 
+    public function mount(?int $countryId = null): void
+    {
+        $this->authorizePermission('store.flash-sales.manage');
+        $this->countryId = $countryId;
+    }
+
     protected function pageMeta(): array
     {
+        $country = $this->countryId ? Country::query()->find($this->countryId) : null;
+
         return [
-            'title' => 'Central Flash Sales',
+            'title' => $country ? "Central Flash Sales — {$country->flag_emoji} {$country->name}" : 'Central Flash Sales — Default',
             'badge' => 'Store',
-            'description' => 'Create platform-wide flash sale campaigns that are automatically synced to all tenant storefronts.',
+            'description' => $country
+                ? "Flash sale campaigns synced to tenants targeting {$country->name}."
+                : 'Default flash sale campaigns synced to every tenant with no country-specific campaigns.',
             'actionLabel' => 'Add Flash Sale',
             'tableTitle' => 'Flash Sale Campaigns',
             'headers' => ['Products', 'Discount', 'Window', 'Status', 'Actions'],
@@ -50,12 +63,13 @@ class FlashSalesPage extends ListPage
 
         $records = CentralFlashSale::query()
             ->with('products.translations.language')
+            ->where('country_id', $this->countryId)
             ->orderByDesc('id')
             ->paginate(15);
 
-        $total = CentralFlashSale::query()->count();
-        $active = CentralFlashSale::query()->where('active', true)->count();
-        $avgDisc = CentralFlashSale::query()->avg('discount_percentage') ?? 0;
+        $total = CentralFlashSale::query()->where('country_id', $this->countryId)->count();
+        $active = CentralFlashSale::query()->where('country_id', $this->countryId)->where('active', true)->count();
+        $avgDisc = CentralFlashSale::query()->where('country_id', $this->countryId)->avg('discount_percentage') ?? 0;
 
         $rows = collect($records->items())->map(fn(CentralFlashSale $flashSale) => [
             $this->productSummaryCell($flashSale),
@@ -70,6 +84,8 @@ class FlashSalesPage extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
+            'secondaryActionLabel' => '← All Countries',
+            'secondaryActionUrl' => route('admin.store.flash-sales.index'),
             'records' => $records,
             'rows' => $rows,
             'statistics' => [
@@ -147,6 +163,7 @@ class FlashSalesPage extends ListPage
             'start_date' => $validated['startDate'] ?? null,
             'end_date' => $validated['endDate'] ?? null,
             'active' => $validated['active'],
+            'country_id' => $this->countryId,
         ], $existing);
 
         // Sync to all tenants

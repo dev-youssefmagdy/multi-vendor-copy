@@ -25,6 +25,8 @@ class CategoriesList extends ListPage
             'description' => 'Manage tenant category ordering, featured state, and translated storefront copy.',
             'actionLabel' => 'Add Category',
             'actionUrl' => route('tenant.categories.create'),
+            'secondaryActionLabel' => 'Sort Categories',
+            'secondaryActionUrl' => route('tenant.categories.sort'),
             'tableTitle' => 'Tenant Categories',
             'headers' => ['Category', 'Parent', 'Status', 'Products', 'Updated At', 'Actions'],
         ];
@@ -63,7 +65,7 @@ class CategoriesList extends ListPage
                     '<span class="badge ' . ($category->active ? 'badge-green' : 'badge-amber') . '">' . e($category->active ? 'Active' : 'Inactive') . '</span>' . ($category->featured ? ' <span class="badge badge-cyan">Featured</span>' : ''),
                     e((string) $category->products->count()),
                     e($category->updated_at?->format('M d, Y')),
-                    '<div class="flex gap-2 flex-wrap"><a href="' . route('tenant.categories.edit', $category) . '"  class="btn btn-secondary btn-sm">Edit</a><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $category->id . ')">' . ($category->active ? 'Disable' : 'Enable') . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleFeatured(' . $category->id . ')">' . ($category->featured ? 'Unfeature' : 'Feature') . '</button>' . ($category->central_category_id === null ? '<button type="button" class="btn btn-danger btn-sm" wire:click="deleteCategory(' . $category->id . ')" wire:confirm="Are you sure you want to delete this category?">Delete</button>' : '') . '</div>',
+                    '<div class="flex gap-2 flex-wrap"><a href="' . route('tenant.categories.edit', $category) . '"  class="btn btn-secondary btn-sm">Edit</a><a href="' . route('tenant.categories.products', $category) . '" class="btn btn-secondary btn-sm">Sort Products</a><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $category->id . ')">' . ($category->active ? 'Disable' : 'Enable') . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleFeatured(' . $category->id . ')">' . ($category->featured ? 'Unfeature' : 'Feature') . '</button>' . ($category->central_category_id === null ? '<button type="button" class="btn btn-danger btn-sm" wire:click="deleteCategory(' . $category->id . ')" wire:confirm="Are you sure you want to delete this category?">Delete</button>' : '') . '</div>',
                 ];
             })->all(),
             'tableDescription' => $records->total() . ' categories matched the storefront filters.',

@@ -16,12 +16,18 @@ use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Theme;
+use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
 use App\Models\DeliveryPopupDay;
+use App\Models\HomeVariant;
 use App\Services\CountryDetectorService;
 use App\Services\Tenant\CustomerCountryResolver;
+use App\Services\Preview\PreviewOverrides;
+use App\Support\CacheVersion;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -40,13 +46,28 @@ class StorefrontRepository
             'cairo' => ['label' => 'Cairo', 'family' => "'Cairo', sans-serif"],
             'tajawal' => ['label' => 'Tajawal', 'family' => "'Tajawal', sans-serif"],
             'almarai' => ['label' => 'Almarai', 'family' => "'Almarai', sans-serif"],
+            'noto_sans_ar' => ['label' => 'Noto Sans AR', 'family' => "'Noto Sans Arabic', sans-serif"],
+            'ibm_plex_ar' => ['label' => 'IBM Plex AR', 'family' => "'IBM Plex Sans Arabic', sans-serif"],
+            'readex_pro' => ['label' => 'Readex Pro', 'family' => "'Readex Pro', sans-serif"],
+            'lemonada' => ['label' => 'Lemonada', 'family' => "'Lemonada', cursive"],
+            'lalezar' => ['label' => 'Lalezar', 'family' => "'Lalezar', cursive"],
+            'reem_kufi' => ['label' => 'Reem Kufi', 'family' => "'Reem Kufi', sans-serif"],
             'amiri' => ['label' => 'Amiri', 'family' => "'Amiri', serif"],
+            'scheherazade' => ['label' => 'Scheherazade', 'family' => "'Scheherazade New', serif"],
         ],
         'en' => [
             'poppins' => ['label' => 'Poppins', 'family' => "'Poppins', sans-serif"],
-            'playfair' => ['label' => 'Playfair Display', 'family' => "'Playfair Display', serif"],
             'montserrat' => ['label' => 'Montserrat', 'family' => "'Montserrat', sans-serif"],
+            'inter' => ['label' => 'Inter', 'family' => "'Inter', sans-serif"],
+            'nunito' => ['label' => 'Nunito', 'family' => "'Nunito', sans-serif"],
+            'dm_sans' => ['label' => 'DM Sans', 'family' => "'DM Sans', sans-serif"],
             'oswald' => ['label' => 'Oswald', 'family' => "'Oswald', sans-serif"],
+            'raleway' => ['label' => 'Raleway', 'family' => "'Raleway', sans-serif"],
+            'bebas_neue' => ['label' => 'Bebas Neue', 'family' => "'Bebas Neue', cursive"],
+            'space_grotesk' => ['label' => 'Space Grotesk', 'family' => "'Space Grotesk', sans-serif"],
+            'playfair' => ['label' => 'Playfair Display', 'family' => "'Playfair Display', serif"],
+            'cormorant' => ['label' => 'Cormorant Garamond', 'family' => "'Cormorant Garamond', serif"],
+            'lora' => ['label' => 'Lora', 'family' => "'Lora', serif"],
         ],
     ];
 
@@ -56,6 +77,23 @@ class StorefrontRepository
     private function detectedCountry(): ?\App\Models\Country
     {
         return $this->memo['detected_country'] ??= app(CountryDetectorService::class)->detect(request());
+    }
+
+    /**
+     * Cache a query result behind a version-tagged key: the key embeds the
+     * current cache version of each tag, so it stays valid until a write to
+     * one of those models bumps its tag (see CacheVersionObserver) — no TTL
+     * race, no need to flush by pattern (the `file` driver doesn't support tags).
+     *
+     * @param  string[]  $tags  Model class basenames this result depends on.
+     */
+    protected function cacheRemember(string $key, array $tags, \Closure $callback, ?int $ttl = null)
+    {
+        $ttl ??= (int) config('cache.storefront.default_ttl', 3600);
+        $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
+        $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
+
+        return Cache::driver('file')->remember($fullKey, $ttl, $callback);
     }
 
     protected function customerCountryId(): ?int
@@ -98,7 +136,22 @@ class StorefrontRepository
 
     protected function activeFlashDiscountExpression(): string
     {
-        return "COALESCE((SELECT MAX(flash_sales.discount_percentage) FROM flash_sale_product INNER JOIN flash_sales ON flash_sales.id = flash_sale_product.flash_sale_id WHERE flash_sale_product.product_id = products.id AND flash_sales.active = 1 AND (flash_sales.start_date IS NULL OR flash_sales.start_date <= CURRENT_TIMESTAMP) AND (flash_sales.end_date IS NULL OR flash_sales.end_date >= CURRENT_TIMESTAMP)), 0)";
+        // $countryId is cast to int from the resolved central country id — safe to interpolate.
+        $countryId = $this->customerCountryId();
+
+        $windowClause = "flash_sales.active = 1 AND (flash_sales.start_date IS NULL OR flash_sales.start_date <= CURRENT_TIMESTAMP) AND (flash_sales.end_date IS NULL OR flash_sales.end_date >= CURRENT_TIMESTAMP)";
+        $baseFrom = "FROM flash_sale_product INNER JOIN flash_sales ON flash_sales.id = flash_sale_product.flash_sale_id WHERE flash_sale_product.product_id = products.id AND {$windowClause}";
+
+        // Priority: country-specific discount first; fall back to the default
+        // (country_id IS NULL) discount only when no country-specific sale applies.
+        if ($countryId) {
+            return "COALESCE("
+                . "(SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id = " . (int) $countryId . "), "
+                . "(SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id IS NULL), "
+                . "0)";
+        }
+
+        return "COALESCE((SELECT MAX(flash_sales.discount_percentage) {$baseFrom} AND flash_sales.country_id IS NULL), 0)";
     }
 
     protected function effectivePriceExpression(): string
@@ -135,7 +188,7 @@ class StorefrontRepository
         return $relations;
     }
 
-    protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = true): Builder
+    protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
     {
         $query = Product::query()
             ->where('active', true)
@@ -295,8 +348,35 @@ class StorefrontRepository
         return $query;
     }
 
+    /**
+     * Primary sort key that floats products targeted at the visitor's country to
+     * the top. Products with no country preference (NULL / empty allowed_country_ids)
+     * rank alongside matches; products targeted only at other countries sink.
+     *
+     * Nothing is filtered out — every product stays browsable in every storefront.
+     */
+    protected function countryPriorityExpression(): ?string
+    {
+        $countryId = $this->customerCountryId();
+
+        if (!$countryId) {
+            return null;
+        }
+
+        // $countryId is an int cast from the resolved central country id — safe to interpolate.
+        return "CASE WHEN (products.allowed_country_ids IS NULL"
+            . " OR JSON_LENGTH(products.allowed_country_ids) = 0"
+            . " OR JSON_CONTAINS(products.allowed_country_ids, '" . (int) $countryId . "')) THEN 1 ELSE 0 END DESC";
+    }
+
     protected function applyProductSort($query, string $sort): Builder
     {
+        // Applied first so it becomes the leading ORDER BY term; the sort chosen
+        // by the visitor then breaks ties within each country-priority group.
+        if ($countryPriority = $this->countryPriorityExpression()) {
+            $query->orderByRaw($countryPriority);
+        }
+
         return match ($sort) {
             'old' => $query->orderBy('created_at'),
             'ascending' => $query->orderByRaw($this->effectivePriceExpression() . ' asc')->orderByDesc('created_at'),
@@ -316,7 +396,7 @@ class StorefrontRepository
         return $query->whereHas('categories', fn(Builder $categoryQuery) => $categoryQuery->where('categories.id', (int) $categoryId));
     }
 
-    protected function productsByBadgeQuery(string $badgeText, bool $excludeOutOfStock = true): Builder
+    protected function productsByBadgeQuery(string $badgeText, bool $excludeOutOfStock = false): Builder
     {
         return $this->productBaseQuery(excludeOutOfStock: $excludeOutOfStock)
             ->whereHas('badges', fn(Builder $badgeQuery) => $badgeQuery->where('text', $badgeText)->where('active', true));
@@ -340,7 +420,7 @@ class StorefrontRepository
      */
     protected function appearanceSettings(): array
     {
-        return $this->memo['appearance_settings'] ??= Setting::query()
+        return $this->memo['appearance_settings'] ??= $this->cacheRemember('appearance_settings', ['Setting'], fn() => Setting::query()
             ->whereIn('name', [
                 'store_name',
                 'logo_path',
@@ -360,7 +440,7 @@ class StorefrontRepository
             ->with('translations.language')
             ->get()
             ->keyBy('name')
-            ->all();
+            ->all());
     }
 
     public function storeName(): string
@@ -435,28 +515,28 @@ class StorefrontRepository
 
     public function socialLinks(): Collection
     {
-        return $this->memo['social_links'] ??= SocialLink::query()->orderBy('serial_number')->get();
+        return $this->memo['social_links'] ??= $this->cacheRemember('social_links', ['SocialLink'], fn() => SocialLink::query()->orderBy('serial_number')->get());
     }
 
     // ─── Languages & Currencies ──────────────────────────────────────────────
 
     public function activeLanguages(): Collection
     {
-        return $this->memo['active_languages'] ??= Language::query()
+        return $this->memo['active_languages'] ??= $this->cacheRemember('active_languages', ['Language'], fn() => Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
 
             ->with('imageFile')
-            ->get();
+            ->get());
     }
 
     public function activeCurrencies(): Collection
     {
-        return $this->memo['active_currencies'] ??= Currency::query()
+        return $this->memo['active_currencies'] ??= $this->cacheRemember('active_currencies', ['Currency'], fn() => Currency::query()
             ->where('is_active', true)
             ->orderByDesc('is_default')
             ->orderBy('code')
-            ->get();
+            ->get());
     }
 
     public function currentLanguage(): ?Language
@@ -545,41 +625,156 @@ class StorefrontRepository
 
         $country = $this->detectedCountry();
 
-        if ($country) {
-            // Find country-specific active themes allowing this country, ordered
-            // by specificity (ascending total allowed country count). We join the
-            // pivot twice — once to filter, once to count — which is fine for the
-            // small number of themes a tenant has.
-            $specific = Theme::query()
-                ->where('is_universal', false)
-                ->where('is_active', true)
-                ->whereExists(function ($q) use ($country) {
-                    $q->select(DB::raw(1))
-                        ->from('theme_country')
-                        ->whereColumn('theme_country.theme_id', 'themes.id')
-                        ->where('theme_country.country_id', $country->id)
-                        ->where('theme_country.is_enabled', true);
-                })
-                ->withCount([
-                    'countries as allowed_countries_count' => function ($q) {
-                        $q->where('is_enabled', true);
-                    }
-                ])
-                ->orderBy('allowed_countries_count')
-                ->orderBy('id')
-                ->first();
+        return $this->memo['current_theme'] = $this->cacheRemember('current_theme_' . ($country?->id ?? 'default'), ['Theme'], function () use ($country) {
+            if ($country) {
+                // Find country-specific active themes allowing this country, ordered
+                // by specificity (ascending total allowed country count). We join the
+                // pivot twice — once to filter, once to count — which is fine for the
+                // small number of themes a tenant has.
+                $specific = Theme::query()
+                    ->where('is_universal', false)
+                    ->where('is_active', true)
+                    ->whereExists(function ($q) use ($country) {
+                        $q->select(DB::raw(1))
+                            ->from('theme_country')
+                            ->whereColumn('theme_country.theme_id', 'themes.id')
+                            ->where('theme_country.country_id', $country->id)
+                            ->where('theme_country.is_enabled', true);
+                    })
+                    ->withCount([
+                        'countries as allowed_countries_count' => function ($q) {
+                            $q->where('is_enabled', true);
+                        }
+                    ])
+                    ->orderBy('allowed_countries_count')
+                    ->orderBy('id')
+                    ->first();
 
-            if ($specific) {
-                return $this->memo['current_theme'] = $specific;
+                if ($specific) {
+                    return $specific;
+                }
+            }
+
+            return Theme::query()
+                ->where('is_universal', true)
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->first()
+                ?? Theme::query()->where('is_universal', true)->orderBy('id')->first();
+        });
+    }
+
+    /**
+     * Resolve the home page layout variant the tenant picked for the current
+     * theme, preferring a country-specific pick over the tenant-wide default,
+     * and falling back to the theme's default catalog entry.
+     */
+    public function currentHomeVariant(): ?HomeVariant
+    {
+        if (\array_key_exists('current_home_variant', $this->memo)) {
+            return $this->memo['current_home_variant'];
+        }
+
+        $theme = $this->currentTheme();
+
+        if (!$theme) {
+            return $this->memo['current_home_variant'] = null;
+        }
+
+        if (PreviewOverrides::active() && PreviewOverrides::homepageVariantKey()) {
+            $forced = tenancy()->central(fn() => HomeVariant::query()
+                ->forTheme($theme->slug)
+                ->where('key', PreviewOverrides::homepageVariantKey())
+                ->first());
+
+            if ($forced) {
+                return $this->memo['current_home_variant'] = $forced;
             }
         }
 
-        return $this->memo['current_theme'] = Theme::query()
-            ->where('is_universal', true)
-            ->where('is_active', true)
-            ->orderBy('id')
-            ->first()
-            ?? Theme::query()->where('is_universal', true)->orderBy('id')->first();
+        $country = $this->detectedCountry();
+
+        return $this->memo['current_home_variant'] = $this->cacheRemember(
+            'current_home_variant_' . $theme->id . '_' . ($country?->id ?? 'default'),
+            ['Theme', 'TenantHomeVariant', 'HomeVariant'],
+            function () use ($theme, $country) {
+                $tenantChoice = null;
+
+                if ($country) {
+                    $tenantChoice = TenantHomeVariant::query()
+                        ->where('theme_id', $theme->id)
+                        ->where('country_id', $country->id)
+                        ->first();
+                }
+
+                $tenantChoice ??= TenantHomeVariant::query()
+                    ->where('theme_id', $theme->id)
+                    ->whereNull('country_id')
+                    ->first();
+
+                if ($tenantChoice) {
+                    $variant = tenancy()->central(fn() => HomeVariant::query()->find($tenantChoice->home_variant_id));
+
+                    if ($variant) {
+                        return $variant;
+                    }
+                }
+
+                return tenancy()->central(fn() => HomeVariant::forTheme($theme->slug)
+                    ->where('is_default', true)
+                    ->where('is_active', true)
+                    ->first());
+            },
+        );
+    }
+
+    /**
+     * Resolve the CSS custom properties to render for the current storefront
+     * request: the active home variant's default palette, overlaid with any
+     * tenant color overrides (country-specific taking priority over the
+     * tenant-wide default), keyed by CSS custom property name.
+     */
+    public function resolvedThemeColors(): array
+    {
+        if (\array_key_exists('resolved_theme_colors', $this->memo)) {
+            return $this->memo['resolved_theme_colors'];
+        }
+
+        $theme = $this->currentTheme();
+        $variant = $this->currentHomeVariant();
+
+        if (!$theme || !$variant) {
+            return $this->memo['resolved_theme_colors'] = [];
+        }
+
+        $defaults = (array) ($variant->colors ?? []);
+        $country = $this->detectedCountry();
+
+        return $this->memo['resolved_theme_colors'] = $this->cacheRemember(
+            'resolved_theme_colors_' . $theme->id . '_' . $variant->id . '_' . ($country?->id ?? 'default'),
+            ['TenantThemeColor'],
+            function () use ($defaults, $theme, $variant, $country) {
+                $override = null;
+
+                if ($country) {
+                    $override = TenantThemeColor::query()
+                        ->where('theme_id', $theme->id)
+                        ->where('home_variant_id', $variant->id)
+                        ->where('country_id', $country->id)
+                        ->value('colors');
+                }
+
+                $override ??= TenantThemeColor::query()
+                    ->where('theme_id', $theme->id)
+                    ->where('home_variant_id', $variant->id)
+                    ->whereNull('country_id')
+                    ->value('colors');
+
+                $override = $override ? (is_array($override) ? $override : json_decode($override, true)) : [];
+
+                return array_merge($defaults, $override ?: []);
+            },
+        );
     }
 
 
@@ -587,10 +782,31 @@ class StorefrontRepository
 
     public function activeBanners(): Collection
     {
-        return $this->memo['active_banners'] ??= Banner::query()
-            ->with('translations.language')
-            ->orderBy('serial_number')
-            ->get();
+        if (\array_key_exists('active_banners', $this->memo)) {
+            return $this->memo['active_banners'];
+        }
+
+        $countryId = $this->detectedCountry()?->id;
+
+        return $this->memo['active_banners'] = $this->cacheRemember('active_banners_' . ($countryId ?? 'default'), ['Banner'], function () use ($countryId) {
+            if ($countryId) {
+                $countryBanners = Banner::query()
+                    ->with('translations.language')
+                    ->where('country_id', $countryId)
+                    ->orderBy('serial_number')
+                    ->get();
+
+                if ($countryBanners->isNotEmpty()) {
+                    return $countryBanners;
+                }
+            }
+
+            return Banner::query()
+                ->with('translations.language')
+                ->whereNull('country_id')
+                ->orderBy('serial_number')
+                ->get();
+        });
     }
 
     // ─── Categories ──────────────────────────────────────────────────────────
@@ -612,19 +828,19 @@ class StorefrontRepository
 
     public function activeCategories(): Collection
     {
-        return $this->memo['active_categories'] ??= Category::query()
+        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories', ['Category'], fn() => Category::query()
             ->where('active', true)
             ->withCount(['products', 'children']) // For fallback thumb in header menu
             ->with(['translations.language', 'files', 'centralCategory.files'])
             ->orderBy('order_number')
             ->get()
             ->filter(fn(Category $c) => $c->children_count > 0 || $c->products_count > 0)
-            ->values();
+            ->values());
     }
 
     public function rootCategoriesWithChildren(): Collection
     {
-        return $this->memo['root_categories'] ??= $this->pruneEmptyLeaves(
+        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories', ['Category'], fn() => $this->pruneEmptyLeaves(
             Category::query()
                 ->where('active', true)
                 ->whereNull('parent_id')
@@ -644,7 +860,7 @@ class StorefrontRepository
                 ->withCount('products')
                 ->orderBy('order_number')
                 ->get()
-        );
+        ));
     }
 
     /**
@@ -705,18 +921,13 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
-        return $this->productBaseQuery()
-            ->where('active', true)
-            ->where('featured', true)
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
+        return app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId());
     }
 
     public function latestProducts(int $limit = 20): Collection
     {
         return $this->productBaseQuery()
+            ->orderBy('order_number')
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -726,16 +937,22 @@ class StorefrontRepository
     public function productsByCategory(Category $category, int $limit = 20): Collection
     {
         return $this->productBaseQuery()
-            ->whereHas('categories', fn($q) => $q->where('categories.id', $category->id))
+            ->join('category_product', function ($join) use ($category) {
+                $join->on('category_product.product_id', '=', 'products.id')
+                    ->where('category_product.category_id', $category->id);
+            })
+            ->orderBy('category_product.sort_order', 'asc')
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
+            ->orderByDesc('products.created_at')
+            ->select('products.*')
             ->limit($limit)
             ->get();
     }
 
     public function paginatedProductsByCategory(?Category $category = null, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $sort = (string) ($filters['sort'] ?? 'latest');
+        $userSort = (string) ($filters['sort'] ?? 'latest');
+        $sort = $userSort;
 
         // Section presets: override sort when the user hasn't explicitly chosen one
         if ($sort === 'latest') {
@@ -750,11 +967,24 @@ class StorefrontRepository
 
         $categoryIdWithChildrenIds = $category ? array_merge([$category->id], $this->categoryDescendantIds($category->id)) : null;
         // dd($categoryIdWithChildrenIds);
-        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock')
-            ->when($categoryIdWithChildrenIds, fn($categoryQuery) => $categoryQuery->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIdWithChildrenIds)));
+        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
 
-        $this->applyProductFilters($query, $filters);
-        $this->applyProductSort($query, $sort);
+        if ($category && $userSort === 'latest') {
+            $query->join('category_product', function ($join) use ($categoryIdWithChildrenIds) {
+                $join->on('category_product.product_id', '=', 'products.id')
+                    ->whereIn('category_product.category_id', $categoryIdWithChildrenIds);
+            })
+                ->orderBy('category_product.sort_order', 'asc')
+                ->orderByDesc('products.created_at')
+                ->select('products.*');
+
+            $this->applyProductFilters($query, $filters);
+        } else {
+            $query->when($categoryIdWithChildrenIds, fn($categoryQuery) => $categoryQuery->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIdWithChildrenIds)));
+
+            $this->applyProductFilters($query, $filters);
+            $this->applyProductSort($query, $sort);
+        }
 
         return $query->paginate($perPage)->withQueryString();
     }
@@ -795,6 +1025,28 @@ class StorefrontRepository
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
+     * Load tenant products for a ranked list of central catalog product IDs
+     * (as returned by ImageSearchService::search), preserving similarity order.
+     *
+     * @param array<int> $centralProductIds ordered most-similar first
+     */
+    public function imageSearchProducts(array $centralProductIds, int $perPage = 20): LengthAwarePaginator
+    {
+        if (empty($centralProductIds)) {
+            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
+        }
+
+        $orderClause = 'FIELD(central_product_id, ' . implode(',', array_map('intval', $centralProductIds)) . ')';
+
+        $query = $this->productBaseQuery()
+            ->whereIn('central_product_id', $centralProductIds)
+            ->orderByRaw($orderClause);
+
+        return $query->paginate($perPage)->withQueryString();
     }
 
     public function paginatedSearchProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -858,29 +1110,18 @@ class StorefrontRepository
         return $query->paginate($perPage)->withQueryString();
     }
 
+    /**
+     * Merchandiser-curated "trending-now" badge wins when set; otherwise this
+     * falls back to a recency-decayed sales-velocity score, and finally to the
+     * newest products if nothing has sold recently — see
+     * HomeProductService::getTrendingNow() for the full fallback chain.
+     */
     public function trendingNowProducts(int $limit = 10): Collection
     {
         $key = 'trending_now_' . $limit;
-        return $this->memo[$key] ??= (function () use ($limit): Collection{
-            $salesQuery = OrderItem::query()
-                ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
-                ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
-                ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                ->where(function ($query): void{
-                    $query->whereNotNull('order_items.product_id')
-                        ->orWhereNotNull('product_variants.product_id');
-                })
-                ->where('orders.created_at', '>=', now()->subDays(30))
-                ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
-                ->orderByDesc('total_qty')
-                ->limit($limit);
 
-            return $this->productBaseQuery()
-                ->joinSub($salesQuery, 'sales_totals', fn($join) => $join->on('sales_totals.product_id', '=', 'products.id'))
-                ->select('products.*')
-                ->orderByRaw($this->effectivePriceExpression() . ' asc')
-                ->get();
-        })();
+        return $this->memo[$key] ??= app(\App\Services\HomeProductService::class)
+            ->getTrendingNow($limit, $this->customerCountryId());
     }
 
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -916,22 +1157,39 @@ class StorefrontRepository
 
     public function bestSellingProducts(int $perPage = 12, int $page = 1): LengthAwarePaginator
     {
-        return $this->productsByBadge('best-selling', $perPage, $page);
+        return $this->paginateFromService(
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->customerCountryId()),
+            $perPage,
+            $page,
+        );
     }
 
     public function newInProducts(int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
-        return $this->productsByBadge('new-in', $perPage, $page);
+        return $this->paginateFromService(
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit, $this->customerCountryId()),
+            $perPage,
+            $page,
+        );
+    }
+
+    protected function paginateFromService(callable $fetcher, int $perPage, int $page): LengthAwarePaginator
+    {
+        $limit = $perPage * $page;
+        $items = $fetcher($limit);
+        $total = $items->count() >= $limit ? $items->count() + 1 : $items->count();
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+        );
     }
 
     public function recommendedProducts(int $limit = 10): Collection
     {
-        return $this->memo['recommended_' . $limit] ??= $this->productBaseQuery()
-            ->where('featured', true)
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
-            ->orderByDesc('created_at')
-            ->limit($limit)
-            ->get();
+        return $this->memo['recommended_' . $limit . '_' . ($this->customerCountryId() ?? 'def')] ??= app(\App\Services\HomeProductService::class)->getRecommended($limit, $this->customerCountryId());
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -956,14 +1214,49 @@ class StorefrontRepository
 
     public function activeFlashSales(): Collection
     {
-        return $this->memo['active_flash_sales'] ??= FlashSale::query()
-            ->activeWindow()
-            ->with([
-                'files',
-                'products' => fn($query) => $query->with($this->productRelations()),
-            ])
-            ->orderByDesc('created_at')
-            ->get();
+        if (array_key_exists('active_flash_sales', $this->memo)) {
+            return $this->memo['active_flash_sales'];
+        }
+
+        $countryId = $this->customerCountryId();
+
+        // Short TTL: the "active" window is time-based (start/end timestamps), so
+        // a sale can flip active/inactive with no model write — keep this fresh
+        // rather than relying solely on the version bump.
+        return $this->memo['active_flash_sales'] = $this->cacheRemember(
+            'active_flash_sales_' . ($countryId ?? 'default'),
+            ['FlashSale', 'Product'],
+            function () use ($countryId) {
+                // Priority: country-specific flash sales first, fall back to the default
+                // (country_id IS NULL) set only when no country-specific sale applies.
+                if ($countryId) {
+                    $countrySpecific = FlashSale::query()
+                        ->activeWindow()
+                        ->where('country_id', $countryId)
+                        ->with([
+                            'files',
+                            'products' => fn($query) => $query->with($this->productRelations()),
+                        ])
+                        ->orderByDesc('created_at')
+                        ->get();
+
+                    if ($countrySpecific->isNotEmpty()) {
+                        return $countrySpecific;
+                    }
+                }
+
+                return FlashSale::query()
+                    ->activeWindow()
+                    ->whereNull('country_id')
+                    ->with([
+                        'files',
+                        'products' => fn($query) => $query->with($this->productRelations()),
+                    ])
+                    ->orderByDesc('created_at')
+                    ->get();
+            },
+            ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
+        );
     }
 
     // ─── Cart (session-based) ────────────────────────────────────────────────
@@ -1038,10 +1331,33 @@ class StorefrontRepository
                 'is_flash_sale' => $pricing['is_flash_sale'],
                 'flash_sale_percentage' => $pricing['flash_sale_percentage'],
                 'subtotal' => $price * $qty,
+                'is_out_of_stock' => $this->isCartItemOutOfStock($product, $variant),
             ];
         }
 
         return $items;
+    }
+
+    private function isCartItemOutOfStock(Product $product, ?ProductVariant $variant): bool
+    {
+        $central = $product->centralProduct;
+
+        if (!$central) {
+            $stock = $variant ? ($variant->stock ?? $product->stock ?? null) : $product->stock;
+            return $stock !== null && (int) $stock <= 0;
+        }
+
+        if (!($central->manage_stock ?? false)) {
+            return false;
+        }
+
+        if ($variant) {
+            $stock = (int) ($variant->stock ?? $variant->centralVariant?->stock ?? 0);
+        } else {
+            $stock = (int) ($product->stock ?? 0);
+        }
+
+        return $stock <= 0;
     }
 
     public function cartCount(): int

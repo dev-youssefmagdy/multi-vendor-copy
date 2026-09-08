@@ -70,8 +70,9 @@
 
         {{-- ── Image ─────────────────────────────────────────────────────── --}}
         <x-card-collapse title="Product Image" :start-open="false">
-            <div>
+            <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}">
                 <label class="field-label">Upload Image <span class="field-optional">(max 5 MB)</span></label>
+                <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                 <input type="file" wire:model="imageFile" accept="image/*" class="field-control"
                     style="padding-top:6px">
                 @error('imageFile') <p class="field-error">{{ $message }}</p> @enderror
@@ -81,6 +82,7 @@
                             style="max-width:200px;border-radius:8px;border:1px solid rgba(255,255,255,.12)">
                     </div>
                 @endif
+                <x-dimension-feedback :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
             </div>
         </x-card-collapse>
 
@@ -163,7 +165,8 @@
                             <div class="form-grid form-grid-2" style="margin-bottom:12px">
                                 <div>
                                     <label class="field-label">Variant Image</label>
-                                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                                    <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
+                                    <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
                                         @if (!empty($variant['image']))
                                             <img src="{{ $variant['image']->temporaryUrl() }}" alt=""
                                                 style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ddd" />
@@ -176,6 +179,7 @@
                                             <button type="button" class="btn btn-secondary btn-sm btn-danger"
                                                 wire:click="removeVariantImage({{ $vIdx }})">Remove image</button>
                                         @endif
+                                        <x-dimension-feedback :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                                     </div>
                                     @error("variants.{$vIdx}.image") <p class="field-error">{{ $message }}</p> @enderror
                                 </div>
@@ -273,6 +277,55 @@
             <div style="margin-top:14px">
                 <button type="button" class="btn btn-secondary" wire:click="addVariant">+ Add Variant</button>
             </div>
+        </x-card-collapse>
+
+        {{-- ── Return & Refund Policy ───────────────────────────────────────── --}}
+        <x-card-collapse title="Return &amp; Refund Policy"
+            subtitle="Override the store-wide return policy for this specific product. When disabled, your store's default policy applies."
+            :start-open="false">
+
+            <label class="toggle-field">
+                <input type="checkbox" wire:model.live="returnPolicyOverride">
+                <span>Enable product-specific return policy</span>
+            </label>
+
+            @if ($returnPolicyOverride)
+                <div class="form-grid form-grid-2" style="margin-top:14px">
+                    <label class="toggle-field" style="grid-column:1 / -1">
+                        <input type="checkbox" wire:model.live="isReturnable">
+                        <span>This product is eligible for returns</span>
+                    </label>
+
+                    @if ($isReturnable)
+                        <div>
+                            <label class="field-label">Return Window (days) <span class="field-optional">(leave blank to inherit)</span></label>
+                            <x-input type="number" min="1" max="365" wire:model.defer="returnWindowDays" />
+                            @error('returnWindowDays') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="field-label">Return Fee <span class="field-optional">(leave blank to inherit)</span></label>
+                            <x-input type="number" step="0.01" min="0" wire:model.defer="returnFee" />
+                            @error('returnFee') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                        <label class="toggle-field" style="grid-column:1 / -1">
+                            <input type="checkbox" wire:model.defer="returnVideoRequired">
+                            <span>Always require video evidence for return requests on this product</span>
+                        </label>
+                        <div style="grid-column:1 / -1">
+                            <label class="field-label">Return Conditions <span class="field-optional">(shown to customer)</span></label>
+                            <x-textarea wire:model.defer="returnConditions" rows="3"
+                                placeholder="e.g. Product must be unused and in original packaging..." />
+                            @error('returnConditions') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+                    @else
+                        <div class="notice-muted" style="grid-column:1 / -1">
+                            This product is marked as <strong>non-returnable</strong>. Customers will not be able to submit return requests for it.
+                        </div>
+                    @endif
+                </div>
+            @else
+                <p class="page-copy" style="margin-top:10px">Using store-wide return policy.</p>
+            @endif
         </x-card-collapse>
 
         <div class="notice-muted">

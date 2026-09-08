@@ -98,7 +98,9 @@
 
                     <label class="field-label" for="primary-image">Primary Image</label>
                     <x-dropzone id="primary-image" model="primaryImage" remove-action="removeImage" accept="image/*"
-                        :multiple="false" label="Upload primary image" sublabel="PNG, JPG, WEBP up to 4MB" />
+                        :multiple="false" label="Upload primary image" sublabel="PNG, JPG, WEBP up to 4MB"
+                        :expected-width="config('image_dimensions.product.width')"
+                        :expected-height="config('image_dimensions.product.height')" />
                     @error('primaryImage') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
             </x-card-collapse>
@@ -110,10 +112,17 @@
 
                 {{-- Existing gallery files --}}
                 @if ($existingGallery->isNotEmpty())
-                    <div class="gallery-grid">
+                    <p class="field-hint mb-2">Drag thumbnails to reorder. The image order here controls the display order in the storefront slider.</p>
+                    <div class="gallery-grid" id="product-gallery-sortable" wire:ignore.self>
                         @foreach ($existingGallery as $file)
                             @if (!in_array($file->id, $removeGalleryIds))
-                                <div class="gallery-item" wire:key="gallery-{{ $file->id }}">
+                                <div class="gallery-item" data-id="{{ $file->id }}" wire:key="gallery-{{ $file->id }}">
+                                    <span class="gallery-item-handle" title="Drag to reorder">
+                                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <line x1="4" y1="8" x2="20" y2="8" />
+                                            <line x1="4" y1="16" x2="20" y2="16" />
+                                        </svg>
+                                    </span>
                                     @if ($file->file_type->value === 'video')
                                         <div class="gallery-item-video">
                                             <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -142,7 +151,9 @@
                 <x-dropzone id="gallery-files" model="galleryFiles"
                     accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
                     :multiple="true" label="Upload images or videos"
-                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed" />
+                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed"
+                    :expected-width="config('image_dimensions.product.width')"
+                    :expected-height="config('image_dimensions.product.height')" />
             </x-card-collapse>
 
             {{-- ── Translations ─────────────────────────────────────────────────── --}}
@@ -351,7 +362,8 @@
                                 <div class="form-grid form-grid-1" style="margin-bottom:12px">
                                     <div>
                                         <label class="field-label">Variant Image</label>
-                                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                                        <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
+                                        <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
                                             @if ($variant['image'])
                                                 <img src="{{ $variant['image']->temporaryUrl() }}" alt=""
                                                     style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #ddd" />
@@ -370,6 +382,7 @@
                                                     <span>Uploading…</span>
                                                 </div>
                                             </div>
+                                            <x-dimension-feedback :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                                             @if ($variant['image'] || !empty($variant['thumbnail_url']))
                                                 <button type="button" class="btn btn-secondary btn-sm btn-danger"
                                                     wire:click="removeVariantImage({{ $vIdx }})">Remove image</button>
@@ -560,6 +573,43 @@
 
             </x-card-collapse>--}}
 
+            {{-- ── Badges ───────────────────────────────────────────────────── --}}
+            <x-card-collapse title="Badges" description="Assign badges such as Featured or Recommended — used to highlight this product on the storefront." :start-open="true">
+                @if ($badges->isEmpty())
+                    <div class="notice-muted">No badges available yet.</div>
+                @else
+                    <x-select multiple searchable wire:model.defer="badgeIds" placeholder="Search and select badges">
+                        @foreach ($badges as $badge)
+                            <option value="{{ $badge->id }}">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}</option>
+                        @endforeach
+                    </x-select>
+                    @error('badgeIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
+            {{-- ── Country Targeting ────────────────────────────────────────── --}}
+            <x-card-collapse title="Country Targeting" description="Choose which countries this product is aimed at. It stays visible everywhere — targeted countries simply rank it higher on their storefront." :start-open="true">
+                @if ($countries->isEmpty())
+                    <div class="notice-muted">No countries are enabled for tenants yet.</div>
+                @else
+                    <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;">
+                        <input type="checkbox" wire:model.live="allCountries" style="width:16px;height:16px;">
+                        <span style="font-weight:500;">No country preference (rank equally everywhere)</span>
+                    </label>
+                    @if (!$allCountries)
+                        <x-select multiple searchable wire:model.defer="assignedCountryIds" placeholder="Search and select countries">
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->flag_emoji }} {{ $country->name }}</option>
+                            @endforeach
+                        </x-select>
+                        @error('assignedCountryIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                        <div class="notice-muted" style="margin-top:8px">Visitors from the selected countries see this product first. Visitors elsewhere still see it, ranked below their own country's products.</div>
+                    @else
+                        <div class="notice-muted">This product ranks equally in every storefront.</div>
+                    @endif
+                @endif
+            </x-card-collapse>
+
             {{-- ── Tenant Assignments ──────────────────────────────────────── --}}
             <x-card-collapse title="Tenant Assignments" description="Assign this product to specific tenants — they will be notified and the product will appear in their catalog." :start-open="true">
                 @if ($tenants->isEmpty())
@@ -584,3 +634,31 @@
         </div>
     </form>
 </main>
+
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:init', () => {
+            const initGallerySortable = () => {
+                const grid = document.getElementById('product-gallery-sortable');
+                if (!grid || typeof Sortable === 'undefined' || grid.dataset.sortableInit) {
+                    return;
+                }
+
+                grid.dataset.sortableInit = '1';
+
+                Sortable.create(grid, {
+                    animation: 150,
+                    handle: '.gallery-item-handle',
+                    draggable: '.gallery-item',
+                    onEnd: () => {
+                        const orderedIds = Array.from(grid.querySelectorAll('.gallery-item[data-id]'))
+                            .map(item => parseInt(item.dataset.id, 10));
+                        @this.call('updateGalleryOrder', orderedIds);
+                    },
+                });
+            };
+
+            initGallerySortable();
+        });
+    </script>
+@endpush

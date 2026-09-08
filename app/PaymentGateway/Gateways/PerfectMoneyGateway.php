@@ -72,4 +72,14 @@ class PerfectMoneyGateway extends AbstractPaymentGateway
 
         return PaymentResult::failure('Perfect Money payment verification failed — data mismatch.');
     }
+
+    protected static function meta(): array
+    {
+        return [
+            'currencies' => ['USD', 'EUR', 'GOLD'],
+            'merchant_countries' => ['RU', 'UA', 'BY', 'KZ', 'UZ', 'AM', 'AZ'],
+            'customer_countries' => ['RU', 'UA', 'BY', 'KZ', 'UZ', 'AM', 'AZ', 'US', 'DE', 'FR'],
+            'payment_methods' => ['perfect_money_wallet', 'voucher'],
+        ];
+    }
 }

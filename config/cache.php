@@ -125,6 +125,28 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storefront Cache TTLs
+    |--------------------------------------------------------------------------
+    |
+    | TTLs (seconds) for the version-tagged storefront caches in
+    | StorefrontRepository / HomeProductService. A version bump (on any
+    | create/update/delete of the models a cache entry depends on) invalidates
+    | it immediately regardless of TTL; these values are just the safety-net
+    | expiry, and are shorter for data whose "active" state also depends on
+    | wall-clock time rather than only on writes (flash sale windows, rolling
+    | trending window).
+    |
+    */
+
+    'storefront' => [
+        'default_ttl' => env('STOREFRONT_CACHE_TTL', 3600),
+        'flash_sales_ttl' => env('STOREFRONT_CACHE_FLASH_SALES_TTL', 60),
+        'trending_ttl' => env('STOREFRONT_CACHE_TRENDING_TTL', 300),
+        'home_products_ttl' => env('STOREFRONT_CACHE_HOME_PRODUCTS_TTL', 3600),
+    ],
 
 ];

@@ -19,7 +19,7 @@ class AddEditStaticPage extends Component
 
     public function mount(?StaticPage $staticPage = null): void
     {
-        $languages = Language::query()->where('is_active', true)->orderByDesc('is_default')->get();
+        $languages = Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get();
         $this->activeLocale = $languages->first()?->code ?? 'en';
 
         $this->translations = $languages->mapWithKeys(fn(Language $language) => [
@@ -80,7 +80,7 @@ class AddEditStaticPage extends Component
         return view('livewire.admin.pages.add-edit-static-page', [
             'pageTitle' => $this->pageId ? 'Edit Static Page' : 'Add Static Page',
             'statusOptions' => ['draft' => 'Draft', 'active' => 'Active', 'archived' => 'Archived'],
-            'languages' => Language::query()->where('is_active', true)->orderByDesc('is_default')->get(),
+            'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
         ]);
     }
 }

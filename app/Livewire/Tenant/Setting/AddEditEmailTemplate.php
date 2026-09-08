@@ -102,7 +102,7 @@ class AddEditEmailTemplate extends Component
     {
         $languages = Language::query()
             ->where('is_active', true)
-            ->orderByDesc('is_default')
+            ->orderBy('sort_order')->orderByDesc('is_default')
             ->orderBy('name')
             ->get();
 
