@@ -1,6 +1,11 @@
 @php
-    // Figma lays eight tiles across the 1347px row.
-    $__categories = ($categories ?? $rootCategories ?? collect())->take(8)->values();
+    // Figma lays eight tiles across the 1347px row, but capping the query at
+    // exactly 8 - the same count as the desktop carousel's slidesPerView -
+    // meant a store with 8 or fewer categories always filled the row exactly
+    // and Swiper had nothing to scroll to (see mountCategories() in
+    // carousels-v6.js). Taking more than the row can show gives the desktop
+    // carousel real overflow to drag through.
+    $__categories = ($categories ?? $rootCategories ?? collect())->take(20)->values();
     $__catFallbackImages = [
         asset('souqify-5/assets/images/category-bag.png'),
         asset('souqify-5/assets/images/category-gaming.png'),
@@ -113,6 +118,14 @@
         color: #000000;
         margin: 0;
         max-width: 100%;
+        /* .sqv6-cats__row .swiper-wrapper aligns tiles to the row's bottom
+           edge (arches sitting on a shared "shelf" line), so a one-line label
+           (e.g. "Outdoor bag") left its tile shorter than its two-line
+           neighbors - bottom-aligning that shorter tile pushed its arch/photo
+           down below the others instead of level with them. Reserving two
+           lines' height regardless of actual text length keeps every tile the
+           same height, so the arches stay level no matter how the label wraps. */
+        min-height: 3em;
     }
     .sqv6-cats__empty {
         font-family: 'Outfit', sans-serif;

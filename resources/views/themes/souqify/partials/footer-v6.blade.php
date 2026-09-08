@@ -95,6 +95,6 @@
   </div>
   <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="relative flex items-center justify-center size-[56px] rounded-full shrink-0" style="background:var(--color-black-alt)">
     <img src="{{ asset('souqify-5/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px]" />
-    <span id="souqify-v6-mobtab-cart-badge" class="souqify-cart-badge absolute -top-[2px] right-[8px] flex items-center justify-center size-[16px] rounded-full text-[10px] font-semibold text-white {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-brand-pink)">{{ $cartCount }}</span>
+    <span id="souqify-v6-mobtab-cart-badge" class="souqify-cart-badge absolute top-[6px] right-[6px] flex items-center justify-center size-[16px] rounded-full text-[10px] font-semibold text-white" style="background:var(--color-brand-pink)">{{ $cartCount }}</span>
   </a>
 </nav>

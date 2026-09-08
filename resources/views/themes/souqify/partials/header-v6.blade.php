@@ -22,7 +22,7 @@
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] text-[var(--color-text-placeholder)] w-full" />
       <div class="w-px h-[24px]" style="background:var(--color-stroke)"></div>
       <button type="button" data-image-search-trigger="storefront-image-search-modal-v6-mobile" aria-label="{{ __('Search by Image') }}">
-        <img src="{{ asset('souqify-5/assets/icons/camera.svg') }}" alt="" class="size-[20px]" />
+        <img src="{{ asset('souqify-5/assets/icons/camera.svg') }}" alt="" class="h-[20px] w-[27.5px]" />
       </button>
     </form>
     <x-image-search-modal id="storefront-image-search-modal-v6-mobile" :action="route('tenant.storefront.search.image')" />

@@ -224,10 +224,26 @@
        the odd ones high, the even ones dropped by the row's 23px gap. Keyed to
        nth-child, so every set of five a swipe brings in repeats the pattern. */
     .sqv6-best__slide:nth-child(2n) { padding-top: 14px; }
-    /* Phone grid: two columns, the left one dropped so the pair reads staggered
-       exactly like the desktop row. Rows need their own bottom gap. */
+    /* Phone grid: two columns, one dropped so the pair reads staggered exactly
+       like the desktop row. Rows need their own bottom gap.
+       Swiper's Grid module sets every slide's `height` and (for row 2+)
+       `margin-top` via INLINE style (see swiper's grid.mjs updateSlide()),
+       which always wins over padding-top from this stylesheet - so the
+       padding-top stagger only ever showed up on the very first row before
+       Swiper's own inline height clipped it away on every row after. A
+       transform isn't a property Swiper's grid math ever touches, so it
+       shifts the card without fighting that inline height - kept to 12px
+       (matching this row's own 12px spaceBetween) so the shifted card never
+       overlaps into the row below.
+       Which column a card lands in also can't be read off nth-child here:
+       with slidesPerGroup > 1, Swiper's grid module assigns columns through a
+       per-page formula, not simple DOM order, so nth-child(2n) only happened
+       to match the real column on some row-pairs and not others - which is
+       exactly why some pairs came out level. mountBestSeller() in
+       carousels-v6.js reads Swiper's own computed column back off each slide
+       and toggles this class instead, which is reliable on every row. */
     .sqv6-best--grid .sqv6-best__slide { padding-top: 0; margin-bottom: 12px; }
-    .sqv6-best--grid .sqv6-best__slide:nth-child(2n + 1) { padding-top: 24px; }
+    .sqv6-best--grid .sqv6-best__slide--stagger { transform: translateY(12px); }
     /* Deal Card: 236.47 x 375.67, radius 7.15736, no shadow on the pink. */
     .sqv6-best__slide .sqv6-deal {
         border-radius: 7.15736px;

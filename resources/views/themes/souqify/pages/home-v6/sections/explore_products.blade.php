@@ -1,6 +1,11 @@
 @php
-    // Figma repeats six tiles across the 1328px row.
-    $__tiles = collect($categories ?? $rootCategories ?? [])->take(6)->values();
+    // Figma repeats six tiles across the 1328px row, but capping the query at
+    // exactly 6 - the same count as the desktop carousel's slidesPerView -
+    // meant a store with 6 or fewer categories always filled the row exactly
+    // and Swiper had nothing to scroll to (see mountShopCategory() in
+    // carousels-v6.js). Taking more than the row can show gives the desktop
+    // carousel real overflow to drag through.
+    $__tiles = collect($categories ?? $rootCategories ?? [])->take(20)->values();
     $__tileImages = [
         asset('souqify-5/assets/images/shop-mens.png'),
         asset('souqify-5/assets/images/shop-electronics.png'),
