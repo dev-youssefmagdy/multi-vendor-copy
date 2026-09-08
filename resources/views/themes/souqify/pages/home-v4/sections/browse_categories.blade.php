@@ -149,9 +149,15 @@
             font-size: clamp(15px, 1.389vw, 20px);
         }
         .sqv4-cats__row {
+            /* Always exactly 8 slides per view on desktop - a grid guarantees
+               that regardless of content, instead of a flex row that could
+               overflow into horizontal scroll. */
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
             /* 44.71px gap, distributed across the full 1347px width */
             gap: clamp(20px, 3.105vw, 44.71px);
-            justify-content: space-between;
+            overflow-x: visible;
+            scroll-snap-type: none;
         }
         .sqv4-cats__tile {
             gap: clamp(8px, 1.0347vw, 14.9px);
