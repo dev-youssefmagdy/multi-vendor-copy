@@ -21,8 +21,11 @@
       <button type="submit"><img src="{{ asset('souqify-5/assets/icons/search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] text-[var(--color-text-placeholder)] w-full" />
       <div class="w-px h-[24px]" style="background:var(--color-stroke)"></div>
-      <img src="{{ asset('souqify-5/assets/icons/camera.svg') }}" alt="{{ __('Visual search') }}" class="size-[20px]" />
+      <button type="button" data-image-search-trigger="storefront-image-search-modal-v6-mobile" aria-label="{{ __('Search by Image') }}">
+        <img src="{{ asset('souqify-5/assets/icons/camera.svg') }}" alt="" class="size-[20px]" />
+      </button>
     </form>
+    <x-image-search-modal id="storefront-image-search-modal-v6-mobile" :action="route('tenant.storefront.search.image')" />
   </div>
 
   <!-- Desktop -->
@@ -76,7 +79,11 @@
           </span> --}}
           <button type="submit"><img src="{{ asset('souqify-5/assets/icons/search.svg') }}" alt="" class="size-[18px] opacity-70 mr-[8px]" /></button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color:var(--color-text-placeholder)" />
+          <button type="button" data-image-search-trigger="storefront-image-search-modal-v6" aria-label="{{ __('Search by Image') }}">
+            <img src="{{ asset('souqify-5/assets/icons/camera.svg') }}" alt="" class="size-[20px]" />
+          </button>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v6" :action="route('tenant.storefront.search.image')" />
       </div>
       <div class="flex items-center gap-[38px] shrink-0">
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[8px] cursor-pointer" aria-label="{{ __('Cart') }}">

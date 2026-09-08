@@ -25,8 +25,12 @@
             <img src="{{ asset('souqify-1/assets/icons/icon-search.svg') }}" alt="" class="size-[20px] opacity-70" />
           </button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[16px] flex-1 min-w-0" style="color:var(--color-gray)" />
+          <button type="button" data-image-search-trigger="storefront-image-search-modal-v2-mobile" aria-label="{{ __('Search by Image') }}" class="shrink-0">
+            <img src="{{ asset('souqify-1/assets/icons/icon-camera.svg') }}" alt="" class="size-[20px] opacity-70" />
+          </button>
         </div>
       </form>
+      <x-image-search-modal id="storefront-image-search-modal-v2-mobile" :action="route('tenant.storefront.search.image')" />
     </div>
   </div>
 
@@ -101,9 +105,13 @@
             <div class="flex flex-1 items-center gap-[8px]">
               <button type="submit"><img src="{{ asset('souqify-1/assets/icons/icon-search.svg') }}" alt="" class="size-[20px] opacity-70" /></button>
               <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color:var(--color-text-placeholder)" />
+              <button type="button" data-image-search-trigger="storefront-image-search-modal-v2" aria-label="{{ __('Search by Image') }}">
+                <img src="{{ asset('souqify-1/assets/icons/icon-camera.svg') }}" alt="" class="size-[20px] opacity-70" />
+              </button>
             </div>
           </div>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v2" :action="route('tenant.storefront.search.image')" />
       </div>
 
       <div class="flex items-center gap-[38px] shrink-0">

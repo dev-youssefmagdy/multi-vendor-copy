@@ -1,7 +1,9 @@
     @if ($categories->isNotEmpty())
     @php
       $shopByCatFallbackImgs = ['shop-accessories.png', 'shop-fashion.png', 'shop-electronics.png', 'shop-presents.png', 'shop-decor.png', 'shop-furniture.png'];
-      $shopByCatData = $categories->take(6)->values()->map(function ($cat, $i) use ($shopByCatFallbackImgs) {
+      $categories = $categories->values();
+      $shopByCatData = collect(range(0, 5))->map(function ($i) use ($categories, $shopByCatFallbackImgs) {
+          $cat = $categories[$i % $categories->count()];
           $catName = $cat->translationValue('name') ?? $cat->name;
           return [
               'url' => route('tenant.storefront.category', $cat->slug),
