@@ -107,7 +107,7 @@
       if (!isMobile) {
         var wide = new Swiper(el, {
           slidesPerView: 4.5,
-          spaceBetween: 0,
+          spaceBetween: 16,
           navigation: { nextEl: '#flashSaleNext' },
         });
         wide.__eloraV3FlashGrid = false;

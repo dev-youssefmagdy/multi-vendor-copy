@@ -38,27 +38,22 @@ function mountCategories() {
 function mountTrending() {
   const wrapper = document.getElementById("trendingWrapper");
   if (!wrapper) return;
-  const container = wrapper.closest(".swiper");
-  // Mobile renders as a plain stacked column (no Swiper at all — toggling
-  // Swiper's `enabled` option across a breakpoint doesn't reliably
-  // re-run slide sizing/positioning), desktop is a real 2.5-per-view swiper.
-  const mq = window.matchMedia("(min-width: 1024px)");
-  let instance = null;
-
-  function sync() {
-    if (mq.matches && !instance) {
-      instance = new Swiper(container, {
+  // Mobile: swipeable 1-column x 3-row grid (Swiper's Grid module) — one
+  // card per row, 3 rows per page, swipe left/right for the next 3
+  // products. Desktop is untouched: a real 2.5-per-view single-row swiper
+  // (grid rows reset to 1 there via the breakpoint override below).
+  return new Swiper(wrapper.closest(".swiper"), {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    grid: { rows: 3, fill: "row" },
+    breakpoints: {
+      1024: {
         slidesPerView: 2.5,
         spaceBetween: 16,
-      });
-    } else if (!mq.matches && instance) {
-      instance.destroy(true, true);
-      instance = null;
-    }
-  }
-
-  sync();
-  mq.addEventListener("change", sync);
+        grid: { rows: 1, fill: "row" },
+      },
+    },
+  });
 }
 
 function mountFlashSale() {

@@ -96,15 +96,17 @@ body {
   overflow: hidden;
 }
 
-/* Trending Now: stacked full-width column on mobile, horizontal swiper from desktop up */
-.trending-swiper .swiper-wrapper {
-  flex-direction: column;
-  gap: 12px;
-}
-@media (min-width: 1024px) {
-  .trending-swiper .swiper-wrapper {
-    flex-direction: row;
-    gap: 0;
+/* Trending Now: on mobile this is a real 1-col x 3-row Swiper Grid carousel
+   now (see mountTrending() in elora-v4-carousels.js), so the wrapper keeps
+   Swiper's own row/wrap layout at every breakpoint — no flex-direction
+   override needed here any more. */
+
+/* Trending Now section background: white on mobile per the mockup, but the
+   section reuses the shared .pattern-trending class (gray page bg) — scope
+   the override to mobile only so desktop's existing look is untouched. */
+@media (max-width: 1023.98px) {
+  .pattern-trending {
+    background-color: #ffffff;
   }
 }
 
