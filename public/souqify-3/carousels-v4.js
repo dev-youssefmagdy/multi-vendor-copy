@@ -177,13 +177,18 @@ function mountFlashSaleMobile() {
 // also carries a `rot` per slot (every card stays the same size, just
 // rotated/offset); Best Seller's table has no rotation but shrinks size by
 // distance instead — mountFanCascadeCarousel supports both.
+// `top` here is normalized so the smallest value is 0 - the raw Figma
+// coordinates all start at top:98 because that fan group sat 98px below
+// other content in the original frame. Left as-is, that offset becomes
+// 98px of dead space above the cards once the fan is the swiper's only
+// content, directly under the section title.
 const SQV4_BEST_SELLER_POSITIONS_DESKTOP = [
-  { left: 56, top: 98, width: 295.45, height: 472.89 },
-  { left: 329, top: 107, width: 283.96, height: 454.2 },
-  { left: 580.18, top: 129, width: 255.24, height: 409 },
-  { left: 811, top: 155, width: 229.29, height: 367 },
-  { left: 1021, top: 173, width: 210.06, height: 336 },
-  { left: 1218, top: 193, width: 192.21, height: 308 },
+  { left: 0, top: 0, width: 295.45, height: 472.89 },
+  { left: 273, top: 9, width: 283.96, height: 454.2 },
+  { left: 524.18, top: 31, width: 255.24, height: 409 },
+  { left: 755, top: 57, width: 229.29, height: 367 },
+  { left: 965, top: 75, width: 210.06, height: 336 },
+  { left: 1162, top: 95, width: 192.21, height: 308 },
 ];
 const SQV4_BEST_SELLER_POSITIONS_MOBILE = [
   { left: 0, top: 0, width: 154.5, height: 223.1 },

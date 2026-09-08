@@ -176,18 +176,29 @@
         height: 100%;
     }
 
-    /* ---------- Pagination (Frame 1984080197) ---------- */
+    /* ---------- Pagination (Frame 1984080197) ----------
+       .sqv4-best is align-items:flex-start (children size to their own
+       content instead of stretching), which is why the fan needs its own
+       width:100% !important above. Flex-row + justify-content:center on
+       this element ran into the same non-stretch sizing and stayed left
+       -aligned even with !important, so centering here uses a completely
+       different mechanism (text-align on a full-width block) rather than
+       another flex variant. */
     .sqv4-best__dots {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
+        display: block !important;
+        text-align: center !important;
+        align-self: stretch !important;
+        width: 100% !important;
         padding: 0;
-        gap: 3px;
-        width: 100%;
+        margin: 0;
         height: 8px;
+        font-size: 0;
+        line-height: 0;
     }
     .sqv4-best__dots .best-seller-dot {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 1.5px;
         width: 8px;
         height: 8px;
         background: #F3F3F3;
