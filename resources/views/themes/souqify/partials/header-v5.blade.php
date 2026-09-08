@@ -93,7 +93,11 @@
           </div> --}}
           <button type="submit"><img src="{{ asset('souqify-4/assets/icons/nav-search.svg') }}" class="size-[22px] opacity-70" alt="" /></button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color:var(--color-text-placeholder)" />
+          <button type="button" data-image-search-trigger="storefront-image-search-modal-v5" aria-label="{{ __('Search by Image') }}">
+            <img src="{{ asset('souqify-4/assets/icons/icon-camera.svg') }}" class="size-[20px] opacity-70" alt="" />
+          </button>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v5" :action="route('tenant.storefront.search.image')" />
       </div>
       <div class="flex items-center gap-[38px] shrink-0">
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[8px] cursor-pointer" aria-label="{{ __('Cart') }}">
@@ -133,7 +137,11 @@
       class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]" style="background:var(--color-surface)">
     <button type="submit"><img src="{{ asset('souqify-4/assets/icons/mobile-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
     <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color:var(--color-text-placeholder)" />
+    <button type="button" data-image-search-trigger="storefront-image-search-modal-v5-mobile" aria-label="{{ __('Search by Image') }}">
+      <img src="{{ asset('souqify-4/assets/icons/icon-camera.svg') }}" alt="" class="size-[18px] opacity-70" />
+    </button>
   </form>
+  <x-image-search-modal id="storefront-image-search-modal-v5-mobile" :action="route('tenant.storefront.search.image')" />
   <nav class="flex flex-col px-[16px] py-[12px] overflow-y-auto no-scrollbar">
     <a href="{{ route('tenant.home') }}" class="flex items-center justify-between py-[12px] border-b text-[15px] font-medium tracking-[0.3px]" style="border-color:var(--color-page-bg); color:var(--color-primary)">{{ __('All') }}
       <img src="{{ asset('souqify-4/assets/icons/mobile-arrow-down.svg') }}" class="size-[14px] -rotate-90 opacity-60" alt="" />
