@@ -462,11 +462,23 @@ class StorefrontRepository
      * that language, or a styled text wordmark. Falls back to a text logo built
      * from the store name when image mode is on but no image was uploaded.
      *
-     * @return array{mode:string,image_url:?string,text:string,font_family:string,color:string,bg_color:string,shape:string}
+     * @return array{mode:string,image_url:?string,text:string,font_family:string,color:string,bg_color:string,shape:string,is_default:bool}
      */
     public function resolvedLogo(): array
     {
         $settings = $this->appearanceSettings();
+
+        // True only when the vendor has never touched any logo-related
+        // appearance setting (no image uploaded, no text/color/font/shape
+        // customized) — i.e. the untouched default. Used by <x-storefront-logo>
+        // to know when it's safe to show the theme's own demo branding instead
+        // of the generic "store name in a box" placeholder, without ever
+        // overriding a vendor's deliberate customization.
+        $isDefault = collect([
+            'logo_mode', 'logo_path', 'logo_path_ar', 'logo_path_en',
+            'logo_text_ar', 'logo_text_en', 'logo_color', 'logo_bg_color',
+            'logo_shape', 'logo_font_ar', 'logo_font_en',
+        ])->every(fn($key) => !isset($settings[$key]));
         $value = fn(string $name) => (string) (($settings[$name] ?? null)?->value ?? '');
 
         $locale = app()->getLocale() === 'ar' ? 'ar' : 'en';
@@ -489,6 +501,7 @@ class StorefrontRepository
 
         return [
             'mode' => $mode,
+            'is_default' => $isDefault,
             'image_url' => $mode === 'image' ? $imageUrl : null,
             'text' => $text,
             'font_family' => $fontFamily,

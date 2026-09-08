@@ -6,7 +6,11 @@
         <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
           <div class="flex flex-col gap-[32px]">
             <a href="{{ route('tenant.home') }}">
-              <x-storefront-logo :storeName="$storeName" class="h-[32px] w-auto" />
+              <img
+                src="{{ asset('elora-2/assets/icons/logo-elora-white.svg') }}"
+                alt="{{ $storeName ?? 'ELORA' }}"
+                class="h-[32px] w-auto"
+              />
             </a>
             <div class="flex flex-col gap-[16px]">
               <p class="font-medium text-[16px] text-white">

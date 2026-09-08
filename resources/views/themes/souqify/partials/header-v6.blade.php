@@ -9,7 +9,7 @@
   <div class="lg:hidden flex flex-col bg-white">
     <div class="flex items-center justify-between px-[16px] py-[14px]">
       <a href="{{ route('tenant.home') }}" class="shrink-0">
-        <x-storefront-logo :storeName="$storeName" class="font-semibold text-[26px] tracking-[0.5px]" />
+        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#FF1A90" class="font-semibold text-[26px] tracking-[0.5px]" />
       </a>
       <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer" class="flex items-center justify-center cursor-pointer">
         <img src="{{ asset('souqify-5/assets/icons/menu.svg') }}" alt="" class="size-[24px]" />
@@ -45,7 +45,7 @@
     </div>
     <div class="flex items-center gap-[24px] px-[32px] py-[16px]">
       <a href="{{ route('tenant.home') }}" class="shrink-0">
-        <x-storefront-logo :storeName="$storeName" class="h-[46px] w-auto" />
+        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#FF1A90" class="h-[46px] w-auto" />
       </a>
       <div class="flex flex-1 items-center gap-[8px]">
         <button type="button" id="desktopMenuBtn" onclick="event.stopPropagation(); document.getElementById('souqifyV6DeptMenu')?.classList.toggle('hidden')" class="flex items-center gap-[8px] h-[54px] px-[12px] rounded-[4px] shrink-0 cursor-pointer relative" style="background:var(--color-brand-pink)">
@@ -106,7 +106,7 @@
 <div id="mobileDrawerOverlay" class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"></div>
 <aside id="mobileDrawer" class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white" style="box-shadow: 4px 0 24px rgba(0,0,0,0.15)">
   <div class="flex items-center justify-between px-[20px] py-[16px] border-b" style="border-color:var(--color-page-bg)">
-    <x-storefront-logo :storeName="$storeName" class="font-semibold text-[22px]" />
+    <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#FF1A90" class="font-semibold text-[22px]" />
     <button type="button" id="drawerCloseBtn" aria-label="{{ __('Close menu') }}" class="flex items-center justify-center size-[32px] rounded-full cursor-pointer" style="background:var(--color-page-bg)">
       <svg viewBox="0 0 24 24" class="size-[16px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>

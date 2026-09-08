@@ -146,7 +146,7 @@
         <span class="text-[10px] tracking-[0.5px] text-black">{{ __('menu') }}</span>
       </button>
       <a href="{{ route('tenant.home') }}">
-        <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
+        <x-storefront-logo :storeName="$storeName" :brand-logo="asset('elora-4/assets/icons/logo-elora.svg')" class="h-[38px] w-auto" />
       </a>
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
@@ -281,7 +281,7 @@
     class="flex items-center justify-between px-[20px] py-[16px] border-b"
     style="border-color: var(--color-page-bg)"
   >
-    <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
+    <x-storefront-logo :storeName="$storeName" :brand-logo="asset('elora-4/assets/icons/logo-elora.svg')" class="h-[26px] w-auto" />
     <button
       type="button"
       id="drawerCloseBtn"

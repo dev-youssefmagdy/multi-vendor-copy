@@ -6,7 +6,7 @@
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">
-        <x-storefront-logo :storeName="$storeName" class="h-[32px] w-auto" />
+        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#F1F1F1" class="h-[32px] w-auto" />
         <div class="flex flex-col gap-[16px]">
           <p class="font-medium text-[16px] text-white">{{ __('Connect with') }} {{ $storeName }}</p>
           <div class="flex gap-[16px] items-center">
@@ -80,10 +80,20 @@
   </div>
 </footer>
 
+{{-- This footer only renders when v2 is the active variant, so scoping to
+     plain `body` here is safe - it never leaks into another edition's pages. --}}
+<style>
+  @media (max-width: 1023.98px) {
+    body { padding-bottom: 80px; }
+  }
+</style>
+
 <!-- ============ MOBILE BOTTOM NAV ============ -->
-<nav class="lg:hidden flex items-center justify-between px-[16px] py-[10px] border-t-2 bg-white" style="border-color:var(--color-gray)">
-  <a href="{{ route('tenant.home') }}" class="flex flex-col items-center gap-[4px] px-[8px] py-[4px] rounded-[10px] {{ request()->routeIs('tenant.home') ? '' : '' }}" style="background:rgba(174,1,237,0.12)">
-    <img src="{{ asset('souqify-1/assets/icons/icon-nav-home.svg') }}" alt="" class="size-[24px]" />
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between h-[80px] px-[16px] gap-[19px] border-t-2 bg-white" style="border-color:var(--color-gray)">
+  <a href="{{ route('tenant.home') }}" class="flex flex-col items-center gap-[4px]">
+    <span class="flex items-center justify-center px-[11px] py-[4px] rounded-[10px]" style="background:rgba(174,1,237,0.12)">
+      <img src="{{ asset('souqify-1/assets/icons/icon-nav-home.svg') }}" alt="" class="size-[24px]" />
+    </span>
     <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-accent-purple-bright)">{{ __('Home') }}</span>
   </a>
   <a href="{{ route('tenant.storefront.favorites') }}" class="flex flex-col items-center gap-[4px]">

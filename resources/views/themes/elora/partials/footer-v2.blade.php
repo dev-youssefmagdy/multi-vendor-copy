@@ -4,7 +4,11 @@
     >
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
         <div class="flex flex-col gap-[32px]">
-        <x-storefront-logo :storeName="$storeName" class="h-[32px] w-auto" />
+        <img
+            src="{{ asset('elora-1/assets/icons/logo-elora-white.svg') }}"
+            alt="{{ $storeName ?? 'ELORA' }}"
+            class="h-[32px] w-auto"
+        />
         <div class="flex flex-col gap-[16px]">
             <p class="font-medium text-[16px] text-white">
             Connect with ELORA

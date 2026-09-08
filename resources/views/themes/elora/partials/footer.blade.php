@@ -12,7 +12,11 @@
             <div class="col-span-2 lg:col-span-1 items-center">
 
                 {{-- Logo --}}
-                <x-storefront-logo :storeName="$storeName" class="h-9 sm:h-11 w-auto mb-5 mx-auto sm:mx-0" />
+                <img
+                    src="{{ asset('elora-1/assets/icons/logo-elora-white.svg') }}"
+                    alt="{{ $storeName ?? 'ELORA' }}"
+                    class="h-9 sm:h-11 w-auto mb-5 mx-auto sm:mx-0"
+                />
 
                 {{-- Connect with ELORA --}}
                 <p class="hidden sm:block text-sm font-semibold text-white mb-3">{{ __('Connect with ELORA') }}</p>

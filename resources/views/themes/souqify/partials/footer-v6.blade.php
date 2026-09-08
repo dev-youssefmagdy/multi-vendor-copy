@@ -6,7 +6,7 @@
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">
-        <x-storefront-logo :storeName="$storeName" class="font-semibold text-[28px]" />
+        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#F1F1F1" class="font-semibold text-[28px]" />
         <div class="flex flex-col gap-[16px]">
           <p class="font-medium text-[16px] text-white">{{ __('Connect with') }} {{ $storeName }}</p>
           <div class="flex gap-[16px] items-center">
@@ -85,7 +85,7 @@
   <div class="bg-white flex flex-1 items-center justify-between h-[56px] px-[14px] rounded-full" style="box-shadow:var(--shadow-card)">
     <a href="{{ route('tenant.home') }}" data-mobile-tab class="mobile-tab {{ request()->routeIs('tenant.home') ? 'is-active-tab' : '' }} flex items-center gap-[6px]">
       <span class="flex items-center justify-center size-[30px] rounded-tr-[10px] rounded-bl-[10px]" style="background:var(--color-brand-pink)">
-        <img src="{{ asset('souqify-5/assets/icons/nav-home.svg') }}" alt="" class="size-[16px] invert" />
+        <img src="{{ asset('souqify-5/assets/icons/nav-home.svg') }}" alt="" class="size-[16px]" />
       </span>
       <span class="text-[13px]" style="color:var(--color-brand-pink)">{{ __('Home') }}</span>
     </a>
@@ -94,7 +94,7 @@
     <a href="{{ route('tenant.storefront.favorites') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-wishlist.svg') }}" alt="{{ __('Wishlist') }}" class="size-[22px]" /></a>
   </div>
   <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="relative flex items-center justify-center size-[56px] rounded-full shrink-0" style="background:var(--color-black-alt)">
-    <img src="{{ asset('souqify-5/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px] invert" />
-    <span id="souqify-v6-mobtab-cart-badge" class="souqify-cart-badge absolute -top-[2px] right-[8px] flex items-center justify-center size-[16px] rounded-full text-[10px] font-semibold text-black {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-brand-pink)">{{ $cartCount }}</span>
+    <img src="{{ asset('souqify-5/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px]" />
+    <span id="souqify-v6-mobtab-cart-badge" class="souqify-cart-badge absolute -top-[2px] right-[8px] flex items-center justify-center size-[16px] rounded-full text-[10px] font-semibold text-white {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-brand-pink)">{{ $cartCount }}</span>
   </a>
 </nav>

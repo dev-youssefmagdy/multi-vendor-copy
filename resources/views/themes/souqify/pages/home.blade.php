@@ -56,7 +56,7 @@ $rate = (float) ($currency->conversion_rate ?? 1);
                 </button>
                 <!-- Logo -->
                 <a href="{{ route('tenant.home') }}" class="flex items-center gap-2 shrink-0">
-                    <x-storefront-logo :storeName="$storeName" class="h-8 sm:h-10 lg:h-12 w-auto" />
+                    <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#F1F1F1" class="h-8 sm:h-10 lg:h-12 w-auto" />
                 </a>
             </div>
             <div class="flex items-center gap-2">

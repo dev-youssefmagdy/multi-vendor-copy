@@ -6,7 +6,7 @@
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">
-        <x-storefront-logo :storeName="$storeName" class="h-[32px] w-auto" />
+        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#F1F1F1" class="h-[32px] w-auto" />
         <div class="flex flex-col gap-[16px]">
           <p class="font-medium text-[16px] text-white">{{ __('Connect with') }} {{ $storeName }}</p>
           <div class="flex gap-[16px] items-center">

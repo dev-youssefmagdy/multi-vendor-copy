@@ -16,7 +16,7 @@
           </svg>
         </button>
         <a href="{{ route('tenant.home') }}">
-          <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
+          <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#199387" class="h-[26px] w-auto" />
         </a>
       </div>
       <button type="button" aria-label="{{ __('Notifications') }}" class="flex items-center justify-center size-[40px] rounded-full" style="background: var(--color-page-bg)">
@@ -87,7 +87,7 @@
   <!-- Desktop main bar -->
   <div class="hidden lg:flex items-center justify-between gap-[32px] px-[32px] py-[21px] bg-white">
     <a href="{{ route('tenant.home') }}" class="shrink-0">
-      <x-storefront-logo :storeName="$storeName" class="h-[36px] w-auto" />
+      <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#199387" class="h-[36px] w-auto" />
     </a>
     <div class="flex items-center gap-[8px] flex-1 max-w-[962px]">
       <button type="button" onclick="event.stopPropagation(); document.getElementById('souqifyV3DeptMenu')?.classList.toggle('hidden')"
@@ -150,7 +150,7 @@
 <div id="mobileDrawerOverlay" class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"></div>
 <aside id="mobileDrawer" class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white" style="box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15)">
   <div class="flex items-center justify-between px-[20px] py-[16px] border-b" style="border-color: var(--color-page-bg)">
-    <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
+    <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#199387" class="h-[26px] w-auto" />
     <button type="button" id="drawerCloseBtn" aria-label="{{ __('Close menu') }}" class="flex items-center justify-center size-[32px] rounded-full cursor-pointer" style="background: var(--color-page-bg)">
       <svg viewBox="0 0 24 24" class="size-[16px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
     </button>
