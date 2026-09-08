@@ -115,7 +115,7 @@
 
         <!-- Logo -->
         <a href="{{ route('tenant.home') }}" class="flex items-center gap-2 shrink-0">
-            <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#1d4ed8" class="h-8 sm:h-10 lg:h-12 w-auto" />
+            <x-storefront-logo :storeName="$storeName" class="h-8 sm:h-10 lg:h-12 w-auto" />
         </a>
 
         <!-- Search bar -->
@@ -270,7 +270,7 @@
     <div class="absolute inset-0 bg-black/50" onclick="closeMobileMenu()"></div>
     <aside class="absolute start-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-2xl p-6 overflow-y-auto">
         <div class="flex items-center justify-between mb-8">
-            <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#1d4ed8" class="h-8 w-auto" />
+            <x-storefront-logo :storeName="$storeName" class="h-8 w-auto" />
             <button onclick="closeMobileMenu()" class="p-1">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

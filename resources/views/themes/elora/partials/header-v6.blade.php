@@ -99,7 +99,7 @@
           <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
         </button>
         <a href="{{ route('tenant.home') }}">
-          <x-storefront-logo :storeName="$storeName" :brand-logo="asset('elora-2/assets/icons/logo-elora.svg')" class="h-[38px] w-auto" />
+          <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
         </a>
         <form action="{{ route('tenant.storefront.search') }}" method="GET"
           data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
@@ -212,7 +212,7 @@
         style="border-color: var(--color-page-bg)"
       >
         <a href="{{ route('tenant.home') }}">
-          <x-storefront-logo :storeName="$storeName" :brand-logo="asset('elora-2/assets/icons/logo-elora.svg')" class="h-[26px] w-auto" />
+          <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
         </a>
         <button
           type="button"

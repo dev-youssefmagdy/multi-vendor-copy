@@ -11,7 +11,7 @@ $shopCategories = ($categories ?? collect())->take(6);
         <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-8">
             <!-- Brand col -->
             <div class="lg:col-span-4">
-                <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#F1F1F1" class="h-10 w-auto mb-3" />
+                <x-storefront-logo :storeName="$storeName" class="h-10 w-auto mb-3" />
                 <p class="text-neutral-400 text-sm leading-6 mb-6">
                     {{ $footerText ?? __('Elevating the everyday through curated premium experiences and cutting-edge technology.') }}
                 </p>

@@ -13,7 +13,7 @@
           <svg viewBox="0 0 24 24" class="size-[24px]" fill="none" stroke="var(--color-text-primary)" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
         </button>
         <a href="{{ route('tenant.home') }}" class="shrink-0">
-          <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#EC910A" class="size-[44px] rounded-full object-cover" />
+          <x-storefront-logo :storeName="$storeName" class="size-[44px] rounded-full object-cover" />
         </a>
         @auth('storefront')
           <div class="flex flex-col gap-[3px]">
@@ -62,7 +62,7 @@
     </div>
     <div class="flex items-center justify-between px-[32px] py-[18px] bg-white gap-[24px]">
       <a href="{{ route('tenant.home') }}" class="shrink-0">
-        <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#EC910A" class="h-[38px] w-auto" />
+        <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
       </a>
       <div class="flex items-center gap-[8px] flex-1 max-w-[962px]">
         <button type="button" id="desktopMenuBtn" onclick="event.stopPropagation(); document.getElementById('souqifyV5DeptMenu')?.classList.toggle('hidden')" class="flex items-center gap-[8px] h-[54px] px-[12px] rounded-[4px] shrink-0 cursor-pointer relative" style="background:var(--color-primary)">
@@ -123,7 +123,7 @@
 <div id="mobileDrawerOverlay" class="mobile-drawer-overlay lg:hidden fixed inset-0 bg-black/50 z-40"></div>
 <aside id="mobileDrawer" class="mobile-drawer lg:hidden fixed top-0 left-0 z-50 h-full w-[280px] max-w-[80vw] flex flex-col bg-white" style="box-shadow: 4px 0 24px rgba(0,0,0,0.15)">
   <div class="flex items-center justify-between px-[20px] py-[16px] border-b" style="border-color:var(--color-page-bg)">
-    <x-storefront-logo :storeName="$storeName" brand-text="Souqify" brand-color="#EC910A" class="h-[26px] w-auto" />
+    <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
     <button type="button" id="drawerCloseBtn" aria-label="{{ __('Close menu') }}" class="flex items-center justify-center size-[32px] rounded-full cursor-pointer" style="background:var(--color-page-bg)">
       <svg viewBox="0 0 24 24" class="size-[16px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>

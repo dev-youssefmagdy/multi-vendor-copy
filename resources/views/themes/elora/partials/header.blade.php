@@ -40,7 +40,7 @@
             <span class="text-[10px] hidden group-[.opened]:block">{{ __('close') }}</span>
         </button>
         <a href="{{ route('tenant.home') }}" class="flex-shrink-0">
-            <x-storefront-logo :storeName="$storeName" :brand-logo="asset('elora-1/assets/icons/logo-elora.svg')" class="h-7 sm:h-9 lg:h-11 w-auto" />
+            <x-storefront-logo :storeName="$storeName" class="h-7 sm:h-9 lg:h-11 w-auto" />
         </a>
         <!-- Search -->
         <div class="flex-1 min-w-0 mx-1 sm:mx-3 lg:mx-4">
