@@ -88,21 +88,81 @@ function mountShopCategory() {
   });
 }
 
-// Flash Sale: same carousel technique as ELORA Bold Edition's Best Seller
-// carousel (see elora-v4-carousels.js's mountBestSeller/mountBestSellerMobile) -
-// mobile is a swipeable 2-col x 2-row grid (Swiper's grid module), desktop is
-// a plain "auto" width swipeable row. No fan/rotation, no scroll-snap paging.
+// Flash Sale mobile: card-effect carousel, visually matching ELORA Purple
+// Edition's Flash Sale — but positioned with the SAME virtualTranslate +
+// self-computed geometry technique already proven reliable elsewhere in
+// this file (mountFanCascadeCarousel, used by Best Seller and Flash Sale
+// desktop), rather than Swiper's own centeredSlides + real translate.
+// centeredSlides + loop repeatedly produced an asymmetric result here —
+// confirmed via screenshots showing the left neighbor rendering fully while
+// the right neighbor didn't render at all — regardless of spaceBetween
+// tuning. Computing every slide's position ourselves sidesteps that
+// entirely: the active card's CSS base position is centered directly, and
+// each neighbor is offset from that centered base by a fixed, symmetric
+// pixel amount via transform, independent of anything Swiper measures.
+const SQV4_FLASH_MOBILE_MAX_ROTATE_DEG = 12;
+const SQV4_FLASH_MOBILE_STEP_PX = 110;
+
 function mountFlashSaleMobile() {
-  const wrapper = document.getElementById("flashMobileWrapper");
-  if (!wrapper) return;
-  const swiperEl = wrapper.closest(".swiper");
+  const container = document.getElementById("flashMobileWrapper");
+  if (!container) return;
+  const swiperEl = container.closest(".swiper");
   if (!swiperEl) return;
 
-  new Swiper(swiperEl, {
-    slidesPerView: 2,
-    slidesPerGroup: 2,
-    spaceBetween: 12,
-    grid: { rows: 2, fill: "row" },
+  container.style.position = "relative";
+
+  // Only the ORIGINAL slides (captured before Swiper's loop mode injects
+  // its own clones) get positioned here — clones are hidden separately
+  // below, since our own modulo wrap already makes the cascade infinite
+  // without needing Swiper's duplicated DOM nodes to be visually meaningful.
+  const slideEls = [...container.children];
+  const count = slideEls.length;
+  if (!count) return;
+
+  // Distance is each slide's own index minus the REAL (loop-aware) active
+  // index, wrapped to the shortest signed path around the loop — so paging
+  // past the last card correctly shows the first card as "next" (d=+1)
+  // rather than some large positive number. Negative d (left neighbor)
+  // rotates counter-clockwise, positive d (right neighbor) clockwise;
+  // anything beyond the immediate neighbor is force-hidden so exactly 3
+  // cards are ever visible.
+  const applyLayout = (sw) => {
+    slideEls.forEach((slideEl, i) => {
+      let d = i - sw.realIndex;
+      if (d > count / 2) d -= count;
+      if (d < -count / 2) d += count;
+      const dist = Math.min(Math.abs(d), 2);
+      const scale = 1 - dist * 0.12;
+      const rotate = Math.max(
+        -SQV4_FLASH_MOBILE_MAX_ROTATE_DEG,
+        Math.min(SQV4_FLASH_MOBILE_MAX_ROTATE_DEG, d * SQV4_FLASH_MOBILE_MAX_ROTATE_DEG)
+      );
+      slideEl.style.transform = `translateX(${d * SQV4_FLASH_MOBILE_STEP_PX}px) rotate(${rotate}deg) scale(${scale})`;
+      slideEl.style.zIndex = String(10 - Math.round(dist * 4));
+      slideEl.style.opacity = dist > 1 ? "0" : "1";
+      slideEl.style.pointerEvents = dist > 1 ? "none" : "";
+    });
+    // Loop mode clones aren't part of slideEls and never get positioned —
+    // hide them so they don't sit stacked at their default position.
+    container.querySelectorAll(".swiper-slide-duplicate").forEach((clone) => {
+      clone.style.opacity = "0";
+      clone.style.pointerEvents = "none";
+    });
+  };
+
+  return new Swiper(swiperEl, {
+    slidesPerView: "auto",
+    virtualTranslate: true,
+    loop: true,
+    loopedSlides: count,
+    on: {
+      init: applyLayout,
+      slideChange: applyLayout,
+      transitionEnd: applyLayout,
+      setTransition(sw, duration) {
+        slideEls.forEach((s) => (s.style.transitionDuration = `${duration}ms`));
+      },
+    },
   });
 }
 
@@ -251,9 +311,9 @@ function mountBestSeller() {
   }
 }
 
-// Flash Sale desktop: same fan cascade, but every card is the same size
-// (228.76 x 366.14) and only rotates/offsets - no receding. Mobile keeps its
-// own separate 2-col x 2-row grid (mountFlashSaleMobile above).
+// Flash Sale desktop: the draggable fan-cascade technique (mobile keeps its
+// own separate card-effect carousel — mountFlashSaleMobile above — this is
+// desktop only, untouched by that).
 function mountFlashSaleDesktop() {
   mountFanCascadeCarousel("flashDesktopWrapper", SQV4_FLASH_POSITIONS_DESKTOP, {
     baseWidth: 228.76,

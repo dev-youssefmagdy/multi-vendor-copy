@@ -173,10 +173,10 @@
     }
 
     /* ---------- Carousel ----------
-       Mobile: swipeable 2-col x 2-row grid (Swiper's grid module, same
-       technique as ELORA Bold Edition's Best Seller carousel). Desktop: a
-       draggable rotated fan cascade matching Souqify's own original card
-       fan (see the .sqv4-flash__desktop-swiper rules below). */
+       Mobile: card-effect carousel, same technique as ELORA Purple Edition's
+       Flash Sale (see the .sqv4-flash__mobile-swiper rules + comment below).
+       Desktop: a draggable rotated fan cascade matching Souqify's own
+       original card fan (see the .sqv4-flash__desktop-swiper rules below). */
     .sqv4-flash__group {
         --sqv4-deal-accent: #8B03BD;
         position: relative;
@@ -188,11 +188,29 @@
         width: 100%;
         height: 100%;
     }
+    /* Mobile: virtualTranslate + self-computed positioning (see
+       mountFlashSaleMobile() in carousels-v4.js) — every slide's CSS base
+       position is centered directly (left: calc(50% - 80px), 80 = half the
+       160px card width), so with translateX(0) the active card sits
+       exactly centered; JS then offsets each neighbor from that centered
+       base by a fixed pixel amount, independent of anything Swiper itself
+       measures or translates. */
     .sqv4-flash__mobile-swiper {
-        /* Swiper's grid module needs a real height to divide into rows -
-           sized from the deal card's own aspect ratio (228.76 x 366.14) at
-           this carousel's ~2-column mobile width. */
-        height: 542px;
+        overflow: visible;
+        padding: 0;
+        width: 100%;
+    }
+    .sqv4-flash__mobile-swiper .swiper-wrapper {
+        position: relative;
+        height: 256.1px;
+    }
+    .sqv4-flash__mobile-deal-base {
+        position: absolute;
+        top: 0;
+        left: calc(50% - 80px);
+        width: 160px;
+        height: 256.1px;
+        transition-property: transform;
     }
     /* Desktop: draggable rotated fan cascade (Figma "Group 57", matching
        Souqify's own original card fan) - every card stays the SAME size
@@ -386,13 +404,14 @@
     </div>
 
     @if ($__flashCards->isNotEmpty())
-      {{-- Mobile: swipeable 2-col x 2-row grid (same technique as ELORA Bold
-           Edition's Best Seller carousel). --}}
+      {{-- Mobile: card-effect carousel, same technique as ELORA Purple
+           Edition's Flash Sale (see mountFlashSaleMobile() in
+           carousels-v4.js). --}}
       <div class="sqv4-flash__group lg:!hidden">
         <div class="swiper sqv4-flash__mobile-swiper">
           <div class="swiper-wrapper" id="flashMobileWrapper">
             @foreach ($__flashCards as $p)
-              <div class="swiper-slide">
+              <div class="swiper-slide sqv4-flash__mobile-deal-base">
                 @include('themes.souqify.pages.home-v4.sections.partials.deal_card', ['p' => $p, 'style' => ''])
               </div>
             @endforeach
