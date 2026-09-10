@@ -30,6 +30,14 @@
       </div>
 
       <div>
+        <label class="field-label" for="pr-url">Product URL <span class="field-hint">(optional)</span></label>
+        <p class="field-hint" style="margin-bottom:6px;">Link to the product on the manufacturer, supplier, or reference site.</p>
+        <input id="pr-url" type="url" class="field-control {{ $errors->has('productUrl') ? 'is-invalid' : '' }}"
+               wire:model.defer="productUrl" placeholder="https://example.com/product/...">
+        @error('productUrl') <p class="field-error">{{ $message }}</p> @enderror
+      </div>
+
+      <div>
         <label class="field-label">Attachments <span class="field-hint">(optional, max 5 files &middot; 10 MB each)</span></label>
         <p class="field-hint" style="margin-bottom:8px;">Images, PDFs, spreadsheets or reference files that describe the product.</p>
         <input type="file" multiple wire:model="files" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.zip"

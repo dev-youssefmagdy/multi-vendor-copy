@@ -83,14 +83,17 @@ class RequestDetail extends AdminPage
             ['request_id' => $req->id]
         );
 
-        event(new ProductRequestMessageSent(
-            requestId: $req->id,
-            tenantId: $req->tenant_id,
-            senderType: 'admin',
-            senderName: $senderName,
-            body: $this->reply,
-            sentAt: now()->toIso8601String(),
-        ));
+        try {
+            event(new ProductRequestMessageSent(
+                requestId: $req->id,
+                tenantId: $req->tenant_id,
+                senderType: 'admin',
+                senderName: $senderName,
+                body: $this->reply,
+                sentAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->request = $this->presentRequest($req->fresh('messages'));
         $this->reply = '';
@@ -120,11 +123,14 @@ class RequestDetail extends AdminPage
             ['request_id' => $req->id]
         );
 
-        event(new ProductRequestStatusChanged(
-            requestId: $req->id,
-            tenantId: $req->tenant_id,
-            status: $newStatus,
-        ));
+        try {
+            event(new ProductRequestStatusChanged(
+                requestId: $req->id,
+                tenantId: $req->tenant_id,
+                status: $newStatus,
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->request = $this->presentRequest($req->fresh('messages'));
         $this->toast('Status updated to ' . $newStatus->label() . '.');
@@ -152,6 +158,7 @@ class RequestDetail extends AdminPage
             'tenant_id' => $r->tenant_id,
             'title' => $r->title,
             'description' => $r->description,
+            'product_url' => $r->product_url,
             'attachments' => $r->attachments ?? [],
             'status' => $r->status->value,
             'status_label' => $r->status->label(),

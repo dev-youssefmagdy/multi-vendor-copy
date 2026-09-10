@@ -33,6 +33,8 @@ class AdminPermissions
             'store.sync.manage' => 'Sync sections to tenants',
             'manufacturing.view' => 'View manufacturing requests',
             'manufacturing.manage' => 'Manage manufacturing requests',
+            'brand-requests.view' => 'View brand requests',
+            'brand-requests.manage' => 'Manage brand requests',
             'branches.view' => 'View branches',
             'branches.manage' => 'Manage branches',
 

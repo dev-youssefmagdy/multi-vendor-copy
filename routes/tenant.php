@@ -398,6 +398,12 @@ Route::middleware([
                 Route::get('/{id}', TenantManufacturingRequestDetail::class)->name('show');
             });
 
+            Route::prefix('brand-requests')->name('tenant.brand-requests.')->group(function () {
+                Route::get('/', \App\Livewire\Tenant\BrandRequest\BrandRequestsList::class)->name('index');
+                Route::get('/create', \App\Livewire\Tenant\BrandRequest\CreateBrandRequest::class)->name('create');
+                Route::get('/{id}', \App\Livewire\Tenant\BrandRequest\BrandRequestDetail::class)->name('show');
+            });
+
             Route::get('/notifications', NotificationsPage::class)->name('tenant.notifications.index');
 
             Route::prefix('support')->name('tenant.support.')->group(function () {
@@ -545,6 +551,12 @@ Route::middleware([
                 Route::get('{gateway}/{paymentRequestId}', [ManufacturingPaymentController::class, 'charge'])->name('charge');
                 Route::match(['get', 'post'], '{gateway}/success', [ManufacturingPaymentController::class, 'success'])->name('success');
                 Route::get('{gateway}/cancel', [ManufacturingPaymentController::class, 'cancel'])->name('cancel');
+            });
+
+            Route::prefix('brand-request-payment')->name('tenant.brand-request-payment.')->group(function () {
+                Route::get('{gateway}/{paymentRequestId}', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'charge'])->name('charge');
+                Route::match(['get', 'post'], '{gateway}/success', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'success'])->name('success');
+                Route::get('{gateway}/cancel', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'cancel'])->name('cancel');
             });
 
             // Vendor-to-central settlement payment flow

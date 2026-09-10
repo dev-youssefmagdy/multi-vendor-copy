@@ -44,3 +44,11 @@ Broadcast::channel('tenant.{tenantId}.manufacturing.{requestId}', function ($use
 
     return tenant('id') === $tenantId;
 }, ['guards' => ['tenant', 'admin']]);
+
+Broadcast::channel('tenant.{tenantId}.brand-requests.{requestId}', function ($user, string $tenantId, int $requestId) {
+    if (auth('admin')->check()) {
+        return true;
+    }
+
+    return tenant('id') === $tenantId;
+}, ['guards' => ['tenant', 'admin']]);

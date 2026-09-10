@@ -87,6 +87,14 @@ class AdminNavigation
                         ],
                     ],
                     [
+                        'type' => 'group',
+                        'label' => 'Brand Requests',
+                        'icon' => 'manufacturing',
+                        'children' => [
+                            ['label' => 'Brand Requests', 'route' => 'admin.brand-requests.index', 'permission' => 'brand-requests.view'],
+                        ],
+                    ],
+                    [
                         'type' => 'link',
                         'label' => 'Payment Logs',
                         'route' => 'admin.payment-logs.index',
@@ -377,6 +385,14 @@ class AdminNavigation
                         'admin.manufacturing.index' => 'Manufacturing Requests',
                     ],
                     'default' => 'Manufacturing Requests',
+                ],
+                'admin.brand-requests.' => [
+                    'section' => 'Commerce',
+                    'group' => 'Brand Requests',
+                    'labels' => [
+                        'admin.brand-requests.index' => 'Brand Requests',
+                    ],
+                    'default' => 'Brand Requests',
                 ],
                 'admin.plans.users' => [
                     'section' => 'Commerce',

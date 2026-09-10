@@ -6,6 +6,17 @@
         <span class="badge {{ $request['status_badge'] }}">{{ $request['status_label'] }}</span>
       </div>
       <p class="page-copy">Request #{{ $request['id'] }} from tenant <strong>{{ $request['tenant_id'] }}</strong> &middot; {{ $request['created_at'] }}</p>
+      @if (!empty($request['product_url']))
+        <a href="{{ $request['product_url'] }}" target="_blank" rel="noopener"
+           class="badge badge-secondary" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none;">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          View Product Link
+        </a>
+      @endif
     </div>
     <a href="{{ route('admin.product-requests.index') }}" class="btn btn-secondary">&larr; All Requests</a>
   </div>

@@ -13,6 +13,7 @@ class ProductRequest extends Model
         'tenant_id',
         'title',
         'description',
+        'product_url',
         'attachments',
         'status',
         'tenant_has_unread',

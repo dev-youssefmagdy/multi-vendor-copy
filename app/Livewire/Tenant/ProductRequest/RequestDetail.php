@@ -94,14 +94,17 @@ class RequestDetail extends TenantPage
             return;
         }
 
-        event(new ProductRequestMessageSent(
-            requestId:  $this->requestId,
-            tenantId:   $tenantId,
-            senderType: 'tenant',
-            senderName: $senderName,
-            body:       $body,
-            sentAt:     now()->toIso8601String(),
-        ));
+        try {
+            event(new ProductRequestMessageSent(
+                requestId:  $this->requestId,
+                tenantId:   $tenantId,
+                senderType: 'tenant',
+                senderName: $senderName,
+                body:       $body,
+                sentAt:     now()->toIso8601String(),
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->request    = $this->presentRequest($req);
         $this->reply      = '';
@@ -115,6 +118,7 @@ class RequestDetail extends TenantPage
             'id'                => $r->id,
             'title'             => $r->title,
             'description'       => $r->description,
+            'product_url'       => $r->product_url,
             'attachments'       => $r->attachments ?? [],
             'status'            => $r->status->value,
             'status_label'      => $r->status->label(),

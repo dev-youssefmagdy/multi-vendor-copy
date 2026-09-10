@@ -350,6 +350,11 @@ Route::group([
         Route::get('/{id}', ManufacturingRequestDetail::class)->middleware('admin.permission:manufacturing.view')->name('show');
     });
 
+    Route::prefix('brand-requests')->name('brand-requests.')->group(function () {
+        Route::get('/', \App\Livewire\Admin\BrandRequest\BrandRequestsList::class)->middleware('admin.permission:brand-requests.view,brand-requests.manage')->name('index');
+        Route::get('/{id}', \App\Livewire\Admin\BrandRequest\BrandRequestDetail::class)->middleware('admin.permission:brand-requests.view')->name('show');
+    });
+
     Route::prefix('payment-logs')->name('payment-logs.')->group(function () {
         Route::get('/', PaymentLogsList::class)->middleware('admin.permission:billing.payment-logs.view')->name('index');
         Route::get('/{tenantId}/{orderNumber}', PaymentLogDetailPage::class)->middleware('admin.permission:billing.payment-logs.view')->name('show');

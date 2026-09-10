@@ -16,6 +16,7 @@ class CreateRequest extends ContentPage
 
     public string $title       = '';
     public string $description = '';
+    public string $productUrl  = '';
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile[] */
     public array  $files       = [];
 
@@ -43,6 +44,7 @@ class CreateRequest extends ContentPage
         return [
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:20', 'max:8000'],
+            'productUrl'  => ['nullable', 'url', 'max:2000'],
             'files'       => ['array', 'max:5'],
             'files.*'     => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip'],
         ];
@@ -67,6 +69,7 @@ class CreateRequest extends ContentPage
                 'tenant_id'        => $tenantId,
                 'title'            => $validated['title'],
                 'description'      => $validated['description'],
+                'product_url'      => $validated['productUrl'] ?: null,
                 'attachments'      => $storedPaths ?: null,
                 'status'           => 'pending',
                 'admin_has_unread' => true,
@@ -91,14 +94,17 @@ class CreateRequest extends ContentPage
             ['request_id' => $request->id, 'tenant_id' => $tenantId],
         );
 
-        event(new ProductRequestMessageSent(
-            requestId:  $request->id,
-            tenantId:   $tenantId,
-            senderType: 'tenant',
-            senderName: $senderName,
-            body:       $validated['description'],
-            sentAt:     now()->toIso8601String(),
-        ));
+        try {
+            event(new ProductRequestMessageSent(
+                requestId:  $request->id,
+                tenantId:   $tenantId,
+                senderType: 'tenant',
+                senderName: $senderName,
+                body:       $validated['description'],
+                sentAt:     now()->toIso8601String(),
+            ));
+        } catch (\Throwable) {
+        }
 
         $this->toast('Product request submitted successfully.');
         $this->redirect(route('tenant.product-requests.show', $request->id));
