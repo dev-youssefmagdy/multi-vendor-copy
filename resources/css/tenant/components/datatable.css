@@ -1,0 +1,5 @@
+/* DataTables theme overrides — filled in with the component in prompt 02 */
+table.dataTable {
+    color: var(--t1);
+    border-color: var(--border2);
+}

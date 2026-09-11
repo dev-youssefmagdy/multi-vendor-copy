@@ -48,7 +48,10 @@ use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
 use App\Services\Tenant\Templates\UploadedBladeTemplateStrategy;
 use App\Translation\TenantTranslator;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -160,6 +163,10 @@ class AppServiceProvider extends ServiceProvider
         TenantOrderItem::observe(CacheVersionObserver::class);
 
         $this->app->terminating(fn() => CachedBelongsTo::flushCache());
+
+        RateLimiter::for('tenant-validate', fn (Request $request) => Limit::perMinute(180)->by(
+            $request->user('tenant')?->id ?: $request->ip(),
+        ));
     }
 
     protected function configureSessionDomain(): void

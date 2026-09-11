@@ -1,0 +1,4 @@
+/* Form engine overrides — filled in with the component in prompt 02 */
+[data-form-errors]:empty {
+    display: none;
+}

@@ -1,0 +1,6 @@
+/* Select2 theme overrides — filled in with the component in prompt 02 */
+.select2-container--tenant .select2-selection {
+    background-color: var(--input);
+    border-color: var(--border2);
+    color: var(--t1);
+}

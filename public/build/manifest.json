@@ -1,22 +1,267 @@
 {
-  "_bootstrap-G41iU2lS.js": {
-    "file": "assets/bootstrap-G41iU2lS.js",
-    "name": "bootstrap"
+  "_axios-Bpgg44Vn.js": {
+    "file": "assets/axios-Bpgg44Vn.js",
+    "name": "axios",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js"
+    ]
   },
-  "_phone-input-D5IcT0Zr.js": {
-    "file": "assets/phone-input-D5IcT0Zr.js",
+  "_bootstrap-kxCPIH52.js": {
+    "file": "assets/bootstrap-kxCPIH52.js",
+    "name": "bootstrap",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js",
+      "_axios-Bpgg44Vn.js"
+    ]
+  },
+  "_forms-fwq1O-Je.js": {
+    "file": "assets/forms-fwq1O-Je.js",
+    "name": "forms",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js",
+      "_http-j8iPa_cc.js"
+    ],
+    "dynamicImports": [
+      "_vendor-swal-Ctf5tS4l.js",
+      "_modals-DgyiLQQs.js"
+    ]
+  },
+  "_http-j8iPa_cc.js": {
+    "file": "assets/http-j8iPa_cc.js",
+    "name": "http",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js",
+      "_axios-Bpgg44Vn.js"
+    ],
+    "dynamicImports": [
+      "resources/js/tenant/vendor/jquery.js",
+      "_vendor-jquery-yGwdlJo2.js"
+    ]
+  },
+  "_modals-DgyiLQQs.js": {
+    "file": "assets/modals-DgyiLQQs.js",
+    "name": "modals",
+    "imports": [
+      "_http-j8iPa_cc.js"
+    ],
+    "dynamicImports": [
+      "_forms-fwq1O-Je.js"
+    ]
+  },
+  "_phone-input-K7fBWZ74.js": {
+    "file": "assets/phone-input-K7fBWZ74.js",
     "name": "phone-input",
+    "imports": [
+      "_vendor-phone-Dxh0iA9W.js"
+    ]
+  },
+  "_rolldown-runtime-BP0ATiRg.js": {
+    "file": "assets/rolldown-runtime-BP0ATiRg.js",
+    "name": "rolldown-runtime"
+  },
+  "_vendor-charts-CE4Qsg8i.js": {
+    "file": "assets/vendor-charts-CE4Qsg8i.js",
+    "name": "vendor-charts"
+  },
+  "_vendor-jquery-ByBPWtpo.css": {
+    "file": "assets/vendor-jquery-ByBPWtpo.css",
+    "src": "_vendor-jquery-ByBPWtpo.css"
+  },
+  "_vendor-jquery-yGwdlJo2.js": {
+    "file": "assets/vendor-jquery-yGwdlJo2.js",
+    "name": "vendor-jquery",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js"
+    ],
     "css": [
-      "assets/phone-input-DynWKaYt.css"
+      "assets/vendor-jquery-ByBPWtpo.css"
+    ]
+  },
+  "_vendor-phone-Dxh0iA9W.js": {
+    "file": "assets/vendor-phone-Dxh0iA9W.js",
+    "name": "vendor-phone",
+    "css": [
+      "assets/vendor-phone-DynWKaYt.css"
     ],
     "assets": [
       "assets/flags-DjVgN9ag.webp",
       "assets/flags@2x-QBzdwbZ8.webp"
     ]
   },
-  "_phone-input-DynWKaYt.css": {
-    "file": "assets/phone-input-DynWKaYt.css",
-    "src": "_phone-input-DynWKaYt.css"
+  "_vendor-phone-DynWKaYt.css": {
+    "file": "assets/vendor-phone-DynWKaYt.css",
+    "src": "_vendor-phone-DynWKaYt.css"
+  },
+  "_vendor-sortable-BTGqtuOT.js": {
+    "file": "assets/vendor-sortable-BTGqtuOT.js",
+    "name": "vendor-sortable"
+  },
+  "_vendor-swal-Ctf5tS4l.js": {
+    "file": "assets/vendor-swal-Ctf5tS4l.js",
+    "name": "vendor-swal",
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js"
+    ]
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-300-normal.woff": {
+    "file": "assets/dm-sans-latin-300-normal-CsNfKS1n.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-300-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-300-normal.woff2": {
+    "file": "assets/dm-sans-latin-300-normal-C46oWILc.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-300-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff": {
+    "file": "assets/dm-sans-latin-400-normal-BwCSEQnW.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2": {
+    "file": "assets/dm-sans-latin-400-normal-CW0RaeGs.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff": {
+    "file": "assets/dm-sans-latin-500-normal-Dr3UlScf.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2": {
+    "file": "assets/dm-sans-latin-500-normal-B9HHJjqV.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff": {
+    "file": "assets/dm-sans-latin-600-normal-BmdmIIQ2.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2": {
+    "file": "assets/dm-sans-latin-600-normal-Aqo67rzb.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-300-normal.woff": {
+    "file": "assets/dm-sans-latin-ext-300-normal-COYJju1g.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-300-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-300-normal.woff2": {
+    "file": "assets/dm-sans-latin-ext-300-normal-WGwOtXxi.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-300-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff": {
+    "file": "assets/dm-sans-latin-ext-400-normal-BjWJ59Pq.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff2": {
+    "file": "assets/dm-sans-latin-ext-400-normal-BtiwyxMk.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-500-normal.woff": {
+    "file": "assets/dm-sans-latin-ext-500-normal-DR84L5F-.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-500-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-500-normal.woff2": {
+    "file": "assets/dm-sans-latin-ext-500-normal-BJfUCQsA.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-500-normal.woff2"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-600-normal.woff": {
+    "file": "assets/dm-sans-latin-ext-600-normal-DRtaDpgU.woff",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-600-normal.woff"
+  },
+  "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-600-normal.woff2": {
+    "file": "assets/dm-sans-latin-ext-600-normal-4vooXBpG.woff2",
+    "src": "node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-600-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-400-normal.woff": {
+    "file": "assets/syne-greek-400-normal-C1nzy5ms.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-400-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-400-normal.woff2": {
+    "file": "assets/syne-greek-400-normal-B4XGRaFa.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-400-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-600-normal.woff": {
+    "file": "assets/syne-greek-600-normal-BJs4kvyH.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-600-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-600-normal.woff2": {
+    "file": "assets/syne-greek-600-normal-BpFII5Ja.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-600-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-700-normal.woff": {
+    "file": "assets/syne-greek-700-normal-C01yjWE_.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-700-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-700-normal.woff2": {
+    "file": "assets/syne-greek-700-normal-RbvlO3f8.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-700-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-800-normal.woff": {
+    "file": "assets/syne-greek-800-normal-DtzFnRR0.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-800-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-greek-800-normal.woff2": {
+    "file": "assets/syne-greek-800-normal-n2LZS_yH.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-greek-800-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-400-normal.woff": {
+    "file": "assets/syne-latin-400-normal-CULFKXub.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-400-normal.woff2": {
+    "file": "assets/syne-latin-400-normal-CcHADMBd.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-600-normal.woff": {
+    "file": "assets/syne-latin-600-normal-dRu9QuIh.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-600-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-600-normal.woff2": {
+    "file": "assets/syne-latin-600-normal-BiwQbQXw.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-600-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-700-normal.woff": {
+    "file": "assets/syne-latin-700-normal-Cd-_iCn5.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-700-normal.woff2": {
+    "file": "assets/syne-latin-700-normal-AF3Rs61n.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-800-normal.woff": {
+    "file": "assets/syne-latin-800-normal-BuJcbPcX.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-800-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-800-normal.woff2": {
+    "file": "assets/syne-latin-800-normal-EehdNYzx.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-800-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-400-normal.woff": {
+    "file": "assets/syne-latin-ext-400-normal-DCnt6qEA.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-400-normal.woff2": {
+    "file": "assets/syne-latin-ext-400-normal-B5s6XpS5.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-600-normal.woff": {
+    "file": "assets/syne-latin-ext-600-normal-DEzBMW8B.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-600-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-600-normal.woff2": {
+    "file": "assets/syne-latin-ext-600-normal-ZnizrDKU.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-600-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-700-normal.woff": {
+    "file": "assets/syne-latin-ext-700-normal-C-qCH-vM.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-700-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-700-normal.woff2": {
+    "file": "assets/syne-latin-ext-700-normal-DuyXglMe.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-700-normal.woff2"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-800-normal.woff": {
+    "file": "assets/syne-latin-ext-800-normal-B2iBRfEf.woff",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-800-normal.woff"
+  },
+  "node_modules/@fontsource/syne/files/syne-latin-ext-800-normal.woff2": {
+    "file": "assets/syne-latin-ext-800-normal-CAQAsWuS.woff2",
+    "src": "node_modules/@fontsource/syne/files/syne-latin-ext-800-normal.woff2"
   },
   "node_modules/intl-tel-input/dist/img/flags.webp": {
     "file": "assets/flags-DjVgN9ag.webp",
@@ -27,16 +272,11 @@
     "src": "node_modules/intl-tel-input/dist/img/flags@2x.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CU8LOpoA.css",
-    "name": "app",
-    "names": [
-      "app.css"
-    ],
-    "src": "resources/css/app.css",
-    "isEntry": true
+    "file": "assets/app-DTZ04hP6.css",
+    "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-BLlAoiw6.css",
+    "file": "assets/ecommet-Bip4GQX_.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -319,13 +559,67 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-Dp8OxfN8.css",
+    "file": "assets/souqify-2Oh89XVG.css",
     "name": "souqify",
     "names": [
       "souqify.css"
     ],
     "src": "resources/css/souqify.css",
     "isEntry": true
+  },
+  "resources/css/tenant/app.css": {
+    "file": "assets/app-CHPac88Q.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/tenant/app.css",
+    "isEntry": true,
+    "css": [
+      "assets/app-DTZ04hP6.css"
+    ],
+    "assets": [
+      "assets/syne-greek-400-normal-B4XGRaFa.woff2",
+      "assets/syne-greek-400-normal-C1nzy5ms.woff",
+      "assets/syne-latin-ext-400-normal-B5s6XpS5.woff2",
+      "assets/syne-latin-ext-400-normal-DCnt6qEA.woff",
+      "assets/syne-latin-400-normal-CcHADMBd.woff2",
+      "assets/syne-latin-400-normal-CULFKXub.woff",
+      "assets/syne-greek-600-normal-BpFII5Ja.woff2",
+      "assets/syne-greek-600-normal-BJs4kvyH.woff",
+      "assets/syne-latin-ext-600-normal-ZnizrDKU.woff2",
+      "assets/syne-latin-ext-600-normal-DEzBMW8B.woff",
+      "assets/syne-latin-600-normal-BiwQbQXw.woff2",
+      "assets/syne-latin-600-normal-dRu9QuIh.woff",
+      "assets/syne-greek-700-normal-RbvlO3f8.woff2",
+      "assets/syne-greek-700-normal-C01yjWE_.woff",
+      "assets/syne-latin-ext-700-normal-DuyXglMe.woff2",
+      "assets/syne-latin-ext-700-normal-C-qCH-vM.woff",
+      "assets/syne-latin-700-normal-AF3Rs61n.woff2",
+      "assets/syne-latin-700-normal-Cd-_iCn5.woff",
+      "assets/syne-greek-800-normal-n2LZS_yH.woff2",
+      "assets/syne-greek-800-normal-DtzFnRR0.woff",
+      "assets/syne-latin-ext-800-normal-CAQAsWuS.woff2",
+      "assets/syne-latin-ext-800-normal-B2iBRfEf.woff",
+      "assets/syne-latin-800-normal-EehdNYzx.woff2",
+      "assets/syne-latin-800-normal-BuJcbPcX.woff",
+      "assets/dm-sans-latin-ext-300-normal-WGwOtXxi.woff2",
+      "assets/dm-sans-latin-ext-300-normal-COYJju1g.woff",
+      "assets/dm-sans-latin-300-normal-C46oWILc.woff2",
+      "assets/dm-sans-latin-300-normal-CsNfKS1n.woff",
+      "assets/dm-sans-latin-ext-400-normal-BtiwyxMk.woff2",
+      "assets/dm-sans-latin-ext-400-normal-BjWJ59Pq.woff",
+      "assets/dm-sans-latin-400-normal-CW0RaeGs.woff2",
+      "assets/dm-sans-latin-400-normal-BwCSEQnW.woff",
+      "assets/dm-sans-latin-ext-500-normal-BJfUCQsA.woff2",
+      "assets/dm-sans-latin-ext-500-normal-DR84L5F-.woff",
+      "assets/dm-sans-latin-500-normal-B9HHJjqV.woff2",
+      "assets/dm-sans-latin-500-normal-Dr3UlScf.woff",
+      "assets/dm-sans-latin-ext-600-normal-4vooXBpG.woff2",
+      "assets/dm-sans-latin-ext-600-normal-DRtaDpgU.woff",
+      "assets/dm-sans-latin-600-normal-Aqo67rzb.woff2",
+      "assets/dm-sans-latin-600-normal-BmdmIIQ2.woff"
+    ]
   },
   "resources/css/website.css": {
     "file": "assets/website-LWY6qRY-.css",
@@ -337,13 +631,17 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DarJI0gl.js",
+    "file": "assets/app-CQauUdQN.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-G41iU2lS.js",
-      "_phone-input-D5IcT0Zr.js"
+      "_rolldown-runtime-BP0ATiRg.js",
+      "_vendor-charts-CE4Qsg8i.js",
+      "_bootstrap-kxCPIH52.js",
+      "_vendor-sortable-BTGqtuOT.js",
+      "_vendor-swal-Ctf5tS4l.js",
+      "_phone-input-K7fBWZ74.js"
     ]
   },
   "resources/js/ecommet.js": {
@@ -563,22 +861,65 @@
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-DQie1pH1.js",
+    "file": "assets/storefront-cart-CastEJ2c.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-D5IcT0Zr.js"
+      "_phone-input-K7fBWZ74.js"
+    ]
+  },
+  "resources/js/tenant/app.js": {
+    "file": "assets/app-C0BM5Q3K.js",
+    "name": "app",
+    "src": "resources/js/tenant/app.js",
+    "isEntry": true,
+    "imports": [
+      "_http-j8iPa_cc.js",
+      "_forms-fwq1O-Je.js",
+      "_modals-DgyiLQQs.js"
+    ],
+    "dynamicImports": [
+      "_modals-DgyiLQQs.js",
+      "_bootstrap-kxCPIH52.js"
+    ]
+  },
+  "resources/js/tenant/core/forms.js": {
+    "file": "assets/forms-CCkRvNzt.js",
+    "name": "forms",
+    "src": "resources/js/tenant/core/forms.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_forms-fwq1O-Je.js"
+    ]
+  },
+  "resources/js/tenant/core/modals.js": {
+    "file": "assets/modals-DTPBU4j6.js",
+    "name": "modals",
+    "src": "resources/js/tenant/core/modals.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_modals-DgyiLQQs.js"
+    ]
+  },
+  "resources/js/tenant/vendor/jquery.js": {
+    "file": "assets/jquery-DsWx0rVU.js",
+    "name": "jquery",
+    "src": "resources/js/tenant/vendor/jquery.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-BP0ATiRg.js",
+      "_vendor-jquery-yGwdlJo2.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-BQgJ54P4.js",
+    "file": "assets/website-Ce5-YNAv.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-G41iU2lS.js",
-      "_phone-input-D5IcT0Zr.js"
+      "_bootstrap-kxCPIH52.js",
+      "_phone-input-K7fBWZ74.js"
     ]
   }
 }

@@ -41,6 +41,13 @@ class EnforceOnboardingSetup
             return $next($request);
         }
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Please complete your store setup before accessing other pages.',
+                'redirect' => route('tenant.onboarding', ['tab' => 'setup']),
+            ], 409);
+        }
+
         return redirect()
             ->route('tenant.onboarding', ['tab' => 'setup'])
             ->with('setup_warning', 'Please complete your store setup before accessing other pages.');

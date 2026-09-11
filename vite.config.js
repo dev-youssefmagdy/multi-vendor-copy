@@ -1,6 +1,10 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     plugins: [
@@ -74,12 +78,41 @@ export default defineConfig({
                 'resources/js/elora-v5-interactions.js',
                 'resources/js/elora-v5-carousels.js',
                 'resources/js/elora-v6-interactions.js',
-                'resources/js/elora-v6-carousels.js'
+                'resources/js/elora-v6-carousels.js',
+
+                // ── TENANT PANEL (/admin on tenant domain) ─────────────────────────────
+                'resources/css/tenant/app.css',
+                'resources/js/tenant/app.js',
+                // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,
         }),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            '@tenant': path.resolve(__dirname, 'resources/js/tenant'),
+            '@tenant-css': path.resolve(__dirname, 'resources/css/tenant'),
+        },
+    },
+    build: {
+        chunkSizeWarningLimit: 900,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) return undefined;
+                    if (/node_modules\/(jquery|select2|datatables\.net|toastr)/.test(id)) return 'vendor-jquery';
+                    if (id.includes('node_modules/flatpickr')) return 'vendor-flatpickr';
+                    if (id.includes('node_modules/chart.js')) return 'vendor-charts';
+                    if (id.includes('node_modules/tinymce')) return 'vendor-tinymce';
+                    if (id.includes('node_modules/intl-tel-input')) return 'vendor-phone';
+                    if (id.includes('node_modules/sweetalert2')) return 'vendor-swal';
+                    if (id.includes('node_modules/sortablejs')) return 'vendor-sortable';
+                    return undefined;
+                },
+            },
+        },
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

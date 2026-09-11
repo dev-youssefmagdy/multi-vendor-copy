@@ -1,0 +1,11 @@
+@import "../app.css";                 /* shared tokens + shell + existing classes (unchanged look) */
+@import "./base/utilities.css";       /* tenant-only helpers: .is-loading, .is-invalid, .field-error, .sr-only-focusable … */
+@import "./components/field.css";
+@import "./components/select2.css";
+@import "./components/datatable.css";
+@import "./components/filters-card.css";
+@import "./components/pagination.css";
+@import "./components/modal.css";
+@import "./components/toast.css";
+@import "./components/form.css";
+/* prompt 02 creates the remaining component CSS files and appends their imports here */

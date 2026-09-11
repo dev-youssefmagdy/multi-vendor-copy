@@ -1,0 +1,6 @@
+/* Modal overrides — filled in with the component in prompt 02 */
+[data-tenant-modal] {
+    background-color: var(--card);
+    border: 1px solid var(--border2);
+    box-shadow: var(--shadow);
+}

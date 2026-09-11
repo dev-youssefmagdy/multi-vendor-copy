@@ -53,6 +53,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->trustHosts(at: fn() => ['.*']);
 
+        $middleware->encryptCookies(except: ['tenant_theme']);
+
         // Apple posts its Sign in with Apple callback cross-site with no Laravel CSRF
         // token attached; the callback validates the signed `state` param itself.
         $middleware->validateCsrfTokens(except: [
@@ -76,6 +78,38 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('admin*') && $request->expectsJson()) {
+                return response()->json(['message' => 'The requested record no longer exists.'], 404);
+            }
+
+            return null;
+        });
+
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('admin*') && $request->expectsJson()) {
+                return response()->json(['message' => 'Your session expired. Please reload the page.'], 419);
+            }
+
+            return null;
+        });
+
+        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('admin*') && $request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage() ?: 'This action is unauthorized.'], 403);
+            }
+
+            return null;
+        });
+
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('admin*') && $request->expectsJson()) {
+                return response()->json(['message' => 'The requested record no longer exists.'], 404);
+            }
+
+            return null;
+        });
+
         $exceptions->render(function (\Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException $e, \Illuminate\Http\Request $request) {
             return redirect(config('app.url') . '?error=' . urlencode('This store does not exist.'));
         });
