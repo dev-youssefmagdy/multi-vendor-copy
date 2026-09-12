@@ -2,119 +2,21 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Tenant\CartController;
-use App\Http\Controllers\Tenant\FavoriteController;
-use App\Http\Controllers\Tenant\EmailVerificationController;
-use App\Http\Controllers\Tenant\StorefrontInvoiceController;
-use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
-use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
-use App\Http\Controllers\Tenant\HomePageController;
-use App\Http\Controllers\Tenant\PaymentController;
-use App\Http\Controllers\Tenant\PaymentWebhookController;
-use App\Http\Controllers\Tenant\AiTranslationPaymentController;
-use App\Http\Controllers\Tenant\LanguagePaymentController;
-use App\Http\Controllers\Tenant\SubscriptionPaymentController;
-use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
-use App\Livewire\Tenant\Analytics\CustomerLifetimeValuePage;
-use App\Livewire\Tenant\Analytics\OrderAnalyticsPage;
-use App\Livewire\Tenant\Analytics\ProductProfitabilityPage;
-use App\Livewire\Tenant\Analytics\ShippingAnalyticsPage;
-use App\Livewire\Tenant\Auth\LoginPage;
-use App\Livewire\Tenant\Category\AddEditCategory;
-use App\Livewire\Tenant\Category\CategoriesList;
-use App\Livewire\Tenant\Category\CategoryProducts;
-use App\Livewire\Tenant\Category\SortCategories;
-use App\Livewire\Tenant\Product\SortProducts as TenantSortProducts;
-use App\Livewire\Tenant\Badge\SortBadgeProducts as TenantSortBadgeProducts;
-use App\Livewire\Tenant\Customer\CustomersList;
-use App\Http\Controllers\Tenant\CustomerCreateController;
-use App\Http\Controllers\Tenant\CustomerDetailController;
-use App\Livewire\Tenant\Dashboard;
-use App\Http\Controllers\Tenant\Panel\Finance\BillingController;
-use App\Http\Controllers\Tenant\Panel\Finance\PayoutsController;
-use App\Http\Controllers\Tenant\Panel\Finance\SettlementPaymentsController;
-use App\Http\Controllers\Tenant\Panel\Finance\VendorPurchaseController;
-use App\Http\Controllers\Tenant\Panel\Finance\VendorSettleOrderController;
-use App\Livewire\Tenant\Finance\VendorPurchasePage;
-use App\Http\Controllers\Tenant\Panel\Finance\WalletController;
-use App\Http\Controllers\Tenant\Panel\Finance\BuyLanguageController;
-use App\Livewire\Tenant\Order\OrdersList;
-use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
-use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
-use App\Livewire\Tenant\Return\ReturnDetailPage as TenantReturnDetailPage;
-use App\Livewire\Tenant\Help\DocsPage;
-use App\Livewire\Tenant\Storefront\RequestReturnForm;
-use App\Livewire\Tenant\Storefront\ReturnDetailPage as StorefrontReturnDetailPage;
-use App\Livewire\Tenant\Product\AddEditProduct;
-use App\Livewire\Tenant\Product\ProductsList;
-use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
-use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductsListController;
-use App\Http\Controllers\Tenant\Panel\Store\ThemesController;
-use App\Http\Controllers\Tenant\Panel\Store\PagesController;
-use App\Http\Controllers\Tenant\Panel\Store\PageFormController;
-use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
-use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
-use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;
-use App\Http\Controllers\Tenant\ManufacturingPaymentController;
-use App\Http\Controllers\Tenant\TenantImpersonateController;
-use App\Livewire\Tenant\Notifications\NotificationsPage;
-use App\Http\Controllers\Tenant\Panel\Support\TicketController;
-use App\Http\Controllers\Tenant\Panel\Requests\ProductRequestController;
+use App\Http\Controllers\Tenant\{EmailVerificationController, AiTranslationPaymentController, LanguagePaymentController, SubscriptionPaymentController, VendorSettlementPaymentController, ManufacturingPaymentController, TenantImpersonateController, BladeThemeStarterKitController, BrandRequestPaymentController};
+use App\Http\Controllers\Tenant\Panel\Finance\{BillingController, PayoutsController, SettlementPaymentsController, VendorPurchaseController, VendorSettleOrderController, WalletController, BuyLanguageController};
+use App\Http\Controllers\Tenant\Panel\Catalog\{OwnProductController, OwnProductsListController, BadgeController, BadgeSortController, CategoryController, CategoryProductsController, CategorySortController, EditRequestsController, ProductController, ProductModalsController, ProductSortController, ProductsListController};
+use App\Http\Controllers\Tenant\Panel\Store\{ThemesController, PagesController, PageFormController, BannerController, CouponController, FlashSaleController, AppearanceController, SocialLinkController, BladeThemeController, HomeVariantsController, PageBuilderController};
+use App\Http\Controllers\Tenant\Panel\Support\{TicketController, HelpController, NotificationsController};
+use App\Http\Controllers\Tenant\Panel\Requests\{ProductRequestController, BrandRequestController, ManufacturingController};
 use App\Http\Controllers\Tenant\Panel\Onboarding\OnboardingController;
-use App\Http\Controllers\Tenant\Panel\Settings\AccountSettingsController;
-use App\Http\Controllers\Tenant\Panel\Settings\ComplianceCenterController;
-use App\Http\Controllers\Tenant\Panel\Settings\AdminsController;
-use App\Http\Controllers\Tenant\Panel\Settings\AiTranslationController;
-use App\Http\Controllers\Tenant\Panel\Settings\CurrenciesController;
-use App\Http\Controllers\Tenant\Panel\Settings\DomainsController;
-use App\Http\Controllers\Tenant\Panel\Settings\EmailTemplateController;
-use App\Http\Controllers\Tenant\Panel\Settings\GeneralSettingsController;
-use App\Http\Controllers\Tenant\Panel\Settings\LanguagesController;
-use App\Http\Controllers\Tenant\Panel\Settings\LanguagesManageController;
-use App\Http\Controllers\Tenant\Panel\Settings\MailConfigurationsController;
-use App\Http\Controllers\Tenant\Panel\Settings\PaymentGatewaysController;
-use App\Http\Controllers\Tenant\Panel\Settings\PaymentReadinessController;
-use App\Http\Controllers\Tenant\Panel\Settings\ReturnPolicyController;
-use App\Http\Controllers\Tenant\Panel\Settings\RolesPermissionsController;
-use App\Http\Controllers\Tenant\Panel\Settings\SubscribersController;
-use App\Http\Controllers\Tenant\Panel\Settings\TrackingSettingsController;
-use App\Http\Controllers\Tenant\Panel\Settings\TranslationsController;
-use App\Http\Controllers\Tenant\Panel\Store\BannerController;
-use App\Http\Controllers\Tenant\Panel\Store\CouponController;
-use App\Http\Controllers\Tenant\Panel\Store\FlashSaleController;
-use App\Http\Controllers\Tenant\Panel\Store\AppearanceController;
-use App\Http\Controllers\Tenant\Panel\Store\SocialLinkController;
-use App\Livewire\Tenant\Store\BladeThemePage;
-use App\Livewire\Tenant\Store\HomeVariantsPage;
-use App\Livewire\Tenant\Store\PageBuilderPage;
-use App\Livewire\Tenant\Store\AddEditPage;
-use App\Livewire\Tenant\Store\PagesList;
-use App\Livewire\Tenant\Store\ThemesPage;
-use App\Livewire\Tenant\Storefront\AuthPage;
-use App\Livewire\Tenant\Storefront\BestSellingPage;
-use App\Livewire\Tenant\Storefront\CartPage;
-use App\Livewire\Tenant\Storefront\CategoryPage;
-use App\Livewire\Tenant\Storefront\FavoritesPage;
-use App\Livewire\Tenant\Storefront\CheckoutPage;
-use App\Livewire\Tenant\Storefront\FullStarPage;
-use App\Livewire\Tenant\Storefront\HomePage;
-use App\Livewire\Tenant\Storefront\NewInPage;
-use App\Livewire\Tenant\Storefront\OffersPage;
-use App\Livewire\Tenant\Storefront\OrderStatusPage;
-use App\Livewire\Tenant\Storefront\OrderTrackingPage;
-use App\Livewire\Tenant\Storefront\ProductPage;
-use App\Http\Controllers\Tenant\RobotsController;
-use App\Http\Controllers\Tenant\SitemapController;
-use App\Livewire\Tenant\Storefront\NotFoundPage;
-use App\Livewire\Tenant\Storefront\PageView;
-use App\Livewire\Tenant\Storefront\ProfilePage;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
-use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
-
+use App\Http\Controllers\Tenant\Panel\Settings\{AccountSettingsController, ComplianceCenterController, AdminsController, AiTranslationController, CurrenciesController, DomainsController, EmailTemplateController, GeneralSettingsController, LanguagesController, LanguagesManageController, MailConfigurationsController, PaymentGatewaysController, PaymentReadinessController, ReturnPolicyController, RolesPermissionsController, SubscribersController, TrackingSettingsController, TranslationsController};
+use App\Http\Controllers\ImageSearchController;
+use App\Http\Controllers\Tenant\Panel\Auth\LoginController;
+use App\Http\Controllers\Tenant\Panel\Insights\{CustomerLifetimeValueController, DashboardController, OrderAnalyticsController, ProductProfitabilityController, ShippingAnalyticsController};
+use App\Http\Controllers\Tenant\Panel\Sales\{CustomerCreateController, CustomerDetailController, CustomersController, OrdersController, ReturnAnalyticsController, ReturnController, ReturnsController};
+use App\Http\Controllers\Tenant\Panel\Shell\{ComplianceController, SetupProgressController};
+use App\Http\Controllers\Tenant\Panel\UiKitController;
+use Illuminate\Support\Facades\{Auth, Route};
 
 Route::get('/', function () {
     return redirect()->route(
@@ -123,16 +25,16 @@ Route::get('/', function () {
 });
 
 Route::middleware('guest:tenant')->group(function () {
-    Route::get('/login', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'show'])->name('tenant.login');
-    Route::post('/login', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'login'])
+    Route::get('/login', [LoginController::class, 'show'])->name('tenant.login');
+    Route::post('/login', [LoginController::class, 'login'])
         ->middleware('throttle:6,1')
         ->name('tenant.login.attempt');
-    Route::post('/login/validate', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'validateLogin'])
+    Route::post('/login/validate', [LoginController::class, 'validateLogin'])
         ->middleware('throttle:tenant-validate')
         ->name('tenant.login.validate');
 });
 
-Route::post('/logout', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'logout'])
+Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth:tenant')
     ->name('tenant.logout');
 
@@ -153,22 +55,22 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.verification.send');
 
-    Route::post('/compliance/accept', [\App\Http\Controllers\Tenant\Panel\Shell\ComplianceController::class, 'accept'])
+    Route::post('/compliance/accept', [ComplianceController::class, 'accept'])
         ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.compliance.accept');
-    Route::post('/compliance/accept/validate', [\App\Http\Controllers\Tenant\Panel\Shell\ComplianceController::class, 'validateAccept'])
+    Route::post('/compliance/accept/validate', [ComplianceController::class, 'validateAccept'])
         ->middleware('throttle:tenant-validate')
         ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.compliance.accept.validate');
 
-    Route::get('/widgets/setup-progress', [\App\Http\Controllers\Tenant\Panel\Shell\SetupProgressController::class, 'show'])
+    Route::get('/widgets/setup-progress', [SetupProgressController::class, 'show'])
         ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.widgets.setup-progress');
-    Route::post('/widgets/setup-progress/pages-reviewed', [\App\Http\Controllers\Tenant\Panel\Shell\SetupProgressController::class, 'pagesReviewed'])
+    Route::post('/widgets/setup-progress/pages-reviewed', [SetupProgressController::class, 'pagesReviewed'])
         ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.widgets.setup-progress.pages-reviewed');
 
-    Route::get('/dashboard', [\App\Http\Controllers\Tenant\Panel\Insights\DashboardController::class, 'index'])
+    Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.dashboard');
 
@@ -194,39 +96,39 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
 
     if (app()->environment('local')) {
         Route::prefix('_ui')->name('tenant.ui-kit')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, '__invoke'])->name('');
-            Route::get('/data', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'data'])->name('.data');
-            Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'validateForm'])->name('.validate')->middleware('throttle:tenant-validate');
-            Route::post('/', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'store'])->name('.store');
+            Route::get('/', [UiKitController::class, '__invoke'])->name('');
+            Route::get('/data', [UiKitController::class, 'data'])->name('.data');
+            Route::post('/validate', [UiKitController::class, 'validateForm'])->name('.validate')->middleware('throttle:tenant-validate');
+            Route::post('/', [UiKitController::class, 'store'])->name('.store');
         });
     }
 
     Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'index'])->middleware('tenant.setup:theme')->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'data'])->name('data');
-        Route::get('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductSortController::class, 'index'])->name('sort');
-        Route::post('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductSortController::class, 'update'])->name('sort.save');
-        Route::get('/edit-requests', [\App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController::class, 'index'])->name('edit-requests');
-        Route::get('/edit-requests/data', [\App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController::class, 'data'])->name('edit-requests.data');
-        Route::get('/central-search', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'centralSearch'])->name('central-search');
-        Route::get('/central-snapshot/{centralProduct}', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'centralSnapshot'])->name('central-snapshot');
-        Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'store'])->name('store');
-        Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
-        Route::patch('/{product}/active', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'toggleActive'])->name('toggle-active');
-        Route::patch('/{product}/featured', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'toggleFeatured'])->name('toggle-featured');
-        Route::get('/{product}/social', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'social'])->name('social');
-        Route::post('/{product}/social/generate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'generateSocial'])->name('social.generate');
-        Route::get('/{product}/ai-price', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'aiPrice'])->name('ai-price');
-        Route::post('/{product}/ai-price', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'fetchAiPrice'])->name('ai-price.fetch');
-        Route::get('/{product}/share', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'share'])->name('share');
-        Route::get('/{product}/price-list', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListShow'])->name('price-list');
-        Route::put('/{product}/price-list', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListSave'])->name('price-list.save');
-        Route::post('/{product}/price-list/preview', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListPreview'])->name('price-list.preview');
-        Route::get('/{product}/edit', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'edit'])->name('edit');
-        Route::put('/{product}', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'update'])->name('update');
-        Route::post('/{product}/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
-        Route::post('/image-search', [\App\Http\Controllers\ImageSearchController::class, 'tenantPanel'])->name('image-search');
+        Route::get('/', [ProductsListController::class, 'index'])->middleware('tenant.setup:theme')->name('index');
+        Route::get('/data', [ProductsListController::class, 'data'])->name('data');
+        Route::get('/sort', [ProductSortController::class, 'index'])->name('sort');
+        Route::post('/sort', [ProductSortController::class, 'update'])->name('sort.save');
+        Route::get('/edit-requests', [EditRequestsController::class, 'index'])->name('edit-requests');
+        Route::get('/edit-requests/data', [EditRequestsController::class, 'data'])->name('edit-requests.data');
+        Route::get('/central-search', [ProductController::class, 'centralSearch'])->name('central-search');
+        Route::get('/central-snapshot/{centralProduct}', [ProductController::class, 'centralSnapshot'])->name('central-snapshot');
+        Route::get('/create', [ProductController::class, 'create'])->name('create');
+        Route::post('/', [ProductController::class, 'store'])->name('store');
+        Route::post('/validate', [ProductController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        Route::patch('/{product}/active', [ProductsListController::class, 'toggleActive'])->name('toggle-active');
+        Route::patch('/{product}/featured', [ProductsListController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::get('/{product}/social', [ProductModalsController::class, 'social'])->name('social');
+        Route::post('/{product}/social/generate', [ProductModalsController::class, 'generateSocial'])->name('social.generate');
+        Route::get('/{product}/ai-price', [ProductModalsController::class, 'aiPrice'])->name('ai-price');
+        Route::post('/{product}/ai-price', [ProductModalsController::class, 'fetchAiPrice'])->name('ai-price.fetch');
+        Route::get('/{product}/share', [ProductModalsController::class, 'share'])->name('share');
+        Route::get('/{product}/price-list', [ProductModalsController::class, 'priceListShow'])->name('price-list');
+        Route::put('/{product}/price-list', [ProductModalsController::class, 'priceListSave'])->name('price-list.save');
+        Route::post('/{product}/price-list/preview', [ProductModalsController::class, 'priceListPreview'])->name('price-list.preview');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/{product}', [ProductController::class, 'update'])->name('update');
+        Route::post('/{product}/validate', [ProductController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
+        Route::post('/image-search', [ImageSearchController::class, 'tenantPanel'])->name('image-search');
     });
 
     Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
@@ -242,39 +144,39 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     });
 
     Route::prefix('manufacturing')->name('tenant.manufacturing.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'data'])->name('data');
-        Route::get('/export', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'export'])->name('export');
-        Route::get('/products/search', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'searchProducts'])->name('products.search');
-        Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'store'])->name('store');
-        Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
-        Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'show'])->whereNumber('id')->name('show');
-        Route::post('/{id}/cancel', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'cancel'])->whereNumber('id')->name('cancel');
-        Route::post('/{id}/messages', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'sendMessage'])->whereNumber('id')->name('messages');
-        Route::post('/{id}/messages/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
-        Route::post('/{id}/pay', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'pay'])->whereNumber('id')->name('pay');
-        Route::post('/{id}/pay/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
+        Route::get('/', [ManufacturingController::class, 'index'])->name('index');
+        Route::get('/data', [ManufacturingController::class, 'data'])->name('data');
+        Route::get('/export', [ManufacturingController::class, 'export'])->name('export');
+        Route::get('/products/search', [ManufacturingController::class, 'searchProducts'])->name('products.search');
+        Route::get('/create', [ManufacturingController::class, 'create'])->name('create');
+        Route::post('/', [ManufacturingController::class, 'store'])->name('store');
+        Route::post('/validate', [ManufacturingController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        Route::get('/{id}', [ManufacturingController::class, 'show'])->whereNumber('id')->name('show');
+        Route::post('/{id}/cancel', [ManufacturingController::class, 'cancel'])->whereNumber('id')->name('cancel');
+        Route::post('/{id}/messages', [ManufacturingController::class, 'sendMessage'])->whereNumber('id')->name('messages');
+        Route::post('/{id}/messages/validate', [ManufacturingController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
+        Route::post('/{id}/pay', [ManufacturingController::class, 'pay'])->whereNumber('id')->name('pay');
+        Route::post('/{id}/pay/validate', [ManufacturingController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
     });
 
     Route::prefix('brand-requests')->name('tenant.brand-requests.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'data'])->name('data');
-        Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'store'])->name('store');
-        Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
-        Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'show'])->whereNumber('id')->name('show');
-        Route::post('/{id}/messages', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'sendMessage'])->whereNumber('id')->name('messages');
-        Route::post('/{id}/messages/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
-        Route::post('/{id}/pay', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'pay'])->whereNumber('id')->name('pay');
-        Route::post('/{id}/pay/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
+        Route::get('/', [BrandRequestController::class, 'index'])->name('index');
+        Route::get('/data', [BrandRequestController::class, 'data'])->name('data');
+        Route::get('/create', [BrandRequestController::class, 'create'])->name('create');
+        Route::post('/', [BrandRequestController::class, 'store'])->name('store');
+        Route::post('/validate', [BrandRequestController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        Route::get('/{id}', [BrandRequestController::class, 'show'])->whereNumber('id')->name('show');
+        Route::post('/{id}/messages', [BrandRequestController::class, 'sendMessage'])->whereNumber('id')->name('messages');
+        Route::post('/{id}/messages/validate', [BrandRequestController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
+        Route::post('/{id}/pay', [BrandRequestController::class, 'pay'])->whereNumber('id')->name('pay');
+        Route::post('/{id}/pay/validate', [BrandRequestController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
     });
 
     Route::prefix('notifications')->name('tenant.notifications.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'index'])->name('index');
-        Route::get('/feed', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'feed'])->name('feed');
-        Route::post('/read-all', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'markAllRead'])->name('read-all');
-        Route::patch('/{id}/read', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'markRead'])->whereNumber('id')->name('mark-read');
+        Route::get('/', [NotificationsController::class, 'index'])->name('index');
+        Route::get('/feed', [NotificationsController::class, 'feed'])->name('feed');
+        Route::post('/read-all', [NotificationsController::class, 'markAllRead'])->name('read-all');
+        Route::patch('/{id}/read', [NotificationsController::class, 'markRead'])->whereNumber('id')->name('mark-read');
     });
 
     Route::prefix('support')->name('tenant.support.')->group(function () {
@@ -301,127 +203,127 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     });
 
     Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'data'])->name('data');
-        Route::get('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController::class, 'index'])->name('sort');
-        Route::post('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController::class, 'update'])->name('sort.save');
-        Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'store'])->name('store');
-        Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
-        Route::get('/{category}/edit', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'edit'])->name('edit');
-        Route::put('/{category}', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'update'])->name('update');
-        Route::post('/{category}/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
-        Route::patch('/{category}/active', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'toggleActive'])->name('toggle-active');
-        Route::patch('/{category}/featured', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'toggleFeatured'])->name('toggle-featured');
-        Route::delete('/{category}', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'destroy'])->name('destroy');
-        Route::get('/{category}/products', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryProductsController::class, 'index'])->name('products');
-        Route::post('/{category}/products/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryProductsController::class, 'update'])->name('products.sort');
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/data', [CategoryController::class, 'data'])->name('data');
+        Route::get('/sort', [CategorySortController::class, 'index'])->name('sort');
+        Route::post('/sort', [CategorySortController::class, 'update'])->name('sort.save');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::post('/validate', [CategoryController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+        Route::post('/{category}/validate', [CategoryController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
+        Route::patch('/{category}/active', [CategoryController::class, 'toggleActive'])->name('toggle-active');
+        Route::patch('/{category}/featured', [CategoryController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+        Route::get('/{category}/products', [CategoryProductsController::class, 'index'])->name('products');
+        Route::post('/{category}/products/sort', [CategoryProductsController::class, 'update'])->name('products.sort');
     });
 
     Route::prefix('badges')->name('tenant.badges.')->middleware('tenant.permission:catalog.badges.manage')->group(function () {
         Route::get('/', function () {
             return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
         })->name('index');
-        Route::get('/{badge}', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'show'])->name('show');
-        Route::get('/{badge}/search', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'searchProducts'])->name('search');
-        Route::get('/{badge}/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeSortController::class, 'index'])->name('sort');
-        Route::post('/{badge}/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeSortController::class, 'update'])->name('sort');
-        Route::post('/{badge}/assign-category', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'assignCategory'])->name('assign-category');
-        Route::post('/{badge}/save', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'save'])->name('save');
+        Route::get('/{badge}', [BadgeController::class, 'show'])->name('show');
+        Route::get('/{badge}/search', [BadgeController::class, 'searchProducts'])->name('search');
+        Route::get('/{badge}/sort', [BadgeSortController::class, 'index'])->name('sort');
+        Route::post('/{badge}/sort', [BadgeSortController::class, 'update'])->name('sort');
+        Route::post('/{badge}/assign-category', [BadgeController::class, 'assignCategory'])->name('assign-category');
+        Route::post('/{badge}/save', [BadgeController::class, 'save'])->name('save');
     });
 
-    Route::get('/orders', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'index'])
+    Route::get('/orders', [OrdersController::class, 'index'])
         ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
         ->name('tenant.orders.index');
 
-    Route::get('/orders/data', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'data'])
+    Route::get('/orders/data', [OrdersController::class, 'data'])
         ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
         ->name('tenant.orders.data');
 
-    Route::get('/orders/export', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'export'])
+    Route::get('/orders/export', [OrdersController::class, 'export'])
         ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
         ->name('tenant.orders.export');
 
-    Route::get('/orders/{orderId}', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'show'])
+    Route::get('/orders/{orderId}', [OrdersController::class, 'show'])
         ->whereNumber('orderId')
         ->middleware('tenant.permission:sales.orders.view')
         ->name('tenant.orders.show');
 
-    Route::patch('/orders/{orderId}/shipping-status', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'updateShippingStatus'])
+    Route::patch('/orders/{orderId}/shipping-status', [OrdersController::class, 'updateShippingStatus'])
         ->whereNumber('orderId')
         ->middleware('tenant.permission:sales.orders.view')
         ->name('tenant.orders.shipping-status');
 
-    Route::post('/orders/{orderId}/shipping-status/validate', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'validateUpdateShippingStatus'])
+    Route::post('/orders/{orderId}/shipping-status/validate', [OrdersController::class, 'validateUpdateShippingStatus'])
         ->whereNumber('orderId')
         ->middleware(['tenant.permission:sales.orders.view', 'throttle:tenant-validate'])
         ->name('tenant.orders.shipping-status.validate');
 
     Route::prefix('returns')->name('tenant.returns.')->middleware('tenant.permission:sales.returns.manage')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnsController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnsController::class, 'data'])->name('data');
+        Route::get('/', [ReturnsController::class, 'index'])->name('index');
+        Route::get('/data', [ReturnsController::class, 'data'])->name('data');
 
-        Route::get('/analytics', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnAnalyticsController::class, 'index'])->name('analytics');
-        Route::get('/analytics/data', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnAnalyticsController::class, 'data'])->name('analytics.data');
+        Route::get('/analytics', [ReturnAnalyticsController::class, 'index'])->name('analytics');
+        Route::get('/analytics/data', [ReturnAnalyticsController::class, 'data'])->name('analytics.data');
 
-        Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'show'])->whereNumber('id')->name('show');
+        Route::get('/{id}', [ReturnController::class, 'show'])->whereNumber('id')->name('show');
 
-        Route::post('/{id}/approve', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'approve'])->whereNumber('id')->name('approve');
+        Route::post('/{id}/approve', [ReturnController::class, 'approve'])->whereNumber('id')->name('approve');
 
-        Route::post('/{id}/reject', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'reject'])->whereNumber('id')->name('reject');
-        Route::post('/{id}/reject/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate');
+        Route::post('/{id}/reject', [ReturnController::class, 'reject'])->whereNumber('id')->name('reject');
+        Route::post('/{id}/reject/validate', [ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate');
 
-        Route::post('/{id}/request-info', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'requestMoreInfo'])->whereNumber('id')->name('request-info');
-        Route::post('/{id}/request-info/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate');
+        Route::post('/{id}/request-info', [ReturnController::class, 'requestMoreInfo'])->whereNumber('id')->name('request-info');
+        Route::post('/{id}/request-info/validate', [ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate');
 
-        Route::post('/{id}/received', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'markItemReceived'])->whereNumber('id')->name('received');
+        Route::post('/{id}/received', [ReturnController::class, 'markItemReceived'])->whereNumber('id')->name('received');
 
-        Route::post('/{id}/refunded', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'markRefunded'])->whereNumber('id')->name('refunded');
-        Route::post('/{id}/refunded/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate');
+        Route::post('/{id}/refunded', [ReturnController::class, 'markRefunded'])->whereNumber('id')->name('refunded');
+        Route::post('/{id}/refunded/validate', [ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate');
 
-        Route::post('/{id}/notes', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'addNote'])->whereNumber('id')->name('notes');
-        Route::post('/{id}/notes/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateNote'])->whereNumber('id')->name('notes.validate');
+        Route::post('/{id}/notes', [ReturnController::class, 'addNote'])->whereNumber('id')->name('notes');
+        Route::post('/{id}/notes/validate', [ReturnController::class, 'validateNote'])->whereNumber('id')->name('notes.validate');
     });
 
     Route::prefix('customers')->name('tenant.customers.')->middleware('tenant.permission:sales.customers.manage')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'index'])->name('index');
-        Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'data'])->name('data');
-        Route::get('/export', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'export'])->name('export');
-        Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'store'])->name('store');
-        Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        Route::get('/', [CustomersController::class, 'index'])->name('index');
+        Route::get('/data', [CustomersController::class, 'data'])->name('data');
+        Route::get('/export', [CustomersController::class, 'export'])->name('export');
+        Route::get('/create', [CustomerCreateController::class, 'create'])->name('create');
+        Route::post('/', [CustomerCreateController::class, 'store'])->name('store');
+        Route::post('/validate', [CustomerCreateController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
 
-        Route::get('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'show'])->whereNumber('customerId')->name('show');
-        Route::put('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'updateProfile'])->whereNumber('customerId')->name('update');
-        Route::post('/{customerId}/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'validateProfile'])->whereNumber('customerId')->name('validate.update')->middleware('throttle:tenant-validate');
-        Route::patch('/{customerId}/active', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'toggleActive'])->whereNumber('customerId')->name('toggle-active');
-        Route::delete('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'destroy'])->whereNumber('customerId')->name('destroy');
-        Route::get('/{customerId}/payments/data', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'paymentsData'])->whereNumber('customerId')->name('payments.data');
+        Route::get('/{customerId}', [CustomerDetailController::class, 'show'])->whereNumber('customerId')->name('show');
+        Route::put('/{customerId}', [CustomerDetailController::class, 'updateProfile'])->whereNumber('customerId')->name('update');
+        Route::post('/{customerId}/validate', [CustomerDetailController::class, 'validateProfile'])->whereNumber('customerId')->name('validate.update')->middleware('throttle:tenant-validate');
+        Route::patch('/{customerId}/active', [CustomerDetailController::class, 'toggleActive'])->whereNumber('customerId')->name('toggle-active');
+        Route::delete('/{customerId}', [CustomersController::class, 'destroy'])->whereNumber('customerId')->name('destroy');
+        Route::get('/{customerId}/payments/data', [CustomerDetailController::class, 'paymentsData'])->whereNumber('customerId')->name('payments.data');
 
-        Route::post('/{customerId}/addresses', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'storeAddress'])->whereNumber('customerId')->name('addresses.store');
-        Route::post('/{customerId}/addresses/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'validateAddress'])->whereNumber('customerId')->name('addresses.validate')->middleware('throttle:tenant-validate');
-        Route::get('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'showAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.show');
-        Route::put('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'updateAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.update');
-        Route::delete('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'destroyAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.destroy');
+        Route::post('/{customerId}/addresses', [CustomerDetailController::class, 'storeAddress'])->whereNumber('customerId')->name('addresses.store');
+        Route::post('/{customerId}/addresses/validate', [CustomerDetailController::class, 'validateAddress'])->whereNumber('customerId')->name('addresses.validate')->middleware('throttle:tenant-validate');
+        Route::get('/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'showAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.show');
+        Route::put('/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'updateAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.update');
+        Route::delete('/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'destroyAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.destroy');
     });
 
-    Route::get('/cities-by-country/{countryId?}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'citiesByCountry'])
+    Route::get('/cities-by-country/{countryId?}', [CustomerDetailController::class, 'citiesByCountry'])
         ->middleware('tenant.permission:sales.customers.manage')
         ->name('tenant.cities.by-country');
 
     Route::prefix('analytics')->name('tenant.analytics.')->middleware('tenant.permission:analytics.view')->group(function () {
-        Route::get('/orders', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'index'])->name('orders');
-        Route::get('/orders/data/monthly', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'dataMonthly'])->name('orders.data.monthly');
-        Route::get('/orders/data/status', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'dataStatus'])->name('orders.data.status');
+        Route::get('/orders', [OrderAnalyticsController::class, 'index'])->name('orders');
+        Route::get('/orders/data/monthly', [OrderAnalyticsController::class, 'dataMonthly'])->name('orders.data.monthly');
+        Route::get('/orders/data/status', [OrderAnalyticsController::class, 'dataStatus'])->name('orders.data.status');
 
-        Route::get('/customer-lifetime-value', [\App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController::class, 'index'])->name('clv');
-        Route::get('/customer-lifetime-value/data', [\App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController::class, 'data'])->name('clv.data');
+        Route::get('/customer-lifetime-value', [CustomerLifetimeValueController::class, 'index'])->name('clv');
+        Route::get('/customer-lifetime-value/data', [CustomerLifetimeValueController::class, 'data'])->name('clv.data');
 
-        Route::get('/shipping', [\App\Http\Controllers\Tenant\Panel\Insights\ShippingAnalyticsController::class, 'index'])->name('shipping');
-        Route::get('/shipping/data/monthly', [\App\Http\Controllers\Tenant\Panel\Insights\ShippingAnalyticsController::class, 'dataMonthly'])->name('shipping.data.monthly');
+        Route::get('/shipping', [ShippingAnalyticsController::class, 'index'])->name('shipping');
+        Route::get('/shipping/data/monthly', [ShippingAnalyticsController::class, 'dataMonthly'])->name('shipping.data.monthly');
 
-        Route::get('/profitability', [\App\Http\Controllers\Tenant\Panel\Insights\ProductProfitabilityController::class, 'index'])->name('profitability');
-        Route::get('/profitability/data', [\App\Http\Controllers\Tenant\Panel\Insights\ProductProfitabilityController::class, 'data'])->name('profitability.data');
+        Route::get('/profitability', [ProductProfitabilityController::class, 'index'])->name('profitability');
+        Route::get('/profitability/data', [ProductProfitabilityController::class, 'data'])->name('profitability.data');
     });
 
     Route::prefix('finance')->name('tenant.finance.')->group(function () {
@@ -528,9 +430,9 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     });
 
     Route::prefix('brand-request-payment')->name('tenant.brand-request-payment.')->group(function () {
-        Route::get('{gateway}/{paymentRequestId}', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'charge'])->name('charge');
-        Route::match(['get', 'post'], '{gateway}/success', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'success'])->name('success');
-        Route::get('{gateway}/cancel', [\App\Http\Controllers\Tenant\BrandRequestPaymentController::class, 'cancel'])->name('cancel');
+        Route::get('{gateway}/{paymentRequestId}', [BrandRequestPaymentController::class, 'charge'])->name('charge');
+        Route::match(['get', 'post'], '{gateway}/success', [BrandRequestPaymentController::class, 'success'])->name('success');
+        Route::get('{gateway}/cancel', [BrandRequestPaymentController::class, 'cancel'])->name('cancel');
     });
 
     // Vendor-to-central settlement payment flow
@@ -634,29 +536,29 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
             Route::get('/banners/list/{countryId?}', [BannerController::class, 'list'])->whereNumber('countryId')->name('banners');
         });
         Route::middleware('tenant.permission:store.blade-theme.manage')->group(function () {
-            Route::get('/blade-theme', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'index'])->name('blade-theme');
-            Route::get('/blade-theme/starter-kit', [\App\Http\Controllers\Tenant\BladeThemeStarterKitController::class, 'download'])->name('blade-theme.starter-kit');
-            Route::post('/blade-theme', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'upload'])->name('blade-theme.upload');
-            Route::post('/blade-theme/validate', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'validateUpload'])->name('blade-theme.upload.validate');
-            Route::post('/blade-theme/deactivate', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'deactivate'])->name('blade-theme.deactivate');
-            Route::delete('/blade-theme/{upload}', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'destroy'])->whereNumber('upload')->name('blade-theme.destroy');
+            Route::get('/blade-theme', [BladeThemeController::class, 'index'])->name('blade-theme');
+            Route::get('/blade-theme/starter-kit', [BladeThemeStarterKitController::class, 'download'])->name('blade-theme.starter-kit');
+            Route::post('/blade-theme', [BladeThemeController::class, 'upload'])->name('blade-theme.upload');
+            Route::post('/blade-theme/validate', [BladeThemeController::class, 'validateUpload'])->name('blade-theme.upload.validate');
+            Route::post('/blade-theme/deactivate', [BladeThemeController::class, 'deactivate'])->name('blade-theme.deactivate');
+            Route::delete('/blade-theme/{upload}', [BladeThemeController::class, 'destroy'])->whereNumber('upload')->name('blade-theme.destroy');
         });
 
         Route::middleware('tenant.permission:store.page-builder.manage')->group(function () {
-            Route::get('/page-builder', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'index'])->name('page-builder');
-            Route::post('/page-builder/order', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'updateOrder'])->name('page-builder.order');
-            Route::patch('/page-builder/sections/{section}/visibility', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'toggleVisibility'])->name('page-builder.sections.visibility');
+            Route::get('/page-builder', [PageBuilderController::class, 'index'])->name('page-builder');
+            Route::post('/page-builder/order', [PageBuilderController::class, 'updateOrder'])->name('page-builder.order');
+            Route::patch('/page-builder/sections/{section}/visibility', [PageBuilderController::class, 'toggleVisibility'])->name('page-builder.sections.visibility');
         });
 
         Route::middleware('tenant.permission:store.home-variants.manage')->group(function () {
-            Route::get('/home-variants', [\App\Http\Controllers\Tenant\Panel\Store\HomeVariantsController::class, 'index'])->name('home-variants');
-            Route::post('/home-variants', [\App\Http\Controllers\Tenant\Panel\Store\HomeVariantsController::class, 'selectVariant'])->name('home-variants.select');
+            Route::get('/home-variants', [HomeVariantsController::class, 'index'])->name('home-variants');
+            Route::post('/home-variants', [HomeVariantsController::class, 'selectVariant'])->name('home-variants.select');
         });
     });
 
     Route::prefix('help')->name('tenant.help.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Tenant\Panel\Support\HelpController::class, 'index'])->name('index');
-        Route::get('/articles/{slug}', [\App\Http\Controllers\Tenant\Panel\Support\HelpController::class, 'article'])->name('article');
+        Route::get('/', [HelpController::class, 'index'])->name('index');
+        Route::get('/articles/{slug}', [HelpController::class, 'article'])->name('article');
     });
 
     Route::prefix('settings')->name('tenant.settings.')->group(function () {
