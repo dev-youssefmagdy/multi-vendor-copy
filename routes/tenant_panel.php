@@ -280,59 +280,82 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                 Route::post('/{badge}/save', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'save'])->name('save');
             });
 
-            Route::get('/orders', OrdersList::class)
+            Route::get('/orders', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'index'])
                 ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
                 ->name('tenant.orders.index');
 
-            Route::get('/orders/{orderId}', TenantOrderDetailPage::class)
+            Route::get('/orders/data', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'data'])
+                ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
+                ->name('tenant.orders.data');
+
+            Route::get('/orders/export', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'export'])
+                ->middleware(['tenant.permission:sales.orders.view', 'tenant.setup:payment_gateway'])
+                ->name('tenant.orders.export');
+
+            Route::get('/orders/{orderId}', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'show'])
+                ->whereNumber('orderId')
                 ->middleware('tenant.permission:sales.orders.view')
                 ->name('tenant.orders.show');
 
-            Route::get('/returns', TenantReturnsList::class)
-                ->middleware('tenant.permission:sales.returns.manage')
-                ->name('tenant.returns.index');
+            Route::patch('/orders/{orderId}/shipping-status', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'updateShippingStatus'])
+                ->whereNumber('orderId')
+                ->middleware('tenant.permission:sales.orders.view')
+                ->name('tenant.orders.shipping-status');
 
-            Route::get('/returns/analytics', \App\Livewire\Tenant\Return\ReturnAnalyticsPage::class)
-                ->middleware('tenant.permission:sales.returns.manage')
-                ->name('tenant.returns.analytics');
+            Route::post('/orders/{orderId}/shipping-status/validate', [\App\Http\Controllers\Tenant\Panel\Sales\OrdersController::class, 'validateUpdateShippingStatus'])
+                ->whereNumber('orderId')
+                ->middleware(['tenant.permission:sales.orders.view', 'throttle:tenant-validate'])
+                ->name('tenant.orders.shipping-status.validate');
 
-            Route::get('/returns/{id}', TenantReturnDetailPage::class)
-                ->middleware('tenant.permission:sales.returns.manage')
-                ->name('tenant.returns.show');
+            Route::prefix('returns')->name('tenant.returns.')->middleware('tenant.permission:sales.returns.manage')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnsController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnsController::class, 'data'])->name('data');
 
-            Route::get('/customers', CustomersList::class)
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.index');
+                Route::get('/analytics', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnAnalyticsController::class, 'index'])->name('analytics');
+                Route::get('/analytics/data', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnAnalyticsController::class, 'data'])->name('analytics.data');
 
-            Route::get('/customers/create', [CustomerCreateController::class, 'create'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.create');
+                Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'show'])->whereNumber('id')->name('show');
 
-            Route::post('/customers', [CustomerCreateController::class, 'store'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.store');
+                Route::post('/{id}/approve', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'approve'])->whereNumber('id')->name('approve');
 
-            Route::get('/customers/{customerId}', [CustomerDetailController::class, 'show'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.show');
+                Route::post('/{id}/reject', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'reject'])->whereNumber('id')->name('reject');
+                Route::post('/{id}/reject/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate');
 
-            Route::put('/customers/{customerId}', [CustomerDetailController::class, 'updateProfile'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.update');
+                Route::post('/{id}/request-info', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'requestMoreInfo'])->whereNumber('id')->name('request-info');
+                Route::post('/{id}/request-info/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate');
 
-            Route::post('/customers/{customerId}/addresses', [CustomerDetailController::class, 'storeAddress'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.addresses.store');
+                Route::post('/{id}/received', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'markItemReceived'])->whereNumber('id')->name('received');
 
-            Route::put('/customers/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'updateAddress'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.addresses.update');
+                Route::post('/{id}/refunded', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'markRefunded'])->whereNumber('id')->name('refunded');
+                Route::post('/{id}/refunded/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate');
 
-            Route::delete('/customers/{customerId}/addresses/{addressId}', [CustomerDetailController::class, 'destroyAddress'])
-                ->middleware('tenant.permission:sales.customers.manage')
-                ->name('tenant.customers.addresses.destroy');
+                Route::post('/{id}/notes', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'addNote'])->whereNumber('id')->name('notes');
+                Route::post('/{id}/notes/validate', [\App\Http\Controllers\Tenant\Panel\Sales\ReturnController::class, 'validateNote'])->whereNumber('id')->name('notes.validate');
+            });
 
-            Route::get('/cities-by-country/{countryId}', [CustomerDetailController::class, 'citiesByCountry'])
+            Route::prefix('customers')->name('tenant.customers.')->middleware('tenant.permission:sales.customers.manage')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'data'])->name('data');
+                Route::get('/export', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'export'])->name('export');
+                Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'store'])->name('store');
+                Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+
+                Route::get('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'show'])->whereNumber('customerId')->name('show');
+                Route::put('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'updateProfile'])->whereNumber('customerId')->name('update');
+                Route::post('/{customerId}/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'validateProfile'])->whereNumber('customerId')->name('validate.update')->middleware('throttle:tenant-validate');
+                Route::patch('/{customerId}/active', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'toggleActive'])->whereNumber('customerId')->name('toggle-active');
+                Route::delete('/{customerId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomersController::class, 'destroy'])->whereNumber('customerId')->name('destroy');
+                Route::get('/{customerId}/payments/data', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'paymentsData'])->whereNumber('customerId')->name('payments.data');
+
+                Route::post('/{customerId}/addresses', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'storeAddress'])->whereNumber('customerId')->name('addresses.store');
+                Route::post('/{customerId}/addresses/validate', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'validateAddress'])->whereNumber('customerId')->name('addresses.validate')->middleware('throttle:tenant-validate');
+                Route::get('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'showAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.show');
+                Route::put('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'updateAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.update');
+                Route::delete('/{customerId}/addresses/{addressId}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'destroyAddress'])->whereNumber('customerId')->whereNumber('addressId')->name('addresses.destroy');
+            });
+
+            Route::get('/cities-by-country/{countryId?}', [\App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController::class, 'citiesByCountry'])
                 ->middleware('tenant.permission:sales.customers.manage')
                 ->name('tenant.cities.by-country');
 

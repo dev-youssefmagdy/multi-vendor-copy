@@ -97,6 +97,13 @@ export default defineConfig({
                 'resources/js/tenant/pages/catalog/product-form.js',
                 'resources/js/tenant/pages/catalog/own-products-index.js',
                 'resources/js/tenant/pages/catalog/own-product-form.js',
+                'resources/js/tenant/pages/sales/orders-index.js',
+                'resources/js/tenant/pages/sales/order-show.js',
+                'resources/js/tenant/pages/sales/returns-index.js',
+                'resources/js/tenant/pages/sales/return-show.js',
+                'resources/js/tenant/pages/sales/customers-index.js',
+                'resources/js/tenant/pages/sales/customer-create.js',
+                'resources/js/tenant/pages/sales/customer-detail.js',
                 // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,

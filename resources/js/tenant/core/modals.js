@@ -52,7 +52,7 @@ function onKeydown(event) {
     trapFocus(event, openModal);
 }
 
-export async function openModal(id, { url, fill, mode } = {}) {
+export async function openModal(id, { url, fill, mode, action } = {}) {
     const modal = getModal(id);
     if (!modal) {
         return;
@@ -60,10 +60,30 @@ export async function openModal(id, { url, fill, mode } = {}) {
 
     lastFocused = document.activeElement;
 
+    const form = modal.querySelector('form');
+
+    // Remember the form's original action/method the first time the modal is
+    // opened so a later "create" open (no action/mode override) can restore
+    // them after a previous "edit" open pointed the form elsewhere.
+    if (form && form.dataset.defaultAction === undefined) {
+        form.dataset.defaultAction = form.getAttribute('action') || '';
+        form.dataset.defaultMethod = form.dataset.method || '';
+    }
+
+    if (form) {
+        form.setAttribute('action', action || form.dataset.defaultAction);
+        form.action = action || form.dataset.defaultAction;
+        const resolvedMethod = mode || form.dataset.defaultMethod;
+        if (resolvedMethod) {
+            form.dataset.method = resolvedMethod;
+        } else {
+            delete form.dataset.method;
+        }
+    }
+
     if (url) {
         try {
             const response = await get(url, {}, { toast: false });
-            const form = modal.querySelector('form');
             if (form) {
                 const { TenantForm } = await import('./forms.js');
                 TenantForm.for(form).fill(response.data ?? {});
@@ -71,21 +91,16 @@ export async function openModal(id, { url, fill, mode } = {}) {
         } catch {
             /* handled by http error interceptor */
         }
-    }
-
-    if (fill) {
-        const form = modal.querySelector('form');
+    } else if (fill) {
         if (form) {
             const { TenantForm } = await import('./forms.js');
             TenantForm.for(form).fill(fill);
         }
-    }
-
-    if (mode) {
-        const form = modal.querySelector('form');
-        if (form) {
-            form.dataset.method = mode;
-        }
+    } else if (form) {
+        // No prefill source: this is a "create" open — reset any leftover
+        // values/errors from a previous "edit" open of the same modal.
+        const { TenantForm } = await import('./forms.js');
+        TenantForm.for(form).reset();
     }
 
     modal.classList.add('is-open');
@@ -128,7 +143,8 @@ function bindDelegation() {
             const id = opener.dataset.modalOpen;
             openModal(id, {
                 url: opener.dataset.modalFillUrl,
-                mode: opener.dataset.modalMode,
+                mode: opener.dataset.modalMethod || opener.dataset.modalMode,
+                action: opener.dataset.modalAction,
             });
             return;
         }

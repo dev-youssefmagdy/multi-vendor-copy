@@ -470,6 +470,11 @@ class TenantPanelRepository
         return $this->buildOrdersQuery($filters)->get();
     }
 
+    public function queryOrders(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildOrdersQuery($filters);
+    }
+
     protected function buildOrdersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
     {
         return Order::query()
@@ -526,6 +531,11 @@ class TenantPanelRepository
     public function exportCustomers(array $filters): \Illuminate\Database\Eloquent\Collection
     {
         return $this->buildCustomersQuery($filters)->get();
+    }
+
+    public function queryCustomers(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildCustomersQuery($filters)->with('orders');
     }
 
     protected function buildCustomersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
@@ -1988,5 +1998,114 @@ class TenantPanelRepository
                 ->values()
                 ->all();
         });
+    }
+
+    /**
+     * Return requests are a central model (App\Models\ReturnRequest uses the CentralConnection
+     * trait), so this query always hits the central database regardless of the current tenant
+     * connection — mirrors the query that used to live directly in Return\ReturnsList.
+     */
+    public function queryReturns(array $filters): Builder
+    {
+        $tenantId = tenant()->id;
+
+        return \App\Models\ReturnRequest::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where('order_number', 'like', '%' . $search . '%');
+            })
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->latest();
+    }
+
+    public function returnStats(): array
+    {
+        $tenantId = tenant()->id;
+
+        return [
+            'total' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->count(),
+            'pending' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Pending->value)->count(),
+            'approved' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Approved->value)->count(),
+            'refunded' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Refunded->value)->count(),
+        ];
+    }
+
+    /**
+     * Same math/grouping as the former Return\ReturnAnalyticsPage::pageData(), just relocated
+     * so the controller can render it through the shared insights layout.
+     */
+    public function returnAnalyticsOverview(): array
+    {
+        $tenantId = tenant()->id;
+
+        $base = \App\Models\ReturnRequest::query()->where('tenant_id', $tenantId);
+
+        $total = (clone $base)->count();
+        $last30 = (clone $base)->where('created_at', '>=', now()->subDays(30))->count();
+
+        $approved = (clone $base)->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Refunded->value])->count();
+        $rejected = (clone $base)->where('status', \App\Enums\ReturnStatus::Rejected->value)->count();
+
+        $approvalRate = $total > 0 ? ($approved / $total) * 100 : 0;
+        $rejectionRate = $total > 0 ? ($rejected / $total) * 100 : 0;
+
+        $topReasons = (clone $base)
+            ->selectRaw('reason, count(*) as total')
+            ->groupBy('reason')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $topProductRows = (clone $base)
+            ->whereNotNull('product_id')
+            ->selectRaw('product_id, count(*) as total')
+            ->groupBy('product_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $productNames = Product::whereIn('id', $topProductRows->pluck('product_id'))
+            ->get()
+            ->mapWithKeys(fn (Product $p) => [$p->id => $p->translationValue('name') ?? $p->slug]);
+
+        $avgProcessingHours = (clone $base)
+            ->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Rejected->value, \App\Enums\ReturnStatus::Refunded->value])
+            ->get()
+            ->avg(fn (\App\Models\ReturnRequest $r) => $r->created_at?->diffInHours($r->updated_at)) ?? 0;
+
+        $monthly = (clone $base)
+            ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
+            ->get()
+            ->groupBy(fn (\App\Models\ReturnRequest $r) => $r->created_at?->format('Y-m'))
+            ->map->count();
+
+        $monthlyRows = collect(range(0, 5))
+            ->map(fn ($i) => now()->subMonths(5 - $i)->format('Y-m'))
+            ->map(fn ($month) => [
+                'label' => Carbon::createFromFormat('Y-m', $month)->format('M Y'),
+                'count' => (int) ($monthly[$month] ?? 0),
+            ])
+            ->values()
+            ->all();
+
+        return [
+            'cards' => [
+                ['label' => 'Total Returns', 'value' => $total, 'format' => 'number', 'caption' => 'All-time return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => 'Last 30 Days', 'value' => $last30, 'format' => 'number', 'caption' => 'Returns submitted this month', 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
+                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved or refunded', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Rejection Rate', 'value' => $rejectionRate, 'format' => 'percent', 'caption' => 'Rejected requests', 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
+                ['label' => 'Avg Processing Time', 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => 'From submission to resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+            ],
+            'top_reasons' => $topReasons->map(fn ($row) => [
+                'label' => $row->reason->label(),
+                'value' => (int) $row->total,
+            ])->all(),
+            'top_products' => $topProductRows->map(fn ($row) => [
+                'label' => $productNames[$row->product_id] ?? "Product #{$row->product_id}",
+                'value' => (int) $row->total,
+            ])->all(),
+            'monthly_rows' => $monthlyRows,
+        ];
     }
 }
