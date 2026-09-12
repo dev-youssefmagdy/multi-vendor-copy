@@ -1,1 +1,0 @@
-import{r as e}from"./rolldown-runtime-2h_wPici.js";import{c as t}from"./vendor-jquery-Br4eTfg-.js";var n=e(t(),1);window.$=window.jQuery=n.default;var r=n.default;export{r as default};

@@ -1452,6 +1452,12 @@ class TenantPanelRepository
         return $this->profitabilityRowsCache ??= $this->productProfitabilityRows(null);
     }
 
+    /** Public wrapper so DataTables::collection() can consume the full, unpaginated rows. */
+    public function profitabilityRows(): array
+    {
+        return $this->allProfitabilityRows();
+    }
+
     public function paginateProductProfitabilityRows(int $perPage = 20, string $pageName = 'profitability'): ManualPaginator
     {
         $all = $this->allProfitabilityRows();

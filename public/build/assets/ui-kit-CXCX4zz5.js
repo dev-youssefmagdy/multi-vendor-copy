@@ -1,0 +1,1 @@
+import{n as e}from"./toast-DHZGhsNO.js";document.getElementById(`ui-kit-rtl-toggle`)?.addEventListener(`click`,()=>{let e=document.documentElement;e.dir=e.dir===`rtl`?`ltr`:`rtl`}),document.addEventListener(`DOMContentLoaded`,()=>{e.info(`UI kit loaded — try the toasts, forms, and datatable below.`)});

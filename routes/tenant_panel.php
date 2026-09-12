@@ -167,7 +167,8 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                 ->withoutMiddleware('tenant.setup.enforce')
                 ->name('tenant.widgets.setup-progress.pages-reviewed');
 
-            Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
+            Route::get('/dashboard', [\App\Http\Controllers\Tenant\Panel\Insights\DashboardController::class, 'index'])
+                ->middleware('tenant.permission:dashboard.view')
                 ->name('tenant.dashboard');
 
             Route::get('/onboarding/{tab?}', OnboardingPage::class)
@@ -304,10 +305,18 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                 ->name('tenant.cities.by-country');
 
             Route::prefix('analytics')->name('tenant.analytics.')->middleware('tenant.permission:analytics.view')->group(function () {
-                Route::get('/orders', OrderAnalyticsPage::class)->name('orders');
-                Route::get('/customer-lifetime-value', CustomerLifetimeValuePage::class)->name('clv');
-                Route::get('/shipping', ShippingAnalyticsPage::class)->name('shipping');
-                Route::get('/profitability', ProductProfitabilityPage::class)->name('profitability');
+                Route::get('/orders', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'index'])->name('orders');
+                Route::get('/orders/data/monthly', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'dataMonthly'])->name('orders.data.monthly');
+                Route::get('/orders/data/status', [\App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController::class, 'dataStatus'])->name('orders.data.status');
+
+                Route::get('/customer-lifetime-value', [\App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController::class, 'index'])->name('clv');
+                Route::get('/customer-lifetime-value/data', [\App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController::class, 'data'])->name('clv.data');
+
+                Route::get('/shipping', [\App\Http\Controllers\Tenant\Panel\Insights\ShippingAnalyticsController::class, 'index'])->name('shipping');
+                Route::get('/shipping/data/monthly', [\App\Http\Controllers\Tenant\Panel\Insights\ShippingAnalyticsController::class, 'dataMonthly'])->name('shipping.data.monthly');
+
+                Route::get('/profitability', [\App\Http\Controllers\Tenant\Panel\Insights\ProductProfitabilityController::class, 'index'])->name('profitability');
+                Route::get('/profitability/data', [\App\Http\Controllers\Tenant\Panel\Insights\ProductProfitabilityController::class, 'data'])->name('profitability.data');
             });
 
             Route::prefix('finance')->name('tenant.finance.')->group(function () {
