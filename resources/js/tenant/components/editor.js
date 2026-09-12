@@ -53,6 +53,7 @@ export async function init(el) {
     el._tenantBeforeSubmit = () => {
         tinymce.get(el.id)?.save();
     };
+    el.dataset.tenantReady = '1';
 
     const off = on('tenant:theme-changed', async () => {
         tinymce.get(el.id)?.remove();

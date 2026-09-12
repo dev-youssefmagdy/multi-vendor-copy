@@ -137,6 +137,12 @@ export class TenantForm {
         }
     }
 
+    /**
+     * Runs every registered component's pre-submit hook (select2/phone/editor
+     * sync, or a payment form's card tokenisation). Returning `false` from a
+     * hook aborts the submit — used by the payment gateway modal to stop a
+     * submission when card tokenisation fails.
+     */
     async syncComponents() {
         if (window.tinymce) {
             this.form.querySelectorAll('[data-tenant-editor]').forEach((el) => {
@@ -146,8 +152,13 @@ export class TenantForm {
 
         const beforeSubmitEls = this.form.querySelectorAll('[data-tenant-ready]');
         for (const el of beforeSubmitEls) {
-            el._tenantBeforeSubmit?.();
+            const result = await el._tenantBeforeSubmit?.();
+            if (result === false) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     async submit() {
@@ -159,7 +170,10 @@ export class TenantForm {
             }
         }
 
-        await this.syncComponents();
+        const ready = await this.syncComponents();
+        if (ready === false) {
+            return;
+        }
 
         const method = methodFor(this.form);
         const action = this.form.action;

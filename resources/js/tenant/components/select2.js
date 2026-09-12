@@ -91,6 +91,7 @@ export async function init(el) {
     el._tenantBeforeSubmit = () => {
         // select2 keeps the native <select> in sync already; nothing extra needed.
     };
+    el.dataset.tenantReady = '1';
 }
 
 function getDependencyValue(el, dependsOn) {

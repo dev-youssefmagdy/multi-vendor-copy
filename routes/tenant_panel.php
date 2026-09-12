@@ -30,14 +30,14 @@ use App\Livewire\Tenant\Customer\CustomersList;
 use App\Http\Controllers\Tenant\CustomerCreateController;
 use App\Http\Controllers\Tenant\CustomerDetailController;
 use App\Livewire\Tenant\Dashboard;
-use App\Livewire\Tenant\Finance\BillingPage;
-use App\Livewire\Tenant\Finance\BillingDetailPage;
-use App\Livewire\Tenant\Finance\BuyLanguagePage;
-use App\Livewire\Tenant\Finance\PayoutsReceivedPage;
-use App\Livewire\Tenant\Finance\SettlementPaymentsPage;
+use App\Http\Controllers\Tenant\Panel\Finance\BillingController;
+use App\Http\Controllers\Tenant\Panel\Finance\PayoutsController;
+use App\Http\Controllers\Tenant\Panel\Finance\SettlementPaymentsController;
+use App\Http\Controllers\Tenant\Panel\Finance\VendorPurchaseController;
+use App\Http\Controllers\Tenant\Panel\Finance\VendorSettleOrderController;
 use App\Livewire\Tenant\Finance\VendorPurchasePage;
-use App\Livewire\Tenant\Finance\VendorSettleOrderPage;
-use App\Livewire\Tenant\Finance\WalletPage;
+use App\Http\Controllers\Tenant\Panel\Finance\WalletController;
+use App\Http\Controllers\Tenant\Panel\Finance\BuyLanguageController;
 use App\Livewire\Tenant\Order\OrdersList;
 use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
 use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
@@ -375,30 +375,80 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             });
 
             Route::prefix('finance')->name('tenant.finance.')->group(function () {
-                Route::get('/wallet', WalletPage::class)
+                Route::get('/wallet', [WalletController::class, 'index'])
                     ->middleware('tenant.permission:finance.wallet.view')
                     ->name('wallet');
-                Route::get('/billing', BillingPage::class)
+                Route::get('/wallet/subscriptions/data', [WalletController::class, 'subscriptionsData'])
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('wallet.subscriptions.data');
+                Route::get('/wallet/transactions/data', [WalletController::class, 'transactionsData'])
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('wallet.transactions.data');
+                Route::post('/wallet/subscription', [WalletController::class, 'subscribe'])
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('wallet.subscribe');
+                Route::post('/wallet/subscription/validate', [WalletController::class, 'validateSubscribe'])
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('wallet.subscribe.validate');
+                Route::get('/billing', [BillingController::class, 'index'])
                     ->middleware('tenant.permission:finance.billing.view')
                     ->name('billing');
-                Route::get('/billing/{orderId}', BillingDetailPage::class)
+                Route::get('/billing/data', [BillingController::class, 'data'])
+                    ->middleware('tenant.permission:finance.billing.view')
+                    ->name('billing.data');
+                Route::get('/billing/{orderId}', [BillingController::class, 'show'])
+                    ->whereNumber('orderId')
                     ->middleware('tenant.permission:finance.billing.view')
                     ->name('billing.detail');
-                Route::get('/vendor-purchases', VendorPurchasePage::class)
+                Route::get('/vendor-purchases', [VendorPurchaseController::class, 'index'])
                     ->middleware('tenant.permission:finance.vendor-purchases.view')
                     ->name('vendor-purchases');
-                Route::get('/vendor-purchases/{orderId}/settle', VendorSettleOrderPage::class)
+                Route::get('/vendor-purchases/data', [VendorPurchaseController::class, 'data'])
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchases.data');
+                Route::get('/vendor-purchases/export', [VendorPurchaseController::class, 'export'])
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchases.export');
+                Route::get('/vendor-purchases/{orderId}/settle', [VendorSettleOrderController::class, 'show'])
+                    ->whereNumber('orderId')
                     ->middleware('tenant.permission:finance.vendor-purchases.view')
                     ->name('vendor-purchase-settle');
-                Route::get('/settlement-payments', SettlementPaymentsPage::class)
+                Route::get('/vendor-purchases/{orderId}/settle/breakdown', [VendorSettleOrderController::class, 'breakdown'])
+                    ->whereNumber('orderId')
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchase-settle.breakdown');
+                Route::post('/vendor-purchases/{orderId}/settle', [VendorSettleOrderController::class, 'settle'])
+                    ->whereNumber('orderId')
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchase-settle.pay');
+                Route::post('/vendor-purchases/{orderId}/settle/validate', [VendorSettleOrderController::class, 'validateSettle'])
+                    ->whereNumber('orderId')
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('vendor-purchase-settle.pay.validate');
+                Route::get('/settlement-payments', [SettlementPaymentsController::class, 'index'])
                     ->middleware('tenant.permission:finance.vendor-purchases.view')
                     ->name('settlement-payments');
-                Route::get('/payouts-received', PayoutsReceivedPage::class)
+                Route::get('/settlement-payments/data', [SettlementPaymentsController::class, 'data'])
+                    ->middleware('tenant.permission:finance.vendor-purchases.view')
+                    ->name('settlement-payments.data');
+                Route::get('/payouts-received', [PayoutsController::class, 'index'])
                     ->middleware('tenant.permission:finance.wallet.view')
                     ->name('payouts');
-                Route::get('/buy-languages', BuyLanguagePage::class)
+                Route::get('/payouts-received/data', [PayoutsController::class, 'data'])
+                    ->middleware('tenant.permission:finance.wallet.view')
+                    ->name('payouts.data');
+                Route::get('/buy-languages', [BuyLanguageController::class, 'index'])
                     ->middleware('tenant.permission:settings.languages.purchase')
                     ->name('buy-languages');
+                Route::get('/buy-languages/data', [BuyLanguageController::class, 'data'])
+                    ->middleware('tenant.permission:settings.languages.purchase')
+                    ->name('buy-languages.data');
+                Route::post('/buy-languages', [BuyLanguageController::class, 'purchase'])
+                    ->middleware('tenant.permission:settings.languages.purchase')
+                    ->name('buy-languages.purchase');
+                Route::post('/buy-languages/validate', [BuyLanguageController::class, 'validatePurchase'])
+                    ->middleware('tenant.permission:settings.languages.purchase')
+                    ->name('buy-languages.purchase.validate');
             });
 
             // Language purchase payment flow (no extra permission middleware – controller guards the logic)

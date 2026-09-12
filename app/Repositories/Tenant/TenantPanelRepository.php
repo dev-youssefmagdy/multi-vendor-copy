@@ -619,7 +619,12 @@ class TenantPanelRepository
 
     public function paginateTransactions(int $perPage = 10, string $pageName = 'page'): LengthAwarePaginator
     {
-        return Transaction::query()->with('model')->latest()->paginate($perPage, ['*'], $pageName);
+        return $this->queryTransactions()->paginate($perPage, ['*'], $pageName);
+    }
+
+    public function queryTransactions(): Builder
+    {
+        return Transaction::query()->with('model')->latest();
     }
 
     public function walletStats(): array
@@ -642,7 +647,12 @@ class TenantPanelRepository
 
     public function paginateSubscriptions(int $perPage = 10, string $pageName = 'page'): LengthAwarePaginator
     {
-        return Subscription::query()->with('transaction')->latest()->paginate($perPage, ['*'], $pageName);
+        return $this->querySubscriptions()->paginate($perPage, ['*'], $pageName);
+    }
+
+    public function querySubscriptions(): Builder
+    {
+        return Subscription::query()->with('transaction')->latest();
     }
 
     public function billingStats(): array
@@ -1877,12 +1887,17 @@ class TenantPanelRepository
      */
     public function paginateVendorPurchases(array $filters, int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->buildVendorPurchasesQuery($filters)->paginate($perPage);
+        return $this->queryVendorPurchases($filters)->paginate($perPage);
     }
 
     public function exportVendorPurchases(array $filters): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->buildVendorPurchasesQuery($filters)->get();
+        return $this->queryVendorPurchases($filters)->get();
+    }
+
+    public function queryVendorPurchases(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildVendorPurchasesQuery($filters);
     }
 
     protected function buildVendorPurchasesQuery(array $filters): \Illuminate\Database\Eloquent\Builder
@@ -1998,6 +2013,107 @@ class TenantPanelRepository
                 ->values()
                 ->all();
         });
+    }
+
+    /**
+     * VendorSettlement is a central model (uses the CentralConnection trait), so this query
+     * always hits the central database regardless of the current tenant connection — mirrors
+     * the query that used to live directly in Finance\SettlementPaymentsPage.
+     */
+    public function querySettlementPayments(array $filters): Builder
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        return \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('invoice_number', 'like', "%{$search}%")
+                        ->orWhere('order_uuid', 'like', "%{$search}%")
+                        ->orWhere('transaction_id', 'like', "%{$search}%");
+                });
+            })
+            ->latest('settled_at');
+    }
+
+    public function settlementPaymentStats(): array
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        $totalCount = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalPaid = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('total');
+        $thisMonth = \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'paid')
+            ->whereMonth('settled_at', now()->month)
+            ->whereYear('settled_at', now()->year)
+            ->sum('total');
+
+        $statuses = \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->distinct()
+            ->pluck('status', 'status')
+            ->filter()
+            ->toArray();
+
+        return [
+            'total' => $totalCount,
+            'total_paid' => $totalPaid,
+            'this_month' => $thisMonth,
+            'statuses' => $statuses,
+        ];
+    }
+
+    /**
+     * TenantPayout is a central model (uses the CentralConnection trait), so this query
+     * always hits the central database regardless of the current tenant connection — mirrors
+     * the query that used to live directly in Finance\PayoutsReceivedPage.
+     */
+    public function queryPayouts(array $filters): Builder
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        return \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('invoice_number', 'like', "%{$search}%")
+                        ->orWhere('transaction_reference', 'like', "%{$search}%");
+                });
+            })
+            ->latest('paid_at');
+    }
+
+    public function payoutStats(): array
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        $totalCount = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalReceived = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('amount');
+        $thisMonth = \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'paid')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('amount');
+
+        $statuses = \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->distinct()
+            ->pluck('status', 'status')
+            ->filter()
+            ->toArray();
+
+        return [
+            'total' => $totalCount,
+            'total_received' => $totalReceived,
+            'this_month' => $thisMonth,
+            'statuses' => $statuses,
+        ];
     }
 
     /**

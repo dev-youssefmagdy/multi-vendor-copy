@@ -30,3 +30,4 @@ registerComponent('[data-checkbox-group]', () => import('../components/checkbox-
 registerComponent('[data-tenant-notification-bell]', () => import('../components/notification-bell.js'));
 registerComponent('[data-setup-progress]', () => import('../shell/setup-progress.js'));
 registerComponent('[data-tenant-image-search-modal]', () => import('../components/image-search.js'));
+registerComponent('[data-tenant-payment-modal]', () => import('../modules/payment-gateway.js'));

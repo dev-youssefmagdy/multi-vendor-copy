@@ -1,0 +1,1 @@
+<x-tenant::status-badge :status="$subscription->status" />

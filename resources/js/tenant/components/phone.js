@@ -47,6 +47,7 @@ export async function init(el) {
     visible.addEventListener('countrychange', sync);
 
     el._tenantBeforeSubmit = sync;
+    el.dataset.tenantReady = '1';
 }
 
 export function destroy(el) {
