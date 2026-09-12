@@ -20,7 +20,7 @@ final class ShippingAnalyticsController extends PanelController
 
     private function overview(): array
     {
-        return Cache::remember('tenant:'.tenant('id').':shipping-analytics:overview', 60, fn () => $this->repository->shippingAnalyticsOverview());
+        return Cache::driver('file')->remember('tenant:'.tenant('id').':shipping-analytics:overview', 60, fn () => $this->repository->shippingAnalyticsOverview());
     }
 
     public function index(): View

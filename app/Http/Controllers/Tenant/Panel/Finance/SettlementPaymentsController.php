@@ -49,6 +49,7 @@ final class SettlementPaymentsController extends PanelController
     public function data(Request $request): JsonResponse
     {
         $filters = $this->filters($request, ['search', 'status']);
+        $filters['status'] = $filters['status'] ?? '';
         $filters['status'] = $filters['status'] ?: 'paid';
 
         $query = $this->repo->querySettlementPayments($filters);

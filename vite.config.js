@@ -154,6 +154,7 @@ export default defineConfig({
                 'resources/js/tenant/pages/settings/general.js',
                 'resources/js/tenant/pages/settings/compliance.js',
                 'resources/js/tenant/pages/settings/return-policy.js',
+                'resources/js/tenant/pages/onboarding/index.js',
                 // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,

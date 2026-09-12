@@ -139,10 +139,7 @@
     @if(!empty($order))
     <div class="card fu d4 section-gap">
         <h4 class="panel-title">Order Summary</h4>
-        @include('livewire.tenant.order.partials.order-details', [
-            'order' => $order,
-            'showShippingControls' => false,
-        ])
+        @include('tenant.pages.sales.orders._partials.details', ['order' => $order])
     </div>
     @endif
 

@@ -20,7 +20,7 @@ final class CustomerLifetimeValueController extends PanelController
 
     private function overview(): array
     {
-        return Cache::remember('tenant:'.tenant('id').':clv:overview', 60, fn () => $this->repository->customerLifetimeOverview());
+        return Cache::driver('file')->remember('tenant:' . tenant('id') . ':clv:overview', 60, fn() => $this->repository->customerLifetimeOverview());
     }
 
     public function index(): View
@@ -54,7 +54,7 @@ final class CustomerLifetimeValueController extends PanelController
                             'description' => 'Use repeat-buyer growth and lifetime averages to identify retention gaps.',
                             'metrics' => [
                                 ['label' => 'Top Customer', 'value' => $firstRow['name'] ?? 'N/A'],
-                                ['label' => 'Top Spend', 'value' => '$'.number_format((float) ($firstRow['total'] ?? 0), 2)],
+                                ['label' => 'Top Spend', 'value' => '$' . number_format((float) ($firstRow['total'] ?? 0), 2)],
                                 ['label' => 'Repeat Buyers', 'value' => number_format((int) $rows->where('orders', '>', 1)->count())],
                             ],
                         ],
@@ -92,11 +92,11 @@ final class CustomerLifetimeValueController extends PanelController
         $rows = collect($this->overview()['rows']);
 
         return DataTables::collection($rows)
-            ->addColumn('customer', fn (array $row) => view('tenant.pages.insights._cols.customer', ['row' => $row])->render())
-            ->editColumn('total', fn (array $row) => '$'.number_format((float) $row['total'], 2))
-            ->editColumn('paid_total', fn (array $row) => '$'.number_format((float) $row['paid_total'], 2))
-            ->editColumn('average', fn (array $row) => '$'.number_format((float) $row['average'], 2))
-            ->editColumn('last_order', fn (array $row) => optional($row['last_order'])->format('M d, Y') ?? 'N/A')
+            ->addColumn('customer', fn(array $row) => view('tenant.pages.insights._cols.customer', ['row' => $row])->render())
+            ->editColumn('total', fn(array $row) => '$' . number_format((float) $row['total'], 2))
+            ->editColumn('paid_total', fn(array $row) => '$' . number_format((float) $row['paid_total'], 2))
+            ->editColumn('average', fn(array $row) => '$' . number_format((float) $row['average'], 2))
+            ->editColumn('last_order', fn(array $row) => optional($row['last_order'])->format('M d, Y') ?? 'N/A')
             ->rawColumns(['customer'])
             ->toJson();
     }

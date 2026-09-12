@@ -1,49 +1,49 @@
 {
-  "_axios-rno3gpLC.js": {
-    "file": "assets/axios-rno3gpLC.js",
+  "_axios-CuPy2Ixh.js": {
+    "file": "assets/axios-CuPy2Ixh.js",
     "name": "axios",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
-  "_bootstrap-BYI8__Dy.js": {
-    "file": "assets/bootstrap-BYI8__Dy.js",
+  "_bootstrap-CiZkJFPc.js": {
+    "file": "assets/bootstrap-CiZkJFPc.js",
     "name": "bootstrap",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_axios-rno3gpLC.js",
-      "_echo-Bc_vj34d.js",
-      "_pusher-CQz7seSm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_axios-CuPy2Ixh.js",
+      "_echo-BvVdiET9.js",
+      "_pusher-BatKT8QL.js"
     ]
   },
-  "_confirm-DrtghGEF.js": {
-    "file": "assets/confirm-DrtghGEF.js",
+  "_confirm-C0AQ92OP.js": {
+    "file": "assets/confirm-C0AQ92OP.js",
     "name": "confirm",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
-      "_vendor-swal-B-kxRjAZ.js"
+      "_vendor-swal-BmYa7zU2.js"
     ]
   },
-  "_core-CydPFjW9.js": {
-    "file": "assets/core-CydPFjW9.js",
+  "_core-DIlaAJdq.js": {
+    "file": "assets/core-DIlaAJdq.js",
     "name": "core",
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_confirm-DrtghGEF.js",
-      "_dom-B9qJ3KFz.js",
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js",
-      "_forms-Cm8EFlPb.js",
-      "_http-B0YEhg3S.js",
-      "_modals-C3WK80Iy.js",
-      "_registry-Dp6BQhlz.js",
-      "_toast-CEmOGeir.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_confirm-C0AQ92OP.js",
+      "_dom-BvuyIO8G.js",
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js",
+      "_forms-D4te-vLL.js",
+      "_http-Dxjz7Wdq.js",
+      "_modals-BU8k2qb3.js",
+      "_registry-B-cqme3C.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "dynamicImports": [
-      "_modals-C3WK80Iy.js",
+      "_modals-BU8k2qb3.js",
       "resources/js/tenant/components/password-toggle.js",
       "resources/js/tenant/components/slug.js",
       "resources/js/tenant/components/char-counter.js",
@@ -77,124 +77,489 @@
       "resources/js/tenant/modules/payment-gateway.js"
     ]
   },
-  "_dom-B9qJ3KFz.js": {
-    "file": "assets/dom-B9qJ3KFz.js",
+  "_dom-BvuyIO8G.js": {
+    "file": "assets/dom-BvuyIO8G.js",
     "name": "dom"
   },
-  "_echo-BMe20d-J.js": {
-    "file": "assets/echo-BMe20d-J.js",
+  "_echo-BvVdiET9.js": {
+    "file": "assets/echo-BvVdiET9.js",
     "name": "echo",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js"
+    ]
+  },
+  "_echo-CGw7MDoI.js": {
+    "file": "assets/echo-CGw7MDoI.js",
+    "name": "echo",
+    "imports": [
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
-      "_echo-Bc_vj34d.js",
-      "_pusher-CQz7seSm.js"
+      "_echo-BvVdiET9.js",
+      "_pusher-BatKT8QL.js"
     ]
   },
-  "_echo-Bc_vj34d.js": {
-    "file": "assets/echo-Bc_vj34d.js",
-    "name": "echo",
-    "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
-    ]
-  },
-  "_events-oXKQj97e.js": {
-    "file": "assets/events-oXKQj97e.js",
+  "_events-BGalvnsw.js": {
+    "file": "assets/events-BGalvnsw.js",
     "name": "events"
   },
-  "_flatpickr-CiWYvy1i.js": {
-    "file": "assets/flatpickr-CiWYvy1i.js",
+  "_flatpickr-4OssAiTV.js": {
+    "file": "assets/flatpickr-4OssAiTV.js",
     "name": "flatpickr",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
-      "_vendor-flatpickr-BWHbpfik.js"
+      "_vendor-flatpickr-DlHxRg-N.js"
     ]
   },
-  "_forms-Cm8EFlPb.js": {
-    "file": "assets/forms-Cm8EFlPb.js",
+  "_forms-D4te-vLL.js": {
+    "file": "assets/forms-D4te-vLL.js",
     "name": "forms",
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_confirm-DrtghGEF.js",
-      "_dom-B9qJ3KFz.js",
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js",
-      "_toast-CEmOGeir.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_confirm-C0AQ92OP.js",
+      "_dom-BvuyIO8G.js",
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "dynamicImports": [
-      "_modals-C3WK80Iy.js"
+      "_modals-BU8k2qb3.js"
     ]
   },
-  "_http-B0YEhg3S.js": {
-    "file": "assets/http-B0YEhg3S.js",
+  "_http-Dxjz7Wdq.js": {
+    "file": "assets/http-Dxjz7Wdq.js",
     "name": "http",
     "imports": [
-      "_axios-rno3gpLC.js",
-      "_toast-CEmOGeir.js"
+      "_axios-CuPy2Ixh.js",
+      "_toast-Bt6A-TVs.js"
     ]
   },
-  "_insight-charts-B5Es0llC.js": {
-    "file": "assets/insight-charts-B5Es0llC.js",
+  "_insight-charts-Ce91-sBB.js": {
+    "file": "assets/insight-charts-Ce91-sBB.js",
     "name": "insight-charts",
     "imports": [
-      "_vendor-charts-D7i-PTn7.js",
-      "_events-oXKQj97e.js"
+      "_vendor-charts-DkU6U417.js",
+      "_events-BGalvnsw.js"
     ]
   },
-  "_modals-C3WK80Iy.js": {
-    "file": "assets/modals-C3WK80Iy.js",
+  "_logo-builder-CnodXAtl.js": {
+    "file": "assets/logo-builder-CnodXAtl.js",
+    "name": "logo-builder",
+    "css": [
+      "assets/logo-builder-DY3RbYyQ.css"
+    ],
+    "assets": [
+      "assets/cairo-arabic-400-normal-DN15VWMM.woff2",
+      "assets/cairo-arabic-400-normal-CAYwymWN.woff",
+      "assets/cairo-latin-ext-400-normal-xCL67Y2R.woff2",
+      "assets/cairo-latin-ext-400-normal-C_BIE9Qe.woff",
+      "assets/cairo-latin-400-normal-Dh7otpdh.woff2",
+      "assets/cairo-latin-400-normal-b1R3q6Pf.woff",
+      "assets/cairo-arabic-700-normal-D3nDedWX.woff2",
+      "assets/cairo-arabic-700-normal-CyOqhaeK.woff",
+      "assets/cairo-latin-ext-700-normal-Cscux539.woff2",
+      "assets/cairo-latin-ext-700-normal-htXca11Z.woff",
+      "assets/cairo-latin-700-normal-C3GYtKbV.woff2",
+      "assets/cairo-latin-700-normal-6fcUy4Rc.woff",
+      "assets/tajawal-arabic-400-normal-CyCXRvzh.woff2",
+      "assets/tajawal-arabic-400-normal-DCQxawbB.woff",
+      "assets/tajawal-latin-400-normal-BVNSOH3d.woff2",
+      "assets/tajawal-latin-400-normal-BdYcZznU.woff",
+      "assets/tajawal-arabic-700-normal-D2-eand5.woff2",
+      "assets/tajawal-arabic-700-normal-9L7Zusdl.woff",
+      "assets/tajawal-latin-700-normal-BypgxfGb.woff2",
+      "assets/tajawal-latin-700-normal-CV3bxpHe.woff",
+      "assets/almarai-arabic-400-normal-BFOw1b4Z.woff2",
+      "assets/almarai-arabic-400-normal-BFru3eIr.woff",
+      "assets/almarai-latin-400-normal-vHk6bQw7.woff2",
+      "assets/almarai-latin-400-normal-nk-oBp0x.woff",
+      "assets/almarai-arabic-700-normal-RufW5IrK.woff2",
+      "assets/almarai-arabic-700-normal-ChHbFnJB.woff",
+      "assets/almarai-latin-700-normal-CmEa8QLc.woff2",
+      "assets/almarai-latin-700-normal-Bw55lGft.woff",
+      "assets/noto-sans-arabic-arabic-400-normal-AAMxebZb.woff2",
+      "assets/noto-sans-arabic-arabic-400-normal-hsqIUL9Q.woff",
+      "assets/noto-sans-arabic-math-400-normal-BxrVu-ji.woff2",
+      "assets/noto-sans-arabic-math-400-normal-BiWGKoY7.woff",
+      "assets/noto-sans-arabic-symbols-400-normal-BbP0vlM-.woff2",
+      "assets/noto-sans-arabic-symbols-400-normal-BJzmBRSy.woff",
+      "assets/noto-sans-arabic-latin-ext-400-normal-CW3XQ4Yj.woff2",
+      "assets/noto-sans-arabic-latin-ext-400-normal-D4Wl3hq7.woff",
+      "assets/noto-sans-arabic-latin-400-normal-CjsIS08k.woff2",
+      "assets/noto-sans-arabic-latin-400-normal-lr8cikIT.woff",
+      "assets/noto-sans-arabic-arabic-700-normal-3CqrwsiZ.woff2",
+      "assets/noto-sans-arabic-arabic-700-normal-DXnsSW3z.woff",
+      "assets/noto-sans-arabic-math-700-normal-DhwRdyuq.woff2",
+      "assets/noto-sans-arabic-math-700-normal-C3IT52xG.woff",
+      "assets/noto-sans-arabic-symbols-700-normal-D40a2DlB.woff2",
+      "assets/noto-sans-arabic-symbols-700-normal-Ct3Gyvbr.woff",
+      "assets/noto-sans-arabic-latin-ext-700-normal-wF0ZdkCd.woff2",
+      "assets/noto-sans-arabic-latin-ext-700-normal-DX5dIs2j.woff",
+      "assets/noto-sans-arabic-latin-700-normal-D41hNJFR.woff2",
+      "assets/noto-sans-arabic-latin-700-normal-DST6Nu2E.woff",
+      "assets/ibm-plex-sans-arabic-arabic-400-normal-CyU-ddYS.woff2",
+      "assets/ibm-plex-sans-arabic-arabic-400-normal-EA1o-u_Q.woff",
+      "assets/ibm-plex-sans-arabic-cyrillic-ext-400-normal-KAuemXZb.woff2",
+      "assets/ibm-plex-sans-arabic-cyrillic-ext-400-normal-BnfWueTs.woff",
+      "assets/ibm-plex-sans-arabic-latin-ext-400-normal-BpLfq-63.woff2",
+      "assets/ibm-plex-sans-arabic-latin-ext-400-normal-BeVLg08x.woff",
+      "assets/ibm-plex-sans-arabic-latin-400-normal-Bo5KPYvw.woff2",
+      "assets/ibm-plex-sans-arabic-latin-400-normal-CFZh1unN.woff",
+      "assets/ibm-plex-sans-arabic-arabic-700-normal-DrtBj6UE.woff2",
+      "assets/ibm-plex-sans-arabic-arabic-700-normal-9rXc6cUL.woff",
+      "assets/ibm-plex-sans-arabic-cyrillic-ext-700-normal-DkasDNaI.woff2",
+      "assets/ibm-plex-sans-arabic-cyrillic-ext-700-normal-Dhy2Zk9g.woff",
+      "assets/ibm-plex-sans-arabic-latin-ext-700-normal-BSbyEp0V.woff2",
+      "assets/ibm-plex-sans-arabic-latin-ext-700-normal-C7GcWn11.woff",
+      "assets/ibm-plex-sans-arabic-latin-700-normal-BzSf6GNr.woff2",
+      "assets/ibm-plex-sans-arabic-latin-700-normal-Cl4F7CZR.woff",
+      "assets/readex-pro-arabic-400-normal-BzB5iZVu.woff2",
+      "assets/readex-pro-arabic-400-normal-CRluTl2A.woff",
+      "assets/readex-pro-vietnamese-400-normal-DAQS1QRE.woff2",
+      "assets/readex-pro-vietnamese-400-normal-DRTbt2AX.woff",
+      "assets/readex-pro-latin-ext-400-normal-CDeDBhe3.woff2",
+      "assets/readex-pro-latin-ext-400-normal-DzeKRH4q.woff",
+      "assets/readex-pro-latin-400-normal-BZtYQVaG.woff2",
+      "assets/readex-pro-latin-400-normal-SP_jEUAw.woff",
+      "assets/readex-pro-arabic-700-normal-EXBdNfUG.woff2",
+      "assets/readex-pro-arabic-700-normal-CrhlwrkQ.woff",
+      "assets/readex-pro-vietnamese-700-normal-BOdn1JB1.woff2",
+      "assets/readex-pro-vietnamese-700-normal-DWiQMDrn.woff",
+      "assets/readex-pro-latin-ext-700-normal-Bpf-iva7.woff2",
+      "assets/readex-pro-latin-ext-700-normal-C1QSodUR.woff",
+      "assets/readex-pro-latin-700-normal-oqSerPEB.woff2",
+      "assets/readex-pro-latin-700-normal-L_HvUYJT.woff",
+      "assets/lemonada-arabic-400-normal-w7xoLTFn.woff2",
+      "assets/lemonada-arabic-400-normal-CZyyVGAa.woff",
+      "assets/lemonada-vietnamese-400-normal-BdAsZdR_.woff2",
+      "assets/lemonada-vietnamese-400-normal-dxgCwKVW.woff",
+      "assets/lemonada-latin-ext-400-normal-DwDGAkVj.woff2",
+      "assets/lemonada-latin-ext-400-normal-C7udAu2i.woff",
+      "assets/lemonada-latin-400-normal-DUvPZbOV.woff2",
+      "assets/lemonada-latin-400-normal-Ca96xa3e.woff",
+      "assets/lemonada-arabic-700-normal-BLxDy-ee.woff2",
+      "assets/lemonada-arabic-700-normal-Cs264PDM.woff",
+      "assets/lemonada-vietnamese-700-normal-31Rv3sIN.woff2",
+      "assets/lemonada-vietnamese-700-normal-Bu0GjjFj.woff",
+      "assets/lemonada-latin-ext-700-normal-5eQ_j4Y1.woff2",
+      "assets/lemonada-latin-ext-700-normal-DMd8H9P8.woff",
+      "assets/lemonada-latin-700-normal-o81mPNau.woff2",
+      "assets/lemonada-latin-700-normal-D-V-bhh0.woff",
+      "assets/reem-kufi-arabic-400-normal-DtbpzZsC.woff2",
+      "assets/reem-kufi-arabic-400-normal-BBJU0Qav.woff",
+      "assets/reem-kufi-vietnamese-400-normal-mVApVoLm.woff2",
+      "assets/reem-kufi-vietnamese-400-normal-CC1rmUNx.woff",
+      "assets/reem-kufi-latin-ext-400-normal-CtrjvQUY.woff2",
+      "assets/reem-kufi-latin-ext-400-normal-CkEL2vhd.woff",
+      "assets/reem-kufi-latin-400-normal-Za7ilK7N.woff2",
+      "assets/reem-kufi-latin-400-normal-dNVWXZsY.woff",
+      "assets/reem-kufi-arabic-700-normal-D4RhYlR1.woff2",
+      "assets/reem-kufi-arabic-700-normal-2X0LRV6P.woff",
+      "assets/reem-kufi-vietnamese-700-normal-CwRvvSSB.woff2",
+      "assets/reem-kufi-vietnamese-700-normal-C_zHpWh6.woff",
+      "assets/reem-kufi-latin-ext-700-normal-CbxOURXW.woff2",
+      "assets/reem-kufi-latin-ext-700-normal-BVODnn_J.woff",
+      "assets/reem-kufi-latin-700-normal-D4MLSEVm.woff2",
+      "assets/reem-kufi-latin-700-normal-CFkdsF2J.woff",
+      "assets/amiri-arabic-400-normal-D0NIBXga.woff2",
+      "assets/amiri-arabic-400-normal-C_1DQziU.woff",
+      "assets/amiri-latin-ext-400-normal-C9hoIjPx.woff2",
+      "assets/amiri-latin-ext-400-normal-CGn-6a7O.woff",
+      "assets/amiri-latin-400-normal-Czk41Rjn.woff2",
+      "assets/amiri-latin-400-normal-Bv6IM0kz.woff",
+      "assets/amiri-arabic-700-normal-D8FrblyB.woff2",
+      "assets/amiri-arabic-700-normal-dUd6sHq-.woff",
+      "assets/amiri-latin-ext-700-normal-ByFuOT8o.woff2",
+      "assets/amiri-latin-ext-700-normal-Ck-lxu84.woff",
+      "assets/amiri-latin-700-normal-DIjoEGk6.woff2",
+      "assets/amiri-latin-700-normal-BH9dHmOv.woff",
+      "assets/scheherazade-new-arabic-400-normal-BQFftFrr.woff2",
+      "assets/scheherazade-new-arabic-400-normal-BusZfw6j.woff",
+      "assets/scheherazade-new-latin-ext-400-normal-RLkGgHnN.woff2",
+      "assets/scheherazade-new-latin-ext-400-normal-DOY06IJe.woff",
+      "assets/scheherazade-new-latin-400-normal-X_aqx3In.woff2",
+      "assets/scheherazade-new-latin-400-normal-DSpaYQ48.woff",
+      "assets/scheherazade-new-arabic-700-normal-BgseUfDr.woff2",
+      "assets/scheherazade-new-arabic-700-normal-B_V_WvY8.woff",
+      "assets/scheherazade-new-latin-ext-700-normal-BeStj5QX.woff2",
+      "assets/scheherazade-new-latin-ext-700-normal-DvxZgnjm.woff",
+      "assets/scheherazade-new-latin-700-normal-BRBC5bke.woff2",
+      "assets/scheherazade-new-latin-700-normal-BLgVC2Z_.woff",
+      "assets/lalezar-arabic-400-normal-D6_F3AeY.woff2",
+      "assets/lalezar-arabic-400-normal-BT7j_n2X.woff",
+      "assets/lalezar-vietnamese-400-normal-ScipispP.woff2",
+      "assets/lalezar-vietnamese-400-normal-DXhD3tbU.woff",
+      "assets/lalezar-latin-ext-400-normal-Boaamuqr.woff2",
+      "assets/lalezar-latin-ext-400-normal-Dq4DC2QX.woff",
+      "assets/lalezar-latin-400-normal-CsH8Qv7g.woff2",
+      "assets/lalezar-latin-400-normal-Bm4W26Zi.woff",
+      "assets/poppins-devanagari-400-normal-CJDn6rn8.woff2",
+      "assets/poppins-devanagari-400-normal-CqVvlrh5.woff",
+      "assets/poppins-latin-ext-400-normal-by3JarPu.woff2",
+      "assets/poppins-latin-ext-400-normal-DaBSavcJ.woff",
+      "assets/poppins-latin-400-normal-cpxAROuN.woff2",
+      "assets/poppins-latin-400-normal-BOb3E3N0.woff",
+      "assets/poppins-devanagari-700-normal-O-jipLrW.woff2",
+      "assets/poppins-devanagari-700-normal-fHs-vx92.woff",
+      "assets/poppins-latin-ext-700-normal-cby-RkWa.woff2",
+      "assets/poppins-latin-ext-700-normal-DctTR6Tg.woff",
+      "assets/poppins-latin-700-normal-Qrb0O0WB.woff2",
+      "assets/poppins-latin-700-normal-BVuQR_eA.woff",
+      "assets/montserrat-cyrillic-ext-400-normal-Xqov12YL.woff2",
+      "assets/montserrat-cyrillic-ext-400-normal-DRPPeomZ.woff",
+      "assets/montserrat-cyrillic-400-normal-BPq32Q8K.woff2",
+      "assets/montserrat-cyrillic-400-normal-jEs4Tk-Z.woff",
+      "assets/montserrat-vietnamese-400-normal-D4oHqQTd.woff2",
+      "assets/montserrat-vietnamese-400-normal-BeEscFYY.woff",
+      "assets/montserrat-latin-ext-400-normal-B8bwfy6Y.woff2",
+      "assets/montserrat-latin-ext-400-normal-BffdBkAA.woff",
+      "assets/montserrat-latin-400-normal-BLhwKU8k.woff2",
+      "assets/montserrat-latin-400-normal-xItZbAXg.woff",
+      "assets/montserrat-cyrillic-ext-700-normal-MyDreaeu.woff2",
+      "assets/montserrat-cyrillic-ext-700-normal-D-Mk2xRJ.woff",
+      "assets/montserrat-cyrillic-700-normal-D-Pqjtdp.woff2",
+      "assets/montserrat-cyrillic-700-normal-BvLYcGP1.woff",
+      "assets/montserrat-vietnamese-700-normal-C0x1De3p.woff2",
+      "assets/montserrat-vietnamese-700-normal-DnwGT2D9.woff",
+      "assets/montserrat-latin-ext-700-normal-BOP2Nhf0.woff2",
+      "assets/montserrat-latin-ext-700-normal-DdDFr05Z.woff",
+      "assets/montserrat-latin-700-normal-BdjcYUrC.woff2",
+      "assets/montserrat-latin-700-normal-BWkrl476.woff",
+      "assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2",
+      "assets/inter-cyrillic-ext-400-normal-DQukG94-.woff",
+      "assets/inter-cyrillic-400-normal-obahsSVq.woff2",
+      "assets/inter-cyrillic-400-normal-HOLc17fK.woff",
+      "assets/inter-greek-ext-400-normal-DGGRlc-M.woff2",
+      "assets/inter-greek-ext-400-normal-KugGGMne.woff",
+      "assets/inter-greek-400-normal-B4URO6DV.woff2",
+      "assets/inter-greek-400-normal-q2sYcFCs.woff",
+      "assets/inter-vietnamese-400-normal-DMkecbls.woff2",
+      "assets/inter-vietnamese-400-normal-Bbgyi5SW.woff",
+      "assets/inter-latin-ext-400-normal-C1nco2VV.woff2",
+      "assets/inter-latin-ext-400-normal-77YHD8bZ.woff",
+      "assets/inter-latin-400-normal-C38fXH4l.woff2",
+      "assets/inter-latin-400-normal-CyCys3Eg.woff",
+      "assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2",
+      "assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff",
+      "assets/inter-cyrillic-700-normal-CjBOestx.woff2",
+      "assets/inter-cyrillic-700-normal-DrXBdSj3.woff",
+      "assets/inter-greek-ext-700-normal-qfdV9bQt.woff2",
+      "assets/inter-greek-ext-700-normal-BoQ6DsYi.woff",
+      "assets/inter-greek-700-normal-C3JjAnD8.woff2",
+      "assets/inter-greek-700-normal-BUv2fZ6O.woff",
+      "assets/inter-vietnamese-700-normal-DlLaEgI2.woff2",
+      "assets/inter-vietnamese-700-normal-BZaoP0fm.woff",
+      "assets/inter-latin-ext-700-normal-Ca8adRJv.woff2",
+      "assets/inter-latin-ext-700-normal-TidjK2hL.woff",
+      "assets/inter-latin-700-normal-Yt3aPRUw.woff2",
+      "assets/inter-latin-700-normal-BLAVimhd.woff",
+      "assets/nunito-cyrillic-ext-400-normal-CuPM9foi.woff2",
+      "assets/nunito-cyrillic-ext-400-normal-xaE7D4Sw.woff",
+      "assets/nunito-cyrillic-400-normal-xAOo5cBP.woff2",
+      "assets/nunito-cyrillic-400-normal-D1j0u8EH.woff",
+      "assets/nunito-vietnamese-400-normal-BHkVbP3T.woff2",
+      "assets/nunito-vietnamese-400-normal-DtOtW02z.woff",
+      "assets/nunito-latin-ext-400-normal-i-8OOpdj.woff2",
+      "assets/nunito-latin-ext-400-normal-CjMJVfGn.woff",
+      "assets/nunito-latin-400-normal-r8SDr6Up.woff2",
+      "assets/nunito-latin-400-normal-DKg4f3fz.woff",
+      "assets/nunito-cyrillic-ext-700-normal-BuR0mlCG.woff2",
+      "assets/nunito-cyrillic-ext-700-normal-DfoqN4Gs.woff",
+      "assets/nunito-cyrillic-700-normal-DP36NgGt.woff2",
+      "assets/nunito-cyrillic-700-normal-DfHRUDv-.woff",
+      "assets/nunito-vietnamese-700-normal-Ch8EUCfz.woff2",
+      "assets/nunito-vietnamese-700-normal-C9SQsXvj.woff",
+      "assets/nunito-latin-ext-700-normal-BWeMsAzO.woff2",
+      "assets/nunito-latin-ext-700-normal-D4woHhbd.woff",
+      "assets/nunito-latin-700-normal-Dort48En.woff2",
+      "assets/nunito-latin-700-normal-OcDqTBcA.woff",
+      "assets/dm-sans-latin-ext-400-normal-BtiwyxMk.woff2",
+      "assets/dm-sans-latin-ext-400-normal-BjWJ59Pq.woff",
+      "assets/dm-sans-latin-400-normal-CW0RaeGs.woff2",
+      "assets/dm-sans-latin-400-normal-BwCSEQnW.woff",
+      "assets/dm-sans-latin-ext-700-normal-CJIcxD6K.woff2",
+      "assets/dm-sans-latin-ext-700-normal-BLI3TTWz.woff",
+      "assets/dm-sans-latin-700-normal-DvUfVpUG.woff2",
+      "assets/dm-sans-latin-700-normal-CUSSCpQX.woff",
+      "assets/oswald-cyrillic-ext-400-normal-DaQSmjrl.woff2",
+      "assets/oswald-cyrillic-ext-400-normal-BkkDEomt.woff",
+      "assets/oswald-cyrillic-400-normal-Dakd8U79.woff2",
+      "assets/oswald-cyrillic-400-normal-BUD0W5Zj.woff",
+      "assets/oswald-vietnamese-400-normal-Qi5zi-Wv.woff2",
+      "assets/oswald-vietnamese-400-normal-BupuUjkp.woff",
+      "assets/oswald-latin-ext-400-normal-DbVOzfr-.woff2",
+      "assets/oswald-latin-ext-400-normal-KcyBFdGH.woff",
+      "assets/oswald-latin-400-normal-BAFo8sP8.woff2",
+      "assets/oswald-latin-400-normal-D1wpMXgf.woff",
+      "assets/oswald-cyrillic-ext-700-normal-CtkJES1U.woff2",
+      "assets/oswald-cyrillic-ext-700-normal-VKAui8kQ.woff",
+      "assets/oswald-cyrillic-700-normal-BO0IwMyy.woff2",
+      "assets/oswald-cyrillic-700-normal-DxuP1Pb9.woff",
+      "assets/oswald-vietnamese-700-normal-_DkZZ6ID.woff2",
+      "assets/oswald-vietnamese-700-normal-BxFoeH7J.woff",
+      "assets/oswald-latin-ext-700-normal-BKErdSR5.woff2",
+      "assets/oswald-latin-ext-700-normal-CJSSDThd.woff",
+      "assets/oswald-latin-700-normal-vy6hmKSr.woff2",
+      "assets/oswald-latin-700-normal-UmC9Ev9x.woff",
+      "assets/raleway-cyrillic-ext-400-normal-zbv6uFvq.woff2",
+      "assets/raleway-cyrillic-ext-400-normal-QD38Acpa.woff",
+      "assets/raleway-cyrillic-400-normal-B1ZxqHSH.woff2",
+      "assets/raleway-cyrillic-400-normal-BOk4FNQ-.woff",
+      "assets/raleway-vietnamese-400-normal-CTw6K1Xj.woff2",
+      "assets/raleway-vietnamese-400-normal-CTqj18iX.woff",
+      "assets/raleway-latin-ext-400-normal-B4d0sYmR.woff2",
+      "assets/raleway-latin-ext-400-normal-DoUy7GWe.woff",
+      "assets/raleway-latin-400-normal-C5eIEfLm.woff2",
+      "assets/raleway-latin-400-normal-sMcq1OIP.woff",
+      "assets/raleway-cyrillic-ext-700-normal-BYzsFH9R.woff2",
+      "assets/raleway-cyrillic-ext-700-normal-D0MeO1Y4.woff",
+      "assets/raleway-cyrillic-700-normal-Dynwhvvt.woff2",
+      "assets/raleway-cyrillic-700-normal-Y0JCLxAF.woff",
+      "assets/raleway-vietnamese-700-normal-DhRR6XW-.woff2",
+      "assets/raleway-vietnamese-700-normal-BT2zqTaJ.woff",
+      "assets/raleway-latin-ext-700-normal-BSYX0AAR.woff2",
+      "assets/raleway-latin-ext-700-normal-D9ggOV46.woff",
+      "assets/raleway-latin-700-normal-BVpQLp0x.woff2",
+      "assets/raleway-latin-700-normal-JVwBSLev.woff",
+      "assets/space-grotesk-vietnamese-400-normal-B7xT_GF5.woff2",
+      "assets/space-grotesk-vietnamese-400-normal-BIWiOVfw.woff",
+      "assets/space-grotesk-latin-ext-400-normal-CfP_5XZW.woff2",
+      "assets/space-grotesk-latin-ext-400-normal-DRPE3kg4.woff",
+      "assets/space-grotesk-latin-400-normal-CJ-V5oYT.woff2",
+      "assets/space-grotesk-latin-400-normal-BnQMeOim.woff",
+      "assets/space-grotesk-vietnamese-700-normal-DMty7AZE.woff2",
+      "assets/space-grotesk-vietnamese-700-normal-Duxec5Rn.woff",
+      "assets/space-grotesk-latin-ext-700-normal-BQnZhY3m.woff2",
+      "assets/space-grotesk-latin-ext-700-normal-HVCqSBdx.woff",
+      "assets/space-grotesk-latin-700-normal-RjhwGPKo.woff2",
+      "assets/space-grotesk-latin-700-normal-CwsQ-cCU.woff",
+      "assets/playfair-display-cyrillic-400-normal-CjW2EstV.woff2",
+      "assets/playfair-display-cyrillic-400-normal-ZiRag6zj.woff",
+      "assets/playfair-display-vietnamese-400-normal-BV2APVTb.woff2",
+      "assets/playfair-display-vietnamese-400-normal-BbvUAu4N.woff",
+      "assets/playfair-display-latin-ext-400-normal-BxlSGspa.woff2",
+      "assets/playfair-display-latin-ext-400-normal-qdZwdvNS.woff",
+      "assets/playfair-display-latin-400-normal-CFtfchNt.woff2",
+      "assets/playfair-display-latin-400-normal-DHYHbkg3.woff",
+      "assets/playfair-display-cyrillic-700-normal-Dw3uKy19.woff2",
+      "assets/playfair-display-cyrillic-700-normal-Dk1mTcxf.woff",
+      "assets/playfair-display-vietnamese-700-normal-CaKJSIny.woff2",
+      "assets/playfair-display-vietnamese-700-normal-Cr1rw0mr.woff",
+      "assets/playfair-display-latin-ext-700-normal-C58ejOkc.woff2",
+      "assets/playfair-display-latin-ext-700-normal-D5HUU8GT.woff",
+      "assets/playfair-display-latin-700-normal-CuDiGg7c.woff2",
+      "assets/playfair-display-latin-700-normal-Bc_1Q1cG.woff",
+      "assets/cormorant-garamond-cyrillic-ext-400-normal-W3Dto7M0.woff2",
+      "assets/cormorant-garamond-cyrillic-ext-400-normal-DLdKLAvx.woff",
+      "assets/cormorant-garamond-cyrillic-400-normal-DD2KOZkl.woff2",
+      "assets/cormorant-garamond-cyrillic-400-normal-CVFrM67f.woff",
+      "assets/cormorant-garamond-vietnamese-400-normal-6K-YXo6g.woff2",
+      "assets/cormorant-garamond-vietnamese-400-normal-4uxlocMh.woff",
+      "assets/cormorant-garamond-latin-ext-400-normal-Drx2k2n9.woff2",
+      "assets/cormorant-garamond-latin-ext-400-normal-uvC0WHQr.woff",
+      "assets/cormorant-garamond-latin-400-normal-B-1hWBU7.woff2",
+      "assets/cormorant-garamond-latin-400-normal-B7YtguxJ.woff",
+      "assets/cormorant-garamond-cyrillic-ext-700-normal-Do0rx6yy.woff2",
+      "assets/cormorant-garamond-cyrillic-ext-700-normal-BaW-xaxb.woff",
+      "assets/cormorant-garamond-cyrillic-700-normal-SLG_-a_c.woff2",
+      "assets/cormorant-garamond-cyrillic-700-normal-D3uyJ5DH.woff",
+      "assets/cormorant-garamond-vietnamese-700-normal--OtHbi1I.woff2",
+      "assets/cormorant-garamond-vietnamese-700-normal-GOTdnRS1.woff",
+      "assets/cormorant-garamond-latin-ext-700-normal-CNjt5vTB.woff2",
+      "assets/cormorant-garamond-latin-ext-700-normal-qRbaVVD7.woff",
+      "assets/cormorant-garamond-latin-700-normal-DajfzrDU.woff2",
+      "assets/cormorant-garamond-latin-700-normal-O25Qpphb.woff",
+      "assets/lora-cyrillic-ext-400-normal-DwaaZvol.woff2",
+      "assets/lora-cyrillic-ext-400-normal-PiPRSBNu.woff",
+      "assets/lora-cyrillic-400-normal-CbVom6TB.woff2",
+      "assets/lora-cyrillic-400-normal-BedExNGj.woff",
+      "assets/lora-math-400-normal-D2gccGFf.woff2",
+      "assets/lora-math-400-normal-BToItYw_.woff",
+      "assets/lora-symbols-400-normal-DmcY0X7a.woff2",
+      "assets/lora-symbols-400-normal-BK2bqsD8.woff",
+      "assets/lora-vietnamese-400-normal-BxA6xcFr.woff2",
+      "assets/lora-vietnamese-400-normal-DlgyXXxo.woff",
+      "assets/lora-latin-ext-400-normal-CyviI4c-.woff2",
+      "assets/lora-latin-ext-400-normal-B9GmMl5M.woff",
+      "assets/lora-latin-400-normal-DnxXpLNu.woff2",
+      "assets/lora-latin-400-normal-DBJS-Hc6.woff",
+      "assets/lora-cyrillic-ext-700-normal-CH2Ef3pd.woff2",
+      "assets/lora-cyrillic-ext-700-normal-B20D6wuF.woff",
+      "assets/lora-cyrillic-700-normal-CicHrsUU.woff2",
+      "assets/lora-cyrillic-700-normal-CoUvLzhc.woff",
+      "assets/lora-math-700-normal-BdgFUNlJ.woff2",
+      "assets/lora-math-700-normal-JjB0YUk-.woff",
+      "assets/lora-symbols-700-normal-zYsi5zvy.woff2",
+      "assets/lora-symbols-700-normal-DaE8wqnc.woff",
+      "assets/lora-vietnamese-700-normal-BHDzxyiD.woff2",
+      "assets/lora-vietnamese-700-normal-DyKKCAD2.woff",
+      "assets/lora-latin-ext-700-normal-DbHby4fw.woff2",
+      "assets/lora-latin-ext-700-normal-XBj10pPw.woff",
+      "assets/lora-latin-700-normal-BHK4Pzk4.woff2",
+      "assets/lora-latin-700-normal-Yfa97ytg.woff",
+      "assets/bebas-neue-latin-ext-400-normal-DWiEslNC.woff2",
+      "assets/bebas-neue-latin-ext-400-normal-HFKRJXnW.woff",
+      "assets/bebas-neue-latin-400-normal-9mHNbWWO.woff2",
+      "assets/bebas-neue-latin-400-normal-Bi-ndsyu.woff"
+    ]
+  },
+  "_logo-builder-DY3RbYyQ.css": {
+    "file": "assets/logo-builder-DY3RbYyQ.css",
+    "src": "_logo-builder-DY3RbYyQ.css"
+  },
+  "_modals-BU8k2qb3.js": {
+    "file": "assets/modals-BU8k2qb3.js",
     "name": "modals",
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js",
-      "_registry-Dp6BQhlz.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js",
+      "_registry-B-cqme3C.js"
     ],
     "dynamicImports": [
-      "_forms-Cm8EFlPb.js"
+      "_forms-D4te-vLL.js"
     ]
   },
-  "_phone-input-BVTcgHPS.js": {
-    "file": "assets/phone-input-BVTcgHPS.js",
+  "_phone-input-DYfXZI0D.js": {
+    "file": "assets/phone-input-DYfXZI0D.js",
     "name": "phone-input",
     "imports": [
-      "_vendor-phone-CmK74GbQ.js"
+      "_vendor-phone-BgVFCUVA.js"
     ]
   },
-  "_preload-helper-Cx6angFm.js": {
-    "file": "assets/preload-helper-Cx6angFm.js",
+  "_preload-helper-BdnPLKW7.js": {
+    "file": "assets/preload-helper-BdnPLKW7.js",
     "name": "preload-helper"
   },
-  "_pusher-CQz7seSm.js": {
-    "file": "assets/pusher-CQz7seSm.js",
+  "_pusher-BatKT8QL.js": {
+    "file": "assets/pusher-BatKT8QL.js",
     "name": "pusher",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
-  "_registry-Dp6BQhlz.js": {
-    "file": "assets/registry-Dp6BQhlz.js",
+  "_registry-B-cqme3C.js": {
+    "file": "assets/registry-B-cqme3C.js",
     "name": "registry"
   },
   "_requests-CJpz01p_.css": {
     "file": "assets/requests-CJpz01p_.css",
     "src": "_requests-CJpz01p_.css"
   },
-  "_rolldown-runtime-E-TR9XSN.js": {
-    "file": "assets/rolldown-runtime-E-TR9XSN.js",
+  "_rolldown-runtime-BE6ZWUib.js": {
+    "file": "assets/rolldown-runtime-BE6ZWUib.js",
     "name": "rolldown-runtime"
   },
-  "_select2-BNDvghhp.js": {
-    "file": "assets/select2-BNDvghhp.js",
+  "_select2-BWkKw8O_.js": {
+    "file": "assets/select2-BWkKw8O_.js",
     "name": "select2",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
       "resources/js/tenant/vendor/jquery.js",
@@ -205,51 +570,51 @@
     "file": "assets/support-DPusLhcR.css",
     "src": "_support-DPusLhcR.css"
   },
-  "_toast-CEmOGeir.js": {
-    "file": "assets/toast-CEmOGeir.js",
+  "_toast-Bt6A-TVs.js": {
+    "file": "assets/toast-Bt6A-TVs.js",
     "name": "toast",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
       "resources/js/tenant/vendor/jquery.js",
       "node_modules/toastr/toastr.js"
     ]
   },
-  "_vendor-charts-D7i-PTn7.js": {
-    "file": "assets/vendor-charts-D7i-PTn7.js",
+  "_vendor-charts-DkU6U417.js": {
+    "file": "assets/vendor-charts-DkU6U417.js",
     "name": "vendor-charts",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
-    ]
-  },
-  "_vendor-flatpickr-BWHbpfik.js": {
-    "file": "assets/vendor-flatpickr-BWHbpfik.js",
-    "name": "vendor-flatpickr",
-    "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
-    ],
-    "css": [
-      "assets/vendor-flatpickr-CveviJq_.css"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
   "_vendor-flatpickr-CveviJq_.css": {
     "file": "assets/vendor-flatpickr-CveviJq_.css",
     "src": "_vendor-flatpickr-CveviJq_.css"
   },
-  "_vendor-jquery-Dw1hYzjO.js": {
-    "file": "assets/vendor-jquery-Dw1hYzjO.js",
-    "name": "vendor-jquery",
+  "_vendor-flatpickr-DlHxRg-N.js": {
+    "file": "assets/vendor-flatpickr-DlHxRg-N.js",
+    "name": "vendor-flatpickr",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
+    ],
+    "css": [
+      "assets/vendor-flatpickr-CveviJq_.css"
     ]
   },
-  "_vendor-phone-CmK74GbQ.js": {
-    "file": "assets/vendor-phone-CmK74GbQ.js",
+  "_vendor-jquery-5XYqUNav.js": {
+    "file": "assets/vendor-jquery-5XYqUNav.js",
+    "name": "vendor-jquery",
+    "imports": [
+      "_rolldown-runtime-BE6ZWUib.js"
+    ]
+  },
+  "_vendor-phone-BgVFCUVA.js": {
+    "file": "assets/vendor-phone-BgVFCUVA.js",
     "name": "vendor-phone",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ],
     "css": [
       "assets/vendor-phone-DynWKaYt.css"
@@ -263,25 +628,25 @@
     "file": "assets/vendor-phone-DynWKaYt.css",
     "src": "_vendor-phone-DynWKaYt.css"
   },
-  "_vendor-sortable-Di4lIFGr.js": {
-    "file": "assets/vendor-sortable-Di4lIFGr.js",
+  "_vendor-sortable-kJ5l7mSQ.js": {
+    "file": "assets/vendor-sortable-kJ5l7mSQ.js",
     "name": "vendor-sortable",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
-  "_vendor-swal-B-kxRjAZ.js": {
-    "file": "assets/vendor-swal-B-kxRjAZ.js",
+  "_vendor-swal-BmYa7zU2.js": {
+    "file": "assets/vendor-swal-BmYa7zU2.js",
     "name": "vendor-swal",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
-  "_vendor-tinymce-tVq4WO3G.js": {
-    "file": "assets/vendor-tinymce-tVq4WO3G.js",
+  "_vendor-tinymce-CC0G5m3B.js": {
+    "file": "assets/vendor-tinymce-CC0G5m3B.js",
     "name": "vendor-tinymce",
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js"
+      "_rolldown-runtime-BE6ZWUib.js"
     ]
   },
   "node_modules/@fontsource/almarai/files/almarai-arabic-400-normal.woff": {
@@ -1841,13 +2206,13 @@
     "src": "node_modules/datatables.net-dt/css/dataTables.dataTables.min.css"
   },
   "node_modules/datatables.net-dt/js/dataTables.dataTables.mjs": {
-    "file": "assets/dataTables.dataTables-CCH7_e39.js",
+    "file": "assets/dataTables.dataTables-re9nqXvY.js",
     "name": "dataTables.dataTables",
     "src": "node_modules/datatables.net-dt/js/dataTables.dataTables.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_vendor-jquery-Dw1hYzjO.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_vendor-jquery-5XYqUNav.js"
     ]
   },
   "node_modules/datatables.net-responsive-dt/css/responsive.dataTables.min.css": {
@@ -1855,14 +2220,14 @@
     "src": "node_modules/datatables.net-responsive-dt/css/responsive.dataTables.min.css"
   },
   "node_modules/datatables.net-responsive-dt/js/responsive.dataTables.mjs": {
-    "file": "assets/responsive.dataTables-Lb_ajHFv.js",
+    "file": "assets/responsive.dataTables-CTe9-k7O.js",
     "name": "responsive.dataTables",
     "src": "node_modules/datatables.net-responsive-dt/js/responsive.dataTables.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
+      "_rolldown-runtime-BE6ZWUib.js",
       "node_modules/datatables.net-dt/js/dataTables.dataTables.mjs",
-      "_vendor-jquery-Dw1hYzjO.js"
+      "_vendor-jquery-5XYqUNav.js"
     ]
   },
   "node_modules/intl-tel-input/dist/img/flags.webp": {
@@ -1878,13 +2243,13 @@
     "src": "node_modules/select2/dist/css/select2.min.css"
   },
   "node_modules/select2/dist/js/select2.full.js": {
-    "file": "assets/select2.full-Bm2Xfq9M.js",
+    "file": "assets/select2.full-Cf2MTxLy.js",
     "name": "select2.full",
     "src": "node_modules/select2/dist/js/select2.full.js",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_vendor-jquery-Dw1hYzjO.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_vendor-jquery-5XYqUNav.js"
     ]
   },
   "node_modules/toastr/build/toastr.min.css": {
@@ -1892,21 +2257,21 @@
     "src": "node_modules/toastr/build/toastr.min.css"
   },
   "node_modules/toastr/toastr.js": {
-    "file": "assets/toastr-4_yXl-i_.js",
+    "file": "assets/toastr-Cmwa_kb9.js",
     "name": "toastr",
     "src": "node_modules/toastr/toastr.js",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_vendor-jquery-Dw1hYzjO.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_vendor-jquery-5XYqUNav.js"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-lu3JpD5I.css",
+    "file": "assets/app-CAMJUjh1.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DzqNOCCI.css",
+    "file": "assets/ecommet-l2s1Ld8Y.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2189,7 +2554,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DIgtAGqw.css",
+    "file": "assets/souqify-Bj5gau3Q.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2198,7 +2563,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-BezL8OaY.css",
+    "file": "assets/app-DjSQwG1V.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2206,7 +2571,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-lu3JpD5I.css"
+      "assets/app-CAMJUjh1.css"
     ],
     "assets": [
       "assets/syne-greek-400-normal-B4XGRaFa.woff2",
@@ -2261,17 +2626,17 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DQiJ1-Z5.js",
+    "file": "assets/app-CF4Zy5bQ.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_vendor-charts-D7i-PTn7.js",
-      "_vendor-sortable-Di4lIFGr.js",
-      "_vendor-swal-B-kxRjAZ.js",
-      "_bootstrap-BYI8__Dy.js",
-      "_phone-input-BVTcgHPS.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_vendor-charts-DkU6U417.js",
+      "_vendor-sortable-kJ5l7mSQ.js",
+      "_vendor-swal-BmYa7zU2.js",
+      "_bootstrap-CiZkJFPc.js",
+      "_phone-input-DYfXZI0D.js"
     ]
   },
   "resources/js/ecommet.js": {
@@ -2491,99 +2856,99 @@
     "isEntry": true
   },
   "resources/js/storefront-cart.js": {
-    "file": "assets/storefront-cart-CpUNo1ua.js",
+    "file": "assets/storefront-cart-CRZTzDW_.js",
     "name": "storefront-cart",
     "src": "resources/js/storefront-cart.js",
     "isEntry": true,
     "imports": [
-      "_phone-input-BVTcgHPS.js"
+      "_phone-input-DYfXZI0D.js"
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-CDfWYi5R.js",
+    "file": "assets/app-OWjNxrP2.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-CydPFjW9.js",
-      "_events-oXKQj97e.js"
+      "_core-DIlaAJdq.js",
+      "_events-BGalvnsw.js"
     ]
   },
   "resources/js/tenant/components/ajax-list.js": {
-    "file": "assets/ajax-list-C8QPqxwQ.js",
+    "file": "assets/ajax-list-BEfXN4WM.js",
     "name": "ajax-list",
     "src": "resources/js/tenant/components/ajax-list.js",
     "isDynamicEntry": true,
     "imports": [
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js",
-      "_registry-Dp6BQhlz.js"
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js",
+      "_registry-B-cqme3C.js"
     ]
   },
   "resources/js/tenant/components/autosize.js": {
-    "file": "assets/autosize-gbNU8DCt.js",
+    "file": "assets/autosize-DzLOJgTw.js",
     "name": "autosize",
     "src": "resources/js/tenant/components/autosize.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/char-counter.js": {
-    "file": "assets/char-counter-CDGU3IXj.js",
+    "file": "assets/char-counter-CL7vF5aZ.js",
     "name": "char-counter",
     "src": "resources/js/tenant/components/char-counter.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/chart.js": {
-    "file": "assets/chart-BHdT9K03.js",
+    "file": "assets/chart-C7HgmzVo.js",
     "name": "chart",
     "src": "resources/js/tenant/components/chart.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_events-oXKQj97e.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_events-BGalvnsw.js"
     ],
     "dynamicImports": [
-      "_vendor-charts-D7i-PTn7.js"
+      "_vendor-charts-DkU6U417.js"
     ]
   },
   "resources/js/tenant/components/chat.js": {
-    "file": "assets/chat-LdetBDEr.js",
+    "file": "assets/chat-BrCrq2yG.js",
     "name": "chat",
     "src": "resources/js/tenant/components/chat.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/checkbox-group.js": {
-    "file": "assets/checkbox-group-DvCbo4QY.js",
+    "file": "assets/checkbox-group-B_zJ5OcW.js",
     "name": "checkbox-group",
     "src": "resources/js/tenant/components/checkbox-group.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/color.js": {
-    "file": "assets/color-D7pqAQIP.js",
+    "file": "assets/color-CmAGkOfx.js",
     "name": "color",
     "src": "resources/js/tenant/components/color.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/copy.js": {
-    "file": "assets/copy-CcJj68dC.js",
+    "file": "assets/copy-CbeGR49Z.js",
     "name": "copy",
     "src": "resources/js/tenant/components/copy.js",
     "isDynamicEntry": true,
     "imports": [
-      "_toast-CEmOGeir.js"
+      "_toast-Bt6A-TVs.js"
     ]
   },
   "resources/js/tenant/components/datatable.js": {
-    "file": "assets/datatable-DXrlTSqH.js",
+    "file": "assets/datatable-BMhuM_Xr.js",
     "name": "datatable",
     "src": "resources/js/tenant/components/datatable.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_confirm-DrtghGEF.js",
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js",
-      "_registry-Dp6BQhlz.js",
-      "_toast-CEmOGeir.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_confirm-C0AQ92OP.js",
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js",
+      "_registry-B-cqme3C.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "dynamicImports": [
       "resources/js/tenant/vendor/jquery.js",
@@ -2592,50 +2957,50 @@
     ]
   },
   "resources/js/tenant/components/date.js": {
-    "file": "assets/date-CrR-uE-3.js",
+    "file": "assets/date-_MKO7FKn.js",
     "name": "date",
     "src": "resources/js/tenant/components/date.js",
     "isDynamicEntry": true,
     "imports": [
-      "_flatpickr-CiWYvy1i.js"
+      "_flatpickr-4OssAiTV.js"
     ]
   },
   "resources/js/tenant/components/daterange.js": {
-    "file": "assets/daterange-D_EBxz7t.js",
+    "file": "assets/daterange-BN1cuLiq.js",
     "name": "daterange",
     "src": "resources/js/tenant/components/daterange.js",
     "isDynamicEntry": true,
     "imports": [
-      "_flatpickr-CiWYvy1i.js"
+      "_flatpickr-4OssAiTV.js"
     ]
   },
   "resources/js/tenant/components/dropdown.js": {
-    "file": "assets/dropdown-D0Ud6QRX.js",
+    "file": "assets/dropdown-DK76SyOm.js",
     "name": "dropdown",
     "src": "resources/js/tenant/components/dropdown.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/dropzone.js": {
-    "file": "assets/dropzone-Clc_uQz7.js",
+    "file": "assets/dropzone-D8hXdBai.js",
     "name": "dropzone",
     "src": "resources/js/tenant/components/dropzone.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
+      "_preload-helper-BdnPLKW7.js",
       "resources/js/tenant/components/file.js"
     ],
     "dynamicImports": [
-      "_vendor-sortable-Di4lIFGr.js"
+      "_vendor-sortable-kJ5l7mSQ.js"
     ]
   },
   "resources/js/tenant/components/editor.js": {
-    "file": "assets/editor-CsndwAxp.js",
+    "file": "assets/editor--50q17wn.js",
     "name": "editor",
     "src": "resources/js/tenant/components/editor.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_events-oXKQj97e.js",
+      "_preload-helper-BdnPLKW7.js",
+      "_events-BGalvnsw.js",
       "resources/js/tenant/vendor/tinymce.js"
     ],
     "dynamicImports": [
@@ -2643,32 +3008,32 @@
     ]
   },
   "resources/js/tenant/components/file.js": {
-    "file": "assets/file-B50xC7zb.js",
+    "file": "assets/file-Dv6D3934.js",
     "name": "file",
     "src": "resources/js/tenant/components/file.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/filters-card.js": {
-    "file": "assets/filters-card-D_oIlZPa.js",
+    "file": "assets/filters-card-Br1dkmiA.js",
     "name": "filters-card",
     "src": "resources/js/tenant/components/filters-card.js",
     "isDynamicEntry": true,
     "imports": [
-      "_dom-B9qJ3KFz.js",
-      "_events-oXKQj97e.js"
+      "_dom-BvuyIO8G.js",
+      "_events-BGalvnsw.js"
     ]
   },
   "resources/js/tenant/components/image-search.js": {
-    "file": "assets/image-search-BUQQFKnN.js",
+    "file": "assets/image-search-yLudo6zD.js",
     "name": "image-search",
     "src": "resources/js/tenant/components/image-search.js",
     "isDynamicEntry": true,
     "imports": [
-      "_events-oXKQj97e.js"
+      "_events-BGalvnsw.js"
     ]
   },
   "resources/js/tenant/components/image-upload.js": {
-    "file": "assets/image-upload-BxJEspHP.js",
+    "file": "assets/image-upload-DhcVxV7T.js",
     "name": "image-upload",
     "src": "resources/js/tenant/components/image-upload.js",
     "isDynamicEntry": true,
@@ -2677,130 +3042,130 @@
     ]
   },
   "resources/js/tenant/components/json-tree.js": {
-    "file": "assets/json-tree-gCHDmQF1.js",
+    "file": "assets/json-tree-DhjJH45Q.js",
     "name": "json-tree",
     "src": "resources/js/tenant/components/json-tree.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/locale-tabs.js": {
-    "file": "assets/locale-tabs-Nab58gtm.js",
+    "file": "assets/locale-tabs-Chw6X05W.js",
     "name": "locale-tabs",
     "src": "resources/js/tenant/components/locale-tabs.js",
     "isDynamicEntry": true,
     "imports": [
-      "_events-oXKQj97e.js"
+      "_events-BGalvnsw.js"
     ]
   },
   "resources/js/tenant/components/notification-bell.js": {
-    "file": "assets/notification-bell-DqIJiC_o.js",
+    "file": "assets/notification-bell-CgrqgYnC.js",
     "name": "notification-bell",
     "src": "resources/js/tenant/components/notification-bell.js",
     "isDynamicEntry": true,
     "imports": [
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js",
-      "_toast-CEmOGeir.js"
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js",
+      "_toast-Bt6A-TVs.js"
     ]
   },
   "resources/js/tenant/components/password-toggle.js": {
-    "file": "assets/password-toggle-CICMX6LT.js",
+    "file": "assets/password-toggle-sysHZ4--.js",
     "name": "password-toggle",
     "src": "resources/js/tenant/components/password-toggle.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/phone.js": {
-    "file": "assets/phone-M_A2CpAy.js",
+    "file": "assets/phone-Bcw9Ohfn.js",
     "name": "phone",
     "src": "resources/js/tenant/components/phone.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js"
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
-      "_vendor-phone-CmK74GbQ.js"
+      "_vendor-phone-BgVFCUVA.js"
     ]
   },
   "resources/js/tenant/components/repeater.js": {
-    "file": "assets/repeater-BjuXwfUM.js",
+    "file": "assets/repeater-ChSkVQp8.js",
     "name": "repeater",
     "src": "resources/js/tenant/components/repeater.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_registry-Dp6BQhlz.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_registry-B-cqme3C.js"
     ],
     "dynamicImports": [
-      "_vendor-sortable-Di4lIFGr.js"
+      "_vendor-sortable-kJ5l7mSQ.js"
     ]
   },
   "resources/js/tenant/components/select2.js": {
-    "file": "assets/select2-BCOCr--Z.js",
+    "file": "assets/select2-DKiKH7F6.js",
     "name": "select2",
     "src": "resources/js/tenant/components/select2.js",
     "isDynamicEntry": true,
     "imports": [
-      "_select2-BNDvghhp.js"
+      "_select2-BWkKw8O_.js"
     ]
   },
   "resources/js/tenant/components/slug.js": {
-    "file": "assets/slug-Bfy6MKhO.js",
+    "file": "assets/slug-D4LWtKMa.js",
     "name": "slug",
     "src": "resources/js/tenant/components/slug.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/sortable-list.js": {
-    "file": "assets/sortable-list-muk1jQ-g.js",
+    "file": "assets/sortable-list-BXACnXIP.js",
     "name": "sortable-list",
     "src": "resources/js/tenant/components/sortable-list.js",
     "isDynamicEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_http-B0YEhg3S.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_http-Dxjz7Wdq.js"
     ],
     "dynamicImports": [
-      "_vendor-sortable-Di4lIFGr.js"
+      "_vendor-sortable-kJ5l7mSQ.js"
     ]
   },
   "resources/js/tenant/components/switch.js": {
-    "file": "assets/switch-Co6T0MvY.js",
+    "file": "assets/switch-Boa6RxUa.js",
     "name": "switch",
     "src": "resources/js/tenant/components/switch.js",
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/tabs.js": {
-    "file": "assets/tabs-BZl1wS7z.js",
+    "file": "assets/tabs-B9XzLLtw.js",
     "name": "tabs",
     "src": "resources/js/tenant/components/tabs.js",
     "isDynamicEntry": true,
     "imports": [
-      "_events-oXKQj97e.js"
+      "_events-BGalvnsw.js"
     ]
   },
   "resources/js/tenant/core/forms.js": {
-    "file": "assets/forms-DMm3rM7p.js",
+    "file": "assets/forms-Cew03YQ4.js",
     "name": "forms",
     "src": "resources/js/tenant/core/forms.js",
     "isDynamicEntry": true,
     "imports": [
-      "_forms-Cm8EFlPb.js"
+      "_forms-D4te-vLL.js"
     ]
   },
   "resources/js/tenant/core/modals.js": {
-    "file": "assets/modals-Da1mCfS7.js",
+    "file": "assets/modals-C7cXi-In.js",
     "name": "modals",
     "src": "resources/js/tenant/core/modals.js",
     "isDynamicEntry": true,
     "imports": [
-      "_modals-C3WK80Iy.js"
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/modules/payment-gateway.js": {
-    "file": "assets/payment-gateway-32OdbeGQ.js",
+    "file": "assets/payment-gateway-C461c9vZ.js",
     "name": "payment-gateway",
     "src": "resources/js/tenant/modules/payment-gateway.js",
     "isDynamicEntry": true,
     "imports": [
-      "_toast-CEmOGeir.js"
+      "_toast-Bt6A-TVs.js"
     ]
   },
   "resources/js/tenant/pages/auth/login.js": {
@@ -2810,13 +3175,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/badge-show.js": {
-    "file": "assets/badge-show-BUJI9v51.js",
+    "file": "assets/badge-show-DTn7LHOh.js",
     "name": "badge-show",
     "src": "resources/js/tenant/pages/catalog/badge-show.js",
     "isEntry": true,
     "imports": [
-      "_confirm-DrtghGEF.js",
-      "_http-B0YEhg3S.js"
+      "_confirm-C0AQ92OP.js",
+      "_http-Dxjz7Wdq.js"
     ],
     "css": [
       "assets/badge-show-BMjWGhS4.css"
@@ -2856,23 +3221,23 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/product-form.js": {
-    "file": "assets/product-form-D-wYQG0O.js",
+    "file": "assets/product-form-DVpyvKD0.js",
     "name": "product-form",
     "src": "resources/js/tenant/pages/catalog/product-form.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js"
+      "_http-Dxjz7Wdq.js"
     ]
   },
   "resources/js/tenant/pages/catalog/products-index.js": {
-    "file": "assets/products-index-BpDXMYwp.js",
+    "file": "assets/products-index-Ce1mpPKO.js",
     "name": "products-index",
     "src": "resources/js/tenant/pages/catalog/products-index.js",
     "isEntry": true,
     "imports": [
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js",
-      "_modals-C3WK80Iy.js",
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js",
+      "_modals-BU8k2qb3.js",
       "resources/js/tenant/pages/catalog/products-price-list.js",
       "resources/js/tenant/pages/catalog/products-price-list.js"
     ],
@@ -2893,12 +3258,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-9684risO.js",
+    "file": "assets/index-BNb3nK_B.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
     "imports": [
-      "_insight-charts-B5Es0llC.js"
+      "_insight-charts-Ce91-sBB.js"
     ]
   },
   "resources/js/tenant/pages/finance/billing-index.js": {
@@ -2914,12 +3279,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/finance/buy-languages.js": {
-    "file": "assets/buy-languages-BonMBrhc.js",
+    "file": "assets/buy-languages-DR7VqeNN.js",
     "name": "buy-languages",
     "src": "resources/js/tenant/pages/finance/buy-languages.js",
     "isEntry": true,
     "imports": [
-      "_modals-C3WK80Iy.js"
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/pages/finance/payouts.js": {
@@ -2941,12 +3306,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/finance/vendor-settle.js": {
-    "file": "assets/vendor-settle-Cb3m1B7m.js",
+    "file": "assets/vendor-settle-Cp0R2_ns.js",
     "name": "vendor-settle",
     "src": "resources/js/tenant/pages/finance/vendor-settle.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js"
+      "_http-Dxjz7Wdq.js"
     ],
     "css": [
       "assets/vendor-settle-tBIkHEm7.css"
@@ -2959,12 +3324,27 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/insights/index.js": {
-    "file": "assets/index-CsLgCk93.js",
+    "file": "assets/index-BDJOopfA.js",
     "name": "index",
     "src": "resources/js/tenant/pages/insights/index.js",
     "isEntry": true,
     "imports": [
-      "_insight-charts-B5Es0llC.js"
+      "_insight-charts-Ce91-sBB.js"
+    ]
+  },
+  "resources/js/tenant/pages/onboarding/index.js": {
+    "file": "assets/index-CVmaPcLd.js",
+    "name": "index",
+    "src": "resources/js/tenant/pages/onboarding/index.js",
+    "isEntry": true,
+    "imports": [
+      "_logo-builder-CnodXAtl.js",
+      "_dom-BvuyIO8G.js",
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js"
+    ],
+    "css": [
+      "assets/index-Z2UYXb_A.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
@@ -2980,14 +3360,14 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/requests/brand-show.js": {
-    "file": "assets/brand-show-Ce2uIYAM.js",
+    "file": "assets/brand-show-Bxwr6KmD.js",
     "name": "brand-show",
     "src": "resources/js/tenant/pages/requests/brand-show.js",
     "isEntry": true,
     "imports": [
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js",
-      "_modals-C3WK80Iy.js"
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js",
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
@@ -3003,18 +3383,18 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/requests/manufacturing-show.js": {
-    "file": "assets/manufacturing-show-B3wj9jgI.js",
+    "file": "assets/manufacturing-show-BCtKrpUs.js",
     "name": "manufacturing-show",
     "src": "resources/js/tenant/pages/requests/manufacturing-show.js",
     "isEntry": true,
     "imports": [
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js",
-      "_modals-C3WK80Iy.js"
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js",
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-Baka57Ek.js",
+    "file": "assets/product-request-create-C-sfUK6D.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
@@ -3023,20 +3403,20 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-show.js": {
-    "file": "assets/product-request-show-DOkx3XbK.js",
+    "file": "assets/product-request-show-uRtGfcb_.js",
     "name": "product-request-show",
     "src": "resources/js/tenant/pages/requests/product-request-show.js",
     "isEntry": true,
     "imports": [
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js"
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js"
     ],
     "css": [
       "assets/requests-CJpz01p_.css"
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-DEamJNdQ.js",
+    "file": "assets/product-requests-index-BCZU3unP.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
@@ -3063,15 +3443,15 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-DAKnls-e.js",
+    "file": "assets/order-show-DeuAB0r-.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-CydPFjW9.js",
-      "_events-oXKQj97e.js",
-      "_forms-Cm8EFlPb.js",
-      "_registry-Dp6BQhlz.js"
+      "_core-DIlaAJdq.js",
+      "_events-BGalvnsw.js",
+      "_forms-D4te-vLL.js",
+      "_registry-B-cqme3C.js"
     ],
     "css": [
       "assets/order-show-DF9i_jxp.css"
@@ -3111,22 +3491,22 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/ai-translation.js": {
-    "file": "assets/ai-translation-AG9Ezb2i.js",
+    "file": "assets/ai-translation-Bl8sKYX6.js",
     "name": "ai-translation",
     "src": "resources/js/tenant/pages/settings/ai-translation.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_modals-C3WK80Iy.js"
+      "_http-Dxjz7Wdq.js",
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/pages/settings/compliance.js": {
-    "file": "assets/compliance-BeqQy9M8.js",
+    "file": "assets/compliance-Cph2_Dhe.js",
     "name": "compliance",
     "src": "resources/js/tenant/pages/settings/compliance.js",
     "isEntry": true,
     "imports": [
-      "_select2-BNDvghhp.js"
+      "_select2-BWkKw8O_.js"
     ],
     "css": [
       "assets/compliance-wp9nXMrN.css"
@@ -3139,13 +3519,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/domains.js": {
-    "file": "assets/domains-FOxyepRd.js",
+    "file": "assets/domains-CAkJZT4g.js",
     "name": "domains",
     "src": "resources/js/tenant/pages/settings/domains.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_toast-CEmOGeir.js"
+      "_http-Dxjz7Wdq.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "css": [
       "assets/domains-BpvNRS3f.css"
@@ -3167,12 +3547,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/languages-manage.js": {
-    "file": "assets/languages-manage-Dpcc01bI.js",
+    "file": "assets/languages-manage-BcL_UfBf.js",
     "name": "languages-manage",
     "src": "resources/js/tenant/pages/settings/languages-manage.js",
     "isEntry": true,
     "imports": [
-      "_modals-C3WK80Iy.js"
+      "_modals-BU8k2qb3.js"
     ],
     "css": [
       "assets/languages-manage-COsAWEQD.css"
@@ -3185,13 +3565,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/payment-gateways.js": {
-    "file": "assets/payment-gateways-TxYaA7XZ.js",
+    "file": "assets/payment-gateways-u7FubvNM.js",
     "name": "payment-gateways",
     "src": "resources/js/tenant/pages/settings/payment-gateways.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_modals-C3WK80Iy.js"
+      "_http-Dxjz7Wdq.js",
+      "_modals-BU8k2qb3.js"
     ]
   },
   "resources/js/tenant/pages/settings/return-policy.js": {
@@ -3219,385 +3599,32 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/translations.js": {
-    "file": "assets/translations-CbWrWXmW.js",
+    "file": "assets/translations-C5reeXFX.js",
     "name": "translations",
     "src": "resources/js/tenant/pages/settings/translations.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js"
+      "_http-Dxjz7Wdq.js"
     ]
   },
   "resources/js/tenant/pages/store/appearance.js": {
-    "file": "assets/appearance-I9jv0gVb.js",
+    "file": "assets/appearance-CCcWUp7x.js",
     "name": "appearance",
     "src": "resources/js/tenant/pages/store/appearance.js",
     "isEntry": true,
     "imports": [
-      "_preload-helper-Cx6angFm.js",
-      "_confirm-DrtghGEF.js",
-      "_dom-B9qJ3KFz.js",
-      "_http-B0YEhg3S.js",
-      "_toast-CEmOGeir.js"
+      "_preload-helper-BdnPLKW7.js",
+      "_logo-builder-CnodXAtl.js",
+      "_confirm-C0AQ92OP.js",
+      "_dom-BvuyIO8G.js",
+      "_http-Dxjz7Wdq.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "dynamicImports": [
-      "_forms-Cm8EFlPb.js"
+      "_forms-D4te-vLL.js"
     ],
     "css": [
-      "assets/appearance-B8s6A_kL.css"
-    ],
-    "assets": [
-      "assets/cairo-arabic-400-normal-DN15VWMM.woff2",
-      "assets/cairo-arabic-400-normal-CAYwymWN.woff",
-      "assets/cairo-latin-ext-400-normal-xCL67Y2R.woff2",
-      "assets/cairo-latin-ext-400-normal-C_BIE9Qe.woff",
-      "assets/cairo-latin-400-normal-Dh7otpdh.woff2",
-      "assets/cairo-latin-400-normal-b1R3q6Pf.woff",
-      "assets/cairo-arabic-700-normal-D3nDedWX.woff2",
-      "assets/cairo-arabic-700-normal-CyOqhaeK.woff",
-      "assets/cairo-latin-ext-700-normal-Cscux539.woff2",
-      "assets/cairo-latin-ext-700-normal-htXca11Z.woff",
-      "assets/cairo-latin-700-normal-C3GYtKbV.woff2",
-      "assets/cairo-latin-700-normal-6fcUy4Rc.woff",
-      "assets/tajawal-arabic-400-normal-CyCXRvzh.woff2",
-      "assets/tajawal-arabic-400-normal-DCQxawbB.woff",
-      "assets/tajawal-latin-400-normal-BVNSOH3d.woff2",
-      "assets/tajawal-latin-400-normal-BdYcZznU.woff",
-      "assets/tajawal-arabic-700-normal-D2-eand5.woff2",
-      "assets/tajawal-arabic-700-normal-9L7Zusdl.woff",
-      "assets/tajawal-latin-700-normal-BypgxfGb.woff2",
-      "assets/tajawal-latin-700-normal-CV3bxpHe.woff",
-      "assets/almarai-arabic-400-normal-BFOw1b4Z.woff2",
-      "assets/almarai-arabic-400-normal-BFru3eIr.woff",
-      "assets/almarai-latin-400-normal-vHk6bQw7.woff2",
-      "assets/almarai-latin-400-normal-nk-oBp0x.woff",
-      "assets/almarai-arabic-700-normal-RufW5IrK.woff2",
-      "assets/almarai-arabic-700-normal-ChHbFnJB.woff",
-      "assets/almarai-latin-700-normal-CmEa8QLc.woff2",
-      "assets/almarai-latin-700-normal-Bw55lGft.woff",
-      "assets/noto-sans-arabic-arabic-400-normal-AAMxebZb.woff2",
-      "assets/noto-sans-arabic-arabic-400-normal-hsqIUL9Q.woff",
-      "assets/noto-sans-arabic-math-400-normal-BxrVu-ji.woff2",
-      "assets/noto-sans-arabic-math-400-normal-BiWGKoY7.woff",
-      "assets/noto-sans-arabic-symbols-400-normal-BbP0vlM-.woff2",
-      "assets/noto-sans-arabic-symbols-400-normal-BJzmBRSy.woff",
-      "assets/noto-sans-arabic-latin-ext-400-normal-CW3XQ4Yj.woff2",
-      "assets/noto-sans-arabic-latin-ext-400-normal-D4Wl3hq7.woff",
-      "assets/noto-sans-arabic-latin-400-normal-CjsIS08k.woff2",
-      "assets/noto-sans-arabic-latin-400-normal-lr8cikIT.woff",
-      "assets/noto-sans-arabic-arabic-700-normal-3CqrwsiZ.woff2",
-      "assets/noto-sans-arabic-arabic-700-normal-DXnsSW3z.woff",
-      "assets/noto-sans-arabic-math-700-normal-DhwRdyuq.woff2",
-      "assets/noto-sans-arabic-math-700-normal-C3IT52xG.woff",
-      "assets/noto-sans-arabic-symbols-700-normal-D40a2DlB.woff2",
-      "assets/noto-sans-arabic-symbols-700-normal-Ct3Gyvbr.woff",
-      "assets/noto-sans-arabic-latin-ext-700-normal-wF0ZdkCd.woff2",
-      "assets/noto-sans-arabic-latin-ext-700-normal-DX5dIs2j.woff",
-      "assets/noto-sans-arabic-latin-700-normal-D41hNJFR.woff2",
-      "assets/noto-sans-arabic-latin-700-normal-DST6Nu2E.woff",
-      "assets/ibm-plex-sans-arabic-arabic-400-normal-CyU-ddYS.woff2",
-      "assets/ibm-plex-sans-arabic-arabic-400-normal-EA1o-u_Q.woff",
-      "assets/ibm-plex-sans-arabic-cyrillic-ext-400-normal-KAuemXZb.woff2",
-      "assets/ibm-plex-sans-arabic-cyrillic-ext-400-normal-BnfWueTs.woff",
-      "assets/ibm-plex-sans-arabic-latin-ext-400-normal-BpLfq-63.woff2",
-      "assets/ibm-plex-sans-arabic-latin-ext-400-normal-BeVLg08x.woff",
-      "assets/ibm-plex-sans-arabic-latin-400-normal-Bo5KPYvw.woff2",
-      "assets/ibm-plex-sans-arabic-latin-400-normal-CFZh1unN.woff",
-      "assets/ibm-plex-sans-arabic-arabic-700-normal-DrtBj6UE.woff2",
-      "assets/ibm-plex-sans-arabic-arabic-700-normal-9rXc6cUL.woff",
-      "assets/ibm-plex-sans-arabic-cyrillic-ext-700-normal-DkasDNaI.woff2",
-      "assets/ibm-plex-sans-arabic-cyrillic-ext-700-normal-Dhy2Zk9g.woff",
-      "assets/ibm-plex-sans-arabic-latin-ext-700-normal-BSbyEp0V.woff2",
-      "assets/ibm-plex-sans-arabic-latin-ext-700-normal-C7GcWn11.woff",
-      "assets/ibm-plex-sans-arabic-latin-700-normal-BzSf6GNr.woff2",
-      "assets/ibm-plex-sans-arabic-latin-700-normal-Cl4F7CZR.woff",
-      "assets/readex-pro-arabic-400-normal-BzB5iZVu.woff2",
-      "assets/readex-pro-arabic-400-normal-CRluTl2A.woff",
-      "assets/readex-pro-vietnamese-400-normal-DAQS1QRE.woff2",
-      "assets/readex-pro-vietnamese-400-normal-DRTbt2AX.woff",
-      "assets/readex-pro-latin-ext-400-normal-CDeDBhe3.woff2",
-      "assets/readex-pro-latin-ext-400-normal-DzeKRH4q.woff",
-      "assets/readex-pro-latin-400-normal-BZtYQVaG.woff2",
-      "assets/readex-pro-latin-400-normal-SP_jEUAw.woff",
-      "assets/readex-pro-arabic-700-normal-EXBdNfUG.woff2",
-      "assets/readex-pro-arabic-700-normal-CrhlwrkQ.woff",
-      "assets/readex-pro-vietnamese-700-normal-BOdn1JB1.woff2",
-      "assets/readex-pro-vietnamese-700-normal-DWiQMDrn.woff",
-      "assets/readex-pro-latin-ext-700-normal-Bpf-iva7.woff2",
-      "assets/readex-pro-latin-ext-700-normal-C1QSodUR.woff",
-      "assets/readex-pro-latin-700-normal-oqSerPEB.woff2",
-      "assets/readex-pro-latin-700-normal-L_HvUYJT.woff",
-      "assets/lemonada-arabic-400-normal-w7xoLTFn.woff2",
-      "assets/lemonada-arabic-400-normal-CZyyVGAa.woff",
-      "assets/lemonada-vietnamese-400-normal-BdAsZdR_.woff2",
-      "assets/lemonada-vietnamese-400-normal-dxgCwKVW.woff",
-      "assets/lemonada-latin-ext-400-normal-DwDGAkVj.woff2",
-      "assets/lemonada-latin-ext-400-normal-C7udAu2i.woff",
-      "assets/lemonada-latin-400-normal-DUvPZbOV.woff2",
-      "assets/lemonada-latin-400-normal-Ca96xa3e.woff",
-      "assets/lemonada-arabic-700-normal-BLxDy-ee.woff2",
-      "assets/lemonada-arabic-700-normal-Cs264PDM.woff",
-      "assets/lemonada-vietnamese-700-normal-31Rv3sIN.woff2",
-      "assets/lemonada-vietnamese-700-normal-Bu0GjjFj.woff",
-      "assets/lemonada-latin-ext-700-normal-5eQ_j4Y1.woff2",
-      "assets/lemonada-latin-ext-700-normal-DMd8H9P8.woff",
-      "assets/lemonada-latin-700-normal-o81mPNau.woff2",
-      "assets/lemonada-latin-700-normal-D-V-bhh0.woff",
-      "assets/reem-kufi-arabic-400-normal-DtbpzZsC.woff2",
-      "assets/reem-kufi-arabic-400-normal-BBJU0Qav.woff",
-      "assets/reem-kufi-vietnamese-400-normal-mVApVoLm.woff2",
-      "assets/reem-kufi-vietnamese-400-normal-CC1rmUNx.woff",
-      "assets/reem-kufi-latin-ext-400-normal-CtrjvQUY.woff2",
-      "assets/reem-kufi-latin-ext-400-normal-CkEL2vhd.woff",
-      "assets/reem-kufi-latin-400-normal-Za7ilK7N.woff2",
-      "assets/reem-kufi-latin-400-normal-dNVWXZsY.woff",
-      "assets/reem-kufi-arabic-700-normal-D4RhYlR1.woff2",
-      "assets/reem-kufi-arabic-700-normal-2X0LRV6P.woff",
-      "assets/reem-kufi-vietnamese-700-normal-CwRvvSSB.woff2",
-      "assets/reem-kufi-vietnamese-700-normal-C_zHpWh6.woff",
-      "assets/reem-kufi-latin-ext-700-normal-CbxOURXW.woff2",
-      "assets/reem-kufi-latin-ext-700-normal-BVODnn_J.woff",
-      "assets/reem-kufi-latin-700-normal-D4MLSEVm.woff2",
-      "assets/reem-kufi-latin-700-normal-CFkdsF2J.woff",
-      "assets/amiri-arabic-400-normal-D0NIBXga.woff2",
-      "assets/amiri-arabic-400-normal-C_1DQziU.woff",
-      "assets/amiri-latin-ext-400-normal-C9hoIjPx.woff2",
-      "assets/amiri-latin-ext-400-normal-CGn-6a7O.woff",
-      "assets/amiri-latin-400-normal-Czk41Rjn.woff2",
-      "assets/amiri-latin-400-normal-Bv6IM0kz.woff",
-      "assets/amiri-arabic-700-normal-D8FrblyB.woff2",
-      "assets/amiri-arabic-700-normal-dUd6sHq-.woff",
-      "assets/amiri-latin-ext-700-normal-ByFuOT8o.woff2",
-      "assets/amiri-latin-ext-700-normal-Ck-lxu84.woff",
-      "assets/amiri-latin-700-normal-DIjoEGk6.woff2",
-      "assets/amiri-latin-700-normal-BH9dHmOv.woff",
-      "assets/scheherazade-new-arabic-400-normal-BQFftFrr.woff2",
-      "assets/scheherazade-new-arabic-400-normal-BusZfw6j.woff",
-      "assets/scheherazade-new-latin-ext-400-normal-RLkGgHnN.woff2",
-      "assets/scheherazade-new-latin-ext-400-normal-DOY06IJe.woff",
-      "assets/scheherazade-new-latin-400-normal-X_aqx3In.woff2",
-      "assets/scheherazade-new-latin-400-normal-DSpaYQ48.woff",
-      "assets/scheherazade-new-arabic-700-normal-BgseUfDr.woff2",
-      "assets/scheherazade-new-arabic-700-normal-B_V_WvY8.woff",
-      "assets/scheherazade-new-latin-ext-700-normal-BeStj5QX.woff2",
-      "assets/scheherazade-new-latin-ext-700-normal-DvxZgnjm.woff",
-      "assets/scheherazade-new-latin-700-normal-BRBC5bke.woff2",
-      "assets/scheherazade-new-latin-700-normal-BLgVC2Z_.woff",
-      "assets/lalezar-arabic-400-normal-D6_F3AeY.woff2",
-      "assets/lalezar-arabic-400-normal-BT7j_n2X.woff",
-      "assets/lalezar-vietnamese-400-normal-ScipispP.woff2",
-      "assets/lalezar-vietnamese-400-normal-DXhD3tbU.woff",
-      "assets/lalezar-latin-ext-400-normal-Boaamuqr.woff2",
-      "assets/lalezar-latin-ext-400-normal-Dq4DC2QX.woff",
-      "assets/lalezar-latin-400-normal-CsH8Qv7g.woff2",
-      "assets/lalezar-latin-400-normal-Bm4W26Zi.woff",
-      "assets/poppins-devanagari-400-normal-CJDn6rn8.woff2",
-      "assets/poppins-devanagari-400-normal-CqVvlrh5.woff",
-      "assets/poppins-latin-ext-400-normal-by3JarPu.woff2",
-      "assets/poppins-latin-ext-400-normal-DaBSavcJ.woff",
-      "assets/poppins-latin-400-normal-cpxAROuN.woff2",
-      "assets/poppins-latin-400-normal-BOb3E3N0.woff",
-      "assets/poppins-devanagari-700-normal-O-jipLrW.woff2",
-      "assets/poppins-devanagari-700-normal-fHs-vx92.woff",
-      "assets/poppins-latin-ext-700-normal-cby-RkWa.woff2",
-      "assets/poppins-latin-ext-700-normal-DctTR6Tg.woff",
-      "assets/poppins-latin-700-normal-Qrb0O0WB.woff2",
-      "assets/poppins-latin-700-normal-BVuQR_eA.woff",
-      "assets/montserrat-cyrillic-ext-400-normal-Xqov12YL.woff2",
-      "assets/montserrat-cyrillic-ext-400-normal-DRPPeomZ.woff",
-      "assets/montserrat-cyrillic-400-normal-BPq32Q8K.woff2",
-      "assets/montserrat-cyrillic-400-normal-jEs4Tk-Z.woff",
-      "assets/montserrat-vietnamese-400-normal-D4oHqQTd.woff2",
-      "assets/montserrat-vietnamese-400-normal-BeEscFYY.woff",
-      "assets/montserrat-latin-ext-400-normal-B8bwfy6Y.woff2",
-      "assets/montserrat-latin-ext-400-normal-BffdBkAA.woff",
-      "assets/montserrat-latin-400-normal-BLhwKU8k.woff2",
-      "assets/montserrat-latin-400-normal-xItZbAXg.woff",
-      "assets/montserrat-cyrillic-ext-700-normal-MyDreaeu.woff2",
-      "assets/montserrat-cyrillic-ext-700-normal-D-Mk2xRJ.woff",
-      "assets/montserrat-cyrillic-700-normal-D-Pqjtdp.woff2",
-      "assets/montserrat-cyrillic-700-normal-BvLYcGP1.woff",
-      "assets/montserrat-vietnamese-700-normal-C0x1De3p.woff2",
-      "assets/montserrat-vietnamese-700-normal-DnwGT2D9.woff",
-      "assets/montserrat-latin-ext-700-normal-BOP2Nhf0.woff2",
-      "assets/montserrat-latin-ext-700-normal-DdDFr05Z.woff",
-      "assets/montserrat-latin-700-normal-BdjcYUrC.woff2",
-      "assets/montserrat-latin-700-normal-BWkrl476.woff",
-      "assets/inter-cyrillic-ext-400-normal-BQZuk6qB.woff2",
-      "assets/inter-cyrillic-ext-400-normal-DQukG94-.woff",
-      "assets/inter-cyrillic-400-normal-obahsSVq.woff2",
-      "assets/inter-cyrillic-400-normal-HOLc17fK.woff",
-      "assets/inter-greek-ext-400-normal-DGGRlc-M.woff2",
-      "assets/inter-greek-ext-400-normal-KugGGMne.woff",
-      "assets/inter-greek-400-normal-B4URO6DV.woff2",
-      "assets/inter-greek-400-normal-q2sYcFCs.woff",
-      "assets/inter-vietnamese-400-normal-DMkecbls.woff2",
-      "assets/inter-vietnamese-400-normal-Bbgyi5SW.woff",
-      "assets/inter-latin-ext-400-normal-C1nco2VV.woff2",
-      "assets/inter-latin-ext-400-normal-77YHD8bZ.woff",
-      "assets/inter-latin-400-normal-C38fXH4l.woff2",
-      "assets/inter-latin-400-normal-CyCys3Eg.woff",
-      "assets/inter-cyrillic-ext-700-normal-BjwYoWNd.woff2",
-      "assets/inter-cyrillic-ext-700-normal-LO58E6JB.woff",
-      "assets/inter-cyrillic-700-normal-CjBOestx.woff2",
-      "assets/inter-cyrillic-700-normal-DrXBdSj3.woff",
-      "assets/inter-greek-ext-700-normal-qfdV9bQt.woff2",
-      "assets/inter-greek-ext-700-normal-BoQ6DsYi.woff",
-      "assets/inter-greek-700-normal-C3JjAnD8.woff2",
-      "assets/inter-greek-700-normal-BUv2fZ6O.woff",
-      "assets/inter-vietnamese-700-normal-DlLaEgI2.woff2",
-      "assets/inter-vietnamese-700-normal-BZaoP0fm.woff",
-      "assets/inter-latin-ext-700-normal-Ca8adRJv.woff2",
-      "assets/inter-latin-ext-700-normal-TidjK2hL.woff",
-      "assets/inter-latin-700-normal-Yt3aPRUw.woff2",
-      "assets/inter-latin-700-normal-BLAVimhd.woff",
-      "assets/nunito-cyrillic-ext-400-normal-CuPM9foi.woff2",
-      "assets/nunito-cyrillic-ext-400-normal-xaE7D4Sw.woff",
-      "assets/nunito-cyrillic-400-normal-xAOo5cBP.woff2",
-      "assets/nunito-cyrillic-400-normal-D1j0u8EH.woff",
-      "assets/nunito-vietnamese-400-normal-BHkVbP3T.woff2",
-      "assets/nunito-vietnamese-400-normal-DtOtW02z.woff",
-      "assets/nunito-latin-ext-400-normal-i-8OOpdj.woff2",
-      "assets/nunito-latin-ext-400-normal-CjMJVfGn.woff",
-      "assets/nunito-latin-400-normal-r8SDr6Up.woff2",
-      "assets/nunito-latin-400-normal-DKg4f3fz.woff",
-      "assets/nunito-cyrillic-ext-700-normal-BuR0mlCG.woff2",
-      "assets/nunito-cyrillic-ext-700-normal-DfoqN4Gs.woff",
-      "assets/nunito-cyrillic-700-normal-DP36NgGt.woff2",
-      "assets/nunito-cyrillic-700-normal-DfHRUDv-.woff",
-      "assets/nunito-vietnamese-700-normal-Ch8EUCfz.woff2",
-      "assets/nunito-vietnamese-700-normal-C9SQsXvj.woff",
-      "assets/nunito-latin-ext-700-normal-BWeMsAzO.woff2",
-      "assets/nunito-latin-ext-700-normal-D4woHhbd.woff",
-      "assets/nunito-latin-700-normal-Dort48En.woff2",
-      "assets/nunito-latin-700-normal-OcDqTBcA.woff",
-      "assets/dm-sans-latin-ext-400-normal-BtiwyxMk.woff2",
-      "assets/dm-sans-latin-ext-400-normal-BjWJ59Pq.woff",
-      "assets/dm-sans-latin-400-normal-CW0RaeGs.woff2",
-      "assets/dm-sans-latin-400-normal-BwCSEQnW.woff",
-      "assets/dm-sans-latin-ext-700-normal-CJIcxD6K.woff2",
-      "assets/dm-sans-latin-ext-700-normal-BLI3TTWz.woff",
-      "assets/dm-sans-latin-700-normal-DvUfVpUG.woff2",
-      "assets/dm-sans-latin-700-normal-CUSSCpQX.woff",
-      "assets/oswald-cyrillic-ext-400-normal-DaQSmjrl.woff2",
-      "assets/oswald-cyrillic-ext-400-normal-BkkDEomt.woff",
-      "assets/oswald-cyrillic-400-normal-Dakd8U79.woff2",
-      "assets/oswald-cyrillic-400-normal-BUD0W5Zj.woff",
-      "assets/oswald-vietnamese-400-normal-Qi5zi-Wv.woff2",
-      "assets/oswald-vietnamese-400-normal-BupuUjkp.woff",
-      "assets/oswald-latin-ext-400-normal-DbVOzfr-.woff2",
-      "assets/oswald-latin-ext-400-normal-KcyBFdGH.woff",
-      "assets/oswald-latin-400-normal-BAFo8sP8.woff2",
-      "assets/oswald-latin-400-normal-D1wpMXgf.woff",
-      "assets/oswald-cyrillic-ext-700-normal-CtkJES1U.woff2",
-      "assets/oswald-cyrillic-ext-700-normal-VKAui8kQ.woff",
-      "assets/oswald-cyrillic-700-normal-BO0IwMyy.woff2",
-      "assets/oswald-cyrillic-700-normal-DxuP1Pb9.woff",
-      "assets/oswald-vietnamese-700-normal-_DkZZ6ID.woff2",
-      "assets/oswald-vietnamese-700-normal-BxFoeH7J.woff",
-      "assets/oswald-latin-ext-700-normal-BKErdSR5.woff2",
-      "assets/oswald-latin-ext-700-normal-CJSSDThd.woff",
-      "assets/oswald-latin-700-normal-vy6hmKSr.woff2",
-      "assets/oswald-latin-700-normal-UmC9Ev9x.woff",
-      "assets/raleway-cyrillic-ext-400-normal-zbv6uFvq.woff2",
-      "assets/raleway-cyrillic-ext-400-normal-QD38Acpa.woff",
-      "assets/raleway-cyrillic-400-normal-B1ZxqHSH.woff2",
-      "assets/raleway-cyrillic-400-normal-BOk4FNQ-.woff",
-      "assets/raleway-vietnamese-400-normal-CTw6K1Xj.woff2",
-      "assets/raleway-vietnamese-400-normal-CTqj18iX.woff",
-      "assets/raleway-latin-ext-400-normal-B4d0sYmR.woff2",
-      "assets/raleway-latin-ext-400-normal-DoUy7GWe.woff",
-      "assets/raleway-latin-400-normal-C5eIEfLm.woff2",
-      "assets/raleway-latin-400-normal-sMcq1OIP.woff",
-      "assets/raleway-cyrillic-ext-700-normal-BYzsFH9R.woff2",
-      "assets/raleway-cyrillic-ext-700-normal-D0MeO1Y4.woff",
-      "assets/raleway-cyrillic-700-normal-Dynwhvvt.woff2",
-      "assets/raleway-cyrillic-700-normal-Y0JCLxAF.woff",
-      "assets/raleway-vietnamese-700-normal-DhRR6XW-.woff2",
-      "assets/raleway-vietnamese-700-normal-BT2zqTaJ.woff",
-      "assets/raleway-latin-ext-700-normal-BSYX0AAR.woff2",
-      "assets/raleway-latin-ext-700-normal-D9ggOV46.woff",
-      "assets/raleway-latin-700-normal-BVpQLp0x.woff2",
-      "assets/raleway-latin-700-normal-JVwBSLev.woff",
-      "assets/space-grotesk-vietnamese-400-normal-B7xT_GF5.woff2",
-      "assets/space-grotesk-vietnamese-400-normal-BIWiOVfw.woff",
-      "assets/space-grotesk-latin-ext-400-normal-CfP_5XZW.woff2",
-      "assets/space-grotesk-latin-ext-400-normal-DRPE3kg4.woff",
-      "assets/space-grotesk-latin-400-normal-CJ-V5oYT.woff2",
-      "assets/space-grotesk-latin-400-normal-BnQMeOim.woff",
-      "assets/space-grotesk-vietnamese-700-normal-DMty7AZE.woff2",
-      "assets/space-grotesk-vietnamese-700-normal-Duxec5Rn.woff",
-      "assets/space-grotesk-latin-ext-700-normal-BQnZhY3m.woff2",
-      "assets/space-grotesk-latin-ext-700-normal-HVCqSBdx.woff",
-      "assets/space-grotesk-latin-700-normal-RjhwGPKo.woff2",
-      "assets/space-grotesk-latin-700-normal-CwsQ-cCU.woff",
-      "assets/playfair-display-cyrillic-400-normal-CjW2EstV.woff2",
-      "assets/playfair-display-cyrillic-400-normal-ZiRag6zj.woff",
-      "assets/playfair-display-vietnamese-400-normal-BV2APVTb.woff2",
-      "assets/playfair-display-vietnamese-400-normal-BbvUAu4N.woff",
-      "assets/playfair-display-latin-ext-400-normal-BxlSGspa.woff2",
-      "assets/playfair-display-latin-ext-400-normal-qdZwdvNS.woff",
-      "assets/playfair-display-latin-400-normal-CFtfchNt.woff2",
-      "assets/playfair-display-latin-400-normal-DHYHbkg3.woff",
-      "assets/playfair-display-cyrillic-700-normal-Dw3uKy19.woff2",
-      "assets/playfair-display-cyrillic-700-normal-Dk1mTcxf.woff",
-      "assets/playfair-display-vietnamese-700-normal-CaKJSIny.woff2",
-      "assets/playfair-display-vietnamese-700-normal-Cr1rw0mr.woff",
-      "assets/playfair-display-latin-ext-700-normal-C58ejOkc.woff2",
-      "assets/playfair-display-latin-ext-700-normal-D5HUU8GT.woff",
-      "assets/playfair-display-latin-700-normal-CuDiGg7c.woff2",
-      "assets/playfair-display-latin-700-normal-Bc_1Q1cG.woff",
-      "assets/cormorant-garamond-cyrillic-ext-400-normal-W3Dto7M0.woff2",
-      "assets/cormorant-garamond-cyrillic-ext-400-normal-DLdKLAvx.woff",
-      "assets/cormorant-garamond-cyrillic-400-normal-DD2KOZkl.woff2",
-      "assets/cormorant-garamond-cyrillic-400-normal-CVFrM67f.woff",
-      "assets/cormorant-garamond-vietnamese-400-normal-6K-YXo6g.woff2",
-      "assets/cormorant-garamond-vietnamese-400-normal-4uxlocMh.woff",
-      "assets/cormorant-garamond-latin-ext-400-normal-Drx2k2n9.woff2",
-      "assets/cormorant-garamond-latin-ext-400-normal-uvC0WHQr.woff",
-      "assets/cormorant-garamond-latin-400-normal-B-1hWBU7.woff2",
-      "assets/cormorant-garamond-latin-400-normal-B7YtguxJ.woff",
-      "assets/cormorant-garamond-cyrillic-ext-700-normal-Do0rx6yy.woff2",
-      "assets/cormorant-garamond-cyrillic-ext-700-normal-BaW-xaxb.woff",
-      "assets/cormorant-garamond-cyrillic-700-normal-SLG_-a_c.woff2",
-      "assets/cormorant-garamond-cyrillic-700-normal-D3uyJ5DH.woff",
-      "assets/cormorant-garamond-vietnamese-700-normal--OtHbi1I.woff2",
-      "assets/cormorant-garamond-vietnamese-700-normal-GOTdnRS1.woff",
-      "assets/cormorant-garamond-latin-ext-700-normal-CNjt5vTB.woff2",
-      "assets/cormorant-garamond-latin-ext-700-normal-qRbaVVD7.woff",
-      "assets/cormorant-garamond-latin-700-normal-DajfzrDU.woff2",
-      "assets/cormorant-garamond-latin-700-normal-O25Qpphb.woff",
-      "assets/lora-cyrillic-ext-400-normal-DwaaZvol.woff2",
-      "assets/lora-cyrillic-ext-400-normal-PiPRSBNu.woff",
-      "assets/lora-cyrillic-400-normal-CbVom6TB.woff2",
-      "assets/lora-cyrillic-400-normal-BedExNGj.woff",
-      "assets/lora-math-400-normal-D2gccGFf.woff2",
-      "assets/lora-math-400-normal-BToItYw_.woff",
-      "assets/lora-symbols-400-normal-DmcY0X7a.woff2",
-      "assets/lora-symbols-400-normal-BK2bqsD8.woff",
-      "assets/lora-vietnamese-400-normal-BxA6xcFr.woff2",
-      "assets/lora-vietnamese-400-normal-DlgyXXxo.woff",
-      "assets/lora-latin-ext-400-normal-CyviI4c-.woff2",
-      "assets/lora-latin-ext-400-normal-B9GmMl5M.woff",
-      "assets/lora-latin-400-normal-DnxXpLNu.woff2",
-      "assets/lora-latin-400-normal-DBJS-Hc6.woff",
-      "assets/lora-cyrillic-ext-700-normal-CH2Ef3pd.woff2",
-      "assets/lora-cyrillic-ext-700-normal-B20D6wuF.woff",
-      "assets/lora-cyrillic-700-normal-CicHrsUU.woff2",
-      "assets/lora-cyrillic-700-normal-CoUvLzhc.woff",
-      "assets/lora-math-700-normal-BdgFUNlJ.woff2",
-      "assets/lora-math-700-normal-JjB0YUk-.woff",
-      "assets/lora-symbols-700-normal-zYsi5zvy.woff2",
-      "assets/lora-symbols-700-normal-DaE8wqnc.woff",
-      "assets/lora-vietnamese-700-normal-BHDzxyiD.woff2",
-      "assets/lora-vietnamese-700-normal-DyKKCAD2.woff",
-      "assets/lora-latin-ext-700-normal-DbHby4fw.woff2",
-      "assets/lora-latin-ext-700-normal-XBj10pPw.woff",
-      "assets/lora-latin-700-normal-BHK4Pzk4.woff2",
-      "assets/lora-latin-700-normal-Yfa97ytg.woff",
-      "assets/bebas-neue-latin-ext-400-normal-DWiEslNC.woff2",
-      "assets/bebas-neue-latin-ext-400-normal-HFKRJXnW.woff",
-      "assets/bebas-neue-latin-400-normal-9mHNbWWO.woff2",
-      "assets/bebas-neue-latin-400-normal-Bi-ndsyu.woff"
+      "assets/appearance-BykOHeRB.css"
     ]
   },
   "resources/js/tenant/pages/store/banners.js": {
@@ -3607,13 +3634,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/blade-theme.js": {
-    "file": "assets/blade-theme-vXS5tYr_.js",
+    "file": "assets/blade-theme-B9nm15PK.js",
     "name": "blade-theme",
     "src": "resources/js/tenant/pages/store/blade-theme.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_toast-CEmOGeir.js"
+      "_http-Dxjz7Wdq.js",
+      "_toast-Bt6A-TVs.js"
     ],
     "css": [
       "assets/blade-theme-BrBN6q3_.css"
@@ -3641,12 +3668,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/home-variants.js": {
-    "file": "assets/home-variants-B7VTmR7I.js",
+    "file": "assets/home-variants-5-aSK2KJ.js",
     "name": "home-variants",
     "src": "resources/js/tenant/pages/store/home-variants.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js"
+      "_http-Dxjz7Wdq.js"
     ],
     "css": [
       "assets/home-variants-C4ql8u_G.css"
@@ -3674,46 +3701,46 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/themes.js": {
-    "file": "assets/themes--NYogq7f.js",
+    "file": "assets/themes-BGSjr8ov.js",
     "name": "themes",
     "src": "resources/js/tenant/pages/store/themes.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_modals-C3WK80Iy.js"
+      "_http-Dxjz7Wdq.js",
+      "_modals-BU8k2qb3.js"
     ],
     "css": [
       "assets/themes-Celag4VU.css"
     ]
   },
   "resources/js/tenant/pages/support/help.js": {
-    "file": "assets/help-BVQ95FDO.js",
+    "file": "assets/help-B6euFvmF.js",
     "name": "help",
     "src": "resources/js/tenant/pages/support/help.js",
     "isEntry": true,
     "imports": [
-      "_http-B0YEhg3S.js",
-      "_registry-Dp6BQhlz.js"
+      "_http-Dxjz7Wdq.js",
+      "_registry-B-cqme3C.js"
     ],
     "css": [
       "assets/help-DwmxfjAX.css"
     ]
   },
   "resources/js/tenant/pages/support/notifications.js": {
-    "file": "assets/notifications-uJEndDl5.js",
+    "file": "assets/notifications-CpK6cENY.js",
     "name": "notifications",
     "src": "resources/js/tenant/pages/support/notifications.js",
     "isEntry": true,
     "imports": [
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js"
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js"
     ],
     "css": [
       "assets/notifications-2L3C_fDO.css"
     ]
   },
   "resources/js/tenant/pages/support/ticket-create.js": {
-    "file": "assets/ticket-create-CiuYUB-j.js",
+    "file": "assets/ticket-create-CHeB3sVR.js",
     "name": "ticket-create",
     "src": "resources/js/tenant/pages/support/ticket-create.js",
     "isEntry": true,
@@ -3722,23 +3749,23 @@
     ]
   },
   "resources/js/tenant/pages/support/ticket-show.js": {
-    "file": "assets/ticket-show-CEle606i.js",
+    "file": "assets/ticket-show-CdE9vNzo.js",
     "name": "ticket-show",
     "src": "resources/js/tenant/pages/support/ticket-show.js",
     "isEntry": true,
     "imports": [
-      "_echo-BMe20d-J.js",
-      "_events-oXKQj97e.js",
-      "_forms-Cm8EFlPb.js",
-      "_http-B0YEhg3S.js",
-      "_registry-Dp6BQhlz.js"
+      "_echo-CGw7MDoI.js",
+      "_events-BGalvnsw.js",
+      "_forms-D4te-vLL.js",
+      "_http-Dxjz7Wdq.js",
+      "_registry-B-cqme3C.js"
     ],
     "css": [
       "assets/support-DPusLhcR.css"
     ]
   },
   "resources/js/tenant/pages/support/tickets-index.js": {
-    "file": "assets/tickets-index-CsVfDEg6.js",
+    "file": "assets/tickets-index-D2ehiP7x.js",
     "name": "tickets-index",
     "src": "resources/js/tenant/pages/support/tickets-index.js",
     "isEntry": true,
@@ -3747,55 +3774,55 @@
     ]
   },
   "resources/js/tenant/pages/ui-kit.js": {
-    "file": "assets/ui-kit-Dk7h4ARL.js",
+    "file": "assets/ui-kit-DNL9dDoR.js",
     "name": "ui-kit",
     "src": "resources/js/tenant/pages/ui-kit.js",
     "isEntry": true,
     "imports": [
-      "_toast-CEmOGeir.js"
+      "_toast-Bt6A-TVs.js"
     ]
   },
   "resources/js/tenant/shell/setup-progress.js": {
-    "file": "assets/setup-progress-Bt3ZPgCq.js",
+    "file": "assets/setup-progress-Dy7LDNzj.js",
     "name": "setup-progress",
     "src": "resources/js/tenant/shell/setup-progress.js",
     "isDynamicEntry": true,
     "imports": [
-      "_events-oXKQj97e.js",
-      "_http-B0YEhg3S.js"
+      "_events-BGalvnsw.js",
+      "_http-Dxjz7Wdq.js"
     ]
   },
   "resources/js/tenant/vendor/jquery.js": {
-    "file": "assets/jquery-BASPLtKi.js",
+    "file": "assets/jquery-Cx5csFJW.js",
     "name": "jquery",
     "src": "resources/js/tenant/vendor/jquery.js",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_vendor-jquery-Dw1hYzjO.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_vendor-jquery-5XYqUNav.js"
     ]
   },
   "resources/js/tenant/vendor/tinymce.js": {
-    "file": "assets/tinymce-Dk38smmE.js",
+    "file": "assets/tinymce-ga0EA-nH.js",
     "name": "tinymce",
     "src": "resources/js/tenant/vendor/tinymce.js",
     "isDynamicEntry": true,
     "imports": [
-      "_rolldown-runtime-E-TR9XSN.js",
-      "_preload-helper-Cx6angFm.js"
+      "_rolldown-runtime-BE6ZWUib.js",
+      "_preload-helper-BdnPLKW7.js"
     ],
     "dynamicImports": [
-      "_vendor-tinymce-tVq4WO3G.js"
+      "_vendor-tinymce-CC0G5m3B.js"
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-CJcn3ORI.js",
+    "file": "assets/website-Bdz1CB5R.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
-      "_bootstrap-BYI8__Dy.js",
-      "_phone-input-BVTcgHPS.js"
+      "_bootstrap-CiZkJFPc.js",
+      "_phone-input-DYfXZI0D.js"
     ]
   }
 }

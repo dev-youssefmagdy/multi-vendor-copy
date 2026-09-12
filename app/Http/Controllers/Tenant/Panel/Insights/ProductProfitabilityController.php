@@ -20,12 +20,12 @@ final class ProductProfitabilityController extends PanelController
 
     private function overview(): array
     {
-        return Cache::remember('tenant:'.tenant('id').':profitability:overview', 60, fn () => $this->repository->productProfitabilityOverview());
+        return Cache::driver('file')->remember('tenant:'.tenant('id').':profitability:overview', 60, fn () => $this->repository->productProfitabilityOverview());
     }
 
     private function rows(): array
     {
-        return Cache::remember('tenant:'.tenant('id').':profitability:rows', 60, fn () => $this->repository->profitabilityRows());
+        return Cache::driver('file')->remember('tenant:'.tenant('id').':profitability:rows', 60, fn () => $this->repository->profitabilityRows());
     }
 
     public function index(): View

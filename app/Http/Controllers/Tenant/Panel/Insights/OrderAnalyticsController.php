@@ -20,7 +20,7 @@ final class OrderAnalyticsController extends PanelController
 
     private function overview(): array
     {
-        return Cache::remember('tenant:'.tenant('id').':order-analytics:overview', 60, fn () => $this->repository->orderAnalyticsOverview());
+        return Cache::driver('file')->remember('tenant:'.tenant('id').':order-analytics:overview', 60, fn () => $this->repository->orderAnalyticsOverview());
     }
 
     public function index(): View
