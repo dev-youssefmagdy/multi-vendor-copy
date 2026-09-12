@@ -31,6 +31,9 @@ use App\Models\Tenant\Subscriber;
 use App\Models\Tenant\Subscription;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\Transaction;
+use App\Models\HomeVariant;
+use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as ManualPaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -719,9 +722,24 @@ class TenantPanelRepository
         return Theme::query()->with('countries')->orderBy('name')->get();
     }
 
+    public function queryPages(array $filters): Builder
+    {
+        return Page::query()
+            ->with('translations.language')
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $q) use ($search) {
+                    $q->where('slug', 'like', "%{$search}%")
+                        ->orWhereHas('translations', fn (Builder $t) => $t->where('value', 'like', "%{$search}%"));
+                });
+            })
+            ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('active', $filters['status'] === 'active'))
+            ->latest();
+    }
+
     public function paginatePages(int $perPage = 10): LengthAwarePaginator
     {
-        return Page::query()->with('translations.language')->latest()->paginate($perPage);
+        return $this->queryPages([])->paginate($perPage);
     }
 
     public function pageStats(): array
@@ -733,9 +751,14 @@ class TenantPanelRepository
         ];
     }
 
+    public function queryCoupons(?int $countryId): Builder
+    {
+        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest();
+    }
+
     public function paginateCoupons(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
-        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest()->paginate($perPage);
+        return $this->queryCoupons($countryId)->paginate($perPage);
     }
 
     public function couponStats(?int $countryId = null): array
@@ -749,13 +772,17 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    public function queryFlashSales(?int $countryId): Builder
     {
         return FlashSale::query()
             ->with(['product.translations.language', 'products.translations.language', 'files'])
             ->where('country_id', $countryId)
-            ->latest()
-            ->paginate($perPage);
+            ->latest();
+    }
+
+    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    {
+        return $this->queryFlashSales($countryId)->paginate($perPage);
     }
 
     public function flashSaleStats(?int $countryId = null): array
@@ -1874,6 +1901,116 @@ class TenantPanelRepository
         return SocialLink::query()->orderBy('serial_number')->get();
     }
 
+
+    /**
+     * One entry per tenant theme, each holding one entry per home variant with
+     * customizable colors. Shape: [theme_id => ['name' => ..., 'slug' => ...,
+     * 'is_active' => bool, 'variants' => [variant_id => ['key' => 'v2', 'name' => 'Purple Edition',
+     * 'is_active' => bool, 'defaults' => [...], 'values' => [...]]]]].
+     */
+    public function appearanceColorThemes(): array
+    {
+        $colorThemes = [];
+
+        $storefrontRepo = app(StorefrontRepository::class);
+        $activeTheme = $storefrontRepo->currentTheme();
+        $activeVariant = $storefrontRepo->currentHomeVariant();
+
+        $themes = Theme::query()->orderBy('name')->get();
+
+        foreach ($themes as $theme) {
+            $variants = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))
+                ->where('is_active', true)
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get()
+            );
+
+            $overrides = TenantThemeColor::query()
+                ->where('theme_id', $theme->id)
+                ->whereNull('country_id')
+                ->get()
+                ->keyBy('home_variant_id');
+
+            $variantSections = [];
+            foreach ($variants as $variant) {
+                $defaults = (array) ($variant->colors ?? []);
+                if (empty($defaults)) {
+                    continue;
+                }
+
+                $override = (array) ($overrides->get($variant->id)?->colors ?? []);
+
+                $variantSections[$variant->id] = [
+                    'key' => $variant->key,
+                    'name' => $variant->name,
+                    'is_active' => $activeTheme && $activeTheme->id === $theme->id
+                        && $activeVariant && $activeVariant->id === $variant->id,
+                    'defaults' => $defaults,
+                    'values' => array_merge($defaults, $override),
+                ];
+            }
+
+            if (empty($variantSections)) {
+                continue;
+            }
+
+            $colorThemes[$theme->id] = [
+                'name' => $theme->name,
+                'slug' => $theme->slug,
+                'is_active' => $activeTheme && $activeTheme->id === $theme->id,
+                'variants' => $variantSections,
+            ];
+        }
+
+        return $colorThemes;
+    }
+
+    /** Build the `/preview` URL that mirrors this tenant's current theme, colors, and homepage variant. */
+    public function appearancePreviewUrl(): ?string
+    {
+        $repo = app(StorefrontRepository::class);
+        $theme = $repo->currentTheme();
+        if (!$theme) {
+            return null;
+        }
+
+        $query = ['theme' => $theme->slug];
+
+        $variantId = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+
+        if ($variantId) {
+            $variantKey = tenancy()->central(fn () => HomeVariant::query()->find($variantId)?->key);
+            if ($variantKey) {
+                $query['homepage_variant'] = $variantKey;
+            }
+        }
+
+        $centralDomain = config('tenancy.central_domains.0')
+            ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
+        $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
+
+        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
+    }
+
+    /** Default color values for one theme's home variant (used to build dynamic validation rules and for the reset action). */
+    public function themeVariantColorDefaults(int $themeId, int $variantId): array
+    {
+        $theme = Theme::query()->find($themeId);
+        if (!$theme) {
+            return [];
+        }
+
+        $variant = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))
+            ->where('id', $variantId)
+            ->first()
+        );
+
+        return (array) ($variant?->colors ?? []);
+    }
 
     public function appearanceSettings(): array
     {

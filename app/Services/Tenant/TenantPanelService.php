@@ -380,6 +380,55 @@ class TenantPanelService
         });
     }
 
+    /**
+     * Validate that a flash sale discount does not exceed the vendor profit
+     * margin for any of the given products.
+     *
+     * @param  int[]  $productIds
+     * @return string[]  Empty when valid; one human-readable error per failing product.
+     */
+    public function validateFlashSaleProfitMargins(array $productIds, float $discountPct, array $productLabels = []): array
+    {
+        if ($discountPct <= 0 || empty($productIds)) {
+            return [];
+        }
+
+        $products = Product::query()
+            ->with('centralProduct')
+            ->whereIn('id', $productIds)
+            ->get(['id', 'central_product_id', 'default_price', 'is_own_product']);
+
+        $errors = [];
+
+        foreach ($products as $product) {
+            $sellPrice = (float) ($product->default_price ?? 0);
+            if ($sellPrice <= 0) {
+                continue;
+            }
+
+            if ($product->is_own_product) {
+                $ownerCost = 0.0;
+            } else {
+                $central = $product->centralProduct;
+                $ownerCost = (float) ($central?->sale_price ?: $central?->base_price ?? $sellPrice);
+            }
+
+            $vendorProfit = $sellPrice - $ownerCost;
+            $discountAmount = $sellPrice * ($discountPct / 100);
+
+            if ($discountAmount > $vendorProfit) {
+                $name = $productLabels[(int) $product->id] ?? ('Product #' . $product->id);
+                $maxPct = $sellPrice > 0 ? floor(($vendorProfit / $sellPrice) * 100) : 0;
+                $errors[] = __("The discount for ':product' cannot exceed :max% (vendor profit margin).", [
+                    'product' => $name,
+                    'max' => $maxPct,
+                ]);
+            }
+        }
+
+        return $errors;
+    }
+
     public function saveGateway(array $attributes, PaymentGateway $gateway): PaymentGateway
     {
         $requiredValues = collect($attributes['required_values'] ?? [])

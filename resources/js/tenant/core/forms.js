@@ -327,6 +327,49 @@ export class TenantForm {
         Object.entries(data ?? {}).forEach(([key, value]) => {
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
+            // Companion "<field>_options" map ({id: label}) for an ajax-mode
+            // multi select2: inject the missing <option> elements before the
+            // matching "<field>" array key (processed next, in insertion
+            // order) marks them selected. This is how a shared create/edit
+            // modal pre-renders existing selections for a select2 field whose
+            // options are otherwise only ever loaded by the ajax search.
+            // Companion "<field>_current" URL for an x-tenant::image-upload
+            // field: updates that component's preview <img> to the record's
+            // existing image when a shared create/edit modal is filled for
+            // edit (the component only ever has the file input's value to
+            // work with otherwise, and a file input's value can't be set
+            // from JS).
+            if (key.endsWith('_current')) {
+                const baseKey = prefix ? `${prefix}.${key.slice(0, -'_current'.length)}` : key.slice(0, -'_current'.length);
+                const input = this.form.querySelector(`input[type="file"][name="${this.toInputName(baseKey)}"]`);
+                const preview = input?.closest('[data-image-upload]')?.querySelector('.t-image-upload-preview');
+                if (preview) {
+                    if (value) {
+                        preview.src = value;
+                        preview.hidden = false;
+                    } else {
+                        preview.hidden = true;
+                    }
+                }
+                return;
+            }
+
+            if (key.endsWith('_options') && value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                const baseKey = prefix ? `${prefix}.${key.slice(0, -'_options'.length)}` : key.slice(0, -'_options'.length);
+                const select = this.form.querySelector(`select[data-tenant-select2][name="${this.toInputName(baseKey)}[]"]`);
+                if (select) {
+                    Object.entries(value).forEach(([optId, optText]) => {
+                        if (!select.querySelector(`option[value="${CSS.escape(String(optId))}"]`)) {
+                            const opt = document.createElement('option');
+                            opt.value = optId;
+                            opt.textContent = optText;
+                            select.appendChild(opt);
+                        }
+                    });
+                }
+                return;
+            }
+
             if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
                 this.fill(value, fullKey);
                 return;

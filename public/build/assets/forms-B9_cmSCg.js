@@ -1,0 +1,1 @@
+import{t as e}from"./forms-DKIMD86F.js";export{e as TenantForm};

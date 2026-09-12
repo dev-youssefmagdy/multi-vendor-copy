@@ -49,6 +49,9 @@ use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
 use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
 use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductsListController;
+use App\Http\Controllers\Tenant\Panel\Store\ThemesController;
+use App\Http\Controllers\Tenant\Panel\Store\PagesController;
+use App\Http\Controllers\Tenant\Panel\Store\PageFormController;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
 use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;
@@ -74,17 +77,15 @@ use App\Livewire\Tenant\Setting\MailConfigurationsPage;
 use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
 use App\Livewire\Tenant\Setting\RolesPermissionsList;
 use App\Livewire\Tenant\Setting\SubscribersPage;
-use App\Livewire\Tenant\Store\AppearancePage;
-use App\Livewire\Tenant\Store\BannersIndexPage;
-use App\Livewire\Tenant\Store\BannersPage;
+use App\Http\Controllers\Tenant\Panel\Store\BannerController;
+use App\Http\Controllers\Tenant\Panel\Store\CouponController;
+use App\Http\Controllers\Tenant\Panel\Store\FlashSaleController;
+use App\Http\Controllers\Tenant\Panel\Store\AppearanceController;
+use App\Http\Controllers\Tenant\Panel\Store\SocialLinkController;
 use App\Livewire\Tenant\Store\BladeThemePage;
 use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
-use App\Livewire\Tenant\Store\CouponsIndexPage;
-use App\Livewire\Tenant\Store\CouponsPage;
-use App\Livewire\Tenant\Store\FlashSalesIndexPage;
-use App\Livewire\Tenant\Store\FlashSalesPage;
 use App\Livewire\Tenant\Store\AddEditPage;
 use App\Livewire\Tenant\Store\PagesList;
 use App\Livewire\Tenant\Store\ThemesPage;
@@ -523,51 +524,117 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             });
 
             Route::prefix('store')->name('tenant.store.')->group(function () {
-                Route::get('/themes', ThemesPage::class)
-                    ->middleware('tenant.permission:store.themes.manage')
-                    ->name('themes');
-                Route::get('/pages', PagesList::class)
-                    ->middleware('tenant.permission:store.pages.manage')
-                    ->name('pages');
-                Route::get('/pages/create', AddEditPage::class)
-                    ->middleware('tenant.permission:store.pages.manage')
-                    ->name('pages.create');
-                Route::get('/pages/{page}/edit', AddEditPage::class)
-                    ->middleware('tenant.permission:store.pages.manage')
-                    ->name('pages.edit');
-                Route::get('/coupons', CouponsIndexPage::class)
-                    ->middleware('tenant.permission:store.coupons.manage')
-                    ->name('coupons.index');
-                Route::get('/coupons/list/{countryId?}', CouponsPage::class)
-                    ->middleware('tenant.permission:store.coupons.manage')
-                    ->name('coupons.list');
-                Route::get('/flash-sales', FlashSalesIndexPage::class)
-                    ->middleware('tenant.permission:store.flash-sales.manage')
-                    ->name('flash-sales.index');
-                Route::get('/flash-sales/list/{countryId?}', FlashSalesPage::class)
-                    ->middleware('tenant.permission:store.flash-sales.manage')
-                    ->name('flash-sales');
-                Route::get('/appearance', AppearancePage::class)
-                    ->middleware('tenant.permission:store.appearance.manage')
-                    ->name('appearance');
-                Route::get('/banners', BannersIndexPage::class)
-                    ->middleware('tenant.permission:store.appearance.manage')
-                    ->name('banners.index');
-                Route::get('/banners/list/{countryId?}', BannersPage::class)
-                    ->middleware('tenant.permission:store.appearance.manage')
-                    ->name('banners');
-                Route::get('/blade-theme', BladeThemePage::class)
-                    ->middleware('tenant.permission:store.blade-theme.manage')
-                    ->name('blade-theme');
-                Route::get('/blade-theme/starter-kit', [\App\Http\Controllers\Tenant\BladeThemeStarterKitController::class, 'download'])
-                    ->middleware('tenant.permission:store.blade-theme.manage')
-                    ->name('blade-theme.starter-kit');
-                Route::get('/page-builder', PageBuilderPage::class)
-                    ->middleware('tenant.permission:store.page-builder.manage')
-                    ->name('page-builder');
-                Route::get('/home-variants', HomeVariantsPage::class)
-                    ->middleware('tenant.permission:store.home-variants.manage')
-                    ->name('home-variants');
+                Route::middleware('tenant.permission:store.themes.manage')->group(function () {
+                    Route::get('/themes', [ThemesController::class, 'index'])->name('themes');
+                    Route::post('/themes/{theme}/activate', [ThemesController::class, 'activate'])
+                        ->whereNumber('theme')
+                        ->name('themes.activate');
+                    Route::post('/themes/{theme}/variants/{variant}/activate', [ThemesController::class, 'activateVariant'])
+                        ->whereNumber('theme')
+                        ->whereNumber('variant')
+                        ->name('themes.variants.activate');
+                    Route::post('/themes/{theme}/deactivate', [ThemesController::class, 'deactivate'])
+                        ->whereNumber('theme')
+                        ->name('themes.deactivate');
+                    Route::get('/themes/{theme}/countries', [ThemesController::class, 'countries'])
+                        ->whereNumber('theme')
+                        ->name('themes.countries');
+                    Route::put('/themes/{theme}/countries', [ThemesController::class, 'updateCountries'])
+                        ->whereNumber('theme')
+                        ->name('themes.countries.update');
+                });
+
+                Route::middleware('tenant.permission:store.pages.manage')->group(function () {
+                    Route::get('/pages', [PagesController::class, 'index'])->name('pages');
+                    Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
+                    Route::get('/pages/create', [PageFormController::class, 'create'])->name('pages.create');
+                    Route::post('/pages', [PageFormController::class, 'store'])->name('pages.store');
+                    Route::post('/pages/validate', [PageFormController::class, 'validateStore'])->name('pages.validate');
+                    Route::get('/pages/{page}/edit', [PageFormController::class, 'edit'])->whereNumber('page')->name('pages.edit');
+                    Route::put('/pages/{page}', [PageFormController::class, 'update'])->whereNumber('page')->name('pages.update');
+                    Route::post('/pages/{page}/validate', [PageFormController::class, 'validateUpdate'])->whereNumber('page')->name('pages.validate.update');
+                    Route::delete('/pages/{page}', [PagesController::class, 'destroy'])->whereNumber('page')->name('pages.destroy');
+                });
+                Route::middleware('tenant.permission:store.coupons.manage')->group(function () {
+                    Route::get('/coupons', [CouponController::class, 'index'])->name('coupons.index');
+                    Route::get('/coupons/data/{countryId?}', [CouponController::class, 'data'])->whereNumber('countryId')->name('coupons.data');
+                    Route::get('/coupons/item/{coupon}', [CouponController::class, 'show'])->whereNumber('coupon')->name('coupons.show');
+                    Route::post('/coupons', [CouponController::class, 'store'])->name('coupons.store');
+                    Route::post('/coupons/validate', [CouponController::class, 'validateStore'])->name('coupons.validate');
+                    Route::put('/coupons/item/{coupon}', [CouponController::class, 'update'])->whereNumber('coupon')->name('coupons.update');
+                    Route::post('/coupons/item/{coupon}/validate', [CouponController::class, 'validateUpdate'])->whereNumber('coupon')->name('coupons.validate.update');
+                    Route::delete('/coupons/item/{coupon}', [CouponController::class, 'destroy'])->whereNumber('coupon')->name('coupons.destroy');
+                    Route::get('/coupons/list/{countryId?}', [CouponController::class, 'list'])->whereNumber('countryId')->name('coupons.list');
+                });
+
+                Route::middleware('tenant.permission:store.flash-sales.manage')->group(function () {
+                    Route::get('/flash-sales', [FlashSaleController::class, 'index'])->name('flash-sales.index');
+                    Route::get('/flash-sales/data/{countryId?}', [FlashSaleController::class, 'data'])->whereNumber('countryId')->name('flash-sales.data');
+                    Route::get('/flash-sales/products/search', [FlashSaleController::class, 'searchProducts'])->name('flash-sales.products.search');
+                    Route::get('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'show'])->whereNumber('flashSale')->name('flash-sales.show');
+                    Route::post('/flash-sales', [FlashSaleController::class, 'store'])->name('flash-sales.store');
+                    Route::post('/flash-sales/validate', [FlashSaleController::class, 'validateStore'])->name('flash-sales.validate');
+                    Route::put('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'update'])->whereNumber('flashSale')->name('flash-sales.update');
+                    Route::post('/flash-sales/item/{flashSale}/validate', [FlashSaleController::class, 'validateUpdate'])->whereNumber('flashSale')->name('flash-sales.validate.update');
+                    Route::delete('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'destroy'])->whereNumber('flashSale')->name('flash-sales.destroy');
+                    Route::get('/flash-sales/list/{countryId?}', [FlashSaleController::class, 'list'])->whereNumber('countryId')->name('flash-sales');
+                });
+
+                Route::middleware('tenant.permission:store.appearance.manage')->group(function () {
+                    Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');
+
+                    Route::put('/appearance/general', [AppearanceController::class, 'saveGeneral'])->name('appearance.general');
+                    Route::post('/appearance/general/validate', [AppearanceController::class, 'validateGeneral'])->name('appearance.general.validate');
+
+                    Route::put('/appearance/colors/{theme}/{variant}', [AppearanceController::class, 'saveColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors');
+                    Route::post('/appearance/colors/{theme}/{variant}/validate', [AppearanceController::class, 'validateColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors.validate');
+                    Route::post('/appearance/colors/{theme}/{variant}/reset', [AppearanceController::class, 'resetColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors.reset');
+
+                    Route::get('/appearance/social', [SocialLinkController::class, 'index'])->name('appearance.social.index');
+                    Route::get('/appearance/social/{link}', [SocialLinkController::class, 'show'])->whereNumber('link')->name('appearance.social.show');
+                    Route::post('/appearance/social', [SocialLinkController::class, 'store'])->name('appearance.social.store');
+                    Route::post('/appearance/social/validate', [SocialLinkController::class, 'validateStore'])->name('appearance.social.validate');
+                    Route::put('/appearance/social/{link}', [SocialLinkController::class, 'update'])->whereNumber('link')->name('appearance.social.update');
+                    Route::post('/appearance/social/{link}/validate', [SocialLinkController::class, 'validateUpdate'])->whereNumber('link')->name('appearance.social.validate.update');
+                    Route::delete('/appearance/social/{link}', [SocialLinkController::class, 'destroy'])->whereNumber('link')->name('appearance.social.destroy');
+
+                    Route::put('/appearance/promo-banner', [AppearanceController::class, 'savePromoBanner'])->name('appearance.promo-banner');
+                    Route::post('/appearance/promo-banner/validate', [AppearanceController::class, 'validatePromoBanner'])->name('appearance.promo-banner.validate');
+
+                    Route::put('/appearance/footer', [AppearanceController::class, 'saveFooter'])->name('appearance.footer');
+                    Route::post('/appearance/footer/validate', [AppearanceController::class, 'validateFooter'])->name('appearance.footer.validate');
+                });
+
+                Route::middleware('tenant.permission:store.appearance.manage')->group(function () {
+                    Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
+                    Route::get('/banners/item/{banner}', [BannerController::class, 'show'])->whereNumber('banner')->name('banners.show');
+                    Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
+                    Route::post('/banners/validate', [BannerController::class, 'validateStore'])->name('banners.validate');
+                    Route::put('/banners/item/{banner}', [BannerController::class, 'update'])->whereNumber('banner')->name('banners.update');
+                    Route::post('/banners/item/{banner}/validate', [BannerController::class, 'validateUpdate'])->whereNumber('banner')->name('banners.validate.update');
+                    Route::delete('/banners/item/{banner}', [BannerController::class, 'destroy'])->whereNumber('banner')->name('banners.destroy');
+                    Route::post('/banners/{countryId}/order', [BannerController::class, 'updateOrder'])->whereNumber('countryId')->name('banners.order');
+                    Route::get('/banners/list/{countryId?}', [BannerController::class, 'list'])->whereNumber('countryId')->name('banners');
+                });
+                Route::middleware('tenant.permission:store.blade-theme.manage')->group(function () {
+                    Route::get('/blade-theme', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'index'])->name('blade-theme');
+                    Route::get('/blade-theme/starter-kit', [\App\Http\Controllers\Tenant\BladeThemeStarterKitController::class, 'download'])->name('blade-theme.starter-kit');
+                    Route::post('/blade-theme', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'upload'])->name('blade-theme.upload');
+                    Route::post('/blade-theme/validate', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'validateUpload'])->name('blade-theme.upload.validate');
+                    Route::post('/blade-theme/deactivate', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'deactivate'])->name('blade-theme.deactivate');
+                    Route::delete('/blade-theme/{upload}', [\App\Http\Controllers\Tenant\Panel\Store\BladeThemeController::class, 'destroy'])->whereNumber('upload')->name('blade-theme.destroy');
+                });
+
+                Route::middleware('tenant.permission:store.page-builder.manage')->group(function () {
+                    Route::get('/page-builder', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'index'])->name('page-builder');
+                    Route::post('/page-builder/order', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'updateOrder'])->name('page-builder.order');
+                    Route::patch('/page-builder/sections/{section}/visibility', [\App\Http\Controllers\Tenant\Panel\Store\PageBuilderController::class, 'toggleVisibility'])->name('page-builder.sections.visibility');
+                });
+
+                Route::middleware('tenant.permission:store.home-variants.manage')->group(function () {
+                    Route::get('/home-variants', [\App\Http\Controllers\Tenant\Panel\Store\HomeVariantsController::class, 'index'])->name('home-variants');
+                    Route::post('/home-variants', [\App\Http\Controllers\Tenant\Panel\Store\HomeVariantsController::class, 'selectVariant'])->name('home-variants.select');
+                });
             });
 
             Route::prefix('help')->name('tenant.help.')->group(function () {

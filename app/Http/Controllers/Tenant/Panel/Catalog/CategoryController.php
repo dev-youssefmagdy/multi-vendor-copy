@@ -38,11 +38,11 @@ final class CategoryController extends PanelController
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('category', 'Category')->orderable(false),
-                TableColumn::make('parent', 'Parent')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('products', 'Products')->orderable(false),
-                TableColumn::make('updated_at', 'Updated At'),
+                TableColumn::make('category', 'Category')->orderable(false)->width('320px'),
+                TableColumn::make('parent', 'Parent')->orderable(false)->width('160px'),
+                TableColumn::make('status', 'Status')->orderable(false)->width('140px'),
+                TableColumn::make('products', 'Products')->orderable(false)->width('100px'),
+                TableColumn::make('updated_at', 'Updated At')->width('120px'),
                 TableColumn::actions(),
             ],
         ]);

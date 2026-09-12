@@ -240,7 +240,7 @@
 .t-repeater-add { margin-top: 4px; }
 
 /* Entity row (thumbnail + title/subtitle), used in list/sort/form partials */
-.entity-row { display: flex; align-items: center; gap: 12px; }
+.entity-row { display: flex; align-items: center; gap: 12px; max-width: 100%; }
 .entity-thumb {
     width: 44px;
     height: 44px;
@@ -255,6 +255,25 @@
     justify-content: center;
     background: var(--elevated);
     color: var(--t3);
+    font-size: 12px;
+}
+.entity-body {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.entity-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    color: var(--t1);
+}
+.entity-subtitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--t3);
+    font-size: 12px;
 }
 .entity-thumb-lg {
     width: 100%;

@@ -126,6 +126,17 @@ export default defineConfig({
                 'resources/js/tenant/pages/support/tickets-index.js',
                 'resources/js/tenant/pages/support/ticket-create.js',
                 'resources/js/tenant/pages/support/ticket-show.js',
+                'resources/js/tenant/pages/store/themes.js',
+                'resources/js/tenant/pages/store/pages-index.js',
+                'resources/js/tenant/pages/store/page-form.js',
+                'resources/js/tenant/pages/store/country-index.js',
+                'resources/js/tenant/pages/store/coupons.js',
+                'resources/js/tenant/pages/store/flash-sales.js',
+                'resources/js/tenant/pages/store/banners.js',
+                'resources/js/tenant/pages/store/blade-theme.js',
+                'resources/js/tenant/pages/store/page-builder.js',
+                'resources/js/tenant/pages/store/home-variants.js',
+                'resources/js/tenant/pages/store/appearance.js',
                 // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,
@@ -144,7 +155,10 @@ export default defineConfig({
             output: {
                 manualChunks(id) {
                     if (!id.includes('node_modules')) return undefined;
-                    if (/node_modules\/(jquery|select2|datatables\.net|toastr)/.test(id)) return 'vendor-jquery';
+                    if (id.includes('node_modules/datatables.net')) return undefined;
+                    if (id.includes('node_modules/select2')) return undefined;
+                    if (id.includes('node_modules/toastr')) return undefined;
+                    if (id.includes('node_modules/jquery')) return 'vendor-jquery';
                     if (id.includes('node_modules/flatpickr')) return 'vendor-flatpickr';
                     if (id.includes('node_modules/chart.js')) return 'vendor-charts';
                     if (id.includes('node_modules/tinymce')) return 'vendor-tinymce';

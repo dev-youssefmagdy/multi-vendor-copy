@@ -1,1 +1,0 @@
-import{t as e}from"./forms-DnBTYBa0.js";export{e as TenantForm};

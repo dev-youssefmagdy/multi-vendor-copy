@@ -1,0 +1,1 @@
+import{t as e}from"./insight-charts-CZitz7QO.js";e();

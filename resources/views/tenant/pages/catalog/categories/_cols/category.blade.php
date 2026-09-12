@@ -8,11 +8,11 @@
     @else
         <div class="entity-thumb entity-thumb-empty">—</div>
     @endif
-    <div>
-        <div class="entity-title">{{ $label }}</div>
-        <div class="entity-subtitle">/{{ $category->slug }}</div>
+    <div class="entity-body">
+        <div class="entity-title" title="{{ $label }}">{{ $label }}</div>
+        <div class="entity-subtitle" title="/{{ $category->slug }}">/{{ $category->slug }}</div>
         @if($central)
-            <div class="entity-subtitle">Central: {{ $central['name'] }}</div>
+            <div class="entity-subtitle" title="Central: {{ $central['name'] }}">Central: {{ $central['name'] }}</div>
         @endif
     </div>
 </div>

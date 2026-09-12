@@ -1,0 +1,1 @@
+var e=document.querySelector(`[data-pb-switcher-form]`),t=e?.querySelector(`[data-pb-theme-select]`),n=e?.querySelector(`[data-pb-variant-select]`);t?.addEventListener(`change`,()=>{n&&n.removeAttribute(`name`),e.submit()}),n?.addEventListener(`change`,()=>e.submit());
