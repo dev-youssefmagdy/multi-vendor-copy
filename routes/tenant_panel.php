@@ -60,7 +60,7 @@ use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
 use App\Http\Controllers\Tenant\Panel\Support\TicketController;
 use App\Http\Controllers\Tenant\Panel\Requests\ProductRequestController;
-use App\Livewire\Tenant\Onboarding\OnboardingPage;
+use App\Http\Controllers\Tenant\Panel\Onboarding\OnboardingController;
 use App\Http\Controllers\Tenant\Panel\Settings\AccountSettingsController;
 use App\Http\Controllers\Tenant\Panel\Settings\ComplianceCenterController;
 use App\Http\Controllers\Tenant\Panel\Settings\AdminsController;
@@ -172,9 +172,25 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                 ->middleware('tenant.permission:dashboard.view')
                 ->name('tenant.dashboard');
 
-            Route::get('/onboarding/{tab?}', OnboardingPage::class)
+            Route::get('/onboarding/{tab?}', [OnboardingController::class, 'show'])
                 ->where('tab', 'tour|setup')
                 ->name('tenant.onboarding');
+            Route::post('/onboarding/tour/complete', [OnboardingController::class, 'completeTour'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.onboarding.tour.complete');
+            Route::post('/onboarding/logo', [OnboardingController::class, 'saveLogo'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.onboarding.logo');
+            Route::post('/onboarding/logo/validate', [OnboardingController::class, 'validateLogo'])
+                ->middleware('throttle:tenant-validate')
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.onboarding.logo.validate');
+            Route::post('/onboarding/payment-readiness/skip', [OnboardingController::class, 'skipPaymentReadiness'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.onboarding.payment-readiness.skip');
+            Route::post('/onboarding/dismiss', [OnboardingController::class, 'dismiss'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.onboarding.dismiss');
 
             if (app()->environment('local')) {
                 Route::prefix('_ui')->name('tenant.ui-kit')->group(function () {

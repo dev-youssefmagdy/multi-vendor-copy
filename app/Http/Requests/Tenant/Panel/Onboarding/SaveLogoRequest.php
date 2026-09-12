@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Tenant\Panel\Store;
+namespace App\Http\Requests\Tenant\Panel\Onboarding;
 
 use App\Http\Requests\Tenant\Panel\Concerns\LogoRules;
 use App\Http\Requests\Tenant\Panel\TenantFormRequest;
 
-final class SaveGeneralAppearanceRequest extends TenantFormRequest
+final class SaveLogoRequest extends TenantFormRequest
 {
     use LogoRules;
 
