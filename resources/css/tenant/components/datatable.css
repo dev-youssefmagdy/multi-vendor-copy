@@ -1,5 +1,31 @@
-/* DataTables theme overrides — filled in with the component in prompt 02 */
 table.dataTable {
     color: var(--t1);
     border-color: var(--border2);
+    width: 100% !important;
 }
+table.dataTable thead th {
+    color: var(--t3);
+    border-bottom: 1px solid var(--border2);
+}
+table.dataTable tbody td { border-bottom: 1px solid var(--border); }
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before {
+    background-color: var(--cyan);
+}
+.dt-layout-row { color: var(--t3); font-size: 12px; }
+.dt-paging .dt-paging-button {
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--t2);
+    margin-left: 4px;
+    padding: 4px 10px;
+}
+.dt-paging .dt-paging-button.current {
+    background: var(--cyan);
+    color: #fff;
+    border-color: var(--cyan);
+}
+.dt-paging .dt-paging-button.disabled { opacity: .5; }
+.dt-length select { background: var(--input); border: 1px solid var(--border2); border-radius: 6px; color: var(--t1); }
+.t-select-col { width: 34px; text-align: center; }
+table.dataTable.dtr-inline.collapsed > tbody > tr[role="row"] > td:first-child { cursor: default; }

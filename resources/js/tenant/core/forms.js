@@ -139,7 +139,7 @@ export class TenantForm {
 
     async syncComponents() {
         if (window.tinymce) {
-            this.form.querySelectorAll('.tinymce-editor, [data-tinymce]').forEach((el) => {
+            this.form.querySelectorAll('[data-tenant-editor]').forEach((el) => {
                 window.tinymce.get(el.id)?.save();
             });
         }
@@ -244,8 +244,10 @@ export class TenantForm {
         const slot = errorSlot(this.form, key);
 
         wrapper?.classList.add('is-invalid');
+        wrapper?.querySelector('[required], input, select, textarea')?.setAttribute('aria-invalid', 'true');
         if (slot) {
             slot.textContent = message;
+            slot.hidden = false;
         }
     }
 
@@ -254,8 +256,10 @@ export class TenantForm {
         const slot = errorSlot(this.form, key);
 
         wrapper?.classList.remove('is-invalid');
+        wrapper?.querySelector('[aria-invalid]')?.removeAttribute('aria-invalid');
         if (slot) {
             slot.textContent = '';
+            slot.hidden = true;
         }
     }
 
@@ -288,15 +292,20 @@ export class TenantForm {
 
         if (summary) {
             summary.textContent = messages.join(' ');
+            summary.hidden = messages.length === 0;
         }
     }
 
     clearErrors() {
         this.form.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'));
-        this.form.querySelectorAll('[data-error-for]').forEach((el) => (el.textContent = ''));
+        this.form.querySelectorAll('[data-error-for]').forEach((el) => {
+            el.textContent = '';
+            el.hidden = true;
+        });
         const summary = this.form.querySelector('[data-form-errors]');
         if (summary) {
             summary.textContent = '';
+            summary.hidden = true;
         }
     }
 
@@ -329,9 +338,17 @@ export class TenantForm {
             });
 
             if (window.tinymce) {
-                const editor = window.tinymce.get(fullKey);
+                const editorId = `f-${fullKey.replace(/\./g, '-')}`;
+                const editor = window.tinymce.get(editorId);
                 if (editor) {
                     editor.setContent(value ?? '');
+                }
+            }
+
+            if (window.jQuery?.fn.select2) {
+                const select2Field = this.form.querySelector(`select[data-tenant-select2][name="${this.toInputName(fullKey)}"], select[data-tenant-select2][name="${this.toInputName(fullKey)}[]"]`);
+                if (select2Field) {
+                    window.jQuery(select2Field).trigger('change');
                 }
             }
         });

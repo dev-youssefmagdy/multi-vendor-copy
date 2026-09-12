@@ -1,6 +1,46 @@
-/* Select2 theme overrides — filled in with the component in prompt 02 */
-.select2-container--tenant .select2-selection {
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
     background-color: var(--input);
-    border-color: var(--border2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    min-height: 34px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--t1);
+    line-height: 34px;
+    padding-left: 11px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow { height: 32px; }
+.select2-container--default .select2-selection--multiple .select2-selection__rendered { padding: 4px 8px; }
+.select2-container--default .select2-selection__choice {
+    background: var(--elevated);
+    border: 1px solid var(--border2);
+    color: var(--t1);
+    border-radius: 6px;
+}
+.select2-dropdown {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+.select2-search--dropdown .select2-search__field {
+    background: var(--input);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
     color: var(--t1);
 }
+.select2-results__option {
+    color: var(--t1);
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: var(--cyan);
+    color: #fff;
+}
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    background: var(--elevated);
+}
+.select2-container--default .select2-selection__clear { color: var(--t3); }
+.is-invalid + .select2-container .select2-selection,
+select.is-invalid + .select2-container .select2-selection { border-color: var(--red) !important; }
+[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__rendered { padding-right: 11px; padding-left: 0; }

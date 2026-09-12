@@ -156,6 +156,15 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                 ->where('tab', 'tour|setup')
                 ->name('tenant.onboarding');
 
+            if (app()->environment('local')) {
+                Route::prefix('_ui')->name('tenant.ui-kit')->group(function () {
+                    Route::get('/', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, '__invoke'])->name('');
+                    Route::get('/data', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'data'])->name('.data');
+                    Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'validateForm'])->name('.validate')->middleware('throttle:tenant-validate');
+                    Route::post('/', [\App\Http\Controllers\Tenant\Panel\UiKitController::class, 'store'])->name('.store');
+                });
+            }
+
             Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
                 Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
                 Route::get('/sort', TenantSortProducts::class)->name('sort');

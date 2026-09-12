@@ -8,4 +8,4 @@
 @import "./components/modal.css";
 @import "./components/toast.css";
 @import "./components/form.css";
-/* prompt 02 creates the remaining component CSS files and appends their imports here */
+@import "./components/misc.css";

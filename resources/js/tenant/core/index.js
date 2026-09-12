@@ -3,6 +3,7 @@ import { bindForms } from './forms.js';
 import { initComponents, registerComponent } from './registry.js';
 import './actions.js';
 import './modals.js';
+import './register-components.js';
 
 export { registerComponent, initComponents };
 export { toast, showFlash } from './toast.js';

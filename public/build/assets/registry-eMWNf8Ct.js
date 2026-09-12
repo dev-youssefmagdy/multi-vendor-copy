@@ -1,0 +1,1 @@
+var e=[];function t(t,n){e.push({selector:t,loader:n})}async function n(t=document){for(let{selector:n,loader:r}of e){let e=Array.from(t.querySelectorAll(n));t instanceof Element&&t.matches(n)&&e.push(t);let i=e.filter(e=>!e.dataset.tenantReady);if(!i.length)continue;let a=await r();for(let e of i)e.dataset.tenantReady=`1`,a.init?.(e)}}export{t as n,n as t};

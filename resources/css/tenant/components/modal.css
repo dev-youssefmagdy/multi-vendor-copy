@@ -1,6 +1,10 @@
-/* Modal overrides — filled in with the component in prompt 02 */
-[data-tenant-modal] {
-    background-color: var(--card);
-    border: 1px solid var(--border2);
-    box-shadow: var(--shadow);
+[data-tenant-modal] { display: block; }
+[data-tenant-modal][hidden] { display: none; }
+[data-tenant-modal] .modal-card { box-shadow: var(--shadow); }
+
+@media (max-width: 640px) {
+    [data-tenant-modal] .flex.min-h-full { align-items: flex-end; padding: 0; }
+    [data-tenant-modal] .modal-card { width: 100%; max-width: 100% !important; border-radius: 16px 16px 0 0; }
 }
+
+[dir="rtl"] [data-tenant-modal] .modal-close-btn { margin-right: auto; margin-left: 0; }

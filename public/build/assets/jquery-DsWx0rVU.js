@@ -1,1 +1,0 @@
-import{r as e}from"./rolldown-runtime-BP0ATiRg.js";import{n as t}from"./vendor-jquery-yGwdlJo2.js";var n=e(t(),1);window.$=window.jQuery=n.default;var r=n.default;export{r as default};

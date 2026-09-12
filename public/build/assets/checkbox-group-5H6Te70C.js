@@ -1,0 +1,1 @@
+function e(e){let t=e.parentElement?.querySelector(`[data-checkbox-group-all] input`),n=()=>Array.from(e.querySelectorAll(`input[type="checkbox"]`));t&&(t.addEventListener(`change`,()=>{n().forEach(e=>{e.checked=t.checked}),e.dispatchEvent(new Event(`change`,{bubbles:!0}))}),e.addEventListener(`change`,()=>{t.checked=n().length>0&&n().every(e=>e.checked)}))}export{e as init};

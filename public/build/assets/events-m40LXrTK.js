@@ -1,0 +1,1 @@
+var e=new EventTarget;function t(t,n){let r=e=>n(e.detail);return e.addEventListener(t,r),()=>e.removeEventListener(t,r)}function n(t,n={}){e.dispatchEvent(new CustomEvent(t,{detail:n}))}export{t as n,n as t};

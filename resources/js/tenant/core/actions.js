@@ -45,6 +45,8 @@ async function handleAction(el) {
         } catch {
             payload = null;
         }
+    } else if (el.dataset.payloadKey && el instanceof HTMLInputElement) {
+        payload = { [el.dataset.payloadKey]: el.checked ? 1 : 0 };
     }
 
     setBusy(el, true);

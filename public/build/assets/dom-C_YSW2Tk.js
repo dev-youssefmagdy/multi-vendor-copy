@@ -1,0 +1,1 @@
+function e(e,t=300){let n;return(...r)=>{clearTimeout(n),n=setTimeout(()=>e(...r),t)}}function t(e,t){e&&(e.classList.toggle(`is-loading`,!!t),(e instanceof HTMLButtonElement||e instanceof HTMLInputElement)&&(e.disabled=!!t))}export{t as n,e as t};

@@ -1,4 +1,82 @@
-/* Form engine overrides — filled in with the component in prompt 02 */
+/* Form engine overrides */
 [data-form-errors]:empty {
     display: none;
 }
+
+.t-form-errors {
+    color: var(--red);
+    font-size: 12.5px;
+    margin-bottom: 10px;
+}
+
+.t-field { margin-bottom: 14px; }
+.t-field--inline { display: flex; align-items: center; gap: 10px; }
+
+.t-req { color: var(--red); margin-left: 2px; }
+.t-help { color: var(--t3); font-size: 11.5px; margin-top: 4px; }
+
+.t-submit.is-loading .t-submit-label {
+    visibility: hidden;
+    position: relative;
+}
+
+.t-submit.is-loading .t-submit-label::after {
+    content: attr(data-loading-text);
+    visibility: visible;
+    position: absolute;
+    inset: 0;
+}
+
+.t-submit.is-loading .t-submit-label {
+    display: inline-block;
+}
+
+.t-checkbox-desc {
+    display: block;
+    font-size: 11px;
+    color: var(--t3);
+    font-weight: 400;
+}
+
+.t-input-wrap { position: relative; display: flex; align-items: center; }
+.t-input-wrap .field-control { width: 100%; }
+.t-input-wrap.has-prefix .field-control { padding-left: 28px; }
+.t-input-wrap.has-suffix .field-control { padding-right: 34px; }
+.t-input-wrap.has-icon .field-control { padding-left: 34px; }
+.t-input-icon, .t-input-prefix, .t-input-suffix, .t-input-toggle {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    color: var(--t3);
+}
+.t-input-icon, .t-input-prefix { left: 10px; }
+.t-input-suffix, .t-input-toggle { right: 8px; background: none; border: none; cursor: pointer; }
+.t-counter { font-size: 11px; color: var(--t3); margin-top: 2px; text-align: right; }
+
+.t-checkbox-group { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 8px 16px; }
+.t-radio-group { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 8px; }
+.t-radio-group--cards, .t-radio-group--pills { gap: 10px; }
+.t-radio-cards {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--surface);
+}
+.t-radio-cards:has(input:checked) { border-color: var(--cyan); background: var(--elevated); }
+.t-radio-pills {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    font-size: 12.5px;
+}
+.t-radio-pills:has(input:checked) { border-color: var(--cyan); color: var(--cyan); background: var(--elevated); }
+.t-radio-cards input, .t-radio-pills input { position: absolute; opacity: 0; pointer-events: none; }
+.t-radio-card-image { width: 28px; height: 28px; object-fit: contain; }
+.t-radio-card-label { font-weight: 600; font-size: 13px; color: var(--t1); }
+.t-radio-card-desc { display: block; font-size: 11.5px; color: var(--t3); }

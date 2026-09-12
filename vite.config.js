@@ -83,6 +83,7 @@ export default defineConfig({
                 // ── TENANT PANEL (/admin on tenant domain) ─────────────────────────────
                 'resources/css/tenant/app.css',
                 'resources/js/tenant/app.js',
+                'resources/js/tenant/pages/ui-kit.js',
                 // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,

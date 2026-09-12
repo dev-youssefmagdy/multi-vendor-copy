@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Tenant\Panel;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -50,6 +51,17 @@ abstract class PanelController extends Controller
             ->only($allowed)
             ->map(fn ($value) => is_string($value) ? trim($value) : $value)
             ->all();
+    }
+
+    protected function fragment(string $view, array $data, LengthAwarePaginator $paginator): JsonResponse
+    {
+        return response()->json([
+            'html' => view($view, $data)->render(),
+            'pagination' => view('tenant::components.pagination', [
+                'paginator' => $paginator,
+                'mode' => 'ajax',
+            ])->render(),
+        ]);
     }
 
     protected function streamCsv(string $fileName, array $headers, iterable $rows): StreamedResponse

@@ -50,6 +50,7 @@ use App\Services\Tenant\Templates\UploadedBladeTemplateStrategy;
 use App\Translation\TenantTranslator;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -92,6 +93,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->configureSessionDomain();
+
+        Blade::anonymousComponentPath(resource_path('views/tenant/components'), 'tenant');
 
         TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
 
