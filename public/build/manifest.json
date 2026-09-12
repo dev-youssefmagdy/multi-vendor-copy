@@ -27,8 +27,8 @@
       "_vendor-swal-BmYa7zU2.js"
     ]
   },
-  "_core-DIlaAJdq.js": {
-    "file": "assets/core-DIlaAJdq.js",
+  "_core-CWwilWIb.js": {
+    "file": "assets/core-CWwilWIb.js",
     "name": "core",
     "imports": [
       "_preload-helper-BdnPLKW7.js",
@@ -2865,12 +2865,12 @@
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-OWjNxrP2.js",
+    "file": "assets/app-zDqJ1HG4.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-DIlaAJdq.js",
+      "_core-CWwilWIb.js",
       "_events-BGalvnsw.js"
     ]
   },
@@ -3099,7 +3099,7 @@
     ]
   },
   "resources/js/tenant/components/select2.js": {
-    "file": "assets/select2-DKiKH7F6.js",
+    "file": "assets/select2-D5VHB_-V.js",
     "name": "select2",
     "src": "resources/js/tenant/components/select2.js",
     "isDynamicEntry": true,
@@ -3443,12 +3443,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-DeuAB0r-.js",
+    "file": "assets/order-show-Cp2GwmK1.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-DIlaAJdq.js",
+      "_core-CWwilWIb.js",
       "_events-BGalvnsw.js",
       "_forms-D4te-vLL.js",
       "_registry-B-cqme3C.js"

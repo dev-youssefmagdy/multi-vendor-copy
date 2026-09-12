@@ -24,14 +24,20 @@ final class Options
         }
 
         $collection = $options instanceof Collection ? $options : collect($options);
+        // A plain sequential list (e.g. ['Red', 'Green']) has meaningless keys, so the
+        // option content itself becomes the value. An associative map (e.g. a
+        // `pluck('name', 'id')` result like [5 => 'Albania']) has real keys — including
+        // integer ones — that must be used as the value, or the label would be sent
+        // back to the server as if it were the id.
+        $isList = array_is_list($collection->all());
 
         return $collection
-            ->map(fn ($option, $key) => self::normalizeOne($option, $key, $valueKey, $labelKey))
+            ->map(fn ($option, $key) => self::normalizeOne($option, $key, $valueKey, $labelKey, 0, $isList))
             ->values()
             ->all();
     }
 
-    private static function normalizeOne(mixed $option, mixed $key, ?string $valueKey, ?string $labelKey, int $level = 0): array
+    private static function normalizeOne(mixed $option, mixed $key, ?string $valueKey, ?string $labelKey, int $level = 0, bool $isList = true): array
     {
         if (is_array($option) || is_object($option)) {
             $row = (array) $option;
@@ -61,7 +67,7 @@ final class Options
         }
 
         return [
-            'value' => is_int($key) ? $option : $key,
+            'value' => $isList ? $option : $key,
             'label' => (string) $option,
             'level' => $level,
         ];

@@ -72,8 +72,22 @@ export async function init(el) {
 
     $el.select2(options);
 
+    // Bridges select2's jQuery-only 'change' trigger into a real native event so
+    // plain addEventListener('change') consumers see it too. jQuery binds 'change'
+    // via a real addEventListener, so dispatching a native event here would
+    // otherwise re-enter this very handler through jQuery's own listener and
+    // recurse forever — the `dispatching` guard breaks that cycle.
+    let dispatching = false;
     $el.on('change', () => {
-        el.dispatchEvent(new Event('change', { bubbles: true }));
+        if (dispatching) {
+            return;
+        }
+        dispatching = true;
+        try {
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        } finally {
+            dispatching = false;
+        }
     });
 
     if (dependsOn) {
