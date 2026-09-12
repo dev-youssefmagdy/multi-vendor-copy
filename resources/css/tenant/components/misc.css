@@ -241,7 +241,8 @@
 
 /* Entity row (thumbnail + title/subtitle), used in list/sort/form partials */
 .entity-row { display: flex; align-items: center; gap: 12px; max-width: 100%; }
-.entity-thumb {
+/* Scoped under .t-scope so this wins over the unrelated global .entity-thumb (100%-fill variant used by admin media wrappers). */
+.t-scope .entity-thumb {
     width: 44px;
     height: 44px;
     border-radius: 10px;

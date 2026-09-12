@@ -3,7 +3,7 @@
 .row-partial-stock { background: rgba(245, 158, 11, .04); }
 
 .entity-row { display: flex; align-items: center; gap: 12px; }
-.entity-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); flex-shrink: 0; }
+.t-scope .entity-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); flex-shrink: 0; }
 .entity-thumb-empty {
     display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .04);
     font-weight: 700; color: var(--t2, #9ca3af);
@@ -122,3 +122,20 @@
 /* ── Video ad modal ───────────────────────────────────────────────── */
 .video-ad-placeholder { text-align: center; padding: 32px 0; }
 .video-ad-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+
+/* ── Synced variants table ───────────────────────────────────────── */
+.variants-table-variant-cell { min-width: 220px; }
+.variants-table-price-cell { min-width: 140px; }
+.variants-table .t-field { margin-bottom: 0; }
+.input-prefix-group { position: relative; }
+.input-prefix-group .input-prefix {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--t3);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 1;
+}
+.input-prefix-group .field-control { padding-left: 24px; }

@@ -1,1 +1,0 @@
-import{t as e}from"./forms-D4te-vLL.js";export{e as TenantForm};

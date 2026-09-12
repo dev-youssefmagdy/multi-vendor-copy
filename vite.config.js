@@ -179,7 +179,6 @@ export default defineConfig({
                     if (id.includes('node_modules/jquery')) return 'vendor-jquery';
                     if (id.includes('node_modules/flatpickr')) return 'vendor-flatpickr';
                     if (id.includes('node_modules/chart.js')) return 'vendor-charts';
-                    if (id.includes('node_modules/tinymce')) return 'vendor-tinymce';
                     if (id.includes('node_modules/intl-tel-input')) return 'vendor-phone';
                     if (id.includes('node_modules/sweetalert2')) return 'vendor-swal';
                     if (id.includes('node_modules/sortablejs')) return 'vendor-sortable';

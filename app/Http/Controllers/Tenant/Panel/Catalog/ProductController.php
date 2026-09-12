@@ -40,7 +40,7 @@ final class ProductController extends PanelController
         $languages = $this->repo->activeLanguages();
         $activeLocale = $languages->first()?->code ?? 'en';
 
-        $translations = $languages->mapWithKeys(fn ($language) => [$language->code => ['name' => '', 'description' => '', 'meta_keywords' => '', 'meta_description' => '']])->all();
+        $translations = $languages->mapWithKeys(fn($language) => [$language->code => ['name' => '', 'description' => '', 'meta_keywords' => '', 'meta_description' => '']])->all();
         $variants = [];
         $centralProductId = null;
         $pendingEditRequest = null;
@@ -52,11 +52,11 @@ final class ProductController extends PanelController
             $variants = $this->syncVariantsFromCentral($centralProductId, $product);
 
             $tenantId = tenant()->getTenantKey();
-            $pendingEditRequest = tenancy()->central(fn () => ProductEditRequest::where('tenant_id', $tenantId)
+            $pendingEditRequest = tenancy()->central(fn() => ProductEditRequest::where('tenant_id', $tenantId)
                 ->where('product_id', $product->id)
                 ->where('status', 'pending')
                 ->first(['id', 'requested_translations', 'created_at'])
-                ?->toArray());
+                    ?->toArray());
         }
 
         $centralProduct = $this->repo->centralProductSnapshot($centralProductId);
@@ -68,7 +68,6 @@ final class ProductController extends PanelController
                 $shippingCosts = $centralModel->applicableFixedShippingCosts();
             }
         }
-
         return view('tenant.pages.catalog.products.form', [
             'product' => $product,
             'pageTitle' => $product ? 'Edit Product' : 'Add Product',
@@ -95,7 +94,7 @@ final class ProductController extends PanelController
         );
 
         return response()->json([
-            'results' => collect($result['items'])->map(fn ($name, $id) => ['id' => $id, 'text' => $name])->values()->all(),
+            'results' => collect($result['items'])->map(fn($name, $id) => ['id' => $id, 'text' => $name])->values()->all(),
             'pagination' => ['more' => $result['has_more']],
         ]);
     }
@@ -189,7 +188,7 @@ final class ProductController extends PanelController
             'featured' => $validated['featured'] ?? false,
             'category_ids' => $validated['category_ids'] ?? [],
             'translations' => $validated['translations'],
-            'variants' => collect($validated['variants'] ?? [])->map(fn (array $variant) => [
+            'variants' => collect($validated['variants'] ?? [])->map(fn(array $variant) => [
                 'id' => $variant['id'] ?? null,
                 'central_product_variant_id' => $variant['central_product_variant_id'] ?? null,
                 'real_price' => $variant['real_price'] ?? 0,
