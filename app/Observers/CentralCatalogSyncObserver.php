@@ -15,8 +15,14 @@ use App\Services\Tenant\CentralCatalogTenantSyncService;
 
 class CentralCatalogSyncObserver
 {
-    public function created(Product|ProductVariant $model): void
+    public function created(Category|Product|Variation|ProductVariant $model): void
     {
+        // Category and Variation are synced to tenants by CategoryService /
+        // VariationService after save; nothing to do here.
+        if ($model instanceof Category || $model instanceof Variation) {
+            return;
+        }
+
         if ($model instanceof Product) {
             EmbedProductImagesJob::dispatch($model->id);
 
@@ -26,8 +32,12 @@ class CentralCatalogSyncObserver
         $model->product?->syncOutOfStockAt();
     }
 
-    public function updated(Product|ProductVariant $model): void
+    public function updated(Category|Product|Variation|ProductVariant $model): void
     {
+        if ($model instanceof Category || $model instanceof Variation) {
+            return;
+        }
+
         if ($model->wasChanged('weight_grams')) {
             if ($model instanceof Product) {
                 info("Dispatching SyncCentralProductWeightToTenantsJob for central product #{$model->id}");
@@ -106,8 +116,12 @@ class CentralCatalogSyncObserver
         app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);
     }
 
-    public function restored(Product $model): void
+    public function restored(Category|Product|Variation|ProductVariant $model): void
     {
+        if (! $model instanceof Product) {
+            return;
+        }
+
         app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);
     }
 }
