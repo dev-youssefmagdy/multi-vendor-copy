@@ -393,6 +393,43 @@ class TenantPanelRepository
         return $this->queryCategories($filters)->paginate($perPage);
     }
 
+    public function queryManufacturingRequests(array $filters): Builder
+    {
+        $tenantId = tenant('id');
+
+        return \App\Models\ManufacturingRequest::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('product_name', 'like', '%' . $filters['search'] . '%'))
+            ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('status', $filters['status']))
+            ->latest();
+    }
+
+    public function searchLinkableProducts(string $search = '', int $page = 1, int $perPage = 15): LengthAwarePaginator
+    {
+        $defaultLangId = $this->defaultLanguageId();
+
+        $query = DB::table('products as p')
+            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+                $join->on('t.translatable_id', '=', 'p.id')
+                    ->where('t.translatable_type', '=', Product::class)
+                    ->where('t.field', '=', 'name')
+                    ->where('t.language_id', '=', $defaultLangId);
+            })
+            ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'));
+
+        if (filled($search)) {
+            $like = '%' . $search . '%';
+            $query->where(function ($q) use ($like) {
+                $q->where('t.value', 'like', $like)
+                    ->orWhere('p.slug', 'like', $like);
+            });
+        }
+
+        return $query
+            ->orderBy(DB::raw('COALESCE(t.value, p.slug)'))
+            ->paginate($perPage, ['*'], 'page', $page);
+    }
+
     public function queryCategories(array $filters): Builder
     {
         return Category::query()
@@ -2222,6 +2259,83 @@ class TenantPanelRepository
                 'value' => (int) $row->total,
             ])->all(),
             'monthly_rows' => $monthlyRows,
+        ];
+    }
+
+    public function queryBrandRequests(array $filters): Builder
+    {
+        return \App\Models\BrandRequest::query()
+            ->where('tenant_id', tenant('id'))
+            ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
+            ->latest();
+    }
+
+    public function brandRequestStats(): array
+    {
+        $tenantId = tenant('id');
+
+        return [
+            'total' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->count(),
+            'pending' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Pending->value)->count(),
+            'approved' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Approved->value)->count(),
+        ];
+    }
+
+    public function paginateNotifications(int $perPage = 20): LengthAwarePaginator
+    {
+        return \App\Models\Tenant\TenantNotification::query()
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function unreadNotificationsCount(): int
+    {
+        return \App\Models\Tenant\TenantNotification::unread()->count();
+    }
+
+    /**
+     * `ProductRequest` is a central model (the tenant panel reads it through
+     * `tenancy()->central()`), matching the query the former
+     * `RequestsList` Livewire component built.
+     */
+    public function queryProductRequests(array $filters): Builder
+    {
+        return \App\Models\ProductRequest::forTenant((string) tenant('id'))
+            ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
+            ->orderByDesc('last_reply_at');
+    }
+
+    public function productRequestStats(): array
+    {
+        $tenantId = (string) tenant('id');
+
+        return [
+            'total' => \App\Models\ProductRequest::forTenant($tenantId)->count(),
+            'open' => \App\Models\ProductRequest::forTenant($tenantId)->open()->count(),
+            'unread' => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count(),
+        ];
+    }
+
+    /**
+     * `SupportTicket` is a central model, scoped via `SupportTicket::forTenant()`
+     * exactly as the former `TicketsList` Livewire component did.
+     */
+    public function querySupportTickets(array $filters): Builder
+    {
+        return \App\Models\SupportTicket::forTenant((string) tenant('id'))
+            ->orderByDesc('last_reply_at')
+            ->orderByDesc('id');
+    }
+
+    public function supportTicketStats(): array
+    {
+        $tenantId = (string) tenant('id');
+        $base = \App\Models\SupportTicket::forTenant($tenantId);
+
+        return [
+            'total' => (clone $base)->count(),
+            'open' => (clone $base)->whereIn('status', ['open', 'in_progress'])->count(),
+            'unread' => (clone $base)->where('tenant_has_unread', true)->count(),
         ];
     }
 }

@@ -1,0 +1,23 @@
+/* ── Notifications card list ──────────────────────────────────────── */
+.notification-card {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.notification-card-body { flex: 1; min-width: 0; }
+
+.notification-card-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.notification-new-badge { font-size: 10px; display: none; }
+.notification-unread .notification-new-badge { display: inline-block; }
+
+.notification-card-time { margin-left: auto; }
+
+.notification-card-message { margin-top: 4px; }
+
+.notification-card-meta { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 0 8px; }
+
+.notification-mark-read-btn { flex-shrink: 0; margin-top: 2px; display: none; }
+.notification-unread .notification-mark-read-btn { display: inline-flex; }

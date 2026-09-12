@@ -55,9 +55,8 @@ use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufa
 use App\Http\Controllers\Tenant\ManufacturingPaymentController;
 use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Livewire\Tenant\Notifications\NotificationsPage;
-use App\Livewire\Tenant\Support\TicketsList;
-use App\Livewire\Tenant\Support\CreateTicket;
-use App\Livewire\Tenant\Support\TicketDetail;
+use App\Http\Controllers\Tenant\Panel\Support\TicketController;
+use App\Http\Controllers\Tenant\Panel\Requests\ProductRequestController;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
 use App\Http\Controllers\Tenant\AccountSettingsController;
 use App\Http\Controllers\Tenant\ComplianceCenterController;
@@ -225,29 +224,62 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             });
 
             Route::prefix('manufacturing')->name('tenant.manufacturing.')->group(function () {
-                Route::get('/', TenantManufacturingRequestsList::class)->name('index');
-                Route::get('/create', AddManufacturingRequest::class)->name('create');
-                Route::get('/{id}', TenantManufacturingRequestDetail::class)->name('show');
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'data'])->name('data');
+                Route::get('/export', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'export'])->name('export');
+                Route::get('/products/search', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'searchProducts'])->name('products.search');
+                Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'store'])->name('store');
+                Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'show'])->whereNumber('id')->name('show');
+                Route::post('/{id}/cancel', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'cancel'])->whereNumber('id')->name('cancel');
+                Route::post('/{id}/messages', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'sendMessage'])->whereNumber('id')->name('messages');
+                Route::post('/{id}/messages/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
+                Route::post('/{id}/pay', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'pay'])->whereNumber('id')->name('pay');
+                Route::post('/{id}/pay/validate', [\App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
             });
 
             Route::prefix('brand-requests')->name('tenant.brand-requests.')->group(function () {
-                Route::get('/', \App\Livewire\Tenant\BrandRequest\BrandRequestsList::class)->name('index');
-                Route::get('/create', \App\Livewire\Tenant\BrandRequest\CreateBrandRequest::class)->name('create');
-                Route::get('/{id}', \App\Livewire\Tenant\BrandRequest\BrandRequestDetail::class)->name('show');
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'data'])->name('data');
+                Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'store'])->name('store');
+                Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::get('/{id}', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'show'])->whereNumber('id')->name('show');
+                Route::post('/{id}/messages', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'sendMessage'])->whereNumber('id')->name('messages');
+                Route::post('/{id}/messages/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
+                Route::post('/{id}/pay', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'pay'])->whereNumber('id')->name('pay');
+                Route::post('/{id}/pay/validate', [\App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController::class, 'validatePay'])->whereNumber('id')->name('pay.validate')->middleware('throttle:tenant-validate');
             });
 
-            Route::get('/notifications', NotificationsPage::class)->name('tenant.notifications.index');
+            Route::prefix('notifications')->name('tenant.notifications.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'index'])->name('index');
+                Route::get('/feed', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'feed'])->name('feed');
+                Route::post('/read-all', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'markAllRead'])->name('read-all');
+                Route::patch('/{id}/read', [\App\Http\Controllers\Tenant\Panel\Support\NotificationsController::class, 'markRead'])->whereNumber('id')->name('mark-read');
+            });
 
             Route::prefix('support')->name('tenant.support.')->group(function () {
-                Route::get('/', TicketsList::class)->name('index');
-                Route::get('/new', CreateTicket::class)->name('create');
-                Route::get('/{ticketId}', TicketDetail::class)->name('show');
+                Route::get('/', [TicketController::class, 'index'])->name('index');
+                Route::get('/data', [TicketController::class, 'data'])->name('data');
+                Route::get('/new', [TicketController::class, 'create'])->name('create');
+                Route::post('/', [TicketController::class, 'store'])->name('store');
+                Route::post('/validate', [TicketController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::get('/{ticketId}', [TicketController::class, 'show'])->whereNumber('ticketId')->name('show');
+                Route::post('/{ticketId}/replies', [TicketController::class, 'reply'])->whereNumber('ticketId')->name('replies');
+                Route::post('/{ticketId}/replies/validate', [TicketController::class, 'validateReply'])->whereNumber('ticketId')->name('replies.validate')->middleware('throttle:tenant-validate');
+                Route::get('/{ticketId}/thread', [TicketController::class, 'thread'])->whereNumber('ticketId')->name('thread');
             });
 
             Route::prefix('product-requests')->name('tenant.product-requests.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
-                Route::get('/', \App\Livewire\Tenant\ProductRequest\RequestsList::class)->name('index');
-                Route::get('/new', \App\Livewire\Tenant\ProductRequest\CreateRequest::class)->name('create');
-                Route::get('/{requestId}', \App\Livewire\Tenant\ProductRequest\RequestDetail::class)->name('show');
+                Route::get('/', [ProductRequestController::class, 'index'])->name('index');
+                Route::get('/data', [ProductRequestController::class, 'data'])->name('data');
+                Route::get('/new', [ProductRequestController::class, 'create'])->name('create');
+                Route::post('/', [ProductRequestController::class, 'store'])->name('store');
+                Route::post('/validate', [ProductRequestController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::get('/{requestId}', [ProductRequestController::class, 'show'])->whereNumber('requestId')->name('show');
+                Route::post('/{requestId}/replies', [ProductRequestController::class, 'reply'])->whereNumber('requestId')->name('replies');
+                Route::post('/{requestId}/replies/validate', [ProductRequestController::class, 'validateReply'])->whereNumber('requestId')->name('replies.validate')->middleware('throttle:tenant-validate');
             });
 
             Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
@@ -538,7 +570,10 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
                     ->name('home-variants');
             });
 
-            Route::get('/help', DocsPage::class)->name('tenant.help.index');
+            Route::prefix('help')->name('tenant.help.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Support\HelpController::class, 'index'])->name('index');
+                Route::get('/articles/{slug}', [\App\Http\Controllers\Tenant\Panel\Support\HelpController::class, 'article'])->name('article');
+            });
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {
                 Route::get('/tracking', TrackingSettingsPage::class)

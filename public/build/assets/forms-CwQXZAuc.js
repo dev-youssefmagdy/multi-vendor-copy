@@ -1,1 +1,0 @@
-import{t as e}from"./forms-BDylbyHf.js";export{e as TenantForm};

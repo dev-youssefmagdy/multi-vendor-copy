@@ -34,4 +34,9 @@ export async function init(el) {
             render();
         }
     });
+
+    on('tenant:notification-read-all', () => {
+        unread = 0;
+        render();
+    });
 }

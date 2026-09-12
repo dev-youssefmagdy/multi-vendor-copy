@@ -1,0 +1,1 @@
+var e=document.getElementById(`manufacturing-create-form`);if(e){let t=e.querySelector(`[name="linked_product_id"]`),n=e.querySelector(`[name="product_name"]`);t?.addEventListener(`change`,()=>{if(!n||n.value.trim()!==``)return;let e=t.selectedOptions?.[0];e&&e.value&&(n.value=e.textContent.trim())})}
