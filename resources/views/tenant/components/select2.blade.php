@@ -32,7 +32,7 @@
     $htmlName = $name ? FieldName::html($name) : null;
     $fieldId = $id ?? ($dot ? FieldName::id($dot) : null);
     $resolved = old($dot, $value ?? (!$ajaxUrl ? $selected : null));
-    $selectedValues = $multiple ? (array) ($resolved ?? []) : $resolved;
+    $selectedValues = $multiple ? (array) ($resolved ?? []) : (is_array($resolved) ? null : $resolved);
     $normalized = $ajaxUrl ? [] : Options::normalize($options);
     $clear = $allowClear ?? !$required;
     $minInputResolved = $minInput ?? ($ajaxUrl ? 2 : 0);

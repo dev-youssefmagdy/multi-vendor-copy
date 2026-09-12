@@ -27,8 +27,8 @@
       "_vendor-swal-BmYa7zU2.js"
     ]
   },
-  "_core-DlA_vdFT.js": {
-    "file": "assets/core-DlA_vdFT.js",
+  "_core-BBQ1k4Sj.js": {
+    "file": "assets/core-BBQ1k4Sj.js",
     "name": "core",
     "imports": [
       "_preload-helper-BdnPLKW7.js",
@@ -2389,11 +2389,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-B7fVlZh1.css",
+    "file": "assets/app-CAMJUjh1.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-lvpsWirZ.css",
+    "file": "assets/ecommet-l2s1Ld8Y.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2676,7 +2676,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-COzRV8tc.css",
+    "file": "assets/souqify-Bj5gau3Q.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2685,7 +2685,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-B-iZG91v.css",
+    "file": "assets/app-KNKyzipE.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2693,7 +2693,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-B7fVlZh1.css"
+      "assets/app-CAMJUjh1.css"
     ],
     "assets": [
       "assets/syne-greek-400-normal-B4XGRaFa.woff2",
@@ -2987,12 +2987,12 @@
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-DQRQC4W0.js",
+    "file": "assets/app-FNE_gt19.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-DlA_vdFT.js",
+      "_core-BBQ1k4Sj.js",
       "_events-BGalvnsw.js"
     ]
   },
@@ -3060,7 +3060,7 @@
     ]
   },
   "resources/js/tenant/components/datatable.js": {
-    "file": "assets/datatable-H0AL0Iaj.js",
+    "file": "assets/datatable-DSHcsJr2.js",
     "name": "datatable",
     "src": "resources/js/tenant/components/datatable.js",
     "isDynamicEntry": true,
@@ -3565,12 +3565,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-Ble6xdKF.js",
+    "file": "assets/order-show-BAFpd9FJ.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-DlA_vdFT.js",
+      "_core-BBQ1k4Sj.js",
       "_events-BGalvnsw.js",
       "_forms-C1UCor9c.js",
       "_registry-B-cqme3C.js"

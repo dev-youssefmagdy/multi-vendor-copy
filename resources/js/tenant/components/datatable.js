@@ -126,6 +126,7 @@ export async function init(el) {
         options.ajax = {
             url: config.url,
             type: 'GET',
+            cache: false,
             data: (d) => {
                 d.filters = el._filters || initialFiltersFromQuery();
             },

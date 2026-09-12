@@ -54,13 +54,13 @@ final class CustomersController extends PanelController
 
         return DataTables::eloquent($this->repo->queryCustomers($filters))
             ->addIndexColumn()
-            ->editColumn('customer', fn (Customer $customer) => view('tenant.pages.sales.customers._cols.customer', ['customer' => $customer])->render())
-            ->editColumn('contact', fn (Customer $customer) => view('tenant.pages.sales.customers._cols.contact', ['customer' => $customer])->render())
-            ->editColumn('orders', fn (Customer $customer) => view('tenant.pages.sales.customers._cols.orders', ['customer' => $customer])->render())
-            ->editColumn('lifetime_value', fn (Customer $customer) => view('tenant.pages.sales.customers._cols.lifetime-value', ['customer' => $customer])->render())
-            ->editColumn('last_order', fn (Customer $customer) => e(optional($customer->orders->sortByDesc('created_at')->first()?->created_at)->format('M d, Y') ?: 'N/A'))
-            ->editColumn('status', fn (Customer $customer) => view('tenant::components.status-badge', ['status' => $customer->active ? 'active' : 'inactive'])->render())
-            ->addColumn('actions', fn (Customer $customer) => view('tenant.pages.sales.customers._cols.actions', ['customer' => $customer])->render())
+            ->editColumn('customer', fn(Customer $customer) => view('tenant.pages.sales.customers._cols.customer', ['customer' => $customer])->render())
+            ->editColumn('contact', fn(Customer $customer) => view('tenant.pages.sales.customers._cols.contact', ['customer' => $customer])->render())
+            ->editColumn('orders', fn(Customer $customer) => view('tenant.pages.sales.customers._cols.orders', ['customer' => $customer])->render())
+            ->editColumn('lifetime_value', fn(Customer $customer) => view('tenant.pages.sales.customers._cols.lifetime-value', ['customer' => $customer])->render())
+            ->editColumn('last_order', fn(Customer $customer) => e(optional($customer->orders->sortByDesc('created_at')->first()?->created_at)->format('M d, Y') ?: 'N/A'))
+            ->editColumn('status', fn(Customer $customer) => view('tenant::components.status-badge', ['status' => $customer->active ? 'active' : 'inactive'])->render())
+            ->addColumn('actions', fn(Customer $customer) => view('tenant.pages.sales.customers._cols.actions', ['customer' => $customer])->render())
             ->rawColumns(['customer', 'contact', 'orders', 'lifetime_value', 'status', 'actions'])
             ->toJson();
     }
@@ -69,7 +69,7 @@ final class CustomersController extends PanelController
     {
         $filters = $this->filters($request, ['search', 'status']);
 
-        $rows = $this->repo->exportCustomers($filters)->map(fn (Customer $customer) => [
+        $rows = $this->repo->exportCustomers($filters)->map(fn(Customer $customer) => [
             $customer->id,
             $customer->full_name,
             $customer->email,
