@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -95,6 +96,8 @@ class AppServiceProvider extends ServiceProvider
         $this->configureSessionDomain();
 
         Blade::anonymousComponentPath(resource_path('views/tenant/components'), 'tenant');
+
+        View::composer('tenant.layouts.partials.*', \App\View\Composers\Tenant\ShellComposer::class);
 
         TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
 

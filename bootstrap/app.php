@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'owner.auth' => \App\Http\Middleware\TenantOwnerAuth::class,
             'tenant.setup' => \App\Http\Middleware\SetupGuard::class,
             'tenant.setup.enforce' => \App\Http\Middleware\EnforceOnboardingSetup::class,
+            'tenant.tour' => \App\Http\Middleware\EnsureTenantTourSeen::class,
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
             'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,

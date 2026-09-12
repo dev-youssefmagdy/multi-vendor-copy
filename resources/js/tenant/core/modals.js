@@ -152,3 +152,9 @@ function bindDelegation() {
 }
 
 bindDelegation();
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-tenant-modal][data-auto-open]').forEach((modal) => {
+        openModal(modal.id);
+    });
+});

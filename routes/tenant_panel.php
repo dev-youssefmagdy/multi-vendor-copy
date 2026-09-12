@@ -122,15 +122,18 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
         });
 
         Route::middleware('guest:tenant')->group(function () {
-            Route::get('/login', LoginPage::class)->name('tenant.login');
+            Route::get('/login', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'show'])->name('tenant.login');
+            Route::post('/login', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'login'])
+                ->middleware('throttle:6,1')
+                ->name('tenant.login.attempt');
+            Route::post('/login/validate', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'validateLogin'])
+                ->middleware('throttle:tenant-validate')
+                ->name('tenant.login.validate');
         });
 
-        Route::post('/logout', function (Request $request) {
-            Auth::guard('tenant')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return redirect()->route('tenant.login');
-        })->middleware('auth:tenant')->name('tenant.logout');
+        Route::post('/logout', [\App\Http\Controllers\Tenant\Panel\Auth\LoginController::class, 'logout'])
+            ->middleware('auth:tenant')
+            ->name('tenant.logout');
 
         // Central-admin → Tenant impersonation (no auth guard yet – token IS the auth)
         Route::get('/impersonate/{token}', [TenantImpersonateController::class, 'accept'])
@@ -142,12 +145,27 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             ->middleware(['signed', 'throttle:6,1'])
             ->name('tenant.verification.verify');
 
-        Route::middleware(['auth:tenant', 'tenant.setup.enforce'])->group(function () {
+        Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group(function () {
 
             Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
                 ->middleware('throttle:6,1')
                 ->withoutMiddleware('tenant.setup.enforce')
                 ->name('tenant.verification.send');
+
+            Route::post('/compliance/accept', [\App\Http\Controllers\Tenant\Panel\Shell\ComplianceController::class, 'accept'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.compliance.accept');
+            Route::post('/compliance/accept/validate', [\App\Http\Controllers\Tenant\Panel\Shell\ComplianceController::class, 'validateAccept'])
+                ->middleware('throttle:tenant-validate')
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.compliance.accept.validate');
+
+            Route::get('/widgets/setup-progress', [\App\Http\Controllers\Tenant\Panel\Shell\SetupProgressController::class, 'show'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.widgets.setup-progress');
+            Route::post('/widgets/setup-progress/pages-reviewed', [\App\Http\Controllers\Tenant\Panel\Shell\SetupProgressController::class, 'pagesReviewed'])
+                ->withoutMiddleware('tenant.setup.enforce')
+                ->name('tenant.widgets.setup-progress.pages-reviewed');
 
             Route::get('/dashboard', Dashboard::class)->middleware('tenant.permission:dashboard.view')
                 ->name('tenant.dashboard');

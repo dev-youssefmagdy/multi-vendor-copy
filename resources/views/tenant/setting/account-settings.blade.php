@@ -1,4 +1,4 @@
-@extends('layouts.tenant')
+@extends('tenant.layouts.app')
 
 @section('content')
 @php
@@ -6,7 +6,6 @@
               . strtoupper(substr(strstr($adminName ?: '', ' ') ?: '', 1, 1));
 @endphp
 
-<main id="mn">
 
     <div class="page-head fu d0">
         <div>
@@ -176,7 +175,6 @@
         </div>
     </form>
 
-</main>
 
 <style>
 .acct-layout { display: grid; grid-template-columns: 260px 1fr; gap: 16px; align-items: start; }

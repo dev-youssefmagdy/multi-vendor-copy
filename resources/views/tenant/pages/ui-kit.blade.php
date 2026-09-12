@@ -1,7 +1,8 @@
-@extends('layouts.tenant')
+@extends('tenant.layouts.app')
+
+@section('title', 'UI Kit')
 
 @section('content')
-<main id="mn">
     <x-tenant::page-header title="UI Kit" badge="QA" description="Every x-tenant:: component in every state. Local environment only.">
         <x-slot:actions>
             <button type="button" class="btn btn-secondary" id="ui-kit-rtl-toggle">Toggle RTL</button>
@@ -110,15 +111,8 @@
             <button type="button" class="btn btn-secondary" data-modal-close>Close</button>
         </x-slot:footer>
     </x-tenant::modal>
-</main>
 @endsection
 
-{{-- The shared layout still loads the legacy app.css/app.js bundle; the
-     switch to the tenant bundle happens in prompt 03. Until then, this page
-     (and every other converted page) pulls the tenant bundle in explicitly. --}}
-@push('styles')
-    @vite(['resources/css/tenant/app.css'])
-@endpush
-@push('scripts')
-    @vite(['resources/js/tenant/app.js', 'resources/js/tenant/pages/ui-kit.js'])
+@push('tenant-vite')
+    @vite('resources/js/tenant/pages/ui-kit.js')
 @endpush

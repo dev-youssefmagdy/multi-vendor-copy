@@ -1,4 +1,4 @@
-@extends('layouts.tenant')
+@extends('tenant.layouts.app')
 
 @section('content')
 @php
@@ -7,7 +7,6 @@
     $f      = fn(string $key, mixed $fallback = '') => old($key, $pd[$key] ?? $fallback);
 @endphp
 
-<main id="mn">
     <form id="own-product-form"
           method="POST"
           action="{{ $isEdit ? route('tenant.own-products.update', $product) : route('tenant.own-products.store') }}"
@@ -598,7 +597,6 @@
             </video>
         </div>
     </div>
-</main>
 @endsection
 
 @push('scripts')

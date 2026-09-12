@@ -1,7 +1,6 @@
-@extends('layouts.tenant')
+@extends('tenant.layouts.app')
 
 @section('content')
-<main id="mn">
 
     {{-- Page head --}}
     <div class="page-head fu d0">
@@ -144,7 +143,6 @@
         </div>
     </section>
 
-</main>
 
 <style>
 .badge-chip {

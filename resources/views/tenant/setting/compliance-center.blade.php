@@ -1,4 +1,4 @@
-@extends('layouts.tenant')
+@extends('tenant.layouts.app')
 
 @section('content')
 <style>
@@ -78,7 +78,6 @@
 }
 </style>
 
-<main id="mn">
 
     <div class="page-head fu d0">
         <div>
@@ -427,7 +426,6 @@
         </div>
     </section>
 
-</main>
 
 @push('scripts')
 <script>

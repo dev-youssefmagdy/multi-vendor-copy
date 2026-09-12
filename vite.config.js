@@ -84,6 +84,7 @@ export default defineConfig({
                 'resources/css/tenant/app.css',
                 'resources/js/tenant/app.js',
                 'resources/js/tenant/pages/ui-kit.js',
+                'resources/js/tenant/pages/auth/login.js',
                 // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,

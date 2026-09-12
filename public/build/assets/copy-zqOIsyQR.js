@@ -1,0 +1,1 @@
+import{n as e}from"./toast-CYmvXRoV.js";function t(t){t.addEventListener(`click`,async()=>{let n=t.dataset.copyValue||``;try{await navigator.clipboard.writeText(n),e.success(`Copied`)}catch{e.error(`Could not copy to clipboard.`)}})}export{t as init};

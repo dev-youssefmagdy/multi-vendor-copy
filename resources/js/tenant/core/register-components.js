@@ -27,3 +27,5 @@ registerComponent('[data-tenant-chart]', () => import('../components/chart.js'))
 registerComponent('[data-tenant-json-tree]', () => import('../components/json-tree.js'));
 registerComponent('[data-tenant-copy]', () => import('../components/copy.js'));
 registerComponent('[data-checkbox-group]', () => import('../components/checkbox-group.js'));
+registerComponent('[data-tenant-notification-bell]', () => import('../components/notification-bell.js'));
+registerComponent('[data-setup-progress]', () => import('../shell/setup-progress.js'));

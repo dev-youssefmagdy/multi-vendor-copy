@@ -4,6 +4,8 @@
     'size' => 'md',
     'static' => false,
     'description' => null,
+    'closable' => true,
+    'autoOpen' => false,
 ])
 
 @php
@@ -19,6 +21,7 @@
 
 <div id="{{ $id }}" class="modal-shell t-modal fixed inset-0 z-50 overflow-y-auto" data-tenant-modal
     @if($static) data-static="1" @endif
+    @if($autoOpen) data-auto-open="1" @endif
     role="dialog" aria-modal="true" aria-labelledby="{{ $id }}-title"
     hidden>
     <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-[3px]"></div>
@@ -32,12 +35,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                     @isset($headerActions){{ $headerActions }}@endisset
-                    <button type="button" data-modal-close class="modal-close-btn transition-colors" aria-label="Close">
-                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </button>
+                    @if($closable)
+                        <button type="button" data-modal-close class="modal-close-btn transition-colors" aria-label="Close">
+                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    @endif
                 </div>
             </div>
 
