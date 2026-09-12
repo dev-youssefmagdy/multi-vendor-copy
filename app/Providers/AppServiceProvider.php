@@ -97,6 +97,8 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::anonymousComponentPath(resource_path('views/tenant/components'), 'tenant');
 
+        View::addNamespace('tenant', resource_path('views/tenant'));
+
         View::composer('tenant.layouts.partials.*', \App\View\Composers\Tenant\ShellComposer::class);
 
         TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
