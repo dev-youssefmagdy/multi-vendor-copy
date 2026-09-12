@@ -40,7 +40,9 @@ final class ReturnPolicyController extends PanelController
 
         $selectedProducts = Product::query()
             ->whereIn('id', $nonReturnableIds)
-            ->pluck('name', 'id')
+            ->with('translations.language')
+            ->get()
+            ->mapWithKeys(fn (Product $product) => [$product->id => $product->name])
             ->all();
 
         return view('tenant.pages.settings.return-policy.index', [

@@ -30,7 +30,7 @@
                 <x-tenant::input type="url" name="url" label="URL" />
                 <x-tenant::input type="number" min="0" name="serial_number" label="Sort Order" required value="0" />
                 <div class="span-2">
-                    <p class="panel-copy" style="margin-bottom:6px">This banner is displayed on the <strong>{{ $activeThemeLabel }}</strong> theme@if($bannerWidth && $bannerHeight) ({{ $bannerWidth }} × {{ $bannerHeight }}px)@endif.</p>
+                    <p class="panel-copy" style="margin-bottom:6px">This banner is displayed on the <strong>{{ $activeThemeLabel }}</strong> theme @if($bannerWidth && $bannerHeight)({{ $bannerWidth }} × {{ $bannerHeight }}px) @endif.</p>
                     <x-tenant::image-upload name="banner_image" label="Image" removable :expected-width="$bannerWidth" :expected-height="$bannerHeight" :dimension-label="$activeThemeLabel" max-kb="2048" />
                 </div>
             </div>
