@@ -1,0 +1,5 @@
+.t-email-template-vars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}

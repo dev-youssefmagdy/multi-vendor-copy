@@ -61,29 +61,30 @@ use App\Livewire\Tenant\Notifications\NotificationsPage;
 use App\Http\Controllers\Tenant\Panel\Support\TicketController;
 use App\Http\Controllers\Tenant\Panel\Requests\ProductRequestController;
 use App\Livewire\Tenant\Onboarding\OnboardingPage;
-use App\Http\Controllers\Tenant\AccountSettingsController;
-use App\Http\Controllers\Tenant\ComplianceCenterController;
-use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
-use App\Livewire\Tenant\Setting\AdminsList;
-use App\Livewire\Tenant\Setting\CurrenciesPage;
-use App\Livewire\Tenant\Setting\DomainsList;
-use App\Livewire\Tenant\Setting\EmailTemplatesPage;
-use App\Livewire\Tenant\Setting\GeneralSettingsPage;
-use App\Livewire\Tenant\Setting\LanguagesManagePage;
-use App\Livewire\Tenant\Setting\AiTranslationPage;
-use App\Livewire\Tenant\Setting\TranslationsPage;
-use App\Livewire\Tenant\Setting\LanguagesPage;
-use App\Livewire\Tenant\Setting\MailConfigurationsPage;
-use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
-use App\Livewire\Tenant\Setting\RolesPermissionsList;
-use App\Livewire\Tenant\Setting\SubscribersPage;
+use App\Http\Controllers\Tenant\Panel\Settings\AccountSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\ComplianceCenterController;
+use App\Http\Controllers\Tenant\Panel\Settings\AdminsController;
+use App\Http\Controllers\Tenant\Panel\Settings\AiTranslationController;
+use App\Http\Controllers\Tenant\Panel\Settings\CurrenciesController;
+use App\Http\Controllers\Tenant\Panel\Settings\DomainsController;
+use App\Http\Controllers\Tenant\Panel\Settings\EmailTemplateController;
+use App\Http\Controllers\Tenant\Panel\Settings\GeneralSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\LanguagesController;
+use App\Http\Controllers\Tenant\Panel\Settings\LanguagesManageController;
+use App\Http\Controllers\Tenant\Panel\Settings\MailConfigurationsController;
+use App\Http\Controllers\Tenant\Panel\Settings\PaymentGatewaysController;
+use App\Http\Controllers\Tenant\Panel\Settings\PaymentReadinessController;
+use App\Http\Controllers\Tenant\Panel\Settings\ReturnPolicyController;
+use App\Http\Controllers\Tenant\Panel\Settings\RolesPermissionsController;
+use App\Http\Controllers\Tenant\Panel\Settings\SubscribersController;
+use App\Http\Controllers\Tenant\Panel\Settings\TrackingSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\TranslationsController;
 use App\Http\Controllers\Tenant\Panel\Store\BannerController;
 use App\Http\Controllers\Tenant\Panel\Store\CouponController;
 use App\Http\Controllers\Tenant\Panel\Store\FlashSaleController;
 use App\Http\Controllers\Tenant\Panel\Store\AppearanceController;
 use App\Http\Controllers\Tenant\Panel\Store\SocialLinkController;
 use App\Livewire\Tenant\Store\BladeThemePage;
-use App\Livewire\Tenant\Setting\TrackingSettingsPage;
 use App\Livewire\Tenant\Store\HomeVariantsPage;
 use App\Livewire\Tenant\Store\PageBuilderPage;
 use App\Livewire\Tenant\Store\AddEditPage;
@@ -643,71 +644,141 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             });
 
             Route::prefix('settings')->name('tenant.settings.')->group(function () {
-                Route::get('/tracking', TrackingSettingsPage::class)
-                    ->middleware('tenant.permission:settings.tracking.manage')
-                    ->name('tracking');
-                Route::get('/subscribers', SubscribersPage::class)
-                    ->middleware('tenant.permission:store.subscribers.manage')
-                    ->name('subscribers');
-                Route::get('/currencies', CurrenciesPage::class)
-                    ->middleware('tenant.permission:settings.regional.manage')
-                    ->name('currencies');
-                Route::get('/domains', DomainsList::class)
-                    ->middleware('tenant.permission:settings.domains.manage')
-                    ->name('domains');
-                Route::get('/languages', LanguagesPage::class)
-                    ->middleware('tenant.permission:settings.regional.manage')
-                    ->name('languages');
-                Route::get('/languages-manage', LanguagesManagePage::class)
-                    ->middleware('tenant.permission:settings.regional.manage')
-                    ->name('languages-manage');
-                Route::get('/ai-translation', AiTranslationPage::class)
-                    ->middleware('tenant.permission:settings.translations.manage')
-                    ->name('ai-translation');
-                Route::get('/translations', TranslationsPage::class)
-                    ->middleware('tenant.permission:settings.translations.manage')
-                    ->name('translations');
-                Route::get('/admins', AdminsList::class)
-                    ->middleware('tenant.permission:settings.admins.manage')
-                    ->name('admins');
-                Route::get('/roles-permissions', RolesPermissionsList::class)
-                    ->middleware('tenant.permission:settings.roles.manage')
-                    ->name('roles-permissions');
-                Route::get('/payment-gateways', PaymentGatewaysPage::class)
-                    ->middleware('tenant.permission:settings.payment-gateways.manage')
-                    ->name('payment-gateways');
-                Route::get('/payment-readiness', \App\Livewire\Tenant\Setting\PaymentReadinessPage::class)
-                    ->middleware('tenant.permission:settings.payment-gateways.manage')
-                    ->name('payment-readiness');
-                Route::get('/email-templates', EmailTemplatesPage::class)
-                    ->middleware('tenant.permission:settings.mail.manage')
-                    ->name('email-templates');
-                Route::get('/email-templates/{emailTemplate}/edit', AddEditEmailTemplate::class)
-                    ->middleware('tenant.permission:settings.mail.manage')
-                    ->name('email-templates.edit');
-                Route::get('/mail', MailConfigurationsPage::class)
-                    ->middleware('tenant.permission:settings.mail.manage')
-                    ->name('mail');
-                Route::get('/account', [AccountSettingsController::class, 'show'])
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('account');
-                Route::put('/account', [AccountSettingsController::class, 'update'])
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('account.update');
-                Route::get('/general', GeneralSettingsPage::class)
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('general');
-                Route::get('/compliance', [ComplianceCenterController::class, 'show'])
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('compliance');
-                Route::post('/compliance', [ComplianceCenterController::class, 'update'])
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('compliance.update');
-                Route::get('/compliance/cities-by-country/{countryId}', [ComplianceCenterController::class, 'citiesByCountry'])
-                    ->middleware('tenant.permission:settings.account.manage')
-                    ->name('compliance.cities-by-country');
-                Route::get('/return-policy', \App\Livewire\Tenant\Setting\ReturnPolicyPage::class)
-                    ->middleware('tenant.permission:sales.returns.manage')
-                    ->name('return-policy');
+                Route::middleware('tenant.permission:settings.tracking.manage')->group(function () {
+                    Route::get('/tracking', [TrackingSettingsController::class, 'index'])->name('tracking');
+                    Route::put('/tracking', [TrackingSettingsController::class, 'update'])->name('tracking.update');
+                    Route::post('/tracking/validate', [TrackingSettingsController::class, 'validateUpdate'])->name('tracking.validate');
+                });
+
+                Route::middleware('tenant.permission:store.subscribers.manage')->group(function () {
+                    Route::get('/subscribers', [SubscribersController::class, 'index'])->name('subscribers');
+                    Route::get('/subscribers/data', [SubscribersController::class, 'data'])->name('subscribers.data');
+                    Route::get('/subscribers/export', [SubscribersController::class, 'export'])->name('subscribers.export');
+                    Route::delete('/subscribers/{subscriber}', [SubscribersController::class, 'destroy'])->name('subscribers.destroy');
+                });
+
+                Route::middleware('tenant.permission:settings.regional.manage')->group(function () {
+                    Route::get('/currencies', [CurrenciesController::class, 'index'])->name('currencies');
+                    Route::get('/currencies/data', [CurrenciesController::class, 'data'])->name('currencies.data');
+                    Route::patch('/currencies/{currency}/active', [CurrenciesController::class, 'toggleActive'])->name('currencies.toggle-active');
+                    Route::post('/currencies/{currency}/default', [CurrenciesController::class, 'makeDefault'])->name('currencies.default');
+
+                    Route::get('/languages', [LanguagesController::class, 'index'])->name('languages');
+                    Route::get('/languages/data', [LanguagesController::class, 'data'])->name('languages.data');
+                    Route::patch('/languages/{language}/active', [LanguagesController::class, 'toggleActive'])->name('languages.toggle-active');
+                    Route::post('/languages/{language}/default', [LanguagesController::class, 'makeDefault'])->name('languages.default');
+
+                    Route::get('/languages-manage', [LanguagesManageController::class, 'index'])->name('languages-manage');
+                    Route::get('/languages-manage/data', [LanguagesManageController::class, 'data'])->name('languages-manage.data');
+                    Route::get('/languages-manage/available', [LanguagesManageController::class, 'available'])->name('languages-manage.available.data');
+                    Route::post('/languages-manage/purchase', [LanguagesManageController::class, 'purchase'])->name('languages-manage.purchase');
+                    Route::post('/languages-manage/purchase/validate', [LanguagesManageController::class, 'validatePurchase'])->name('languages-manage.purchase.validate');
+                    Route::patch('/languages-manage/{language}/active', [LanguagesManageController::class, 'toggleActive'])->name('languages-manage.toggle-active');
+                    Route::post('/languages-manage/{language}/default', [LanguagesManageController::class, 'makeDefault'])->name('languages-manage.default');
+                });
+
+                Route::middleware('tenant.permission:settings.domains.manage')->group(function () {
+                    Route::get('/domains', [DomainsController::class, 'index'])->name('domains');
+                    Route::post('/domains', [DomainsController::class, 'store'])->name('domains.store');
+                    Route::post('/domains/validate', [DomainsController::class, 'validateStore'])->name('domains.validate');
+                    Route::get('/domains/{domainRequest}', [DomainsController::class, 'show'])->name('domains.show');
+                    Route::put('/domains/{domainRequest}', [DomainsController::class, 'update'])->name('domains.update');
+                    Route::post('/domains/{domainRequest}/validate', [DomainsController::class, 'validateUpdate'])->name('domains.validate.update');
+                    Route::post('/domains/{domainRequest}/check-dns', [DomainsController::class, 'checkDns'])->name('domains.check-dns');
+                    Route::delete('/domains/{domainRequest}', [DomainsController::class, 'destroy'])->name('domains.destroy');
+                });
+
+                Route::middleware('tenant.permission:settings.translations.manage')->group(function () {
+                    Route::get('/ai-translation', [AiTranslationController::class, 'index'])->name('ai-translation');
+                    Route::get('/ai-translation/history/data', [AiTranslationController::class, 'historyData'])->name('ai-translation.history.data');
+                    Route::get('/ai-translation/status', [AiTranslationController::class, 'status'])->name('ai-translation.status');
+                    Route::post('/ai-translation/purchase/validate', [AiTranslationController::class, 'validatePurchase'])->name('ai-translation.purchase.validate');
+                    Route::post('/ai-translation/{language}/run', [AiTranslationController::class, 'run'])->whereNumber('language')->name('ai-translation.run');
+                    Route::post('/ai-translation/{language}/purchase', [AiTranslationController::class, 'purchase'])->whereNumber('language')->name('ai-translation.purchase');
+
+                    Route::get('/translations', [TranslationsController::class, 'index'])->name('translations');
+                    Route::get('/translations/data', [TranslationsController::class, 'data'])->name('translations.data');
+                    Route::post('/translations/{language}/keys', [TranslationsController::class, 'saveKey'])->name('translations.keys.update');
+                    Route::post('/translations/{language}/keys/ai', [TranslationsController::class, 'translateKeyWithAi'])->name('translations.keys.ai');
+                    Route::post('/translations/{language}/keys/ai-batch', [TranslationsController::class, 'translateSelectedWithAi'])->name('translations.keys.ai-bulk');
+                    Route::post('/translations/{language}/translate-store', [TranslationsController::class, 'translateStore'])->name('translations.store-ai');
+                    Route::get('/translations/{language}/status', [TranslationsController::class, 'status'])->name('translations.status');
+                });
+
+                Route::middleware('tenant.permission:settings.admins.manage')->group(function () {
+                    Route::get('/admins', [AdminsController::class, 'index'])->name('admins');
+                    Route::get('/admins/data', [AdminsController::class, 'data'])->name('admins.data');
+                    Route::post('/admins/validate', [AdminsController::class, 'validateStore'])->name('admins.validate');
+                    Route::post('/admins', [AdminsController::class, 'store'])->name('admins.store');
+                    Route::get('/admins/{admin}', [AdminsController::class, 'show'])->name('admins.show');
+                    Route::put('/admins/{admin}', [AdminsController::class, 'update'])->name('admins.update');
+                    Route::post('/admins/{admin}/validate', [AdminsController::class, 'validateUpdate'])->name('admins.validate.update');
+                    Route::post('/admins/{admin}/activate', [AdminsController::class, 'activate'])->name('admins.activate');
+                    Route::post('/admins/{admin}/deactivate', [AdminsController::class, 'deactivate'])->name('admins.deactivate');
+                    Route::delete('/admins/{admin}', [AdminsController::class, 'destroy'])->name('admins.destroy');
+                });
+
+                Route::middleware('tenant.permission:settings.roles.manage')->group(function () {
+                    Route::get('/roles-permissions', [RolesPermissionsController::class, 'index'])->name('roles-permissions');
+                    Route::get('/roles-permissions/data', [RolesPermissionsController::class, 'data'])->name('roles-permissions.data');
+                    Route::post('/roles-permissions/validate', [RolesPermissionsController::class, 'validateStore'])->name('roles-permissions.validate');
+                    Route::post('/roles-permissions', [RolesPermissionsController::class, 'store'])->name('roles-permissions.store');
+                    Route::get('/roles-permissions/{role}', [RolesPermissionsController::class, 'show'])->name('roles-permissions.show');
+                    Route::put('/roles-permissions/{role}', [RolesPermissionsController::class, 'update'])->name('roles-permissions.update');
+                    Route::post('/roles-permissions/{role}/validate', [RolesPermissionsController::class, 'validateUpdate'])->name('roles-permissions.validate.update');
+                    Route::delete('/roles-permissions/{role}', [RolesPermissionsController::class, 'destroy'])->name('roles-permissions.destroy');
+                });
+
+                Route::middleware('tenant.permission:settings.payment-gateways.manage')->group(function () {
+                    Route::get('/payment-gateways', [PaymentGatewaysController::class, 'index'])->name('payment-gateways');
+                    Route::get('/payment-gateways/data', [PaymentGatewaysController::class, 'data'])->name('payment-gateways.data');
+                    Route::get('/payment-gateways/{gateway}', [PaymentGatewaysController::class, 'show'])->name('payment-gateways.show');
+                    Route::put('/payment-gateways/{gateway}', [PaymentGatewaysController::class, 'update'])->name('payment-gateways.update');
+                    Route::post('/payment-gateways/{gateway}/validate', [PaymentGatewaysController::class, 'validateUpdate'])->name('payment-gateways.validate.update');
+                    Route::post('/payment-gateways/{gateway}/primary', [PaymentGatewaysController::class, 'setPrimary'])->name('payment-gateways.primary');
+                    Route::post('/payment-gateways/{gateway}/check-connection', [PaymentGatewaysController::class, 'checkConnection'])->name('payment-gateways.check');
+
+                    Route::get('/payment-readiness', [PaymentReadinessController::class, 'index'])->name('payment-readiness');
+                });
+
+                Route::middleware('tenant.permission:settings.mail.manage')->group(function () {
+                    Route::get('/email-templates', [EmailTemplateController::class, 'index'])->name('email-templates');
+                    Route::get('/email-templates/data', [EmailTemplateController::class, 'data'])->name('email-templates.data');
+                    Route::get('/email-templates/{emailTemplate}/edit', [EmailTemplateController::class, 'edit'])->name('email-templates.edit');
+                    Route::put('/email-templates/{emailTemplate}', [EmailTemplateController::class, 'update'])->name('email-templates.update');
+                    Route::post('/email-templates/{emailTemplate}/validate', [EmailTemplateController::class, 'validateUpdate'])->name('email-templates.validate');
+                    Route::post('/email-templates/{emailTemplate}/resync', [EmailTemplateController::class, 'resync'])->name('email-templates.resync');
+
+                    Route::get('/mail', [MailConfigurationsController::class, 'index'])->name('mail');
+                    Route::put('/mail', [MailConfigurationsController::class, 'update'])->name('mail.update');
+                    Route::post('/mail/validate', [MailConfigurationsController::class, 'validateUpdate'])->name('mail.validate');
+                    Route::post('/mail/test', [MailConfigurationsController::class, 'sendTest'])->name('mail.test');
+                    Route::post('/mail/test/validate', [MailConfigurationsController::class, 'validateSendTest'])->name('mail.test.validate');
+                });
+
+                Route::middleware('tenant.permission:settings.account.manage')->group(function () {
+                    Route::get('/account', [AccountSettingsController::class, 'show'])->name('account');
+                    Route::put('/account', [AccountSettingsController::class, 'update'])->name('account.update');
+                    Route::post('/account/validate', [AccountSettingsController::class, 'validateUpdate'])->name('account.validate');
+
+                    Route::get('/general', [GeneralSettingsController::class, 'index'])->name('general');
+                    Route::put('/general', [GeneralSettingsController::class, 'update'])->name('general.update');
+                    Route::post('/general/validate', [GeneralSettingsController::class, 'validateUpdate'])->name('general.validate');
+                    Route::post('/general/country-request', [GeneralSettingsController::class, 'submitCountryRequest'])->name('general.country-request');
+                    Route::post('/general/country-request/validate', [GeneralSettingsController::class, 'validateCountryRequest'])->name('general.country-request.validate');
+                    Route::post('/general/category-request', [GeneralSettingsController::class, 'submitCategoryRequest'])->name('general.category-request');
+                    Route::post('/general/category-request/validate', [GeneralSettingsController::class, 'validateCategoryRequest'])->name('general.category-request.validate');
+
+                    Route::get('/compliance', [ComplianceCenterController::class, 'show'])->name('compliance');
+                    Route::post('/compliance', [ComplianceCenterController::class, 'update'])->name('compliance.update');
+                    Route::post('/compliance/validate', [ComplianceCenterController::class, 'validateUpdate'])->name('compliance.validate');
+                    Route::get('/compliance/cities-by-country/{countryId}', [ComplianceCenterController::class, 'citiesByCountry'])->name('compliance.cities-by-country');
+                });
+
+                Route::middleware('tenant.permission:sales.returns.manage')->group(function () {
+                    Route::get('/return-policy', [ReturnPolicyController::class, 'index'])->name('return-policy');
+                    Route::put('/return-policy', [ReturnPolicyController::class, 'update'])->name('return-policy.update');
+                    Route::post('/return-policy/validate', [ReturnPolicyController::class, 'validateUpdate'])->name('return-policy.validate');
+                });
             });
         });

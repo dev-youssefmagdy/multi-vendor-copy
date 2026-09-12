@@ -811,6 +811,13 @@ class TenantPanelRepository
         return Subscriber::query()->latest()->paginate($perPage);
     }
 
+    public function querySubscribers(array $filters): Builder
+    {
+        return Subscriber::query()
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('email', 'like', '%'.trim((string) $filters['search']).'%'))
+            ->latest();
+    }
+
     public function exportSubscribers(): \Illuminate\Database\Eloquent\Collection
     {
         return Subscriber::query()->latest()->get();
@@ -828,6 +835,25 @@ class TenantPanelRepository
     public function currencies()
     {
         return Currency::query()->orderByDesc('is_default')->orderBy('code')->get();
+    }
+
+    public function queryCurrencies(array $filters): Builder
+    {
+        return Currency::query()
+            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(fn ($q) => $q->where('code', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%"));
+            })
+            ->when(($filters['status'] ?? '') !== '', function ($query) use ($filters) {
+                match ($filters['status']) {
+                    'default' => $query->where('is_default', true),
+                    'active' => $query->where('is_active', true)->where('is_default', false),
+                    'inactive' => $query->where('is_active', false),
+                    default => null,
+                };
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('code');
     }
 
     public function languages()
@@ -914,6 +940,11 @@ class TenantPanelRepository
 
     public function paginateAdmins(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryAdmins($filters)->paginate($perPage);
+    }
+
+    public function queryAdmins(array $filters): Builder
+    {
         return AdminUser::query()
             ->with('role')
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -922,8 +953,7 @@ class TenantPanelRepository
                     ->orWhere('email', 'like', "%{$search}%");
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('status', $filters['status']))
-            ->latest('updated_at')
-            ->paginate($perPage);
+            ->latest('updated_at');
     }
 
     public function adminStats(): array
@@ -942,11 +972,15 @@ class TenantPanelRepository
 
     public function paginateAdminRoles(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryAdminRoles($filters)->paginate($perPage);
+    }
+
+    public function queryAdminRoles(array $filters): Builder
+    {
         return AdminRole::query()
             ->withCount('admins')
             ->when(filled($filters['search'] ?? null), fn($query) => $query->where('name', 'like', '%' . trim((string) $filters['search']) . '%'))
-            ->latest('updated_at')
-            ->paginate($perPage);
+            ->latest('updated_at');
     }
 
     public function adminRoleStats(): array
@@ -985,6 +1019,21 @@ class TenantPanelRepository
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('is_active', $filters['status'] === 'active'))
             ->latest('updated_at')
             ->paginate($perPage);
+    }
+
+    public function queryEmailTemplates(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return EmailTemplate::query()
+            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function ($nested) use ($search) {
+                    $nested->where('name', 'like', "%{$search}%")
+                        ->orWhere('action', 'like', "%{$search}%")
+                        ->orWhere('subject', 'like', "%{$search}%");
+                });
+            })
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->latest('updated_at');
     }
 
     public function emailTemplateStats(): array
