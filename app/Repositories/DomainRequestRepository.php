@@ -15,8 +15,10 @@ class DomainRequestRepository
             ->with('tenant')
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
-                $query->where('domain', 'like', "%{$search}%")
-                    ->orWhereHas('tenant', fn(Builder $tenantQuery) => $tenantQuery->where('name', 'like', "%{$search}%"));
+                $query->where(function (Builder $nested) use ($search) {
+                    $nested->where('domain', 'like', "%{$search}%")
+                        ->orWhereHas('tenant', fn(Builder $tenantQuery) => $tenantQuery->where('data->name', 'like', "%{$search}%"));
+                });
             })
             ->when(filled($filters['status'] ?? null), fn($query) => $query->where('status', $filters['status']))
             ->latest('requested_at')
@@ -36,7 +38,8 @@ class DomainRequestRepository
     public function tenantOptions(): array
     {
         return \App\Models\Tenant::query()
-            ->orderBy('name')
+            ->orderBy('data->name')
+            ->get(['id', 'data->name as name'])
             ->pluck('name', 'id')
             ->all();
     }

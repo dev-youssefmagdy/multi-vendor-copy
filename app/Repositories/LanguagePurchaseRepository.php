@@ -17,7 +17,7 @@ class LanguagePurchaseRepository
             $query->where(function ($q) use ($search) {
                 $q->where('transaction_uuid', 'like', "%{$search}%")
                     ->orWhere('gateway_code', 'like', "%{$search}%")
-                    ->orWhereHas('tenant', fn($t) => $t->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"))
+                    ->orWhereHas('tenant', fn($t) => $t->where('data->name', 'like', "%{$search}%")->orWhere('data->email', 'like', "%{$search}%"))
                     ->orWhereHas('language', fn($l) => $l->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%"));
             });
         }

@@ -31,7 +31,7 @@ class InvoiceRepository
                         ->orWhere('order_number', 'like', "%{$search}%")
                         ->orWhere('customer_name', 'like', "%{$search}%")
                         ->orWhere('customer_email', 'like', "%{$search}%")
-                        ->orWhereHas('tenant', fn(Builder $tenantQuery) => $tenantQuery->where('name', 'like', "%{$search}%"));
+                        ->orWhereHas('tenant', fn(Builder $tenantQuery) => $tenantQuery->where('data->name', 'like', "%{$search}%"));
                 });
             })
             ->when(filled($filters['status'] ?? null), fn($query) => $query->where('status', $filters['status']))
