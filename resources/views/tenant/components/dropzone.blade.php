@@ -49,7 +49,7 @@
                 <h4>{{ $label }}</h4>
                 <p>{{ $sublabel }}</p>
             </div>
-            <input type="file" class="t-dropzone-input" @if($multiple) multiple @endif @if($accept) accept="{{ $accept }}" @endif
+            <input type="file" name="{{ $htmlName }}{{ $multiple ? '[]' : '' }}" class="t-dropzone-input" @if($multiple) multiple @endif @if($accept) accept="{{ $accept }}" @endif
                 {{ $attributes->merge(['class' => $error ? 'is-invalid' : '']) }}>
         </label>
 

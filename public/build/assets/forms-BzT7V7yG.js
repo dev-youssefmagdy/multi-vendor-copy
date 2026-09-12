@@ -1,0 +1,1 @@
+import{t as e}from"./forms--xPNg-zl.js";export{e as TenantForm};

@@ -5,6 +5,7 @@
     'sortable' => false,
     'addLabel' => 'Add row',
     'items' => [],
+    'indexToken' => '__INDEX__',
 ])
 
 @php
@@ -18,6 +19,7 @@
     data-min="{{ $min }}"
     @if($max) data-max="{{ $max }}" @endif
     @if($sortable) data-sortable="true" @endif
+    @if($indexToken !== '__INDEX__') data-index-token="{{ $indexToken }}" @endif
 >
     <template data-repeater-template>
         {{ $slot }}

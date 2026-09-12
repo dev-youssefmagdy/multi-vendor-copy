@@ -47,8 +47,6 @@ use App\Livewire\Tenant\Storefront\RequestReturnForm;
 use App\Livewire\Tenant\Storefront\ReturnDetailPage as StorefrontReturnDetailPage;
 use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
-use App\Livewire\Tenant\Product\OwnProductsList;
-use App\Http\Controllers\Tenant\OwnProductController;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
 use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;

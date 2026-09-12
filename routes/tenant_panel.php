@@ -47,8 +47,8 @@ use App\Livewire\Tenant\Storefront\RequestReturnForm;
 use App\Livewire\Tenant\Storefront\ReturnDetailPage as StorefrontReturnDetailPage;
 use App\Livewire\Tenant\Product\AddEditProduct;
 use App\Livewire\Tenant\Product\ProductsList;
-use App\Livewire\Tenant\Product\OwnProductsList;
-use App\Http\Controllers\Tenant\OwnProductController;
+use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
+use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductsListController;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
 use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
 use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;
@@ -185,22 +185,43 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             }
 
             Route::prefix('products')->name('tenant.products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
-                Route::get('/', ProductsList::class)->middleware('tenant.setup:theme')->name('index');
-                Route::get('/sort', TenantSortProducts::class)->name('sort');
-                Route::get('/edit-requests', \App\Livewire\Tenant\Product\EditRequestsPage::class)->name('edit-requests');
-                Route::get('/create', AddEditProduct::class)->name('create');
-                Route::get('/{product}/edit', AddEditProduct::class)->name('edit');
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'index'])->middleware('tenant.setup:theme')->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'data'])->name('data');
+                Route::get('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductSortController::class, 'index'])->name('sort');
+                Route::post('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductSortController::class, 'update'])->name('sort.save');
+                Route::get('/edit-requests', [\App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController::class, 'index'])->name('edit-requests');
+                Route::get('/edit-requests/data', [\App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController::class, 'data'])->name('edit-requests.data');
+                Route::get('/central-search', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'centralSearch'])->name('central-search');
+                Route::get('/central-snapshot/{centralProduct}', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'centralSnapshot'])->name('central-snapshot');
+                Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'store'])->name('store');
+                Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::patch('/{product}/active', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'toggleActive'])->name('toggle-active');
+                Route::patch('/{product}/featured', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController::class, 'toggleFeatured'])->name('toggle-featured');
+                Route::get('/{product}/social', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'social'])->name('social');
+                Route::post('/{product}/social/generate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'generateSocial'])->name('social.generate');
+                Route::get('/{product}/ai-price', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'aiPrice'])->name('ai-price');
+                Route::post('/{product}/ai-price', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'fetchAiPrice'])->name('ai-price.fetch');
+                Route::get('/{product}/share', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'share'])->name('share');
+                Route::get('/{product}/price-list', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListShow'])->name('price-list');
+                Route::put('/{product}/price-list', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListSave'])->name('price-list.save');
+                Route::post('/{product}/price-list/preview', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController::class, 'priceListPreview'])->name('price-list.preview');
+                Route::get('/{product}/edit', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'edit'])->name('edit');
+                Route::put('/{product}', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'update'])->name('update');
+                Route::post('/{product}/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\ProductController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
                 Route::post('/image-search', [\App\Http\Controllers\ImageSearchController::class, 'tenantPanel'])->name('image-search');
             });
 
             Route::prefix('own-products')->name('tenant.own-products.')->middleware('tenant.permission:catalog.products.manage')->group(function () {
-                Route::get('/', OwnProductsList::class)->name('index');
+                Route::get('/', [OwnProductsListController::class, 'index'])->name('index');
+                Route::get('/data', [OwnProductsListController::class, 'data'])->name('data');
                 Route::get('/create', [OwnProductController::class, 'create'])->name('create');
                 Route::post('/', [OwnProductController::class, 'store'])->name('store');
-                Route::post('/validate', [OwnProductController::class, 'validateForm'])->name('validate');
+                Route::post('/validate', [OwnProductController::class, 'validateStore'])->name('validate');
                 Route::get('/{product}/edit', [OwnProductController::class, 'edit'])->name('edit');
                 Route::put('/{product}', [OwnProductController::class, 'update'])->name('update');
-                Route::post('/{product}/validate', [OwnProductController::class, 'validateForm'])->name('validate.update');
+                Route::post('/{product}/validate', [OwnProductController::class, 'validateUpdate'])->name('validate.update');
+                Route::delete('/{product}', [OwnProductsListController::class, 'destroy'])->name('destroy');
             });
 
             Route::prefix('manufacturing')->name('tenant.manufacturing.')->group(function () {
@@ -230,22 +251,33 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
             });
 
             Route::prefix('categories')->name('tenant.categories.')->middleware('tenant.permission:catalog.categories.manage')->group(function () {
-                Route::get('/', CategoriesList::class)->name('index');
-                Route::get('/sort', SortCategories::class)->name('sort');
-                Route::get('/create', AddEditCategory::class)->name('create');
-                Route::get('/{category}/edit', AddEditCategory::class)->name('edit');
-                Route::get('/{category}/products', CategoryProducts::class)->name('products');
+                Route::get('/', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'data'])->name('data');
+                Route::get('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController::class, 'index'])->name('sort');
+                Route::post('/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController::class, 'update'])->name('sort.save');
+                Route::get('/create', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'store'])->name('store');
+                Route::post('/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+                Route::get('/{category}/edit', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'edit'])->name('edit');
+                Route::put('/{category}', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'update'])->name('update');
+                Route::post('/{category}/validate', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
+                Route::patch('/{category}/active', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'toggleActive'])->name('toggle-active');
+                Route::patch('/{category}/featured', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'toggleFeatured'])->name('toggle-featured');
+                Route::delete('/{category}', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryController::class, 'destroy'])->name('destroy');
+                Route::get('/{category}/products', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryProductsController::class, 'index'])->name('products');
+                Route::post('/{category}/products/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\CategoryProductsController::class, 'update'])->name('products.sort');
             });
 
             Route::prefix('badges')->name('tenant.badges.')->middleware('tenant.permission:catalog.badges.manage')->group(function () {
                 Route::get('/', function () {
                     return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
                 })->name('index');
-                Route::get('/{badge}', [TenantBadgeProductsController::class, 'show'])->name('show');
-                Route::get('/{badge}/search', [TenantBadgeProductsController::class, 'searchProducts'])->name('search');
-                Route::get('/{badge}/sort', TenantSortBadgeProducts::class)->name('sort');
-                Route::post('/{badge}/assign-category', [TenantBadgeProductsController::class, 'assignCategory'])->name('assign-category');
-                Route::post('/{badge}/save', [TenantBadgeProductsController::class, 'save'])->name('save');
+                Route::get('/{badge}', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'show'])->name('show');
+                Route::get('/{badge}/search', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'searchProducts'])->name('search');
+                Route::get('/{badge}/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeSortController::class, 'index'])->name('sort');
+                Route::post('/{badge}/sort', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeSortController::class, 'update'])->name('sort');
+                Route::post('/{badge}/assign-category', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'assignCategory'])->name('assign-category');
+                Route::post('/{badge}/save', [\App\Http\Controllers\Tenant\Panel\Catalog\BadgeController::class, 'save'])->name('save');
             });
 
             Route::get('/orders', OrdersList::class)

@@ -239,6 +239,59 @@
 .t-repeater-row { border: 1px solid var(--border2); border-radius: 10px; padding: 12px; margin-bottom: 10px; position: relative; }
 .t-repeater-add { margin-top: 4px; }
 
+/* Entity row (thumbnail + title/subtitle), used in list/sort/form partials */
+.entity-row { display: flex; align-items: center; gap: 12px; }
+.entity-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--border2);
+    flex-shrink: 0;
+}
+.entity-thumb-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--elevated);
+    color: var(--t3);
+}
+.entity-thumb-lg {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid var(--border2);
+}
+
+/* Static (read-only) field display, mirrors .field-control's box without an input */
+.field-control-static {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--t1);
+    font-size: 12.5px;
+}
+.field-control-multiline { min-height: 88px; align-items: flex-start; padding-top: 10px; white-space: normal; }
+
+/* Sortable list rows (products/categories/badge-products sort pages) */
+.t-sortable-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    background: var(--surface);
+    margin-bottom: 8px;
+}
+.t-sortable-row .t-drag { display: inline-flex; color: var(--t3); cursor: grab; }
+
 /* Copy button */
 .t-copy-btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--border2); border-radius: 8px; padding: 5px 10px; font-size: 11.5px; color: var(--t2); cursor: pointer; }
 .t-copy-btn:hover { border-color: var(--cyan); color: var(--cyan); }

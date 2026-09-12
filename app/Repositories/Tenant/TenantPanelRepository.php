@@ -145,6 +145,16 @@ class TenantPanelRepository
 
     public function paginateProducts(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryProducts($filters)->paginate($perPage);
+    }
+
+    public function queryProducts(array $filters): Builder
+    {
+        $imageSearchIds = array_values(array_filter(
+            (array) ($filters['image_search_ids'] ?? $filters['image_ids'] ?? []),
+            fn($id) => filled($id)
+        ));
+
         return Product::query()
             ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -160,11 +170,11 @@ class TenantPanelRepository
                 $categoryIds = $this->resolveCategoryIdsWithDescendants((int) $filters['category']);
                 $query->whereHas('categories', fn (Builder $q) => $q->whereIn('categories.id', $categoryIds));
             })
-            ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
-                $query->whereIn('central_product_id', $filters['image_search_ids']);
-            })
-            ->orderBy('order_number')
-            ->paginate($perPage);
+            ->when(!empty($imageSearchIds), function ($query) use ($imageSearchIds) {
+                $query->whereIn('central_product_id', $imageSearchIds);
+                $ids = implode(',', array_map('intval', $imageSearchIds));
+                $query->orderByRaw("FIELD(central_product_id, {$ids})");
+            }, fn($query) => $query->orderBy('order_number'));
     }
 
     /**
@@ -220,6 +230,28 @@ class TenantPanelRepository
             'active' => Product::query()->where('active', true)->count(),
             'featured' => Product::query()->where('featured', true)->count(),
         ];
+    }
+
+    public function searchCentralProducts(string $search = '', int $page = 1, int $perPage = 15): array
+    {
+        return tenancy()->central(function () use ($search, $page, $perPage) {
+            $query = CentralProduct::query()
+                ->when(filled($search), fn ($q) => $q->where(function ($nested) use ($search) {
+                    $nested->where('sku', 'like', "%{$search}%")
+                        ->orWhereHas('translations', fn ($t) => $t->where('field', 'name')->where('value', 'like', "%{$search}%"));
+                }));
+
+            $total = (clone $query)->count();
+            $items = $query
+                ->with('translations.language')
+                ->orderBy('id')
+                ->forPage($page, $perPage)
+                ->get()
+                ->mapWithKeys(fn (CentralProduct $product) => [$product->id => $product->translationValue('name') ?? $product->sku ?? ('Product #'.$product->id)])
+                ->all();
+
+            return ['items' => $items, 'has_more' => ($page * $perPage) < $total];
+        });
     }
 
     public function centralProductSnapshot(?int $centralProductId): ?array
@@ -358,6 +390,11 @@ class TenantPanelRepository
 
     public function paginateCategories(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryCategories($filters)->paginate($perPage);
+    }
+
+    public function queryCategories(array $filters): Builder
+    {
         return Category::query()
             ->with(['translations.language', 'parent.translations.language', 'products'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -366,8 +403,7 @@ class TenantPanelRepository
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
             ->when(!empty($filters['mine'] ?? false), fn($query) => $query->whereNull('central_category_id'))
-            ->orderBy('order_number')
-            ->paginate($perPage);
+            ->orderBy('order_number');
     }
 
     public function categoryStats(): array
@@ -376,6 +412,51 @@ class TenantPanelRepository
             'total' => Category::query()->count(),
             'active' => Category::query()->where('active', true)->count(),
             'featured' => Category::query()->where('featured', true)->count(),
+        ];
+    }
+
+    public function queryOwnProducts(array $filters): Builder
+    {
+        return Product::query()
+            ->with(['badges', 'variants'])
+            ->where('is_own_product', true)
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->whereHas('translations', fn (Builder $t) => $t->where('value', 'like', "%{$search}%"));
+            })
+            ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('active', $filters['status'] === 'active'))
+            ->when(($filters['stock'] ?? '') === 'out', function (Builder $query) {
+                $query->where(function (Builder $noVar) {
+                    $noVar->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
+                })->orWhere(function (Builder $hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '>', 0));
+                });
+            })
+            ->when(($filters['stock'] ?? '') === 'in', function (Builder $query) {
+                $query->where(function (Builder $noVar) {
+                    $noVar->whereDoesntHave('variants')->where(function (Builder $nv) {
+                        $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
+                    });
+                })->orWhere(function (Builder $hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '<=', 0));
+                });
+            })
+            ->when(($filters['stock'] ?? '') === 'partial', function (Builder $query) {
+                $query->whereHas('variants', fn (Builder $v) => $v->where('stock', '<=', 0))
+                    ->whereHas('variants', fn (Builder $v) => $v->where('stock', '>', 0));
+            })
+            ->latest();
+    }
+
+    public function ownProductStats(): array
+    {
+        $total = Product::where('is_own_product', true)->count();
+        $active = Product::where('is_own_product', true)->where('active', true)->count();
+
+        return [
+            'total' => $total,
+            'active' => $active,
+            'inactive' => $total - $active,
         ];
     }
 

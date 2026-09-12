@@ -1,0 +1,124 @@
+/* ── Product list row styling ─────────────────────────────────────── */
+.row-out-of-stock { background: rgba(239, 68, 68, .04); }
+.row-partial-stock { background: rgba(245, 158, 11, .04); }
+
+.entity-row { display: flex; align-items: center; gap: 12px; }
+.entity-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); flex-shrink: 0; }
+.entity-thumb-empty {
+    display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .04);
+    font-weight: 700; color: var(--t2, #9ca3af);
+}
+
+.products-title-badge { font-size: 10px; margin-top: 4px; display: inline-block; }
+.products-badge-pills { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; }
+.products-badge-pills .badge { font-size: 10px; }
+
+.products-ai-price { color: #4ade80; }
+.products-stock-out { color: var(--red, #ef4444); }
+.products-stock-partial { color: var(--amber, #f59e0b); }
+
+.products-actions { align-items: center; }
+.t-switch-inline { display: inline-flex; }
+
+/* ── Image search chip inside filters card ───────────────────────── */
+.products-search-wrap { position: relative; display: flex; align-items: center; }
+.products-search-camera-btn {
+    position: absolute; right: 6px; width: 26px; height: 26px; border-radius: 6px; border: none;
+    background: transparent; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted, #94a3b8); cursor: pointer;
+}
+
+/* ── Shared modal primitives ─────────────────────────────────────── */
+.t-spinner {
+    display: inline-block; width: 32px; height: 32px;
+    border: 3px solid rgba(255, 255, 255, .1); border-top-color: var(--accent, #6366f1);
+    border-radius: 50%; animation: t-spin .8s linear infinite;
+}
+@keyframes t-spin { to { transform: rotate(360deg); } }
+
+.alert-banner-error {
+    background: rgba(239, 68, 68, .12); border: 1px solid rgba(239, 68, 68, .3); border-radius: 10px;
+    padding: 12px 16px; color: var(--danger, #ef4444); font-size: 13px; margin-bottom: 16px;
+}
+.alert-banner-success {
+    background: rgba(74, 222, 128, .12); border: 1px solid rgba(74, 222, 128, .3); border-radius: 10px;
+    padding: 10px 16px; color: #4ade80; font-size: 13px; margin-bottom: 16px;
+}
+
+/* ── Social posts modal ──────────────────────────────────────────── */
+.social-controls { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.social-control { min-width: 220px; }
+.social-platforms { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.social-platform-btn {
+    padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    border: 1.5px solid var(--border); background: rgba(255, 255, 255, .04); color: var(--t2);
+    cursor: pointer; transition: all .15s;
+}
+.social-platform-btn.is-active { border-color: #6366f1; background: rgba(99, 102, 241, .18); color: #a5b4fc; }
+.social-generate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.social-loading { text-align: center; padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.social-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.social-posts { display: flex; flex-direction: column; gap: 12px; }
+.social-post-card {
+    padding: 14px 16px; background: rgba(255, 255, 255, .03); border: 1px solid var(--border);
+    border-left: 3px solid #6366f1; border-radius: 10px;
+}
+.social-post-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.social-post-header-left { display: flex; align-items: center; gap: 8px; }
+.social-post-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.social-post-text { margin: 0; white-space: pre-wrap; font-size: 13px; line-height: 1.65; color: var(--t1); }
+.social-image { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 20px; }
+.social-image-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.social-image img { width: 100%; max-width: 380px; border-radius: 10px; border: 1px solid var(--border); display: block; }
+
+/* ── Price finder modal ───────────────────────────────────────────── */
+.price-finder-options {
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.price-finder-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--t2); cursor: pointer; }
+.price-finder-fetch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.price-finder-loading { text-align: center; padding: 32px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.price-finder-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.price-finder-stat { padding: 12px 14px; background: rgba(255, 255, 255, .03); border: 1px solid var(--border); border-radius: 10px; text-align: center; }
+.price-finder-stat-value { font-size: 18px; font-weight: 700; }
+
+/* ── Share modal ──────────────────────────────────────────────────── */
+.share-preview {
+    padding: 14px 16px; background: rgba(255, 255, 255, .03); border: 1px solid var(--border);
+    border-radius: 10px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;
+}
+.share-preview-image { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; }
+.share-preview-body { flex: 1; min-width: 0; }
+.share-ai-badge { font-size: 10px; margin-bottom: 6px; display: inline-block; }
+.share-caption { margin: 0; font-size: 12px; white-space: pre-wrap; line-height: 1.5; max-height: 80px; overflow: hidden; }
+.share-url-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 12px;
+    border-radius: 10px; background: rgba(255, 255, 255, .03); border: 1px solid var(--border); font-size: 12px;
+}
+.share-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--t3); }
+.share-platforms { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.share-platform-btn {
+    display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 13px; padding: 10px 12px;
+}
+
+/* ── Price list modal ─────────────────────────────────────────────── */
+.price-list-save-message {
+    background: rgba(74, 222, 128, .12); border: 1px solid rgba(74, 222, 128, .3); border-radius: 10px;
+    padding: 10px 16px; color: #4ade80; font-size: 13px; margin-bottom: 16px;
+}
+.price-list-legend { margin-bottom: 16px; }
+.price-list-heading { margin-top: 20px; margin-bottom: 10px; }
+.price-list-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.price-list-variant-block { margin-bottom: 16px; }
+.price-list-variant-label { margin-bottom: 6px; font-weight: 500; }
+.price-list-your-price { color: #4ade80; font-weight: 600; }
+.price-list-profit-cell { display: flex; gap: 6px; align-items: center; }
+.price-list-profit-cell select,
+.price-list-profit-cell input { padding: 4px 8px; font-size: 12px; }
+.price-list-profit-cell input { width: 90px; text-align: right; }
+.price-list-fallback-badge { margin-left: 6px; font-size: 10px; }
+
+/* ── Video ad modal ───────────────────────────────────────────────── */
+.video-ad-placeholder { text-align: center; padding: 32px 0; }
+.video-ad-icon { font-size: 40px; display: block; margin-bottom: 12px; }

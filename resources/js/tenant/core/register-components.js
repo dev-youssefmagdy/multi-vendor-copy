@@ -29,3 +29,4 @@ registerComponent('[data-tenant-copy]', () => import('../components/copy.js'));
 registerComponent('[data-checkbox-group]', () => import('../components/checkbox-group.js'));
 registerComponent('[data-tenant-notification-bell]', () => import('../components/notification-bell.js'));
 registerComponent('[data-setup-progress]', () => import('../shell/setup-progress.js'));
+registerComponent('[data-tenant-image-search-modal]', () => import('../components/image-search.js'));
