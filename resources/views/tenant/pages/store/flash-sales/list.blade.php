@@ -3,10 +3,15 @@
 @section('title', $country ? "Flash Sales — {$country->name}" : 'Flash Sales — Default')
 
 @section('content')
+    @php
+        $flashSalesDescription = $country
+            ? "Flash sale campaigns for visitors from {$country->name}."
+            : 'Default flash sales shown when no country-specific campaigns exist.';
+    @endphp
     <x-tenant::page-header
         :title="$country ? 'Flash Sales — ' . $country->flag_emoji . ' ' . $country->name : 'Flash Sales — Default'"
         badge="Storefront"
-        :description="$country ? \"Flash sale campaigns for visitors from {$country->name}.\" : 'Default flash sales shown when no country-specific campaigns exist.'"
+        :description="$flashSalesDescription"
     >
         <x-slot:actions>
             <a href="{{ route('tenant.store.flash-sales.index') }}" class="btn btn-secondary">← All Countries</a>

@@ -3,10 +3,15 @@
 @section('title', $country ? "Coupons — {$country->name}" : 'Coupons — Default')
 
 @section('content')
+    @php
+        $couponsDescription = $country
+            ? "Discount codes for visitors from {$country->name}."
+            : 'Default coupons shown when no country-specific coupons exist.';
+    @endphp
     <x-tenant::page-header
         :title="$country ? 'Coupons — ' . $country->flag_emoji . ' ' . $country->name : 'Coupons — Default'"
         badge="Storefront"
-        :description="$country ? \"Discount codes for visitors from {$country->name}.\" : 'Default coupons shown when no country-specific coupons exist.'"
+        :description="$couponsDescription"
     >
         <x-slot:actions>
             <a href="{{ route('tenant.store.coupons.index') }}" class="btn btn-secondary">← All Countries</a>
