@@ -2,6 +2,8 @@
  * view. Everything else (.ob-*) is already shared in resources/css/app.css
  * with the central-admin onboarding wizard. */
 
+@import '@tenant-css/components/logo-builder.css';
+
 .ob-setup-header-progress {
     flex-shrink: 0;
     text-align: right;

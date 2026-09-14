@@ -12,18 +12,40 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Locks the whole vendor panel behind the "Quick Store Setup" checklist:
  * until every item is done, every page except the onboarding page itself
- * is unreachable directly — it must be opened via a setup action button
- * (which appends ?from=onboarding). Once the checklist is 100% complete,
- * navigation is unrestricted again.
+ * (and the pages the checklist's own action buttons link to) is unreachable
+ * directly — it must be opened via a setup action button (which appends
+ * ?from=onboarding). Once the checklist is 100% complete, navigation is
+ * unrestricted again.
  *
  * Applied to the authenticated tenant admin route group in routes/tenant.php.
  */
 class EnforceOnboardingSetup
 {
+    /**
+     * Route-name prefixes for pages the "Quick Store Setup" checklist links
+     * to (logo/appearance, themes, payment gateways, languages, account,
+     * compliance). Every route under these prefixes — including their data/
+     * AJAX endpoints — must stay reachable while setup is incomplete, since
+     * completing a checklist item requires using those pages fully, not just
+     * loading the first request with ?from=onboarding.
+     */
+    private const EXEMPT_ROUTE_PREFIXES = [
+        'tenant.onboarding',
+        'tenant.store.appearance',
+        'tenant.store.themes',
+        'tenant.settings.payment-gateways',
+        'tenant.settings.payment-readiness',
+        'tenant.settings.languages',
+        'tenant.settings.account',
+        'tenant.settings.compliance',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->routeIs('tenant.onboarding')) {
-            return $next($request);
+        foreach (self::EXEMPT_ROUTE_PREFIXES as $prefix) {
+            if ($request->routeIs($prefix) || $request->routeIs($prefix . '.*')) {
+                return $next($request);
+            }
         }
 
         /** @var AdminUser|null $admin */

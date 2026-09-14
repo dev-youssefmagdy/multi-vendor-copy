@@ -5,9 +5,30 @@
 // them into a `<template>` before opening the shared modal.
 import { get } from '../../core/http.js';
 import { openModal } from '../../core/modals.js';
+import { on } from '../../core/events.js';
 
 function fieldsContainer() {
     return document.querySelector('#gateway-modal [data-credential-fields]');
+}
+
+function useOwnToggle() {
+    return document.querySelector('#gateway-modal input[name="use_own"]');
+}
+
+function credentialsWrapper() {
+    return document.querySelector('#gateway-modal [data-field="required_fields"]');
+}
+
+function syncCredentialsVisibility() {
+    const toggle = useOwnToggle();
+    const wrapper = credentialsWrapper();
+    const container = fieldsContainer();
+    if (!toggle || !wrapper) {
+        return;
+    }
+
+    const hasFields = container && !container.hidden;
+    wrapper.hidden = !toggle.checked || !hasFields;
 }
 
 function fieldTemplate() {
@@ -104,6 +125,7 @@ async function openGatewayModal(trigger) {
     setWebhookUrl(data.webhook_url);
 
     await openModal('gateway-modal', { fill: data, action, mode: 'PUT' });
+    syncCredentialsVisibility();
 
     const form = document.getElementById('gateway-form');
     if (form && validateUrl) {
@@ -119,4 +141,16 @@ document.addEventListener('click', (event) => {
 
     event.preventDefault();
     openGatewayModal(trigger);
+});
+
+document.addEventListener('change', (event) => {
+    if (event.target === useOwnToggle()) {
+        syncCredentialsVisibility();
+    }
+});
+
+on('tenant:modal:opened', ({ id }) => {
+    if (id === 'gateway-modal') {
+        syncCredentialsVisibility();
+    }
 });

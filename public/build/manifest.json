@@ -2389,11 +2389,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-lu3JpD5I.css",
+    "file": "assets/app-CAMJUjh1.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DzqNOCCI.css",
+    "file": "assets/ecommet-l2s1Ld8Y.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2676,7 +2676,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DIgtAGqw.css",
+    "file": "assets/souqify-Bj5gau3Q.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2685,7 +2685,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DMXX3j0o.css",
+    "file": "assets/app-K08QnpA8.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2693,7 +2693,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-lu3JpD5I.css"
+      "assets/app-CAMJUjh1.css"
     ],
     "assets": [
       "assets/syne-greek-400-normal-B4XGRaFa.woff2",
@@ -3447,7 +3447,7 @@
     ]
   },
   "resources/js/tenant/pages/onboarding/index.js": {
-    "file": "assets/index-Byhylh_Z.js",
+    "file": "assets/index-BbKDfeOw.js",
     "name": "index",
     "src": "resources/js/tenant/pages/onboarding/index.js",
     "isEntry": true,
@@ -3458,7 +3458,7 @@
       "_http-BoWwR_D2.js"
     ],
     "css": [
-      "assets/index-Z2UYXb_A.css"
+      "assets/index-QK0EsR_3.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
@@ -3679,11 +3679,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/payment-gateways.js": {
-    "file": "assets/payment-gateways-BQpbNTco.js",
+    "file": "assets/payment-gateways-BoDRzqIX.js",
     "name": "payment-gateways",
     "src": "resources/js/tenant/pages/settings/payment-gateways.js",
     "isEntry": true,
     "imports": [
+      "_events-HX7T97Vf.js",
       "_http-BoWwR_D2.js",
       "_modals-Bwf9TQd2.js"
     ]
@@ -3722,7 +3723,7 @@
     ]
   },
   "resources/js/tenant/pages/store/appearance.js": {
-    "file": "assets/appearance-DC_KH0pC.js",
+    "file": "assets/appearance-Fq-oG3hG.js",
     "name": "appearance",
     "src": "resources/js/tenant/pages/store/appearance.js",
     "isEntry": true,
@@ -3738,7 +3739,7 @@
       "_forms-DqESBiuQ.js"
     ],
     "css": [
-      "assets/appearance-BykOHeRB.css"
+      "assets/appearance-DD0cOYdP.css"
     ]
   },
   "resources/js/tenant/pages/store/banners.js": {
