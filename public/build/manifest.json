@@ -2389,11 +2389,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CAMJUjh1.css",
+    "file": "assets/app-CigTyVUu.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-l2s1Ld8Y.css",
+    "file": "assets/ecommet-D6_GCFJb.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2676,7 +2676,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-Bj5gau3Q.css",
+    "file": "assets/souqify-C1ZuNaSo.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2685,7 +2685,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-K08QnpA8.css",
+    "file": "assets/app-CeZ4f3z2.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2693,7 +2693,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-CAMJUjh1.css"
+      "assets/app-CigTyVUu.css"
     ],
     "assets": [
       "assets/syne-greek-400-normal-B4XGRaFa.woff2",
@@ -3352,7 +3352,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-index.js": {
-    "file": "assets/products-index-DoePzp1W.js",
+    "file": "assets/products-index-DRLO1M0E.js",
     "name": "products-index",
     "src": "resources/js/tenant/pages/catalog/products-index.js",
     "isEntry": true,
@@ -3362,7 +3362,7 @@
       "_modals-Bwf9TQd2.js"
     ],
     "css": [
-      "assets/products-index-BTvqVtbX.css"
+      "assets/products-index-BDD6tj5R.css"
     ]
   },
   "resources/js/tenant/pages/catalog/sortable.js": {

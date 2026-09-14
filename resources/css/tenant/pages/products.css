@@ -2,23 +2,89 @@
 .row-out-of-stock { background: rgba(239, 68, 68, .04); }
 .row-partial-stock { background: rgba(245, 158, 11, .04); }
 
-.entity-row { display: flex; align-items: center; gap: 12px; }
-.t-scope .entity-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); flex-shrink: 0; }
+#products-table.tb td { vertical-align: middle; }
+#products-table.tb td:first-child { color: var(--t3); font-weight: 600; font-size: 12px; }
+
+.entity-row { display: flex; align-items: center; gap: 13px; }
+.t-scope .entity-thumb {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 11px;
+    border: 1px solid var(--border2);
+    background: var(--elevated);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .18);
+    flex-shrink: 0;
+}
 .entity-thumb-empty {
-    display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .04);
-    font-weight: 700; color: var(--t2, #9ca3af);
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 229, 255, .12), rgba(162, 89, 255, .1));
+    font-weight: 700; color: var(--cyan);
+    font-size: 15px;
 }
 
-.products-title-badge { font-size: 10px; margin-top: 4px; display: inline-block; }
-.products-badge-pills { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px; }
+.products-title-badge { font-size: 10px; margin-top: 5px; display: inline-block; }
+.products-badge-pills { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px; }
 .products-badge-pills .badge { font-size: 10px; }
 
-.products-ai-price { color: #4ade80; }
-.products-stock-out { color: var(--red, #ef4444); }
-.products-stock-partial { color: var(--amber, #f59e0b); }
+.products-status-pills { display: flex; flex-wrap: wrap; gap: 5px; }
 
-.products-actions { align-items: center; }
-.t-switch-inline { display: inline-flex; }
+.products-ai-price { color: var(--green); }
+.products-stock-out { color: var(--red, #ef4444); font-weight: 600; }
+.products-stock-partial { color: var(--amber, #f59e0b); font-weight: 600; }
+
+/* Vendor price is the tenant's own number — give it the visual weight;
+ * central price / AI price stay secondary reference figures. */
+.products-vendor-price {
+    color: var(--cyan);
+}
+
+/* ── Actions column — status pills on top, icon tools below ────────── */
+.products-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.products-actions-toggles {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.products-actions-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.t-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--t2);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.t-icon-btn:hover { background: var(--elevated); color: var(--t1); border-color: var(--border2); }
+
+.products-actions .t-dropdown-trigger {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    justify-content: center;
+}
+.products-actions .t-dropdown-trigger span { display: none; }
 
 /* ── Image search chip inside filters card ───────────────────────── */
 .products-search-wrap { position: relative; display: flex; align-items: center; }

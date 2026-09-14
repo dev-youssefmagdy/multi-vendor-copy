@@ -34,8 +34,13 @@
                     ajax-url="{{ route('tenant.products.central-search') }}"
                     :selected="$centralProduct ? [$centralProduct['id'] => $centralProduct['name']] : []"
                     placeholder="Search central catalog products…"
+                    :disabled="(bool) $centralProduct"
+                    :help="$centralProduct ? 'The central product cannot be changed once set.' : null"
                     data-central-product-select
                 />
+                @if($centralProduct)
+                    <input type="hidden" name="central_product_id" value="{{ $centralProduct['id'] }}">
+                @endif
                 <x-tenant::input type="text" name="slug" label="Slug" :value="$product?->slug" />
                 <div>
                     <x-tenant::input type="number" step="0.01" name="price" label="Vendor Sale Price" :value="$product ? number_format((float) ($product->default_price ?? 0), 2, '.', '') : '0.00'" />

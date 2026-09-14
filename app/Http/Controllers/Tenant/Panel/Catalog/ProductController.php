@@ -143,6 +143,10 @@ final class ProductController extends PanelController
 
         $validated = $request->validated();
 
+        if ($product && $product->central_product_id) {
+            $validated['central_product_id'] = $product->central_product_id;
+        }
+
         if ($validated['central_product_id'] ?? null) {
             $snapshot = $this->repo->centralProductSnapshot((int) $validated['central_product_id']);
 

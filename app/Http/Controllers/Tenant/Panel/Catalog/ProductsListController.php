@@ -43,7 +43,7 @@ final class ProductsListController extends PanelController
                 TableColumn::make('status', 'Status')->orderable(false),
                 TableColumn::make('categories', 'Categories')->orderable(false),
                 TableColumn::make('updated_at', 'Updated At'),
-                TableColumn::actions(),
+                TableColumn::actions()->width('190px'),
             ],
         ]);
     }

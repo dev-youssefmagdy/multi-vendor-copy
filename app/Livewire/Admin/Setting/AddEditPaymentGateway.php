@@ -58,7 +58,7 @@ class AddEditPaymentGateway extends Component
             ->values()
             ->all();
 
-        if (empty($this->credentials) && !empty($existing)) {
+            if (empty($this->credentials) && !empty($existing)) {
             $this->credentials = collect($existing)
                 ->reject(fn($value, $key) => $key === 'sandbox')
                 ->map(fn($value, $key) => ['key' => $key, 'value' => $value])
