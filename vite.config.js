@@ -93,7 +93,6 @@ export default defineConfig({
                 'resources/js/tenant/pages/catalog/category-form.js',
                 'resources/js/tenant/pages/catalog/badge-show.js',
                 'resources/js/tenant/pages/catalog/products-index.js',
-                'resources/js/tenant/pages/catalog/products-price-list.js',
                 'resources/js/tenant/pages/catalog/product-form.js',
                 'resources/js/tenant/pages/catalog/own-products-index.js',
                 'resources/js/tenant/pages/catalog/own-product-form.js',
