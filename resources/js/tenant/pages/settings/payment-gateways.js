@@ -12,7 +12,12 @@ function fieldsContainer() {
 }
 
 function useOwnToggle() {
-    return document.querySelector('#gateway-modal input[name="use_own"]');
+    // The switch component renders a hidden companion input with the same
+    // `name` before the actual checkbox (so an unchecked switch still posts
+    // "0") — must target the checkbox specifically, or a plain
+    // `[name="use_own"]` query matches the hidden one first and `.checked`
+    // is always undefined.
+    return document.querySelector('#gateway-modal input[type="checkbox"][name="use_own"]');
 }
 
 function credentialsWrapper() {
