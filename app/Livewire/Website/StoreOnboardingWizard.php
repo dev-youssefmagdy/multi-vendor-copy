@@ -5,14 +5,13 @@ namespace App\Livewire\Website;
 use App\Models\Country;
 use App\Models\Tenant;
 use App\Models\TenantCountry;
-use App\Models\Tenant\Banner;
 use App\Models\Tenant\Language as TenantLanguage;
 use App\Models\Tenant\Theme;
 use Livewire\Component;
 
 class StoreOnboardingWizard extends Component
 {
-    // Steps: 1=countries  2=languages  3=theme  4=banners  5=done
+    // Steps: 1=countries  2=languages  3=theme  4=done
     public int    $step      = 1;
     public string $tenantId  = '';
     public bool   $invalid   = false;
@@ -25,10 +24,6 @@ class StoreOnboardingWizard extends Component
 
     // Step 3 — Active theme (global, not per-country)
     public string $activeThemeId = '';
-
-    // Step 4 — Banner config per country
-    // ['country_id' => ['title'=>'', 'subtitle'=>'', 'button_text'=>'', 'url'=>'']]
-    public array $banners = [];
 
     public function mount(string $tenantId): void
     {
@@ -72,15 +67,6 @@ class StoreOnboardingWizard extends Component
 
         $this->activeThemeId = (string) (Theme::query()->where('is_active', true)->value('id') ?? '');
 
-        foreach ($this->countryIds as $cid) {
-            $this->banners[$cid] = [
-                'title' => '',
-                'subtitle' => '',
-                'button_text' => '',
-                'url' => '',
-            ];
-        }
-
         tenancy()->end();
     }
 
@@ -90,7 +76,6 @@ class StoreOnboardingWizard extends Component
             1 => $this->submitCountries(),
             2 => $this->submitLanguages(),
             3 => $this->submitTheme(),
-            4 => $this->submitBanners(),
             default => null,
         };
     }
@@ -100,6 +85,17 @@ class StoreOnboardingWizard extends Component
         if ($this->step < 4) {
             $this->step++;
         }
+    }
+
+    public function toggleAllCountries(bool $checked): void
+    {
+        $this->countryIds = $checked
+            ? Country::query()
+                ->where('is_active_for_tenants', true)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
+                ->all()
+            : [];
     }
 
     public function submitCountries(): void
@@ -126,12 +122,6 @@ class StoreOnboardingWizard extends Component
         Tenant::saveData($this->tenantId, [
             'country_ids' => array_map('intval', $this->countryIds),
         ]);
-
-        foreach ($this->countryIds as $cid) {
-            if (!isset($this->banners[$cid])) {
-                $this->banners[$cid] = ['title' => '', 'subtitle' => '', 'button_text' => '', 'url' => ''];
-            }
-        }
 
         $this->step = 2;
     }
@@ -171,38 +161,6 @@ class StoreOnboardingWizard extends Component
         $this->step = 4;
     }
 
-    public function submitBanners(): void
-    {
-        $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant) {
-            return;
-        }
-
-        tenancy()->initialize($tenant);
-
-        foreach ($this->banners as $countryId => $bannerData) {
-            if (blank($bannerData['title'] ?? '') && blank($bannerData['subtitle'] ?? '')) {
-                continue;
-            }
-
-            $banner = new Banner();
-            $banner->fill(['country_id' => (int) $countryId, 'url' => $bannerData['url'] ?? '']);
-            $banner->save();
-
-            $banner->syncTranslations([
-                'en' => [
-                    'title' => $bannerData['title'] ?? '',
-                    'subtitle' => $bannerData['subtitle'] ?? '',
-                    'button_text' => $bannerData['button_text'] ?? '',
-                ],
-            ]);
-        }
-
-        tenancy()->end();
-
-        $this->step = 5;
-    }
-
     public function launch(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
@@ -231,8 +189,6 @@ class StoreOnboardingWizard extends Component
             ->orderBy('name')
             ->get();
 
-        $selectedCountries = $allCountries->whereIn('id', array_map('intval', $this->countryIds))->values();
-
         $themes = collect();
         $availableLanguages = collect();
 
@@ -245,7 +201,6 @@ class StoreOnboardingWizard extends Component
 
         return view('livewire.website.store-onboarding-wizard', [
             'allCountries' => $allCountries,
-            'selectedCountries' => $selectedCountries,
             'themes' => $themes,
             'availableLanguages' => $availableLanguages,
         ])->layout('layouts.website', ['title' => __('Set Up Your Store') . ' — Ecommet']);
