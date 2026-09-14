@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Customer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -13,6 +14,24 @@ use Laravel\Socialite\Two\User as SocialiteUser;
 
 class StorefrontSocialAuthController extends Controller
 {
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::guard('storefront')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('tenant.home');
+    }
+
+    public function logoutPath(Request $request): RedirectResponse
+    {
+        Auth::guard('storefront')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('tenant.path.home', ['tenant' => $request->route('tenant')]);
+    }
+
     public function redirectToGoogle(): RedirectResponse
     {
         return Socialite::driver('google')

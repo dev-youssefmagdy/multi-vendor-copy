@@ -15,6 +15,15 @@ use Laravel\Socialite\Two\User as SocialiteUser;
 
 class CentralSocialAuthController extends Controller
 {
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::guard('tenant_owner')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('owner.login');
+    }
+
     public function redirectToGoogle(Request $request, string $intent): RedirectResponse
     {
         $this->stashIntent($request, $intent);

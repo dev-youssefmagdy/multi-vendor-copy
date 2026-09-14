@@ -12,6 +12,7 @@ use App\Models\TenantCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -20,6 +21,11 @@ final class BadgeController extends PanelController
 {
     public function __construct(private readonly TenantPanelRepository $repo)
     {
+    }
+
+    public function index(): RedirectResponse
+    {
+        return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
     }
 
     public function show(Request $request, ProductBadge $badge): View

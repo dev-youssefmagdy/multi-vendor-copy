@@ -33,6 +33,8 @@ use App\Livewire\Admin\Plan\RegisteredUsersList;
 use App\Livewire\Admin\Plan\PendingRegistrationsList;
 use App\Livewire\Admin\Plan\TenantChangeRequestsList;
 use App\Livewire\Admin\Plan\AddEditPackage;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\DevToolsController;
 use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
 use App\Http\Controllers\Admin\TenantImpersonateController;
@@ -133,22 +135,12 @@ use App\Livewire\TenantOwner\SubscriptionsList as OwnerSubscriptionsList;
 use App\Http\Controllers\Website\SitemapController;
 use App\Jobs\ApplyTenantProfitPercentageJob;
 use App\Jobs\SyncFixedShippingCostsToTenantsJob;
-use App\Jobs\SyncProductFixedShippingCosts;
 use App\Models\Tenant;
 use App\Models\Tenant\PaymentGateway;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 // ── Locale switcher ───────────────────────────────────────────────────────────
-Route::get('/locale/{locale}', function (string $locale) {
-    if (in_array($locale, ['en', 'ar'])) {
-        session(['locale' => $locale]);
-    }
-    return redirect()->back(fallback: route('website.home'));
-})->name('locale.switch');
+Route::get('/locale/{locale}', [\App\Http\Controllers\Website\LocaleController::class, 'switch'])->name('locale.switch');
 
 // ── Public website ────────────────────────────────────────────────────────────
 Route::middleware('track.affiliate')->group(function () {
@@ -224,12 +216,7 @@ Route::group([
     Route::get('/subscriptions', OwnerSubscriptionsList::class)->name('subscriptions');
 });
 
-Route::post('/my-account/logout', function (Request $request) {
-    Auth::guard('tenant_owner')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect()->route('owner.login');
-})->name('owner.logout');
+Route::post('/my-account/logout', [CentralSocialAuthController::class, 'logout'])->name('owner.logout');
 
 Route::middleware('guest:admin')->group(function () {
     Route::get('/admin/login', LoginPage::class)->name('admin.login');
@@ -238,17 +225,9 @@ Route::middleware('guest:admin')->group(function () {
 // Default /broadcasting/auth endpoint, used by the admin panel's Echo client
 // (see resources/js/bootstrap.js) to authorize private/presence channels
 // under the 'admin' guard.
-Route::post('/broadcasting/auth', function (Request $request) {
-    return \Illuminate\Support\Facades\Broadcast::auth($request);
-})->middleware(AdminAuth::class)->name('broadcasting.auth');
+Route::post('/broadcasting/auth', [AdminAuthController::class, 'broadcastAuth'])->middleware(AdminAuth::class)->name('broadcasting.auth');
 
-Route::post('/admin/logout', function (Request $request) {
-    Auth::guard('admin')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect()->route('admin.login');
-})->middleware(AdminAuth::class)->name('admin.logout');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware(AdminAuth::class)->name('admin.logout');
 
 Route::group([
     'prefix' => 'admin',
@@ -323,9 +302,7 @@ Route::group([
         Route::get('/fixed-costs/create', AddEditFixedShippingCost::class)->middleware('admin.permission:shipping.delivery.manage')->name('fixed-costs.create');
         Route::get('/fixed-costs/{fixedShippingCost}/edit', AddEditFixedShippingCost::class)->middleware('admin.permission:shipping.delivery.manage')->name('fixed-costs.edit');
     });
-    Route::get('products-run', function () {
-        SyncProductFixedShippingCosts::dispatch();
-    });
+    Route::get('products-run', [DevToolsController::class, 'syncProductFixedShippingCosts']);
 
     Route::prefix('store')->name('store.')->group(function () {
         Route::get('/flash-sales', AdminFlashSalesIndexPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
@@ -518,24 +495,9 @@ Route::group([
 
 Route::fallback(NotFoundPage::class)->name('website.not-found');
 
-Route::post('upload-files', function (Request $request) {
-    $request->validate([
-        'file' => ['required'],
-    ]);
+Route::post('upload-files', [\App\Http\Controllers\Website\FileUploadController::class, 'store'])->name('upload-files');
 
-    $path = $request->file('file')->storeAs('uploads', $request->file('file')->getClientOriginalName(), 'public');
-
-    return response()->json([
-        'path' => $path,
-        'file' => url(Storage::url($path))
-    ]);
-})->name('upload-files');
-
-Route::get('prod', function () {
-    for ($i = 0; $i <= 50; $i++) {
-        Artisan::call('neozena:import', ['--page' => $i, '--only-page' => true]);
-    }
-});
+Route::get('prod', [DevToolsController::class, 'importNeozenaProducts']);
 
 // Route::get('apply-tenant-profit', function () {
 //     ApplyTenantProfitPercentageJob::dispatch(Tenant::first()->id);

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Tenant\{
+    BroadcastAuthController,
     CartController,
     FavoriteController,
     HomePageController,
@@ -11,6 +12,7 @@ use App\Http\Controllers\Tenant\{
     RobotsController,
     SitemapController,
     StorefrontInvoiceController,
+    StorefrontSearchController,
     StorefrontSocialAuthController,
 };
 use App\Livewire\Tenant\Storefront\{
@@ -33,8 +35,6 @@ use App\Livewire\Tenant\Storefront\{
     RequestReturnForm,
     ReturnDetailPage as StorefrontReturnDetailPage,
 };
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -60,9 +60,7 @@ Route::middleware([
     // Tenancy-aware broadcasting auth endpoint. The default /broadcasting/auth
     // route (registered on the central router) never initializes tenancy, so
     // private channels scoped to a tenant subdomain authorize here instead.
-    Route::post('/tenant/broadcasting/auth', function (Request $request) {
-        return \Illuminate\Support\Facades\Broadcast::auth($request);
-    })->middleware('auth:tenant')->name('tenant.broadcasting.auth');
+    Route::post('/tenant/broadcasting/auth', BroadcastAuthController::class)->middleware('auth:tenant')->name('tenant.broadcasting.auth');
 
     // ─── Storefront (public) ─────────────────────────────────────────────────
 
@@ -78,94 +76,11 @@ Route::middleware([
         Route::get('/search', BestSellingPage::class)->name('tenant.storefront.search');
         // Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.).
         Route::post('/search/image', [\App\Http\Controllers\ImageSearchController::class, 'storefront'])->name('tenant.storefront.search.image');
-        Route::get('/search/autocomplete', function () {
-            $keyword = trim((string) request('q', ''));
-            if (strlen($keyword) < 2) {
-                return response()->json(['products' => []]);
-            }
-            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
-            $products = $repo->autocompleteProducts($keyword);
-            $currentCurrency = request()->attributes->get('storefrontCurrentCurrency') ?: $repo->currentCurrency();
-            $symbol = data_get($currentCurrency, 'symbol', '$');
-            $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
-
-            return response()->json([
-                'products' => $products->map(function ($p) use ($symbol, $rate) {
-                    $pricing = $p->storefrontPricing();
-
-                    return [
-                        'name' => $p->translationValue('name') ?? $p->slug,
-                        'slug' => $p->slug,
-                        'url' => route('tenant.storefront.product', $p->slug),
-                        'image' => $p->primary_image_url,
-                        'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
-                        'original_price' => $pricing['original_price'] !== null
-                            ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2)
-                            : null,
-                        'has_discount' => $pricing['has_discount'],
-                        'discount_percentage' => $pricing['discount_percentage'],
-                    ];
-                })->values(),
-            ]);
-        })->name('tenant.storefront.search.autocomplete');
-        Route::get('/api/products', function () {
-            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
-            $currentCurrency = request()->attributes->get('storefrontCurrentCurrency')
-                ?: $repo->currentCurrency();
-            $paginator = $repo->paginatedProducts([], 20);
-
-            // Resolve which product-card partial to use based on the active theme.
-            $theme = request()->attributes->get('storefrontCurrentTheme');
-            $themeSlug = $theme?->slug ?? 'elora';
-            $cardView = "themes.{$themeSlug}.pages._product-card";
-            if (!view()->exists($cardView)) {
-                $cardView = 'themes.elora.pages._product-card';
-            }
-
-            $cards = collect($paginator->items())->map(function ($product) use ($currentCurrency, $cardView) {
-                return view($cardView, [
-                    'product' => $product,
-                    'badge' => null,
-                    'currentCurrency' => $currentCurrency,
-                ])->render();
-            })->values()->all();
-
-            return response()->json([
-                'has_more' => $paginator->hasMorePages(),
-                'next_page' => $paginator->currentPage() + 1,
-                'cards' => $cards,
-            ]);
-        })->name('tenant.storefront.products.json');
+        Route::get('/search/autocomplete', [StorefrontSearchController::class, 'autocomplete'])->name('tenant.storefront.search.autocomplete');
+        Route::get('/api/products', [StorefrontSearchController::class, 'products'])->name('tenant.storefront.products.json');
         Route::get('/api/home/tabbed-products', HomePageController::class)->name('tenant.storefront.home.tabbed-products');
         Route::get('/categories/{slug?}', CategoryPage::class)->name('tenant.storefront.category');
-        Route::get('/categories-products/{slug?}', function (string $slug = null) {
-            $repo = app(\App\Repositories\Tenant\StorefrontRepository::class);
-            $category = $repo->categoryBySlug($slug);
-            // if (!$category) {
-            //     return response()->json(['has_more' => false, 'cards' => []]);
-            // }
-            $filters = [
-                'keyword' => trim((string) request('keyword', '')),
-                'sort' => request('sort', 'latest'),
-                'availability' => request('availability', ''),
-                'product_flag' => request('product_flag', ''),
-                'on_sale' => request('on_sale', ''),
-                'ratings' => request('ratings', ''),
-                'min' => request('min', ''),
-                'max' => request('max', ''),
-            ];
-            $paginator = $repo->paginatedProductsByCategory($slug ? $category : null, $filters, 15);
-            $currentCurrency = $repo->currentCurrency();
-            $cards = collect($paginator->items())->map(fn($p) => view('themes.elora.pages._product-card', [
-                'product' => $p,
-                'badge' => null,
-                'currentCurrency' => $currentCurrency,
-            ])->render())->values()->all();
-            return response()->json([
-                'has_more' => $paginator->hasMorePages(),
-                'cards' => $cards,
-            ]);
-        })->name('tenant.storefront.category.products.json');
+        Route::get('/categories-products/{slug?}', [StorefrontSearchController::class, 'categoryProducts'])->name('tenant.storefront.category.products.json');
         Route::get('/products/{slug}', ProductPage::class)->name('tenant.storefront.product');
         Route::post('/cart/add', [CartController::class, 'add'])->name('tenant.storefront.cart.add');
         Route::post('/cart/remove', [CartController::class, 'remove'])->name('tenant.storefront.cart.remove');
@@ -244,13 +159,7 @@ Route::middleware([
             Route::post('{gateway}/webhook', [PaymentWebhookController::class, 'handle'])->name('webhook');
         });
 
-        Route::post('/account/logout', function (Request $request) {
-            Auth::guard('storefront')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return redirect()->route('tenant.home');
-        })->middleware('auth:storefront')->name('tenant.storefront.logout');
+        Route::post('/account/logout', [StorefrontSocialAuthController::class, 'logout'])->middleware('auth:storefront')->name('tenant.storefront.logout');
     });
 
     // ─── Admin panel (all under /admin) ─────────────────────────────────────

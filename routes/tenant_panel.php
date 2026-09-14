@@ -16,13 +16,9 @@ use App\Http\Controllers\Tenant\Panel\Insights\{CustomerLifetimeValueController,
 use App\Http\Controllers\Tenant\Panel\Sales\{CustomerCreateController, CustomerDetailController, CustomersController, OrdersController, ReturnAnalyticsController, ReturnController, ReturnsController};
 use App\Http\Controllers\Tenant\Panel\Shell\{ComplianceController, SetupProgressController};
 use App\Http\Controllers\Tenant\Panel\UiKitController;
-use Illuminate\Support\Facades\{Auth, Route};
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route(
-        Auth::guard('tenant')->check() ? 'tenant.dashboard' : 'tenant.login'
-    );
-});
+Route::get('/', [LoginController::class, 'redirectToStart']);
 
 Route::middleware('guest:tenant')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('tenant.login');
@@ -221,9 +217,7 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     });
 
     Route::prefix('badges')->name('tenant.badges.')->middleware('tenant.permission:catalog.badges.manage')->group(function () {
-        Route::get('/', function () {
-            return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
-        })->name('index');
+        Route::get('/', [BadgeController::class, 'index'])->name('index');
         Route::get('/{badge}', [BadgeController::class, 'show'])->name('show');
         Route::get('/{badge}/search', [BadgeController::class, 'searchProducts'])->name('search');
         Route::get('/{badge}/sort', [BadgeSortController::class, 'index'])->name('sort');

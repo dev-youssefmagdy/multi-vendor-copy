@@ -19,6 +19,13 @@ use Illuminate\Validation\ValidationException;
 
 final class LoginController extends PanelController
 {
+    public function redirectToStart(): RedirectResponse
+    {
+        return redirect()->route(
+            Auth::guard('tenant')->check() ? 'tenant.dashboard' : 'tenant.login'
+        );
+    }
+
     public function show(): View|RedirectResponse
     {
         if (Auth::guard('tenant')->check()) {
