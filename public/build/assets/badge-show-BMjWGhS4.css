@@ -1,0 +1,1 @@
+.t-badge-country-tabs{border-bottom:1px solid var(--border-color);margin-bottom:12px;display:flex;overflow-x:auto}.t-badge-country-tab{white-space:nowrap;color:var(--t2);border-bottom:2px solid #0000;padding:12px 20px;font-size:13px;font-weight:600;text-decoration:none}.t-badge-country-tab.is-active{border-bottom-color:var(--primary);color:var(--primary)}

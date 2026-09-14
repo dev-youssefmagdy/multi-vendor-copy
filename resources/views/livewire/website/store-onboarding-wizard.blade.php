@@ -14,8 +14,7 @@
                 1 => __('Countries'),
                 2 => __('Languages'),
                 3 => __('Theme'),
-                4 => __('Banners'),
-                5 => __('Launch'),
+                4 => __('Launch'),
             ];
         @endphp
         <div class="flex items-center justify-center gap-1 mb-8">
@@ -42,6 +41,14 @@
                 <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Target Countries') }}</h2>
                 <p class="text-sm text-gray-500 mb-5">{{ __('Select the countries you want to sell to. Free countries are pre-checked to get you started.') }}</p>
 
+                <label class="flex items-center gap-3 p-2.5 mb-2 rounded-lg cursor-pointer bg-gray-50 border border-gray-200">
+                    <input type="checkbox"
+                        wire:click="toggleAllCountries($event.target.checked)"
+                        @checked(count($countryIds) === count($allCountries))
+                        class="w-4 h-4 rounded text-primary">
+                    <span class="text-sm font-semibold text-gray-800 flex-1">{{ __('All Countries') }}</span>
+                </label>
+
                 <div class="space-y-2 max-h-72 overflow-y-auto border border-gray-200 rounded-xl p-3 mb-4">
                     @foreach($allCountries as $country)
                         <label class="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
@@ -50,7 +57,7 @@
                                 wire:model="countryIds"
                                 class="w-4 h-4 rounded text-primary">
                             <span class="text-lg leading-none">{{ $country->flag_emoji }}</span>
-                            <span class="text-sm text-gray-800 flex-1">{{ $country->translationValue('name') ?: $country->iso2 }}</span>
+                            <span class="text-sm text-gray-800 flex-1">{{ $country->translationValue('name') ?: $country->getRawOriginal('name') ?: $country->iso2 }}</span>
                             @if($country->is_free)
                                 <span class="text-xs text-green-600 font-medium">{{ __('Free') }}</span>
                             @endif
@@ -139,72 +146,8 @@
                 </div>
             @endif
 
-            {{-- STEP 4: Banners --}}
+            {{-- STEP 4: Launch --}}
             @if($step === 4)
-                <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Homepage Banners') }}</h2>
-                <p class="text-sm text-gray-500 mb-5">{{ __('Configure a banner for each country. You can upload images and set details later from the dashboard.') }}</p>
-
-                <div class="space-y-4 mb-4">
-                    @foreach($selectedCountries as $country)
-                        @php $cid = (string) $country->id; @endphp
-                        <div x-data="{ open: false }" class="border border-gray-200 rounded-xl overflow-hidden">
-                            <button type="button" @click="open = !open"
-                                class="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors">
-                                <span class="text-lg">{{ $country->flag_emoji }}</span>
-                                <span class="font-semibold text-sm text-gray-800 flex-1">
-                                    {{ $country->translationValue('name') ?: $country->iso2 }}
-                                </span>
-                                <svg class="w-4 h-4 text-gray-400 transition-transform" :class="open ? 'rotate-90' : ''"
-                                    viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-                            <div x-show="open" x-cloak class="px-4 pb-4 space-y-3 border-t border-gray-100">
-                                <div class="pt-3">
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Banner Title') }}</label>
-                                    <input type="text" wire:model="banners.{{ $cid }}.title"
-                                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
-                                        placeholder="{{ __('e.g. Summer Collection 2025') }}">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Subtitle') }}</label>
-                                    <input type="text" wire:model="banners.{{ $cid }}.subtitle"
-                                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
-                                        placeholder="{{ __('Short tagline') }}">
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Button Text') }}</label>
-                                        <input type="text" wire:model="banners.{{ $cid }}.button_text"
-                                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
-                                            placeholder="{{ __('Shop Now') }}">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">{{ __('Button URL') }}</label>
-                                        <input type="text" wire:model="banners.{{ $cid }}.url"
-                                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
-                                            placeholder="/products">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div class="flex gap-3">
-                    <button wire:click="skipStep" type="button"
-                        class="flex-1 py-3.5 font-bold text-sm rounded-xl border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors">
-                        {{ __('Skip for now') }}
-                    </button>
-                    <button wire:click="nextStep" type="button"
-                        class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
-                        {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                    </button>
-                </div>
-            @endif
-
-            {{-- STEP 5: Launch --}}
-            @if($step === 5)
                 <div class="text-center py-4">
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
                         <i class="fas fa-rocket text-green-600 text-2xl"></i>

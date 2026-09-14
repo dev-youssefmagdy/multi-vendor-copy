@@ -1,0 +1,9 @@
+/* Support tickets datatable — unread row highlight (ported from the former
+   Livewire `rowClasses` on TicketsList) via Yajra's `setRowClass()`. */
+tr.row-unread {
+    background: color-mix(in srgb, var(--amber, #f59e0b) 8%, transparent);
+}
+
+tr.row-unread:hover {
+    background: color-mix(in srgb, var(--amber, #f59e0b) 14%, transparent);
+}

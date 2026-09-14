@@ -1,0 +1,1 @@
+function e(e){let t=e.id,n=e.closest(`.t-field`)?.querySelector(`[data-counter-for="${CSS.escape(t)}"]`),r=e.getAttribute(`maxlength`);if(!n||!r)return;let i=()=>{n.textContent=`${e.value.length}/${r}`};e.addEventListener(`input`,i),i()}export{e as init};

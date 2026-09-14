@@ -91,8 +91,8 @@
         <td>Central admin Blade views</td>
     </tr>
     <tr>
-        <td><code>resources/views/livewire/tenant/</code></td>
-        <td>Tenant admin Blade views</td>
+        <td><code>resources/views/tenant/pages/</code>, <code>resources/views/tenant/components/</code></td>
+        <td>Tenant admin Blade views (controller-driven, not Livewire)</td>
     </tr>
     <tr>
         <td><code>resources/views/themes/&lt;theme&gt;/</code></td>

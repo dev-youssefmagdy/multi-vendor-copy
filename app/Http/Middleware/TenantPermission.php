@@ -15,6 +15,13 @@ class TenantPermission
         $user = auth('tenant')->user();
 
         if (! $user instanceof AdminUser) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Unauthenticated.',
+                    'redirect' => route('tenant.login'),
+                ], 401);
+            }
+
             return redirect()->route('tenant.login');
         }
 
@@ -26,6 +33,12 @@ class TenantPermission
             if ($user->hasPermission($permission)) {
                 return $next($request);
             }
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'You do not have permission to access that section.',
+            ], 403);
         }
 
         if ($user->hasPermission('dashboard.view') && $request->route()?->getName() !== 'tenant.dashboard') {

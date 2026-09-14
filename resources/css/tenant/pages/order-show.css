@@ -1,0 +1,16 @@
+.details-value-positive {
+    color: #22c55e;
+}
+
+.details-value-warning {
+    color: #f59e0b;
+}
+
+.details-kv-full {
+    grid-column: 1 / -1;
+}
+
+.details-note {
+    font-size: 11px;
+    color: var(--t3);
+}

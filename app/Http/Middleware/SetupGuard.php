@@ -63,6 +63,13 @@ class SetupGuard
 
         $message = "Please complete this step before accessing {$definition['page_name']}.";
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $message,
+                'redirect' => route('tenant.onboarding', ['tab' => 'setup', 'item' => $definition['tab']]),
+            ], 409);
+        }
+
         return redirect()
             ->route('tenant.onboarding', ['tab' => 'setup', 'item' => $definition['tab']])
             ->with($definition['mandatory'] ? 'setup_error' : 'setup_warning', $message)

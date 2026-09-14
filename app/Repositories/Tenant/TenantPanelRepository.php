@@ -31,6 +31,9 @@ use App\Models\Tenant\Subscriber;
 use App\Models\Tenant\Subscription;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\Transaction;
+use App\Models\HomeVariant;
+use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantThemeColor;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as ManualPaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -145,6 +148,16 @@ class TenantPanelRepository
 
     public function paginateProducts(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryProducts($filters)->paginate($perPage);
+    }
+
+    public function queryProducts(array $filters): Builder
+    {
+        $imageSearchIds = array_values(array_filter(
+            (array) ($filters['image_search_ids'] ?? $filters['image_ids'] ?? []),
+            fn($id) => filled($id)
+        ));
+
         return Product::query()
             ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -160,11 +173,11 @@ class TenantPanelRepository
                 $categoryIds = $this->resolveCategoryIdsWithDescendants((int) $filters['category']);
                 $query->whereHas('categories', fn (Builder $q) => $q->whereIn('categories.id', $categoryIds));
             })
-            ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
-                $query->whereIn('central_product_id', $filters['image_search_ids']);
-            })
-            ->orderBy('order_number')
-            ->paginate($perPage);
+            ->when(!empty($imageSearchIds), function ($query) use ($imageSearchIds) {
+                $query->whereIn('central_product_id', $imageSearchIds);
+                $ids = implode(',', array_map('intval', $imageSearchIds));
+                $query->orderByRaw("FIELD(central_product_id, {$ids})");
+            }, fn($query) => $query->orderBy('order_number'));
     }
 
     /**
@@ -220,6 +233,28 @@ class TenantPanelRepository
             'active' => Product::query()->where('active', true)->count(),
             'featured' => Product::query()->where('featured', true)->count(),
         ];
+    }
+
+    public function searchCentralProducts(string $search = '', int $page = 1, int $perPage = 15): array
+    {
+        return tenancy()->central(function () use ($search, $page, $perPage) {
+            $query = CentralProduct::query()
+                ->when(filled($search), fn ($q) => $q->where(function ($nested) use ($search) {
+                    $nested->where('sku', 'like', "%{$search}%")
+                        ->orWhereHas('translations', fn ($t) => $t->where('field', 'name')->where('value', 'like', "%{$search}%"));
+                }));
+
+            $total = (clone $query)->count();
+            $items = $query
+                ->with('translations.language')
+                ->orderBy('id')
+                ->forPage($page, $perPage)
+                ->get()
+                ->mapWithKeys(fn (CentralProduct $product) => [$product->id => $product->translationValue('name') ?? $product->sku ?? ('Product #'.$product->id)])
+                ->all();
+
+            return ['items' => $items, 'has_more' => ($page * $perPage) < $total];
+        });
     }
 
     public function centralProductSnapshot(?int $centralProductId): ?array
@@ -358,6 +393,48 @@ class TenantPanelRepository
 
     public function paginateCategories(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryCategories($filters)->paginate($perPage);
+    }
+
+    public function queryManufacturingRequests(array $filters): Builder
+    {
+        $tenantId = tenant('id');
+
+        return \App\Models\ManufacturingRequest::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('product_name', 'like', '%' . $filters['search'] . '%'))
+            ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('status', $filters['status']))
+            ->latest();
+    }
+
+    public function searchLinkableProducts(string $search = '', int $page = 1, int $perPage = 15): LengthAwarePaginator
+    {
+        $defaultLangId = $this->defaultLanguageId();
+
+        $query = DB::table('products as p')
+            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+                $join->on('t.translatable_id', '=', 'p.id')
+                    ->where('t.translatable_type', '=', Product::class)
+                    ->where('t.field', '=', 'name')
+                    ->where('t.language_id', '=', $defaultLangId);
+            })
+            ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'));
+
+        if (filled($search)) {
+            $like = '%' . $search . '%';
+            $query->where(function ($q) use ($like) {
+                $q->where('t.value', 'like', $like)
+                    ->orWhere('p.slug', 'like', $like);
+            });
+        }
+
+        return $query
+            ->orderBy(DB::raw('COALESCE(t.value, p.slug)'))
+            ->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    public function queryCategories(array $filters): Builder
+    {
         return Category::query()
             ->with(['translations.language', 'parent.translations.language', 'products'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -366,8 +443,7 @@ class TenantPanelRepository
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
             ->when(!empty($filters['mine'] ?? false), fn($query) => $query->whereNull('central_category_id'))
-            ->orderBy('order_number')
-            ->paginate($perPage);
+            ->orderBy('order_number');
     }
 
     public function categoryStats(): array
@@ -379,6 +455,51 @@ class TenantPanelRepository
         ];
     }
 
+    public function queryOwnProducts(array $filters): Builder
+    {
+        return Product::query()
+            ->with(['badges', 'variants'])
+            ->where('is_own_product', true)
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->whereHas('translations', fn (Builder $t) => $t->where('value', 'like', "%{$search}%"));
+            })
+            ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('active', $filters['status'] === 'active'))
+            ->when(($filters['stock'] ?? '') === 'out', function (Builder $query) {
+                $query->where(function (Builder $noVar) {
+                    $noVar->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
+                })->orWhere(function (Builder $hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '>', 0));
+                });
+            })
+            ->when(($filters['stock'] ?? '') === 'in', function (Builder $query) {
+                $query->where(function (Builder $noVar) {
+                    $noVar->whereDoesntHave('variants')->where(function (Builder $nv) {
+                        $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
+                    });
+                })->orWhere(function (Builder $hasVar) {
+                    $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '<=', 0));
+                });
+            })
+            ->when(($filters['stock'] ?? '') === 'partial', function (Builder $query) {
+                $query->whereHas('variants', fn (Builder $v) => $v->where('stock', '<=', 0))
+                    ->whereHas('variants', fn (Builder $v) => $v->where('stock', '>', 0));
+            })
+            ->latest();
+    }
+
+    public function ownProductStats(): array
+    {
+        $total = Product::where('is_own_product', true)->count();
+        $active = Product::where('is_own_product', true)->where('active', true)->count();
+
+        return [
+            'total' => $total,
+            'active' => $active,
+            'inactive' => $total - $active,
+        ];
+    }
+
     public function paginateOrders(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return $this->buildOrdersQuery($filters)->paginate($perPage);
@@ -387,6 +508,11 @@ class TenantPanelRepository
     public function exportOrders(array $filters): \Illuminate\Database\Eloquent\Collection
     {
         return $this->buildOrdersQuery($filters)->get();
+    }
+
+    public function queryOrders(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildOrdersQuery($filters);
     }
 
     protected function buildOrdersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
@@ -445,6 +571,11 @@ class TenantPanelRepository
     public function exportCustomers(array $filters): \Illuminate\Database\Eloquent\Collection
     {
         return $this->buildCustomersQuery($filters)->get();
+    }
+
+    public function queryCustomers(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildCustomersQuery($filters)->with('orders');
     }
 
     protected function buildCustomersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
@@ -528,7 +659,12 @@ class TenantPanelRepository
 
     public function paginateTransactions(int $perPage = 10, string $pageName = 'page'): LengthAwarePaginator
     {
-        return Transaction::query()->with('model')->latest()->paginate($perPage, ['*'], $pageName);
+        return $this->queryTransactions()->paginate($perPage, ['*'], $pageName);
+    }
+
+    public function queryTransactions(): Builder
+    {
+        return Transaction::query()->with('model')->latest();
     }
 
     public function walletStats(): array
@@ -551,7 +687,12 @@ class TenantPanelRepository
 
     public function paginateSubscriptions(int $perPage = 10, string $pageName = 'page'): LengthAwarePaginator
     {
-        return Subscription::query()->with('transaction')->latest()->paginate($perPage, ['*'], $pageName);
+        return $this->querySubscriptions()->paginate($perPage, ['*'], $pageName);
+    }
+
+    public function querySubscriptions(): Builder
+    {
+        return Subscription::query()->with('transaction')->latest();
     }
 
     public function billingStats(): array
@@ -581,9 +722,24 @@ class TenantPanelRepository
         return Theme::query()->with('countries')->orderBy('name')->get();
     }
 
+    public function queryPages(array $filters): Builder
+    {
+        return Page::query()
+            ->with('translations.language')
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $q) use ($search) {
+                    $q->where('slug', 'like', "%{$search}%")
+                        ->orWhereHas('translations', fn (Builder $t) => $t->where('value', 'like', "%{$search}%"));
+                });
+            })
+            ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('active', $filters['status'] === 'active'))
+            ->latest();
+    }
+
     public function paginatePages(int $perPage = 10): LengthAwarePaginator
     {
-        return Page::query()->with('translations.language')->latest()->paginate($perPage);
+        return $this->queryPages([])->paginate($perPage);
     }
 
     public function pageStats(): array
@@ -595,9 +751,14 @@ class TenantPanelRepository
         ];
     }
 
+    public function queryCoupons(?int $countryId): Builder
+    {
+        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest();
+    }
+
     public function paginateCoupons(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
     {
-        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest()->paginate($perPage);
+        return $this->queryCoupons($countryId)->paginate($perPage);
     }
 
     public function couponStats(?int $countryId = null): array
@@ -611,13 +772,17 @@ class TenantPanelRepository
         ];
     }
 
-    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    public function queryFlashSales(?int $countryId): Builder
     {
         return FlashSale::query()
             ->with(['product.translations.language', 'products.translations.language', 'files'])
             ->where('country_id', $countryId)
-            ->latest()
-            ->paginate($perPage);
+            ->latest();
+    }
+
+    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    {
+        return $this->queryFlashSales($countryId)->paginate($perPage);
     }
 
     public function flashSaleStats(?int $countryId = null): array
@@ -646,6 +811,13 @@ class TenantPanelRepository
         return Subscriber::query()->latest()->paginate($perPage);
     }
 
+    public function querySubscribers(array $filters): Builder
+    {
+        return Subscriber::query()
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('email', 'like', '%'.trim((string) $filters['search']).'%'))
+            ->latest();
+    }
+
     public function exportSubscribers(): \Illuminate\Database\Eloquent\Collection
     {
         return Subscriber::query()->latest()->get();
@@ -663,6 +835,25 @@ class TenantPanelRepository
     public function currencies()
     {
         return Currency::query()->orderByDesc('is_default')->orderBy('code')->get();
+    }
+
+    public function queryCurrencies(array $filters): Builder
+    {
+        return Currency::query()
+            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(fn ($q) => $q->where('code', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%"));
+            })
+            ->when(($filters['status'] ?? '') !== '', function ($query) use ($filters) {
+                match ($filters['status']) {
+                    'default' => $query->where('is_default', true),
+                    'active' => $query->where('is_active', true)->where('is_default', false),
+                    'inactive' => $query->where('is_active', false),
+                    default => null,
+                };
+            })
+            ->orderByDesc('is_default')
+            ->orderBy('code');
     }
 
     public function languages()
@@ -749,6 +940,11 @@ class TenantPanelRepository
 
     public function paginateAdmins(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryAdmins($filters)->paginate($perPage);
+    }
+
+    public function queryAdmins(array $filters): Builder
+    {
         return AdminUser::query()
             ->with('role')
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -757,8 +953,7 @@ class TenantPanelRepository
                     ->orWhere('email', 'like', "%{$search}%");
             })
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('status', $filters['status']))
-            ->latest('updated_at')
-            ->paginate($perPage);
+            ->latest('updated_at');
     }
 
     public function adminStats(): array
@@ -777,11 +972,15 @@ class TenantPanelRepository
 
     public function paginateAdminRoles(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        return $this->queryAdminRoles($filters)->paginate($perPage);
+    }
+
+    public function queryAdminRoles(array $filters): Builder
+    {
         return AdminRole::query()
             ->withCount('admins')
             ->when(filled($filters['search'] ?? null), fn($query) => $query->where('name', 'like', '%' . trim((string) $filters['search']) . '%'))
-            ->latest('updated_at')
-            ->paginate($perPage);
+            ->latest('updated_at');
     }
 
     public function adminRoleStats(): array
@@ -820,6 +1019,21 @@ class TenantPanelRepository
             ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('is_active', $filters['status'] === 'active'))
             ->latest('updated_at')
             ->paginate($perPage);
+    }
+
+    public function queryEmailTemplates(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return EmailTemplate::query()
+            ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function ($nested) use ($search) {
+                    $nested->where('name', 'like', "%{$search}%")
+                        ->orWhere('action', 'like', "%{$search}%")
+                        ->orWhere('subject', 'like', "%{$search}%");
+                });
+            })
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->latest('updated_at');
     }
 
     public function emailTemplateStats(): array
@@ -1452,6 +1666,12 @@ class TenantPanelRepository
         return $this->profitabilityRowsCache ??= $this->productProfitabilityRows(null);
     }
 
+    /** Public wrapper so DataTables::collection() can consume the full, unpaginated rows. */
+    public function profitabilityRows(): array
+    {
+        return $this->allProfitabilityRows();
+    }
+
     public function paginateProductProfitabilityRows(int $perPage = 20, string $pageName = 'profitability'): ManualPaginator
     {
         $all = $this->allProfitabilityRows();
@@ -1731,6 +1951,116 @@ class TenantPanelRepository
     }
 
 
+    /**
+     * One entry per tenant theme, each holding one entry per home variant with
+     * customizable colors. Shape: [theme_id => ['name' => ..., 'slug' => ...,
+     * 'is_active' => bool, 'variants' => [variant_id => ['key' => 'v2', 'name' => 'Purple Edition',
+     * 'is_active' => bool, 'defaults' => [...], 'values' => [...]]]]].
+     */
+    public function appearanceColorThemes(): array
+    {
+        $colorThemes = [];
+
+        $storefrontRepo = app(StorefrontRepository::class);
+        $activeTheme = $storefrontRepo->currentTheme();
+        $activeVariant = $storefrontRepo->currentHomeVariant();
+
+        $themes = Theme::query()->orderBy('name')->get();
+
+        foreach ($themes as $theme) {
+            $variants = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))
+                ->where('is_active', true)
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get()
+            );
+
+            $overrides = TenantThemeColor::query()
+                ->where('theme_id', $theme->id)
+                ->whereNull('country_id')
+                ->get()
+                ->keyBy('home_variant_id');
+
+            $variantSections = [];
+            foreach ($variants as $variant) {
+                $defaults = (array) ($variant->colors ?? []);
+                if (empty($defaults)) {
+                    continue;
+                }
+
+                $override = (array) ($overrides->get($variant->id)?->colors ?? []);
+
+                $variantSections[$variant->id] = [
+                    'key' => $variant->key,
+                    'name' => $variant->name,
+                    'is_active' => $activeTheme && $activeTheme->id === $theme->id
+                        && $activeVariant && $activeVariant->id === $variant->id,
+                    'defaults' => $defaults,
+                    'values' => array_merge($defaults, $override),
+                ];
+            }
+
+            if (empty($variantSections)) {
+                continue;
+            }
+
+            $colorThemes[$theme->id] = [
+                'name' => $theme->name,
+                'slug' => $theme->slug,
+                'is_active' => $activeTheme && $activeTheme->id === $theme->id,
+                'variants' => $variantSections,
+            ];
+        }
+
+        return $colorThemes;
+    }
+
+    /** Build the `/preview` URL that mirrors this tenant's current theme, colors, and homepage variant. */
+    public function appearancePreviewUrl(): ?string
+    {
+        $repo = app(StorefrontRepository::class);
+        $theme = $repo->currentTheme();
+        if (!$theme) {
+            return null;
+        }
+
+        $query = ['theme' => $theme->slug];
+
+        $variantId = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+
+        if ($variantId) {
+            $variantKey = tenancy()->central(fn () => HomeVariant::query()->find($variantId)?->key);
+            if ($variantKey) {
+                $query['homepage_variant'] = $variantKey;
+            }
+        }
+
+        $centralDomain = config('tenancy.central_domains.0')
+            ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
+        $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
+
+        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
+    }
+
+    /** Default color values for one theme's home variant (used to build dynamic validation rules and for the reset action). */
+    public function themeVariantColorDefaults(int $themeId, int $variantId): array
+    {
+        $theme = Theme::query()->find($themeId);
+        if (!$theme) {
+            return [];
+        }
+
+        $variant = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))
+            ->where('id', $variantId)
+            ->first()
+        );
+
+        return (array) ($variant?->colors ?? []);
+    }
+
     public function appearanceSettings(): array
     {
         return Setting::query()
@@ -1780,12 +2110,17 @@ class TenantPanelRepository
      */
     public function paginateVendorPurchases(array $filters, int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->buildVendorPurchasesQuery($filters)->paginate($perPage);
+        return $this->queryVendorPurchases($filters)->paginate($perPage);
     }
 
     public function exportVendorPurchases(array $filters): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->buildVendorPurchasesQuery($filters)->get();
+        return $this->queryVendorPurchases($filters)->get();
+    }
+
+    public function queryVendorPurchases(array $filters): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->buildVendorPurchasesQuery($filters);
     }
 
     protected function buildVendorPurchasesQuery(array $filters): \Illuminate\Database\Eloquent\Builder
@@ -1901,5 +2236,292 @@ class TenantPanelRepository
                 ->values()
                 ->all();
         });
+    }
+
+    /**
+     * VendorSettlement is a central model (uses the CentralConnection trait), so this query
+     * always hits the central database regardless of the current tenant connection — mirrors
+     * the query that used to live directly in Finance\SettlementPaymentsPage.
+     */
+    public function querySettlementPayments(array $filters): Builder
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        return \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('invoice_number', 'like', "%{$search}%")
+                        ->orWhere('order_uuid', 'like', "%{$search}%")
+                        ->orWhere('transaction_id', 'like', "%{$search}%");
+                });
+            })
+            ->latest('settled_at');
+    }
+
+    public function settlementPaymentStats(): array
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        $totalCount = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalPaid = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('total');
+        $thisMonth = \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'paid')
+            ->whereMonth('settled_at', now()->month)
+            ->whereYear('settled_at', now()->year)
+            ->sum('total');
+
+        $statuses = \App\Models\VendorSettlement::query()
+            ->where('tenant_id', $tenantId)
+            ->distinct()
+            ->pluck('status', 'status')
+            ->filter()
+            ->toArray();
+
+        return [
+            'total' => $totalCount,
+            'total_paid' => $totalPaid,
+            'this_month' => $thisMonth,
+            'statuses' => $statuses,
+        ];
+    }
+
+    /**
+     * TenantPayout is a central model (uses the CentralConnection trait), so this query
+     * always hits the central database regardless of the current tenant connection — mirrors
+     * the query that used to live directly in Finance\PayoutsReceivedPage.
+     */
+    public function queryPayouts(array $filters): Builder
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        return \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('invoice_number', 'like', "%{$search}%")
+                        ->orWhere('transaction_reference', 'like', "%{$search}%");
+                });
+            })
+            ->latest('paid_at');
+    }
+
+    public function payoutStats(): array
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        $totalCount = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalReceived = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('amount');
+        $thisMonth = \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->where('status', 'paid')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('amount');
+
+        $statuses = \App\Models\TenantPayout::query()
+            ->where('tenant_id', $tenantId)
+            ->distinct()
+            ->pluck('status', 'status')
+            ->filter()
+            ->toArray();
+
+        return [
+            'total' => $totalCount,
+            'total_received' => $totalReceived,
+            'this_month' => $thisMonth,
+            'statuses' => $statuses,
+        ];
+    }
+
+    /**
+     * Return requests are a central model (App\Models\ReturnRequest uses the CentralConnection
+     * trait), so this query always hits the central database regardless of the current tenant
+     * connection — mirrors the query that used to live directly in Return\ReturnsList.
+     */
+    public function queryReturns(array $filters): Builder
+    {
+        $tenantId = tenant()->id;
+
+        return \App\Models\ReturnRequest::query()
+            ->where('tenant_id', $tenantId)
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where('order_number', 'like', '%' . $search . '%');
+            })
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->latest();
+    }
+
+    public function returnStats(): array
+    {
+        $tenantId = tenant()->id;
+
+        return [
+            'total' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->count(),
+            'pending' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Pending->value)->count(),
+            'approved' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Approved->value)->count(),
+            'refunded' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Refunded->value)->count(),
+        ];
+    }
+
+    /**
+     * Same math/grouping as the former Return\ReturnAnalyticsPage::pageData(), just relocated
+     * so the controller can render it through the shared insights layout.
+     */
+    public function returnAnalyticsOverview(): array
+    {
+        $tenantId = tenant()->id;
+
+        $base = \App\Models\ReturnRequest::query()->where('tenant_id', $tenantId);
+
+        $total = (clone $base)->count();
+        $last30 = (clone $base)->where('created_at', '>=', now()->subDays(30))->count();
+
+        $approved = (clone $base)->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Refunded->value])->count();
+        $rejected = (clone $base)->where('status', \App\Enums\ReturnStatus::Rejected->value)->count();
+
+        $approvalRate = $total > 0 ? ($approved / $total) * 100 : 0;
+        $rejectionRate = $total > 0 ? ($rejected / $total) * 100 : 0;
+
+        $topReasons = (clone $base)
+            ->selectRaw('reason, count(*) as total')
+            ->groupBy('reason')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $topProductRows = (clone $base)
+            ->whereNotNull('product_id')
+            ->selectRaw('product_id, count(*) as total')
+            ->groupBy('product_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $productNames = Product::whereIn('id', $topProductRows->pluck('product_id'))
+            ->get()
+            ->mapWithKeys(fn (Product $p) => [$p->id => $p->translationValue('name') ?? $p->slug]);
+
+        $avgProcessingHours = (clone $base)
+            ->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Rejected->value, \App\Enums\ReturnStatus::Refunded->value])
+            ->get()
+            ->avg(fn (\App\Models\ReturnRequest $r) => $r->created_at?->diffInHours($r->updated_at)) ?? 0;
+
+        $monthly = (clone $base)
+            ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
+            ->get()
+            ->groupBy(fn (\App\Models\ReturnRequest $r) => $r->created_at?->format('Y-m'))
+            ->map->count();
+
+        $monthlyRows = collect(range(0, 5))
+            ->map(fn ($i) => now()->subMonths(5 - $i)->format('Y-m'))
+            ->map(fn ($month) => [
+                'label' => Carbon::createFromFormat('Y-m', $month)->format('M Y'),
+                'count' => (int) ($monthly[$month] ?? 0),
+            ])
+            ->values()
+            ->all();
+
+        return [
+            'cards' => [
+                ['label' => 'Total Returns', 'value' => $total, 'format' => 'number', 'caption' => 'All-time return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => 'Last 30 Days', 'value' => $last30, 'format' => 'number', 'caption' => 'Returns submitted this month', 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
+                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved or refunded', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Rejection Rate', 'value' => $rejectionRate, 'format' => 'percent', 'caption' => 'Rejected requests', 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
+                ['label' => 'Avg Processing Time', 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => 'From submission to resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+            ],
+            'top_reasons' => $topReasons->map(fn ($row) => [
+                'label' => $row->reason->label(),
+                'value' => (int) $row->total,
+            ])->all(),
+            'top_products' => $topProductRows->map(fn ($row) => [
+                'label' => $productNames[$row->product_id] ?? "Product #{$row->product_id}",
+                'value' => (int) $row->total,
+            ])->all(),
+            'monthly_rows' => $monthlyRows,
+        ];
+    }
+
+    public function queryBrandRequests(array $filters): Builder
+    {
+        return \App\Models\BrandRequest::query()
+            ->where('tenant_id', tenant('id'))
+            ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
+            ->latest();
+    }
+
+    public function brandRequestStats(): array
+    {
+        $tenantId = tenant('id');
+
+        return [
+            'total' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->count(),
+            'pending' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Pending->value)->count(),
+            'approved' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Approved->value)->count(),
+        ];
+    }
+
+    public function paginateNotifications(int $perPage = 20): LengthAwarePaginator
+    {
+        return \App\Models\Tenant\TenantNotification::query()
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function unreadNotificationsCount(): int
+    {
+        return \App\Models\Tenant\TenantNotification::unread()->count();
+    }
+
+    /**
+     * `ProductRequest` is a central model (the tenant panel reads it through
+     * `tenancy()->central()`), matching the query the former
+     * `RequestsList` Livewire component built.
+     */
+    public function queryProductRequests(array $filters): Builder
+    {
+        return \App\Models\ProductRequest::forTenant((string) tenant('id'))
+            ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
+            ->orderByDesc('last_reply_at');
+    }
+
+    public function productRequestStats(): array
+    {
+        $tenantId = (string) tenant('id');
+
+        return [
+            'total' => \App\Models\ProductRequest::forTenant($tenantId)->count(),
+            'open' => \App\Models\ProductRequest::forTenant($tenantId)->open()->count(),
+            'unread' => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count(),
+        ];
+    }
+
+    /**
+     * `SupportTicket` is a central model, scoped via `SupportTicket::forTenant()`
+     * exactly as the former `TicketsList` Livewire component did.
+     */
+    public function querySupportTickets(array $filters): Builder
+    {
+        return \App\Models\SupportTicket::forTenant((string) tenant('id'))
+            ->orderByDesc('last_reply_at')
+            ->orderByDesc('id');
+    }
+
+    public function supportTicketStats(): array
+    {
+        $tenantId = (string) tenant('id');
+        $base = \App\Models\SupportTicket::forTenant($tenantId);
+
+        return [
+            'total' => (clone $base)->count(),
+            'open' => (clone $base)->whereIn('status', ['open', 'in_progress'])->count(),
+            'unread' => (clone $base)->where('tenant_has_unread', true)->count(),
+        ];
     }
 }

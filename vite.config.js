@@ -1,6 +1,10 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     plugins: [
@@ -74,12 +78,114 @@ export default defineConfig({
                 'resources/js/elora-v5-interactions.js',
                 'resources/js/elora-v5-carousels.js',
                 'resources/js/elora-v6-interactions.js',
-                'resources/js/elora-v6-carousels.js'
+                'resources/js/elora-v6-carousels.js',
+
+                // ── TENANT PANEL (/admin on tenant domain) ─────────────────────────────
+                'resources/css/tenant/app.css',
+                'resources/js/tenant/app.js',
+                'resources/js/tenant/pages/ui-kit.js',
+                'resources/js/tenant/pages/auth/login.js',
+                'resources/js/tenant/pages/dashboard/index.js',
+                'resources/js/tenant/pages/insights/index.js',
+                'resources/js/tenant/pages/catalog/edit-requests.js',
+                'resources/js/tenant/pages/catalog/sortable.js',
+                'resources/js/tenant/pages/catalog/categories-index.js',
+                'resources/js/tenant/pages/catalog/category-form.js',
+                'resources/js/tenant/pages/catalog/badge-show.js',
+                'resources/js/tenant/pages/catalog/products-index.js',
+                'resources/js/tenant/pages/catalog/product-form.js',
+                'resources/js/tenant/pages/catalog/own-products-index.js',
+                'resources/js/tenant/pages/catalog/own-product-form.js',
+                'resources/js/tenant/pages/sales/orders-index.js',
+                'resources/js/tenant/pages/sales/order-show.js',
+                'resources/js/tenant/pages/sales/returns-index.js',
+                'resources/js/tenant/pages/sales/return-show.js',
+                'resources/js/tenant/pages/sales/customers-index.js',
+                'resources/js/tenant/pages/sales/customer-create.js',
+                'resources/js/tenant/pages/sales/customer-detail.js',
+                'resources/js/tenant/pages/finance/vendor-settle.js',
+                'resources/js/tenant/pages/finance/settlement-payments.js',
+                'resources/js/tenant/pages/finance/payouts.js',
+                'resources/js/tenant/pages/finance/billing-index.js',
+                'resources/js/tenant/pages/finance/billing-show.js',
+                'resources/js/tenant/pages/finance/vendor-purchases.js',
+                'resources/js/tenant/pages/finance/wallet.js',
+                'resources/js/tenant/pages/finance/buy-languages.js',
+                'resources/js/tenant/pages/requests/manufacturing-index.js',
+                'resources/js/tenant/pages/requests/manufacturing-create.js',
+                'resources/js/tenant/pages/requests/manufacturing-show.js',
+                'resources/js/tenant/pages/requests/brand-index.js',
+                'resources/js/tenant/pages/requests/brand-create.js',
+                'resources/js/tenant/pages/requests/brand-show.js',
+                'resources/js/tenant/pages/support/notifications.js',
+                'resources/js/tenant/pages/support/help.js',
+                'resources/js/tenant/pages/requests/product-requests-index.js',
+                'resources/js/tenant/pages/requests/product-request-create.js',
+                'resources/js/tenant/pages/requests/product-request-show.js',
+                'resources/js/tenant/pages/support/tickets-index.js',
+                'resources/js/tenant/pages/support/ticket-create.js',
+                'resources/js/tenant/pages/support/ticket-show.js',
+                'resources/js/tenant/pages/store/themes.js',
+                'resources/js/tenant/pages/store/pages-index.js',
+                'resources/js/tenant/pages/store/page-form.js',
+                'resources/js/tenant/pages/store/country-index.js',
+                'resources/js/tenant/pages/store/coupons.js',
+                'resources/js/tenant/pages/store/flash-sales.js',
+                'resources/js/tenant/pages/store/banners.js',
+                'resources/js/tenant/pages/store/blade-theme.js',
+                'resources/js/tenant/pages/store/page-builder.js',
+                'resources/js/tenant/pages/store/home-variants.js',
+                'resources/js/tenant/pages/store/appearance.js',
+
+                'resources/js/tenant/pages/settings/tracking.js',
+                'resources/js/tenant/pages/settings/subscribers.js',
+                'resources/js/tenant/pages/settings/currencies.js',
+                'resources/js/tenant/pages/settings/domains.js',
+                'resources/js/tenant/pages/settings/languages-manage.js',
+                'resources/js/tenant/pages/settings/ai-translation.js',
+                'resources/js/tenant/pages/settings/translations.js',
+                'resources/js/tenant/pages/settings/admins.js',
+                'resources/js/tenant/pages/settings/roles-permissions.js',
+                'resources/js/tenant/pages/settings/payment-gateways.js',
+                'resources/js/tenant/pages/settings/email-template-form.js',
+                'resources/js/tenant/pages/settings/mail.js',
+                'resources/js/tenant/pages/settings/account.js',
+                'resources/js/tenant/pages/settings/general.js',
+                'resources/js/tenant/pages/settings/compliance.js',
+                'resources/js/tenant/pages/settings/return-policy.js',
+                'resources/js/tenant/pages/onboarding/index.js',
+                // page entries — one line per page; added by prompts 03–11, listed explicitly
             ],
             refresh: true,
         }),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            '@tenant': path.resolve(__dirname, 'resources/js/tenant'),
+            '@tenant-css': path.resolve(__dirname, 'resources/css/tenant'),
+        },
+    },
+    build: {
+        chunkSizeWarningLimit: 900,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) return undefined;
+                    if (id.includes('node_modules/datatables.net')) return undefined;
+                    if (id.includes('node_modules/select2')) return undefined;
+                    if (id.includes('node_modules/toastr')) return undefined;
+                    if (id.includes('node_modules/jquery')) return 'vendor-jquery';
+                    if (id.includes('node_modules/flatpickr')) return 'vendor-flatpickr';
+                    if (id.includes('node_modules/chart.js')) return 'vendor-charts';
+                    if (id.includes('node_modules/intl-tel-input')) return 'vendor-phone';
+                    if (id.includes('node_modules/sweetalert2')) return 'vendor-swal';
+                    if (id.includes('node_modules/sortablejs')) return 'vendor-sortable';
+                    return undefined;
+                },
+            },
+        },
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

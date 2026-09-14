@@ -1,0 +1,1 @@
+function e(e){let t=(e.closest(`.t-input-wrap`)||e.parentElement)?.querySelector(`input`);t&&e.addEventListener(`click`,()=>{t.type=t.type===`password`?`text`:`password`})}export{e as init};

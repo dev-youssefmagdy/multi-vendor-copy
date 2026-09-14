@@ -525,6 +525,14 @@ class TenantNavigation
         return !empty($settings['logo_path_ar']) || !empty($settings['logo_path_en']);
     }
 
+    /** Text direction for the active locale, read from the tenant's `languages` table. */
+    public static function direction(): string
+    {
+        $direction = Language::query()->where('code', app()->getLocale())->value('direction');
+
+        return in_array($direction, ['ltr', 'rtl'], true) ? $direction : 'ltr';
+    }
+
     public static function href(array $item): string
     {
         if (($item['type'] ?? 'link') === 'external') {

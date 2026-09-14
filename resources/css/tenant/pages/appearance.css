@@ -1,0 +1,39 @@
+/* Store ▸ Appearance — tab panels, color theme groups, and social links table.
+ * The shared logo builder partial's styles live in
+ * resources/css/tenant/components/logo-builder.css (also used by Onboarding). */
+
+@import '@tenant-css/components/logo-builder.css';
+
+.t-color-theme-summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.t-color-theme-badge {
+    margin-inline-start: 8px;
+}
+
+.t-color-variant-list {
+    margin-top: 20px;
+}
+
+.t-color-variant-card {
+    background: transparent;
+}
+
+.t-color-variant-title {
+    font-size: 14px;
+}
+
+.t-social-icon-badge {
+    text-transform: capitalize;
+}
+
+.t-social-url {
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.t-modal-actions {
+    margin-top: 20px;
+}

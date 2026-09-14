@@ -1,0 +1,15 @@
+.hv-switcher-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    max-width: 420px;
+}
+
+.hv-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+}

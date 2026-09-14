@@ -48,8 +48,13 @@ use App\Eloquent\Relations\CachedBelongsTo;
 use App\Services\Tenant\TemplateRegistryService;
 use App\Services\Tenant\Templates\UploadedBladeTemplateStrategy;
 use App\Translation\TenantTranslator;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -89,6 +94,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->configureSessionDomain();
+
+        Blade::anonymousComponentPath(resource_path('views/tenant/components'), 'tenant');
+
+        View::addNamespace('tenant', resource_path('views/tenant'));
+
+        View::composer('tenant.layouts.partials.*', \App\View\Composers\Tenant\ShellComposer::class);
 
         TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
 
@@ -160,6 +171,10 @@ class AppServiceProvider extends ServiceProvider
         TenantOrderItem::observe(CacheVersionObserver::class);
 
         $this->app->terminating(fn() => CachedBelongsTo::flushCache());
+
+        RateLimiter::for('tenant-validate', fn (Request $request) => Limit::perMinute(180)->by(
+            $request->user('tenant')?->id ?: $request->ip(),
+        ));
     }
 
     protected function configureSessionDomain(): void

@@ -1,0 +1,267 @@
+/* Form engine overrides */
+[data-form-errors]:empty {
+    display: none;
+}
+
+.t-form-errors {
+    color: var(--red);
+    font-size: 12.5px;
+    margin-bottom: 10px;
+}
+
+.t-field { margin-bottom: 14px; }
+.t-field--inline { display: flex; align-items: center; gap: 10px; }
+
+.t-req { color: var(--red); margin-left: 2px; }
+.t-help { color: var(--t3); font-size: 11.5px; margin-top: 4px; }
+
+.t-submit.is-loading .t-submit-label {
+    visibility: hidden;
+    position: relative;
+}
+
+.t-submit.is-loading .t-submit-label::after {
+    content: attr(data-loading-text);
+    visibility: visible;
+    position: absolute;
+    inset: 0;
+}
+
+.t-submit.is-loading .t-submit-label {
+    display: inline-block;
+}
+
+.t-checkbox-desc {
+    display: block;
+    font-size: 11px;
+    color: var(--t3);
+    font-weight: 400;
+}
+
+.t-input-wrap { position: relative; display: flex; align-items: center; }
+.t-input-wrap .field-control { width: 100%; }
+.t-input-wrap.has-prefix .field-control { padding-left: 28px; }
+.t-input-wrap.has-suffix .field-control { padding-right: 34px; }
+.t-input-wrap.has-icon .field-control { padding-left: 34px; }
+.t-input-icon, .t-input-prefix, .t-input-suffix, .t-input-toggle {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    color: var(--t3);
+}
+.t-input-icon, .t-input-prefix { left: 10px; }
+.t-input-suffix, .t-input-toggle { right: 8px; background: none; border: none; cursor: pointer; }
+.t-counter { font-size: 11px; color: var(--t3); margin-top: 2px; text-align: right; }
+
+.t-checkbox-group { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 8px 16px; }
+.t-radio-group { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 8px; }
+.t-radio-group--cards, .t-radio-group--pills { gap: 10px; }
+.t-radio-cards {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--surface);
+}
+.t-radio-cards:has(input:checked) { border-color: var(--cyan); background: var(--elevated); }
+.t-radio-pills {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    font-size: 12.5px;
+}
+.t-radio-pills:has(input:checked) { border-color: var(--cyan); color: var(--cyan); background: var(--elevated); }
+.t-radio-cards input, .t-radio-pills input { position: absolute; opacity: 0; pointer-events: none; }
+.t-radio-card-image { width: 28px; height: 28px; object-fit: contain; }
+.t-radio-card-label { font-weight: 600; font-size: 13px; color: var(--t1); }
+.t-radio-card-desc { display: block; font-size: 11.5px; color: var(--t3); }
+
+/* ── Switch (toggle) — x-tenant::switch ─────────────────────────────────── */
+
+.toggle-field {
+    transition: border-color .18s, background .18s;
+}
+
+.t-switch:hover {
+    border-color: var(--border2);
+}
+
+.t-switch:has(input:checked) {
+    border-color: rgba(0, 229, 255, .3);
+    background: rgba(0, 229, 255, .06);
+}
+
+.t-switch input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 36px;
+    height: 20px;
+    min-width: 36px;
+    flex-shrink: 0;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.t-switch input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: transform .2s ease;
+}
+
+.t-switch input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    border-color: transparent;
+}
+
+.t-switch input[type="checkbox"]:checked::after {
+    transform: translateX(16px);
+}
+
+.t-switch input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+}
+
+.t-switch input[type="checkbox"]:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* ── Status toggle button (green "on" / red "off") ──────────────────────── */
+
+.t-status-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+    white-space: nowrap;
+}
+
+.t-status-toggle:active {
+    transform: scale(.96);
+}
+
+.t-status-toggle-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.t-status-toggle-on {
+    background: rgba(0, 229, 155, .12);
+    border: 1px solid rgba(0, 229, 155, .3);
+    color: var(--green);
+}
+
+.t-status-toggle-on:hover {
+    background: rgba(0, 229, 155, .2);
+}
+
+.t-status-toggle-on .t-status-toggle-dot {
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(0, 229, 155, .6);
+}
+
+.t-status-toggle-off {
+    background: rgba(255, 77, 106, .1);
+    border: 1px solid rgba(255, 77, 106, .28);
+    color: var(--red);
+}
+
+.t-status-toggle-off:hover {
+    background: rgba(255, 77, 106, .18);
+}
+
+.t-status-toggle-off .t-status-toggle-dot {
+    background: var(--red);
+}
+
+.t-status-toggle.is-loading {
+    opacity: .6;
+    pointer-events: none;
+}
+
+/* ── Dynamic per-gateway credential fields ──────────────────────────────── */
+
+.t-field:has(> input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--elevated);
+}
+
+.t-field:has(> input[type="checkbox"]:checked) {
+    border-color: rgba(0, 229, 255, .3);
+    background: rgba(0, 229, 255, .06);
+}
+
+.t-field:has(> input[type="checkbox"]) > .field-label {
+    order: 2;
+    margin: 0;
+}
+
+.t-field:has(> input[type="checkbox"]) > input[type="checkbox"] {
+    order: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    width: 36px;
+    height: 20px;
+    min-width: 36px;
+    flex-shrink: 0;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.t-field:has(> input[type="checkbox"]) > input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    transition: transform .2s ease;
+}
+
+.t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"] {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    border-color: transparent;
+}
+
+.t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"]::after {
+    transform: translateX(16px);
+}

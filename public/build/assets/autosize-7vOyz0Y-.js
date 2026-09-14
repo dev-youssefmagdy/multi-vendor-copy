@@ -1,0 +1,1 @@
+function e(e){let t=()=>{e.style.height=`auto`,e.style.height=`${e.scrollHeight}px`};e.addEventListener(`input`,t),t()}export{e as init};

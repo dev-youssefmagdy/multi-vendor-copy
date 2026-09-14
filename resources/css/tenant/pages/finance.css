@@ -1,0 +1,72 @@
+/* Vendor settle order page — relocated from the former Livewire inline <style>. */
+
+.vso-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .vso-layout {
+        grid-template-columns: 1fr 1.2fr;
+    }
+}
+
+.vso-mono {
+    font-family: monospace;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.vso-breakdown {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.vso-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+}
+
+.vso-row:last-child {
+    border-bottom: none;
+}
+
+.vso-label {
+    color: var(--t2);
+}
+
+.vso-value {
+    font-weight: 600;
+    color: var(--t1);
+    font-variant-numeric: tabular-nums;
+}
+
+.vso-subtotal {
+    background: var(--elevated);
+}
+
+.vso-fee .vso-value {
+    color: var(--amber, #f59e0b);
+}
+
+.vso-fee-zero .vso-value {
+    color: var(--t3);
+}
+
+.vso-total {
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.vso-total .vso-label,
+.vso-total .vso-value {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--t1);
+}

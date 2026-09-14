@@ -1,0 +1,45 @@
+.toast {
+    background-color: var(--card) !important;
+    color: var(--t1) !important;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid var(--cyan);
+    opacity: 1 !important;
+}
+
+.toast-success { border-left-color: var(--green); }
+.toast-error { border-left-color: var(--red); }
+.toast-warning { border-left-color: var(--amber); }
+.toast-info { border-left-color: var(--cyan); }
+
+.toast .toast-message,
+.toast .toast-title {
+    color: var(--t1);
+}
+
+.toast-progress {
+    background-color: currentColor;
+    opacity: 0.4;
+}
+
+.toast-success .toast-progress { color: var(--green); }
+.toast-error .toast-progress { color: var(--red); }
+.toast-warning .toast-progress { color: var(--amber); }
+.toast-info .toast-progress { color: var(--cyan); }
+
+.toast-close-button {
+    color: var(--t2);
+    text-shadow: none;
+    opacity: 0.8;
+}
+
+[dir="rtl"] .toast {
+    border-left: none;
+    border-right: 3px solid var(--cyan);
+}
+
+[dir="rtl"] .toast-success { border-right-color: var(--green); border-left-color: transparent; }
+[dir="rtl"] .toast-error { border-right-color: var(--red); border-left-color: transparent; }
+[dir="rtl"] .toast-warning { border-right-color: var(--amber); border-left-color: transparent; }
+[dir="rtl"] .toast-info { border-right-color: var(--cyan); border-left-color: transparent; }

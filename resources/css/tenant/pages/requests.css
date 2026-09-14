@@ -1,0 +1,59 @@
+/* Product request detail — status progress indicator (ported from the
+   former Livewire inline styles in product-request/detail.blade.php). */
+.t-request-progress {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.t-request-progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.t-request-progress-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--border);
+    color: var(--t3);
+}
+
+.t-request-progress-step.is-done .t-request-progress-dot {
+    background: var(--cyan);
+    color: #060c18;
+}
+
+.t-request-progress-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--t3);
+    text-align: center;
+}
+
+.t-request-progress-step.is-done .t-request-progress-label {
+    color: var(--t1);
+}
+
+.t-request-progress-line {
+    position: absolute;
+    top: 14px;
+    left: calc(50% + 14px);
+    right: calc(-50% + 14px);
+    height: 2px;
+    background: var(--border);
+}
+
+.t-request-progress-line.is-done {
+    background: var(--cyan);
+}
