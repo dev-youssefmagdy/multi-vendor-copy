@@ -2,114 +2,41 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Tenant\CartController;
-use App\Http\Controllers\Tenant\FavoriteController;
-use App\Http\Controllers\Tenant\EmailVerificationController;
-use App\Http\Controllers\Tenant\StorefrontInvoiceController;
-use App\Http\Controllers\Tenant\StorefrontSocialAuthController;
-use App\Http\Controllers\Tenant\BadgeProductsController as TenantBadgeProductsController;
-use App\Http\Controllers\Tenant\HomePageController;
-use App\Http\Controllers\Tenant\PaymentController;
-use App\Http\Controllers\Tenant\PaymentWebhookController;
-use App\Http\Controllers\Tenant\AiTranslationPaymentController;
-use App\Http\Controllers\Tenant\LanguagePaymentController;
-use App\Http\Controllers\Tenant\SubscriptionPaymentController;
-use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
-use App\Livewire\Tenant\Analytics\CustomerLifetimeValuePage;
-use App\Livewire\Tenant\Analytics\OrderAnalyticsPage;
-use App\Livewire\Tenant\Analytics\ProductProfitabilityPage;
-use App\Livewire\Tenant\Analytics\ShippingAnalyticsPage;
-use App\Livewire\Tenant\Auth\LoginPage;
-use App\Livewire\Tenant\Category\AddEditCategory;
-use App\Livewire\Tenant\Category\CategoriesList;
-use App\Livewire\Tenant\Category\CategoryProducts;
-use App\Livewire\Tenant\Category\SortCategories;
-use App\Livewire\Tenant\Product\SortProducts as TenantSortProducts;
-use App\Livewire\Tenant\Badge\SortBadgeProducts as TenantSortBadgeProducts;
-use App\Livewire\Tenant\Customer\CustomersList;
-use App\Http\Controllers\Tenant\CustomerCreateController;
-use App\Http\Controllers\Tenant\CustomerDetailController;
-use App\Livewire\Tenant\Dashboard;
-use App\Livewire\Tenant\Finance\BillingPage;
-use App\Livewire\Tenant\Finance\BillingDetailPage;
-use App\Livewire\Tenant\Finance\BuyLanguagePage;
-use App\Livewire\Tenant\Finance\PayoutsReceivedPage;
-use App\Livewire\Tenant\Finance\SettlementPaymentsPage;
-use App\Livewire\Tenant\Finance\VendorPurchasePage;
-use App\Livewire\Tenant\Finance\VendorSettleOrderPage;
-use App\Livewire\Tenant\Finance\WalletPage;
-use App\Livewire\Tenant\Order\OrdersList;
-use App\Livewire\Tenant\Order\OrderDetailPage as TenantOrderDetailPage;
-use App\Livewire\Tenant\Return\ReturnsList as TenantReturnsList;
-use App\Livewire\Tenant\Return\ReturnDetailPage as TenantReturnDetailPage;
-use App\Livewire\Tenant\Help\DocsPage;
-use App\Livewire\Tenant\Storefront\RequestReturnForm;
-use App\Livewire\Tenant\Storefront\ReturnDetailPage as StorefrontReturnDetailPage;
-use App\Livewire\Tenant\Product\AddEditProduct;
-use App\Livewire\Tenant\Product\ProductsList;
-use App\Livewire\Tenant\Manufacturing\ManufacturingRequestsList as TenantManufacturingRequestsList;
-use App\Livewire\Tenant\Manufacturing\AddManufacturingRequest;
-use App\Livewire\Tenant\Manufacturing\ManufacturingRequestDetail as TenantManufacturingRequestDetail;
-use App\Http\Controllers\Tenant\ManufacturingPaymentController;
-use App\Http\Controllers\Tenant\TenantImpersonateController;
-use App\Livewire\Tenant\Notifications\NotificationsPage;
-use App\Livewire\Tenant\Support\TicketsList;
-use App\Livewire\Tenant\Support\CreateTicket;
-use App\Livewire\Tenant\Support\TicketDetail;
-use App\Livewire\Tenant\Onboarding\OnboardingPage;
-use App\Http\Controllers\Tenant\AccountSettingsController;
-use App\Http\Controllers\Tenant\ComplianceCenterController;
-use App\Livewire\Tenant\Setting\AddEditEmailTemplate;
-use App\Livewire\Tenant\Setting\AdminsList;
-use App\Livewire\Tenant\Setting\CurrenciesPage;
-use App\Livewire\Tenant\Setting\DomainsList;
-use App\Livewire\Tenant\Setting\EmailTemplatesPage;
-use App\Livewire\Tenant\Setting\GeneralSettingsPage;
-use App\Livewire\Tenant\Setting\LanguagesManagePage;
-use App\Livewire\Tenant\Setting\AiTranslationPage;
-use App\Livewire\Tenant\Setting\TranslationsPage;
-use App\Livewire\Tenant\Setting\LanguagesPage;
-use App\Livewire\Tenant\Setting\MailConfigurationsPage;
-use App\Livewire\Tenant\Setting\PaymentGatewaysPage;
-use App\Livewire\Tenant\Setting\RolesPermissionsList;
-use App\Livewire\Tenant\Setting\SubscribersPage;
-use App\Livewire\Tenant\Store\AppearancePage;
-use App\Livewire\Tenant\Store\BannersIndexPage;
-use App\Livewire\Tenant\Store\BannersPage;
-use App\Livewire\Tenant\Store\BladeThemePage;
-use App\Livewire\Tenant\Setting\TrackingSettingsPage;
-use App\Livewire\Tenant\Store\HomeVariantsPage;
-use App\Livewire\Tenant\Store\PageBuilderPage;
-use App\Livewire\Tenant\Store\CouponsIndexPage;
-use App\Livewire\Tenant\Store\CouponsPage;
-use App\Livewire\Tenant\Store\FlashSalesIndexPage;
-use App\Livewire\Tenant\Store\FlashSalesPage;
-use App\Livewire\Tenant\Store\AddEditPage;
-use App\Livewire\Tenant\Store\PagesList;
-use App\Livewire\Tenant\Store\ThemesPage;
-use App\Livewire\Tenant\Storefront\AuthPage;
-use App\Livewire\Tenant\Storefront\BestSellingPage;
-use App\Livewire\Tenant\Storefront\CartPage;
-use App\Livewire\Tenant\Storefront\CategoryPage;
-use App\Livewire\Tenant\Storefront\FavoritesPage;
-use App\Livewire\Tenant\Storefront\CheckoutPage;
-use App\Livewire\Tenant\Storefront\FullStarPage;
-use App\Livewire\Tenant\Storefront\HomePage;
-use App\Livewire\Tenant\Storefront\NewInPage;
-use App\Livewire\Tenant\Storefront\OffersPage;
-use App\Livewire\Tenant\Storefront\OrderStatusPage;
-use App\Livewire\Tenant\Storefront\OrderTrackingPage;
-use App\Livewire\Tenant\Storefront\ProductPage;
-use App\Http\Controllers\Tenant\RobotsController;
-use App\Http\Controllers\Tenant\SitemapController;
-use App\Livewire\Tenant\Storefront\NotFoundPage;
-use App\Livewire\Tenant\Storefront\PageView;
-use App\Livewire\Tenant\Storefront\ProfilePage;
+use App\Http\Controllers\Tenant\{
+    CartController,
+    FavoriteController,
+    HomePageController,
+    PaymentController,
+    PaymentWebhookController,
+    RobotsController,
+    SitemapController,
+    StorefrontInvoiceController,
+    StorefrontSocialAuthController,
+};
+use App\Livewire\Tenant\Storefront\{
+    AuthPage,
+    BestSellingPage,
+    CartPage,
+    CategoryPage,
+    CheckoutPage,
+    FavoritesPage,
+    FullStarPage,
+    HomePage,
+    NewInPage,
+    NotFoundPage,
+    OffersPage,
+    OrderStatusPage,
+    OrderTrackingPage,
+    PageView,
+    ProductPage,
+    ProfilePage,
+    RequestReturnForm,
+    ReturnDetailPage as StorefrontReturnDetailPage,
+};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 /*
