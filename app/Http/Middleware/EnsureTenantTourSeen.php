@@ -17,10 +17,27 @@ class EnsureTenantTourSeen
     {
     }
 
+    private const EXEMPT_ROUTE_PREFIXES = [
+        'tenant.onboarding',
+        'tenant.store.appearance',
+        'tenant.store.themes',
+        'tenant.settings.payment-gateways',
+        'tenant.settings.payment-readiness',
+        'tenant.settings.languages',
+        'tenant.settings.account',
+        'tenant.settings.compliance',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->routeIs('tenant.onboarding') || $request->expectsJson() || $request->method() !== 'GET') {
+        if ($request->expectsJson() || $request->method() !== 'GET') {
             return $next($request);
+        }
+
+        foreach (self::EXEMPT_ROUTE_PREFIXES as $prefix) {
+            if ($request->routeIs($prefix) || $request->routeIs($prefix . '.*')) {
+                return $next($request);
+            }
         }
 
         if ($this->compliance->compliancePagesExist() && !$this->compliance->hasAcceptedCurrentCompliance()) {

@@ -352,16 +352,19 @@ class TenantCatalogSyncService
             // A template with no country assignments means "all countries" ⇒ universal.
             $isUniversal = $theme->countries->isEmpty();
 
-            $tenantTheme = Theme::query()->updateOrCreate(
-                ['central_theme_id' => $theme->id],
-                [
-                    'name' => $theme->name,
-                    'slug' => $theme->slug,
-                    'is_active' => $theme->is_default,
-                    'is_universal' => $isUniversal,
-                    'preview_path' => $theme->previewFile?->full_path,
-                ]
-            );
+            $tenantTheme = Theme::query()->firstOrNew(['central_theme_id' => $theme->id]);
+            $tenantTheme->fill([
+                'name' => $theme->name,
+                'slug' => $theme->slug,
+                'is_universal' => $isUniversal,
+                'preview_path' => $theme->previewFile?->full_path,
+            ]);
+
+            if (!$tenantTheme->exists) {
+                $tenantTheme->is_active = false;
+            }
+
+            $tenantTheme->save();
 
             $this->syncThemeCountries($tenantTheme, $theme);
         }
