@@ -12,6 +12,16 @@ function init() {
     const markAllBtn = document.querySelector('[data-mark-all-read]');
     const unreadBadge = document.querySelector('[data-notifications-unread-badge]');
 
+    // Keep the "N unread" pill (and the mark-all button) in step with the list.
+    const setUnread = (count) => {
+        if (!unreadBadge) return;
+        const next = Math.max(0, count);
+        unreadBadge.dataset.count = String(next);
+        unreadBadge.textContent = `${next} unread`;
+        unreadBadge.hidden = next === 0;
+        if (markAllBtn) markAllBtn.hidden = next === 0;
+    };
+
     markAllBtn?.addEventListener('click', async () => {
         try {
             await post(markAllBtn.dataset.markAllRead);
@@ -20,10 +30,8 @@ function init() {
                 card.classList.remove('notification-unread');
             });
 
-            if (unreadBadge) {
-                unreadBadge.hidden = true;
-            }
-            markAllBtn.hidden = true;
+            setUnread(0);
+            if (markAllBtn) markAllBtn.hidden = true;
 
             emit('tenant:notification-read-all');
         } catch {
@@ -38,15 +46,21 @@ function init() {
         }
 
         const card = btn.closest('[data-notification-card]');
+        btn.classList.add('is-loading');
 
         try {
             await patch(btn.dataset.markRead, null, { toast: false });
 
-            card?.classList.remove('notification-unread');
+            if (card?.classList.contains('notification-unread')) {
+                card.classList.remove('notification-unread');
+                setUnread(Number(unreadBadge?.dataset.count || 0) - 1);
+            }
 
             emit('tenant:notification-read');
         } catch {
             /* handled by http interceptor */
+        } finally {
+            btn.classList.remove('is-loading');
         }
     });
 }

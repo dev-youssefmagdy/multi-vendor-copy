@@ -3975,7 +3975,7 @@
     ]
   },
   "resources/js/tenant/pages/support/notifications.js": {
-    "file": "assets/notifications-Cqv5DAdr.js",
+    "file": "assets/notifications-NfKaxDLx.js",
     "name": "notifications",
     "src": "resources/js/tenant/pages/support/notifications.js",
     "isEntry": true,
@@ -3984,7 +3984,7 @@
       "_http-Cllkf3gA.js"
     ],
     "css": [
-      "assets/notifications-2L3C_fDO.css"
+      "assets/notifications-D0bHKQSw.css"
     ]
   },
   "resources/js/tenant/pages/support/ticket-create.js": {
