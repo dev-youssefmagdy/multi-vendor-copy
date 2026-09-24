@@ -55,6 +55,7 @@
     --ds-switch-off: var(--ds-gray-200);
     --ds-nav-idle: var(--ds-brand-50);
     --ds-nav-hover: var(--ds-brand-200);
+    --ds-sb-card: #F5F5F5;
 
     /* Typography */
     --ds-font: "Outfit", ui-sans-serif, system-ui, sans-serif;
@@ -107,6 +108,7 @@
     --ds-switch-off: #3a3a3d;
     --ds-nav-idle: rgba(253, 111, 4, 0.1);
     --ds-nav-hover: rgba(253, 111, 4, 0.24);
+    --ds-sb-card: #232326;
     --ds-success-bg: rgba(3, 170, 0, 0.16);
     --ds-danger-bg: rgba(224, 0, 0, 0.16);
     --ds-warning-bg: rgba(240, 200, 0, 0.14);

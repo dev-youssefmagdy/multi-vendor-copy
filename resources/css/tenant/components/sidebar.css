@@ -9,10 +9,140 @@
    Logical properties keep the bar on the right-hand edge in RTL.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* ── Shell: 236px white column, 24px vertical padding, 32px between blocks ── */
+
 .t-scope #sb {
+    --ds-sb-width: 236px;
     --ds-nav-bar: 8px;
-    --ds-nav-gap: 12px;
+    --ds-nav-gap: 8px;
+    width: var(--ds-sb-width);
+    gap: 32px;
+    padding: 24px 0;
+    background: var(--ds-surface);
+    border-right: 0;
+}
+
+.t-scope #nav,
+.t-scope #nav2 { left: var(--ds-sb-width, 236px); }
+.t-scope #nav.nav-full,
+.t-scope #nav2.nav-full { left: 0; }
+.t-scope #mn { margin-left: 236px; }
+.t-scope #mn.mn-full { margin-left: 0; }
+
+/* Logo */
+.t-scope .logo-row {
+    position: relative;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0;
+    border-bottom: 0;
+}
+
+.t-scope .sb-logo {
+    display: block;
+    width: 152px;
+    height: 40px;
+}
+
+.t-scope .close-sb {
+    position: absolute;
+    inset-inline-end: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+/* Menu: flat list, 2px between items — section labels/separators hidden */
+.t-scope .sb-scroll {
+    padding: 0;
+}
+
+.t-scope .sb-lbl,
+.t-scope .sb-sep {
+    display: none;
+}
+
+/* Account setup widget sits between the menu and the store card */
+.t-scope #sb .t-setup-progress {
+    margin: -16px 0;
+    padding: 12px 16px;
+    border: 0;
+}
+
+/* Store card */
+.t-scope .sb-user {
+    padding: 0 8px;
+    border-top: 0;
+}
+
+.t-scope .su-inner {
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 80px;
+    padding: 16px 12px;
+    border-radius: 0;
+    background: var(--ds-sb-card, #F5F5F5);
+    cursor: default;
+}
+
+.t-scope .su-inner:hover {
+    background: var(--ds-sb-card, #F5F5F5);
+}
+
+.t-scope .su-inner .t-avatar {
+    flex-shrink: 0;
+    background: #080808;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.t-scope .user-name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.t-scope .user-role {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ds-text-strong);
+}
+
+.t-scope .su-logout {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ds-text-nav);
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+.t-scope .su-logout:hover {
+    color: var(--ds-danger);
+}
+
+.t-scope .su-logout:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ── Nav items ─────────────────────────────────────────────────────────────
+   idle/hover: 8px bar, 8px gap · active: 8px bar, 12px gap (per design) */
+
+.t-scope #sb .ni,
+.t-scope #sb .ng-trigger,
+.t-scope #sb .ng-kids {
     --ds-nav-inset: calc(var(--ds-nav-bar) + var(--ds-nav-gap));
+}
+
+.t-scope #sb .ni.act {
+    --ds-nav-gap: 12px;
 }
 
 .t-scope .ng {
@@ -27,7 +157,7 @@
     gap: 8px;
     width: calc(100% - var(--ds-nav-inset));
     min-height: 48px;
-    margin: 2px 0;
+    margin: 0 0 2px;
     margin-inline-start: var(--ds-nav-inset);
     padding: 0 16px;
     border: 0;
@@ -63,6 +193,7 @@
     width: 24px;
     height: 24px;
     flex-shrink: 0;
+    stroke-width: 1.5;
 }
 
 .t-scope .ni-label {
@@ -93,15 +224,18 @@
     background: var(--ds-nav-hover);
 }
 
-/* Active */
-.t-scope .ni.act {
+/* Active — solid orange pill, white text. Scoped to #sb so no legacy
+   .ni.act / [data-theme] .ni.act rule from app.css can outrank it. */
+.t-scope #sb .ni.act,
+.t-scope #sb .ni.act:hover {
     background: var(--ds-brand-500);
     border: 0;
-    color: var(--ds-on-brand);
+    color: #FFFFFF;
     font-weight: 500;
 }
 
-.t-scope .ni.act::before {
+.t-scope #sb .ni.act::before,
+.t-scope #sb .ni.act:hover::before {
     background: var(--ds-brand-500);
 }
 
@@ -152,10 +286,11 @@
     color: var(--ds-text-strong);
 }
 
-.t-scope .nk.nk-act,
-[data-theme="light"] .t-scope .nk.nk-act {
-    background: var(--ds-brand-50);
-    color: var(--ds-brand-500);
+/* Active sub-item inside a group gets the same orange pill as a top-level item */
+.t-scope #sb .nk.nk-act,
+.t-scope #sb .nk.nk-act:hover {
+    background: var(--ds-brand-500);
+    color: #FFFFFF;
     font-weight: 500;
 }
 

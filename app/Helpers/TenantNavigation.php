@@ -18,25 +18,19 @@ class TenantNavigation
     {
         return [
             [
+                // Main menu — order follows the vendor dashboard design.
                 'label' => 'Overview',
                 'items' => [
-                    ['type' => 'external', 'label' => 'Website URL', 'url' => self::storefrontUrl(), 'icon' => 'storefront', 'permission' => null],
                     ['type' => 'link', 'label' => 'Dashboard', 'route' => 'tenant.dashboard', 'icon' => 'dashboard', 'permission' => 'dashboard.view'],
-                    ['type' => 'link', 'label' => 'Get Started', 'route' => 'tenant.onboarding', 'routeParameters' => ['tab' => 'tour'], 'icon' => 'settings', 'permission' => null],
-                ],
-            ],
-            [
-                'label' => 'Catalog',
-                'items' => [
+                    ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
                     [
                         'type' => 'group',
-                        'label' => 'Inventory',
+                        'label' => 'Products',
                         'icon' => 'products',
                         'children' => [
                             ['label' => 'Products', 'route' => 'tenant.products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Own Products', 'route' => 'tenant.own-products.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Edit Requests', 'route' => 'tenant.products.edit-requests', 'permission' => 'catalog.products.manage', 'badge' => self::pendingEditRequestsCount() ?: null],
-                            ['label' => 'Product Requests', 'route' => 'tenant.product-requests.index', 'permission' => 'catalog.products.manage', 'badge' => self::unreadProductRequestsCount() ?: null],
                             ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
                             ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
@@ -45,19 +39,39 @@ class TenantNavigation
                             ['label' => 'Trending Now Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'trending-now'], 'permission' => 'catalog.badges.manage'],
                         ]
                     ],
-                    ['type' => 'link', 'label' => 'Orders', 'route' => 'tenant.orders.index', 'icon' => 'orders', 'permission' => 'sales.orders.view'],
-                    ['type' => 'link', 'label' => 'Returns', 'route' => 'tenant.returns.index', 'icon' => 'orders', 'permission' => 'sales.returns.manage'],
-                    ['type' => 'link', 'label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'icon' => 'dashboard', 'permission' => 'sales.returns.manage'],
+                    [
+                        'type' => 'group',
+                        'label' => 'Orders',
+                        'icon' => 'orders',
+                        'children' => [
+                            ['label' => 'All Orders', 'route' => 'tenant.orders.index', 'permission' => 'sales.orders.view'],
+                            ['label' => 'Returns', 'route' => 'tenant.returns.index', 'permission' => 'sales.returns.manage'],
+                        ]
+                    ],
                     ['type' => 'link', 'label' => 'Customers', 'route' => 'tenant.customers.index', 'icon' => 'admins', 'permission' => 'sales.customers.manage'],
-                    ['type' => 'link', 'label' => 'Manufacturing Requests', 'route' => 'tenant.manufacturing.index', 'icon' => 'manufacturing', 'permission' => 'catalog.products.manage'],
-                    ['type' => 'link', 'label' => 'Brand Requests', 'route' => 'tenant.brand-requests.index', 'icon' => 'manufacturing', 'permission' => 'catalog.products.manage'],
-                    ['type' => 'link', 'label' => 'Notifications', 'route' => 'tenant.notifications.index', 'icon' => 'notifications', 'permission' => 'dashboard.view'],
-                    ['type' => 'link', 'label' => 'Support', 'route' => 'tenant.support.index', 'icon' => 'admins', 'permission' => 'dashboard.view'],
-                ],
-            ],
-            [
-                'label' => 'Insights',
-                'items' => [
+                    [
+                        'type' => 'group',
+                        'label' => 'Your Store',
+                        'icon' => 'pages',
+                        'children' => [
+                            ['label' => 'Themes', 'route' => 'tenant.store.themes', 'permission' => 'store.themes.manage'],
+                            ['label' => 'Page Builder', 'route' => 'tenant.store.page-builder', 'permission' => 'store.page-builder.manage'],
+                            ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
+                            ['label' => 'Appearance', 'route' => 'tenant.store.appearance', 'permission' => 'store.appearance.manage'],
+                            ['label' => 'Banners', 'route' => 'tenant.store.banners.index', 'permission' => 'store.appearance.manage'],
+                            ['label' => 'Blade Theme', 'route' => 'tenant.store.blade-theme', 'permission' => 'store.blade-theme.manage'],
+                            // Subscribers page hidden from navbar
+                            // ['label' => 'Subscribers', 'route' => 'tenant.settings.subscribers', 'permission' => 'store.subscribers.manage'],
+                        ]
+                    ],
+                    [
+                        'type' => 'group',
+                        'label' => 'Ads & Marketing',
+                        'icon' => 'payments',
+                        'children' => [
+                            ['label' => 'Coupons', 'route' => 'tenant.store.coupons.index', 'permission' => 'store.coupons.manage'],
+                        ]
+                    ],
                     [
                         'type' => 'group',
                         'label' => 'Analytics',
@@ -67,8 +81,50 @@ class TenantNavigation
                             ['label' => 'Customer Lifetime Value', 'route' => 'tenant.analytics.clv', 'permission' => 'analytics.view'],
                             ['label' => 'Shipping Analytics', 'route' => 'tenant.analytics.shipping', 'permission' => 'analytics.view'],
                             ['label' => 'Product Profitability', 'route' => 'tenant.analytics.profitability', 'permission' => 'analytics.view'],
+                            ['label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'permission' => 'sales.returns.manage'],
                         ]
                     ],
+                    [
+                        'type' => 'group',
+                        'label' => 'Request product',
+                        'icon' => 'manufacturing',
+                        'children' => [
+                            ['label' => 'Product Requests', 'route' => 'tenant.product-requests.index', 'permission' => 'catalog.products.manage', 'badge' => self::unreadProductRequestsCount() ?: null],
+                            ['label' => 'Manufacturing Requests', 'route' => 'tenant.manufacturing.index', 'permission' => 'catalog.products.manage'],
+                            ['label' => 'Brand Requests', 'route' => 'tenant.brand-requests.index', 'permission' => 'catalog.products.manage'],
+                        ]
+                    ],
+                    ['type' => 'link', 'label' => 'Partner Program', 'route' => 'tenant.partner-program', 'icon' => 'plans', 'permission' => 'dashboard.view'],
+                    [
+                        'type' => 'group',
+                        'label' => 'Settings',
+                        'icon' => 'settings',
+                        'children' => [
+                            ['label' => 'Account Settings', 'route' => 'tenant.settings.account', 'permission' => 'settings.account.manage'],
+                            ['label' => 'General Settings', 'route' => 'tenant.settings.general', 'permission' => 'settings.account.manage'],
+                            ['label' => 'Currencies', 'route' => 'tenant.settings.currencies', 'permission' => 'settings.regional.manage'],
+                            // ['label' => 'Languages', 'route' => 'tenant.settings.languages', 'permission' => 'settings.regional.manage'],
+                            ['label' => 'Languages Manage', 'route' => 'tenant.settings.languages-manage', 'permission' => 'settings.regional.manage'],
+                            ['label' => 'Translations', 'route' => 'tenant.settings.translations', 'permission' => 'settings.translations.manage'],
+                            ['label' => 'AI Translation', 'route' => 'tenant.settings.ai-translation', 'permission' => 'settings.translations.manage'],
+                            ['label' => 'Tenant Admins', 'route' => 'tenant.settings.admins', 'permission' => 'settings.admins.manage'],
+                            ['label' => 'Roles & Permissions', 'route' => 'tenant.settings.roles-permissions', 'permission' => 'settings.roles.manage'],
+                            ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Payment Readiness', 'route' => 'tenant.settings.payment-readiness', 'permission' => 'settings.payment-gateways.manage'],
+                            ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
+                            ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
+                            ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],
+                            ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
+                            ['label' => 'Tracking', 'route' => 'tenant.settings.tracking', 'permission' => 'settings.tracking.manage'],
+                            ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],
+                        ]
+                    ],
+                ],
+            ],
+            [
+                // Existing pages that have no slot in the design yet — kept below the main menu.
+                'label' => 'More',
+                'items' => [
                     [
                         'type' => 'group',
                         'label' => 'Finance',
@@ -82,77 +138,11 @@ class TenantNavigation
                             // ['label' => 'Buy Languages', 'route' => 'tenant.finance.buy-languages', 'permission' => 'settings.languages.purchase'],
                         ]
                     ],
-                ],
-            ],
-            [
-                'label' => 'Storefront',
-                'items' => [
-                    [
-                        'type' => 'group',
-                        'label' => 'Online Store',
-                        'icon' => 'pages',
-                        'children' => [
-                            ['label' => 'Themes', 'route' => 'tenant.store.themes', 'permission' => 'store.themes.manage'],
-                            ['label' => 'Page Builder', 'route' => 'tenant.store.page-builder', 'permission' => 'store.page-builder.manage'],
-                            ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
-                        ]
-                    ],
-                    ['type' => 'link', 'label' => 'Coupons', 'route' => 'tenant.store.coupons.index', 'icon' => 'payments', 'permission' => 'store.coupons.manage'],
-                    ['type' => 'link', 'label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
-                    ['type' => 'link', 'label' => 'Appearance', 'route' => 'tenant.store.appearance', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
-                    ['type' => 'link', 'label' => 'Banners', 'route' => 'tenant.store.banners.index', 'icon' => 'appearance', 'permission' => 'store.appearance.manage'],
-                    ['type' => 'link', 'label' => 'Blade Theme', 'route' => 'tenant.store.blade-theme', 'icon' => 'code', 'permission' => 'store.blade-theme.manage'],
-                    // Subscribers page hidden from navbar
-                    // ['type' => 'link', 'label' => 'Subscribers', 'route' => 'tenant.settings.subscribers', 'icon' => 'blog', 'permission' => 'store.subscribers.manage'],
-                ],
-            ],
-            [
-                'label' => 'Settings',
-                'items' => [
-                    [
-                        'type' => 'group',
-                        'label' => 'Regional',
-                        'icon' => 'settings',
-                        'children' => [
-                            ['label' => 'Currencies', 'route' => 'tenant.settings.currencies', 'permission' => 'settings.regional.manage'],
-                            // ['label' => 'Languages', 'route' => 'tenant.settings.languages', 'permission' => 'settings.regional.manage'],
-                            ['label' => 'Languages Manage', 'route' => 'tenant.settings.languages-manage', 'permission' => 'settings.regional.manage'],
-                            ['label' => 'Translations', 'route' => 'tenant.settings.translations', 'permission' => 'settings.translations.manage'],
-                            ['label' => 'AI Translation', 'route' => 'tenant.settings.ai-translation', 'permission' => 'settings.translations.manage'],
-                        ]
-                    ],
-                    [
-                        'type' => 'group',
-                        'label' => 'Access',
-                        'icon' => 'admins',
-                        'children' => [
-                            ['label' => 'Tenant Admins', 'route' => 'tenant.settings.admins', 'permission' => 'settings.admins.manage'],
-                            ['label' => 'Roles & Permissions', 'route' => 'tenant.settings.roles-permissions', 'permission' => 'settings.roles.manage'],
-                        ]
-                    ],
-                    [
-                        'type' => 'group',
-                        'label' => 'Configuration',
-                        'icon' => 'settings',
-                        'children' => [
-                            ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
-                            ['label' => 'Payment Readiness', 'route' => 'tenant.settings.payment-readiness', 'permission' => 'settings.payment-gateways.manage'],
-                            ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
-                            ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
-                            ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],
-                            ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
-                            ['label' => 'Tracking', 'route' => 'tenant.settings.tracking', 'permission' => 'settings.tracking.manage'],
-                            ['label' => 'Account Settings', 'route' => 'tenant.settings.account', 'permission' => 'settings.account.manage'],
-                            ['label' => 'General Settings', 'route' => 'tenant.settings.general', 'permission' => 'settings.account.manage'],
-                            ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],
-                        ]
-                    ],
-                ],
-            ],
-            [
-                'label' => 'Help',
-                'items' => [
+                    ['type' => 'link', 'label' => 'Get Started', 'route' => 'tenant.onboarding', 'routeParameters' => ['tab' => 'tour'], 'icon' => 'settings', 'permission' => null],
+                    ['type' => 'link', 'label' => 'Notifications', 'route' => 'tenant.notifications.index', 'icon' => 'notifications', 'permission' => 'dashboard.view'],
+                    ['type' => 'link', 'label' => 'Support', 'route' => 'tenant.support.index', 'icon' => 'admins', 'permission' => 'dashboard.view'],
                     ['type' => 'link', 'label' => 'Documentation', 'route' => 'tenant.help.index', 'icon' => 'faq', 'permission' => null],
+                    ['type' => 'external', 'label' => 'Website URL', 'url' => self::storefrontUrl(), 'icon' => 'storefront', 'permission' => null],
                 ],
             ],
         ];

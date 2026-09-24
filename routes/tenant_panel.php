@@ -70,6 +70,11 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.dashboard');
 
+    // Sidebar modules from the design that have no content yet — empty placeholder pages.
+    Route::view('/partner-program', 'tenant.pages.placeholder', ['title' => 'Partner Program'])
+        ->middleware('tenant.permission:dashboard.view')
+        ->name('tenant.partner-program');
+
     Route::get('/onboarding/{tab?}', [OnboardingController::class, 'show'])
         ->where('tab', 'tour|setup')
         ->name('tenant.onboarding');

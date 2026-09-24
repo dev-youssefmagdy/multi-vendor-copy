@@ -4,16 +4,7 @@
 
 <aside id="sb">
     <div class="logo-row">
-        <div class="logo-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2.2"
-                    stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </div>
-        <div>
-            <div class="brand">NEXUS</div>
-            <div class="brand-subtitle">VENDOR PANEL</div>
-        </div>
+        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" class="sb-logo" width="152" height="40">
         <button type="button" class="close-sb" data-action="close-mobile" aria-label="Close sidebar">
             <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -29,7 +20,7 @@
         @foreach($section['items'] as $item)
         @if(($item['type'] ?? 'link') === 'external')
             <a href="{{ \App\Helpers\TenantNavigation::href($item) }}" class="ni" target="_blank" rel="noopener noreferrer" title="{{ $item['label'] }}">
-                <x-tenant::icon :name="$item['icon']" size="24" />
+                <x-tenant::nav-icon :item="$item" />
                 <span class="ni-label">{{ $item['label'] }}</span>
                 <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
                     style="margin-left:auto;opacity:.5;flex-shrink:0;">
@@ -40,7 +31,7 @@
             <a href="{{ \App\Helpers\TenantNavigation::href($item) }}"
                 class="ni {{ \App\Helpers\TenantNavigation::isActive($item, $shell['currentRoute']) ? 'act' : '' }}"
                 data-action="set-active" title="{{ $item['label'] }}">
-                <x-tenant::icon :name="$item['icon']" size="24" />
+                <x-tenant::nav-icon :item="$item" />
                 <span class="ni-label">{{ $item['label'] }}</span>
                 @if(($item['route'] ?? null) === 'tenant.onboarding')
                     <span class="ni-badge {{ $shell['onboardingProgress']['done'] === $shell['onboardingProgress']['total'] ? 'ni-badge-done' : '' }}">{{ $shell['onboardingProgress']['done'] }}/{{ $shell['onboardingProgress']['total'] }}</span>
@@ -53,7 +44,7 @@
         @php($groupOpen = \App\Helpers\TenantNavigation::groupIsActive($item, $shell['currentRoute']))
         <div class="ng">
             <button type="button" class="ng-trigger {{ $groupOpen ? 'op' : '' }}" data-action="toggle-group" title="{{ $item['label'] }}">
-                <x-tenant::icon :name="$item['icon']" size="24" />
+                <x-tenant::nav-icon :item="$item" />
                 <span class="ni-label">{{ $item['label'] }}</span>
                 <svg class="ng-arrow" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     stroke-width="2.5">
@@ -89,20 +80,18 @@
 
     <div class="sb-user">
         <div class="su-inner">
-            <div class="user-avatar-wrap">
-                <x-tenant::avatar :name="$shell['tenantName'] ?? 'Tenant Owner'" :seed="$shell['tenantId']" size="30" />
-                <span class="status-indicator"></span>
-            </div>
+            <x-tenant::avatar :name="$shell['tenantName'] ?? 'Tenant Owner'" :seed="$shell['tenantId']" size="48" />
             <div class="user-meta">
                 <div class="user-name">{{ $shell['tenantName'] ?? 'Tenant Owner' }}</div>
                 <div class="user-role">Vendor Workspace</div>
             </div>
-            <svg class="icon-t3 shrink-0" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                stroke-width="2">
-                <circle cx="12" cy="12" r="1" />
-                <circle cx="19" cy="12" r="1" />
-                <circle cx="5" cy="12" r="1" />
-            </svg>
+            <button type="button" class="su-logout" aria-label="Logout" title="Logout"
+                data-action-url="{{ route('tenant.logout') }}" data-action-method="POST" data-success="redirect">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 3.09A9.75 9.75 0 1 0 14 20.9"/>
+                    <path d="M21 12H11m10 0c0-.7-2-2.01-2.5-2.5M21 12c0 .7-2 2.01-2.5 2.5"/>
+                </svg>
+            </button>
         </div>
     </div>
 </aside>
