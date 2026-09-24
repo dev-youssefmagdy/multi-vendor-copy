@@ -1,0 +1,82 @@
+/* ── Tooltip — x-tenant::tooltip ──────────────────────────────────────────── */
+
+.t-scope .t-tooltip {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.t-scope .t-tooltip-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    cursor: help;
+}
+
+.t-scope .t-tooltip-trigger svg { width: 24px; height: 24px; }
+
+.t-scope .t-tooltip-trigger:hover { color: var(--ds-brand-500); }
+
+.t-scope .t-tooltip-trigger:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 2px;
+}
+
+.t-scope .t-tooltip-bubble {
+    position: absolute;
+    left: 50%;
+    z-index: 20;
+    width: max-content;
+    max-width: 240px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #171717;
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-transform: none;
+    text-align: start;
+    white-space: normal;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .15s ease, transform .15s ease, visibility .15s;
+}
+
+/* Arrow */
+.t-scope .t-tooltip-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    border: 6px solid transparent;
+    transform: translateX(-50%);
+}
+
+.t-scope .t-tooltip-top .t-tooltip-bubble { bottom: calc(100% + 10px); transform: translate(-50%, 4px); }
+.t-scope .t-tooltip-top .t-tooltip-bubble::after { top: 100%; border-top-color: #171717; }
+
+.t-scope .t-tooltip-bottom .t-tooltip-bubble { top: calc(100% + 10px); transform: translate(-50%, -4px); }
+.t-scope .t-tooltip-bottom .t-tooltip-bubble::after { bottom: 100%; border-bottom-color: #171717; }
+
+.t-scope .t-tooltip:hover .t-tooltip-bubble,
+.t-scope .t-tooltip:focus-within .t-tooltip-bubble {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+[data-theme="dark"] .t-scope .t-tooltip-bubble { background: #F5F5F5; color: #171717; }
+[data-theme="dark"] .t-scope .t-tooltip-top .t-tooltip-bubble::after { border-top-color: #F5F5F5; }
+[data-theme="dark"] .t-scope .t-tooltip-bottom .t-tooltip-bubble::after { border-bottom-color: #F5F5F5; }
+
+@media (prefers-reduced-motion: reduce) {
+    .t-scope .t-tooltip-bubble { transition: none; }
+}

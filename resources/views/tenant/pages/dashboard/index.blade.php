@@ -9,6 +9,10 @@
 
     @include('tenant.pages.dashboard._performance')
 
+    @include('tenant.pages.dashboard._pay-alert')
+
+    @include('tenant.pages.dashboard._opportunities')
+
     <div class="g-r3 section-gap">
         <section class="card fu d2">
             <div class="panel-head">
