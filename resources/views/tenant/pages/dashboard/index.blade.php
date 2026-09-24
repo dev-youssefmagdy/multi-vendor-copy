@@ -7,51 +7,7 @@
 
     @include('tenant.pages.dashboard._hero')
 
-    <div class="g-stats section-gap">
-        @foreach($cards as $card)
-            <div class="card {{ $card['glow'] ?? '' }}">
-                <div class="stat-head">
-                    <div>
-                        <div class="eyebrow">{{ $card['label'] }}</div>
-                        <div class="D stat-value">{{ $card['value'] }}</div>
-                    </div>
-                    <div class="mini-stat-dot {{ $card['dot'] ?? 'dot-cyan' }}"></div>
-                </div>
-                <p class="panel-copy">{{ $card['caption'] }}</p>
-            </div>
-        @endforeach
-    </div>
-
-    <div class="g-r2 section-gap">
-        <section class="card fu d2">
-            <div class="chart-head chart-head-wrap">
-                <div>
-                    <h3 class="D section-title">Sales vs Collection</h3>
-                    <p class="section-copy">Gross sales and collected sales by month for the tenant.</p>
-                </div>
-            </div>
-            <canvas id="revenueChart"></canvas>
-        </section>
-
-        <section class="card fu d3">
-            <div class="section-stack-lg">
-                <h3 class="D section-title">Order Status Mix</h3>
-                <p class="section-copy">Current distribution of tenant order statuses.</p>
-            </div>
-            <div class="donut-wrap"><canvas id="donutChart"></canvas></div>
-            <div class="legend-list">
-                @foreach($statusRows as $index => $row)
-                    <div class="legend-row">
-                        <div class="legend-meta">
-                            <span class="dot {{ ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'][$index % 4] }}"></span>
-                            <span class="text-t2">{{ $row['label'] }}</span>
-                        </div>
-                        <span class="legend-value">{{ number_format($row['count']) }}</span>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    </div>
+    @include('tenant.pages.dashboard._performance')
 
     <div class="g-r3 section-gap">
         <section class="card fu d2">
