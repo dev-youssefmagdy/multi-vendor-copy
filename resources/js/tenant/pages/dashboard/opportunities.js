@@ -1,7 +1,7 @@
-// Dashboard "winning opportunities": the product-card slideshow and the
-// auto-scrolling "best markets" flag ticker inside each card.
+// Dashboard product-card slideshows (winning opportunities, new in) and the
+// auto-scrolling "best markets" flag ticker inside opportunity cards.
 import Swiper from 'swiper';
-import { A11y, Autoplay, Keyboard, Mousewheel, Navigation } from 'swiper/modules';
+import { A11y, Autoplay, Keyboard, Mousewheel } from 'swiper/modules';
 import 'swiper/css';
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -22,10 +22,8 @@ function mountFlagTickers(root) {
 }
 
 function mountSlider(el) {
-    const section = el.closest('section');
-
     new Swiper(el, {
-        modules: [A11y, Autoplay, Keyboard, Mousewheel, Navigation],
+        modules: [A11y, Autoplay, Keyboard, Mousewheel],
         slidesPerView: 'auto',
         spaceBetween: 24,
         grabCursor: true,
@@ -33,22 +31,18 @@ function mountSlider(el) {
         speed: 600,
         keyboard: { enabled: true, onlyInViewport: true },
         mousewheel: { forceToAxis: true },
-        navigation: {
-            prevEl: section?.querySelector('[data-opp-prev]'),
-            nextEl: section?.querySelector('[data-opp-next]'),
-        },
         autoplay: reducedMotion() ? false : { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true },
-        a11y: { prevSlideMessage: 'Previous opportunity', nextSlideMessage: 'Next opportunity' },
-        // Clicking a card's buttons must not be swallowed as a drag.
-        noSwipingSelector: 'button, a',
+        a11y: { prevSlideMessage: 'Previous products', nextSlideMessage: 'Next products' },
+        // Clicking a card's buttons / video controls must not be swallowed as a drag.
+        noSwipingSelector: 'button, a, video',
     });
 }
 
+// Mounts every product-card slider on the page (winning opportunities, new in, …).
 export function mountOpportunities(root = document) {
-    const slider = root.querySelector('[data-opp-slider]');
-    if (!slider) return;
-
-    // Tickers first so each card's inner swiper exists before the outer one measures the slides.
-    mountFlagTickers(slider);
-    mountSlider(slider);
+    root.querySelectorAll('[data-opp-slider]').forEach((slider) => {
+        // Tickers first so each card's inner swiper exists before the outer one measures the slides.
+        mountFlagTickers(slider);
+        mountSlider(slider);
+    });
 }

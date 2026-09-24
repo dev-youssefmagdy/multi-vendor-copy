@@ -13,6 +13,14 @@
 
     @include('tenant.pages.dashboard._opportunities')
 
+    @include('tenant.pages.dashboard._new-in')
+
+    @include('tenant.pages.dashboard._ads')
+
+    @include('tenant.pages.dashboard._brand')
+
+    @include('tenant.pages.dashboard._storefront')
+
     <div class="g-r3 section-gap">
         <section class="card fu d2">
             <div class="panel-head">

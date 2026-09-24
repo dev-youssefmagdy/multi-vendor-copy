@@ -181,12 +181,5 @@
             </article>
         @endforeach
         </div>
-
-        <button type="button" class="db-slider-nav is-prev" data-opp-prev aria-label="Previous opportunities">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-        </button>
-        <button type="button" class="db-slider-nav is-next" data-opp-next aria-label="Next opportunities">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-        </button>
     </div>
 </section>
