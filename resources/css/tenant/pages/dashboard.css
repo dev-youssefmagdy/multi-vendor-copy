@@ -1420,6 +1420,181 @@
     .db-request-boxes { animation: none; }
 }
 
+/* ── Partner program banner ─────────────────────────────────────────────── */
+
+.db-section.db-partner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px 48px;
+    padding: 24px;
+    border-radius: 24px;
+    background: #151515;
+}
+
+.db-partner-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    flex: 541 1 400px;
+    min-width: 0;
+}
+
+/* Keep the design's line break ("…and win / with us") on wide screens */
+.db-partner-copy .db-brand-title { max-width: 541px; }
+
+.db-partner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 24px;
+    background: rgba(253, 111, 4, 0.1);
+    color: var(--ds-brand-500);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.db-partner-badge svg { width: 24px; height: 24px; }
+
+.db-partner-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.db-partner-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 59px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    background: #F5F5F5;
+}
+
+.db-partner-url {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: #5E5E5E;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.db-partner-url > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-partner-url svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+.t-scope .db-partner-copy-btn {
+    min-width: 135px;
+    flex-shrink: 0;
+    border-radius: 12px;
+}
+
+.t-scope .db-partner-copy-btn svg,
+.t-scope .db-partner-invite svg { width: 24px; height: 24px; }
+
+.t-scope .db-partner-invite {
+    width: 100%;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+/* Stats: two small cards over one wide card */
+.db-partner-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    flex: 448 1 360px;
+}
+
+.db-partner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-height: 150px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #222222;
+}
+
+.db-partner-card.is-wide { grid-column: 1 / -1; min-height: 170px; }
+
+.db-partner-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #C1C1C1;
+}
+
+.db-partner-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+    color: var(--c);
+}
+
+.db-partner-icon svg { width: 24px; height: 24px; }
+
+.db-partner-card strong {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #F5F5F5;
+}
+
+.db-partner-card .t-trend { background: #E6FEE6; color: #03AA00; }
+
+.db-partner-card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    margin-top: auto;
+}
+
+.db-partner-withdraw {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 140px;
+    height: 48px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #FFFFFF;
+    color: var(--ds-brand-500);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.db-partner-withdraw svg { width: 24px; height: 24px; }
+.db-partner-withdraw:hover { background: var(--ds-brand-50); }
+.db-partner-withdraw:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
+
+@container (max-width: 480px) {
+    .db-partner-stats { grid-template-columns: minmax(0, 1fr); }
+    .t-scope .db-partner-copy-btn { min-width: 0; }
+}
+
 @container (max-width: 520px) {
     .db-opp-slider .db-opp { width: 100%; }
     .db-opp-title { font-size: 24px; }

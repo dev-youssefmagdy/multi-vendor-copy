@@ -1,1 +1,0 @@
-import{t as e}from"./forms-vEWx-Hr1.js";export{e as TenantForm};
