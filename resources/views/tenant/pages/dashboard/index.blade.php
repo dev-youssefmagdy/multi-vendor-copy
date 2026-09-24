@@ -5,15 +5,7 @@
 @section('content')
     <script id="dashboard-chart-data" type="application/json">@json($chartPayload)</script>
 
-    <div class="page-head fu d0">
-        <div>
-            <div class="page-title-row">
-                <h1 class="D page-title">Vendor Dashboard</h1>
-                <span class="page-badge">Tenant Workspace</span>
-            </div>
-            <p class="page-copy">Track store performance, tenant billing health, customer growth, shipping capture, and product profitability from the current tenant database.</p>
-        </div>
-    </div>
+    @include('tenant.pages.dashboard._hero')
 
     <div class="g-stats section-gap">
         @foreach($cards as $card)

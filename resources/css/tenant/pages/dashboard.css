@@ -1,0 +1,286 @@
+/* ── Dashboard hero ─────────────────────────────────────────────────────── */
+
+.db-hero-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* Welcome row */
+.db-welcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+}
+
+.db-welcome-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.db-welcome-title {
+    margin: 0;
+    font-size: clamp(24px, 2.4vw, 32px);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.db-welcome-sub {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+.db-welcome-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.t-scope .db-btn {
+    min-width: 211px;
+    border-radius: 8px;
+}
+
+.t-scope .db-btn svg,
+.t-scope .db-hero-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Banner */
+.db-hero {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 404px;
+    padding: 16px;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #000;
+    isolation: isolate;
+}
+
+.db-hero-video {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.db-hero-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(270deg, #000000 19.23%, rgba(0, 0, 0, 0) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .db-hero-video { display: none; }
+}
+
+.db-hero-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 0 40px;
+}
+
+.db-hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    width: 426px;
+    max-width: 100%;
+}
+
+.db-hero-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #F5F5F5;
+}
+
+.db-hero-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #A3A3A3;
+}
+
+.db-hero-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 19px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.db-hero-points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #F5F5F5;
+}
+
+.db-hero-points svg {
+    width: 16px;
+    height: 16px;
+    color: #04DA00;
+    flex-shrink: 0;
+}
+
+.db-hero-actions {
+    display: flex;
+    gap: 24px;
+    margin-top: 4px;
+}
+
+.t-scope .db-hero-btn {
+    flex: 1 1 0;
+    border-radius: 12px;
+}
+
+/* ── Store Power ring ───────────────────────────────────────────────────── */
+
+.db-power {
+    --ring: #FD6F04;
+    position: relative;
+    flex-shrink: 0;
+    width: 232px;
+    height: 232px;
+    margin: 24px 32px;
+    border: 2px solid var(--ring);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 36.6px var(--ring));
+}
+
+.db-power-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 137.5px;
+    height: 137.5px;
+    border: 3.6px solid var(--ring);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 37.4px var(--ring));
+}
+
+.db-power-dot {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--ring);
+    box-shadow: 0 0 18.2px var(--ring);
+    transform: translate(-50%, -50%);
+}
+
+.db-power-dot.is-top { top: 0; left: 50%; }
+.db-power-dot.is-right { top: 50%; left: 100%; }
+.db-power-dot.is-bottom { top: 100%; left: 50%; }
+.db-power-dot.is-left { top: 50%; left: 0; }
+
+.db-power-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.db-power-value {
+    font-size: 44.7px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.db-power-label {
+    margin-top: -8px;
+    font-size: 13.2px;
+    line-height: 1.5;
+}
+
+/* Status chips sitting on the outer ring */
+.db-power-chip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.4px;
+    min-width: 60px;
+    padding: 7px;
+    border-radius: 9.6px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(6px);
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+.db-power-chip.is-top { top: 0; left: 50%; }
+.db-power-chip.is-right { top: 50%; left: 100%; }
+.db-power-chip.is-bottom { top: 100%; left: 50%; }
+.db-power-chip.is-left { top: 50%; left: 0; }
+
+.db-power-chip-title {
+    font-size: 8.4px;
+    line-height: 1.5;
+    color: #FFFFFF;
+}
+
+.db-power-chip-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 4.8px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.db-power-chip-value::before {
+    content: "";
+    width: 7.2px;
+    height: 7.2px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.db-power-chip-value.is-good { color: #03AA00; }
+.db-power-chip-value.is-warn { color: #FD6F04; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1279px) {
+    .db-hero-content { padding: 0 16px; gap: 24px; }
+}
+
+@media (max-width: 1023px) {
+    .db-hero { justify-content: center; }
+    .db-hero-content { flex-direction: column-reverse; padding: 32px 8px; }
+    .db-hero-shade { background: linear-gradient(0deg, #000 35%, rgba(0, 0, 0, .55) 100%); }
+}
+
+@media (max-width: 639px) {
+    .db-welcome-actions,
+    .db-welcome-actions .db-btn { width: 100%; }
+    .db-hero-actions { flex-direction: column; }
+    .db-power { transform: scale(.85); margin: 8px 0; }
+}
