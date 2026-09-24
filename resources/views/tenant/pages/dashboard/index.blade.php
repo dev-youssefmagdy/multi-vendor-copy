@@ -21,6 +21,8 @@
 
     @include('tenant.pages.dashboard._storefront')
 
+    @include('tenant.pages.dashboard._product-request')
+
     <div class="g-r3 section-gap">
         <section class="card fu d2">
             <div class="panel-head">
