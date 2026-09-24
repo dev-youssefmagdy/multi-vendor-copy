@@ -1,0 +1,165 @@
+/* ── Sidebar navigation states ────────────────────────────────────────────
+   Each item = an 8px edge bar + a 48px pill that is rounded on the start
+   side and runs flush into the end edge of the sidebar.
+
+     idle    faint peach bar, no pill, gray text
+     hover   peach bar + peach pill
+     active  orange bar + orange pill, light text (.ni.act)
+
+   Logical properties keep the bar on the right-hand edge in RTL.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope #sb {
+    --ds-nav-bar: 8px;
+    --ds-nav-gap: 12px;
+    --ds-nav-inset: calc(var(--ds-nav-bar) + var(--ds-nav-gap));
+}
+
+.t-scope .ng {
+    margin: 0;
+}
+
+.t-scope .ni,
+.t-scope .ng-trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: calc(100% - var(--ds-nav-inset));
+    min-height: 48px;
+    margin: 2px 0;
+    margin-inline-start: var(--ds-nav-inset);
+    padding: 0 16px;
+    border: 0;
+    border-radius: 0;
+    border-start-start-radius: 65px;
+    border-end-start-radius: 65px;
+    background: transparent;
+    color: var(--ds-text-nav);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: start;
+    transition: background-color .18s ease, color .18s ease;
+}
+
+.t-scope .ni::before,
+.t-scope .ng-trigger::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    inset-inline-start: calc(-1 * var(--ds-nav-inset));
+    width: var(--ds-nav-bar);
+    background: var(--ds-nav-idle);
+    border-start-end-radius: 17px;
+    border-end-end-radius: 17px;
+    transition: background-color .18s ease;
+}
+
+.t-scope .ni > svg:first-of-type,
+.t-scope .ng-trigger > svg:first-of-type {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.t-scope .ni-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover */
+.t-scope .ni:hover,
+.t-scope .ng-trigger:hover {
+    background: var(--ds-nav-hover);
+    color: var(--ds-text-nav);
+}
+
+.t-scope .ni:hover::before,
+.t-scope .ng-trigger:hover::before {
+    background: var(--ds-nav-hover);
+}
+
+/* Open group: keep it idle-looking, just stronger text */
+.t-scope .ng-trigger.op {
+    background: transparent;
+    color: var(--ds-text-strong);
+}
+
+.t-scope .ng-trigger.op:hover {
+    background: var(--ds-nav-hover);
+}
+
+/* Active */
+.t-scope .ni.act {
+    background: var(--ds-brand-500);
+    border: 0;
+    color: var(--ds-on-brand);
+    font-weight: 500;
+}
+
+.t-scope .ni.act::before {
+    background: var(--ds-brand-500);
+}
+
+.t-scope .ni.act .act-bar,
+.t-scope .act-bar {
+    display: none;
+}
+
+.t-scope .ni.act .ni-badge {
+    background: rgba(255, 255, 255, .22);
+    border-color: transparent;
+    color: var(--ds-on-brand);
+}
+
+.t-scope .ni:focus-visible,
+.t-scope .ng-trigger:focus-visible,
+.t-scope .nk:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: -2px;
+}
+
+/* Group children */
+.t-scope .ng-kids {
+    background: transparent;
+    border-radius: 0;
+    margin-inline-start: var(--ds-nav-inset);
+}
+
+.t-scope .ng-kids.op {
+    width: calc(100% - var(--ds-nav-inset));
+}
+
+.t-scope .nk {
+    width: 100%;
+    min-height: 40px;
+    margin: 1px 0;
+    padding: 0 16px;
+    padding-inline-start: 48px;
+    border-start-start-radius: 65px;
+    border-end-start-radius: 65px;
+    color: var(--ds-text-nav);
+    font-size: 14px;
+    text-align: start;
+}
+
+.t-scope .nk:hover {
+    background: var(--ds-brand-50);
+    color: var(--ds-text-strong);
+}
+
+.t-scope .nk.nk-act,
+[data-theme="light"] .t-scope .nk.nk-act {
+    background: var(--ds-brand-50);
+    color: var(--ds-brand-500);
+    font-weight: 500;
+}
+
+.t-scope .nk .dot {
+    background: currentColor;
+    box-shadow: none;
+}

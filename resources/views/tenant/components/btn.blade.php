@@ -15,8 +15,15 @@
         'link' => 'btn-link',
         default => 'btn-primary',
     };
-    $sizeClass = $size === 'sm' ? 'btn-sm' : '';
-    $classes = trim("btn $variantClass $sizeClass".($loading ? ' is-loading' : ''));
+    $sizeClass = match ($size) {
+        'sm' => 'btn-sm',
+        'md' => 'btn-md',
+        'lg' => 'btn-lg',
+        default => '',
+    };
+    $classes = $variant === 'tile'
+        ? 'btn-tile'.($loading ? ' is-loading' : '')
+        : trim("btn $variantClass $sizeClass".($loading ? ' is-loading' : ''));
 @endphp
 
 @if($href)

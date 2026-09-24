@@ -7,7 +7,7 @@ namespace App\Support\Tenant;
 final class Metric
 {
     /**
-     * @param array<int, array{label:string, value:mixed, caption?:string, dot?:string, glow?:string, format?:string, suffix?:string}> $cards
+     * @param array<int, array{label:string, value:mixed, caption?:string, dot?:string, glow?:string, format?:string, suffix?:string, trend?:int|float|string}> $cards
      */
     public static function cards(array $cards): array
     {

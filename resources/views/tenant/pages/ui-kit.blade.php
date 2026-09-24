@@ -10,6 +10,72 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
+    @php
+        $zap = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M13.5 2.25L4.75 13.5h7l-1.25 8.25L19.25 10.5h-7l1.25-8.25z"/></svg>';
+        $play = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5-12-7.5z"/></svg>';
+    @endphp
+
+    <x-tenant::card title="Design system — buttons">
+        <div class="ds-kit-grid">
+            @foreach(['primary' => 'Default', 'secondary' => 'Secondary'] as $variant => $caption)
+                @foreach([null => 'Small', 'md' => 'Mid', 'lg' => 'Large'] as $size => $sizeLabel)
+                    <x-tenant::btn :variant="$variant" :size="$size ?: null" :icon="$play">Button</x-tenant::btn>
+                @endforeach
+            @endforeach
+            @foreach([null, 'md', 'lg'] as $size)
+                <x-tenant::btn :size="$size" :icon="$play" disabled>Button</x-tenant::btn>
+            @endforeach
+            <x-tenant::btn variant="ghost">Ghost</x-tenant::btn>
+            <x-tenant::btn variant="danger">Danger</x-tenant::btn>
+            <x-tenant::btn size="sm">Compact (tables)</x-tenant::btn>
+        </div>
+        <p class="t-help">Hover and press a button to see its hover (#E66504) and pressed (#8B3D02) states.</p>
+
+        <div class="ds-kit-grid ds-kit-tiles">
+            <x-tenant::btn variant="tile" :icon="$zap">Add to Flash Sale</x-tenant::btn>
+            <x-tenant::btn variant="tile" :icon="$zap" class="btn-tile-soft">Add to Flash Sale</x-tenant::btn>
+            <x-tenant::btn variant="tile" :icon="$zap" aria-pressed="true">Add to Flash Sale</x-tenant::btn>
+        </div>
+    </x-tenant::card>
+
+    <div class="g-stats3 section-gap">
+        <x-tenant::card title="Design system — switch">
+            <x-tenant::switch name="ds_switch_off" label="Off" />
+            <x-tenant::switch name="ds_switch_on" label="On" :checked="true" />
+        </x-tenant::card>
+
+        <x-tenant::card title="Design system — status &amp; trend">
+            <div class="ds-kit-stack">
+                <x-tenant::status-badge status="delivered" />
+                <x-tenant::status-badge status="processing" />
+                <x-tenant::status-badge status="pending" />
+                <x-tenant::status-badge status="shipped" />
+            </div>
+            <div class="ds-kit-stack">
+                <x-tenant::trend :value="12" />
+                <x-tenant::trend :value="-12" />
+            </div>
+        </x-tenant::card>
+
+        <x-tenant::card title="Design system — dropdown">
+            <x-tenant::select-menu name="ds_period" value="today" icon="calendar" label="Period"
+                :options="['today' => 'Today', 'weekly' => 'weekly', 'monthly' => 'Monthly', 'yearly' => 'yearly']" />
+        </x-tenant::card>
+    </div>
+
+    <x-tenant::card title="Design system — inputs">
+        <div class="form-grid">
+            <x-tenant::select name="ds_product" label="Product name" required placeholder="Ex, Nike shoes" :options="['nike' => 'Nike shoes', 'adidas' => 'Adidas']" />
+            <div dir="rtl">
+                <x-tenant::select name="ds_product_ar" label="اسم المنتج" required placeholder="مثال: احذية" :options="['shoes' => 'احذية']" />
+            </div>
+            <x-tenant::select name="ds_product_active" label="Product name (active)" required placeholder="Ex, Nike shoes" class="is-active" :options="['nike' => 'Nike shoes']" />
+            <div dir="rtl">
+                <x-tenant::select name="ds_product_ar_active" label="اسم المنتج" required placeholder="مثال: احذية" class="is-active" :options="['shoes' => 'احذية']" />
+            </div>
+        </div>
+    </x-tenant::card>
+
     <x-tenant::stats-grid :stats="$stats" />
 
     <x-tenant::card title="Form building blocks">

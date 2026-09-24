@@ -1,0 +1,131 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Vendor dashboard design system — tokens
+   Scoped to .t-scope (the tenant panel <body>) so the central admin, owner
+   and affiliate layouts that share resources/css/app.css are untouched.
+
+   --ds-*   the design-system palette/scale; use these in new CSS.
+   legacy   --bg/--card/--t1…/--cyan are remapped so the existing panel
+            classes pick up the new brand without a per-page rewrite.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope {
+    /* Brand (orange) */
+    --ds-brand-50: #FFF1E6;
+    --ds-brand-100: rgba(253, 111, 4, 0.12);
+    --ds-brand-200: #FED2B1;
+    --ds-brand-500: #FD6F04;
+    --ds-brand-600: #E66504;
+    --ds-brand-900: #8B3D02;
+    --ds-on-brand: #F5F5F5;
+
+    /* Neutrals */
+    --ds-white: #FFFFFF;
+    --ds-gray-50: #F9F9F9;
+    --ds-gray-100: #ECECEC;
+    --ds-gray-200: #D9D9D9;
+    --ds-gray-300: #C1C1C1;
+    --ds-gray-400: #A3A3A3;
+    --ds-gray-500: #787878;
+    --ds-gray-600: #5E5E5E;
+    --ds-gray-900: #1E1E1E;
+    --ds-black: #0B0B0B;
+
+    /* Status */
+    --ds-success: #03AA00;
+    --ds-success-bg: #E6FEE6;
+    --ds-danger: #E00000;
+    --ds-danger-bg: #FCE6E6;
+    --ds-warning: #F0C800;
+    --ds-warning-bg: #FEFAE6;
+    --ds-info: #424AFF;
+    --ds-info-bg: #E6E7FE;
+
+    /* Semantic surfaces — overridden for dark below */
+    --ds-bg: var(--ds-gray-50);
+    --ds-surface: var(--ds-white);
+    --ds-text: var(--ds-black);
+    --ds-text-strong: var(--ds-gray-900);
+    --ds-text-muted: var(--ds-gray-500);
+    --ds-text-subtle: var(--ds-gray-400);
+    --ds-text-nav: var(--ds-gray-600);
+    --ds-placeholder: var(--ds-gray-300);
+    --ds-border: var(--ds-gray-300);
+    --ds-input-bg: var(--ds-gray-100);
+    --ds-input-bg-active: var(--ds-white);
+    --ds-switch-off: var(--ds-gray-200);
+    --ds-nav-idle: var(--ds-brand-50);
+    --ds-nav-hover: var(--ds-brand-200);
+
+    /* Typography */
+    --ds-font: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    --ds-font-ar: "IBM Plex Sans Arabic", "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+    /* Radii & effects */
+    --ds-radius-btn: 0px;
+    --ds-radius-md: 12px;
+    --ds-radius-pill: 40px;
+    --ds-shadow-menu: 0 0 11.3px rgba(0, 0, 0, 0.08);
+    --ds-focus-ring: 0 0 0 3px rgba(253, 111, 4, 0.18);
+
+    /* Legacy tokens → brand */
+    --cyan: var(--ds-brand-500);
+    --violet: var(--ds-brand-600);
+    --logo: var(--ds-brand-500);
+    --green: var(--ds-success);
+    --red: var(--ds-danger);
+    --amber: var(--ds-warning);
+
+    font-family: var(--ds-font);
+}
+
+[data-theme="light"] .t-scope {
+    --bg: var(--ds-bg);
+    --surface: var(--ds-surface);
+    --elevated: var(--ds-gray-50);
+    --card: var(--ds-surface);
+    --card2: var(--ds-gray-50);
+    --input: var(--ds-input-bg);
+    --border: rgba(11, 11, 11, 0.08);
+    --border2: rgba(11, 11, 11, 0.16);
+    --t1: var(--ds-black);
+    --t2: var(--ds-gray-600);
+    --t3: var(--ds-gray-500);
+}
+
+[data-theme="dark"] .t-scope {
+    --ds-bg: #0f0f10;
+    --ds-surface: #18181a;
+    --ds-text: #f5f5f5;
+    --ds-text-strong: #f5f5f5;
+    --ds-text-muted: #a3a3a3;
+    --ds-text-subtle: #787878;
+    --ds-text-nav: #c1c1c1;
+    --ds-placeholder: #5e5e5e;
+    --ds-border: #3a3a3d;
+    --ds-input-bg: #232326;
+    --ds-input-bg-active: #18181a;
+    --ds-switch-off: #3a3a3d;
+    --ds-nav-idle: rgba(253, 111, 4, 0.1);
+    --ds-nav-hover: rgba(253, 111, 4, 0.24);
+    --ds-success-bg: rgba(3, 170, 0, 0.16);
+    --ds-danger-bg: rgba(224, 0, 0, 0.16);
+    --ds-warning-bg: rgba(240, 200, 0, 0.14);
+    --ds-info-bg: rgba(66, 74, 255, 0.18);
+    --ds-brand-50: rgba(253, 111, 4, 0.14);
+
+    --bg: var(--ds-bg);
+    --surface: var(--ds-surface);
+    --card: var(--ds-surface);
+    --input: var(--ds-input-bg);
+}
+
+/* Arabic UI font for an RTL page or any dir="rtl" region (e.g. locale panes) */
+[dir="rtl"] .t-scope,
+.t-scope [dir="rtl"] {
+    font-family: var(--ds-font-ar);
+}
+
+/* The panel's display font (Syne) is replaced by the system font. */
+.t-scope .D {
+    font-family: inherit;
+}

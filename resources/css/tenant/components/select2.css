@@ -1,16 +1,34 @@
+/* Select2 — matches the design-system input (see input.css): gray fill,
+   12px radius, 48px tall, white + brand border while focused/open. */
 .select2-container--default .select2-selection--single,
 .select2-container--default .select2-selection--multiple {
     background-color: var(--input) !important;
-    border: 1px solid var(--border2) !important;
-    border-radius: 8px;
-    min-height: 34px;
+    border: 1px solid transparent !important;
+    border-radius: var(--ds-radius-md, 12px);
+    min-height: 48px;
+    font-size: 14px;
+}
+.select2-container--default.select2-container--focus .select2-selection,
+.select2-container--default.select2-container--open .select2-selection {
+    background-color: var(--ds-input-bg-active, var(--card)) !important;
+    border-color: var(--ds-brand-500, var(--cyan)) !important;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--t1) !important;
-    line-height: 34px;
-    padding-left: 11px;
+    line-height: 46px;
+    padding-left: 8px;
+    padding-right: 40px;
 }
-.select2-container--default .select2-selection--single .select2-selection__arrow { height: 32px; }
+.select2-container--default .select2-selection--single .select2-selection__placeholder { color: var(--ds-placeholder, var(--t3)); }
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px;
+    width: 32px;
+    right: 8px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M18 9l-6 6-6-6' stroke='%23FD6F04' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / 24px;
+    transition: transform .2s ease;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b { display: none; }
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow { transform: rotate(180deg); }
 .select2-container--default .select2-selection--multiple .select2-selection__rendered { padding: 4px 8px; }
 .select2-container--default .select2-selection__choice {
     background: var(--elevated) !important;
@@ -21,9 +39,10 @@
 .select2-container--default .select2-dropdown,
 .select2-dropdown {
     background: var(--card) !important;
-    border: 1px solid var(--border2) !important;
-    border-radius: 10px;
-    box-shadow: var(--shadow);
+    border: 1px solid var(--ds-brand-500, var(--border2)) !important;
+    border-radius: var(--ds-radius-md, 10px);
+    box-shadow: var(--ds-shadow-menu, var(--shadow));
+    overflow: hidden;
 }
 .select2-container--default .select2-search--dropdown .select2-search__field,
 .select2-search--dropdown .select2-search__field {
@@ -38,14 +57,16 @@
     color: var(--t1) !important;
 }
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background: var(--cyan) !important;
-    color: #fff !important;
+    background: var(--ds-brand-50, var(--elevated)) !important;
+    color: var(--ds-brand-500, var(--cyan)) !important;
 }
 .select2-container--default .select2-results__option[aria-selected="true"] {
-    background: var(--elevated) !important;
-    color: var(--t1) !important;
+    background: var(--card) !important;
+    color: var(--ds-brand-500, var(--t1)) !important;
+    font-weight: 500;
 }
 .select2-container--default .select2-selection__clear { color: var(--t3) !important; }
 .is-invalid + .select2-container .select2-selection,
 select.is-invalid + .select2-container .select2-selection { border-color: var(--red) !important; }
-[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__rendered { padding-right: 11px; padding-left: 0; }
+[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__rendered { padding-right: 8px; padding-left: 40px; }
+[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__arrow { right: auto; left: 8px; }

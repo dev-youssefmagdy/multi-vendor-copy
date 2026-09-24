@@ -1,4 +1,11 @@
-@import "../app.css";                 /* shared tokens + shell + existing classes (unchanged look) */
+@import "@fontsource/outfit/400.css";
+@import "@fontsource/outfit/500.css";
+@import "@fontsource/outfit/600.css";
+@import "@fontsource/outfit/700.css";
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+@import "../app.css";                 /* shared tokens + shell + existing classes */
+@import "./base/tokens.css";          /* vendor design system: --ds-* palette + legacy token remap (scoped to .t-scope) */
 @import "./base/utilities.css";       /* tenant-only helpers: .is-loading, .is-invalid, .field-error, .sr-only-focusable … */
 @import "./components/field.css";
 @import "./components/select2.css";
@@ -10,6 +17,12 @@
 @import "./components/toast.css";
 @import "./components/form.css";
 @import "./components/misc.css";
+/* design system components — after misc.css so they win the cascade */
+@import "./components/button.css";
+@import "./components/input.css";
+@import "./components/sidebar.css";
+@import "./components/badge.css";
+@import "./components/select-menu.css";
 @import "./components/setup-progress.css";
 @import "./components/compliance.css";
 @import "./components/payment.css";

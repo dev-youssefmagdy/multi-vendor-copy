@@ -28,9 +28,9 @@
 
         @foreach($section['items'] as $item)
         @if(($item['type'] ?? 'link') === 'external')
-            <a href="{{ \App\Helpers\TenantNavigation::href($item) }}" class="ni" target="_blank" rel="noopener noreferrer">
-                <x-tenant::icon :name="$item['icon']" />
-                {{ $item['label'] }}
+            <a href="{{ \App\Helpers\TenantNavigation::href($item) }}" class="ni" target="_blank" rel="noopener noreferrer" title="{{ $item['label'] }}">
+                <x-tenant::icon :name="$item['icon']" size="24" />
+                <span class="ni-label">{{ $item['label'] }}</span>
                 <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
                     style="margin-left:auto;opacity:.5;flex-shrink:0;">
                     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
@@ -39,12 +39,9 @@
         @elseif(($item['type'] ?? 'link') === 'link')
             <a href="{{ \App\Helpers\TenantNavigation::href($item) }}"
                 class="ni {{ \App\Helpers\TenantNavigation::isActive($item, $shell['currentRoute']) ? 'act' : '' }}"
-                data-action="set-active">
-                @if(\App\Helpers\TenantNavigation::isActive($item, $shell['currentRoute']))
-                    <div class="act-bar"></div>
-                @endif
-                <x-tenant::icon :name="$item['icon']" />
-                {{ $item['label'] }}
+                data-action="set-active" title="{{ $item['label'] }}">
+                <x-tenant::icon :name="$item['icon']" size="24" />
+                <span class="ni-label">{{ $item['label'] }}</span>
                 @if(($item['route'] ?? null) === 'tenant.onboarding')
                     <span class="ni-badge {{ $shell['onboardingProgress']['done'] === $shell['onboardingProgress']['total'] ? 'ni-badge-done' : '' }}">{{ $shell['onboardingProgress']['done'] }}/{{ $shell['onboardingProgress']['total'] }}</span>
                 @endif
@@ -55,9 +52,9 @@
         @else
         @php($groupOpen = \App\Helpers\TenantNavigation::groupIsActive($item, $shell['currentRoute']))
         <div class="ng">
-            <button type="button" class="ng-trigger {{ $groupOpen ? 'op' : '' }}" data-action="toggle-group">
-                <x-tenant::icon :name="$item['icon']" />
-                {{ $item['label'] }}
+            <button type="button" class="ng-trigger {{ $groupOpen ? 'op' : '' }}" data-action="toggle-group" title="{{ $item['label'] }}">
+                <x-tenant::icon :name="$item['icon']" size="24" />
+                <span class="ni-label">{{ $item['label'] }}</span>
                 <svg class="ng-arrow" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     stroke-width="2.5">
                     <polyline points="6 9 12 15 18 9" />
@@ -69,7 +66,7 @@
                         class="nk {{ \App\Helpers\TenantNavigation::isActive($child, $shell['currentRoute']) ? 'nk-act' : '' }}"
                         data-action="set-sub-active">
                         <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
-                        {{ $child['label'] }}
+                        <span class="ni-label">{{ $child['label'] }}</span>
                         @if(!empty($child['badge']))
                             <span class="ni-badge">{{ $child['badge'] }}</span>
                         @endif

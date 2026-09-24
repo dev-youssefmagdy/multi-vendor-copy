@@ -1,0 +1,102 @@
+/* ── Form inputs — x-tenant::field / input / select / textarea ─────────────
+   Default  filled gray (#ECECEC), no border, 12px radius, 48px tall
+   Active   white with a 1px brand border (focus, or .is-active)
+   Labels   14px muted, required asterisk in danger red
+   RTL      labels switch to IBM Plex Sans Arabic via the [dir=rtl] font
+            token; the select chevron moves to the start edge.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope .t-field > .field-label,
+.t-scope .field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ds-text-muted);
+}
+
+.t-scope .t-req,
+.t-scope .field-required {
+    margin: 0;
+    color: var(--ds-danger);
+    font-weight: 400;
+}
+
+.t-scope .field-control {
+    min-height: 48px;
+    padding: 8px;
+    border: 1px solid transparent;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-input-bg);
+    color: var(--ds-text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.t-scope .field-control::placeholder {
+    color: var(--ds-placeholder);
+}
+
+/* A select still sitting on its empty placeholder option reads as placeholder text */
+.t-scope select.field-control:has(option[value=""]:checked) {
+    color: var(--ds-placeholder);
+}
+
+.t-scope select.field-control option {
+    color: var(--ds-text);
+}
+
+.t-scope .field-control:focus,
+.t-scope .field-control.is-active {
+    background: var(--ds-input-bg-active);
+    border-color: var(--ds-brand-500);
+    box-shadow: none;
+}
+
+.t-scope .field-control:disabled,
+.t-scope .field-control[readonly] {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.t-scope textarea.field-control {
+    min-height: 96px;
+    resize: vertical;
+}
+
+/* Native single select — brand chevron (arrow-down-01) */
+.t-scope select.field-control:not([multiple]) {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-inline-end: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M18 9l-6 6-6-6' stroke='%23FD6F04' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 24px;
+    cursor: pointer;
+}
+
+[dir="rtl"] .t-scope select.field-control:not([multiple]),
+.t-scope [dir="rtl"] select.field-control:not([multiple]) {
+    background-position: left 8px center;
+}
+
+/* Icon / prefix / suffix slots follow the writing direction */
+.t-scope .t-input-icon,
+.t-scope .t-input-prefix { left: auto; inset-inline-start: 10px; }
+.t-scope .t-input-suffix,
+.t-scope .t-input-toggle { right: auto; inset-inline-end: 8px; }
+.t-scope .t-input-wrap.has-prefix .field-control { padding-left: 8px; padding-inline-start: 28px; }
+.t-scope .t-input-wrap.has-suffix .field-control { padding-right: 8px; padding-inline-end: 40px; }
+.t-scope .t-input-wrap.has-icon .field-control { padding-left: 8px; padding-inline-start: 40px; }
+
+.t-scope .t-help {
+    font-size: 12px;
+    color: var(--ds-text-subtle);
+}

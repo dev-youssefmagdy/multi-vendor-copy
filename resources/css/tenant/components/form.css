@@ -81,7 +81,10 @@
 .t-radio-card-label { font-weight: 600; font-size: 13px; color: var(--t1); }
 .t-radio-card-desc { display: block; font-size: 11.5px; color: var(--t3); }
 
-/* ── Switch (toggle) — x-tenant::switch ─────────────────────────────────── */
+/* ── Switch (toggle) — x-tenant::switch ───────────────────────────────────
+   77×42 track, 30px knob. Off = neutral gray, on = brand orange.
+   Shared with the per-gateway credential checkboxes further down.
+   ────────────────────────────────────────────────────────────────────────── */
 
 .toggle-field {
     transition: border-color .18s, background .18s;
@@ -92,50 +95,58 @@
 }
 
 .t-switch:has(input:checked) {
-    border-color: rgba(0, 229, 255, .3);
-    background: rgba(0, 229, 255, .06);
+    border-color: var(--ds-brand-200);
+    background: var(--ds-brand-50);
 }
 
-.t-switch input[type="checkbox"] {
+.t-switch input[type="checkbox"],
+.t-field:has(> input[type="checkbox"]) > input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
     position: relative;
-    width: 36px;
-    height: 20px;
-    min-width: 36px;
+    width: 77px;
+    height: 42px;
+    min-width: 77px;
     flex-shrink: 0;
     margin: 0;
-    border-radius: 999px;
-    background: var(--border2);
-    border: 1px solid var(--border2);
+    border: 0;
+    border-radius: 57px;
+    background: var(--ds-switch-track, var(--ds-switch-off));
     cursor: pointer;
-    transition: background .2s ease, border-color .2s ease;
+    transition: background .2s ease;
 }
 
-.t-switch input[type="checkbox"]::after {
+.t-switch input[type="checkbox"]::after,
+.t-field:has(> input[type="checkbox"]) > input[type="checkbox"]::after {
     content: "";
     position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    top: 6px;
+    inset-inline-start: 4px;
+    width: 30px;
+    height: 30px;
+    border-radius: 57px;
+    background: #FFFFFF;
+    transform: translateX(var(--ds-switch-shift, 0));
     transition: transform .2s ease;
 }
 
-.t-switch input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, var(--cyan), var(--violet));
-    border-color: transparent;
+/* On-state is driven by custom properties, not competing background/transform
+   declarations: the build merges the selector lists above into :is(), whose
+   specificity would otherwise outrank a plain :checked rule. */
+.t-switch input[type="checkbox"]:checked,
+.t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"] {
+    --ds-switch-track: var(--ds-brand-500);
+    --ds-switch-shift: 39px;
 }
 
-.t-switch input[type="checkbox"]:checked::after {
-    transform: translateX(16px);
+[dir="rtl"] .t-switch input[type="checkbox"]:checked,
+[dir="rtl"] .t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"] {
+    --ds-switch-shift: -39px;
 }
 
-.t-switch input[type="checkbox"]:focus-visible {
-    outline: 2px solid var(--cyan);
+.t-switch input[type="checkbox"]:focus-visible,
+.t-field:has(> input[type="checkbox"]) > input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
     outline-offset: 2px;
 }
 
@@ -218,8 +229,8 @@
 }
 
 .t-field:has(> input[type="checkbox"]:checked) {
-    border-color: rgba(0, 229, 255, .3);
-    background: rgba(0, 229, 255, .06);
+    border-color: var(--ds-brand-200);
+    background: var(--ds-brand-50);
 }
 
 .t-field:has(> input[type="checkbox"]) > .field-label {
@@ -229,39 +240,4 @@
 
 .t-field:has(> input[type="checkbox"]) > input[type="checkbox"] {
     order: 1;
-    appearance: none;
-    -webkit-appearance: none;
-    position: relative;
-    width: 36px;
-    height: 20px;
-    min-width: 36px;
-    flex-shrink: 0;
-    margin: 0;
-    border-radius: 999px;
-    background: var(--border2);
-    border: 1px solid var(--border2);
-    cursor: pointer;
-    transition: background .2s ease, border-color .2s ease;
-}
-
-.t-field:has(> input[type="checkbox"]) > input[type="checkbox"]::after {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
-    transition: transform .2s ease;
-}
-
-.t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"] {
-    background: linear-gradient(135deg, var(--cyan), var(--violet));
-    border-color: transparent;
-}
-
-.t-field:has(> input[type="checkbox"]:checked) > input[type="checkbox"]::after {
-    transform: translateX(16px);
 }

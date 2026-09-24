@@ -1,7 +1,7 @@
 import { emit } from '../core/events.js';
 
 let sbCollapsed = window.localStorage.getItem('tenant-sb-collapsed') === '1';
-let isDark = true;
+let isDark = false;
 let eventsBound = false;
 
 const byId = (id) => document.getElementById(id);
@@ -179,7 +179,7 @@ function initShell() {
     applyTheme(
         preferredTheme === 'light' || preferredTheme === 'dark'
             ? preferredTheme
-            : document.documentElement.dataset.theme || 'dark',
+            : document.documentElement.dataset.theme || 'light',
     );
     setDateLabel();
     syncSidebarLayout();

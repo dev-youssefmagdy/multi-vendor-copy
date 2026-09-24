@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ \App\Helpers\TenantNavigation::direction() }}"
-      data-theme="{{ in_array(request()->cookie('tenant_theme'), ['light', 'dark'], true) ? request()->cookie('tenant_theme') : 'dark' }}">
+      data-theme="{{ in_array(request()->cookie('tenant_theme'), ['light', 'dark'], true) ? request()->cookie('tenant_theme') : 'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -10,16 +10,19 @@
     'delay' => 0,
 ])
 
+{{-- KPI card. `trend` is a signed percentage (12, -4.5) or a string like "+12%". --}}
+
 @php $tag = $href ? 'a' : 'div'; @endphp
 
-<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => 'card '.($glow ? 'card-glow-'.$glow : '').' fu d'.min($delay, 6)]) }}>
-    <div class="stat-head">
-        <div>
-            <div class="eyebrow">{{ $label }}</div>
-            <div class="D stat-value">{{ $value }}</div>
-        </div>
-        <div class="mini-stat-dot {{ $dot }}">{!! $icon !!}</div>
+<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => 'card t-kpi fu d'.min($delay, 6)]) }}>
+    <div class="t-kpi-head">
+        <span class="t-kpi-label">{{ $label }}</span>
+        @if($trend !== null && $trend !== '')
+            <x-tenant::trend :value="$trend" />
+        @elseif($icon)
+            <span class="t-kpi-icon">{!! $icon !!}</span>
+        @endif
     </div>
-    @if($caption)<p class="panel-copy">{{ $caption }}</p>@endif
-    @if($trend)<p class="t-stat-trend">{{ $trend }}</p>@endif
+    <div class="t-kpi-value">{{ $value }}</div>
+    @if($caption)<p class="t-kpi-caption">{{ $caption }}</p>@endif
 </{{ $tag }}>

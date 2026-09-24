@@ -16,8 +16,8 @@ final class UiKitController extends PanelController
     public function __invoke(): \Illuminate\View\View
     {
         $stats = Metric::cards([
-            ['label' => 'Revenue', 'value' => 128430.5, 'format' => 'currency', 'caption' => 'Last 30 days', 'dot' => 'dot-cyan'],
-            ['label' => 'Orders', 'value' => 342, 'format' => 'number', 'caption' => 'Last 30 days', 'dot' => 'dot-violet'],
+            ['label' => 'Collected Sales', 'value' => 3000, 'format' => 'currency', 'caption' => 'Paid order value captured in this tenant', 'dot' => 'dot-cyan', 'trend' => 12],
+            ['label' => 'Orders', 'value' => 342, 'format' => 'number', 'caption' => 'Last 30 days', 'dot' => 'dot-violet', 'trend' => -12],
             ['label' => 'Conversion', 'value' => 3.42, 'format' => 'percent', 'caption' => 'Visitors to orders', 'dot' => 'dot-green'],
         ]);
 

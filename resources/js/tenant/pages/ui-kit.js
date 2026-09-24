@@ -1,3 +1,4 @@
+import '@tenant-css/pages/ui-kit.css';
 import { toast } from '@tenant/core/toast.js';
 
 document.getElementById('ui-kit-rtl-toggle')?.addEventListener('click', () => {

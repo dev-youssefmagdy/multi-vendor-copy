@@ -23,12 +23,14 @@
     $genericMap = $map ?? [
         'active' => 'green', 'paid' => 'green', 'approved' => 'green', 'completed' => 'green',
         'delivered' => 'green', 'success' => 'green',
-        'pending' => 'amber', 'processing' => 'amber', 'in_progress' => 'amber', 'review' => 'amber',
+        'pending' => 'amber', 'pending_payment' => 'amber', 'unpaid' => 'amber', 'review' => 'amber',
+        'processing' => 'orange', 'in_progress' => 'orange',
+        'shipped' => 'blue', 'in_delivery' => 'blue',
         'rejected' => 'red', 'failed' => 'red', 'cancelled' => 'red', 'expired' => 'red', 'inactive' => 'red',
         'refunded' => 'violet', 'returned' => 'violet',
     ];
 
-    $color ??= $genericMap[$key] ?? 'cyan';
+    $color ??= $genericMap[$key] ?? 'gray';
 @endphp
 
-<span class="badge badge-{{ $color }}">{{ $label }}</span>
+<span class="badge badge-{{ $color }}"><span class="badge-dot"></span>{{ $label }}</span>

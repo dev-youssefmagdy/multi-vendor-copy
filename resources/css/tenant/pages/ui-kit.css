@@ -1,0 +1,21 @@
+/* UI kit page — layout helpers for the design-system showcase only */
+.ds-kit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, max-content));
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.ds-kit-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+    margin-top: 16px;
+}
+
+.ds-kit-stack {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}

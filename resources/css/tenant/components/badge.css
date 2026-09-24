@@ -1,0 +1,114 @@
+/* ── Status badges — x-tenant::badge / x-tenant::status-badge ─────────────
+   Pill with an 8px dot. Tones follow the design:
+     green  Delivered · orange Processing · amber Pending · blue Shipped
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: var(--ds-radius-pill);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+.t-scope .badge-dot {
+    width: 8px;
+    height: 8px;
+    margin: 0;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.t-scope .badge-green { background: var(--ds-success-bg); color: var(--ds-success); }
+.t-scope .badge-red { background: var(--ds-danger-bg); color: var(--ds-danger); }
+.t-scope .badge-amber { background: var(--ds-warning-bg); color: var(--ds-warning); }
+.t-scope .badge-orange { background: var(--ds-brand-50); color: var(--ds-brand-500); }
+.t-scope .badge-blue,
+.t-scope .badge-cyan { background: var(--ds-info-bg); color: var(--ds-info); }
+.t-scope .badge-violet { background: rgba(138, 56, 245, .1); color: #8A38F5; }
+.t-scope .badge-gray { background: var(--ds-gray-100); color: var(--ds-gray-500); border: 0; }
+
+[data-theme="dark"] .t-scope .badge-gray { background: var(--ds-input-bg); color: var(--ds-text-muted); }
+
+/* ── Trend pill — x-tenant::trend ("+12%" / "-12%") ──────────────────────── */
+
+.t-scope .t-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    padding: 2px 4px;
+    border-radius: var(--ds-radius-pill);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.t-scope .t-trend svg { width: 24px; height: 24px; flex-shrink: 0; }
+.t-scope .t-trend-up { background: var(--ds-success-bg); color: var(--ds-success); }
+.t-scope .t-trend-down { background: var(--ds-danger-bg); color: var(--ds-danger); }
+.t-scope .t-trend-flat { background: var(--ds-gray-100); color: var(--ds-gray-500); }
+
+/* ── KPI card — x-tenant::stat-card ───────────────────────────────────────── */
+
+.t-scope .t-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 12px 12px;
+    border: 0;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    box-shadow: none;
+    color: inherit;
+    text-decoration: none;
+}
+
+.t-scope .t-kpi::before { display: none; }
+
+.t-scope a.t-kpi:hover { box-shadow: var(--ds-shadow-menu); }
+
+.t-scope .t-kpi-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+}
+
+.t-scope .t-kpi-label {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+.t-scope .t-kpi-icon {
+    display: inline-flex;
+    color: var(--ds-brand-500);
+}
+
+.t-scope .t-kpi-value {
+    font-size: clamp(24px, 2.5vw, 32px);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--ds-text);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+}
+
+.t-scope .t-kpi-caption {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ds-text-subtle);
+}

@@ -1,0 +1,141 @@
+/* ── Buttons — x-tenant::btn / x-tenant::submit / .btn ─────────────────────
+   Sizes      default = Small (40px) · .btn-md (48px) · .btn-lg (56px)
+              .btn-sm is a compact 32px size for dense table rows.
+   Variants   primary · secondary (outline) · ghost · danger
+   States     :hover · :active (pressed) · :disabled / .is-disabled
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--ds-radius-btn);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.t-scope .btn svg {
+    flex-shrink: 0;
+}
+
+.t-scope .btn:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 2px;
+}
+
+.t-scope .btn-md { min-height: 48px; padding: 12px 20px; }
+.t-scope .btn-lg { min-height: 56px; padding: 16px 24px; }
+.t-scope .btn-sm { min-height: 32px; padding: 6px 12px; font-size: 13px; line-height: 16px; }
+
+/* Primary */
+.t-scope .btn-primary {
+    background: var(--ds-brand-500);
+    color: var(--ds-on-brand);
+}
+.t-scope .btn-primary:hover { background: var(--ds-brand-600); }
+.t-scope .btn-primary:active { background: var(--ds-brand-900); }
+
+/* Secondary — outline */
+.t-scope .btn-secondary {
+    background: transparent;
+    border-color: var(--ds-brand-500);
+    color: var(--ds-brand-500);
+}
+.t-scope .btn-secondary:hover { background: var(--ds-brand-50); }
+.t-scope .btn-secondary:active { border-color: var(--ds-brand-900); color: var(--ds-brand-900); }
+
+/* Ghost */
+.t-scope .btn-ghost {
+    background: transparent;
+    color: var(--ds-text-muted);
+}
+.t-scope .btn-ghost:hover { background: var(--ds-brand-50); color: var(--ds-brand-500); }
+
+/* Danger — outline */
+.t-scope .btn-danger {
+    background: transparent;
+    border-color: var(--ds-danger);
+    color: var(--ds-danger);
+}
+.t-scope .btn-danger:hover { background: var(--ds-danger-bg); }
+
+/* Disabled — last so it wins over every variant's hover/active */
+.t-scope .btn:disabled,
+.t-scope .btn.is-disabled,
+.t-scope .btn[aria-disabled="true"] {
+    background: var(--ds-gray-500);
+    border-color: transparent;
+    color: var(--ds-on-brand);
+    cursor: not-allowed;
+}
+.t-scope .btn-secondary:disabled,
+.t-scope .btn-secondary.is-disabled,
+.t-scope .btn-danger:disabled,
+.t-scope .btn-danger.is-disabled {
+    background: transparent;
+    border-color: var(--ds-gray-500);
+    color: var(--ds-gray-500);
+}
+
+/* ── Action tile — x-tenant::btn variant="tile" ("Add to Flash Sale") ─────
+   default (outlined) → hover (soft orange) → active/pressed (solid orange).
+   Force a look with .btn-tile-soft / .btn-tile-solid, or toggle
+   aria-pressed="true" / .is-active for a selected state.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope .btn-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 60px;
+    padding: 0 16px;
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    color: var(--ds-text-muted);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.t-scope .btn-tile svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+.t-scope .btn-tile:hover,
+.t-scope .btn-tile-soft {
+    background: var(--ds-brand-100);
+    border-color: transparent;
+    color: var(--ds-text-strong);
+}
+
+.t-scope .btn-tile:active,
+.t-scope .btn-tile.is-active,
+.t-scope .btn-tile[aria-pressed="true"],
+.t-scope .btn-tile-solid {
+    background: var(--ds-brand-500);
+    border-color: transparent;
+    color: var(--ds-on-brand);
+}
+
+.t-scope .btn-tile:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 2px;
+}
+
+.t-scope .btn-tile:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
