@@ -1,0 +1,281 @@
+/* ── Top bar ───────────────────────────────────────────────────────────────
+   74px white bar: country select · search · (bell, theme) · profile card.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope {
+    --ds-header-h: 74px;
+    --ds-header-field: #F5F5F5;
+    --ds-header-profile: #E7E7E7;
+}
+
+[data-theme="dark"] .t-scope {
+    --ds-header-field: #232326;
+    --ds-header-profile: #2c2c30;
+}
+
+.t-scope #nav {
+    height: var(--ds-header-h);
+    justify-content: space-between;
+    gap: 24px;
+    padding: 12px 24px;
+    background: var(--ds-surface);
+    border-bottom: 0;
+    backdrop-filter: none;
+}
+
+/* Everything below the bar shifts with its new height */
+.t-scope #nav2 { top: var(--ds-header-h); }
+.t-scope #mn { margin-top: var(--ds-header-h); min-height: calc(100vh - var(--ds-header-h)); }
+body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-height: calc(100vh - var(--ds-header-h) - 36px); }
+
+.t-scope #nav svg { flex-shrink: 0; }
+
+/* Hamburger — only needed when the sidebar is off-canvas */
+.t-scope #nav .ham {
+    display: none;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--ds-header-field);
+    color: var(--ds-text-nav);
+}
+
+/* Shared gray field (country select + search) */
+.t-scope .hd-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--ds-header-field);
+    color: var(--ds-text-nav);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.t-scope .hd-field svg { width: 24px; height: 24px; }
+
+.t-scope .hd-country {
+    justify-content: space-between;
+    flex: 0 1 261px;
+    min-width: 228px;
+    padding: 8px;
+    cursor: pointer;
+    text-align: start;
+}
+
+.t-scope .hd-field-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.t-scope .hd-field-main > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.t-scope .hd-search {
+    flex: 0 1 382px;
+    min-width: 160px;
+    padding: 8px 16px;
+    cursor: text;
+}
+
+.t-scope .hd-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ds-text);
+    font: inherit;
+}
+
+.t-scope .hd-search input::placeholder { color: var(--ds-text-nav); }
+.t-scope .hd-search input::-webkit-search-cancel-button { cursor: pointer; }
+
+.t-scope .hd-field:focus-within,
+.t-scope .hd-country:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 0;
+}
+
+/* Right cluster: 45px between the icon pair and the profile card */
+.t-scope .hd-end {
+    display: flex;
+    align-items: center;
+    gap: 45px;
+    flex-shrink: 0;
+}
+
+.t-scope .hd-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.t-scope .hd-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 8px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: filter .15s ease;
+}
+
+.t-scope .hd-icon-btn:hover { filter: brightness(.95); }
+
+.t-scope .hd-icon-btn:focus-visible,
+.t-scope .hd-profile-trigger:focus-visible {
+    outline: 2px solid var(--ds-brand-500);
+    outline-offset: 2px;
+}
+
+.t-scope .hd-icon-btn svg { width: 24px; height: 24px; }
+
+/* Bell: gray tile, orange icon */
+.t-scope .hd-bell {
+    background: var(--ds-header-field);
+    color: var(--ds-brand-500);
+}
+
+.t-scope .hd-bell .notif-badge { border-color: var(--ds-surface); }
+
+/* Theme: black tile with a moon; flips to a sun in dark mode */
+.t-scope .hd-theme {
+    background: var(--ds-black);
+    color: var(--ds-on-brand);
+}
+
+.t-scope .hd-theme-sun { display: none; }
+
+[data-theme="dark"] .t-scope .hd-theme {
+    background: var(--ds-on-brand);
+    color: var(--ds-black);
+}
+
+[data-theme="dark"] .t-scope .hd-theme-moon { display: none; }
+[data-theme="dark"] .t-scope .hd-theme-sun { display: block; }
+
+/* Profile card */
+.t-scope .hd-profile {
+    position: relative;
+}
+
+.t-scope .hd-profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 211px;
+    height: 50px;
+    padding: 4px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--ds-header-profile);
+    color: var(--ds-text);
+    font-family: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.t-scope .hd-profile-trigger .t-avatar {
+    flex-shrink: 0;
+    background: #080808;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.t-scope .hd-profile-meta {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.t-scope .hd-profile-name {
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.t-scope .hd-profile-role {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ds-text-strong);
+}
+
+.t-scope .hd-profile-chevron {
+    width: 24px;
+    height: 24px;
+    color: #161616;
+    transition: transform .2s ease;
+}
+
+[data-theme="dark"] .t-scope .hd-profile-chevron { color: var(--ds-text); }
+
+.t-scope .hd-profile.is-open .hd-profile-chevron { transform: rotate(180deg); }
+
+/* Profile menu */
+.t-scope .hd-profile-menu {
+    min-width: 100%;
+    padding: 8px;
+    border: 0;
+    border-radius: var(--ds-radius-md);
+    background: var(--ds-surface);
+    box-shadow: var(--ds-shadow-menu);
+}
+
+.t-scope .hd-profile-menu .t-dropdown-item {
+    font-size: 14px;
+    padding: 8px 10px;
+}
+
+.t-scope .hd-menu-user {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 10px 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.t-scope .hd-menu-user-name { font-size: 14px; font-weight: 600; color: var(--ds-text); }
+.t-scope .hd-menu-user-role { font-size: 12px; color: var(--ds-text-muted); }
+
+.t-scope .hd-menu-plan { color: var(--ds-text); text-decoration: none; }
+.t-scope .hd-menu-plan small { display: block; font-size: 11px; color: var(--ds-text-muted); }
+.t-scope .hd-menu-plan.is-expired,
+.t-scope .hd-menu-plan.is-expired small { color: var(--ds-danger); }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1279px) {
+    .t-scope .hd-end { gap: 16px; }
+}
+
+@media (max-width: 1023px) {
+    .t-scope #nav { padding: 12px 16px; gap: 12px; }
+    .t-scope #nav .ham { display: flex; }
+    .t-scope .hd-country { display: none; }
+    .t-scope .hd-end { margin-inline-start: auto; }
+}
+
+@media (max-width: 639px) {
+    .t-scope .hd-profile-trigger { min-width: 0; padding: 4px 8px; }
+}
