@@ -144,7 +144,10 @@
                                 </div>
                                 <div class="db-legend-inline" data-legend-for="{{ $canvas }}"></div>
                             </div>
-                            <div class="an-canvas"><canvas id="{{ $canvas }}" role="img" aria-label="{{ $chartCard['title'] }}"></canvas></div>
+                            {{-- On mobile the plot is wider than the card and scrolls sideways --}}
+                            <div class="an-canvas-scroll">
+                                <div class="an-canvas"><canvas id="{{ $canvas }}" role="img" aria-label="{{ $chartCard['title'] }}"></canvas></div>
+                            </div>
                         </section>
                     @elseif(!empty($chartCard['metrics']))
                         <section class="an-card an-metrics-card">

@@ -2,6 +2,8 @@
 // "download report" CSV (KPI cards + every table on the tab, all rows).
 import '@tenant-css/pages/analytics.css';
 import Chart from 'chart.js/auto';
+import Swiper from 'swiper';
+import 'swiper/css';
 import { on } from '@tenant/core/events.js';
 import { toast } from '@tenant/core/toast.js';
 
@@ -299,3 +301,34 @@ function init() {
 }
 
 init();
+
+// KPI cards: a Swiper carousel (1.25 cards per view) on mobile only; larger
+// screens keep the grid (Swiper classes are added/removed with the breakpoint).
+(() => {
+    const root = document.querySelector('[data-analytics-kpis]');
+    if (!root) return;
+
+    const mobile = window.matchMedia('(max-width: 767px)');
+    const cards = [...root.children];
+    const wrapper = document.createElement('div');
+    let swiper = null;
+
+    const sync = () => {
+        if (mobile.matches && !swiper) {
+            wrapper.className = 'swiper-wrapper';
+            cards.forEach((card) => { card.classList.add('swiper-slide'); wrapper.append(card); });
+            root.append(wrapper);
+            root.classList.add('swiper');
+            swiper = new Swiper(root, { slidesPerView: 1.25, spaceBetween: 12, watchOverflow: true });
+        } else if (!mobile.matches && swiper) {
+            swiper.destroy(true, true);
+            swiper = null;
+            cards.forEach((card) => { card.classList.remove('swiper-slide'); root.append(card); });
+            wrapper.remove();
+            root.classList.remove('swiper');
+        }
+    };
+
+    sync();
+    mobile.addEventListener('change', sync);
+})();

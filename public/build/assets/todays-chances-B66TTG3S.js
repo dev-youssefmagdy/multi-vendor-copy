@@ -1,0 +1,1 @@
+/* empty css                  */import{t as e}from"./opportunities-onf9hp0c.js";/* empty css                       */e(document.querySelector(`.tc-grid`)||document);

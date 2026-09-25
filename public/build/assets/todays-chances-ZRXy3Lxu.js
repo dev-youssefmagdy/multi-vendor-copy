@@ -1,1 +1,0 @@
-/* empty css                  */import{t as e}from"./opportunities-BTVD2UIQ.js";/* empty css                       */e(document.querySelector(`.tc-grid`)||document);

@@ -78,7 +78,9 @@
         </div>
         <div class="db-legend-inline" data-legend-for="lineChart"></div>
     </div>
-    <div class="an-canvas"><canvas id="lineChart" role="img" aria-label="Customer momentum"></canvas></div>
+    <div class="an-canvas-scroll">
+        <div class="an-canvas"><canvas id="lineChart" role="img" aria-label="Customer momentum"></canvas></div>
+    </div>
 </section>
 
 {{-- Customer Ranking --}}

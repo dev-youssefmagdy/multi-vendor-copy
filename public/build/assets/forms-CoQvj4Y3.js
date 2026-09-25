@@ -1,1 +1,0 @@
-import{t as e}from"./forms-DilfWmbn.js";export{e as TenantForm};
