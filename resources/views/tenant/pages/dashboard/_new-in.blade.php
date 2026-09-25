@@ -36,7 +36,7 @@
         </a>
     </div>
 
-    <div class="db-opp-slider swiper" data-opp-slider aria-label="New in products">
+    <div class="db-opp-slider is-newin swiper" data-opp-slider data-mobile-view="1.6" aria-label="New in products">
         <div class="swiper-wrapper">
             @foreach($newProducts as $product)
                 <article class="db-opp swiper-slide">

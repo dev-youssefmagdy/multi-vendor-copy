@@ -1678,22 +1678,45 @@
 
     .db-country-select { width: 100%; height: 54px; font-size: 14px; }
 
-    .db-opp-slider .db-opp { width: 230px; border-radius: 12.33px; }
+    .db-opp-slider.is-opps .db-opp { width: 230px; border-radius: 12.33px; }
     /* Sliders with data-mobile-view get their slide width from Swiper (e.g. 1.5 per view) */
-    .db-opp-slider[data-mobile-view] .db-opp { width: auto; }
+    .db-opp-slider.is-opps[data-mobile-view] .db-opp { width: auto; }
 
-    .db-opp-slider .db-opp-media,
-    .db-opp-slider .db-opp-body { zoom: .5137; }
+    .db-opp-slider.is-opps .db-opp-media,
+    .db-opp-slider.is-opps .db-opp-body { zoom: .5137; }
 
     /* Gauges stay in one row of four inside the (zoomed) card */
-    .db-opp-slider .db-opp-gauges { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .db-opp-slider.is-opps .db-opp-gauges { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
     /* Price boxes: design text sizes, divided by the zoom */
-    .db-opp-slider .db-opp-stat-label { font-size: 19.5px; }  /* → 10px */
-    .db-opp-slider .db-opp-stat strong { font-size: 27.3px; } /* → 14px */
-    .db-opp-slider .db-opp-stat small { font-size: 19.5px; }  /* → 10px */
-    .db-opp-slider .db-opp-stat.is-dark { align-items: center; text-align: center; }
-    .db-opp-slider .db-opp-stat.is-dark .db-opp-stat-label,
-    .db-opp-slider .db-opp-stat.is-dark small { font-size: 23.4px; } /* → 12px */
-    .db-opp-slider .db-opp-stat.is-dark strong { font-size: 38.9px; } /* → 20px */
+    .db-opp-slider.is-opps .db-opp-stat-label { font-size: 19.5px; }  /* → 10px */
+    .db-opp-slider.is-opps .db-opp-stat strong { font-size: 27.3px; } /* → 14px */
+    .db-opp-slider.is-opps .db-opp-stat small { font-size: 19.5px; }  /* → 10px */
+    .db-opp-slider.is-opps .db-opp-stat.is-dark { align-items: center; text-align: center; }
+    .db-opp-slider.is-opps .db-opp-stat.is-dark .db-opp-stat-label,
+    .db-opp-slider.is-opps .db-opp-stat.is-dark small { font-size: 23.4px; } /* → 12px */
+    .db-opp-slider.is-opps .db-opp-stat.is-dark strong { font-size: 38.9px; } /* → 20px */
+}
+
+/* ── Mobile: New in products (design: 375px, 1.6 cards per view) ─────────
+   The card is the desktop card at 47.05% (448 → 210.8px); description and
+   price boxes keep the design's larger text (sizes below ÷ .4705).       */
+@media (max-width: 767px) {
+    .db-opp-slider.is-newin .db-opp { width: auto; border-radius: 11.29px; }
+    .db-opp-slider.is-newin .db-opp-media,
+    .db-opp-slider.is-newin .db-opp-body { zoom: .4705; }
+
+    .db-opp-slider.is-newin .db-opp-desc { font-size: 21.25px; }              /* → 10px */
+
+    .db-opp-slider.is-newin .db-opp-stats { grid-template-columns: minmax(0, 105fr) minmax(0, 87fr); }
+    .db-opp-slider.is-newin .db-opp-stat.is-dark { grid-column: auto; }
+    .db-opp-slider.is-newin .db-opp-stat-label,
+    .db-opp-slider.is-newin .db-opp-stat small {
+        display: block;
+        overflow: hidden;
+        font-size: 21.25px;                                                   /* → 10px */
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .db-opp-slider.is-newin .db-opp-stat strong { font-size: 25.5px; }        /* → 12px */
 }
