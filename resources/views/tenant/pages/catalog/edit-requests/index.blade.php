@@ -3,6 +3,8 @@
 @section('title', 'Product Edit Requests')
 
 @section('content')
+    @include('tenant.pages.catalog._module-nav', ['activeTab' => 'edit-requests'])
+
     <x-tenant::page-header title="Product Edit Requests" badge="Catalog" description="When you edit a product name or description, it goes through admin review before going live. Track your requests here." />
 
     <x-tenant::stats-grid :stats="$stats" :columns="3" />

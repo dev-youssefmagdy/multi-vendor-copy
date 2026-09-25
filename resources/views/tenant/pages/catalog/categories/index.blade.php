@@ -3,6 +3,8 @@
 @section('title', 'Categories')
 
 @section('content')
+    @include('tenant.pages.catalog._module-nav', ['activeTab' => 'categories'])
+
     <x-tenant::page-header title="Categories" badge="Catalog" description="Manage tenant category ordering, featured state, and translated storefront copy.">
         <x-slot:actions>
             <a href="{{ route('tenant.categories.sort') }}" class="btn btn-secondary">Sort Categories</a>

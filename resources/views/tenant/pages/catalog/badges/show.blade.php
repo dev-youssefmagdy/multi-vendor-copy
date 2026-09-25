@@ -3,6 +3,8 @@
 @section('title', $badgeTitle)
 
 @section('content')
+    @include('tenant.pages.catalog._module-nav', ['activeTab' => $badge->text])
+
     <x-tenant::page-header :title="$badgeTitle" badge="Catalog" description="Select which products appear under the {{ $badge->text }} badge, then click Save.">
         <x-slot:actions>
             <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">Sort Order</a>

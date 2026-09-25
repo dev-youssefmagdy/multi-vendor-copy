@@ -1,1 +1,0 @@
-import{t as e}from"./opportunities-D8WI917d.js";e(document.querySelector(`.tc-grid`)||document);

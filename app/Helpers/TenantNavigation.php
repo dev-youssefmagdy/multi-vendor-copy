@@ -23,22 +23,9 @@ class TenantNavigation
                 'items' => [
                     ['type' => 'link', 'label' => 'Dashboard', 'route' => 'tenant.dashboard', 'icon' => 'dashboard', 'permission' => 'dashboard.view'],
                     ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.todays-chances', 'icon' => 'plans', 'permission' => 'dashboard.view'],
-                    [
-                        'type' => 'group',
-                        'label' => 'Products',
-                        'icon' => 'products',
-                        'children' => [
-                            ['label' => 'Products', 'route' => 'tenant.products.index', 'permission' => 'catalog.products.manage'],
-                            ['label' => 'Own Products', 'route' => 'tenant.own-products.index', 'permission' => 'catalog.products.manage'],
-                            ['label' => 'Edit Requests', 'route' => 'tenant.products.edit-requests', 'permission' => 'catalog.products.manage', 'badge' => self::pendingEditRequestsCount() ?: null],
-                            ['label' => 'Categories', 'route' => 'tenant.categories.index', 'permission' => 'catalog.categories.manage'],
-                            ['label' => 'New In Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'new-in'], 'permission' => 'catalog.badges.manage'],
-                            ['label' => 'Best Selling Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'best-selling'], 'permission' => 'catalog.badges.manage'],
-                            ['label' => 'Featured Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'featured'], 'permission' => 'catalog.badges.manage'],
-                            ['label' => 'Recommended Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'recommended'], 'permission' => 'catalog.badges.manage'],
-                            ['label' => 'Trending Now Products', 'route' => 'tenant.badges.show', 'routeParameters' => ['badge' => 'trending-now'], 'permission' => 'catalog.badges.manage'],
-                        ]
-                    ],
+                    // One entry for the whole Products module; its pages are tabs on each page (catalog/_module-nav).
+                    ['type' => 'link', 'label' => 'Products', 'route' => 'tenant.products.index', 'icon' => 'products', 'permission' => 'catalog.products.manage',
+                        'match' => ['tenant.products.', 'tenant.own-products.', 'tenant.categories.', 'tenant.badges.']],
                     [
                         'type' => 'group',
                         'label' => 'Orders',
@@ -524,6 +511,13 @@ class TenantNavigation
 
     public static function isActive(array $item, ?string $routeName): bool
     {
+        // Optional 'match' route-name prefixes keep a single entry active across a whole module.
+        foreach ($item['match'] ?? [] as $prefix) {
+            if ($routeName !== null && str_starts_with($routeName, $prefix)) {
+                return true;
+            }
+        }
+
         return self::itemMatchesRoute($item, $routeName) || self::routeMatchesFamily($item['route'] ?? '', $routeName);
     }
 

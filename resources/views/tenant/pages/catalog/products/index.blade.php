@@ -2,33 +2,91 @@
 
 @section('title', 'Products')
 
+@php
+    $page = $products->currentPage();
+    $lastPage = max(1, $products->lastPage());
+    $pages = collect(range(1, $lastPage))
+        ->filter(fn ($n) => $n === 1 || $n === $lastPage || abs($n - $page) <= 1)
+        ->values();
+    $hasFilters = filled(request('search')) || filled(request('status')) || filled(request('stock')) || filled(request('category')) || !empty($imageSearchIds);
+@endphp
+
 @section('content')
-    <x-tenant::page-header title="Products" badge="Catalog" description="Manage tenant-scoped product details, pricing, availability, and featured status.">
-        <x-slot:actions>
-            <a href="{{ route('tenant.products.sort') }}" class="btn btn-secondary">Sort Products</a>
-        </x-slot:actions>
-    </x-tenant::page-header>
+    <div class="pm-page">
+        @include('tenant.pages.catalog._module-nav', ['activeTab' => 'products'])
 
-    <x-tenant::stats-grid :stats="$stats" />
+        {{-- Filters: same options as the former table filters, applied through the URL --}}
+        <form class="pm-filters fu d1" method="GET" action="{{ route('tenant.products.index') }}" data-pm-filters>
+            @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
+            @if(!empty($imageSearchIds))<input type="hidden" name="image_ids" value="{{ implode(',', $imageSearchIds) }}">@endif
+            <select name="status" class="field-control" aria-label="Status" data-pm-autosubmit>
+                <option value="">All statuses</option>
+                <option value="active" @selected(request('status') === 'active')>Active</option>
+                <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
+            </select>
+            <select name="stock" class="field-control" aria-label="Stock" data-pm-autosubmit>
+                <option value="">All stock</option>
+                <option value="in" @selected(request('stock') === 'in')>In stock</option>
+                <option value="partial" @selected(request('stock') === 'partial')>Partially out of stock</option>
+                <option value="out" @selected(request('stock') === 'out')>Out of stock</option>
+            </select>
+            <select name="category" class="field-control" aria-label="Category" data-pm-autosubmit>
+                <option value="">All categories</option>
+                @foreach($categoryOptions as $id => $name)
+                    <option value="{{ $id }}" @selected((string) request('category') === (string) $id)>{{ $name }}</option>
+                @endforeach
+            </select>
+            @if($hasFilters)
+                <a href="{{ route('tenant.products.index') }}" class="pm-clear">Clear filters</a>
+            @endif
+            <a href="{{ route('tenant.products.sort') }}" class="pm-sort">Sort products</a>
+        </form>
 
-    <x-tenant::filters-card target="products-table" title="Filters">
-        <div class="products-search-wrap">
-            <x-tenant::input name="search" label="Search" placeholder="Name or slug" />
-            <button type="button" class="products-search-camera-btn" data-image-search-open="tenant-image-search-modal" title="Search by image">
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/>
-                    <circle cx="12" cy="13" r="3.2"/>
-                </svg>
-            </button>
-        </div>
-        <div class="products-image-search-status" data-products-image-search-status hidden></div>
-        <x-tenant::select2 name="status" label="Status" :options="['active' => 'Active', 'inactive' => 'Inactive']" placeholder="All" />
-        <x-tenant::select2 name="stock" label="Stock" :options="['in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']" placeholder="All" />
-        <x-tenant::select2 name="category" label="Category" :options="$categoryOptions" placeholder="All Categories" />
-        <input type="hidden" name="image_ids" data-products-image-ids-input>
-    </x-tenant::filters-card>
+        @if(!empty($imageSearchIds))
+            <p class="pm-note fu d1">Showing products matching your image search.</p>
+        @endif
 
-    <x-tenant::datatable id="products-table" :url="route('tenant.products.data')" :columns="$columns" title="Vendor Products" quick-search />
+        @if($products->isEmpty())
+            <div class="pm-empty fu d2">
+                <h3>{{ $hasFilters ? 'No products match these filters' : 'No products yet' }}</h3>
+                <p>{{ $hasFilters ? 'Try a different search or clear the filters.' : 'Add your first product to see it here.' }}</p>
+            </div>
+        @else
+            <div class="pm-grid fu d2">
+                @foreach($products as $product)
+                    @include('tenant.pages.catalog.products._card', ['product' => $product, 'central' => $centralSnapshots[$product->central_product_id] ?? null])
+                @endforeach
+            </div>
+        @endif
+
+        @if($products->total() > 0)
+            <nav class="tc-pagination" aria-label="Products pages">
+                <p>Show <strong>{{ $products->count() }}</strong> of {{ $products->total() }} result</p>
+                <div class="tc-pages">
+                    @if($products->onFirstPage())
+                        <span class="tc-page-btn is-text is-disabled" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}" class="tc-page-btn is-text" rel="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</a>
+                    @endif
+
+                    @foreach($pages as $i => $n)
+                        @if($i > 0 && $n - $pages[$i - 1] > 1)<span class="tc-page-gap" aria-hidden="true">…</span>@endif
+                        @if($n === $page)
+                            <span class="tc-page-btn is-current" aria-current="page">{{ $n }}</span>
+                        @else
+                            <a href="{{ $products->url($n) }}" class="tc-page-btn">{{ $n }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}" class="tc-page-btn is-next" rel="next">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                    @else
+                        <span class="tc-page-btn is-next is-disabled" aria-disabled="true">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+                    @endif
+                </div>
+            </nav>
+        @endif
+    </div>
 
     @include('tenant.pages.catalog.products._modals.social')
     @include('tenant.pages.catalog.products._modals.video-ad')
@@ -40,5 +98,5 @@
 @endsection
 
 @push('tenant-vite')
-    @vite(['resources/js/tenant/pages/catalog/products-index.js'])
+    @vite(['resources/js/tenant/pages/catalog/products-index.js', 'resources/js/tenant/pages/catalog/products-grid.js'])
 @endpush

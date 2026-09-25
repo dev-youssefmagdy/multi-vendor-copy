@@ -3,6 +3,8 @@
 @section('title', 'My Products')
 
 @section('content')
+    @include('tenant.pages.catalog._module-nav', ['activeTab' => 'own-products'])
+
     <x-tenant::page-header title="My Products" badge="Own Catalog" description="Manage products you have added directly — these are not shipped from central inventory.">
         <x-slot:actions>
             <a href="{{ route('tenant.own-products.create') }}" class="btn btn-primary">Add Product</a>

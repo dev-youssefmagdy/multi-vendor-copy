@@ -26,12 +26,29 @@ final class ProductsListController extends PanelController
     {
         $stats = $this->repo->productStats();
 
+        // Card grid (Products tab): one page of products using the same filters as the
+        // data table, read from the query string. Central snapshots are batched per page.
+        $imageIds = array_values(array_filter(array_map('intval', explode(',', (string) $request->query('image_ids', '')))));
+        $products = $this->repo->queryProducts([
+            'search' => $request->query('search'),
+            'status' => $request->query('status', ''),
+            'stock' => $request->query('stock', ''),
+            'category' => $request->query('category'),
+            'image_ids' => $imageIds,
+        ])->paginate(12)->withQueryString();
+        $centralSnapshots = $this->repo->centralProductSnapshots(
+            $products->getCollection()->pluck('central_product_id')->filter()->unique()->values()->all()
+        );
+
         return view('tenant.pages.catalog.products.index', [
             'stats' => Metric::cards([
                 ['label' => 'Products', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Products in this tenant catalog', 'dot' => 'dot-cyan'],
                 ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Currently saleable products', 'dot' => 'dot-green'],
                 ['label' => 'Featured', 'value' => $stats['featured'], 'format' => 'number', 'caption' => 'Homepage promoted products', 'dot' => 'dot-amber'],
             ]),
+            'products' => $products,
+            'centralSnapshots' => $centralSnapshots,
+            'imageSearchIds' => $imageIds,
             'categoryOptions' => $this->categoryOptions(),
             'columns' => [
                 TableColumn::index(),

@@ -6,6 +6,16 @@ import { openModal, closeModal } from '../../core/modals.js';
 import { on, emit } from '../../core/events.js';
 import { computePrices, renderPriceTable } from './products-price-list.js';
 
+// Refresh the product list after a change: the data table when present,
+// otherwise (card grid) the page itself.
+function reloadProducts() {
+    if (document.getElementById('products-table')) {
+        emit('tenant:table:reload', { selector: '#products-table' });
+    } else {
+        window.location.reload();
+    }
+}
+
 const PLATFORMS = ['instagram', 'facebook', 'twitter', 'linkedin', 'tiktok', 'generic'];
 const PLATFORM_LABELS = {
     instagram: 'Instagram',
@@ -437,7 +447,7 @@ async function savePriceList() {
     try {
         await put(`/admin/products/${priceListState.productId}/price-list`, payload);
         closeModal('product-price-list-modal');
-        emit('tenant:table:reload', { selector: '#products-table' });
+        reloadProducts();
     } catch {
         /* handled globally */
     }
@@ -454,6 +464,11 @@ function openVideoAdModal() {
 function updateImageSearchChip(ids) {
     const status = document.querySelector('[data-products-image-search-status]');
     const input = document.querySelector('[data-products-image-ids-input]');
+
+    // Card-grid page: no table chip — products-grid.js applies the results via the URL.
+    if (!status || !input) {
+        return;
+    }
 
     if (ids && ids.length) {
         input.value = ids.join(',');
@@ -485,7 +500,7 @@ function updateImageSearchChip(ids) {
         }
     }
 
-    emit('tenant:table:reload', { selector: '#products-table' });
+    reloadProducts();
 }
 
 on('tenant:image-search:results', ({ ids }) => updateImageSearchChip(ids || []));
