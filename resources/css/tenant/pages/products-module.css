@@ -217,3 +217,12 @@
     .pm-tabs .pm-tab.is-active { font-size: 18px; height: 50px; }
     .pm-search { width: 100%; }
 }
+
+/* Page-specific secondary actions under the module header (e.g. Sort categories) */
+.pm-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+}

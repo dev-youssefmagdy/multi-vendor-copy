@@ -13,12 +13,9 @@
     @else
     @include('tenant.pages.catalog._module-nav', ['activeTab' => $badge->text])
 
-    <x-tenant::page-header :title="$badgeTitle" badge="Catalog" description="Select which products appear under the {{ $badge->text }} badge, then click Save.">
-        <x-slot:actions>
-            <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">Sort Order</a>
-            <a href="{{ route('tenant.products.index') }}" class="btn btn-secondary">Back to Products</a>
-        </x-slot:actions>
-    </x-tenant::page-header>
+    <div class="pm-page-actions">
+        <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">Sort order</a>
+    </div>
 
     <x-tenant::stats-grid :stats="$stats" :columns="2" />
 

@@ -3,14 +3,11 @@
 @section('title', 'Categories')
 
 @section('content')
-    @include('tenant.pages.catalog._module-nav', ['activeTab' => 'categories'])
+    @include('tenant.pages.catalog._module-nav', ['activeTab' => 'categories', 'addUrl' => route('tenant.categories.create'), 'addLabel' => 'Add category'])
 
-    <x-tenant::page-header title="Categories" badge="Catalog" description="Manage tenant category ordering, featured state, and translated storefront copy.">
-        <x-slot:actions>
-            <a href="{{ route('tenant.categories.sort') }}" class="btn btn-secondary">Sort Categories</a>
-            <a href="{{ route('tenant.categories.create') }}" class="btn btn-primary">Add Category</a>
-        </x-slot:actions>
-    </x-tenant::page-header>
+    <div class="pm-page-actions">
+        <a href="{{ route('tenant.categories.sort') }}" class="btn btn-secondary">Sort categories</a>
+    </div>
 
     <x-tenant::stats-grid :stats="$stats" />
 

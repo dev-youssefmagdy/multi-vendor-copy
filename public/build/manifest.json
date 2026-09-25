@@ -3489,7 +3489,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-Bt8YXkXu.js",
+    "file": "assets/module-nav-SkCwVl9B.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3497,7 +3497,8 @@
       "_swiper-DZ3nuP-o.js"
     ],
     "css": [
-      "assets/module-nav-DRHsNaWN.css"
+      "assets/module-nav-DPRY6sUF.css",
+      "assets/dashboard-D8JC5Cn6.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {

@@ -1,5 +1,6 @@
 // Products module header: the module tabs are a swipeable carousel that
 // starts scrolled to the active tab.
+import '@tenant-css/pages/dashboard.css'; // header title/description (db-welcome)
 import '@tenant-css/pages/products-module.css';
 import Swiper from 'swiper';
 import { FreeMode, Mousewheel } from 'swiper/modules';

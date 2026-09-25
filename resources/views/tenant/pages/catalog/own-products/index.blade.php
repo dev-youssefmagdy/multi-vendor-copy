@@ -12,14 +12,7 @@
 
 @section('content')
     <div class="pm-page">
-        @include('tenant.pages.catalog._module-nav', [
-            'activeTab' => 'own-products',
-            'heading' => [
-                'title' => 'Own Products',
-                'sub' => 'Manage tenant-scoped product details, pricing, availability, and featured status.',
-                'add' => route('tenant.own-products.create'),
-            ],
-        ])
+        @include('tenant.pages.catalog._module-nav', ['activeTab' => 'own-products', 'addUrl' => route('tenant.own-products.create')])
 
         @if($products->total() === 0)
             {{-- No own products yet: sample cards (dummy data) for now. --}}
