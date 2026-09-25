@@ -11,7 +11,7 @@
                     <p class="db-welcome-sub">{{ $description }}</p>
                 </div>
                 <div class="rq-actions">
-                    <a href="{{ route('tenant.brand-requests.index') }}" class="btn btn-lg od-download">Back</a>
+                    <a href="{{ route('tenant.brand-requests.index') }}" class="btn btn-lg od-download rq-back"><svg class="rq-back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12h17M3.5 12c0-.7 4.3-5.3 5.75-6.25M3.5 12c0 .7 4.3 5.3 5.75 6.25"/></svg>Back</a>
                     <button type="submit" class="btn btn-primary btn-lg rq-add">Submit Request</button>
                 </div>
             </div>
@@ -31,6 +31,9 @@
                         accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.zip"
                         help="Optional, max 5 files &middot; 10 MB each" />
                 </div>
+
+                {{-- Mobile only: the design repeats Submit at the end of the form. --}}
+                <button type="submit" class="btn btn-primary btn-lg rq-submit-end rq-span-2">Submit Request</button>
             </div>
         </div>
     </x-tenant::form>
