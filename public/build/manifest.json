@@ -613,9 +613,9 @@
       "node_modules/toastr/toastr.js"
     ]
   },
-  "_todays-chances-CU1QodMp.css": {
-    "file": "assets/todays-chances-CU1QodMp.css",
-    "src": "_todays-chances-CU1QodMp.css"
+  "_todays-chances-DpmMPii-.css": {
+    "file": "assets/todays-chances-DpmMPii-.css",
+    "src": "_todays-chances-DpmMPii-.css"
   },
   "_vendor-charts-Ckaxu_BO.js": {
     "file": "assets/vendor-charts-Ckaxu_BO.js",
@@ -2816,7 +2816,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DpvGLj3T.css",
+    "file": "assets/app-ec2IW3lC.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3535,7 +3535,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-grid.js": {
-    "file": "assets/products-grid-bILl2flH.js",
+    "file": "assets/products-grid-CqjEblxu.js",
     "name": "products-grid",
     "src": "resources/js/tenant/pages/catalog/products-grid.js",
     "isEntry": true,
@@ -3544,7 +3544,7 @@
     ],
     "css": [
       "assets/dashboard-DB_yIsLP.css",
-      "assets/todays-chances-CU1QodMp.css"
+      "assets/todays-chances-DpmMPii-.css"
     ]
   },
   "resources/js/tenant/pages/catalog/products-index.js": {
@@ -4145,7 +4145,7 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-B66TTG3S.js",
+    "file": "assets/todays-chances-C3JxYrBs.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
@@ -4154,7 +4154,7 @@
     ],
     "css": [
       "assets/dashboard-DB_yIsLP.css",
-      "assets/todays-chances-CU1QodMp.css"
+      "assets/todays-chances-DpmMPii-.css"
     ]
   },
   "resources/js/tenant/pages/ui-kit.js": {
