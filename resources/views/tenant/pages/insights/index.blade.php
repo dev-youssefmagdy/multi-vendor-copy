@@ -13,7 +13,7 @@
     // KPI illustrations from the design, matched by card label ('dot' = green status dot)
     $kpiIcons = [
         'Gross Sales' => 'gross', 'Collected' => 'collected',
-        'Outstanding' => 'outstanding', 'Average Order' => 'average',
+        'Outstanding' => 'outstanding',
         'Customers' => 'customers', 'Buyers' => 'dot',
         'Repeat Buyers' => 'repeat', 'Average Lifetime' => 'collected',
     ];
