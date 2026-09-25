@@ -80,7 +80,7 @@
             @endforeach
         </div>
 
-        <div class="od-queue fu d2">
+        <div class="od-queue is-orders fu d2">
             <x-tenant::datatable
                 id="orders-table"
                 :url="route('tenant.orders.data')"
@@ -91,6 +91,7 @@
                 :searching="$isMock"
                 :page-length="12"
                 :length-change="false"
+                :responsive="false"
                 title="Order Queue"
                 description=":count orders matched the current queue filters."
                 info-template="Show :count of :total result"

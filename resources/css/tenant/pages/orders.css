@@ -556,3 +556,130 @@
 .t-scope .rq-files .t-dropzone-icon { color: var(--ds-brand-500); background: #FFFFFF; }
 
 [data-theme="dark"] .t-scope .rq-files .t-dropzone-drop { background: var(--ds-input-bg); }
+
+/* ── Mobile (design: 375px) — Orders, Customers and the Request pages ─────
+   Black top block (title + description) under the transparent header, KPI
+   carousel (mobile-kpi-carousel.js), and on Orders each table row becomes a
+   white card: product + ⋮, then Name / Date / Value, Status / Gateway /
+   Commission (labels come from CSS; column order is fixed by the page). */
+@media (max-width: 767px) {
+    body.t-scope:has(.od-page) #mn { margin-top: 0; padding: 0 16px 90px; }
+    .od-page { gap: 24px; margin-top: 0; }
+
+    .od-page > .db-welcome {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        margin: 0 -16px;
+        padding: calc(var(--ds-header-h) + 4px) 16px 24px;
+        border-radius: 0 0 24px 24px;
+        background: #000000;
+    }
+
+    .od-page > .db-welcome .db-welcome-copy { gap: 8px; }
+    .od-page > .db-welcome .db-welcome-title { font-size: 24px; color: #F5F5F5; }
+    .od-page > .db-welcome .db-welcome-sub { font-size: 11px; color: #A3A3A3; }
+    .t-scope .od-page > .db-welcome .od-download { display: none; }
+    .od-page > .db-welcome .rq-actions { width: 100%; }
+    .t-scope .od-page > .db-welcome .rq-add { width: 100%; }
+
+    /* KPI carousel */
+    .od-kpis.is-carousel { display: block; width: 100%; min-width: 0; overflow: hidden; }
+    .od-kpis .swiper-wrapper { display: flex; }
+    .od-kpis .an-kpi.swiper-slide { display: flex; height: auto; }
+
+    /* Queue header: title, then search + filter on one row */
+    .od-queue .table-card-shell { padding: 0; background: transparent; }
+    .od-queue .table-header-shell { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 24px; }
+    .od-queue .panel-title { font-size: 24px; }
+    .od-queue .panel-copy[data-table-description] { font-size: 16px; }
+    .od-queue .table-header-actions { width: 100%; gap: 12px; }
+    .t-scope .od-queue .table-search { flex: 1; width: auto; }
+
+    /* Footer: pager centred, result count underneath */
+    .od-queue .table-footer-shell { flex-direction: column-reverse; align-items: center; gap: 12px; }
+    /* DataTables makes this row a block on small screens; keep it flex so the pager sits above the count */
+    .od-queue div.dt-container .dt-layout-row { display: flex !important; flex-direction: column-reverse; align-items: center; gap: 12px; }
+
+    /* Orders: rows → cards */
+    .od-queue.is-orders .tw { overflow: visible; }
+    .od-queue.is-orders table.tb,
+    .od-queue.is-orders table.tb tbody { display: block; width: 100% !important; min-width: 0 !important; max-width: 100%; }
+    .od-queue.is-orders table.tb thead { display: none; }
+
+    .od-queue.is-orders table.tb tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 83fr) minmax(0, 110fr) minmax(0, 66fr);
+        grid-template-areas:
+            "order order act"
+            "cust  date  val"
+            "stat  gw    comm";
+        gap: 8px 20px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--ds-surface);
+    }
+
+    .od-queue.is-orders table.tb tbody tr td {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        height: auto;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: #171717;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: left;
+        white-space: normal;
+    }
+
+    [data-theme="dark"] .od-queue.is-orders table.tb tbody tr td { color: var(--ds-text); }
+
+    .od-queue.is-orders table.tb tbody tr td::before {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #5E5E5E;
+    }
+
+    .od-queue.is-orders td:nth-child(1) { grid-area: order; }
+    .od-queue.is-orders td:nth-child(2) { grid-area: cust; }
+    .od-queue.is-orders td:nth-child(3) { grid-area: val; }
+    .od-queue.is-orders td:nth-child(4) { grid-area: comm; }
+    .od-queue.is-orders td:nth-child(5) { grid-area: stat; }
+    .od-queue.is-orders td:nth-child(6) { grid-area: gw; }
+    .od-queue.is-orders td:nth-child(7) { grid-area: date; }
+    .od-queue.is-orders td:nth-child(8) { grid-area: act; align-items: flex-end !important; }
+
+    .od-queue.is-orders td:nth-child(2)::before { content: "Name"; }
+    .od-queue.is-orders td:nth-child(3)::before { content: "Value"; }
+    .od-queue.is-orders td:nth-child(4)::before { content: "Commission"; }
+    .od-queue.is-orders td:nth-child(5)::before { content: "Status"; }
+    .od-queue.is-orders td:nth-child(6)::before { content: "Gateway"; }
+    .od-queue.is-orders td:nth-child(7)::before { content: "Date"; }
+
+    /* Empty / loading row spans the whole card */
+    .od-queue.is-orders table.tb tbody tr:has(td.dt-empty) { display: block; }
+    .od-queue.is-orders td.dt-empty::before { content: none; }
+
+    /* Product cell: bigger thumb + bold 16px name, wraps */
+    .od-queue.is-orders .od-order { width: 100%; gap: 8px; }
+    .od-queue.is-orders .od-thumb { width: 39px; height: 39px; }
+    .od-queue.is-orders .od-order-name {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.5;
+        color: #171717;
+        white-space: normal;
+    }
+    [data-theme="dark"] .od-queue.is-orders .od-order-name { color: var(--ds-text); }
+}

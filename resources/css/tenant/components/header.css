@@ -332,11 +332,11 @@ body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-h
 
     /* Pages with a dark top block (dashboard hero, notifications): the bar sits
        over it, transparent, and scrolls away with it */
-    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav)) #nav {
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav), :has(.od-page)) #nav {
         position: absolute;
         background: transparent;
     }
 
-    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav)) .hd-logo-dark { display: none; }
-    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav)) .hd-logo-light { display: block !important; }
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav), :has(.od-page)) .hd-logo-dark { display: none; }
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head), :has(.an-page), :has(.tc-page), :has(.pm-nav), :has(.od-page)) .hd-logo-light { display: block !important; }
 }

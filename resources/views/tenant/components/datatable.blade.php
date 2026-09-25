@@ -22,6 +22,7 @@
     'infoTemplate' => null,
     'lengthChange' => true,
     'searchPlaceholder' => 'Quick search',
+    'responsive' => true,
 ])
 
 @php
@@ -45,6 +46,7 @@
         'language' => $language,
         'infoTemplate' => $infoTemplate,
         'lengthChange' => $lengthChange,
+        'responsive' => $responsive,
     ];
 @endphp
 

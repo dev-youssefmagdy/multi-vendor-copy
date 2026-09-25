@@ -105,7 +105,8 @@ export async function init(el) {
         lengthMenu: [10, 25, 50, 100],
         serverSide: config.mode !== 'client',
         processing: true,
-        responsive: true,
+        // Off for tables that lay rows out as cards on mobile (all columns must stay visible).
+        responsive: config.responsive !== false,
         autoWidth: false,
         searching: Boolean(config.searching),
         paging: config.paging !== false,
