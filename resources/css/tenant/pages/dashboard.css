@@ -1720,3 +1720,28 @@
     }
     .db-opp-slider.is-newin .db-opp-stat strong { font-size: 25.5px; }        /* → 12px */
 }
+
+/* ── Mobile: Successful advertisements (design: 375px, 1.25 cards per view)
+   Card = desktop ad card at 63.07% (448 → 282.6px); hook, quote and the
+   markets heading keep 12px (÷ .6307 below).                           */
+@media (max-width: 767px) {
+    .db-section-head:has(+ .db-country-select.is-ads) .db-welcome-title { font-size: 20px; }
+    .db-section-head:has(+ .db-country-select.is-ads) .db-see-all { color: #171717; }
+
+    .db-country-select.is-ads {
+        height: 42px;
+        background: #F5F5F5;
+        color: #171717;
+        font-size: 16px;
+    }
+
+    [data-theme="dark"] .db-country-select.is-ads { background: var(--ds-input-bg); color: var(--ds-text); }
+
+    .db-opp-slider.is-ads .db-opp { width: auto; border-radius: 15.14px; }
+    .db-opp-slider.is-ads .db-ad-media,
+    .db-opp-slider.is-ads .db-ad-body { zoom: .6307; }
+
+    .db-opp-slider.is-ads .db-ad-hook-tag,
+    .db-opp-slider.is-ads .db-ad-hook p,
+    .db-opp-slider.is-ads .db-opp-markets h4 { font-size: 19.03px; }      /* → 12px */
+}

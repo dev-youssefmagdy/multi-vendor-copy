@@ -38,17 +38,17 @@
         </div>
         {{-- BACKEND TODO: point at the advertising library once that page exists. --}}
         <a href="#" class="db-see-all">
-            Advertising Library
+            <span class="db-title-full">Advertising Library</span><span class="db-title-short">See all</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </a>
     </div>
 
-    <button type="button" class="db-country-select">
+    <button type="button" class="db-country-select is-ads">
         Select your country
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
     </button>
 
-    <div class="db-opp-slider swiper" data-opp-slider aria-label="Successful advertisements">
+    <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1.25" aria-label="Successful advertisements">
         <div class="swiper-wrapper">
             @foreach($ads as $ad)
                 <article class="db-opp db-ad swiper-slide">
