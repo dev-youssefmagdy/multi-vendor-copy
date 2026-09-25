@@ -10,16 +10,19 @@
 --}}
 
 @php
-    // KPI illustrations from the design (Orders tab), matched by card label
+    // KPI illustrations from the design, matched by card label ('dot' = green status dot)
     $kpiIcons = [
         'Gross Sales' => 'gross', 'Collected' => 'collected',
         'Outstanding' => 'outstanding', 'Average Order' => 'average',
+        'Customers' => 'customers', 'Buyers' => 'dot',
+        'Repeat Buyers' => 'repeat', 'Average Lifetime' => 'collected',
     ];
 
     $statusPalette = [
         'completed' => '#10B981', 'delivered' => '#10B981', 'paid' => '#10B981', 'active' => '#10B981',
         'pending' => '#F59E0B', 'processing' => '#3B82F6', 'in delivery' => '#3B82F6', 'shipped' => '#8B5CF6',
         'cancelled' => '#EF4444', 'rejected' => '#EF4444', 'inactive' => '#EF4444',
+        'one-time' => '#F59E0B', 'repeat' => '#3B82F6',
     ];
     $fallbackPalette = ['#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#14B8A6'];
     $colorFor = fn (string $label, int $i) => $statusPalette[strtolower($label)] ?? $fallbackPalette[$i % count($fallbackPalette)];
@@ -52,7 +55,7 @@
         <script id="dashboard-chart-data" type="application/json">@json($chartPayload)</script>
     @endif
 
-    <div class="an-page" data-analytics-page data-report-name="{{ \Illuminate\Support\Str::slug($title) }}">
+    <div class="an-page" data-analytics-page data-tab="{{ $activeTab }}" data-report-name="{{ \Illuminate\Support\Str::slug($title) }}">
         {{-- Page header --}}
         <div class="an-head fu d0">
             <h1 class="an-title">Analytics</h1>
@@ -85,7 +88,9 @@
                             <strong class="an-kpi-value" data-kpi-value>{{ $card['value'] }}</strong>
                             @if(!empty($card['caption']))<p class="an-kpi-caption">{{ $card['caption'] }}</p>@endif
                         </div>
-                        @if($activeTab === 'orders' && isset($kpiIcons[$card['label']]))
+                        @if(($kpiIcons[$card['label']] ?? null) === 'dot')
+                            <span class="an-kpi-dot" aria-hidden="true"></span>
+                        @elseif(isset($kpiIcons[$card['label']]))
                             <img class="an-kpi-icon" src="{{ asset('tenant-panel/analytics/'.$kpiIcons[$card['label']].'.png') }}" alt="" width="44" height="44">
                         @endif
                     </div>
@@ -93,6 +98,9 @@
             </div>
         @endif
 
+        @if($activeTab === 'customer-lifetime-value')
+            @include('tenant.pages.insights._clv')
+        @else
         {{-- Chart rows --}}
         @foreach($chartSections ?? [] as $section)
             <div class="an-chart-row fu d2">
@@ -228,6 +236,7 @@
                 </div>
             @endif
         @endforeach
+        @endif
     </div>
 @endsection
 

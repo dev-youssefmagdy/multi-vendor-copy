@@ -86,11 +86,17 @@ function scales(format, { gridX = false } = {}) {
     };
 }
 
+// Per-tab overrides (Customer Lifetime Value momentum: blue new, orange repeat)
+const TAB_PALETTE = {
+    'customer-lifetime-value': { lineChart: ['#3B82F6', '#FD6F04'] },
+};
+
 function lineChart(id, labels, definitions) {
     const canvas = document.getElementById(id);
     if (!canvas || !definitions?.length) return;
 
-    const colors = PALETTE[id] || PALETTE.lineChart;
+    const tab = document.querySelector('[data-analytics-page]')?.dataset.tab;
+    const colors = TAB_PALETTE[tab]?.[id] || PALETTE[id] || PALETTE.lineChart;
     const datasets = definitions.map((d, i) => {
         const color = colors[i % colors.length];
         return {

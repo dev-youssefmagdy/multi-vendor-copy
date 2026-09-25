@@ -34,6 +34,8 @@ final class CustomerLifetimeValueController extends PanelController
             'badge' => 'Insights',
             'description' => 'Rank customer value, order frequency, and buyer mix using tenant customers joined with tenant orders.',
             'contentIntro' => 'Lifetime spend is calculated from full tenant order totals, not just raw subtotals, so billing and CRM views stay aligned.',
+            // Top customers for the server-rendered spend + ranking tables on the Analytics page
+            'rankingRows' => $rows->take(10)->values()->all(),
             'cardsGridClass' => 'g-stats4',
             'cards' => Metric::cards($overview['cards']),
             'chartPayload' => $overview['chart_payload'],
