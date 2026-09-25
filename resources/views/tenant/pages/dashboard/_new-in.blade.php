@@ -8,6 +8,7 @@
 --}}
 
 @php
+    // FOR DESIGN PURPOSE
     $newProducts = $newProducts ?? collect([
         'photo-1590874103328-eac38a683ce7',
         'photo-1505740420928-5e560c06d30e',

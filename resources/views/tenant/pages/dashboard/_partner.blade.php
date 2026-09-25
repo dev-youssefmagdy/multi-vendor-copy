@@ -8,6 +8,7 @@
 --}}
 
 @php
+    // FOR DESIGN PURPOSE
     $partner = $partner ?? [
         'invite_link' => 'dummy',
         'visits' => 'dummy',

@@ -1,3 +1,4 @@
+{{-- FOR DESIGN PURPOSE --}}
 {{--
     Sample product cards (12 per page) with a mock 109-item pager, used by the
     Products module tabs until the backend provides their products.

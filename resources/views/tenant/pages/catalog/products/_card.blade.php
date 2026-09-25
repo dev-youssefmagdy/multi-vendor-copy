@@ -25,6 +25,7 @@
         @if($added)<span class="db-opp-added">Already added</span>@endif
         <span class="db-opp-cheaper">
             <small>Cheaper than market by</small>
+            {{-- FOR DESIGN PURPOSE --}}
             <strong>dummy</strong>
         </span>
     </div>
@@ -43,6 +44,7 @@
             </div>
             <div class="db-opp-stat">
                 <span class="db-opp-stat-label">Average Cheaper than market by</span>
+                {{-- FOR DESIGN PURPOSE --}}
                 <strong>dummy</strong>
                 <small>Through global stores</small>
             </div>

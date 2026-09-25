@@ -7,6 +7,7 @@
     {{-- New in tab: product card grid (new design). The other badges keep the assignment screen below. --}}
     <div class="pm-page">
         @include('tenant.pages.catalog._module-nav', ['activeTab' => 'new-in'])
+        {{-- FOR DESIGN PURPOSE --}}
         @include('tenant.pages.catalog._mock-cards', ['pagerLabel' => 'New in pages'])
     </div>
     @else

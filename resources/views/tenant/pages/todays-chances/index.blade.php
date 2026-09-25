@@ -12,6 +12,7 @@
 --}}
 
 @php
+    // FOR DESIGN PURPOSE
     $photos = [
         'photo-1590874103328-eac38a683ce7', 'photo-1505740420928-5e560c06d30e', 'photo-1523275335684-37898b6baf30',
         'photo-1525966222134-fcfa99b8ae77', 'photo-1583394838336-acd977736f90', 'photo-1572635196237-14b3f281503f',

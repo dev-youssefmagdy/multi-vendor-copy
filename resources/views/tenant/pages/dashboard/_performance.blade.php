@@ -49,6 +49,7 @@
             <div class="t-kpi db-kpi">
                 <div class="t-kpi-head">
                     <span class="t-kpi-label">{{ $kpi['label'] }}</span>
+                    {{-- FOR DESIGN PURPOSE --}}
                     <span class="t-trend t-trend-up">{!! $trendUp !!} dummy</span>
                 </div>
                 <div class="t-kpi-value">{{ $kpi['value'] }}</div>

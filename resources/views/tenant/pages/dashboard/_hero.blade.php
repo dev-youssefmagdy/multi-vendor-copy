@@ -41,6 +41,7 @@
     <div class="db-hero">
         <video class="db-hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
             {{-- Temporary stock clip (Mixkit, free license) — replace with the final video. --}}
+            {{-- FOR DESIGN PURPOSE --}}
             <source src="https://assets.mixkit.co/videos/4705/4705-720.mp4" type="video/mp4">
         </video>
         <div class="db-hero-shade" aria-hidden="true"></div>
@@ -50,6 +51,7 @@
                 <h2 class="db-hero-title">Your store is full of products, and daily opportunities are simply smart choices from them.</h2>
                 <p class="db-hero-text">Browse the entire catalog, search, filter, and adjust the appearance of any product in the homepage, Flash Sale, or Trending section.</p>
                 <ul class="db-hero-points">
+                    {{-- FOR DESIGN PURPOSE --}}
                     <li>{!! $check !!} dummy active products</li>
                     <li>{!! $check !!} Automatic inventory update</li>
                     <li>{!! $check !!} Direct source prices</li>
@@ -85,6 +87,7 @@
                 </div>
                 <div class="db-power-chip is-left">
                     <span class="db-power-chip-title">Inventory</span>
+                    {{-- FOR DESIGN PURPOSE --}}
                     <span class="db-power-chip-value is-warn">dummy</span>
                 </div>
                 <div class="db-power-chip is-bottom">

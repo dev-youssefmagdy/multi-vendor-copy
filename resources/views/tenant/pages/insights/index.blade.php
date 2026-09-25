@@ -166,6 +166,7 @@
         {{-- Tables --}}
         @foreach($tables ?? [] as $table)
             @if($table['id'] === 'order-analytics-monthly')
+                {{-- FOR DESIGN PURPOSE --}}
                 {{-- BACKEND TODO: mock rows — the live monthly data table only showed its loading state.
                      Replace "dummy" with real values (the same rows come from OrderAnalyticsController::dataMonthly). --}}
                 <section class="an-card an-table-card fu d3">

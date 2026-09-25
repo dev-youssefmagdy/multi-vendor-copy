@@ -8,6 +8,7 @@
 --}}
 
 @php
+    // FOR DESIGN PURPOSE
     $sampleVideo = 'https://assets.mixkit.co/videos/4705/4705-720.mp4';
     $markets = ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor', 'iq' => 'IRQ', 'qa' => 'QTR'];
 

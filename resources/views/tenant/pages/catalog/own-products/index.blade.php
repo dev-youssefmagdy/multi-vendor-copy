@@ -23,6 +23,7 @@
 
         @if($products->total() === 0)
             {{-- No own products yet: sample cards (dummy data) for now. --}}
+            {{-- FOR DESIGN PURPOSE --}}
             @include('tenant.pages.catalog._mock-cards', ['added' => false, 'pagerLabel' => 'Own products pages'])
         @else
             <div class="pm-grid fu d1">

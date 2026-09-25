@@ -16,7 +16,9 @@
         ->all();
     $placedIndex = collect($tableColumns)->search(fn ($col) => (($col instanceof \App\Support\Tenant\TableColumn ? $col->toArray() : $col)['data'] ?? null) === 'placed_at');
 
+    // FOR DESIGN PURPOSE
     // No real orders yet → 109 sample rows (dummy data) rendered in the page.
+    // When removing: delete this block and the :order/:mode/:rows/:searching $isMock switches below.
     // BACKEND TODO: remove once the store has orders; real rows load from tenant.orders.data.
     $ordersStat = collect($stats)->firstWhere('label', 'Orders');
     $isMock = ($ordersStat['value'] ?? '0') === '0';
