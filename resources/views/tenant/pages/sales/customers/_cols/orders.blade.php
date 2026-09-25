@@ -1,2 +1,1 @@
-<div class="entity-title">{{ (int) $customer->orders_count }}</div>
-<div class="entity-subtitle">{{ (int) $customer->paid_orders_count }} paid</div>
+<span title="{{ (int) $customer->paid_orders_count }} paid">{{ (int) $customer->orders_count }}</span>

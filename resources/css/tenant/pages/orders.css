@@ -339,3 +339,11 @@
     .t-scope .od-queue .table-search { flex: 1; width: auto; }
     .od-queue .filters-card[open] .filters-grid { width: min(280px, calc(100vw - 64px)); }
 }
+
+/* ── Customers page (same layout as Orders) ─────────────────────────────── */
+
+.cu-kpi-dot { align-self: center; margin: 0 16px; }
+
+/* ID column: "#" prefix, 12px like the design */
+.cu-queue table.tb tbody td:first-child { font-size: 12px; }
+.cu-queue table.tb tbody td:first-child:not(.dt-empty)::before { content: "#"; }
