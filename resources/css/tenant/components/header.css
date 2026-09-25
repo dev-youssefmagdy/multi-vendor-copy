@@ -323,3 +323,19 @@ body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-h
 
     .t-scope .hd-theme { background: #262626; color: #F5F5F5; }
 }
+
+.t-scope .hd-logo-light { display: none !important; }
+
+@media (max-width: 767px) {
+    [data-theme="dark"] .t-scope .hd-logo-dark { display: none; }
+    [data-theme="dark"] .t-scope .hd-logo-light { display: block !important; }
+
+    /* Dashboard: the bar sits over the hero video and scrolls away with it */
+    body.t-scope:has(.db-hero-wrap) #nav {
+        position: absolute;
+        background: transparent;
+    }
+
+    body.t-scope:has(.db-hero-wrap) .hd-logo-dark { display: none; }
+    body.t-scope:has(.db-hero-wrap) .hd-logo-light { display: block !important; }
+}

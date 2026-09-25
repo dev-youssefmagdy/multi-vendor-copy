@@ -131,3 +131,9 @@
 .t-scope .D {
     font-family: inherit;
 }
+
+/* Mobile page background (design: #FFF5F3), light theme only */
+@media (max-width: 767px) {
+    [data-theme="light"] .t-scope,
+    :root:not([data-theme="dark"]) .t-scope { --ds-bg: #FFF5F3; }
+}

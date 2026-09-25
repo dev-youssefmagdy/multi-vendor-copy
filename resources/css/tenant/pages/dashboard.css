@@ -1532,3 +1532,53 @@
     .db-hero-actions { flex-direction: column; }
     .db-power { transform: scale(.85); margin: 8px 0; }
 }
+
+/* ── Mobile hero (design: 375px) ──────────────────────────────────────────
+   Full-bleed video card under the transparent header: Store Power ring on
+   top, then copy, checks and the two buttons side by side.              */
+@media (max-width: 767px) {
+    body.t-scope:has(.db-hero-wrap) #mn { margin-top: 0; padding: 0 16px 110px; }
+    #mn > .db-hero-wrap:first-of-type { margin-top: 0; }
+
+    /* The welcome row's links live in the nav island (Appearance, Store) on mobile */
+    .db-hero-wrap > .db-welcome { display: none; }
+
+    .db-hero {
+        margin-inline: -16px;
+        min-height: 0;
+        padding: calc(var(--ds-header-h) + 16px) 16px 16px;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .db-hero-shade { background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, .7) 45%, #000 100%); }
+
+    .db-hero-content {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 27px;
+        width: 100%;
+        padding: 0;
+    }
+
+    .db-hero-copy { gap: 11.8px; width: 100%; }
+    .db-hero-title { font-size: 16px; }
+    .db-hero-text { font-size: 12px; }
+    .db-hero-points { gap: 8px 15px; }
+    .db-hero-points svg { width: 12.6px; height: 12.6px; }
+
+    .db-hero-actions { flex-direction: row; gap: 18.9px; margin-top: 0; }
+
+    .t-scope .db-hero-btn {
+        min-width: 0;
+        height: 44px;
+        min-height: 44px;
+        padding: 12px 8px;
+        border-radius: 9.4px;
+        font-size: 12.6px;
+    }
+
+    .t-scope .db-hero-btn svg { width: 18.9px; height: 18.9px; }
+
+    /* Ring at the design's 167px (232px × .72) */
+    .db-power { zoom: .72; transform: none; margin: 24px 0 8px; }
+}

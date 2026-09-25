@@ -7,7 +7,9 @@
 
     {{-- Logo — mobile only (the sidebar carries it on larger screens). --}}
     <a href="{{ route('tenant.dashboard') }}" class="hd-logo" aria-label="Dashboard">
-        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" width="153" height="40">
+        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" width="153" height="40" class="hd-logo-dark">
+        {{-- Mobile logo (light wordmark) for dark backgrounds: dashboard hero, dark theme --}}
+        <img src="{{ asset('tenant-panel/mobile-logo.svg') }}" alt="" width="153" height="40" class="hd-logo-light" aria-hidden="true">
     </a>
 
     {{-- Country selector — UI only for now; not wired to any data yet. --}}
