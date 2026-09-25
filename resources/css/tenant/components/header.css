@@ -330,12 +330,13 @@ body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-h
     [data-theme="dark"] .t-scope .hd-logo-dark { display: none; }
     [data-theme="dark"] .t-scope .hd-logo-light { display: block !important; }
 
-    /* Dashboard: the bar sits over the hero video and scrolls away with it */
-    body.t-scope:has(.db-hero-wrap) #nav {
+    /* Pages with a dark top block (dashboard hero, notifications): the bar sits
+       over it, transparent, and scrolls away with it */
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head)) #nav {
         position: absolute;
         background: transparent;
     }
 
-    body.t-scope:has(.db-hero-wrap) .hd-logo-dark { display: none; }
-    body.t-scope:has(.db-hero-wrap) .hd-logo-light { display: block !important; }
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head)) .hd-logo-dark { display: none; }
+    body.t-scope:is(:has(.db-hero-wrap), :has(.nt-head)) .hd-logo-light { display: block !important; }
 }

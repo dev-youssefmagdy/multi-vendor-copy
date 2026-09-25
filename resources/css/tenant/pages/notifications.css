@@ -189,3 +189,47 @@
     .notification-card-title { font-size: 18px; }
     .t-scope .nt-mark-all { width: 100%; }
 }
+
+/* ── Mobile (design: 375px) ───────────────────────────────────────────────
+   Black top block (under the transparent header) with the title, then the
+   cards on the page background. The page-level "unread" pill and
+   "Mark all as read" button aren't in the mobile design; each card keeps
+   its own Mark as read.                                                 */
+@media (max-width: 767px) {
+    body.t-scope:has(.nt-head) #mn { margin-top: 0; padding: 0 16px 90px; }
+
+    .nt-head {
+        margin: 0 -16px;
+        padding: calc(var(--ds-header-h) + 4px) 16px 24px;
+        border-radius: 0 0 24px 24px;
+        background: #000000;
+    }
+
+    .nt-head-title h1 { font-size: 24px; color: #F5F5F5; }
+    .nt-head-copy { gap: 8px; }
+    .nt-head-copy p { font-size: 11px; color: #A3A3A3; }
+    .nt-unread-pill,
+    .t-scope .nt-mark-all { display: none; }
+
+    .nt-panel { padding: 24px 16px; border-radius: 0; background: transparent; }
+
+    .notification-card,
+    .notification-card.notification-unread {
+        gap: 8px;
+        padding: 8px 12px;
+        background: #F0F0F0;
+    }
+
+    [data-theme="dark"] .notification-card { background: var(--ds-surface); }
+
+    .notification-card-body { gap: 8px; align-self: stretch; padding: 0; }
+    .notification-card-head { flex-wrap: nowrap; justify-content: space-between; gap: 12px; width: 100%; }
+    .notification-card-title { font-size: 16px; }
+    .notification-new-badge { flex-shrink: 0; }
+    .notification-card-message,
+    .notification-card-meta { font-size: 12px; }
+
+    .notification-card-side { gap: 22px; }
+    .notification-card-time { font-size: 12px; }
+    .notification-mark-read-btn { flex: 1; min-width: 0; }
+}
