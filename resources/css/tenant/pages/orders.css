@@ -1,0 +1,341 @@
+/* ── Orders page (All orders) ───────────────────────────────────────────── */
+
+.od-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 10px;
+    container-type: inline-size;
+}
+
+/* "download report" — outlined orange button */
+.t-scope .od-download {
+    min-width: 212px;
+    border: 1px solid var(--ds-brand-500);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--ds-brand-500);
+}
+
+.t-scope .od-download:hover { background: var(--ds-brand-50); color: var(--ds-brand-500); }
+.t-scope .od-download svg { width: 24px; height: 24px; }
+
+/* KPI cards (analytics card style) */
+.od-kpis .an-kpi { align-items: stretch; min-height: 145px; }
+.od-kpis .an-kpi-body { justify-content: space-between; }
+.od-kpis .od-kpi-icon { align-self: center; }
+.od-kpi-icon { width: var(--od-icon, 44px); height: var(--od-icon, 44px); flex-shrink: 0; object-fit: contain; }
+
+/* ── Order Queue card ───────────────────────────────────────────────────── */
+
+.od-queue .table-card-shell {
+    padding: 16px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--ds-surface);
+    box-shadow: none;
+}
+
+.od-queue .table-card-shell::before { display: none; }
+
+.od-queue .table-header-shell {
+    min-height: 0;
+    margin-bottom: 27px;
+    padding: 0;
+    border: 0;
+}
+
+.od-queue .panel-title {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.od-queue .panel-copy[data-table-description] {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #888580;
+}
+
+.od-queue .table-header-actions { position: relative; gap: 20px; }
+
+/* Search box */
+.t-scope .od-queue .table-search {
+    width: 313px;
+    min-width: 0;
+    height: 48px;
+    padding: 8px 16px 8px 48px;
+    border: 0;
+    border-radius: 8px;
+    background: #F5F5F5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E5E5E' stroke-width='1.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8.75'/%3E%3Cpath d='M17.5 17.5l4.25 4.25'/%3E%3C/svg%3E") no-repeat 16px center / 24px;
+    font-size: 16px;
+    color: var(--ds-text);
+    box-shadow: none;
+}
+
+.t-scope .od-queue .table-search::placeholder { color: #5E5E5E; }
+
+/* Filter button (the filters card's summary) + dropdown panel */
+.od-queue .filters-card {
+    position: static;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.od-queue .filters-card::before { display: none; }
+
+.od-queue .filters-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 48px;
+    padding: 0;
+    border-radius: 8px;
+    background: var(--ds-brand-500) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F5' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M3 7h3M3 17h6M18 17h3M15 7h6'/%3E%3Cpath d='M6 7a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 17a3 3 0 1 0 6 0 3 3 0 1 0-6 0'/%3E%3C/svg%3E") no-repeat center / 24px;
+}
+
+.od-queue .filters-summary > div:first-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.od-queue .filters-chevron { display: none; }
+
+.od-queue .filters-summary-meta .filter-pill {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: var(--ds-text);
+    color: #FFFFFF;
+    font-size: 10px;
+    line-height: 18px;
+}
+
+
+.od-queue .filters-card[open] .filters-grid {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 280px;
+    margin: 0;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--ds-surface);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+    grid-template-columns: minmax(0, 1fr);
+    z-index: 20;
+}
+
+/* Reset button hidden: choosing "All" clears the status filter. */
+.od-queue .filters-actions { display: none; }
+
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+
+.od-queue .tw { overflow-x: auto; }
+
+.od-queue table.tb {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.od-queue table.tb thead th {
+    height: 48px;
+    padding: 8px;
+    border: 0;
+    border-bottom: 1px solid #F0F0F0;
+    background: #F5F5F5;
+    color: #A3A3A3;
+    font-weight: 400;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+.od-queue table.tb tbody td {
+    height: 48px;
+    padding: 6px 8px;
+    border: 0;
+    border-bottom: 1px solid #F0F0F0;
+    color: #A3A3A3;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.od-queue table.tb th:first-child,
+.od-queue table.tb td:first-child { text-align: left; }
+
+.od-queue table.tb tbody tr:nth-child(even) td { background: #F8F8F8; }
+.od-queue table.dataTable.no-footer,
+.od-queue div.dt-container.dt-empty-footer .dt-scroll-body,
+.od-queue div.dt-container.dt-empty-footer tbody > tr:last-child > * { border-bottom: 1px solid #F0F0F0; }
+.od-queue table.tb tbody tr:hover td { background: var(--ds-brand-50); }
+
+[data-theme="dark"] .od-queue table.tb thead th,
+[data-theme="dark"] .od-queue table.tb tbody tr:nth-child(even) td { background: var(--ds-input-bg); }
+[data-theme="dark"] .od-queue table.tb thead th,
+[data-theme="dark"] .od-queue table.tb tbody td { border-color: var(--ds-border); }
+
+/* Order cell: product thumbnail + name */
+.od-order {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 180px;
+}
+
+.od-thumb {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #D9D9D9;
+    object-fit: cover;
+}
+
+.od-thumb-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.od-order-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+}
+
+.od-order-name small { color: var(--ds-brand-500); font-size: 11px; }
+
+/* Status pills (design tones) */
+.t-scope .od-queue .badge {
+    gap: 4px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.t-scope .od-queue .badge-amber { background: #FEFAE6; color: #F0C800; }
+.t-scope .od-queue .badge-blue { background: #E6E7FE; color: #424AFF; }
+.t-scope .od-queue .badge-orange { background: #FFF1E6; color: #FD6F04; }
+.t-scope .od-queue .badge-green { background: #E6FEE6; color: #03AA00; }
+.t-scope .od-queue .badge .badge-dot { width: 8px; height: 8px; background: currentColor; box-shadow: none; }
+
+/* Actions: orange ⋯ */
+.od-queue .t-dropdown-trigger {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ds-brand-500);
+}
+
+/* Sort indicators: brand colour */
+.od-queue table.dataTable thead > tr > th .dt-column-order { color: var(--ds-brand-500); }
+
+/* ── Footer: "Show 12 of 109 result" + pager ────────────────────────────── */
+
+.od-queue .table-footer-shell {
+    margin-top: 16px;
+    padding: 16px 0 0;
+    border: 0;
+}
+
+.od-queue .dt-layout-row { margin: 0; }
+
+.od-queue .dt-info {
+    padding: 0;
+    font-size: 14px;
+    color: #5E5E5E;
+}
+
+.od-queue .dt-info strong { color: var(--ds-text); font-weight: 400; }
+
+.od-queue div.dt-container .dt-paging nav { display: flex; align-items: center; gap: 4px; }
+
+.od-queue div.dt-container .dt-paging .dt-paging-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 24px;
+    height: 24px;
+    margin: 0 0 0 4px;
+    padding: 0 4px;
+    border: 1px solid #A3A3A3;
+    border-radius: 4px;
+    background: transparent;
+    color: #5E5E5E;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.od-queue div.dt-container .dt-paging .dt-paging-button svg { width: 16px; height: 16px; }
+.od-queue div.dt-container .dt-paging .dt-paging-button.first,
+.od-queue div.dt-container .dt-paging .dt-paging-button.last { display: none; }
+
+.od-queue div.dt-container .dt-paging .dt-paging-button:hover:not(.disabled):not(.current) {
+    border-color: var(--ds-brand-500);
+    background: transparent;
+    color: var(--ds-brand-500);
+}
+
+.od-queue div.dt-container .dt-paging .dt-paging-button.current,
+.od-queue div.dt-container .dt-paging .dt-paging-button.current:hover {
+    border-color: var(--ds-brand-500);
+    background: var(--ds-brand-500);
+    color: #FFFFFF !important;
+}
+
+.od-queue div.dt-container .dt-paging .dt-paging-button.previous {
+    height: 32px;
+    margin-right: 12px;
+    padding: 0 12px;
+    border-color: #E2E2E2;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.od-queue div.dt-container .dt-paging .dt-paging-button.next,
+.od-queue div.dt-container .dt-paging .dt-paging-button.next:hover:not(.disabled) {
+    height: 32px;
+    margin-left: 16px;
+    padding: 0 12px;
+    border-color: var(--ds-brand-500);
+    border-radius: 8px;
+    background: var(--ds-brand-500);
+    color: #FFFFFF !important; /* DataTables sets color: inherit !important */
+}
+
+.od-queue div.dt-container .dt-paging .dt-paging-button.disabled { opacity: .45; cursor: default; }
+.od-queue div.dt-container .dt-paging .ellipsis { padding: 0 4px; color: #5E5E5E; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@container (max-width: 1000px) {
+    .od-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container (max-width: 640px) {
+    .od-kpis { grid-template-columns: minmax(0, 1fr); }
+    .t-scope .od-download { width: 100%; }
+    .od-queue .table-header-actions { width: 100%; }
+    .t-scope .od-queue .table-search { flex: 1; width: auto; }
+    .od-queue .filters-card[open] .filters-grid { width: min(280px, calc(100vw - 64px)); }
+}

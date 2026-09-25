@@ -1,2 +1,1 @@
-<div class="entity-title">{{ str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString() }}</div>
-<div class="entity-subtitle">{{ $order->paid ? 'Paid' : 'Unpaid' }}</div>
+<span title="{{ $order->paid ? 'Paid' : 'Unpaid' }}">{{ str((string) $order->payment_method)->replace(['_', '-'], ' ')->lower()->ucfirst()->toString() ?: '—' }}</span>

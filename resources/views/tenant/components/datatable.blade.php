@@ -18,6 +18,10 @@
     'mode' => 'server',
     'paging' => true,
     'searching' => false,
+    'language' => null,
+    'infoTemplate' => null,
+    'lengthChange' => true,
+    'searchPlaceholder' => 'Quick search',
 ])
 
 @php
@@ -38,6 +42,9 @@
         'emptyTitle' => $emptyTitle,
         'emptyCopy' => $emptyCopy,
         'descriptionTemplate' => $description,
+        'language' => $language,
+        'infoTemplate' => $infoTemplate,
+        'lengthChange' => $lengthChange,
     ];
 @endphp
 
@@ -49,7 +56,7 @@
         </div>
         <div class="table-header-actions">
             @if($quickSearch)
-                <input type="text" class="field-control table-search" placeholder="Quick search" data-table-quick-search>
+                <input type="text" class="field-control table-search" placeholder="{{ $searchPlaceholder }}" data-table-quick-search>
             @endif
             @isset($toolbar){{ $toolbar }}@endisset
         </div>

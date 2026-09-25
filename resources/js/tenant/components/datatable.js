@@ -20,7 +20,7 @@ function initialFiltersFromQuery() {
 }
 
 function buildLanguage(config) {
-    return {
+    const base = {
         processing: 'Loading…',
         emptyTable: `<div class="empty-state"><div class="empty-state-title">${config.emptyTitle}</div><p class="empty-state-copy">${config.emptyCopy}</p></div>`,
         zeroRecords: `<div class="empty-state"><div class="empty-state-title">${config.emptyTitle}</div><p class="empty-state-copy">${config.emptyCopy}</p></div>`,
@@ -30,6 +30,9 @@ function buildLanguage(config) {
         lengthMenu: '_MENU_ per page',
         paginate: { previous: '‹', next: '›' },
     };
+
+    // Optional per-table overrides (e.g. paginate labels) from the Blade config.
+    return { ...base, ...(config.language || {}) };
 }
 
 function updateDescription(el, config, info) {
@@ -113,9 +116,18 @@ export async function init(el) {
             topEnd: null,
             bottomStart: 'info',
             bottomEnd: 'paging',
-            bottom2Start: 'pageLength',
+            bottom2Start: config.lengthChange === false ? null : 'pageLength',
         },
+        // Optional info text, e.g. "Show :count of :total result".
+        infoCallback: config.infoTemplate
+            ? (settings, start, end, max, total) => config.infoTemplate
+                .replace(':count', `<strong>${total ? end - start + 1 : 0}</strong>`)
+                .replace(':total', total)
+            : undefined,
         drawCallback() {
+            if (config.mode === 'client' && this.api) {
+                updateDescription(el, config, { recordsDisplay: this.api().page.info().recordsDisplay });
+            }
             initComponents(el.closest('.tw') || el);
             updateBulkBar(el);
             el.dispatchEvent(new CustomEvent('tenant:table:drawn', { bubbles: true }));
@@ -155,13 +167,18 @@ export async function init(el) {
     });
 
     on('tenant:table:reload', ({ selector, resetPaging }) => {
-        if (selector && (selector === `#${el.id}` || selector === el.id)) {
+        // Client-mode tables (rows rendered in the page) have nothing to reload.
+        if (config.mode !== 'client' && selector && (selector === `#${el.id}` || selector === el.id)) {
             dt.ajax.reload(null, resetPaging !== false ? false : true);
         }
     });
 
     if (config.quickSearchBound !== true) {
         card?.querySelector('[data-table-quick-search]')?.addEventListener('input', (e) => {
+            if (config.mode === 'client') {
+                dt.search(e.target.value).draw();
+                return;
+            }
             el._filters = { ...(el._filters || {}), search: e.target.value };
             dt.ajax.reload(null, false);
         });

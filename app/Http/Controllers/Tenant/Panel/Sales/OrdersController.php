@@ -66,7 +66,7 @@ final class OrdersController extends PanelController
             ->editColumn('commission', fn (Order $order) => view('tenant.pages.sales.orders._cols.commission', ['order' => $order])->render())
             ->editColumn('status', fn (Order $order) => view('tenant::components.status-badge', ['status' => $order->status])->render())
             ->editColumn('gateway', fn (Order $order) => view('tenant.pages.sales.orders._cols.gateway', ['order' => $order])->render())
-            ->editColumn('placed_at', fn (Order $order) => $order->created_at?->format('M d, Y H:i'))
+            ->editColumn('placed_at', fn (Order $order) => $order->created_at ? strtoupper($order->created_at->format('D')).$order->created_at->format(', d M,Y') : null)
             ->addColumn('actions', fn (Order $order) => view('tenant.pages.sales.orders._cols.actions', ['order' => $order])->render())
             ->orderColumn('value', 'grand_total $1')
             ->orderColumn('placed_at', 'created_at $1')
