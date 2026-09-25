@@ -151,6 +151,12 @@
 }
 
 .pm-card .db-opp-body { flex: 1; }
+
+/* "Cheaper than market by" pill: white, like the design */
+.pm-card .db-opp-cheaper,
+.pm-card.is-added .db-opp-cheaper { background: #FFFFFF; backdrop-filter: none; }
+.pm-card .db-opp-cheaper small { color: #363636; }
+.pm-card .db-opp-cheaper strong { color: #8804D0; }
 .pm-card-initial { margin: auto; font-size: 64px; font-weight: 700; color: #A3A3A3; }
 
 .pm-card-title {

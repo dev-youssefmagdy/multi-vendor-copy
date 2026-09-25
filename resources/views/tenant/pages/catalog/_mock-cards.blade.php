@@ -1,11 +1,14 @@
 {{--
-    New in tab — product cards with a 12-per-page pager.
+    Sample product cards (12 per page) with a mock 109-item pager, used by the
+    Products module tabs until the backend provides their products.
+    Options: $added (bool, default true) shows the "Already added" badge;
+    $pagerLabel names the pagination for screen readers.
 
-    BACKEND TODO: everything here is mock data (109 sample products). Replace
-    the photos loop and $total with the real "new-in" badge products.
+    BACKEND TODO: everything here is mock data — replace with real products.
 --}}
 
 @php
+    $added = $added ?? true;
     $photos = [
         'photo-1590874103328-eac38a683ce7', 'photo-1505740420928-5e560c06d30e', 'photo-1542291026-7eec264c27ff',
         'photo-1523275335684-37898b6baf30', 'photo-1608571423902-eed4a5ad8108', 'photo-1572635196237-14b3f281503f',
@@ -26,9 +29,9 @@
 
 <div class="pm-grid fu d1">
     @foreach($photos as $photo)
-        <article class="db-opp pm-card is-added">
+        <article class="db-opp pm-card {{ $added ? 'is-added' : '' }}">
             <div class="db-opp-media" style="background-image:url('https://images.unsplash.com/{{ $photo }}?w=800&q=70&auto=format&fit=crop')">
-                <span class="db-opp-added">Already added</span>
+                @if($added)<span class="db-opp-added">Already added</span>@endif
                 <span class="db-opp-cheaper">
                     <small>Cheaper than market by</small>
                     <strong>dummy</strong>
@@ -63,7 +66,7 @@
     @endforeach
 </div>
 
-<nav class="tc-pagination" aria-label="New in pages">
+<nav class="tc-pagination" aria-label="{{ $pagerLabel ?? 'Products pages' }}">
     <p>Show <strong>{{ $count }}</strong> of {{ $total }} result</p>
     <div class="tc-pages">
         @if($page > 1)

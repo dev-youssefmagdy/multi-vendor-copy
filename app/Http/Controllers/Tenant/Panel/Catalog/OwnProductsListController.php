@@ -7,8 +7,6 @@ namespace App\Http\Controllers\Tenant\Panel\Catalog;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\TenantPanelRepository;
-use App\Support\Tenant\Metric;
-use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -23,23 +21,11 @@ final class OwnProductsListController extends PanelController
 
     public function index(Request $request): View
     {
-        $stats = $this->repo->ownProductStats();
+        // Card grid (Own products tab): 12 own products per page, newest first.
+        $products = $this->repo->queryOwnProducts([])->paginate(12)->withQueryString();
 
         return view('tenant.pages.catalog.own-products.index', [
-            'stats' => Metric::cards([
-                ['label' => 'Total Own Products', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Products you added directly.', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Currently visible in your store.', 'dot' => 'dot-green'],
-                ['label' => 'Inactive', 'value' => $stats['inactive'], 'format' => 'number', 'caption' => 'Disabled from your storefront.', 'dot' => 'dot-amber'],
-            ]),
-            'columns' => [
-                TableColumn::index(),
-                TableColumn::make('product', 'Product')->orderable(false),
-                TableColumn::make('price', 'Price')->orderable(false),
-                TableColumn::make('stock', 'Stock')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('added', 'Added'),
-                TableColumn::actions(),
-            ],
+            'products' => $products,
         ]);
     }
 

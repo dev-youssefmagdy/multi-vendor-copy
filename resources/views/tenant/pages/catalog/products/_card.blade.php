@@ -3,9 +3,11 @@
     action from the old table row: active/featured toggles, edit, and the
     social / video ad / AI price / share / price list menu.
     "dummy" = market comparison data the backend doesn't provide yet.
+    Pass $added = false to hide the "Already added" badge (Own products).
 --}}
 
 @php
+    $added = $added ?? true;
     $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
     $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
     $imageUrl = $central['image_url'] ?? $product->primary_image_url;
@@ -15,12 +17,12 @@
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
 @endphp
 
-<article class="db-opp pm-card is-added">
+<article class="db-opp pm-card {{ $added ? 'is-added' : '' }}">
     <div class="db-opp-media" @if($imageUrl) style="background-image:url('{{ $imageUrl }}')" @endif>
         @unless($imageUrl)
             <span class="pm-card-initial" aria-hidden="true">{{ strtoupper(mb_substr($label, 0, 1)) }}</span>
         @endunless
-        <span class="db-opp-added">Already added</span>
+        @if($added)<span class="db-opp-added">Already added</span>@endif
         <span class="db-opp-cheaper">
             <small>Cheaper than market by</small>
             <strong>dummy</strong>
