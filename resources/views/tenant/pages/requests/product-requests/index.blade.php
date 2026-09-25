@@ -12,6 +12,7 @@
         'tableColumns' => $columns,
         'order' => [[2, 'desc']],
         'statusOptions' => $statusOptions,
+        'dateLabel' => 'Last Update',
         'createUrl' => route('tenant.product-requests.create'),
         'emptyTitle' => 'No product requests yet',
         'emptyCopy' => "Submit a request when you'd like a new product added to the catalog.",

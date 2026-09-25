@@ -60,7 +60,10 @@
     color: #888580;
 }
 
-.od-queue .table-header-actions { position: relative; gap: 20px; }
+.od-queue .table-header-actions { position: relative; z-index: 30; gap: 20px; }
+
+/* The .fu entrance animation leaves a transform on the filters card, which
+   traps the menu's z-index; the raised actions bar keeps it over the table. */
 
 /* Search box */
 .t-scope .od-queue .table-search {
@@ -766,4 +769,120 @@
         left: 12px;
         border-radius: 8px;
     }
+}
+
+/* ── Request lists: item cell (thumb + #ID are mobile-only) ───────────── */
+.rq-item { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.rq-item-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rq-thumb,
+.rq-id { display: none !important; }
+
+/* ── Mobile: Request rows → cards ─────────────────────────────────────────
+   Manufacturing (is-mfg): Product, Qty, Admin Notes, Status, Submitted, Actions
+     → name + #id + ⋮ / Qty · Submitted · Status / Admin Notes.
+   Product & Brand (is-req): Request, Status, Date, Actions
+     → name + #id + ⋮ / Date · Status.                                     */
+@media (max-width: 767px) {
+    .od-queue.rq-queue .tw { overflow: visible; }
+    .od-queue.rq-queue table.tb,
+    .od-queue.rq-queue table.tb tbody { display: block; width: 100% !important; min-width: 0 !important; max-width: 100%; }
+    .od-queue.rq-queue table.tb thead { display: none; }
+
+    .od-queue.rq-queue table.tb tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 46fr) minmax(0, 120fr) minmax(0, 100fr);
+        gap: 8px 16px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--ds-surface);
+    }
+
+    .od-queue.rq-queue.is-mfg table.tb tbody tr {
+        grid-template-areas:
+            "name  name  act"
+            "qty   date  stat"
+            "notes notes notes";
+    }
+
+    .od-queue.rq-queue.is-req table.tb tbody tr {
+        grid-template-areas:
+            "name name act"
+            "date date stat";
+    }
+
+    .od-queue.rq-queue table.tb tbody tr td {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        height: auto;
+        min-width: 0;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: #171717;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: left;
+        white-space: normal;
+    }
+
+    [data-theme="dark"] .od-queue.rq-queue table.tb tbody tr td { color: var(--ds-text); }
+
+    .od-queue.rq-queue table.tb tbody tr td::before {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #5E5E5E;
+    }
+
+    /* Item header */
+    .od-queue.rq-queue .rq-thumb { display: inline-flex !important; width: 39px; height: 39px; }
+    .od-queue.rq-queue .rq-id { display: block !important; color: #5E5E5E; font-size: 12px; font-weight: 400; }
+    .od-queue.rq-queue .rq-item { align-self: stretch; }
+    .od-queue.rq-queue .rq-name {
+        display: block;
+        max-width: 100%;
+        color: #171717;
+        font-size: 16px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    [data-theme="dark"] .od-queue.rq-queue .rq-name { color: var(--ds-text); }
+
+    /* The mobile design has no Add Request button in the header. */
+    .rq-page > .db-welcome .rq-actions { display: none; }
+
+    .od-queue.rq-queue td:last-child { grid-area: act; align-items: flex-end !important; }
+
+    /* Manufacturing */
+    .od-queue.is-mfg td:nth-child(1) { grid-area: name; }
+    .od-queue.is-mfg td:nth-child(2) { grid-area: qty; }
+    .od-queue.is-mfg td:nth-child(3) { grid-area: notes; }
+    .od-queue.is-mfg td:nth-child(4) { grid-area: stat; }
+    .od-queue.is-mfg td:nth-child(5) { grid-area: date; }
+    .od-queue.is-mfg td:nth-child(2)::before { content: "Qty"; }
+    .od-queue.is-mfg td:nth-child(3)::before { content: "Admin Notes"; }
+    .od-queue.is-mfg td:nth-child(4)::before { content: "Status"; }
+    .od-queue.is-mfg td:nth-child(5)::before { content: var(--rq-date-label); }
+
+    .od-queue.is-mfg td .entity-subtitle {
+        max-width: 100% !important;
+        margin: 0;
+        color: inherit;
+        font-size: 14px;
+    }
+
+    /* Product & Brand */
+    .od-queue.is-req td:nth-child(1) { grid-area: name; }
+    .od-queue.is-req td:nth-child(2) { grid-area: stat; }
+    .od-queue.is-req td:nth-child(3) { grid-area: date; }
+    .od-queue.is-req td:nth-child(2)::before { content: "Status"; }
+    .od-queue.is-req td:nth-child(3)::before { content: var(--rq-date-label); }
+
+    .od-queue.rq-queue table.tb tbody tr:has(td.dt-empty) { display: block; }
+    .od-queue.rq-queue td.dt-empty::before { content: none !important; }
 }

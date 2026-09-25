@@ -20,6 +20,7 @@
         'tableColumns' => $tableColumns,
         'order' => [[$submittedIndex, 'desc']],
         'statusOptions' => $statusOptions,
+        'queueClass' => 'is-mfg',
         'createUrl' => route('tenant.manufacturing.create'),
         'exportUrl' => route('tenant.manufacturing.export'),
         'exportId' => 'manufacturing-export-link',

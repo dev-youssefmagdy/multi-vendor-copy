@@ -6,7 +6,8 @@
     Expects: $title, $description, $stats, $tableId, $url, $tableColumns,
     $statusOptions (value => label), $createUrl.
     Optional: $exportUrl + $exportId (download report), $order, $search (bool,
-    only when the data endpoint supports search), $emptyTitle, $emptyCopy.
+    only when the data endpoint supports search), $emptyTitle, $emptyCopy,
+    $queueClass (mobile card layout: is-mfg / is-req) + $dateLabel (card label of the date column).
 --}}
 
 @php
@@ -53,7 +54,7 @@
         @endforeach
     </div>
 
-    <div class="od-queue rq-queue fu d2">
+    <div class="od-queue rq-queue {{ $queueClass ?? 'is-req' }} fu d2" style="--rq-date-label: '{{ $dateLabel ?? 'Submitted' }}'">
         <x-tenant::datatable
             :id="$tableId"
             :url="$url"
@@ -61,6 +62,7 @@
             :order="$order ?? []"
             :page-length="12"
             :length-change="false"
+            :responsive="false"
             title="Your Requests"
             description=":count requests found."
             info-template="Show :count of :total result"
