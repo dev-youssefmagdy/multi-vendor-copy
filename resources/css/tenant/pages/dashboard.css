@@ -1745,3 +1745,80 @@
     .db-opp-slider.is-ads .db-ad-hook p,
     .db-opp-slider.is-ads .db-opp-markets h4 { font-size: 19.03px; }      /* → 12px */
 }
+
+/* Slider cards are zoomed on mobile, so their title keeps the desktop 32px
+   (the section's narrow-width rule would otherwise shrink it twice). */
+@media (max-width: 767px) {
+    .db-opp-slider:is(.is-opps, .is-newin, .is-ads) .db-opp-title { font-size: 32px; }
+}
+
+/* ── Mobile: brand, live store, product request, partner (design: 375px)
+   One continuous full-width dark block (#151515): the four sections sit
+   edge to edge with 16px of dark space between them.                   */
+@media (max-width: 767px) {
+    .db-section:is(.db-brand, .db-store, .db-request, .db-partner) {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        margin-inline: -16px;
+        margin-block: 0;
+        border-radius: 0;
+    }
+
+    .db-section.db-brand { margin-top: 32px; }
+    /* 16px dark gap between the sections (padding, so it stays dark) */
+    .db-section:is(.db-store, .db-request, .db-partner) { padding: 40px 16px 24px; }
+    .db-section.db-partner { margin-bottom: 8px; }
+
+    /* Brand: illustration on top (desktop art at 89.4% = 295px wide) */
+    .db-section.db-brand { gap: 24px; padding: 24px; }
+    .db-brand-art { order: -1; flex: none; width: 330px; height: 306px; zoom: .894; margin-inline: auto; transform: none; }
+    .db-brand-copy { flex: none; gap: 20px; max-width: none; }
+    .db-brand .db-brand-title { font-size: 20px; }
+    .db-brand .db-brand-text { font-size: 12px; }
+    .db-request .db-brand-title,
+    .db-partner .db-brand-title { font-size: 32px; }
+    .db-brand-choose { max-width: none; }
+    .db-brand-choose h3 { font-size: 14px; }
+    .db-brand-options { flex-direction: column; gap: 8px; }
+    .t-scope .db-brand-options .btn-tile,
+    .t-scope .db-brand-options .btn-tile:first-child { flex: none; width: 100%; height: 60px; font-size: 16px; }
+    .t-scope .db-brand-cta { max-width: none; height: 56px; }
+
+    /* Live store preview + edit shortcuts */
+    .db-section.db-store { gap: 16px; }
+    .db-store-preview,
+    .db-store-edit { flex: none; }
+    .db-store-edit { gap: 12px; }
+    .db-store-edit-head { flex-direction: column; align-items: stretch; gap: 12px; }
+    .db-store-sub { max-width: none; }
+    .db-store-country { width: 100%; }
+    .db-store-links { margin-top: 17px; }
+
+    /* Product request: boxes on top, copy, then the 3 steps in one row */
+    .db-section.db-request { align-items: stretch; gap: 20px; }
+    .db-request-copy { flex: none; max-width: none; gap: 20px; }
+    .db-request-art { display: contents; }
+    .db-request-boxes { order: -1; align-self: center; margin: 0 0 -4px; }
+    .t-scope .db-request-cta { width: 100%; min-width: 0; height: 56px; }
+
+    .db-request-steps { order: 1; flex-direction: row; justify-content: space-between; gap: 8px; }
+    .db-request-steps li { gap: 4px; }
+    .db-request-steps li:not(:last-child)::after {
+        position: static;
+        width: 2px;
+        height: 24px;
+        margin-inline-start: 10px;
+    }
+
+    /* Partner program */
+    .db-section.db-partner { gap: 24px; }
+    .db-partner-copy { flex: none; }
+    .db-partner-copy .db-brand-title { max-width: none; }
+    .db-partner-url { font-size: 12px; }
+    .t-scope .db-partner-copy-btn { min-width: 0; height: 40px; padding: 8px 16px; }
+    .t-scope .db-partner-invite { height: 56px; }
+    .db-partner-stats { flex: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .db-partner-card { min-height: 0; }
+    .db-partner-card-head { font-size: 12px; }
+}

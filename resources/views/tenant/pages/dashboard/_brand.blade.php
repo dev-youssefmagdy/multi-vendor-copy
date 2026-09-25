@@ -20,7 +20,7 @@
                 </button>
                 <button type="button" class="btn-tile" role="radio" aria-checked="false" data-brand-option="network">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.75"/><path d="M8 12c0 5.25 1.8 9.75 4 9.75s4-4.5 4-9.75S14.2 2.25 12 2.25 8 6.75 8 12z"/><path d="M3 9h18M3 15h18"/></svg>
-                    available through the merchant network
+                    <span class="db-title-full">available through the merchant network</span><span class="db-title-short">available merchant network</span>
                 </button>
             </div>
         </div>
