@@ -8,39 +8,12 @@
     $pages = collect(range(1, $lastPage))
         ->filter(fn ($n) => $n === 1 || $n === $lastPage || abs($n - $page) <= 1)
         ->values();
-    $hasFilters = filled(request('search')) || filled(request('status')) || filled(request('stock')) || filled(request('category')) || !empty($imageSearchIds);
+    $hasFilters = filled(request('search')) || !empty($imageSearchIds);
 @endphp
 
 @section('content')
     <div class="pm-page">
         @include('tenant.pages.catalog._module-nav', ['activeTab' => 'products'])
-
-        {{-- Filters: same options as the former table filters, applied through the URL --}}
-        <form class="pm-filters fu d1" method="GET" action="{{ route('tenant.products.index') }}" data-pm-filters>
-            @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
-            @if(!empty($imageSearchIds))<input type="hidden" name="image_ids" value="{{ implode(',', $imageSearchIds) }}">@endif
-            <select name="status" class="field-control" aria-label="Status" data-pm-autosubmit>
-                <option value="">All statuses</option>
-                <option value="active" @selected(request('status') === 'active')>Active</option>
-                <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
-            </select>
-            <select name="stock" class="field-control" aria-label="Stock" data-pm-autosubmit>
-                <option value="">All stock</option>
-                <option value="in" @selected(request('stock') === 'in')>In stock</option>
-                <option value="partial" @selected(request('stock') === 'partial')>Partially out of stock</option>
-                <option value="out" @selected(request('stock') === 'out')>Out of stock</option>
-            </select>
-            <select name="category" class="field-control" aria-label="Category" data-pm-autosubmit>
-                <option value="">All categories</option>
-                @foreach($categoryOptions as $id => $name)
-                    <option value="{{ $id }}" @selected((string) request('category') === (string) $id)>{{ $name }}</option>
-                @endforeach
-            </select>
-            @if($hasFilters)
-                <a href="{{ route('tenant.products.index') }}" class="pm-clear">Clear filters</a>
-            @endif
-            <a href="{{ route('tenant.products.sort') }}" class="pm-sort">Sort products</a>
-        </form>
 
         @if(!empty($imageSearchIds))
             <p class="pm-note fu d1">Showing products matching your image search.</p>
@@ -48,8 +21,8 @@
 
         @if($products->isEmpty())
             <div class="pm-empty fu d2">
-                <h3>{{ $hasFilters ? 'No products match these filters' : 'No products yet' }}</h3>
-                <p>{{ $hasFilters ? 'Try a different search or clear the filters.' : 'Add your first product to see it here.' }}</p>
+                <h3>{{ $hasFilters ? 'No products match your search' : 'No products yet' }}</h3>
+                <p>{{ $hasFilters ? 'Try a different search.' : 'Add your first product to see it here.' }}</p>
             </div>
         @else
             <div class="pm-grid fu d2">
