@@ -82,9 +82,9 @@
       "resources/js/tenant/modules/payment-gateway.js"
     ]
   },
-  "_dashboard-CuLemjiX.css": {
-    "file": "assets/dashboard-CuLemjiX.css",
-    "src": "_dashboard-CuLemjiX.css"
+  "_dashboard-B7MrL2GP.css": {
+    "file": "assets/dashboard-B7MrL2GP.css",
+    "src": "_dashboard-B7MrL2GP.css"
   },
   "_dom-DoxT7ZOq.js": {
     "file": "assets/dom-DoxT7ZOq.js",
@@ -3489,7 +3489,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-B_VJ3SWa.js",
+    "file": "assets/module-nav-Cdr39DRB.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3498,7 +3498,7 @@
     ],
     "css": [
       "assets/module-nav-DPRY6sUF.css",
-      "assets/dashboard-CuLemjiX.css"
+      "assets/dashboard-B7MrL2GP.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
@@ -3526,7 +3526,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-grid.js": {
-    "file": "assets/products-grid-BRDTDkKg.js",
+    "file": "assets/products-grid-CkTrpgcM.js",
     "name": "products-grid",
     "src": "resources/js/tenant/pages/catalog/products-grid.js",
     "isEntry": true,
@@ -3534,7 +3534,7 @@
       "_events-Bji7faQz.js"
     ],
     "css": [
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/todays-chances-CU1QodMp.css"
     ]
   },
@@ -3559,7 +3559,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-DcJhnlyt.js",
+    "file": "assets/index-Dp2a89ae.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3571,7 +3571,7 @@
       "_toast-BQQ5sJpv.js"
     ],
     "css": [
-      "assets/dashboard-CuLemjiX.css"
+      "assets/dashboard-B7MrL2GP.css"
     ]
   },
   "resources/js/tenant/pages/finance/billing-index.js": {
@@ -3671,23 +3671,23 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-B5BVWn7s.js",
+    "file": "assets/brand-create-Dy3WvL_5.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-BmlBIVi_.js",
+    "file": "assets/brand-index-B0BPVral.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
@@ -3703,7 +3703,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-BTTlzSRb.js",
+    "file": "assets/manufacturing-create-DgjU2ydB.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
     "isEntry": true,
@@ -3712,18 +3712,18 @@
       "_http-BLQS_aWI.js"
     ],
     "css": [
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-B-wxGbTG.js",
+    "file": "assets/manufacturing-index-CTHWDU9l.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
@@ -3739,12 +3739,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-Ypx6AHs8.js",
+    "file": "assets/product-request-create-CYFShdKq.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3763,13 +3763,13 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-DIdCOkJg.js",
+    "file": "assets/product-requests-index-CbFPEcr2.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3787,13 +3787,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-DWEyrKdc.js",
+    "file": "assets/customers-index-KLtevI8N.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
@@ -3813,13 +3813,13 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-C9NE_gux.js",
+    "file": "assets/orders-index-CfQ9ry4X.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
   },
@@ -4135,7 +4135,7 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-NpPuCmFv.js",
+    "file": "assets/todays-chances-De7tabfM.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
@@ -4143,7 +4143,7 @@
       "_opportunities-D2EsUMM4.js"
     ],
     "css": [
-      "assets/dashboard-CuLemjiX.css",
+      "assets/dashboard-B7MrL2GP.css",
       "assets/todays-chances-CU1QodMp.css"
     ]
   },
