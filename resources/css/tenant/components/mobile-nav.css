@@ -22,7 +22,7 @@
     .t-scope .mnav > * { pointer-events: auto; }
 
     /* Room for the island under the page content */
-    .t-scope #mn { padding-bottom: 110px; }
+    .t-scope #mn { padding-bottom: 90px; }
 
     .t-scope .mnav-pill {
         display: flex;

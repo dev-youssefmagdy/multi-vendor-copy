@@ -1537,7 +1537,7 @@
    Full-bleed video card under the transparent header: Store Power ring on
    top, then copy, checks and the two buttons side by side.              */
 @media (max-width: 767px) {
-    body.t-scope:has(.db-hero-wrap) #mn { margin-top: 0; padding: 0 16px 110px; }
+    body.t-scope:has(.db-hero-wrap) #mn { margin-top: 0; padding: 0 16px 90px; }
     #mn > .db-hero-wrap:first-of-type { margin-top: 0; }
 
     /* The welcome row's links live in the nav island (Appearance, Store) on mobile */
@@ -1768,7 +1768,7 @@
     .db-section.db-brand { margin-top: 32px; }
     /* 16px dark gap between the sections (padding, so it stays dark) */
     .db-section:is(.db-store, .db-request, .db-partner) { padding: 40px 16px 24px; }
-    .db-section.db-partner { margin-bottom: 8px; }
+    .db-section.db-partner { margin-bottom: 0; }
 
     /* Brand: illustration on top (desktop art at 89.4% = 295px wide) */
     .db-section.db-brand { gap: 24px; padding: 24px; }
