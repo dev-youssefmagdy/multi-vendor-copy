@@ -1582,3 +1582,50 @@
     /* Ring at the design's 167px (232px × .72) */
     .db-power { zoom: .72; transform: none; margin: 24px 0 8px; }
 }
+
+/* ── Mobile: "Your store's performance" (design: 375px) ──────────────────
+   KPI cards → Swiper carousel (1.25 per view, set up in performance.js);
+   line chart → 650px plot scrolling sideways; Status Mix → 100px donut
+   beside the list.                                                      */
+@media (max-width: 767px) {
+    .db-section-head .db-welcome-title { font-size: 24px; }
+    .db-section-head .db-welcome-sub { font-size: 12px; }
+    .db-section-head .db-period { display: none; }
+
+    .db-kpis-slider { width: 100%; min-width: 0; }
+    .db-kpis-slider.swiper { overflow: hidden; }
+    .db-kpis-slider .swiper-wrapper { display: flex; gap: 0; }
+    .t-scope .db-kpis-slider .db-kpi.swiper-slide { height: auto; flex-shrink: 0; }
+
+    .db-charts { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+
+    /* Title + legend on one row, description underneath */
+    .db-chart-line .db-chart-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 2px 12px;
+    }
+    .db-chart-line .db-chart-head > div:first-child { display: contents; }
+    .db-chart-line .db-chart-title { grid-column: 1; grid-row: 1; }
+    .db-chart-line .db-legend-inline { grid-column: 2; grid-row: 1; }
+    .db-chart-line .db-chart-sub { grid-column: 1 / -1; grid-row: 2; }
+
+    .db-chart-scroll {
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .db-chart-scroll::-webkit-scrollbar { display: none; }
+    .db-chart-scroll .db-chart-canvas { width: 650px; }
+
+    .db-status { padding: 16px 24px; }
+    .db-status-body { flex-direction: row; align-items: center; gap: 24px; }
+    .db-donut { width: 100px; height: 100px; align-self: center; }
+    .db-donut canvas { width: 100px !important; height: 100px !important; }
+    .db-donut-total { font-size: 16px; line-height: 20px; }
+    .db-donut-caption { font-size: 12px; line-height: 15px; }
+    .db-status-list li { grid-template-columns: minmax(0, 1fr) auto 40px; }
+}

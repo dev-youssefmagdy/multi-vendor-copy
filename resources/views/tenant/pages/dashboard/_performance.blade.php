@@ -44,6 +44,8 @@
         </button>
     </div>
 
+    {{-- KPI cards: grid on desktop, Swiper carousel (1.25 per view) on mobile — performance.js --}}
+    <div class="db-kpis-slider" data-db-kpis>
     <div class="db-kpis">
         @foreach($kpis as $kpi)
             <div class="t-kpi db-kpi">
@@ -56,6 +58,7 @@
                 <p class="t-kpi-caption">{{ $kpi['caption'] }}</p>
             </div>
         @endforeach
+    </div>
     </div>
 
     <div class="db-charts">
@@ -70,8 +73,11 @@
                     <span><i style="background:#10B981"></i>Collected</span>
                 </div>
             </div>
-            <div class="db-chart-canvas">
-                <canvas id="dbGrossChart" aria-label="Gross vs collected sales by month" role="img"></canvas>
+            {{-- On mobile the plot is wider than the card and scrolls sideways --}}
+            <div class="db-chart-scroll">
+                <div class="db-chart-canvas">
+                    <canvas id="dbGrossChart" aria-label="Gross vs collected sales by month" role="img"></canvas>
+                </div>
             </div>
         </div>
 

@@ -2,6 +2,8 @@
 // and Status Mix (donut). Styled to the vendor design system; the shared
 // insight-charts module still draws the remaining legacy dashboard charts.
 import Chart from 'chart.js/auto';
+import Swiper from 'swiper';
+import 'swiper/css';
 import { on } from '@tenant/core/events.js';
 
 const GROSS = '#3B82F6';
@@ -142,7 +144,40 @@ function build() {
     buildStatus();
 }
 
+// KPI cards: a Swiper carousel (1.25 cards per view) on mobile only; on larger
+// screens the Swiper classes are removed so the cards stay a plain grid.
+const MOBILE = window.matchMedia('(max-width: 767px)');
+
+function mountKpiSlider() {
+    const root = document.querySelector('[data-db-kpis]');
+    const wrapper = root?.querySelector('.db-kpis');
+    if (!root || !wrapper) return;
+
+    const slides = [...wrapper.children];
+    let swiper = null;
+
+    const sync = () => {
+        if (MOBILE.matches && !swiper) {
+            root.classList.add('swiper');
+            wrapper.classList.add('swiper-wrapper');
+            slides.forEach((el) => el.classList.add('swiper-slide'));
+            swiper = new Swiper(root, { slidesPerView: 1.25, spaceBetween: 12, watchOverflow: true });
+        } else if (!MOBILE.matches && swiper) {
+            swiper.destroy(true, true);
+            swiper = null;
+            root.classList.remove('swiper');
+            wrapper.classList.remove('swiper-wrapper');
+            slides.forEach((el) => el.classList.remove('swiper-slide'));
+        }
+    };
+
+    sync();
+    MOBILE.addEventListener('change', sync);
+}
+
 export function mountPerformanceCharts() {
+    mountKpiSlider();
+
     if (!document.getElementById('dbGrossChart') && !document.getElementById('dbStatusChart')) {
         return;
     }
