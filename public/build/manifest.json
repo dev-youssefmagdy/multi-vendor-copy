@@ -2520,11 +2520,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-sZ7V1HTR.css",
+    "file": "assets/app-Bv7QYonS.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Bo3XxKNl.css",
+    "file": "assets/ecommet-MlziWkiX.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2807,7 +2807,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CKDdpm-w.css",
+    "file": "assets/souqify-DBahqeVp.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2816,7 +2816,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-ec2IW3lC.css",
+    "file": "assets/app-7cqQ5ehp.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2824,7 +2824,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-sZ7V1HTR.css"
+      "assets/app-Bv7QYonS.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3497,7 +3497,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-BWHncR1b.js",
+    "file": "assets/module-nav-D0IfUe4E.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3506,7 +3506,7 @@
       "_swiper-DAKsJkXb.js"
     ],
     "css": [
-      "assets/module-nav-DPRY6sUF.css",
+      "assets/module-nav-C12ytgB5.css",
       "assets/dashboard-DB_yIsLP.css"
     ]
   },

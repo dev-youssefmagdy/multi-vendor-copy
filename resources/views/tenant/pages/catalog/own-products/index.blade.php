@@ -14,6 +14,32 @@
     <div class="pm-page">
         @include('tenant.pages.catalog._module-nav', ['activeTab' => 'own-products', 'addUrl' => route('tenant.own-products.create')])
 
+        {{-- Stat cards: mobile design only (hidden on larger screens, products-module.css). --}}
+        {{-- FOR DESIGN PURPOSE --}}
+        {{-- BACKEND TODO: pass real own-product stats (total / active / featured) and replace "dummy". --}}
+        <div class="op-stats fu d1">
+            <div class="op-stat is-brand">
+                <span class="op-stat-label">Products</span>
+                <strong class="op-stat-value">dummy</strong>
+                <span class="op-stat-caption">Products in this tenant catalog</span>
+            </div>
+            <div class="op-stat">
+                <div class="op-stat-body">
+                    <span class="op-stat-label">Active</span>
+                    <strong class="op-stat-value">dummy</strong>
+                    <span class="op-stat-caption">Currently saleable products</span>
+                </div>
+                <span class="op-stat-live" aria-hidden="true"><i></i><b>Active</b></span>
+            </div>
+            <div class="op-stat">
+                <div class="op-stat-body">
+                    <span class="op-stat-label">Featured</span>
+                    <strong class="op-stat-value">dummy</strong>
+                    <span class="op-stat-caption">Homepage promoted products</span>
+                </div>
+            </div>
+        </div>
+
         @if($products->total() === 0)
             {{-- No own products yet: sample cards (dummy data) for now. --}}
             {{-- FOR DESIGN PURPOSE --}}

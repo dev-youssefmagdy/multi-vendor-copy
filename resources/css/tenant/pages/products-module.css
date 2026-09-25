@@ -210,12 +210,57 @@
     .pm-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* ── Mobile (design: 375px) ───────────────────────────────────────────────
+   Black top block (title, description, full-width "Add product") under the
+   transparent header, then the tab pills and a 2-column card grid. The
+   block is a grid pseudo-element behind rows 1–2, so the add button (which
+   lives in .pm-bar with the tabs) can sit inside it without new markup.
+   Cards are the desktop card at 44.97% (369 → 166px), zoomed.          */
 @media (max-width: 767px) {
-    .pm-bar { flex-direction: column; align-items: stretch; }
-    .t-scope .pm-add { width: 100%; }
-    .pm-tabs .pm-tab { font-size: 16px; height: 46px; }
-    .pm-tabs .pm-tab.is-active { font-size: 18px; height: 50px; }
-    .pm-search { width: 100%; }
+    body.t-scope:has(.pm-nav) #mn { margin-top: 0; padding: 0 16px 90px; }
+
+    .pm-nav {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+        margin: 0 0 20px;
+        isolation: isolate;
+    }
+
+    .pm-nav::before {
+        content: "";
+        grid-row: 1 / 3;
+        grid-column: 1;
+        z-index: -1;
+        margin: 0 -16px -24px;
+        border-radius: 0 0 24px 24px;
+        background: #000000;
+    }
+
+    .pm-nav > .db-welcome {
+        grid-row: 1;
+        grid-column: 1;
+        padding-top: calc(var(--ds-header-h) + 4px);
+    }
+
+    .pm-nav .db-welcome-copy { gap: 8px; }
+    .pm-nav .db-welcome-title { font-size: 24px; color: #F5F5F5; }
+    .pm-nav .db-welcome-sub { font-size: 11px; color: #A3A3A3; }
+    .pm-nav .pm-search { display: none; }
+
+    .pm-bar { display: contents; }
+    .t-scope .pm-nav .pm-add { grid-row: 2; grid-column: 1; width: 100%; min-width: 0; height: 56px; }
+    .pm-nav .pm-tabs { grid-row: 3; grid-column: 1; margin-top: 24px; }
+
+    .pm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 10.79px; }
+    .pm-grid .pm-card { border-radius: 10.79px; }
+    .pm-grid .pm-card .db-opp-media,
+    .pm-grid .pm-card .db-opp-body { zoom: .4497; }
+    .pm-grid .pm-card .db-opp-title { font-size: 32px; }
+
+    .pm-page .tc-pagination { flex-direction: column-reverse; align-items: center; gap: 12px; }
+    .pm-page .tc-pages { justify-content: center; }
 }
 
 /* Page-specific secondary actions under the module header (e.g. Sort categories) */
@@ -225,4 +270,72 @@
     justify-content: flex-end;
     gap: 12px;
     margin-bottom: 20px;
+}
+
+/* ── Own products: stat cards (mobile design only) ─────────────────────── */
+.op-stats { display: none; }
+
+@media (max-width: 767px) {
+    .op-stats {
+        display: grid;
+        grid-template-columns: minmax(0, 175fr) minmax(0, 156fr);
+        gap: 12px;
+        margin-top: -8px;
+    }
+
+    .op-stat {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        min-height: 159px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        background: var(--ds-surface);
+    }
+
+    .op-stat.is-brand {
+        grid-column: 1 / -1;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 8px;
+        min-height: 123px;
+        background: var(--ds-brand-500);
+    }
+
+    .op-stat-body { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+    .op-stat-label { font-size: 14px; line-height: 1.5; color: #787878; }
+    .op-stat-value { overflow: hidden; font-size: 48px; font-weight: 700; line-height: 1.1; color: var(--ds-text); text-overflow: ellipsis; white-space: nowrap; }
+    .op-stat-caption { font-size: 12px; line-height: 1.5; color: #A3A3A3; }
+
+    .op-stat.is-brand .op-stat-label,
+    .op-stat.is-brand .op-stat-value,
+    .op-stat.is-brand .op-stat-caption { color: #F5F5F5; }
+
+    /* Green dot + vertical "Active" label */
+    .op-stat-live {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 13px;
+        flex-shrink: 0;
+    }
+
+    .op-stat-live i {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #03AA00;
+        box-shadow: 0 0 0 6px rgba(3, 170, 0, 0.12);
+    }
+
+    .op-stat-live b {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #03AA00;
+    }
 }

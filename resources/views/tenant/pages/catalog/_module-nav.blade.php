@@ -10,22 +10,24 @@
 @php
     $tabs = [
         'products' => ['Products', route('tenant.products.index'), 'Browse, search, and manage every product in your store catalog.'],
-        'own-products' => ['Own products', route('tenant.own-products.index'), 'Manage tenant-scoped product details, pricing, availability, and featured status.'],
+        'own-products' => ['Own products', route('tenant.own-products.index'), 'Manage tenant-scoped product details, pricing, availability, and featured status.', 'Own Products'],
         'categories' => ['Categories', route('tenant.categories.index'), 'Manage tenant category ordering, featured state, and translated storefront copy.'],
         'edit-requests' => ['Edit requests', route('tenant.products.edit-requests'), 'Product name and description edits go through admin review before going live. Track them here.'],
-        'new-in' => ['New in', route('tenant.badges.show', ['badge' => 'new-in']), 'The latest products added to your store.'],
+        'new-in' => ['New in', route('tenant.badges.show', ['badge' => 'new-in']), "These are your store's products all in one place.", 'New in products'],
         'best-selling' => ['Best selling', route('tenant.badges.show', ['badge' => 'best-selling']), 'Choose the products shown under the Best selling badge.'],
         'featured' => ['Featured', route('tenant.badges.show', ['badge' => 'featured']), 'Choose the products shown under the Featured badge.'],
         'recommended' => ['Recommended', route('tenant.badges.show', ['badge' => 'recommended']), 'Choose the products shown under the Recommended badge.'],
         'trending-now' => ['Trending now', route('tenant.badges.show', ['badge' => 'trending-now']), 'Choose the products shown under the Trending now badge.'],
     ];
     $current = $tabs[$activeTab ?? 'products'] ?? $tabs['products'];
+    // Optional 4th item: a page heading that differs from the short tab label.
+    $heading = $current[3] ?? $current[0];
 @endphp
 
 <div class="pm-nav fu d0" data-products-module>
     <div class="db-welcome">
         <div class="db-welcome-copy">
-            <h1 class="db-welcome-title">{{ $current[0] }}</h1>
+            <h1 class="db-welcome-title">{{ $heading }}</h1>
             <p class="db-welcome-sub">{{ $current[2] }}</p>
         </div>
 
