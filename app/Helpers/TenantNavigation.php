@@ -22,7 +22,7 @@ class TenantNavigation
                 'label' => 'Overview',
                 'items' => [
                     ['type' => 'link', 'label' => 'Dashboard', 'route' => 'tenant.dashboard', 'icon' => 'dashboard', 'permission' => 'dashboard.view'],
-                    ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.store.flash-sales.index', 'icon' => 'plans', 'permission' => 'store.flash-sales.manage'],
+                    ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.todays-chances', 'icon' => 'plans', 'permission' => 'dashboard.view'],
                     [
                         'type' => 'group',
                         'label' => 'Products',
@@ -71,6 +71,7 @@ class TenantNavigation
                         'icon' => 'payments',
                         'children' => [
                             ['label' => 'Coupons', 'route' => 'tenant.store.coupons.index', 'permission' => 'store.coupons.manage'],
+                            ['label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'permission' => 'store.flash-sales.manage'],
                         ]
                     ],
                     ['type' => 'link', 'label' => 'Analytics', 'route' => 'tenant.analytics', 'icon' => 'dashboard', 'permission' => 'analytics.view'],

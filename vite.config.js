@@ -88,6 +88,7 @@ export default defineConfig({
                 'resources/js/tenant/pages/dashboard/index.js',
                 'resources/js/tenant/pages/insights/index.js',
                 'resources/js/tenant/pages/insights/analytics.js',
+                'resources/js/tenant/pages/todays-chances.js',
                 'resources/js/tenant/pages/catalog/edit-requests.js',
                 'resources/js/tenant/pages/catalog/sortable.js',
                 'resources/js/tenant/pages/catalog/categories-index.js',

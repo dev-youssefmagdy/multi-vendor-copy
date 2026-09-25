@@ -6,7 +6,7 @@ import 'swiper/css';
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function mountFlagTickers(root) {
+export function mountFlagTickers(root = document) {
     root.querySelectorAll('[data-flag-ticker]').forEach((el) => {
         new Swiper(el, {
             modules: [Autoplay],

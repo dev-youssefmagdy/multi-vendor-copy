@@ -1,1 +1,0 @@
-import{t as e}from"./forms-CunbEt4K.js";export{e as TenantForm};
