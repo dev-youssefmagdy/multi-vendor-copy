@@ -20,5 +20,6 @@
     @include('tenant.layouts.partials.compliance-modal')
     @include('tenant.layouts.partials.setup-banner')
     <main id="mn">@yield('content')</main>
+    @include('tenant.layouts.partials.mobile-nav')
 </body>
 </html>

@@ -1,9 +1,14 @@
 <header id="nav">
     <button type="button" class="ham" data-action="handle-ham" aria-label="Toggle sidebar">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
+            <path d="M3.25 4.25h12.5M3.25 12h17.5M3.25 19.75h17.5"/>
         </svg>
     </button>
+
+    {{-- Logo — mobile only (the sidebar carries it on larger screens). --}}
+    <a href="{{ route('tenant.dashboard') }}" class="hd-logo" aria-label="Dashboard">
+        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" width="153" height="40">
+    </a>
 
     {{-- Country selector — UI only for now; not wired to any data yet. --}}
     <button type="button" class="hd-field hd-country xs-hide" aria-label="Select your country">

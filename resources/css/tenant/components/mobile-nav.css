@@ -1,0 +1,96 @@
+/* ── Mobile nav island (≤ 767px) ──────────────────────────────────────────
+   White pill with 4 quick links (active = orange capsule) + black Store
+   button, floating at the bottom of the screen.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope .mnav { display: none; }
+
+@media (max-width: 767px) {
+    .t-scope .mnav {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 90px;
+        padding: 0 16px calc(env(safe-area-inset-bottom, 0px));
+        pointer-events: none; /* only the pill and button take taps */
+    }
+
+    .t-scope .mnav > * { pointer-events: auto; }
+
+    /* Room for the island under the page content */
+    .t-scope #mn { padding-bottom: 110px; }
+
+    .t-scope .mnav-pill {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        min-width: 0;
+        height: 72px;
+        padding: 0 6px;
+        border-radius: 80px;
+        background: #FFFFFF;
+        box-shadow: 0 0 36.8px rgba(0, 0, 0, 0.25);
+    }
+
+    .t-scope .mnav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        flex: 1 1 0;
+        min-width: 0;
+        height: 64px;
+        padding: 0 4px;
+        border-radius: 102px;
+        color: #5E5E5E;
+        text-decoration: none;
+        transition: background-color .15s ease, color .15s ease;
+    }
+
+    .t-scope .mnav-item svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+    .t-scope .mnav-item span {
+        max-width: 100%;
+        overflow: hidden;
+        color: #787878;
+        font-size: 10px;
+        line-height: 1.5;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .t-scope .mnav-item.is-active { background: var(--ds-brand-500); color: #F5F5F5; }
+    .t-scope .mnav-item.is-active span { color: #F5F5F5; }
+    .t-scope .mnav-item:focus-visible,
+    .t-scope .mnav-store:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
+
+    .t-scope .mnav-store {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        flex-shrink: 0;
+        width: 72px;
+        height: 72px;
+        border-radius: 80px;
+        background: #000000;
+        box-shadow: 0 0 36.8px rgba(0, 0, 0, 0.25);
+        color: var(--ds-brand-500);
+        text-decoration: none;
+    }
+
+    .t-scope .mnav-store svg { width: 28px; height: 28px; }
+    .t-scope .mnav-store span { color: #F5F5F5; font-size: 14px; line-height: 1.5; }
+
+    [data-theme="dark"] .t-scope .mnav-pill { background: var(--ds-surface); }
+    [data-theme="dark"] .t-scope .mnav-item:not(.is-active) span { color: var(--ds-text-muted); }
+    [data-theme="dark"] .t-scope .mnav-item:not(.is-active) { color: var(--ds-text-muted); }
+}
