@@ -46,7 +46,7 @@
                 name="{{ $htmlName }}"
                 id="{{ $fieldId }}"
                 value="{{ $resolved }}"
-                @if($placeholder) placeholder="{{ $placeholder }}" @endif
+                @if(filled($placeholder)) placeholder="{{ $placeholder }}" @endif
                 @if($required) required @endif
                 @if($disabled) disabled @endif
                 @if($readonly) readonly @endif

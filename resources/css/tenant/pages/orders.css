@@ -347,3 +347,212 @@
 /* ID column: "#" prefix, 12px like the design */
 .cu-queue table.tb tbody td:first-child { font-size: 12px; }
 .cu-queue table.tb tbody td:first-child:not(.dt-empty)::before { content: "#"; }
+
+/* ── Request pages (Product / Manufacturing / Brand requests) ───────────── */
+
+.rq-actions { display: flex; flex-wrap: wrap; gap: 24px; }
+.t-scope .rq-add { min-width: 212px; border-radius: 12px; }
+.t-scope .rq-add svg { width: 24px; height: 24px; }
+
+.rq-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rq-kpis .an-kpi { min-height: 127px; }
+
+.rq-name {
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    font-size: 12px;
+}
+
+.rq-new {
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 40px;
+    background: #FFF1E6;
+    color: var(--ds-brand-500);
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+/* Admin notes cell (rendered by the controller) */
+.rq-queue td .entity-subtitle { max-width: 240px !important; margin: 0 auto; color: #A3A3A3; font-size: 14px; }
+
+/* Status spans rendered as bare "badge-*" classes: same pill + dot as the badge component */
+.t-scope .rq-queue td span[class^="badge-"],
+.t-scope .rq-queue td span.badge:not(:has(.badge-dot)) {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.t-scope .rq-queue td span[class^="badge-"]::before,
+.t-scope .rq-queue td span.badge:not(:has(.badge-dot))::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.t-scope .rq-queue .badge-amber { background: #FEFAE6; color: #F0C800; }
+.t-scope .rq-queue .badge-blue { background: #E6E7FE; color: #424AFF; }
+/* "In production" / "Reviewing" read as the design's orange "Processing" */
+.t-scope .rq-queue .badge-cyan,
+.t-scope .rq-queue .badge-violet,
+.t-scope .rq-queue .badge-orange { background: #FFF1E6; color: #FD6F04; }
+.t-scope .rq-queue .badge-green { background: #E6FEE6; color: #03AA00; }
+.t-scope .rq-queue .badge-red { background: #FEE6E6; color: #E00000; }
+
+@container (max-width: 900px) {
+    .rq-kpis { grid-template-columns: minmax(0, 1fr); }
+    .rq-actions { width: 100%; }
+    .rq-actions .btn { flex: 1; }
+}
+
+/* ── Request create forms (New Manufacturing Request) ───────────────────── */
+
+.rq-form-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 10px;
+    container-type: inline-size;
+}
+
+.rq-form-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 24px;
+    padding: 24px;
+    border-radius: 24px;
+    background: var(--ds-surface);
+}
+
+.rq-form-card .t-field { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+
+.rq-form-card .field-label {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #787878;
+}
+
+.rq-form-card .t-req { color: #E00000; }
+
+.t-scope .rq-form-card .field-control {
+    min-height: 48px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 12px;
+    background: #ECECEC;
+    color: var(--ds-text);
+    font-size: 14px;
+    box-shadow: none;
+}
+
+.t-scope .rq-form-card .field-control::placeholder { color: #C1C1C1; }
+.t-scope .rq-form-card .field-control:focus { outline: 2px solid var(--ds-brand-500); outline-offset: 0; }
+.t-scope .rq-form-card textarea.field-control { height: 223px; resize: vertical; }
+
+[data-theme="dark"] .t-scope .rq-form-card .field-control { background: var(--ds-input-bg); }
+
+/* Link to existing product: search + result list */
+.rq-picker-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #F5F5F5;
+    color: #5E5E5E;
+}
+
+.rq-picker-search svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+.rq-picker-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ds-text);
+    font: inherit;
+    font-size: 16px;
+}
+
+.rq-picker-search input::placeholder { color: #5E5E5E; }
+.rq-picker-search:focus-within { outline: 2px solid var(--ds-brand-500); }
+
+.rq-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 171px;
+    margin: 4px 0 0;
+    padding: 12px 0;
+    overflow-y: auto;
+    border-radius: 16px;
+    background: #F0F0F0;
+    list-style: none;
+}
+
+.rq-picker-item {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #5E5E5E;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.rq-picker-item:hover { color: var(--ds-text); font-weight: 500; }
+.rq-picker-item[aria-selected="true"] { background: var(--ds-brand-50); color: var(--ds-brand-500); font-weight: 500; }
+.rq-picker-empty { padding: 12px 16px; color: #A3A3A3; font-size: 14px; }
+
+[data-theme="dark"] .rq-picker-search,
+[data-theme="dark"] .rq-picker-list { background: var(--ds-input-bg); }
+
+@container (max-width: 760px) {
+    .rq-form-card { grid-template-columns: minmax(0, 1fr); }
+}
+
+.rq-form-card .rq-span-2 { grid-column: 1 / -1; }
+.rq-form-card .t-help { margin: 4px 0 0; font-size: 12px; color: #A3A3A3; }
+
+/* Attachments (dropzone) in the right column, same grey surface as the fields */
+.rq-files { display: flex; flex-direction: column; gap: 4px; }
+.rq-files .t-field { gap: 0; }
+
+.t-scope .rq-files .t-dropzone-drop {
+    min-height: 223px;
+    border: 1px dashed #C1C1C1;
+    border-radius: 16px;
+    background: #F0F0F0;
+}
+
+.t-scope .rq-files .t-dropzone-drop:hover { border-color: var(--ds-brand-500); }
+.t-scope .rq-files .t-dropzone-icon { color: var(--ds-brand-500); background: #FFFFFF; }
+
+[data-theme="dark"] .t-scope .rq-files .t-dropzone-drop { background: var(--ds-input-bg); }

@@ -532,9 +532,9 @@
       "_swiper-DZ3nuP-o.js"
     ]
   },
-  "_orders-eERZAO76.css": {
-    "file": "assets/orders-eERZAO76.css",
-    "src": "_orders-eERZAO76.css"
+  "_orders-sQlPfFQ2.css": {
+    "file": "assets/orders-sQlPfFQ2.css",
+    "src": "_orders-sQlPfFQ2.css"
   },
   "_phone-input-D0r15PxO.js": {
     "file": "assets/phone-input-D0r15PxO.js",
@@ -3669,16 +3669,25 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-DdCtHEMa.js",
+    "file": "assets/brand-create-Dc9P_ceN.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css"
+    ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-DLQ2WnYW.js",
+    "file": "assets/brand-index-D6TRwkN9.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/analytics-DDsruBAE.css",
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css"
+    ]
   },
   "resources/js/tenant/pages/requests/brand-show.js": {
     "file": "assets/brand-show-Tgt3JIlG.js",
@@ -3692,16 +3701,29 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-78PDflwi.js",
+    "file": "assets/manufacturing-create-DZCNtGCL.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_dom-DoxT7ZOq.js",
+      "_http-BLQS_aWI.js"
+    ],
+    "css": [
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css"
+    ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-DAoclGey.js",
+    "file": "assets/manufacturing-index-0lq4KDKp.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/analytics-DDsruBAE.css",
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css"
+    ]
   },
   "resources/js/tenant/pages/requests/manufacturing-show.js": {
     "file": "assets/manufacturing-show-Rx-VuYPv.js",
@@ -3715,11 +3737,13 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-B7IGkEJ6.js",
+    "file": "assets/product-request-create-CC_Q5iFU.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css",
       "assets/requests-CJpz01p_.css"
     ]
   },
@@ -3737,11 +3761,14 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-DdIb9a52.js",
+    "file": "assets/product-requests-index-B7r3rYi2.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
     "css": [
+      "assets/analytics-DDsruBAE.css",
+      "assets/dashboard-D8JC5Cn6.css",
+      "assets/orders-sQlPfFQ2.css",
       "assets/requests-CJpz01p_.css"
     ]
   },
@@ -3758,14 +3785,14 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-ko-jNSq9.js",
+    "file": "assets/customers-index-jFM3VI2c.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
       "assets/dashboard-D8JC5Cn6.css",
-      "assets/orders-eERZAO76.css"
+      "assets/orders-sQlPfFQ2.css"
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
@@ -3784,14 +3811,14 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-BH7HCiO1.js",
+    "file": "assets/orders-index-CMxUmlr3.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
     "css": [
       "assets/analytics-DDsruBAE.css",
       "assets/dashboard-D8JC5Cn6.css",
-      "assets/orders-eERZAO76.css"
+      "assets/orders-sQlPfFQ2.css"
     ]
   },
   "resources/js/tenant/pages/sales/return-show.js": {

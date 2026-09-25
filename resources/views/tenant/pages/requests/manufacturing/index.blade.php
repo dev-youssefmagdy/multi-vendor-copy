@@ -2,25 +2,31 @@
 
 @section('title', 'Manufacturing Requests')
 
+@php
+    // Columns in the design order: Product, Qty, Admin Notes, Status, Submitted, Actions.
+    $byKey = collect($columns)->keyBy(fn ($col) => ($col instanceof \App\Support\Tenant\TableColumn ? $col->toArray() : $col)['data'] ?? '');
+    $tableColumns = collect(['product', 'quantity', 'admin_notes', 'status', 'submitted', 'actions'])
+        ->map(fn ($key) => $byKey->get($key))->filter()->values()->all();
+    $submittedIndex = array_search('submitted', ['product', 'quantity', 'admin_notes', 'status', 'submitted', 'actions'], true);
+@endphp
+
 @section('content')
-    <x-tenant::page-header :title="$title" :badge="$badge" :description="$description">
-        <x-slot:actions>
-            <a id="manufacturing-export-link" href="{{ route('tenant.manufacturing.export') }}" class="btn btn-secondary">Export CSV</a>
-            <a href="{{ route('tenant.manufacturing.create') }}" class="btn btn-primary">New Request</a>
-        </x-slot:actions>
-    </x-tenant::page-header>
-
-    <x-tenant::stats-grid :stats="$stats" />
-
-    <x-tenant::filters-card target="manufacturing-table" title="Filters" description="Filter your requests by product name or status." export-link="#manufacturing-export-link">
-        <x-tenant::input name="search" label="Search" placeholder="Search by product name..." />
-        <x-tenant::select2 name="status" label="Status" :options="$statusOptions" placeholder="All Statuses" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="manufacturing-table" :url="route('tenant.manufacturing.data')" :columns="$columns"
-        title="Your Requests"
-        empty-title="No manufacturing requests"
-        empty-copy="Submit your first manufacturing request using the button above." />
+    @include('tenant.pages.requests._list', [
+        'title' => $title,
+        'description' => $description,
+        'stats' => $stats,
+        'tableId' => 'manufacturing-table',
+        'url' => route('tenant.manufacturing.data'),
+        'tableColumns' => $tableColumns,
+        'order' => [[$submittedIndex, 'desc']],
+        'statusOptions' => $statusOptions,
+        'createUrl' => route('tenant.manufacturing.create'),
+        'exportUrl' => route('tenant.manufacturing.export'),
+        'exportId' => 'manufacturing-export-link',
+        'search' => true,
+        'emptyTitle' => 'No manufacturing requests',
+        'emptyCopy' => 'Submit your first manufacturing request using the Add Request button.',
+    ])
 @endsection
 
 @push('tenant-vite')

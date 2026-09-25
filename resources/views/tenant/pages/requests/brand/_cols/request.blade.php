@@ -1,2 +1,1 @@
-<div class="entity-title">{{ $request->title }}</div>
-<div class="entity-subtitle">#{{ $request->id }}</div>
+<span class="rq-name" title="#{{ $request->id }}">{{ $request->title }}</span>

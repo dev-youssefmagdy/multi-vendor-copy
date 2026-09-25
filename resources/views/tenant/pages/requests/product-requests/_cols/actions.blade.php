@@ -1,11 +1,7 @@
 @php
     /** @var \App\Models\ProductRequest $request */
+    $dots = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v.01M12 12v.01M12 18.5v.01"/></svg>';
 @endphp
-
-<a href="{{ route('tenant.product-requests.show', $request->id) }}" class="btn btn-secondary btn-sm">
-    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-1px;">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-    </svg>
-    View
-</a>
+<x-tenant::dropdown align="end" :icon="$dots">
+    <x-tenant::dropdown-item :href="route('tenant.product-requests.show', $request->id)">View details</x-tenant::dropdown-item>
+</x-tenant::dropdown>
