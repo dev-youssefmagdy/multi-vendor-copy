@@ -69,6 +69,10 @@
 }
 .t-scope .btn-danger:hover { background: var(--ds-danger-bg); }
 
+/* The [hidden] attribute must win over the display:flex above */
+.t-scope .btn[hidden],
+.t-scope .btn-tile[hidden] { display: none; }
+
 /* Disabled — last so it wins over every variant's hover/active */
 .t-scope .btn:disabled,
 .t-scope .btn.is-disabled,

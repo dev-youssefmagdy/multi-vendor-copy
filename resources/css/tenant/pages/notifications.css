@@ -50,6 +50,8 @@
     line-height: 1.5;
 }
 
+.nt-unread-pill[hidden] { display: none; }
+
 .t-scope .nt-mark-all {
     min-width: 212px;
     min-height: 52px;

@@ -46,6 +46,7 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'All Orders', 'route' => 'tenant.orders.index', 'permission' => 'sales.orders.view'],
                             ['label' => 'Returns', 'route' => 'tenant.returns.index', 'permission' => 'sales.returns.manage'],
+                            ['label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'permission' => 'sales.returns.manage'],
                         ]
                     ],
                     ['type' => 'link', 'label' => 'Customers', 'route' => 'tenant.customers.index', 'icon' => 'admins', 'permission' => 'sales.customers.manage'],
@@ -72,18 +73,7 @@ class TenantNavigation
                             ['label' => 'Coupons', 'route' => 'tenant.store.coupons.index', 'permission' => 'store.coupons.manage'],
                         ]
                     ],
-                    [
-                        'type' => 'group',
-                        'label' => 'Analytics',
-                        'icon' => 'dashboard',
-                        'children' => [
-                            ['label' => 'Order Analytics', 'route' => 'tenant.analytics.orders', 'permission' => 'analytics.view'],
-                            ['label' => 'Customer Lifetime Value', 'route' => 'tenant.analytics.clv', 'permission' => 'analytics.view'],
-                            ['label' => 'Shipping Analytics', 'route' => 'tenant.analytics.shipping', 'permission' => 'analytics.view'],
-                            ['label' => 'Product Profitability', 'route' => 'tenant.analytics.profitability', 'permission' => 'analytics.view'],
-                            ['label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'permission' => 'sales.returns.manage'],
-                        ]
-                    ],
+                    ['type' => 'link', 'label' => 'Analytics', 'route' => 'tenant.analytics', 'icon' => 'dashboard', 'permission' => 'analytics.view'],
                     [
                         'type' => 'group',
                         'label' => 'Request product',

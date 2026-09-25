@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Tenant\Panel\Insights;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,12 +22,13 @@ final class ShippingAnalyticsController extends PanelController
         return Cache::driver('file')->remember('tenant:'.tenant('id').':shipping-analytics:overview', 60, fn () => $this->repository->shippingAnalyticsOverview());
     }
 
-    public function index(): View
+    /** Data for this module's tab on the single Analytics page (AnalyticsController). */
+    public function viewData(): array
     {
         $overview = $this->overview();
         $statusRows = collect($overview['status_rows']);
 
-        return view('tenant.pages.insights._layout', [
+        return [
             'title' => 'Shipping Analytics',
             'badge' => 'Insights',
             'description' => 'Measure tenant shipping capture, fulfillment throughput, and recorded shipping payload data from tenant orders and order items.',
@@ -73,7 +73,7 @@ final class ShippingAnalyticsController extends PanelController
                     'order' => [],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function dataMonthly(): JsonResponse

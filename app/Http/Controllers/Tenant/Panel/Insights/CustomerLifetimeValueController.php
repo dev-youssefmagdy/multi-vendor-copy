@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Tenant\Panel\Insights;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,13 +22,14 @@ final class CustomerLifetimeValueController extends PanelController
         return Cache::driver('file')->remember('tenant:' . tenant('id') . ':clv:overview', 60, fn() => $this->repository->customerLifetimeOverview());
     }
 
-    public function index(): View
+    /** Data for this module's tab on the single Analytics page (AnalyticsController). */
+    public function viewData(): array
     {
         $overview = $this->overview();
         $rows = collect($overview['rows']);
         $firstRow = $rows->first();
 
-        return view('tenant.pages.insights._layout', [
+        return [
             'title' => 'Customer Lifetime Value',
             'badge' => 'Insights',
             'description' => 'Rank customer value, order frequency, and buyer mix using tenant customers joined with tenant orders.',
@@ -84,7 +84,7 @@ final class CustomerLifetimeValueController extends PanelController
                     'order' => [],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function data(): JsonResponse

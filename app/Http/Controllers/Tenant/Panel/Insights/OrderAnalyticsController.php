@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Tenant\Panel\Insights;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,17 +22,19 @@ final class OrderAnalyticsController extends PanelController
         return Cache::driver('file')->remember('tenant:'.tenant('id').':order-analytics:overview', 60, fn () => $this->repository->orderAnalyticsOverview());
     }
 
-    public function index(): View
+    /** Data for this module's tab on the single Analytics page (AnalyticsController). */
+    public function viewData(): array
     {
         $overview = $this->overview();
 
         $statusRows = collect($overview['status_rows']);
 
-        return view('tenant.pages.insights._layout', [
+        return [
             'title' => 'Order Analytics',
             'badge' => 'Insights',
             'description' => 'Analyze tenant order value, monthly collection performance, and queue mix directly from the tenant order tables.',
             'contentIntro' => 'Gross value, collected value, order counts, and customer momentum are all aggregated from tenant orders and related customers.',
+            'statusRows' => $statusRows->values()->all(),
             'cardsGridClass' => 'g-stats4',
             'cards' => Metric::cards($overview['cards']),
             'chartPayload' => $overview['chart_payload'],
@@ -86,7 +87,7 @@ final class OrderAnalyticsController extends PanelController
                     'order' => [],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function dataMonthly(): JsonResponse

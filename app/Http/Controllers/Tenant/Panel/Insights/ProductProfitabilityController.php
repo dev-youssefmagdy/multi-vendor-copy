@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Tenant\Panel\Insights;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -28,13 +27,14 @@ final class ProductProfitabilityController extends PanelController
         return Cache::driver('file')->remember('tenant:'.tenant('id').':profitability:rows', 60, fn () => $this->repository->profitabilityRows());
     }
 
-    public function index(): View
+    /** Data for this module's tab on the single Analytics page (AnalyticsController). */
+    public function viewData(): array
     {
         $overview = $this->overview();
         $rows = collect($this->rows());
         $firstRow = $rows->first();
 
-        return view('tenant.pages.insights._layout', [
+        return [
             'title' => 'Product Profitability',
             'badge' => 'Insights',
             'description' => 'Compare tenant catalog pricing against recorded sell-through, cost, and gross profit using product variants plus order items.',
@@ -91,7 +91,7 @@ final class ProductProfitabilityController extends PanelController
                     'order' => [],
                 ],
             ],
-        ]);
+        ];
     }
 
     public function data(): JsonResponse

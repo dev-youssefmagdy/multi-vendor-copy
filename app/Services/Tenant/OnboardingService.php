@@ -62,7 +62,7 @@ class OnboardingService
                 'description' => 'Dive deep into your business data with Order Analytics, Customer Lifetime Value, Shipping performance, and Product Profitability reports to make informed decisions.',
                 'icon' => 'analytics',
                 'color' => 'amber',
-                'route_hint' => 'tenant.analytics.orders',
+                'route_hint' => 'tenant.analytics',
             ],
             [
                 'title' => 'Finance — Wallet & Billing',

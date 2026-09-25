@@ -1,1 +1,0 @@
-import{t as e}from"./forms-BfxRXkU4.js";export{e as TenantForm};

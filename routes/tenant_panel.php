@@ -12,7 +12,7 @@ use App\Http\Controllers\Tenant\Panel\Onboarding\OnboardingController;
 use App\Http\Controllers\Tenant\Panel\Settings\{AccountSettingsController, ComplianceCenterController, AdminsController, AiTranslationController, CurrenciesController, DomainsController, EmailTemplateController, GeneralSettingsController, LanguagesController, LanguagesManageController, MailConfigurationsController, PaymentGatewaysController, PaymentReadinessController, ReturnPolicyController, RolesPermissionsController, SubscribersController, TrackingSettingsController, TranslationsController};
 use App\Http\Controllers\ImageSearchController;
 use App\Http\Controllers\Tenant\Panel\Auth\LoginController;
-use App\Http\Controllers\Tenant\Panel\Insights\{CustomerLifetimeValueController, DashboardController, OrderAnalyticsController, ProductProfitabilityController, ShippingAnalyticsController};
+use App\Http\Controllers\Tenant\Panel\Insights\{AnalyticsController, CustomerLifetimeValueController, DashboardController, OrderAnalyticsController, ProductProfitabilityController, ShippingAnalyticsController};
 use App\Http\Controllers\Tenant\Panel\Sales\{CustomerCreateController, CustomerDetailController, CustomersController, OrdersController, ReturnAnalyticsController, ReturnController, ReturnsController};
 use App\Http\Controllers\Tenant\Panel\Shell\{ComplianceController, SetupProgressController};
 use App\Http\Controllers\Tenant\Panel\UiKitController;
@@ -310,18 +310,21 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->middleware('tenant.permission:sales.customers.manage')
         ->name('tenant.cities.by-country');
 
+    // Single Analytics page — the former analytics pages are tabs of it (same URLs as before).
+    Route::get('/analytics/{tab?}', AnalyticsController::class)
+        ->where('tab', implode('|', array_keys(AnalyticsController::TABS)))
+        ->middleware('tenant.permission:analytics.view')
+        ->name('tenant.analytics');
+
+    // JSON endpoints for the tables on each tab
     Route::prefix('analytics')->name('tenant.analytics.')->middleware('tenant.permission:analytics.view')->group(function () {
-        Route::get('/orders', [OrderAnalyticsController::class, 'index'])->name('orders');
         Route::get('/orders/data/monthly', [OrderAnalyticsController::class, 'dataMonthly'])->name('orders.data.monthly');
         Route::get('/orders/data/status', [OrderAnalyticsController::class, 'dataStatus'])->name('orders.data.status');
 
-        Route::get('/customer-lifetime-value', [CustomerLifetimeValueController::class, 'index'])->name('clv');
         Route::get('/customer-lifetime-value/data', [CustomerLifetimeValueController::class, 'data'])->name('clv.data');
 
-        Route::get('/shipping', [ShippingAnalyticsController::class, 'index'])->name('shipping');
         Route::get('/shipping/data/monthly', [ShippingAnalyticsController::class, 'dataMonthly'])->name('shipping.data.monthly');
 
-        Route::get('/profitability', [ProductProfitabilityController::class, 'index'])->name('profitability');
         Route::get('/profitability/data', [ProductProfitabilityController::class, 'data'])->name('profitability.data');
     });
 

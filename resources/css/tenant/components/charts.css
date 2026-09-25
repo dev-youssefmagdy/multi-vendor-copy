@@ -1,0 +1,110 @@
+/* ── Shared chart pieces (dashboard + analytics) ───────────────────────────
+   Inline legend, donut with centre total, and the status/legend list.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.db-legend-inline {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.db-legend-inline span,
+.db-status-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #6B7280;
+}
+
+.db-legend-inline i,
+.db-status-name i {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.db-status-body {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.db-donut {
+    position: relative;
+    width: 151px;
+    height: 151px;
+    flex-shrink: 0;
+}
+
+.db-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.db-donut-total {
+    font-size: 23.4px;
+    font-weight: 700;
+    line-height: 29px;
+    color: var(--ds-text);
+}
+
+.db-donut-caption {
+    font-size: 8.1px;
+    line-height: 10px;
+    color: #9CA3AF;
+}
+
+.db-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.db-status-list li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 48px;
+    align-items: center;
+    gap: 8px;
+}
+
+.db-status-name {
+    gap: 8px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #374151;
+}
+
+.db-status-name i { width: 10px; height: 10px; }
+
+.db-status-count {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--ds-text);
+}
+
+.db-status-pct {
+    font-size: 12px;
+    line-height: 16px;
+    text-align: right;
+    color: #9CA3AF;
+}
+
+.db-status-empty { font-size: 14px; color: var(--ds-text-muted); }
+
+[data-theme="dark"] .db-status-name,
+[data-theme="dark"] .db-legend-inline span { color: var(--ds-text-muted); }
