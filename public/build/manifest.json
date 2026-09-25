@@ -1,7 +1,7 @@
 {
-  "_analytics-C_Bfnao-.css": {
-    "file": "assets/analytics-C_Bfnao-.css",
-    "src": "_analytics-C_Bfnao-.css"
+  "_analytics-j771MnVL.css": {
+    "file": "assets/analytics-j771MnVL.css",
+    "src": "_analytics-j771MnVL.css"
   },
   "_axios-DW958q29.js": {
     "file": "assets/axios-DW958q29.js",
@@ -2520,11 +2520,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Bv7QYonS.css",
+    "file": "assets/app-sZ7V1HTR.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-MlziWkiX.css",
+    "file": "assets/ecommet-Bo3XxKNl.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2807,7 +2807,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DBahqeVp.css",
+    "file": "assets/souqify-CKDdpm-w.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2816,7 +2816,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DxVZMCXH.css",
+    "file": "assets/app-DpvGLj3T.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2824,7 +2824,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-Bv7QYonS.css"
+      "assets/app-sZ7V1HTR.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3641,7 +3641,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/insights/analytics.js": {
-    "file": "assets/analytics-Cq5cPDEy.js",
+    "file": "assets/analytics-DgpKw-R5.js",
     "name": "analytics",
     "src": "resources/js/tenant/pages/insights/analytics.js",
     "isEntry": true,
@@ -3652,7 +3652,7 @@
       "_toast-Ce80V6Zh.js"
     ],
     "css": [
-      "assets/analytics-C_Bfnao-.css"
+      "assets/analytics-j771MnVL.css"
     ]
   },
   "resources/js/tenant/pages/insights/index.js": {
@@ -3691,12 +3691,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-B4LnFEJJ.js",
+    "file": "assets/brand-index-ByBsg0PT.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
     "css": [
-      "assets/analytics-C_Bfnao-.css",
+      "assets/analytics-j771MnVL.css",
       "assets/dashboard-DB_yIsLP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
@@ -3727,12 +3727,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-CxNNsbwB.js",
+    "file": "assets/manufacturing-index-C_cmDE9T.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
     "css": [
-      "assets/analytics-C_Bfnao-.css",
+      "assets/analytics-j771MnVL.css",
       "assets/dashboard-DB_yIsLP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
@@ -3773,12 +3773,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-CbNQ4nuy.js",
+    "file": "assets/product-requests-index-BTo-gSh_.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
     "css": [
-      "assets/analytics-C_Bfnao-.css",
+      "assets/analytics-j771MnVL.css",
       "assets/dashboard-DB_yIsLP.css",
       "assets/orders-sQlPfFQ2.css",
       "assets/requests-CJpz01p_.css"
@@ -3797,12 +3797,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-C_32tw-d.js",
+    "file": "assets/customers-index-CAOuc0FU.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
     "css": [
-      "assets/analytics-C_Bfnao-.css",
+      "assets/analytics-j771MnVL.css",
       "assets/dashboard-DB_yIsLP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
@@ -3823,12 +3823,12 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-C53rfpFX.js",
+    "file": "assets/orders-index-60g7Lwi3.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
     "css": [
-      "assets/analytics-C_Bfnao-.css",
+      "assets/analytics-j771MnVL.css",
       "assets/dashboard-DB_yIsLP.css",
       "assets/orders-sQlPfFQ2.css"
     ]
