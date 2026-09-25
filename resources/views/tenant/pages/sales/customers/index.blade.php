@@ -38,10 +38,12 @@
         $active = \Illuminate\Support\Facades\Blade::render('<x-tenant::status-badge status="active" />');
         $day = now()->startOfDay();
         foreach (range(0, 108) as $i) {
+            $name = $names[$i % 4];
+            $avatar = \Illuminate\Support\Facades\Blade::render('<x-tenant::avatar :name="$name" size="39" />', ['name' => $name]);
             $date = $day->copy()->subDays($i * 3);
             $mockRows[] = [
                 (string) (48487218415848 + $i * 7919),
-                $names[$i % 4],
+                '<span class="cu-customer">'.$avatar.'<span>'.e($name).'</span></span>',
                 '+201234567890',
                 (string) $orders[$i % 12],
                 $active,
@@ -87,7 +89,7 @@
             @endforeach
         </div>
 
-        <div class="od-queue cu-queue fu d2">
+        <div class="od-queue cu-queue is-customers fu d2">
             <x-tenant::datatable
                 id="customers-table"
                 :url="route('tenant.customers.data')"
@@ -98,6 +100,7 @@
                 :searching="$isMock"
                 :page-length="12"
                 :length-change="false"
+                :responsive="false"
                 title="Customer List"
                 description=":count customers matched the current CRM filters."
                 info-template="Show :count of :total result"

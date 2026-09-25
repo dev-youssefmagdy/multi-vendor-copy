@@ -683,3 +683,87 @@
     }
     [data-theme="dark"] .od-queue.is-orders .od-order-name { color: var(--ds-text); }
 }
+
+/* ── Mobile: Customers rows → cards ───────────────────────────────────────
+   Columns: ID, Customer, Contact, Orders, Status, Lifetime Value, Last Order,
+   Actions. Card: name + #id + ⋮ / Contact … Status / LTV · Orders · Last. */
+@media (max-width: 767px) {
+    .od-queue.is-customers .tw { overflow: visible; }
+    .od-queue.is-customers table.tb,
+    .od-queue.is-customers table.tb tbody { display: block; width: 100% !important; min-width: 0 !important; max-width: 100%; }
+    .od-queue.is-customers table.tb thead { display: none; }
+
+    .od-queue.is-customers table.tb tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 81fr) minmax(0, 43fr) minmax(0, 110fr);
+        grid-template-areas:
+            "name name act"
+            "id   id   act"
+            "cont cont stat"
+            "ltv  ord  last";
+        gap: 8px 20px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--ds-surface);
+    }
+
+    .od-queue.is-customers table.tb tbody tr td {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        height: auto;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: #171717;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: left;
+        white-space: normal;
+    }
+
+    [data-theme="dark"] .od-queue.is-customers table.tb tbody tr td { color: var(--ds-text); }
+
+    .od-queue.is-customers table.tb tbody tr td:not(:first-child)::before {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #5E5E5E;
+    }
+
+    .od-queue.is-customers td:nth-child(1) { grid-area: id; display: block !important; margin-top: -6px; color: #5E5E5E !important; font-size: 12px !important; font-weight: 400 !important; }
+    .od-queue.is-customers td:nth-child(2) { grid-area: name; font-size: 16px !important; font-weight: 700 !important; }
+    .od-queue.is-customers td:nth-child(3) { grid-area: cont; }
+    .od-queue.is-customers td:nth-child(4) { grid-area: ord; }
+    .od-queue.is-customers td:nth-child(5) { grid-area: stat; align-items: flex-end !important; }
+    .od-queue.is-customers td:nth-child(6) { grid-area: ltv; }
+    .od-queue.is-customers td:nth-child(7) { grid-area: last; }
+    .od-queue.is-customers td:nth-child(8) { grid-area: act; align-items: flex-end !important; }
+
+    .od-queue.is-customers td:nth-child(3)::before { content: "Contact"; }
+    .od-queue.is-customers td:nth-child(4)::before { content: "Orders"; }
+    .od-queue.is-customers td:nth-child(5)::before { content: "Status"; }
+    .od-queue.is-customers td:nth-child(6)::before { content: "Lifetime Value"; }
+    .od-queue.is-customers td:nth-child(7)::before { content: "Last Order"; }
+
+    .od-queue.is-customers table.tb tbody tr:has(td.dt-empty) { display: block; }
+    .od-queue.is-customers td.dt-empty::before { content: none !important; }
+}
+
+/* Customer avatar: mobile cards only, beside the name + #ID stack. */
+.cu-customer .t-avatar { display: none; }
+
+@media (max-width: 767px) {
+    .od-queue.is-customers table.tb tbody tr { position: relative; }
+    .od-queue.is-customers td:nth-child(1),
+    .od-queue.is-customers td:nth-child(2) { padding-left: 47px !important; }
+    .od-queue.is-customers .cu-customer .t-avatar {
+        display: inline-flex;
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        border-radius: 8px;
+    }
+}
