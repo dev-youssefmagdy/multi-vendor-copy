@@ -1659,3 +1659,41 @@
         font-size: 16px;
     }
 }
+
+/* Short section titles used on mobile only */
+.db-title-short { display: none; }
+
+/* ── Mobile: winning opportunities (design: 375px) ────────────────────────
+   Short title + small "See all", full-width country select, and 230px
+   cards. The card is the desktop card at 51.37% (448 → 230px), so its
+   media and body are zoomed; the price boxes keep the design's larger text. */
+@media (max-width: 767px) {
+    .db-title-full { display: none; }
+    .db-title-short { display: inline; }
+
+    .db-section-head:has(.db-opp-intro) { flex-wrap: nowrap; align-items: center; gap: 12px; }
+    .db-opp-intro .db-welcome-title { font-size: 24px; }
+    .db-opp-intro .db-welcome-sub { display: none; }
+    .db-see-all { gap: 8px; font-size: 12px; color: #787878; }
+
+    .db-country-select { width: 100%; height: 54px; font-size: 14px; }
+
+    .db-opp-slider .db-opp { width: 230px; border-radius: 12.33px; }
+    /* Sliders with data-mobile-view get their slide width from Swiper (e.g. 1.5 per view) */
+    .db-opp-slider[data-mobile-view] .db-opp { width: auto; }
+
+    .db-opp-slider .db-opp-media,
+    .db-opp-slider .db-opp-body { zoom: .5137; }
+
+    /* Gauges stay in one row of four inside the (zoomed) card */
+    .db-opp-slider .db-opp-gauges { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    /* Price boxes: design text sizes, divided by the zoom */
+    .db-opp-slider .db-opp-stat-label { font-size: 19.5px; }  /* → 10px */
+    .db-opp-slider .db-opp-stat strong { font-size: 27.3px; } /* → 14px */
+    .db-opp-slider .db-opp-stat small { font-size: 19.5px; }  /* → 10px */
+    .db-opp-slider .db-opp-stat.is-dark { align-items: center; text-align: center; }
+    .db-opp-slider .db-opp-stat.is-dark .db-opp-stat-label,
+    .db-opp-slider .db-opp-stat.is-dark small { font-size: 23.4px; } /* → 12px */
+    .db-opp-slider .db-opp-stat.is-dark strong { font-size: 38.9px; } /* → 20px */
+}

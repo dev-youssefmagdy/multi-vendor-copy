@@ -71,7 +71,7 @@
 <section class="db-section fu d2">
     <div class="db-section-head">
         <div class="db-welcome-copy db-opp-intro">
-            <h2 class="db-welcome-title">Selected winning opportunities for you today</h2>
+            <h2 class="db-welcome-title"><span class="db-title-full">Selected winning opportunities for you today</span><span class="db-title-short">winning opportunities</span></h2>
             <p class="db-welcome-sub">Out of the thousands of products in your store, we have selected these opportunities based on demand, trends, and competition in your chosen market.</p>
         </div>
         <a href="{{ route('tenant.products.index') }}" class="db-see-all">
@@ -86,7 +86,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
     </button>
 
-    <div class="db-opp-slider swiper" data-opp-slider aria-label="Opportunities">
+    <div class="db-opp-slider swiper" data-opp-slider data-mobile-view="1.5" aria-label="Opportunities">
         <div class="swiper-wrapper">
         @foreach($opportunities as $opp)
             @include('tenant.pages.dashboard._opportunity-card', ['opp' => $opp, 'cardClass' => 'swiper-slide'])

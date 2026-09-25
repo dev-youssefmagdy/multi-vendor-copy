@@ -22,10 +22,18 @@ export function mountFlagTickers(root = document) {
 }
 
 function mountSlider(el) {
+    // Optional mobile layout: data-mobile-view="1.5" shows 1.5 cards (12px apart)
+    // below 768px; larger screens keep the cards' own CSS widths.
+    const mobileView = parseFloat(el.dataset.mobileView || '');
+    const breakpoints = mobileView
+        ? { 0: { slidesPerView: mobileView, spaceBetween: 12 }, 768: { slidesPerView: 'auto', spaceBetween: 24 } }
+        : undefined;
+
     new Swiper(el, {
         modules: [A11y, Autoplay, Keyboard, Mousewheel],
         slidesPerView: 'auto',
         spaceBetween: 24,
+        breakpoints,
         grabCursor: true,
         rewind: true,
         speed: 600,

@@ -1,1 +1,0 @@
-/* empty css                  */import{t as e}from"./opportunities-D2EsUMM4.js";/* empty css                       */e(document.querySelector(`.tc-grid`)||document);
