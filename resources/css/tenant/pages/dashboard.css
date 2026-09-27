@@ -385,7 +385,7 @@
     min-height: 120px;
     padding: 16px;
     border-radius: 16px;
-    background: #1A1A1A linear-gradient(100deg, #2B2E48 0%, #3E2638 50%, #4A1533 100%);
+    background: var(--ds-gradient);
 }
 
 .db-pay-main {
@@ -403,8 +403,8 @@
     height: 56px;
     flex-shrink: 0;
     border-radius: 17.7px;
-    background: rgba(89, 89, 89, 0.21);
-    color: #FD6F04;
+    background: rgba(255, 255, 255, 0.16);
+    color: #F5F5F5; /* light on the brand gradient */
 }
 
 .db-pay-icon svg { width: 34px; height: 34px; }
@@ -420,7 +420,7 @@
     font-size: 20px;
     font-weight: 600;
     line-height: 1.5;
-    color: #FD6F04;
+    color: #F5F5F5;
 }
 
 .db-pay-text {

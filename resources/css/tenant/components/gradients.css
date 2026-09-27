@@ -1,0 +1,33 @@
+/* ── Brand gradient (--ds-gradient: #612CFF → #FF8A65) ──────────────────────
+   Tenant-bundle overrides for the gradients defined in the shared
+   resources/css/app.css (the central layouts keep their own). Tenant CSS
+   files use the tokens directly.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Solid fills: progress bars, active step dot, onboarding buttons */
+.fill-cyan-gradient,
+.ob-progress-fill,
+.ob-dot-active,
+.ob-btn-next,
+.ob-upload-submit,
+.ob-ai-generate-btn,
+.ob-page-tab-active { background: var(--ds-gradient); }
+
+/* Light washes */
+.pagination-chip.active,
+[data-theme="light"] .pagination-chip.active,
+.ob-setup-header,
+.ob-setup-footer-done { background: var(--ds-gradient-soft); }
+
+.ob-modal::before { background: radial-gradient(ellipse at 50% -20%, rgba(97, 44, 255, 0.12), rgba(255, 138, 101, 0.06) 45%, transparent 70%); }
+
+/* Sign-in page: glows + blurred blobs in the two gradient colours */
+.auth-stage {
+    background:
+        radial-gradient(circle at top left, rgba(97, 44, 255, 0.14), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(255, 138, 101, 0.14), transparent 36%),
+        linear-gradient(180deg, rgba(7, 13, 24, 0.88), rgba(7, 13, 24, 1));
+}
+
+.auth-backdrop-a { background: rgba(97, 44, 255, 0.2); }
+.auth-backdrop-b { background: rgba(255, 138, 101, 0.2); }

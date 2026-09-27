@@ -84,9 +84,9 @@
       "resources/js/tenant/modules/payment-gateway.js"
     ]
   },
-  "_dashboard-DB_yIsLP.css": {
-    "file": "assets/dashboard-DB_yIsLP.css",
-    "src": "_dashboard-DB_yIsLP.css"
+  "_dashboard-BOfic93c.css": {
+    "file": "assets/dashboard-BOfic93c.css",
+    "src": "_dashboard-BOfic93c.css"
   },
   "_dom-DoxT7ZOq.js": {
     "file": "assets/dom-DoxT7ZOq.js",
@@ -2825,7 +2825,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-d8-Qflci.css",
+    "file": "assets/app-Cf7eeQGF.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3522,7 +3522,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-D0IfUe4E.js",
+    "file": "assets/module-nav-B9h9E-9G.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3532,7 +3532,7 @@
     ],
     "css": [
       "assets/module-nav-C12ytgB5.css",
-      "assets/dashboard-DB_yIsLP.css"
+      "assets/dashboard-BOfic93c.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
@@ -3560,7 +3560,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-grid.js": {
-    "file": "assets/products-grid-CqjEblxu.js",
+    "file": "assets/products-grid-BBy0DL5a.js",
     "name": "products-grid",
     "src": "resources/js/tenant/pages/catalog/products-grid.js",
     "isEntry": true,
@@ -3568,12 +3568,12 @@
       "_events-Bji7faQz.js"
     ],
     "css": [
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },
   "resources/js/tenant/pages/catalog/products-index.js": {
-    "file": "assets/products-index-CCc_iabP.js",
+    "file": "assets/products-index-CXr290c8.js",
     "name": "products-index",
     "src": "resources/js/tenant/pages/catalog/products-index.js",
     "isEntry": true,
@@ -3583,7 +3583,7 @@
       "_modals-ivBeN_1Y.js"
     ],
     "css": [
-      "assets/products-index-BDD6tj5R.css"
+      "assets/products-index-CekmSq8p.css"
     ]
   },
   "resources/js/tenant/pages/catalog/sortable.js": {
@@ -3593,7 +3593,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-CDxwGLC7.js",
+    "file": "assets/index-Dqr2g2k4.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3605,7 +3605,7 @@
       "_toast-CfDcgrW0.js"
     ],
     "css": [
-      "assets/dashboard-DB_yIsLP.css"
+      "assets/dashboard-BOfic93c.css"
     ]
   },
   "resources/js/tenant/pages/finance/billing-index.js": {
@@ -3691,7 +3691,7 @@
     ]
   },
   "resources/js/tenant/pages/onboarding/index.js": {
-    "file": "assets/index-Bv5hcVyg.js",
+    "file": "assets/index-QlVUvCfS.js",
     "name": "index",
     "src": "resources/js/tenant/pages/onboarding/index.js",
     "isEntry": true,
@@ -3702,21 +3702,21 @@
       "_http-CH8K1Gmc.js"
     ],
     "css": [
-      "assets/index-QK0EsR_3.css"
+      "assets/index-BVqodbQ3.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-HVPwGYEj.js",
+    "file": "assets/brand-create-D0jiCT3p.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-B-Wt30ZG.js",
+    "file": "assets/brand-index-C3Pw03bt.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
@@ -3725,7 +3725,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
@@ -3741,7 +3741,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-CZe-TB7l.js",
+    "file": "assets/manufacturing-create-BTVzRf_L.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
     "isEntry": true,
@@ -3750,12 +3750,12 @@
       "_http-CH8K1Gmc.js"
     ],
     "css": [
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-z3uSVsh_.js",
+    "file": "assets/manufacturing-index-DMaQTK72.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
@@ -3764,7 +3764,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
@@ -3780,12 +3780,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-Ban16TzG.js",
+    "file": "assets/product-request-create-CxdNWlfX.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3804,7 +3804,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-BGcvfEIu.js",
+    "file": "assets/product-requests-index-DZUj-8PZ.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
@@ -3813,7 +3813,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3831,7 +3831,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-VSGpLfS5.js",
+    "file": "assets/customers-index-CVOelG2E.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
@@ -3840,7 +3840,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
@@ -3860,7 +3860,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-73kY7xZV.js",
+    "file": "assets/orders-index-n6qL7ZJq.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
@@ -3869,7 +3869,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
@@ -3886,12 +3886,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/settings/account.js": {
-    "file": "assets/account-ThNsJhY7.js",
+    "file": "assets/account-CVOekgvv.js",
     "name": "account",
     "src": "resources/js/tenant/pages/settings/account.js",
     "isEntry": true,
     "css": [
-      "assets/account-Z9771Icf.css"
+      "assets/account-DwaJIFEC.css"
     ]
   },
   "resources/js/tenant/pages/settings/admins.js": {
@@ -4112,7 +4112,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/themes.js": {
-    "file": "assets/themes-Coi2JROv.js",
+    "file": "assets/themes-B7zwq7p2.js",
     "name": "themes",
     "src": "resources/js/tenant/pages/store/themes.js",
     "isEntry": true,
@@ -4121,7 +4121,7 @@
       "_modals-ivBeN_1Y.js"
     ],
     "css": [
-      "assets/themes-Celag4VU.css"
+      "assets/themes-7ZV-aH2q.css"
     ]
   },
   "resources/js/tenant/pages/support/help.js": {
@@ -4185,7 +4185,7 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-C3JxYrBs.js",
+    "file": "assets/todays-chances-DsZF9yNc.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
@@ -4193,7 +4193,7 @@
       "_opportunities-onf9hp0c.js"
     ],
     "css": [
-      "assets/dashboard-DB_yIsLP.css",
+      "assets/dashboard-BOfic93c.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },

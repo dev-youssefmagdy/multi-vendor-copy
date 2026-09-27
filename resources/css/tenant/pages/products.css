@@ -18,7 +18,7 @@
 }
 .entity-thumb-empty {
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, rgba(0, 229, 255, .12), rgba(162, 89, 255, .1));
+    background: var(--ds-gradient-soft);
     font-weight: 700; color: var(--cyan);
     font-size: 15px;
 }
