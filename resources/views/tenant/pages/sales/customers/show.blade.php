@@ -58,7 +58,7 @@
                         <x-tenant::switch name="active" :checked="$customer->active" label="Active account" />
                     </div>
 
-                    <div class="page-actions compact-actions justify-end" style="margin-top:16px;">
+                    <div class="page-actions compact-actions justify-end">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </x-tenant::form>
@@ -155,7 +155,7 @@
 
         {{-- ═══ TAB: ADDRESSES ═══ --}}
         <x-tenant::tab-panel key="addresses" :active="$activeTab === 'addresses'">
-            <section class="card table-card-shell">
+            <section class="card table-card-shell ds-table">
                 <div class="table-header-shell">
                     <div>
                         <div class="panel-title">Saved Addresses</div>
@@ -229,7 +229,7 @@
                 <x-tenant::switch name="is_default" label="Set as default address" />
             </div>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:16px;">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Address</button>
             </div>

@@ -59,7 +59,7 @@
             </div>
         </x-tenant::card-collapse>
 
-        <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+        <div class="page-actions compact-actions justify-end">
             <button type="submit" class="btn btn-primary">Save Template</button>
         </div>
     </x-tenant::form>

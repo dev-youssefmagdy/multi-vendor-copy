@@ -29,7 +29,7 @@
                 <x-tenant::input type="password" name="password" label="Password" toggle wrapper-class="span-2" />
             </div>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Admin</button>
             </div>

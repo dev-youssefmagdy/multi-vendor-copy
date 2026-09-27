@@ -13,7 +13,7 @@
     <x-tenant::form id="general-form" :action="route('tenant.settings.general.update')" method="PUT" :validate="route('tenant.settings.general.validate')">
         <x-tenant::schema-fields :groups="$groups" :values="$values" />
 
-        <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+        <div class="page-actions compact-actions justify-end">
             <button type="submit" class="btn btn-primary">Save Settings</button>
         </div>
     </x-tenant::form>
@@ -63,7 +63,7 @@
                 :value="$currentCountryIds"
             />
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary">Submit Request</button>
             </div>
@@ -82,7 +82,7 @@
                 :value="$currentCategoryIds"
             />
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary">Submit Request</button>
             </div>

@@ -1,6 +1,6 @@
 @props(['title' => null, 'subtitle' => null, 'glow' => null, 'padding' => null])
 
-<div {{ $attributes->merge(['class' => 'card ' . ($glow ? 'card-glow-' . $glow : '') . ($padding === 'none' ? ' p-0' : ($padding === 'sm' ? ' p-sm' : ''))]) }}>
+<div {{ $attributes->merge(['class' => 'card ds-card ' . ($glow ? 'card-glow-' . $glow : '') . ($padding === 'none' ? ' p-0' : ($padding === 'sm' ? ' p-sm' : ''))]) }}>
     @if($title || isset($actions))
         <div class="panel-head">
             <div>

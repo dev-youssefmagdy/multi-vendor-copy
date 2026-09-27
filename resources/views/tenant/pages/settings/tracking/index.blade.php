@@ -14,7 +14,7 @@
                 <x-tenant::input name="ga_measurement_id" label="GA4 Measurement ID" :value="$values['ga_measurement_id']" maxlength="32" placeholder="G-XXXXXXXX" />
             </div>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="submit" class="btn btn-primary">Save Settings</button>
             </div>
         </x-tenant::form>

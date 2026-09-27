@@ -1,0 +1,286 @@
+/* ── Form pages — design-system spacing and titles ──────────────────────────
+   Same look as the finished pages (Orders header, New Request form card,
+   analytics tab pills):
+     .page-head      x-tenant::page-header — 32px title, 14px muted copy,
+                     brand pill badge, 48px / 12px-radius action buttons
+     .ds-card        x-tenant::card + x-tenant::card-collapse (and raw
+                     .card.form-card sections) — white 24px card,
+                     20px section title, muted subtitle, 24px apart
+     fields          24px between fields (grid gap), no stacked margins
+     .t-locale-tab   pill tabs (grey → brand when active)
+     form actions    bottom Save / Back row, 24px above, 48px buttons
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page header ────────────────────────────────────────────────────────── */
+
+.t-scope .page-head {
+    align-items: center;
+    gap: 16px 24px;
+    margin-bottom: 24px;
+}
+
+.t-scope .page-title-row { gap: 12px; }
+
+.t-scope .page-title {
+    margin: 0;
+    font-size: clamp(24px, 2.4vw, 32px);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.t-scope .page-badge {
+    padding: 4px 12px;
+    border-radius: var(--ds-radius-pill);
+    background: var(--ds-brand-50);
+    color: var(--ds-brand-500);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+[data-theme="dark"] .t-scope .page-badge { background: var(--ds-brand-100); }
+
+.t-scope .page-copy {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+.t-scope .page-actions { flex-wrap: wrap; gap: 16px; }
+
+.t-scope .page-head .page-actions .btn,
+.t-scope form > .page-actions .btn {
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.t-scope .t-back-link { color: var(--ds-text); }
+
+/* ── Section cards ──────────────────────────────────────────────────────── */
+
+/* Padding at single-class weight: page CSS that sets its own card padding
+   (domains, account avatar, …) and inline styles still win. */
+.t-scope :where(.ds-card, .card.form-card):where(:not(.p-0, .p-sm, .form-card .form-card)) { padding: 24px; }
+
+.t-scope :is(.ds-card, .card.form-card):not(.form-card .form-card) {
+    border: 0;
+    border-radius: 24px;
+    background: var(--ds-surface);
+    box-shadow: none;
+}
+
+.t-scope :is(.ds-card, .card.form-card)::before { display: none; }
+
+/* Stacked section cards: 24px apart (margin-top so it also beats .section-gap's
+   14px margin-bottom — vertical margins collapse to the larger one) */
+.t-scope :is(.ds-card, .card.form-card) + :is(.ds-card, .card.form-card) { margin-top: 24px; }
+.t-scope :is(.ds-card, .card.form-card).section-gap { margin-bottom: 24px; }
+
+.t-scope :is(.ds-card, .card.form-card) .panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.t-scope :is(.ds-card, .card.form-card) .panel-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.t-scope :is(.ds-card, .card.form-card) .panel-copy {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+/* Collapse header + divider */
+.t-scope .collapse-card.ds-card > summary.panel-head { margin-bottom: 0; }
+.t-scope .collapse-card.ds-card:not([open]) > summary.panel-head { margin-bottom: 0; }
+
+.t-scope .collapse-card .collapse-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--ds-input-bg);
+    color: var(--ds-text);
+}
+
+.t-scope .collapse-card .collapse-icon svg { width: 16px; height: 16px; }
+
+.t-scope .collapse-card.ds-card > .collapse-content {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #F0F0F0;
+}
+
+[data-theme="dark"] .t-scope .collapse-card.ds-card > .collapse-content { border-color: var(--ds-border); }
+
+/* ── Field spacing ──────────────────────────────────────────────────────────
+   :where() keeps these at the old .t-field weight so page layouts that set
+   their own field spacing (filter dropdowns, request forms, …) still win. */
+
+:where(.t-scope) .t-field { margin-bottom: 24px; }
+:where(.t-scope) .t-field:last-child { margin-bottom: 0; }
+
+:where(.t-scope) .form-grid { gap: 24px; }
+:where(.t-scope) .form-grid > .t-field,
+:where(.t-scope) .form-grid > * > .t-field:only-child { margin-bottom: 0; }
+
+/* ── Locale tabs ────────────────────────────────────────────────────────── */
+
+.t-scope .t-locale-tabs-header { gap: 12px; margin-bottom: 24px; }
+
+.t-scope .t-locale-tab {
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 38px;
+    background: #ECECEC;
+    color: #5E5E5E;
+    font-size: 14px;
+    line-height: 1.5;
+    gap: 8px;
+}
+
+.t-scope .t-locale-tab:hover { background: var(--ds-brand-200); color: var(--ds-text); }
+
+.t-scope .t-locale-tab.is-active {
+    background: var(--ds-brand-500);
+    color: #F5F5F5;
+    font-weight: 500;
+}
+
+.t-scope .t-locale-tab:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
+
+.t-scope .t-locale-default {
+    padding: 0 6px;
+    border-radius: var(--ds-radius-pill);
+    background: rgba(0, 0, 0, .06);
+    color: inherit;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.t-scope .t-locale-tab.is-active .t-locale-default { background: rgba(255, 255, 255, .22); }
+
+[data-theme="dark"] .t-scope .t-locale-tab:not(.is-active) { background: var(--ds-input-bg); color: var(--ds-text-muted); }
+
+/* Title / copy placed straight in a card (no .panel-head row) */
+.t-scope :is(.ds-card, .card.form-card) > .panel-title { margin-bottom: 16px; }
+.t-scope :is(.ds-card, .card.form-card) > .panel-title:has(+ .panel-copy) { margin-bottom: 0; }
+.t-scope :is(.ds-card, .card.form-card) > .panel-copy { margin-bottom: 24px; }
+
+/* ── Form actions (Save / Cancel rows) ──────────────────────────────────── */
+
+.t-scope form > .page-actions { margin-top: 24px; }
+
+.t-scope :is(form, .ds-card, .card.form-card, .modal-body-shell) .page-actions.compact-actions {
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 0;
+}
+
+.t-scope :is(form, .ds-card, .card.form-card, .modal-body-shell) .compact-actions .btn {
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+/* ── Modals — x-tenant::modal ───────────────────────────────────────────── */
+
+.t-scope .modal-card.card {
+    padding: 0; /* its p-0 utility is layered and loses to the legacy .card padding */
+    border: 0;
+    border-radius: 24px;
+    background: var(--ds-surface);
+}
+
+.t-scope .modal-card::before { display: none; }
+
+.t-scope .modal-header-shell {
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.t-scope .modal-title.panel-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.t-scope .modal-header-shell .panel-copy {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+.t-scope .modal-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ds-input-bg);
+    color: var(--ds-text);
+    cursor: pointer;
+}
+
+.t-scope .modal-close-btn:hover { background: var(--ds-brand-50); color: var(--ds-brand-500); }
+.t-scope .modal-close-btn svg { width: 16px; height: 16px; }
+
+.t-scope .modal-body-shell { padding: 24px; }
+.t-scope .modal-footer-shell { padding: 24px; border-top: 1px solid #F0F0F0; }
+
+/* Save / Cancel row: divider above, 24px each side */
+.t-scope .modal-card .modal-body-shell .page-actions.compact-actions {
+    padding-top: 24px;
+    border-top: 1px solid #F0F0F0;
+}
+
+[data-theme="dark"] .t-scope :is(.modal-header-shell, .modal-footer-shell, .modal-body-shell .compact-actions) { border-color: var(--ds-border); }
+
+/* ── Mobile ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+    .t-scope .page-head { flex-direction: column; align-items: stretch; }
+    .t-scope .page-head .page-actions .btn { flex: 1; }
+    .t-scope :is(.ds-card, .card.form-card):not(.form-card .form-card) { border-radius: 16px; }
+    .t-scope :where(.ds-card, .card.form-card):where(:not(.p-0, .p-sm, .form-card .form-card)) { padding: 16px; }
+    .t-scope :is(.ds-card, .card.form-card) + :is(.ds-card, .card.form-card) { margin-top: 16px; }
+    .t-scope .collapse-card.ds-card > .collapse-content { margin-top: 16px; padding-top: 16px; }
+    :where(.t-scope) .form-grid { gap: 16px; }
+    :where(.t-scope) .t-field { margin-bottom: 16px; }
+    :where(.t-scope) .t-field:last-child { margin-bottom: 0; }
+    .t-scope .t-locale-tabs-header { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+    .t-scope .t-locale-tab { flex-shrink: 0; }
+    .t-scope form > .page-actions { margin-top: 16px; }
+    .t-scope form > .page-actions .btn { flex: 1; }
+    .t-scope .modal-card.card { border-radius: 24px 24px 0 0; }
+    .t-scope .modal-header-shell,
+    .t-scope .modal-body-shell,
+    .t-scope .modal-footer-shell { padding: 16px; }
+    .t-scope .modal-card .modal-body-shell .page-actions.compact-actions { margin-top: 16px; padding-top: 16px; }
+}

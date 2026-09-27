@@ -24,7 +24,7 @@
     </x-tenant::page-header>
 
     @if($request['status'] !== 'rejected')
-        <div class="card fu d1 t-request-progress">
+        <div class="card form-card fu d1 t-request-progress">
             @foreach(['pending' => 'Submitted', 'reviewing' => 'Under Review', 'in_production' => 'In Production', 'completed' => 'Completed'] as $s => $label)
                 @php $step = ['pending' => 1, 'reviewing' => 2, 'in_production' => 3, 'completed' => 4][$s]; @endphp
                 <div class="t-request-progress-step {{ $request['status_step'] >= $step ? 'is-done' : '' }}">
@@ -38,7 +38,7 @@
         </div>
     @endif
 
-    <div class="card fu d2" style="padding:24px;">
+    <div class="card form-card fu d2">
         <x-tenant::chat
             id="product-request-chat"
             empty="No messages yet."

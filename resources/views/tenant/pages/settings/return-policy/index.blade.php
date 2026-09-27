@@ -33,7 +33,7 @@
             </div>
         </x-tenant::card>
 
-        <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+        <div class="page-actions compact-actions justify-end">
             <button type="submit" class="btn btn-primary">Save Policy</button>
         </div>
     </x-tenant::form>

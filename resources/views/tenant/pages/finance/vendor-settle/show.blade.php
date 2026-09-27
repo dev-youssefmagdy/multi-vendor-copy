@@ -11,7 +11,7 @@
 
     <div class="vso-layout">
         <div class="page-stack">
-            <section class="card section-gap">
+            <section class="card form-card section-gap">
                 <div class="locale-badge" style="margin-bottom:10px;">Order Summary</div>
                 <div class="form-grid form-grid-2" style="gap:8px 16px;">
                     <div>
@@ -36,7 +36,7 @@
                 </div>
             </section>
 
-            <section class="card section-gap">
+            <section class="card form-card section-gap">
                 <div class="locale-badge" style="margin-bottom:10px;">Settlement Breakdown</div>
                 <div data-breakdown-body>
                     @include('tenant.pages.finance.vendor-settle._breakdown', ['breakdown' => $breakdown, 'selected' => $presented['selected']])
@@ -45,7 +45,7 @@
         </div>
 
         <div class="page-stack">
-            <section class="card section-gap">
+            <section class="card form-card section-gap">
                 <div class="locale-badge" style="margin-bottom:10px;">Payment Gateway</div>
 
                 <div data-vendor-settle data-breakdown-url="{{ route('tenant.finance.vendor-purchase-settle.breakdown', ['orderId' => $order->id]) }}">

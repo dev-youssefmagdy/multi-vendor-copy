@@ -21,7 +21,7 @@
                 I have read and agree to all the compliance documents listed above.
             </x-tenant::checkbox>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:14px;">
+            <div class="page-actions compact-actions justify-end">
                 <x-tenant::submit>Accept &amp; Continue</x-tenant::submit>
             </div>
         </x-tenant::form>

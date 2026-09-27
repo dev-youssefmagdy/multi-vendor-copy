@@ -8,9 +8,9 @@
     <x-tenant::stats-grid :stats="$stats" />
 
     @if(!empty($recommendations))
-        <section class="card fu d2 section-gap" style="padding:20px 24px;">
-            <h3 class="panel-title" style="margin-bottom:4px;">Recommended Gateways for Your Target Markets</h3>
-            <p class="panel-copy" style="margin-bottom:14px;">Based on your target countries, these gateways would maximize your customer coverage.</p>
+        <section class="card form-card fu d2 section-gap">
+            <h3 class="panel-title">Recommended Gateways for Your Target Markets</h3>
+            <p class="panel-copy">Based on your target countries, these gateways would maximize your customer coverage.</p>
             <div class="t-recommendation-grid">
                 @foreach($recommendations as $rec)
                     <div class="t-recommendation-card">
@@ -54,7 +54,7 @@
                 </div>
             </template>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary" data-gateway-submit-label>Save Gateway</button>
             </div>

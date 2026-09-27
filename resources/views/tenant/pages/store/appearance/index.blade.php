@@ -125,7 +125,7 @@
 
         {{-- ────────────────────────────── SOCIAL LINKS ────────────────────────────── --}}
         <x-tenant::tab-panel key="social_links" :active="$activeTab === 'social_links'">
-            <div class="card table-card-shell">
+            <div class="card table-card-shell ds-table">
                 <div class="table-header-shell">
                     <div>
                         <h3 class="panel-title">Social Links</h3>

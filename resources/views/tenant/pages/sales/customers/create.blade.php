@@ -27,7 +27,7 @@
                 <x-tenant::switch name="active" :checked="true" label="Active account" />
             </div>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:16px;">
+            <div class="page-actions compact-actions justify-end">
                 <a href="{{ route('tenant.customers.index') }}" class="btn btn-secondary">Cancel</a>
                 <button type="submit" class="btn btn-primary">Create Customer</button>
             </div>

@@ -49,7 +49,7 @@
                 @endforeach
             </x-tenant::locale-tabs>
 
-            <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+            <div class="page-actions compact-actions justify-end">
                 <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Banner</button>
             </div>

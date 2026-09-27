@@ -26,7 +26,7 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
-    <div class="card fu d1 section-gap">
+    <div class="card form-card fu d1 section-gap">
         <h4 class="panel-title">Return Status</h4>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
             <span class="badge {{ $badgeClass }}" style="font-size:14px;padding:6px 14px">
@@ -61,9 +61,9 @@
         </div>
     </div>
 
-    <div class="card fu d2 section-gap">
+    <div class="card form-card fu d2 section-gap">
         <h4 class="panel-title">Return Details</h4>
-        <div class="form-grid form-grid-2" style="gap:20px">
+        <div class="form-grid form-grid-2">
             <div>
                 <div class="field-label">Order Number</div>
                 <div class="D" style="font-family:ui-monospace,monospace;font-size:15px">{{ $returnRecord['order_number'] ?? '-' }}</div>
@@ -111,7 +111,7 @@
         @endif
     </div>
 
-    <div class="card fu d3 section-gap">
+    <div class="card form-card fu d3 section-gap">
         <h4 class="panel-title">Notes</h4>
 
         <x-tenant::chat
@@ -137,7 +137,7 @@
     </div>
 
     @if(!empty($order))
-    <div class="card fu d4 section-gap">
+    <div class="card form-card fu d4 section-gap">
         <h4 class="panel-title">Order Summary</h4>
         @include('tenant.pages.sales.orders._partials.details', ['order' => $order])
     </div>

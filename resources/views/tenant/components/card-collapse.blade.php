@@ -1,6 +1,6 @@
 @props(['title', 'subtitle' => null, 'open' => true])
 
-<details class="card overflow-hidden collapse-card" @if($open) open @endif>
+<details class="card ds-card overflow-hidden collapse-card" @if($open) open @endif>
     <summary class="panel-head cursor-pointer select-none mb-0 pb-0 collapse-trigger">
         <div>
             <h3 class="panel-title">{{ $title }}</h3>

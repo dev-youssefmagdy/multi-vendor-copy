@@ -5,7 +5,7 @@
 @section('content')
     <x-tenant::page-header title="Blade Theme" badge="Storefront" description="Upload your own Blade storefront theme instead of using a system theme." />
 
-    <div class="card section-gap bt-starter-card">
+    <div class="card form-card section-gap bt-starter-card">
         <div class="bt-starter-row">
             <div>
                 <h3 class="panel-title bt-starter-title">New to Blade themes?</h3>

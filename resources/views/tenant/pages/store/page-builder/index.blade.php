@@ -20,7 +20,7 @@
         <noscript><button type="submit" class="btn btn-secondary">Apply</button></noscript>
     </form>
 
-    <div class="card table-card-shell">
+    <div class="card table-card-shell ds-table">
         <div class="table-header-shell">
             <div>
                 <h3 class="panel-title">Home Page Sections</h3>

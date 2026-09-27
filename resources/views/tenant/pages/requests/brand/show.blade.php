@@ -20,8 +20,8 @@
     @endif
 
     {{-- Request Details --}}
-    <div class="card fu d1 section-gap" style="padding:24px;">
-        <h3 class="panel-title" style="margin-bottom:16px;">Request Details</h3>
+    <div class="card form-card fu d1 section-gap">
+        <h3 class="panel-title">Request Details</h3>
         <dl style="display:grid;grid-template-columns:130px 1fr;gap:10px 16px;font-size:13px;">
             <dt class="entity-subtitle">Status</dt>
             <dd><span class="{{ $request->status->badgeClass() }}">{{ $request->status->label() }}</span></dd>
@@ -59,8 +59,8 @@
         empty-title="No payment requests" empty-copy="The admin hasn't issued any payment requests yet." />
 
     {{-- Chat --}}
-    <section class="card fu d3 section-gap" style="padding:0;overflow:hidden;">
-        <div class="table-header-shell" style="padding:16px 20px;">
+    <section class="card form-card fu d3 section-gap" style="padding:0;overflow:hidden;">
+        <div class="table-header-shell" style="padding:24px;">
             <div>
                 <h3 class="panel-title">Messages</h3>
                 <p class="panel-copy">Communicate with the admin team about this request.</p>

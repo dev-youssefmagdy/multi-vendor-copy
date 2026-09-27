@@ -51,7 +51,7 @@
             data-badge-product-picker
         />
 
-        <div class="page-actions compact-actions justify-end" style="margin-top:20px">
+        <div class="page-actions compact-actions justify-end">
             <button type="button" class="btn btn-primary" data-save-assignment
                 data-action-url="{{ route('tenant.badges.save', $badge) }}"
                 data-action-method="POST"

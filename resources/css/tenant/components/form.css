@@ -93,7 +93,7 @@
 /* A switch sharing a form-grid row with other fields lines up with their
    48px input box (not their label): bottom of the row, centred in 48px. */
 .form-grid > .t-switch-wrap,
-.form-grid > div:has(> .t-switch-wrap:only-child) { align-self: end; margin-bottom: 14px; } /* = .t-field margin */
+.form-grid > div:has(> .t-switch-wrap:only-child) { align-self: end; }
 
 .form-grid > .t-switch-wrap > .t-switch,
 .form-grid > div > .t-switch-wrap:only-child > .t-switch { min-height: 48px; }

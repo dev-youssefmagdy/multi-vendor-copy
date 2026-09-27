@@ -27,6 +27,7 @@
 @import "./components/ds-kpi.css";         /* KPI cards (stats-grid / stat-card) */
 @import "./components/ds-table.css";       /* table design + mobile row cards (datatable / table) */
 @import "./components/gradients.css";      /* brand gradient overrides for app.css gradients */
+@import "./components/ds-form.css";        /* form pages: header, section cards, field spacing, locale tabs */
 @import "./components/select-menu.css";
 @import "./components/tooltip.css";
 @import "./components/charts.css";

@@ -12,7 +12,7 @@
         <noscript><button type="submit" class="btn btn-secondary">Apply</button></noscript>
     </form>
 
-    <div class="card table-card-shell" data-hv-scope data-theme-id="{{ $selectedThemeId }}" data-select-url="{{ route('tenant.store.home-variants.select') }}">
+    <div class="card table-card-shell ds-table" data-hv-scope data-theme-id="{{ $selectedThemeId }}" data-select-url="{{ route('tenant.store.home-variants.select') }}">
         <div class="table-header-shell">
             <div>
                 <h3 class="panel-title">Home Page Variant</h3>
