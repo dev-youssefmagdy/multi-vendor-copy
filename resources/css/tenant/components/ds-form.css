@@ -177,6 +177,21 @@
 
 .ds-check input[type="checkbox"]:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
 
+/* ── Invalid fields ─────────────────────────────────────────────────────────
+   The form engine puts .is-invalid on the field wrapper; no ring or border
+   around the wrapper — the control itself turns red and the message shows
+   underneath. */
+.t-scope .is-invalid:not(input, select, textarea, .field-control) {
+    border-color: transparent !important; /* utilities.css forces a red border with !important */
+    box-shadow: none;
+}
+
+.t-scope .is-invalid .field-control,
+.t-scope .field-control.is-invalid,
+.t-scope .field-control[aria-invalid="true"] { border-color: var(--ds-danger); }
+
+.t-scope .is-invalid .field-control:focus { border-color: var(--ds-danger); box-shadow: none; }
+
 /* ── Locale tabs ────────────────────────────────────────────────────────── */
 
 .t-scope .t-locale-tabs-header { gap: 12px; margin-bottom: 24px; }
