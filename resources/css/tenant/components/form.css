@@ -90,13 +90,23 @@
     transition: border-color .18s, background .18s;
 }
 
-.t-switch:hover {
-    border-color: var(--border2);
-}
+/* A switch sharing a form-grid row with other fields lines up with their
+   48px input box (not their label): bottom of the row, centred in 48px. */
+.form-grid > .t-switch-wrap,
+.form-grid > div:has(> .t-switch-wrap:only-child) { align-self: end; margin-bottom: 14px; } /* = .t-field margin */
 
-.t-switch:has(input:checked) {
-    border-color: var(--ds-brand-200);
-    background: var(--ds-brand-50);
+.form-grid > .t-switch-wrap > .t-switch,
+.form-grid > div > .t-switch-wrap:only-child > .t-switch { min-height: 48px; }
+
+/* Just the switch + its label: no box around them (the shared .toggle-field
+   box stays on checkboxes / radios). */
+.t-switch.toggle-field,
+.t-switch.toggle-field:hover,
+.t-switch.toggle-field:has(input:checked) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
 .t-switch input[type="checkbox"],
