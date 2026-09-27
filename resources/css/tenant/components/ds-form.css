@@ -142,6 +142,41 @@
 :where(.t-scope) .form-grid > .t-field,
 :where(.t-scope) .form-grid > * > .t-field:only-child { margin-bottom: 0; }
 
+/* ── Check-square checkbox — wrapper-class="ds-check" on x-tenant::checkbox,
+   or class="ds-check" on a <label> around a bare checkbox.
+   Unchecked: grey square outline, grey label. Checked: orange check-square,
+   orange label. No box around it (unlike the default .toggle-field). ── */
+.ds-check,
+.ds-check .toggle-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.t-scope .ds-check .toggle-field { padding: 0; border: 0; background: none; color: #787878; font-size: 16px; line-height: 1.5; }
+.t-scope .ds-check:has(input:checked) .toggle-field { color: var(--ds-brand-500); }
+
+.ds-check input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 20.5px;
+    height: 20.5px;
+    margin: 1.75px;
+    border: 1.5px solid #5E5E5E;
+    border-radius: 6px;
+    background: transparent no-repeat center / 14px;
+    cursor: pointer;
+}
+
+.ds-check input[type="checkbox"]:checked {
+    border-color: var(--ds-brand-500);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FD6F04' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+.ds-check input[type="checkbox"]:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
+
 /* ── Locale tabs ────────────────────────────────────────────────────────── */
 
 .t-scope .t-locale-tabs-header { gap: 12px; margin-bottom: 24px; }

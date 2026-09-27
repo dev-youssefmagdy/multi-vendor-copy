@@ -49,7 +49,7 @@
                     <ul class="op-country-list" role="list">
                         @foreach($countryOptions as $code => $country)
                             <li data-op-country="{{ strtolower($country) }}">
-                                <label class="op-check op-country">
+                                <label class="ds-check op-country">
                                     <input type="checkbox" name="countries[]" value="{{ $code }}" @checked(in_array($code, $selectedCountries, true))>
                                     <x-tenant::flag :code="$code" class="op-flag" />
                                     <span>{{ $country }}</span>
@@ -90,10 +90,10 @@
                 @endif
 
                 <div class="op-flags">
-                    <x-tenant::checkbox name="active" label="Product is Active" :checked="$productData['active'] ?? true" wrapper-class="op-check" />
-                    <x-tenant::checkbox name="featured" label="Featured" :checked="$productData['featured'] ?? false" wrapper-class="op-check" />
-                    <x-tenant::checkbox name="manage_stock" label="Manage Stock" :checked="$productData['manage_stock'] ?? true" wrapper-class="op-check" data-manage-stock-toggle />
-                    <x-tenant::checkbox name="is_taxable" label="Taxable" :checked="$productData['is_taxable'] ?? true" wrapper-class="op-check" />
+                    <x-tenant::checkbox name="active" label="Product is Active" :checked="$productData['active'] ?? true" wrapper-class="ds-check" />
+                    <x-tenant::checkbox name="featured" label="Featured" :checked="$productData['featured'] ?? false" wrapper-class="ds-check" />
+                    <x-tenant::checkbox name="manage_stock" label="Manage Stock" :checked="$productData['manage_stock'] ?? true" wrapper-class="ds-check" data-manage-stock-toggle />
+                    <x-tenant::checkbox name="is_taxable" label="Taxable" :checked="$productData['is_taxable'] ?? true" wrapper-class="ds-check" />
                 </div>
             </div>
         </x-tenant::card>

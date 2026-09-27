@@ -2530,11 +2530,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-sZ7V1HTR.css",
+    "file": "assets/app-Bv7QYonS.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Bo3XxKNl.css",
+    "file": "assets/ecommet-MlziWkiX.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2817,7 +2817,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CKDdpm-w.css",
+    "file": "assets/souqify-DBahqeVp.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2826,7 +2826,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DL_32lY7.css",
+    "file": "assets/app-D5lgMg_r.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2834,7 +2834,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-sZ7V1HTR.css"
+      "assets/app-Bv7QYonS.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3492,10 +3492,13 @@
     ]
   },
   "resources/js/tenant/pages/auth/login.js": {
-    "file": "assets/login-DQWeDjAG.js",
+    "file": "assets/login-9AD9XlKp.js",
     "name": "login",
     "src": "resources/js/tenant/pages/auth/login.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/login-C4ELPcrL.css"
+    ]
   },
   "resources/js/tenant/pages/catalog/badge-show.js": {
     "file": "assets/badge-show-BCDbBU8D.js",
@@ -3543,12 +3546,12 @@
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
-    "file": "assets/own-product-form-DAD5c4Ob.js",
+    "file": "assets/own-product-form-C_7HcCR7.js",
     "name": "own-product-form",
     "src": "resources/js/tenant/pages/catalog/own-product-form.js",
     "isEntry": true,
     "css": [
-      "assets/own-product-form-Bnd7qNXf.css"
+      "assets/own-product-form-tCHKPReB.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-products-index.js": {

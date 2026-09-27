@@ -20,14 +20,3 @@
 .ob-setup-footer-done { background: var(--ds-gradient-soft); }
 
 .ob-modal::before { background: radial-gradient(ellipse at 50% -20%, rgba(97, 44, 255, 0.12), rgba(255, 138, 101, 0.06) 45%, transparent 70%); }
-
-/* Sign-in page: glows + blurred blobs in the two gradient colours */
-.auth-stage {
-    background:
-        radial-gradient(circle at top left, rgba(97, 44, 255, 0.14), transparent 34%),
-        radial-gradient(circle at bottom right, rgba(255, 138, 101, 0.14), transparent 36%),
-        linear-gradient(180deg, rgba(7, 13, 24, 0.88), rgba(7, 13, 24, 1));
-}
-
-.auth-backdrop-a { background: rgba(97, 44, 255, 0.2); }
-.auth-backdrop-b { background: rgba(255, 138, 101, 0.2); }

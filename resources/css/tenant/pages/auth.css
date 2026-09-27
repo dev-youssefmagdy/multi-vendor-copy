@@ -1,0 +1,170 @@
+/* ── Tenant sign-in (design system) ─────────────────────────────────────────
+   Brand panel filled with the brand gradient (--ds-gradient: #612CFF →
+   #FF8A65) beside a white form card, over two blurred background circles in
+   the same colours. Mobile: the gradient panel becomes the top block, the
+   form card follows. The shared .auth-* styles in
+   resources/css/app.css belong to the central sign-in and are not used here.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-scope.ta-shell {
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    background: var(--ds-bg);
+    font-family: var(--ds-font);
+}
+
+/* Background circles */
+.ta-backdrop {
+    position: fixed;
+    z-index: 0;
+    border-radius: 50%;
+    filter: blur(22px);
+    opacity: .45;
+    pointer-events: none;
+}
+
+.ta-backdrop-a {
+    top: 8%;
+    left: -5%;
+    width: min(38vw, 320px);
+    height: min(38vw, 320px);
+    background: rgba(97, 44, 255, .35);
+}
+
+.ta-backdrop-b {
+    right: -8%;
+    bottom: 4%;
+    width: min(42vw, 360px);
+    height: min(42vw, 360px);
+    background: rgba(255, 138, 101, .45);
+}
+
+.ta-page {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+    gap: 24px;
+    width: min(100%, 1080px);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 40px 24px;
+    align-content: center;
+}
+
+/* ── Brand panel ── */
+.ta-brand {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+    min-height: 560px;
+    padding: 40px;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--ds-gradient);
+}
+
+.ta-logo { width: 153px; height: 40px; }
+
+.ta-brand-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+
+.ta-badge {
+    padding: 4px 12px;
+    border-radius: var(--ds-radius-pill);
+    background: rgba(255, 255, 255, .2);
+    color: #F5F5F5;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.ta-title {
+    margin: 0;
+    max-width: 14ch;
+    color: #F5F5F5;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.ta-description {
+    margin: 0;
+    max-width: 44ch;
+    color: rgba(245, 245, 245, .85);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.ta-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 48ch;
+    margin: 8px 0 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .16);
+    color: #F5F5F5;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ta-note svg { width: 20px; height: 20px; flex-shrink: 0; color: #F5F5F5; }
+
+/* ── Form card ── */
+.ta-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+    padding: 40px;
+    border-radius: 24px;
+    background: var(--ds-surface);
+}
+
+.ta-card-head { display: flex; flex-direction: column; gap: 4px; }
+.ta-card-title { margin: 0; color: var(--ds-text); font-size: 32px; font-weight: 700; line-height: 1.5; }
+.ta-card-sub { margin: 0; color: var(--ds-text-muted); font-size: 14px; line-height: 1.5; }
+
+.ta-form { display: flex; flex-direction: column; gap: 24px; }
+.t-scope .ta-form .t-field,
+.t-scope .ta-form .t-checkbox-wrap { margin: 0; }
+
+.t-scope .ta-form .ds-check .toggle-field { font-size: 14px; }
+
+.t-scope .ta-submit {
+    width: 100%;
+    min-height: 56px;
+    margin-top: 8px;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+/* ── Tablet / mobile ── */
+@media (max-width: 900px) {
+    .ta-page {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        min-height: 0;
+        padding: 0 16px 40px;
+        align-content: start;
+    }
+
+    .ta-brand {
+        min-height: 0;
+        gap: 24px;
+        margin: 0 -16px;
+        padding: 24px 16px;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .ta-logo { width: 122px; height: 32px; }
+    .ta-title { font-size: 24px; }
+    .ta-description { font-size: 14px; }
+    .ta-card { gap: 24px; padding: 24px 16px; }
+    .ta-card-title { font-size: 24px; }
+}

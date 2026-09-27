@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ \App\Helpers\TenantNavigation::direction() }}"
+      data-theme="{{ in_array(request()->cookie('tenant_theme'), ['light', 'dark'], true) ? request()->cookie('tenant_theme') : 'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,10 @@
     @vite(['resources/css/tenant/app.css', 'resources/js/tenant/app.js'])
     @stack('tenant-vite')
 </head>
-<body class="auth-shell">
-<div class="auth-stage">
-    <div class="auth-backdrop auth-backdrop-a"></div>
-    <div class="auth-backdrop auth-backdrop-b"></div>
+<body class="t-scope ta-shell">
+    {{-- Background circles in the brand-gradient colours --}}
+    <div class="ta-backdrop ta-backdrop-a" aria-hidden="true"></div>
+    <div class="ta-backdrop ta-backdrop-b" aria-hidden="true"></div>
     @yield('content')
-</div>
 </body>
 </html>

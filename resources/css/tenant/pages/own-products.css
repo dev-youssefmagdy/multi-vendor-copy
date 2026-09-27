@@ -161,40 +161,6 @@
 [data-theme="dark"] .op-country-list { background: var(--ds-input-bg); }
 [data-theme="dark"] .op-country > span:last-child { color: var(--ds-text); }
 
-/* ── Check-square checkboxes (flags row + countries) ──
-   Unchecked: grey square outline, grey label. Checked: orange check-square,
-   orange label. */
-.op-check,
-.op-check .toggle-field {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.t-scope .op-check .toggle-field { padding: 0; border: 0; background: none; color: #787878; font-size: 16px; line-height: 1.5; }
-.t-scope .op-check:has(input:checked) .toggle-field { color: var(--ds-brand-500); }
-
-.op-check input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    flex-shrink: 0;
-    width: 20.5px;
-    height: 20.5px;
-    margin: 1.75px;
-    border: 1.5px solid #5E5E5E;
-    border-radius: 6px;
-    background: transparent no-repeat center / 14px;
-    cursor: pointer;
-}
-
-.op-check input[type="checkbox"]:checked {
-    border-color: var(--ds-brand-500);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FD6F04' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
-}
-
-.op-check input[type="checkbox"]:focus-visible { outline: 2px solid var(--ds-brand-500); outline-offset: 2px; }
-
 .op-flags { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 59px; }
 .op-flags .field-error:empty { display: none; }
 
