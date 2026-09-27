@@ -102,7 +102,8 @@ function apply(el, resetPaging = true) {
     const targetEl = target(el);
 
     if (targetEl) {
-        targetEl._filters = filters;
+        // Keep the table's quick-search term (search box in the table header).
+        targetEl._filters = targetEl._quickSearch ? { ...filters, search: targetEl._quickSearch } : filters;
     }
 
     updatePill(el, filters);

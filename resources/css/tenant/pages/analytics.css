@@ -495,4 +495,10 @@
     .an-table { min-width: 560px; }
     .an-table th,
     .an-table td { font-size: 12px; }
+
+    /* Status Breakdown + DataTables rows → cards (components/ds-table.css) */
+    .an-table-card:has(.ds-mcards),
+    .an-dt .ds-mcards.table-card-shell { margin-inline: 0; border-radius: 12px; }
+    .ds-mcards .an-status-table td.is-wide { width: auto; }
+    .ds-mcards .an-status-table .an-bar { align-self: stretch; }
 }

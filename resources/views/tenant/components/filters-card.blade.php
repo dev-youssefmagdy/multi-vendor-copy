@@ -26,14 +26,17 @@
         </div>
     </summary>
 
-    <div class="filters-grid">
-        {{ $slot }}
-    </div>
+    {{-- One body so the fields + Reset can drop down as a single panel (table toolbar filter button). --}}
+    <div class="filters-body">
+        <div class="filters-grid">
+            {{ $slot }}
+        </div>
 
-    <div class="filters-actions">
-        <p class="filters-note">Filters apply automatically as you type or choose an option.</p>
-        <div class="page-actions compact-actions">
-            <button type="button" class="btn btn-secondary" data-filters-reset>Reset</button>
+        <div class="filters-actions">
+            <p class="filters-note">Filters apply automatically as you type or choose an option.</p>
+            <div class="page-actions compact-actions">
+                <button type="button" class="btn btn-secondary" data-filters-reset>Reset</button>
+            </div>
         </div>
     </div>
 </details>

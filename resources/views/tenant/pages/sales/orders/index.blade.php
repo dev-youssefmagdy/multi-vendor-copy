@@ -83,6 +83,8 @@
         <div class="od-queue is-orders fu d2">
             <x-tenant::datatable
                 id="orders-table"
+                :design="false"
+                :mobile-cards="false"
                 :url="route('tenant.orders.data')"
                 :columns="$tableColumns"
                 :order="$isMock ? [] : [[$placedIndex === false ? 0 : $placedIndex, 'desc']]"

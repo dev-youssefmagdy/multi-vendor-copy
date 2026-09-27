@@ -57,6 +57,8 @@
     <div class="od-queue rq-queue {{ $queueClass ?? 'is-req' }} fu d2" style="--rq-date-label: '{{ $dateLabel ?? 'Submitted' }}'">
         <x-tenant::datatable
             :id="$tableId"
+            :design="false"
+            :mobile-cards="false"
             :url="$url"
             :columns="$tableColumns"
             :order="$order ?? []"

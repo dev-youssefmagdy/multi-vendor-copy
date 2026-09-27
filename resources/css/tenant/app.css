@@ -24,6 +24,8 @@
 @import "./components/header.css";
 @import "./components/mobile-nav.css";
 @import "./components/badge.css";
+@import "./components/ds-kpi.css";         /* KPI cards (stats-grid / stat-card) */
+@import "./components/ds-table.css";       /* table design + mobile row cards (datatable / table) */
 @import "./components/select-menu.css";
 @import "./components/tooltip.css";
 @import "./components/charts.css";

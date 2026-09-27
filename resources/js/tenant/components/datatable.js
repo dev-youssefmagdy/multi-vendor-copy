@@ -4,6 +4,7 @@ import { on } from '../core/events.js';
 import { initComponents } from '../core/registry.js';
 import { request } from '../core/http.js';
 import { confirm } from '../core/confirm.js';
+import { labelTableCells } from './ds-table.js';
 
 function initialFiltersFromQuery() {
     const params = new URLSearchParams(location.search);
@@ -129,6 +130,9 @@ export async function init(el) {
             if (config.mode === 'client' && this.api) {
                 updateDescription(el, config, { recordsDisplay: this.api().page.info().recordsDisplay });
             }
+            if (card?.classList.contains('ds-mcards')) {
+                labelTableCells(el);
+            }
             initComponents(el.closest('.tw') || el);
             updateBulkBar(el);
             el.dispatchEvent(new CustomEvent('tenant:table:drawn', { bubbles: true }));
@@ -180,6 +184,7 @@ export async function init(el) {
                 dt.search(e.target.value).draw();
                 return;
             }
+            el._quickSearch = e.target.value; // kept when the filters card re-applies
             el._filters = { ...(el._filters || {}), search: e.target.value };
             dt.ajax.reload(null, false);
         });

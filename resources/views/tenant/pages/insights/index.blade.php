@@ -202,7 +202,8 @@
                         <h3>{{ $table['title'] }}</h3>
                         @if(!empty($table['description']))<p>{{ $table['description'] }}</p>@endif
                     </div>
-                    <div class="an-table-wrap">
+                    {{-- Mobile: rows → cards (components/ds-table.css) --}}
+                    <div class="an-table-wrap ds-mcards" data-ds-table>
                         <table class="an-table an-status-table" data-report-table="{{ $table['title'] }}">
                             <thead><tr><th>Status</th><th>Orders</th><th class="is-wide">Proportion</th><th>Share</th></tr></thead>
                             <tbody>
@@ -214,7 +215,7 @@
                                     <tr>
                                         <td><span class="badge badge-{{ $tone }}"><span class="badge-dot"></span>{{ $row['label'] }}</span></td>
                                         <td>{{ number_format($row['count']) }}</td>
-                                        <td class="is-wide"><span class="an-bar"><i style="width:{{ $share }}%;background:{{ $barColor[$tone] }}"></i></span></td>
+                                        <td class="is-wide ds-cell-wide"><span class="an-bar"><i style="width:{{ $share }}%;background:{{ $barColor[$tone] }}"></i></span></td>
                                         <td>{{ $share }}%</td>
                                     </tr>
                                 @empty
@@ -229,6 +230,8 @@
                 <div class="an-dt fu d3" data-report-source data-report-title="{{ $table['title'] }}" data-report-url="{{ $table['url'] }}" data-report-columns='@json(collect($table['columns'])->map(fn ($c) => ['data' => $c['data'], 'title' => $c['title']])->values())'>
                     <x-tenant::datatable
                         :id="$table['id']"
+                        :design="false"
+                        mobile-cards
                         :url="$table['url']"
                         :columns="$table['columns']"
                         :order="$table['order'] ?? []"

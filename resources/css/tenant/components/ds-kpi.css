@@ -1,0 +1,83 @@
+/* ── KPI cards — x-tenant::stats-grid / x-tenant::stat-card ────────────────
+   Same card as the Orders / Customers / Requests pages: label on top, big
+   value, caption at the bottom, optional illustration centred on the right.
+   On mobile (≤ 767px) the grid becomes a Swiper carousel
+   (core/mobile-kpi-carousel.js, mounted from [data-kpi-carousel]).
+   ────────────────────────────────────────────────────────────────────────── */
+
+.ds-kpis {
+    display: grid;
+    grid-template-columns: repeat(var(--ds-kpi-cols, 4), minmax(0, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.ds-kpi {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    min-height: 145px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--ds-surface);
+    color: inherit;
+    text-decoration: none;
+}
+
+a.ds-kpi:hover { box-shadow: 0 0 0 1px var(--ds-brand-500); }
+
+.ds-kpi-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.ds-kpi-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+.ds-kpi-label {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ds-text-muted);
+}
+
+.ds-kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--ds-text);
+    overflow-wrap: anywhere;
+}
+
+.ds-kpi-caption {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ds-text-subtle);
+}
+
+.ds-kpi-icon {
+    align-self: center;
+    width: var(--ds-kpi-icon, 44px);
+    height: var(--ds-kpi-icon, 44px);
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+/* Inline SVG icons (passed as markup) take the brand colour */
+span.ds-kpi-icon { display: inline-flex; align-items: center; justify-content: center; color: var(--ds-brand-500); }
+span.ds-kpi-icon svg { width: 100%; height: 100%; }
+
+@media (max-width: 1200px) {
+    .ds-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Mobile: carousel (1.25 cards per view) */
+@media (max-width: 767px) {
+    .ds-kpis { grid-template-columns: minmax(0, 1fr); gap: 12px; } /* until the carousel mounts */
+    .ds-kpis.is-carousel { display: block; width: 100%; min-width: 0; max-width: 100%; overflow: hidden; }
+    .ds-kpis .swiper-wrapper { display: flex; }
+    .ds-kpis .ds-kpi.swiper-slide { display: flex; height: auto; } /* Swiper sets slides to block */
+}

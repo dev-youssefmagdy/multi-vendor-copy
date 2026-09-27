@@ -11,11 +11,7 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="roles-table">
-        <x-tenant::input name="filters[search]" label="Search" placeholder="Role name" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="roles-table" :url="route('tenant.settings.roles-permissions.data')" :columns="$columns" title="Tenant Roles & Permission Sets" />
+    <x-tenant::datatable id="roles-table" :url="route('tenant.settings.roles-permissions.data')" :columns="$columns" title="Tenant Roles & Permission Sets" quick-search search-placeholder="Role name" />
 
     <x-tenant::modal id="role-modal" title="Add / Edit Role" size="lg">
         <x-tenant::form id="role-form" :action="route('tenant.settings.roles-permissions.store')" method="POST" :validate="route('tenant.settings.roles-permissions.validate')" success="close-modal reload-table:#roles-table">

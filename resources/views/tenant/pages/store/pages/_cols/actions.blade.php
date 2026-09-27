@@ -1,8 +1,8 @@
-<div class="flex gap-2 flex-wrap">
-    <a href="{{ route('tenant.store.pages.edit', $page) }}" class="btn btn-secondary btn-sm">Edit</a>
-    <button type="button" class="btn btn-danger btn-sm"
+<x-tenant::dropdown align="end">
+    <x-tenant::dropdown-item :href="route('tenant.store.pages.edit', $page)">Edit</x-tenant::dropdown-item>
+    <x-tenant::dropdown-item danger
         data-action-url="{{ route('tenant.store.pages.destroy', $page) }}"
         data-action-method="DELETE"
         data-confirm="Delete page?"
-        data-success="reload-table:#pages-table">Delete</button>
-</div>
+        data-success="reload-table:#pages-table">Delete</x-tenant::dropdown-item>
+</x-tenant::dropdown>

@@ -8,13 +8,14 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="billing-table" title="Filters">
-        <x-tenant::input name="search" label="Search" placeholder="Order UUID, customer, or gateway" />
-        <x-tenant::select2 name="paid" label="Payment State" :options="['paid' => 'Paid', 'unpaid' => 'Unpaid']" placeholder="All" />
-        <x-tenant::select2 name="gateway" label="Gateway" :options="$gatewayOptions" placeholder="All" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="billing-table" :url="route('tenant.finance.billing.data')" :columns="$columns" title="Order Billing Ledger" quick-search />
+    <x-tenant::datatable id="billing-table" :url="route('tenant.finance.billing.data')" :columns="$columns" title="Order Billing Ledger" quick-search search-placeholder="Order UUID, customer, or gateway">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="billing-table" title="Filters">
+                <x-tenant::select2 name="paid" label="Payment State" :options="['paid' => 'Paid', 'unpaid' => 'Unpaid']" placeholder="All" />
+                <x-tenant::select2 name="gateway" label="Gateway" :options="$gatewayOptions" placeholder="All" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 @endsection
 
 @push('tenant-vite')

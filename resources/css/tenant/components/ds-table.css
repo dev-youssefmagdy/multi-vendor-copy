@@ -1,0 +1,417 @@
+/* ── Tables — x-tenant::datatable / x-tenant::table ───────────────────────
+   The "Order Queue" table design, shared by every module:
+     .ds-table   white card, 24px title + grey description, grey search box
+                 and orange filter button, grey header row, zebra rows,
+                 orange ⋮ actions, "Show 12 of 109 result" + Previous/Next.
+     .ds-mcards  on mobile (≤ 767px) each row becomes a white card: the first
+                 column is the card title, the Actions column the ⋮ in the
+                 top-right corner and every other cell a label/value pair
+                 (labels come from the column titles — see labelTableCells in
+                 components/datatable.js / ds-table.js).
+   Orders, Customers and the Request lists keep their own page styles
+   (pages/orders.css) and opt out with :design="false" :mobile-cards="false".
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Card shell + header ────────────────────────────────────────────────── */
+
+.ds-table.table-card-shell {
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--ds-surface);
+    box-shadow: none;
+}
+
+.ds-table.table-card-shell::before { display: none; }
+
+.ds-table .table-header-shell {
+    min-height: 0;
+    margin-bottom: 27px;
+    padding: 0;
+    border: 0;
+}
+
+.ds-table .table-header-shell:not(:has(.panel-title, .panel-copy, .table-header-actions > *)) { display: none; }
+
+.ds-table .panel-title {
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--ds-text);
+}
+
+.ds-table .panel-copy[data-table-description] {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #888580;
+}
+
+/* Raised so the filters dropdown stays above the table (the .fu entrance
+   animation leaves a transform that creates a stacking context). */
+.ds-table .table-header-actions { position: relative; z-index: 30; gap: 20px; }
+
+/* Search box */
+.t-scope .ds-table .table-search {
+    width: 313px;
+    min-width: 0;
+    height: 48px;
+    padding: 8px 16px 8px 48px;
+    border: 0;
+    border-radius: 8px;
+    background: #F5F5F5 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E5E5E' stroke-width='1.5' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8.75'/%3E%3Cpath d='M17.5 17.5l4.25 4.25'/%3E%3C/svg%3E") no-repeat 16px center / 24px;
+    font-size: 16px;
+    color: var(--ds-text);
+    box-shadow: none;
+}
+
+.t-scope .ds-table .table-search::placeholder { color: #5E5E5E; }
+[data-theme="dark"] .t-scope .ds-table .table-search { background-color: var(--ds-input-bg); }
+
+/* Filter button (the filters card's summary) + dropdown panel */
+.ds-table .filters-card {
+    position: static;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.ds-table .filters-card::before { display: none; }
+
+.ds-table .filters-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 48px;
+    padding: 0;
+    border-radius: 8px;
+    background: var(--ds-brand-500) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F5' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M3 7h3M3 17h6M18 17h3M15 7h6'/%3E%3Cpath d='M6 7a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 17a3 3 0 1 0 6 0 3 3 0 1 0-6 0'/%3E%3C/svg%3E") no-repeat center / 24px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.ds-table .filters-summary::-webkit-details-marker { display: none; }
+.ds-table .filters-summary > div:first-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.ds-table .filters-chevron { display: none; }
+
+.ds-table .filters-summary-meta .filter-pill {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: var(--ds-text);
+    color: #FFFFFF;
+    font-size: 10px;
+    line-height: 18px;
+}
+
+.ds-table .filters-card[open] .filters-body {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 280px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--ds-surface);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+    z-index: 20;
+}
+
+.ds-table .filters-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 0;
+}
+
+/* Reset at the bottom of the panel */
+.ds-table .filters-actions { justify-content: flex-end; margin-top: 16px; padding: 0; border: 0; }
+.ds-table .filters-actions .filters-note { display: none; }
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+
+.ds-table.tw,
+.ds-table .tw { overflow-x: auto; }
+
+.ds-table table.tb {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ds-table table.tb thead th {
+    height: 48px;
+    padding: 8px;
+    border: 0;
+    border-bottom: 1px solid #F0F0F0;
+    background: #F5F5F5;
+    color: #A3A3A3;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: 0;
+    white-space: nowrap;
+}
+
+.ds-table table.tb tbody td {
+    height: 48px;
+    padding: 6px 8px;
+    border: 0;
+    border-bottom: 1px solid #F0F0F0;
+    color: #A3A3A3;
+    font-size: 14px;
+    text-align: center;
+}
+
+.ds-table table.tb th:first-child,
+.ds-table table.tb td:first-child { text-align: left; }
+
+.ds-table table.tb tbody tr:nth-child(even) td { background: #F8F8F8; }
+.ds-table table.dataTable.no-footer,
+.ds-table div.dt-container.dt-empty-footer .dt-scroll-body,
+.ds-table div.dt-container.dt-empty-footer tbody > tr:last-child > * { border-bottom: 1px solid #F0F0F0; }
+.ds-table table.tb tbody tr:hover td { background: var(--ds-brand-50); }
+
+[data-theme="dark"] .ds-table table.tb thead th,
+[data-theme="dark"] .ds-table table.tb tbody tr:nth-child(even) td { background: var(--ds-input-bg); }
+[data-theme="dark"] .ds-table table.tb thead th,
+[data-theme="dark"] .ds-table table.tb tbody td { border-color: var(--ds-border); }
+
+/* Entity cells (name + subtitle) */
+.ds-table td .entity-title { color: var(--ds-text); font-size: 14px; font-weight: 500; }
+.ds-table td .entity-subtitle { color: #A3A3A3; font-size: 12px; }
+.ds-table td:not(:first-child) .entity-subtitle { margin-inline: auto; }
+
+/* Status pills (design tones) */
+.t-scope .ds-table .badge {
+    gap: 4px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.t-scope .ds-table .badge-amber { background: #FEFAE6; color: #F0C800; }
+.t-scope .ds-table .badge-blue { background: #E6E7FE; color: #424AFF; }
+.t-scope .ds-table .badge-orange { background: #FFF1E6; color: #FD6F04; }
+.t-scope .ds-table .badge-green { background: #E6FEE6; color: #03AA00; }
+.t-scope .ds-table .badge-red { background: #FEE6E6; color: #E00000; }
+.t-scope .ds-table .badge .badge-dot { width: 8px; height: 8px; background: currentColor; box-shadow: none; }
+
+/* Actions: orange ⋮ */
+.ds-table .t-dropdown-trigger {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ds-brand-500);
+    justify-content: center;
+}
+
+.ds-table .t-dropdown-trigger svg { width: 24px; height: 24px; }
+.ds-table .t-dropdown-menu { text-align: left; }
+
+/* Sort indicators: brand colour */
+.ds-table table.dataTable thead > tr > th .dt-column-order { color: var(--ds-brand-500); }
+
+/* ── Footer: "Show 12 of 109 result" + pager ────────────────────────────── */
+
+.ds-table .table-footer-shell {
+    margin-top: 16px;
+    padding: 16px 0 0;
+    border: 0;
+}
+
+.ds-table .dt-layout-row { margin: 0; }
+
+.ds-table .dt-info {
+    padding: 0;
+    font-size: 14px;
+    color: #5E5E5E;
+}
+
+.ds-table .dt-info strong { color: var(--ds-text); font-weight: 400; }
+
+.ds-table div.dt-container .dt-paging nav { display: flex; align-items: center; gap: 4px; }
+
+.ds-table div.dt-container .dt-paging .dt-paging-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 24px;
+    height: 24px;
+    margin: 0 0 0 4px;
+    padding: 0 4px;
+    border: 1px solid #A3A3A3;
+    border-radius: 4px;
+    background: transparent;
+    color: #5E5E5E;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ds-table div.dt-container .dt-paging .dt-paging-button svg { width: 16px; height: 16px; }
+.ds-table div.dt-container .dt-paging .dt-paging-button.first,
+.ds-table div.dt-container .dt-paging .dt-paging-button.last { display: none; }
+
+.ds-table div.dt-container .dt-paging .dt-paging-button:hover:not(.disabled):not(.current) {
+    border-color: var(--ds-brand-500);
+    background: transparent;
+    color: var(--ds-brand-500);
+}
+
+.ds-table div.dt-container .dt-paging .dt-paging-button.current,
+.ds-table div.dt-container .dt-paging .dt-paging-button.current:hover {
+    border-color: var(--ds-brand-500);
+    background: var(--ds-brand-500);
+    color: #FFFFFF !important;
+}
+
+.ds-table div.dt-container .dt-paging .dt-paging-button.previous {
+    height: 32px;
+    margin-right: 12px;
+    padding: 0 12px;
+    border-color: #E2E2E2;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.ds-table div.dt-container .dt-paging .dt-paging-button.next,
+.ds-table div.dt-container .dt-paging .dt-paging-button.next:hover:not(.disabled) {
+    height: 32px;
+    margin-left: 16px;
+    padding: 0 12px;
+    border-color: var(--ds-brand-500);
+    border-radius: 8px;
+    background: var(--ds-brand-500);
+    color: #FFFFFF !important; /* DataTables sets color: inherit !important */
+}
+
+.ds-table div.dt-container .dt-paging .dt-paging-button.disabled { opacity: .45; cursor: default; }
+.ds-table div.dt-container .dt-paging .ellipsis { padding: 0 4px; color: #5E5E5E; }
+
+/* ── Mobile (design: 375px) ─────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+    /* Queue header: title, then search + filter on one row */
+    .ds-table.table-card-shell { padding: 0; background: transparent; }
+    .ds-table .table-header-shell { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 24px; }
+    .ds-table .table-header-actions { width: 100%; gap: 12px; }
+    .t-scope .ds-table .table-search { flex: 1; width: auto; }
+    .ds-table .filters-card[open] .filters-body { width: min(280px, calc(100vw - 64px)); }
+
+    /* Footer: pager centred, result count underneath */
+    .ds-table .table-footer-shell { flex-direction: column-reverse; align-items: center; gap: 12px; }
+    /* DataTables makes this row a block on small screens; keep it flex so the pager sits above the count */
+    .ds-table div.dt-container .dt-layout-row { display: flex !important; flex-direction: column-reverse; align-items: center; gap: 12px; }
+
+    .ds-mcards.tw { overflow: visible; }
+
+    /* ── Rows → cards (.t-scope: beats the desktop cell rules above) ── */
+    .t-scope .ds-mcards .tw { overflow: visible; }
+    .t-scope .ds-mcards table,
+    .t-scope .ds-mcards table tbody { display: block; width: 100% !important; min-width: 0 !important; max-width: 100%; }
+    .t-scope .ds-mcards table thead { display: none; }
+
+    .t-scope .ds-mcards table tbody tr {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px 16px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--ds-surface);
+    }
+
+    /* Tables sitting on a white card or modal (static tables, tables without
+       the queue design): outline the row cards instead */
+    .t-scope .ds-mcards.tw table tbody tr,
+    .t-scope .ds-mcards.table-card-shell:not(.ds-table) table tbody tr { border: 1px solid #F0F0F0; }
+    [data-theme="dark"] .t-scope .ds-mcards.tw table tbody tr,
+    [data-theme="dark"] .t-scope .ds-mcards.table-card-shell:not(.ds-table) table tbody tr { border-color: var(--ds-border); }
+
+    .t-scope .ds-mcards table tbody tr td {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        height: auto;
+        min-width: 0;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: #171717;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    [data-theme="dark"] .t-scope .ds-mcards table tbody tr td { color: var(--ds-text); }
+
+    .t-scope .ds-mcards table tbody tr td[data-label]:not([data-label=""])::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #5E5E5E;
+    }
+
+    /* Card title: first column (thumb/avatar + name + subtitle), bold 16px */
+    .t-scope .ds-mcards table tbody tr td.ds-cell-primary {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .t-scope .ds-mcards table tbody tr:has(> td.ds-cell-actions) td.ds-cell-primary { grid-column: 1 / 3; }
+    .t-scope .ds-mcards table tbody tr td.ds-cell-primary::before { content: none !important; }
+    .t-scope .ds-mcards td.ds-cell-primary .entity-title { color: inherit; font-size: 16px; font-weight: 700; }
+    .t-scope .ds-mcards td.ds-cell-primary .entity-subtitle { color: #5E5E5E; font-size: 12px; font-weight: 400; }
+
+    /* ⋮ in the top-right corner */
+    .t-scope .ds-mcards table tbody tr td.ds-cell-actions {
+        grid-column: 3;
+        grid-row: 1;
+        align-items: flex-end;
+    }
+
+    .t-scope .ds-mcards table tbody tr td.ds-cell-actions::before { content: none !important; }
+
+    /* Long text cells (notes, descriptions, …) take the full card width */
+    .t-scope .ds-mcards table tbody tr td.ds-cell-wide { grid-column: 1 / -1; }
+
+    /* Bulk-select checkbox sits left of the ⋮ */
+    .t-scope .ds-mcards table tbody tr td.t-select-col {
+        position: absolute;
+        top: 14px;
+        right: 48px;
+        width: auto;
+    }
+
+    .t-scope .ds-mcards table tbody tr td.t-select-col::before { content: none !important; }
+
+    /* Empty / loading row spans the whole card */
+    .t-scope .ds-mcards table tbody tr:has(td.dt-empty),
+    .t-scope .ds-mcards table tbody tr:has(td[colspan]) { display: block; }
+    .t-scope .ds-mcards table tbody td.dt-empty,
+    .t-scope .ds-mcards table tbody td[colspan] { align-items: center; text-align: center; }
+    .t-scope .ds-mcards table tbody td.dt-empty::before,
+    .t-scope .ds-mcards table tbody td[colspan]::before { content: none !important; }
+}

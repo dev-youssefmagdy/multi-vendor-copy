@@ -124,12 +124,13 @@
         </x-tenant::form>
     </x-tenant::card>
 
-    <x-tenant::filters-card target="ui-kit-table" title="Filters">
-        <x-tenant::input name="search" label="Search" placeholder="Search rows" />
-        <x-tenant::select2 name="status" label="Status" :options="['active' => 'Active', 'pending' => 'Pending', 'rejected' => 'Rejected']" placeholder="All" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="ui-kit-table" :url="route('tenant.ui-kit.data')" :columns="$columns" title="Demo records" quick-search selectable bulk-url="#" />
+    <x-tenant::datatable id="ui-kit-table" :url="route('tenant.ui-kit.data')" :columns="$columns" title="Demo records" quick-search selectable bulk-url="#">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="ui-kit-table" title="Filters">
+                <x-tenant::select2 name="status" label="Status" :options="['active' => 'Active', 'pending' => 'Pending', 'rejected' => 'Rejected']" placeholder="All" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 
     <div class="g-stats3 section-gap">
         <x-tenant::card title="Badges">

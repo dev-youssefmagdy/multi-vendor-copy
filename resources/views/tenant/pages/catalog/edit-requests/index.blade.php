@@ -7,11 +7,13 @@
 
     <x-tenant::stats-grid :stats="$stats" :columns="3" />
 
-    <x-tenant::filters-card target="edit-requests-table" title="Filters">
-        <x-tenant::select2 name="status" label="Status" :options="['all' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected']" placeholder="All" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="edit-requests-table" :url="route('tenant.products.edit-requests.data')" :columns="$columns" title="Edit Requests" empty-title="No edit requests yet" empty-copy="When you change a product name or description, your request will appear here for admin review." />
+    <x-tenant::datatable id="edit-requests-table" :url="route('tenant.products.edit-requests.data')" :columns="$columns" title="Edit Requests" empty-title="No edit requests yet" empty-copy="When you change a product name or description, your request will appear here for admin review.">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="edit-requests-table" title="Filters">
+                <x-tenant::select2 name="status" label="Status" :options="['all' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected']" placeholder="All" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 @endsection
 
 @push('tenant-vite')

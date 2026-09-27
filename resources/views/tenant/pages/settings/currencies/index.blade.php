@@ -7,12 +7,13 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="currencies-table" title="Filters">
-        <x-tenant::input name="search" label="Search" placeholder="Code or name…" />
-        <x-tenant::select2 name="status" label="Status" :options="['default' => 'Default', 'active' => 'Active', 'inactive' => 'Inactive']" placeholder="All" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="currencies-table" :url="route('tenant.settings.currencies.data')" :columns="$columns" title="Tenant Currencies" />
+    <x-tenant::datatable id="currencies-table" :url="route('tenant.settings.currencies.data')" :columns="$columns" title="Tenant Currencies" quick-search search-placeholder="Code or name…">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="currencies-table" title="Filters">
+                <x-tenant::select2 name="status" label="Status" :options="['default' => 'Default', 'active' => 'Active', 'inactive' => 'Inactive']" placeholder="All" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 @endsection
 
 @push('tenant-vite')

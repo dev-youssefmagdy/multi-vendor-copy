@@ -1,15 +1,15 @@
-<div class="flex gap-2 flex-wrap">
+<x-tenant::dropdown align="end">
     @if($theme->is_active)
-        <button type="button" class="btn btn-secondary btn-sm"
+        <x-tenant::dropdown-item
             data-action-url="{{ route('tenant.store.blade-theme.deactivate') }}"
             data-action-method="POST"
             data-confirm="Deactivate the blade theme? Your storefront will use the system theme again."
-            data-success="reload-page">Deactivate</button>
+            data-success="reload-page">Deactivate</x-tenant::dropdown-item>
     @else
-        <button type="button" class="btn btn-danger btn-sm"
+        <x-tenant::dropdown-item danger
             data-action-url="{{ route('tenant.store.blade-theme.destroy', $theme) }}"
             data-action-method="DELETE"
             data-confirm="Delete this theme?"
-            data-success="reload-page">Delete</button>
+            data-success="reload-page">Delete</x-tenant::dropdown-item>
     @endif
-</div>
+</x-tenant::dropdown>

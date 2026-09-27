@@ -92,6 +92,8 @@
         <div class="od-queue cu-queue is-customers fu d2">
             <x-tenant::datatable
                 id="customers-table"
+                :design="false"
+                :mobile-cards="false"
                 :url="route('tenant.customers.data')"
                 :columns="$tableColumns"
                 :order="[]"

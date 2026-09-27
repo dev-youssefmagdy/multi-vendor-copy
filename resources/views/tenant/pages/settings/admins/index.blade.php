@@ -11,12 +11,13 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="admins-table">
-        <x-tenant::input name="filters[search]" label="Search" placeholder="Name or email" />
-        <x-tenant::select name="filters[status]" label="Status" :options="['' => 'All statuses', 'active' => 'Active', 'inactive' => 'Inactive']" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="admins-table" :url="route('tenant.settings.admins.data')" :columns="$columns" title="Tenant Admin Users" />
+    <x-tenant::datatable id="admins-table" :url="route('tenant.settings.admins.data')" :columns="$columns" title="Tenant Admin Users" quick-search search-placeholder="Name or email">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="admins-table" title="Filters">
+                <x-tenant::select2 name="status" label="Status" :options="['active' => 'Active', 'inactive' => 'Inactive']" placeholder="All statuses" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 
     <x-tenant::modal id="admin-modal" title="Add / Edit Tenant Admin">
         <x-tenant::form id="admin-form" :action="route('tenant.settings.admins.store')" method="POST" :validate="route('tenant.settings.admins.validate')" success="close-modal reload-table:#admins-table">

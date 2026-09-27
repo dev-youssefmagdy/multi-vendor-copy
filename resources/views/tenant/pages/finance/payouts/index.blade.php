@@ -7,12 +7,13 @@
 
     <x-tenant::stats-grid :stats="$stats" :columns="3" />
 
-    <x-tenant::filters-card target="payouts-table" title="Filters" description="Filter payouts by status and search by invoice or transaction reference.">
-        <x-tenant::input name="search" label="Search" placeholder="Invoice, transaction…" />
-        <x-tenant::select2 name="status" label="Status" :options="$statusOptions" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="payouts-table" :url="route('tenant.finance.payouts.data')" :columns="$columns" title="Payout Records" />
+    <x-tenant::datatable id="payouts-table" :url="route('tenant.finance.payouts.data')" :columns="$columns" title="Payout Records" quick-search search-placeholder="Invoice, transaction…">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="payouts-table" title="Filters">
+                <x-tenant::select2 name="status" label="Status" :options="$statusOptions" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 @endsection
 
 @push('tenant-vite')

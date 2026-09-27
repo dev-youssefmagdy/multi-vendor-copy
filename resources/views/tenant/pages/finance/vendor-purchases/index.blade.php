@@ -11,12 +11,13 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="vendor-purchases-table" title="Filters" export-link="#vendor-purchases-export-link">
-        <x-tenant::input name="search" label="Search" placeholder="Order UUID or customer" />
-        <x-tenant::select2 name="settled" label="Settlement" :options="['unsettled' => 'Unsettled', 'settled' => 'Settled']" placeholder="All" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="vendor-purchases-table" :url="route('tenant.finance.vendor-purchases.data')" :columns="$columns" title="Purchase Ledger" quick-search />
+    <x-tenant::datatable id="vendor-purchases-table" :url="route('tenant.finance.vendor-purchases.data')" :columns="$columns" title="Purchase Ledger" quick-search search-placeholder="Order UUID or customer">
+        <x-slot:toolbar>
+            <x-tenant::filters-card target="vendor-purchases-table" title="Filters" export-link="#vendor-purchases-export-link">
+                <x-tenant::select2 name="settled" label="Settlement" :options="['unsettled' => 'Unsettled', 'settled' => 'Settled']" placeholder="All" />
+            </x-tenant::filters-card>
+        </x-slot:toolbar>
+    </x-tenant::datatable>
 @endsection
 
 @push('tenant-vite')

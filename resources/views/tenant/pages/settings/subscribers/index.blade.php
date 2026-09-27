@@ -11,11 +11,7 @@
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::filters-card target="subscribers-table" title="Filters">
-        <x-tenant::input name="search" label="Search" placeholder="Email…" />
-    </x-tenant::filters-card>
-
-    <x-tenant::datatable id="subscribers-table" :url="route('tenant.settings.subscribers.data')" :columns="$columns" title="Subscriber List" />
+    <x-tenant::datatable id="subscribers-table" :url="route('tenant.settings.subscribers.data')" :columns="$columns" title="Subscriber List" quick-search search-placeholder="Email…" />
 @endsection
 
 @push('tenant-vite')

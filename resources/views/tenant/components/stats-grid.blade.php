@@ -1,11 +1,12 @@
 @props(['stats' => [], 'columns' => null])
 
+{{-- KPI card row; becomes a swipeable carousel on mobile ([data-kpi-carousel]). --}}
+
 @php
-    $columns ??= count($stats) > 3 ? 4 : 3;
-    $gridClass = $columns >= 4 ? 'g-stats4' : 'g-stats3';
+    $columns ??= count($stats) > 3 ? 4 : max(count($stats), 1);
 @endphp
 
-<div class="{{ $gridClass }} section-gap">
+<div class="ds-kpis" style="--ds-kpi-cols: {{ $columns }}" data-kpi-carousel>
     @foreach($stats as $i => $stat)
         <x-tenant::stat-card
             :label="$stat['label'] ?? null"
