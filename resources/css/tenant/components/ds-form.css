@@ -91,10 +91,12 @@
 .t-scope :is(.ds-card, .card.form-card) .panel-title {
     margin: 0;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.5;
-    color: var(--ds-text);
+    color: #171717;
 }
+
+[data-theme="dark"] .t-scope :is(.ds-card, .card.form-card) .panel-title { color: var(--ds-text); }
 
 .t-scope :is(.ds-card, .card.form-card) .panel-copy {
     margin: 4px 0 0;

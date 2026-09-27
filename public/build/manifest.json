@@ -2825,7 +2825,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-C4bg8LSX.css",
+    "file": "assets/app-DKKVqtXa.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3536,12 +3536,12 @@
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
-    "file": "assets/own-product-form-CaGEKVXJ.js",
+    "file": "assets/own-product-form-DAD5c4Ob.js",
     "name": "own-product-form",
     "src": "resources/js/tenant/pages/catalog/own-product-form.js",
     "isEntry": true,
     "css": [
-      "assets/own-product-form-CW_iJhng.css"
+      "assets/own-product-form-Bnd7qNXf.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-products-index.js": {

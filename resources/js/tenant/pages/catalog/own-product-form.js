@@ -14,6 +14,43 @@ if (form) {
     manageStockToggle?.addEventListener('change', syncStockFields);
     syncStockFields();
 
+    // ── Country picker: filter the list as you type ─────────────────────────
+    const countries = form.querySelector('[data-op-countries]');
+    countries?.querySelector('[data-op-country-search]')?.addEventListener('input', (e) => {
+        const term = e.target.value.trim().toLowerCase();
+        let shown = 0;
+        countries.querySelectorAll('[data-op-country]').forEach((item) => {
+            item.hidden = term !== '' && !item.dataset.opCountry.includes(term);
+            shown += item.hidden ? 0 : 1;
+        });
+        countries.querySelector('[data-op-country-empty]').hidden = shown > 0;
+    });
+
+    // ── Primary image thumbnail: red ✕ clears a new pick, or marks the saved
+    //    image for removal (remove_primary_image) ─────────────────────────────
+    const primary = form.querySelector('[data-op-primary]');
+    if (primary) {
+        const fileInput = primary.querySelector('input[type="file"]');
+        const preview = primary.querySelector('.t-image-upload-preview');
+        const removeBox = primary.querySelector('[data-op-primary-remove]');
+
+        removeBox?.addEventListener('change', () => {
+            if (fileInput.value) {
+                fileInput.value = ''; // drop the new pick; the saved image stays
+                removeBox.checked = false;
+                preview.src = preview.dataset.savedSrc || '';
+                preview.hidden = !preview.dataset.savedSrc;
+            } else {
+                preview.hidden = true;
+            }
+        });
+
+        preview.dataset.savedSrc = preview.hidden ? '' : preview.getAttribute('src');
+        fileInput?.addEventListener('change', () => {
+            if (fileInput.files.length && removeBox) removeBox.checked = false;
+        });
+    }
+
     // ── Return policy override toggle ────────────────────────────────────────
     const returnPolicyToggle = form.querySelector('[data-return-policy-toggle]');
     const returnPolicyFields = form.querySelector('[data-return-policy-fields]');

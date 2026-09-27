@@ -2,10 +2,24 @@
 
 @section('title', $pageTitle)
 
+@php
+    $arrowLeft = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M4 12l6-6M4 12l6 6"/></svg>';
+    $uploadIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13v8M8.5 16.5 12 13l3.5 3.5"/><path d="M7 18.5A5 5 0 1 1 8.2 8.6 6 6 0 0 1 19.6 11a4 4 0 0 1-2.1 7.5"/></svg>';
+
+    // FOR DESIGN PURPOSE
+    // Countries the product is sold in — the design's country picker. Products have no
+    // country field yet, so the ticks are posted as countries[] and ignored by
+    // SaveOwnProductRequest. BACKEND TODO: persist countries[] and pass the saved codes here.
+    $countryOptions = ['qa' => 'Qatar', 'ma' => 'Morocco', 'fr' => 'France', 'eg' => 'Egypt', 'ae' => 'UAE', 'us' => 'USA', 'iq' => 'Iraq', 'gb' => 'United Kingdom'];
+    $selectedCountries = old('countries', []);
+@endphp
+
 @section('content')
-    <x-tenant::page-header :title="$pageTitle" badge="Own Catalog" :description="$pageDescription">
+    <div class="op-page">
+    <x-tenant::page-header :title="$pageTitle" :description="$pageDescription">
         <x-slot:actions>
-            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to Products</a>
+            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary op-back">{!! $arrowLeft !!} Back to products</a>
+            <button type="submit" form="own-product-form" class="btn btn-primary op-save">Save product</button>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -17,88 +31,79 @@
         files
         id="own-product-form"
     >
-        <x-tenant::card-collapse title="Basics" subtitle="Identifiers, publication state, and catalog flags.">
-            <div class="form-grid form-grid-3">
-                <x-tenant::input name="sku" label="SKU" placeholder="PRD-001" :value="$productData['sku'] ?? ''" />
-                <x-tenant::input name="slug" label="Slug" placeholder="auto-generated-if-empty" :value="$productData['slug'] ?? ''" />
-                <x-tenant::input type="number" name="weight_grams" label="Weight (grams)" min="0" placeholder="0" :value="$productData['weight_grams'] ?? ''" />
-
-                <div class="field-flag-grid span-3">
-                    <x-tenant::switch name="active" label="Product is Active" :checked="$productData['active'] ?? true" />
-                    <x-tenant::switch name="featured" label="Featured" :checked="$productData['featured'] ?? false" />
-                    <x-tenant::switch name="manage_stock" label="Manage Stock" :checked="$productData['manage_stock'] ?? true" data-manage-stock-toggle />
-                    <x-tenant::switch name="is_taxable" label="Taxable" :checked="$productData['is_taxable'] ?? true" />
+        {{-- ── Basics ─────────────────────────────────────────────────────── --}}
+        <x-tenant::card title="Basics" subtitle="Identifiers, publication state, and catalog flags." class="op-card">
+            <div class="op-stack">
+                <div class="form-grid op-grid-4">
+                    <x-tenant::input name="sku" label="SKU" placeholder="PRD 001" required :value="$productData['sku'] ?? ''" />
+                    <x-tenant::input name="slug" label="Slug" placeholder="Auto-generated" :value="$productData['slug'] ?? ''" />
+                    <x-tenant::input type="number" name="weight_grams" label="Weight (grams)" min="0" placeholder="0" :value="$productData['weight_grams'] ?? ''" />
+                    <x-tenant::select2 name="category_ids" multiple label="Category" placeholder="Select categories" :options="$categoryOptions" :value="$categoryIds" />
                 </div>
-            </div>
-        </x-tenant::card-collapse>
 
-        <x-tenant::card-collapse title="Primary Image" subtitle="Main product image shown on listings and the product page.">
-            <x-tenant::image-upload
-                name="primary_image"
-                :current="$existingImage"
-                :removable="(bool) $existingImage"
-                :expected-width="config('image_dimensions.product.width')"
-                :expected-height="config('image_dimensions.product.height')"
-                help="PNG, JPG, WEBP up to 5MB."
-            />
-        </x-tenant::card-collapse>
+                <div class="op-countries" data-op-countries>
+                    <label class="op-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
+                        <input type="search" placeholder="Search" aria-label="Search countries" data-op-country-search>
+                    </label>
+                    <ul class="op-country-list" role="list">
+                        @foreach($countryOptions as $code => $country)
+                            <li data-op-country="{{ strtolower($country) }}">
+                                <label class="op-check op-country">
+                                    <input type="checkbox" name="countries[]" value="{{ $code }}" @checked(in_array($code, $selectedCountries, true))>
+                                    <x-tenant::flag :code="$code" class="op-flag" />
+                                    <span>{{ $country }}</span>
+                                </label>
+                            </li>
+                        @endforeach
+                        <li class="op-country-empty" data-op-country-empty hidden>No countries match your search.</li>
+                    </ul>
+                </div>
 
-        <x-tenant::card-collapse title="Media Gallery" subtitle="Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV.">
-            <x-tenant::dropzone
-                name="gallery_files"
-                multiple
-                sortable
-                remove-name="remove_gallery_ids"
-                order-name="gallery_order"
-                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
-                label="Upload images or videos"
-                sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed"
-                :expected-width="config('image_dimensions.product.width')"
-                :expected-height="config('image_dimensions.product.height')"
-                :existing="$existingGallery->map(fn ($file) => [
-                    'id' => $file->id,
-                    'url' => $file->full_path,
-                    'name' => strtoupper($file->extension),
-                    'type' => $file->file_type->value,
-                ])->all()"
-            />
-        </x-tenant::card-collapse>
-
-        <x-tenant::card-collapse title="Translations" subtitle="Multilingual product name, summary, description, and SEO meta fields.">
-            @if($languages->count())
-                <x-tenant::locale-tabs :languages="$languages" :active="$defaultLocale">
-                    @foreach($languages as $language)
-                        <x-tenant::locale-pane :code="$language->code" :active="$language->code === $defaultLocale">
-                            <div class="form-grid form-grid-2">
-                                <div class="span-2">
+                @if($languages->count())
+                    <x-tenant::locale-tabs :languages="$languages" :active="$defaultLocale">
+                        @foreach($languages as $language)
+                            <x-tenant::locale-pane :code="$language->code" :active="$language->code === $defaultLocale">
+                                <div class="form-grid op-grid-3">
                                     <x-tenant::input
                                         name="translations.{{ $language->code }}.name"
-                                        :label="'Name (' . strtoupper($language->code) . ')' . ($language->is_default ? ' *' : '')"
+                                        label="Product name"
+                                        :required="(bool) $language->is_default"
                                         :value="$translations[$language->code]['name'] ?? ''"
                                         placeholder="Localized product name"
                                     />
+                                    <x-tenant::input name="translations.{{ $language->code }}.label" label="Label" placeholder="Short display label (used in UI, breadcrumbs, listings)" :value="$translations[$language->code]['label'] ?? ''" />
+                                    <x-tenant::input name="translations.{{ $language->code }}.summary" label="Summary" placeholder="Short merchandising summary" :value="$translations[$language->code]['summary'] ?? ''" />
+                                    <div class="op-span-all">
+                                        <x-tenant::editor name="translations.{{ $language->code }}.description" label="Description" height="220" toolbar="basic" placeholder="Describe your product" :value="$translations[$language->code]['description'] ?? ''" />
+                                    </div>
+                                    <div class="op-span-all form-grid form-grid-2">
+                                        <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" label="Meta Keywords" placeholder="keyword1, keyword2, keyword3" :value="$translations[$language->code]['meta_keywords'] ?? ''" />
+                                        <x-tenant::input name="translations.{{ $language->code }}.meta_description" label="Meta Description" placeholder="SEO-friendly page description (≤ 160 chars)" :value="$translations[$language->code]['meta_description'] ?? ''" />
+                                    </div>
                                 </div>
-                                <x-tenant::input name="translations.{{ $language->code }}.label" label="Label" placeholder="Short display label (used in UI, breadcrumbs, listings)" :value="$translations[$language->code]['label'] ?? ''" />
-                                <x-tenant::input name="translations.{{ $language->code }}.summary" label="Summary" placeholder="Short merchandising summary" :value="$translations[$language->code]['summary'] ?? ''" />
-                                <div class="span-2">
-                                    <x-tenant::editor name="translations.{{ $language->code }}.description" label="Description" height="320" :value="$translations[$language->code]['description'] ?? ''" />
-                                </div>
-                                <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" label="Meta Keywords" placeholder="keyword1, keyword2, keyword3" :value="$translations[$language->code]['meta_keywords'] ?? ''" />
-                                <x-tenant::textarea name="translations.{{ $language->code }}.meta_description" label="Meta Description" rows="3" placeholder="SEO-friendly page description (≤ 160 chars)" :value="$translations[$language->code]['meta_description'] ?? ''" />
-                            </div>
-                        </x-tenant::locale-pane>
-                    @endforeach
-                </x-tenant::locale-tabs>
-            @else
-                <div class="notice-muted">Create at least one active language before managing translated product content.</div>
-            @endif
-        </x-tenant::card-collapse>
+                            </x-tenant::locale-pane>
+                        @endforeach
+                    </x-tenant::locale-tabs>
+                @else
+                    <div class="notice-muted">Create at least one active language before managing translated product content.</div>
+                @endif
 
-        <x-tenant::card-collapse title="Pricing &amp; Inventory" subtitle="Base pricing, promotional pricing, and stock thresholds.">
-            <div class="form-grid form-grid-2">
-                <x-tenant::input type="number" name="base_price" label="Base Price" required min="0" step="0.01" :value="$productData['base_price'] ?? '0.00'" />
-                <x-tenant::input type="number" name="sale_price" label="Sale Price" min="0" step="0.01" :value="$productData['sale_price'] ?? ''" />
-                <x-tenant::input type="number" name="cost_price" label="Cost Price" min="0" step="0.01" :value="$productData['cost_price'] ?? ''" />
+                <div class="op-flags">
+                    <x-tenant::checkbox name="active" label="Product is Active" :checked="$productData['active'] ?? true" wrapper-class="op-check" />
+                    <x-tenant::checkbox name="featured" label="Featured" :checked="$productData['featured'] ?? false" wrapper-class="op-check" />
+                    <x-tenant::checkbox name="manage_stock" label="Manage Stock" :checked="$productData['manage_stock'] ?? true" wrapper-class="op-check" data-manage-stock-toggle />
+                    <x-tenant::checkbox name="is_taxable" label="Taxable" :checked="$productData['is_taxable'] ?? true" wrapper-class="op-check" />
+                </div>
+            </div>
+        </x-tenant::card>
+
+        {{-- ── Pricing ────────────────────────────────────────────────────── --}}
+        <x-tenant::card title="Pricing" subtitle="Base pricing, promotional pricing, and stock thresholds." class="op-card">
+            <div class="form-grid op-grid-3 op-numbers">
+                <x-tenant::input type="number" name="base_price" label="Base Price" required min="0" step="0.01" placeholder="0" :value="$productData['base_price'] ?? '0.00'" />
+                <x-tenant::input type="number" name="sale_price" label="Sale price" min="0" step="0.01" placeholder="0" :value="$productData['sale_price'] ?? ''" />
+                <x-tenant::input type="number" name="cost_price" label="Cost price" min="0" step="0.01" placeholder="0" :value="$productData['cost_price'] ?? ''" />
                 <div data-stock-fields>
                     <x-tenant::input type="number" name="stock" label="Stock" min="0" :value="$productData['stock'] ?? 0" />
                 </div>
@@ -106,11 +111,67 @@
                     <x-tenant::input type="number" name="min_stock" label="Minimum Stock" min="0" :value="$productData['min_stock'] ?? 0" />
                 </div>
             </div>
-        </x-tenant::card-collapse>
+        </x-tenant::card>
 
-        <x-tenant::card-collapse title="Categories" subtitle="Assign one or more storefront categories.">
-            <x-tenant::select2 name="category_ids" multiple label="Categories" placeholder="Select categories" :options="$categoryOptions" :value="$categoryIds" />
-        </x-tenant::card-collapse>
+        {{-- ── Primary Image + Media Gallery ──────────────────────────────── --}}
+        <div class="card ds-card op-card op-media">
+            <section class="op-media-col">
+                <div class="op-media-head">
+                    <h3 class="panel-title">Primary Image</h3>
+                    <p class="panel-copy">Main product image shown on listings and the product page.</p>
+                </div>
+
+                {{-- Same fields as x-tenant::image-upload (primary_image + remove_primary_image); preview via [data-image-upload]. --}}
+                <div class="t-field op-primary" data-field="primary_image">
+                    <div class="t-image-upload" data-image-upload data-op-primary
+                        data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}">
+                        <label class="t-dropzone-drop op-drop">
+                            <span class="op-drop-icon">{!! $uploadIcon !!}</span>
+                            <span class="op-drop-title">Click to upload or drag and drop</span>
+                            <span class="op-drop-sub">PNG, JPG or WEBP (max. 4MB)</span>
+                            <input type="file" name="primary_image" id="f-primary_image" accept="image/*" class="t-dropzone-input">
+                        </label>
+                        <div class="op-thumbs">
+                            <div class="op-thumb">
+                                <img src="{{ $existingImage }}" alt="" class="t-image-upload-preview" @unless($existingImage) hidden @endunless>
+                                <label class="op-thumb-remove" aria-label="Remove image">
+                                    <input type="checkbox" name="remove_primary_image" value="1" data-op-primary-remove>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="dimension-warning" hidden></p>
+                    </div>
+                    <p class="field-error" data-error-for="primary_image" role="alert" hidden></p>
+                </div>
+            </section>
+
+            <section class="op-media-col">
+                <div class="op-media-head">
+                    <h3 class="panel-title">Media Gallery</h3>
+                    <p class="panel-copy">Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV.</p>
+                </div>
+
+                <x-tenant::dropzone
+                    name="gallery_files"
+                    multiple
+                    sortable
+                    remove-name="remove_gallery_ids"
+                    order-name="gallery_order"
+                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
+                    label="Click to upload or drag and drop"
+                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM or MOV (max. 50MB)"
+                    wrapper-class="op-gallery"
+                    :expected-width="config('image_dimensions.product.width')"
+                    :expected-height="config('image_dimensions.product.height')"
+                    :existing="$existingGallery->map(fn ($file) => [
+                        'id' => $file->id,
+                        'url' => $file->full_path,
+                        'name' => strtoupper($file->extension),
+                        'type' => $file->file_type->value,
+                    ])->all()"
+                />
+            </section>
+        </div>
 
         <x-tenant::card-collapse title="Badges" subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront.">
             @if($badges->isEmpty())
@@ -174,10 +235,11 @@
         </x-tenant::card-collapse>
 
         <div class="page-actions compact-actions justify-end">
-            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to Products</a>
-            <x-tenant::submit>Save Product</x-tenant::submit>
+            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to products</a>
+            <x-tenant::submit>Save product</x-tenant::submit>
         </div>
     </x-tenant::form>
+    </div>
 @endsection
 
 @push('tenant-vite')
