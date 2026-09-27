@@ -80,11 +80,11 @@
         </a>
     </div>
 
-    {{-- Market selector — UI only until the backend provides markets. --}}
-    <button type="button" class="db-country-select">
-        Select your country
+    {{-- Market selector — flag dropdown; UI only until the backend provides markets. --}}
+    <x-tenant::country-picker trigger-class="db-country-select">
+        <span data-country-label>Select your country</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
-    </button>
+    </x-tenant::country-picker>
 
     <div class="db-opp-slider is-opps swiper" data-opp-slider data-mobile-view="1.5" aria-label="Opportunities">
         <div class="swiper-wrapper">

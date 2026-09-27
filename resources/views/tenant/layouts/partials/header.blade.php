@@ -12,14 +12,14 @@
         <img src="{{ asset('tenant-panel/mobile-logo.svg') }}" alt="" width="153" height="40" class="hd-logo-light" aria-hidden="true">
     </a>
 
-    {{-- Country selector — UI only for now; not wired to any data yet. --}}
-    <button type="button" class="hd-field hd-country xs-hide" aria-label="Select your country">
+    {{-- Country selector — flag dropdown (x-tenant::country-picker); UI only until the backend provides markets. --}}
+    <x-tenant::country-picker trigger-class="hd-field hd-country xs-hide">
         <span class="hd-field-main">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.75"/><path d="M8 12c0 5.25 1.8 9.75 4 9.75s4-4.5 4-9.75S14.2 2.25 12 2.25 8 6.75 8 12z"/><path d="M3 9h18M3 15h18"/></svg>
-            <span>Select your country</span>
+            <span data-country-label>Select your country</span>
         </span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
-    </button>
+    </x-tenant::country-picker>
 
     {{-- Search — UI only for now; not wired to any endpoint yet. --}}
     <label class="hd-field hd-search xs-hide">

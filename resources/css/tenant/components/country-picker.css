@@ -1,0 +1,99 @@
+/* ── Country picker — x-tenant::country-picker ─────────────────────────────
+   The wrapper is layout-neutral (display: contents) so each page's trigger
+   button keeps its own look and place; the panel is fixed-positioned under it
+   by components/country-picker.js.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.t-country-picker { display: contents; }
+
+/* Chosen country on the trigger: flag + name */
+[data-country-label].has-country { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+[data-country-label] .t-country-flag svg { display: block; width: 24px; height: 18px; border-radius: 2px; }
+
+.t-country-panel {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    background: var(--ds-surface, #FFFFFF);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+    font-family: var(--ds-font);
+}
+
+.t-country-panel[hidden] { display: none; }
+
+.t-country-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #F5F5F5;
+    color: #5E5E5E;
+}
+
+.t-country-search svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.t-country-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ds-text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.t-country-search input::placeholder { color: #5E5E5E; }
+.t-country-search:focus-within { outline: 2px solid var(--ds-brand-500); }
+
+.t-country-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 288px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.t-country-list [role="option"] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #171717;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+    outline: none;
+}
+
+.t-country-list [role="option"][hidden] { display: none; }
+.t-country-list [role="option"] > span:not(.t-country-flag) { flex: 1; min-width: 0; }
+.t-country-list [role="option"]:hover,
+.t-country-list [role="option"]:focus-visible { background: #F5F5F5; }
+.t-country-list [role="option"][aria-selected="true"] { background: var(--ds-brand-50); color: var(--ds-brand-500); }
+
+.t-country-flag svg { display: block; width: 32px; height: 24px; border-radius: 2px; }
+
+.t-country-check { width: 20px; height: 20px; flex-shrink: 0; visibility: hidden; }
+[aria-selected="true"] > .t-country-check { visibility: visible; }
+
+.t-country-empty { padding: 10px 12px; color: #A3A3A3; font-size: 14px; }
+.t-country-empty[hidden] { display: none; }
+
+[data-theme="dark"] .t-country-panel { background: var(--ds-surface); box-shadow: 0 12px 32px rgba(0, 0, 0, .45); }
+[data-theme="dark"] .t-country-search { background: var(--ds-input-bg); }
+[data-theme="dark"] .t-country-list [role="option"] { color: var(--ds-text); }
+[data-theme="dark"] .t-country-list [role="option"]:hover,
+[data-theme="dark"] .t-country-list [role="option"]:focus-visible { background: var(--ds-input-bg); }
+[data-theme="dark"] .t-country-list [role="option"][aria-selected="true"] { background: var(--ds-brand-100); color: var(--ds-brand-500); }

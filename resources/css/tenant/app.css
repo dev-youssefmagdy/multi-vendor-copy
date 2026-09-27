@@ -29,6 +29,7 @@
 @import "./components/gradients.css";      /* brand gradient overrides for app.css gradients */
 @import "./components/ds-form.css";        /* form pages: header, section cards, field spacing, locale tabs */
 @import "./components/select-menu.css";
+@import "./components/country-picker.css";
 @import "./components/tooltip.css";
 @import "./components/charts.css";
 @import "./components/setup-progress.css";

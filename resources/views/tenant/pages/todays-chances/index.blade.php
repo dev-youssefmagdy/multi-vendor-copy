@@ -61,11 +61,11 @@
                 <h1 class="db-welcome-title">Welcome back, {{ tenant('name') ?? 'your store' }}</h1>
                 <p class="db-welcome-sub">These are your store's most important opportunities, actions, and results all in one place.</p>
             </div>
-            {{-- Market selector — UI only until the backend provides markets. --}}
-            <button type="button" class="tc-country">
-                Select your country
+            {{-- Market selector — flag dropdown; UI only until the backend provides markets. --}}
+            <x-tenant::country-picker trigger-class="tc-country">
+                <span data-country-label>Select your country</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
-            </button>
+            </x-tenant::country-picker>
         </div>
 
         <div class="tc-grid fu d1">

@@ -43,10 +43,10 @@
         </a>
     </div>
 
-    <button type="button" class="db-country-select is-ads">
-        Select your country
+    <x-tenant::country-picker trigger-class="db-country-select is-ads">
+        <span data-country-label>Select your country</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
-    </button>
+    </x-tenant::country-picker>
 
     <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1.25" aria-label="Successful advertisements">
         <div class="swiper-wrapper">

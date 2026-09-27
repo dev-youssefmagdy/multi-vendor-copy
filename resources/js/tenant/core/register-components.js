@@ -24,6 +24,7 @@ registerComponent('[data-tenant-ajax-list]', () => import('../components/ajax-li
 registerComponent('[data-tenant-tabs]', () => import('../components/tabs.js'));
 registerComponent('[data-tenant-dropdown]', () => import('../components/dropdown.js'));
 registerComponent('[data-tenant-select-menu]', () => import('../components/select-menu.js'));
+registerComponent('[data-country-picker]', () => import('../components/country-picker.js'));
 registerComponent('[data-tenant-chat]', () => import('../components/chat.js'));
 registerComponent('[data-tenant-sortable-list]', () => import('../components/sortable-list.js'));
 registerComponent('[data-tenant-chart]', () => import('../components/chart.js'));
