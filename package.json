@@ -48,7 +48,7 @@
         "flatpickr": "^4.6.13",
         "intl-tel-input": "^29.2.3",
         "jquery": "^3.7.1",
-        "select2": "^4.1.0-rc.0",
+        "select2": "4.0.13",
         "sortablejs": "^1.15.6",
         "sweetalert2": "^11.23.0",
         "swiper": "^12.1.3",
