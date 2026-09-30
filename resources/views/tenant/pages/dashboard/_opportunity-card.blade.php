@@ -10,13 +10,20 @@
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
 @endphp
 
-<article class="db-opp {{ $cardClass ?? '' }} {{ $opp['added'] ? 'is-added' : '' }}">
+<article class="db-opp {{ $cardClass ?? '' }} {{ $opp['added'] ? 'is-added' : '' }}"
+    data-opp-card
+    data-product-id="{{ $opp['id'] ?? '' }}"
+    data-in-flash-sale="{{ ($opp['in_flash_sale'] ?? false) ? '1' : '0' }}"
+    data-featured="{{ ($opp['featured'] ?? false) ? '1' : '0' }}"
+    data-flash-sales-url="{{ route('tenant.store.flash-sales.available-for-product') }}"
+    data-attach-url="{{ route('tenant.store.flash-sales.attach-product', ['flashSale' => '__SALE__']) }}"
+    data-toggle-featured-url="{{ !empty($opp['id']) ? route('tenant.products.toggle-featured', ['product' => '__PROD__']) : '' }}">
     <div class="db-opp-media" @if(!empty($opp['image'])) style="background-image:url('{{ $opp['image'] }}')" @endif>
         @if($opp['added'])
             <span class="db-opp-added">Already added</span>
         @endif
         <span class="db-opp-cheaper">
-            <small>Cheaper than market by</small>
+            <small >Cheaper than market by</small>
             <strong>{{ $opp['below_market'] }}</strong>
         </span>
     </div>
@@ -88,20 +95,15 @@
         </div>
 
         <div class="db-opp-actions">
-            <a href="{{ route('tenant.store.flash-sales.index') }}" class="btn-tile"
-                data-product-id="{{ $opp['id'] ?? '' }}">
-                {!! $zap !!} Add to Flash Sale
-            </a>
             @if(!empty($opp['id']))
-                <button type="button" class="btn-tile"
-                    data-action-url="{{ route('tenant.products.toggle-featured', $opp['id']) }}"
-                    data-action-method="PATCH"
-                    data-confirm="Mark this product as trending?"
-                    data-success="reload-page"
-                    data-product-id="{{ $opp['id'] }}">
-                    {!! $trendUp !!} Add to trending
+                <button type="button" class="btn-tile {{ ($opp['in_flash_sale'] ?? false) ? 'is-active' : '' }}" data-opp-flash-sale-btn>
+                    {!! $zap !!} <span>{{ ($opp['in_flash_sale'] ?? false) ? 'In Flash Sale' : 'Add to Flash Sale' }}</span>
+                </button>
+                <button type="button" class="btn-tile {{ ($opp['featured'] ?? false) ? 'is-active' : '' }}" data-opp-trending-btn>
+                    {!! $trendUp !!} <span>{{ ($opp['featured'] ?? false) ? 'Trending ✓' : 'Add to trending' }}</span>
                 </button>
             @else
+                <button type="button" class="btn-tile">{!! $zap !!} Add to Flash Sale</button>
                 <button type="button" class="btn-tile">{!! $trendUp !!} Add to trending</button>
             @endif
         </div>

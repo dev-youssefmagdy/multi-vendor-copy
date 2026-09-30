@@ -2539,7 +2539,7 @@ class TenantPanelRepository
     public function opportunityProducts(int $limit = 6): Collection
     {
         return Product::query()
-            ->with(['translations.language', 'files'])
+            ->with(['translations.language', 'files', 'categories.translations.language'])
             ->whereNotNull('cost_price')
             ->whereColumn('cost_price', '<', 'default_price')
             ->orderByRaw('(default_price - cost_price) / default_price DESC')
@@ -2559,7 +2559,89 @@ class TenantPanelRepository
         );
     }
 
-    public function buildOpportunityArray(\App\Models\Tenant\Product $product): array
+    /**
+     * Precompute per-product sales velocity and category-saturation (competition proxy)
+     * for a set of product IDs.
+     *
+     * Returns an array keyed by product ID:
+     *   - recent_orders:    order rows in last 30 days
+     *   - prior_orders:     order rows in the 30 days before that
+     *   - category_peers:   other active products sharing the same primary category
+     *
+     * All data is fetched in bulk (2 queries) to avoid N+1 calls.
+     *
+     * @param  int[]  $productIds
+     * @return array<int, array{recent_orders:int, prior_orders:int, category_peers:int}>
+     */
+    public function opportunityContext(array $productIds): array
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        $now   = \Illuminate\Support\Carbon::now();
+        $day30 = $now->copy()->subDays(30)->toDateTimeString();
+        $day60 = $now->copy()->subDays(60)->toDateTimeString();
+
+        // Sales velocity: recent (0–30 d) vs prior (30–60 d) in a single aggregating query.
+        $salesRows = DB::table('order_items as oi')
+            ->join('orders as o', 'o.id', '=', 'oi.order_id')
+            ->whereIn('oi.product_id', $productIds)
+            ->where('o.created_at', '>=', $day60)
+            ->select(
+                'oi.product_id',
+                DB::raw("SUM(CASE WHEN o.created_at >= '{$day30}' THEN 1 ELSE 0 END) as recent"),
+                DB::raw("SUM(CASE WHEN o.created_at < '{$day30}' THEN 1 ELSE 0 END) as prior_count")
+            )
+            ->groupBy('oi.product_id')
+            ->get()
+            ->keyBy('product_id');
+
+        // Category saturation: primary category ID per product, then count peers in that category.
+        $categoryRows = DB::table('category_product as cp')
+            ->whereIn('cp.product_id', $productIds)
+            ->select('cp.product_id', DB::raw('MIN(cp.category_id) as category_id'))
+            ->groupBy('cp.product_id')
+            ->get()
+            ->keyBy('product_id');
+
+        $categoryIds = $categoryRows->pluck('category_id')->filter()->unique()->values()->all();
+        $peerCounts  = [];
+        if (!empty($categoryIds)) {
+            $peerCounts = DB::table('category_product as cp')
+                ->join('products as p', 'p.id', '=', 'cp.product_id')
+                ->whereIn('cp.category_id', $categoryIds)
+                ->where('p.active', true)
+                ->select('cp.category_id', DB::raw('COUNT(DISTINCT cp.product_id) as cnt'))
+                ->groupBy('cp.category_id')
+                ->pluck('cnt', 'category_id')
+                ->all();
+        }
+
+        $result = [];
+        foreach ($productIds as $pid) {
+            $row     = $salesRows->get($pid);
+            $catRow  = $categoryRows->get($pid);
+            $catId   = $catRow ? (int) $catRow->category_id : 0;
+            $peers   = max(0, (int) ($peerCounts[$catId] ?? 1) - 1); // exclude the product itself
+
+            $result[$pid] = [
+                'recent_orders' => (int) ($row?->recent ?? 0),
+                'prior_orders'  => (int) ($row?->prior_count ?? 0),
+                'category_peers' => $peers,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Build the opportunity card array for a single product.
+     *
+     * @param  array{recent_orders:int,prior_orders:int,competition:int}|null  $context
+     * @param  array<string,string>  $countryMap  country_id → ['iso2'=>..,'name'=>..]
+     */
+    public function buildOpportunityArray(\App\Models\Tenant\Product $product, ?array $context = null, array $countryMap = []): array
     {
         $label       = $product->translationValue('name') ?? $product->slug ?? ('Product #' . $product->id);
         $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
@@ -2569,31 +2651,112 @@ class TenantPanelRepository
         $rawPct      = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
         $lowPct      = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
         $highPct     = $rawPct > 0 ? (int) ceil($rawPct * 1.15)  : 0;
-        $belowMarket = $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null;
+
+        // Prefer AI price data for below_market calculation
+        $aiPriceData = is_array($product->ai_price_data) ? $product->ai_price_data : null;
+        $aiMin       = isset($aiPriceData['min_price']) ? (float) $aiPriceData['min_price'] : null;
+        $aiMax       = isset($aiPriceData['max_price']) ? (float) $aiPriceData['max_price'] : null;
+        if ($cost > 0 && $aiMin !== null && $aiMax !== null && $aiMin > $cost) {
+            $pctFromMin  = (int) round(($aiMin - $cost) / $aiMin * 100);
+            $pctFromMax  = (int) round(($aiMax - $cost) / $aiMax * 100);
+            $belowMarket = min($pctFromMin, $pctFromMax) . '% – ' . max($pctFromMin, $pctFromMax) . '%';
+        } elseif ($cost > 0 && $aiMin !== null && $aiMin > $cost) {
+            $pctFromMin  = (int) round(($aiMin - $cost) / $aiMin * 100);
+            $belowMarket = $pctFromMin . '%';
+        } else {
+            $belowMarket = $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null;
+        }
         $scorePct    = min(100, max(0, (int) $rawPct));
         $profitPct   = min(100, max(0, (int) ($rawPct * 0.5)));
         $markup      = $rawPct > 0 ? '+' . round($rawPct * 0.3, 0) . '%' : '+0%';
         $suggested   = $cost > 0 ? '$' . number_format($cost * 1.5, 2) : '—';
 
+        $inFlashSale = \App\Models\Tenant\FlashSale::query()
+            ->where(function ($q) use ($product) {
+                $q->where('product_id', $product->id)
+                  ->orWhereHas('products', fn($r) => $r->where('products.id', $product->id));
+            })
+            ->where('active', true)
+            ->exists();
+
+        // --- Trend (rising / falling / stable) based on order count change ---
+        $recentOrders = $context['recent_orders'] ?? 0;
+        $priorOrders  = $context['prior_orders']  ?? 0;
+
+        if ($recentOrders > $priorOrders) {
+            $trend = 'rising';
+        } elseif ($recentOrders < $priorOrders) {
+            $trend = 'falling';
+        } else {
+            $trend = $recentOrders > 0 ? 'stable' : 'rising';
+        }
+
+        // --- Product status (Hot / Warm / Cool) based on last-30-day sales ---
+        if ($recentOrders >= 5) {
+            $status    = 'Hot';
+            $statusPct = 90;
+        } elseif ($recentOrders >= 1) {
+            $status    = 'Warm';
+            $statusPct = 55;
+        } else {
+            $status    = 'Cool';
+            $statusPct = 20;
+        }
+
+        // --- Competition (Low / Medium / High) based on category peer count ---
+        $competitorCount = $context['category_peers'] ?? 0;
+        if ($competitorCount <= 1) {
+            $competitionLabel = 'Low';
+            $competitionText  = 'Low competition';
+            $competitionPct   = 20;
+        } elseif ($competitorCount <= 4) {
+            $competitionLabel = 'Medium';
+            $competitionText  = 'Medium competition';
+            $competitionPct   = 55;
+        } else {
+            $competitionLabel = 'High';
+            $competitionText  = 'High competition';
+            $competitionPct   = 85;
+        }
+
+        // --- Markets: use allowed_country_ids mapped to iso2 + short name ---
+        $allowedIds = (array) ($product->allowed_country_ids ?? []);
+        $markets    = [];
+        if (!empty($allowedIds) && !empty($countryMap)) {
+            foreach ($allowedIds as $cid) {
+                /** @var array{iso2:string,name:string}|null $entry */
+                $entry = $countryMap[(int) $cid] ?? null;
+                if (is_array($entry)) {
+                    $markets[strtolower((string) $entry['iso2'])] = (string) $entry['name'];
+                }
+            }
+        }
+        // Fall back to a sensible default when no countries are configured
+        if (empty($markets)) {
+            $markets = ['sa' => 'KSA', 'ae' => 'UAE', 'eg' => 'Egy', 'gb' => 'UK', 'us' => 'USA'];
+        }
+
         return [
             'id'                => $product->id,
             'image'             => $imageUrl,
             'added'             => true,
+            'featured'          => (bool) $product->featured,
+            'in_flash_sale'     => $inFlashSale,
             'category'          => $product->categories->first()?->translationValue('name') ?? 'General',
-            'trend'             => 'rising',
-            'competition'       => 'Low competition',
+            'trend'             => $trend,
+            'competition'       => $competitionText,
             'title'             => $label,
             'description'       => $description !== '' ? $description : 'No description yet.',
-            'markets'           => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor'],
+            'markets'           => $markets,
             'below_market'      => $belowMarket,
             'score'             => $scorePct > 0 ? (string) $scorePct : '—',
             'score_pct'         => $scorePct,
             'profit'            => $rawPct > 0 ? '+' . round($rawPct * 0.25, 0) . '%' : '+0%',
             'profit_pct'        => $profitPct,
-            'competition_level' => 'Low',
-            'competition_pct'   => 25,
-            'status'            => 'Hot',
-            'status_pct'        => 75,
+            'competition_level' => $competitionLabel,
+            'competition_pct'   => $competitionPct,
+            'status'            => $status,
+            'status_pct'        => $statusPct,
             'cost'              => $cost > 0 ? '$' . number_format($cost, 2) : '—',
             'markup'            => $markup,
             'suggested_price'   => $suggested,
@@ -2602,28 +2765,40 @@ class TenantPanelRepository
 
     public function opportunityProductCards(int $limit = 6): array
     {
-        $cards = $this->opportunityProducts($limit)
-            ->map(fn(\App\Models\Tenant\Product $p) => $this->buildOpportunityArray($p))
-            ->all();
+        $products = $this->opportunityProducts($limit);
 
-        return $cards ?: $this->sampleOpportunityCards($limit);
+        if ($products->isEmpty()) {
+            $products = Product::query()
+                ->with(['translations.language', 'files', 'categories.translations.language'])
+                ->where('active', true)
+                ->inRandomOrder()
+                ->limit($limit)
+                ->get();
+        }
+
+        if ($products->isEmpty()) {
+            return $this->sampleOpportunityCards($limit);
+        }
+
+        $ids     = $products->pluck('id')->map(fn($id) => (int) $id)->all();
+        $context = $this->opportunityContext($ids);
+
+        return $products->map(fn(\App\Models\Tenant\Product $p) => $this->buildOpportunityArray($p, $context[$p->id] ?? null))->all();
     }
 
     public function newInProductCards(int $limit = 6): array
     {
         $cards = $this->newInProducts($limit)->map(function (\App\Models\Tenant\Product $product) {
-            $cost = (float) ($product->cost_price ?? $product->default_price ?? 0);
-            $marketRef = (float) ($product->default_price ?? 0);
-            $rawPct = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
-            $lowPct = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
-            $highPct = $rawPct > 0 ? (int) ceil($rawPct * 1.15) : 0;
             $opp = $this->buildOpportunityArray($product);
             return [
+                'id'           => $opp['id'],
                 'image'        => $opp['image'],
                 'title'        => $opp['title'],
                 'description'  => $opp['description'],
-                'below_market' => $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null,
+                'below_market' => $opp['below_market'],
                 'cost'         => $opp['cost'],
+                'featured'     => $opp['featured'],
+                'in_flash_sale'=> $opp['in_flash_sale'],
             ];
         })->all();
 

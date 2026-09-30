@@ -89,6 +89,11 @@
             </nav>
         @endif
     </div>
+
+    @include('tenant.pages.catalog.products._modals.social')
+    @include('tenant.pages.catalog.products._modals.video-ad')
+
+    @include('tenant.pages.dashboard._opp-flash-sale-modal')
 @endsection
 
 @push('tenant-vite')

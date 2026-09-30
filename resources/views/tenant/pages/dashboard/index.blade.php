@@ -24,6 +24,12 @@
     @include('tenant.pages.dashboard._product-request')
 
     @include('tenant.pages.dashboard._partner')
+
+    {{-- Product modals shared with the products page --}}
+    @include('tenant.pages.catalog.products._modals.social')
+    @include('tenant.pages.catalog.products._modals.video-ad')
+
+    @include('tenant.pages.dashboard._opp-flash-sale-modal')
 @endsection
 
 @push('tenant-vite')

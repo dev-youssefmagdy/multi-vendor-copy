@@ -22,7 +22,7 @@ class TenantNavigation
                 'label' => 'Overview',
                 'items' => [
                     ['type' => 'link', 'label' => 'Dashboard', 'route' => 'tenant.dashboard', 'icon' => 'dashboard', 'permission' => 'dashboard.view'],
-                    ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.todays-chances', 'icon' => 'plans', 'permission' => 'dashboard.view'],
+                    // ['type' => 'link', 'label' => "Today's chances", 'route' => 'tenant.todays-chances', 'icon' => 'plans', 'permission' => 'dashboard.view'],
                     // One entry for the whole Products module; its pages are tabs on each page (catalog/_module-nav).
                     ['type' => 'link', 'label' => 'Products', 'route' => 'tenant.products.index', 'icon' => 'products', 'permission' => 'catalog.products.manage',
                         'match' => ['tenant.products.', 'tenant.own-products.', 'tenant.categories.', 'tenant.badges.']],
@@ -88,7 +88,6 @@ class TenantNavigation
                             ['label' => 'Tenant Admins', 'route' => 'tenant.settings.admins', 'permission' => 'settings.admins.manage'],
                             ['label' => 'Roles & Permissions', 'route' => 'tenant.settings.roles-permissions', 'permission' => 'settings.roles.manage'],
                             ['label' => 'Payment Gateways', 'route' => 'tenant.settings.payment-gateways', 'permission' => 'settings.payment-gateways.manage'],
-                            ['label' => 'Payment Readiness', 'route' => 'tenant.settings.payment-readiness', 'permission' => 'settings.payment-gateways.manage'],
                             ['label' => 'Return Policy', 'route' => 'tenant.settings.return-policy', 'permission' => 'sales.returns.manage'],
                             ['label' => 'Email Templates', 'route' => 'tenant.settings.email-templates', 'permission' => 'settings.mail.manage'],
                             ['label' => 'Mail Configurations', 'route' => 'tenant.settings.mail', 'permission' => 'settings.mail.manage'],

@@ -502,6 +502,8 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
             Route::post('/flash-sales/item/{flashSale}/validate', [FlashSaleController::class, 'validateUpdate'])->whereNumber('flashSale')->name('flash-sales.validate.update');
             Route::delete('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'destroy'])->whereNumber('flashSale')->name('flash-sales.destroy');
             Route::get('/flash-sales/list/{countryId?}', [FlashSaleController::class, 'list'])->whereNumber('countryId')->name('flash-sales');
+            Route::get('/flash-sales/available-for-product', [FlashSaleController::class, 'availableForProduct'])->name('flash-sales.available-for-product');
+            Route::post('/flash-sales/item/{flashSale}/attach-product', [FlashSaleController::class, 'attachProduct'])->whereNumber('flashSale')->name('flash-sales.attach-product');
         });
 
         Route::middleware('tenant.permission:store.appearance.manage')->group(function () {

@@ -249,4 +249,63 @@ final class FlashSaleController extends PanelController
 
         return $this->success('Flash sale deleted successfully.');
     }
+
+    public function availableForProduct(Request $request): JsonResponse
+    {
+        $productId = (int) $request->input('product_id');
+
+        $sales = FlashSale::query()
+            ->where('active', true)
+            ->whereNull('central_flash_sale_id')
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get(['id', 'discount_percentage', 'start_date', 'end_date']);
+
+        $attached = DB::table('flash_sale_product')
+            ->whereIn('flash_sale_id', $sales->pluck('id'))
+            ->where('product_id', $productId)
+            ->pluck('flash_sale_id')
+            ->flip();
+
+        $data = $sales->map(fn(FlashSale $s) => [
+            'id'          => $s->id,
+            'discount'    => number_format((float) $s->discount_percentage, 0) . '%',
+            'window'      => (optional($s->start_date)->format('M d') ?: '∞') . ' – ' . (optional($s->end_date)->format('M d') ?: '∞'),
+            'attached'    => $attached->has($s->id),
+        ])->values()->all();
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function attachProduct(Request $request, FlashSale $flashSale): JsonResponse
+    {
+        $productId = (int) $request->input('product_id');
+
+        if (!$productId) {
+            return $this->failure('Product ID is required.', 422);
+        }
+
+        $already = DB::table('flash_sale_product')
+            ->where('flash_sale_id', $flashSale->id)
+            ->where('product_id', $productId)
+            ->exists();
+
+        if ($already) {
+            DB::table('flash_sale_product')
+                ->where('flash_sale_id', $flashSale->id)
+                ->where('product_id', $productId)
+                ->delete();
+
+            return $this->success('Product removed from flash sale.', ['attached' => false]);
+        }
+
+        DB::table('flash_sale_product')->insert([
+            'flash_sale_id' => $flashSale->id,
+            'product_id'    => $productId,
+            'created_at'    => now(),
+            'updated_at'    => now(),
+        ]);
+
+        return $this->success('Product added to flash sale.', ['attached' => true]);
+    }
 }
