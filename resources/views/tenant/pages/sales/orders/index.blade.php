@@ -15,39 +15,6 @@
         ->values()
         ->all();
     $placedIndex = collect($tableColumns)->search(fn ($col) => (($col instanceof \App\Support\Tenant\TableColumn ? $col->toArray() : $col)['data'] ?? null) === 'placed_at');
-
-    // FOR DESIGN PURPOSE
-    // No real orders yet → 109 sample rows (dummy data) rendered in the page.
-    // When removing: delete this block and the :order/:mode/:rows/:searching $isMock switches below.
-    // BACKEND TODO: remove once the store has orders; real rows load from tenant.orders.data.
-    $ordersStat = collect($stats)->firstWhere('label', 'Orders');
-    $isMock = ($ordersStat['value'] ?? '0') === '0';
-    $mockRows = [];
-    if ($isMock) {
-        $names = ['Winter Wonderland Party Decorations', 'Summer Beach Party Essentials', 'Halloween Costume Accessories', "Valentine's Day Gift Baskets", 'Back to School Stationery Packs', 'Super Bowl Viewing Party Gear', 'Fourth of July BBQ Essentials', "New Year's Eve Celebration Kit", 'Easter Egg Hunt Supplies', 'Graduation Party Supplies', 'Earth Day Eco-Friendly Kit', "St. Patrick's Day Party Kit"];
-        $photos = ['photo-1542291026-7eec264c27ff', 'photo-1505740420928-5e560c06d30e', 'photo-1523275335684-37898b6baf30', 'photo-1583394838336-acd977736f90', 'photo-1553062407-98eeb64c6a62', 'photo-1602143407151-7111542de6e8', 'photo-1608571423902-eed4a5ad8108', 'photo-1546868871-7041f2a55e12', 'photo-1541643600914-78b084683601', 'photo-1526170375885-4d8ecf77b99f', 'photo-1556228578-8c89e6adf883', 'photo-1572635196237-14b3f281503f'];
-        $statuses = ['pending', 'shipped', 'processing', 'delivered', 'processing', 'pending', 'shipped', 'delivered', 'pending', 'processing', 'delivered', 'processing'];
-        $customers = ['Ali mohamed', 'Abdullah Magdy', 'Ziad mohamed', 'Abdullah Magdy'];
-        $gateways = ['Paypal', 'Cash', 'Credit card', 'Credit card', 'Paypal', 'Paypal', 'Paypal', 'Party Items'];
-        $values = [80, 27, 14.5, 30, 12.5, 23, 24, 35, 22, 32, 17, 18.5];
-        $dots = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v.01M12 12v.01M12 18.5v.01"/></svg>';
-        $actions = \Illuminate\Support\Facades\Blade::render('<x-tenant::dropdown align="end" :icon="$dots"><x-tenant::dropdown-item href="#">View order</x-tenant::dropdown-item></x-tenant::dropdown>', ['dots' => $dots]);
-        $day = now()->startOfDay();
-        foreach (range(0, 108) as $i) {
-            $k = $i % 12;
-            $date = $day->copy()->subDays($i * 3);
-            $mockRows[] = [
-                '<div class="od-order"><img src="https://images.unsplash.com/'.$photos[$k].'?w=80&q=60&auto=format&fit=crop" alt="" class="od-thumb" loading="lazy"><span class="od-order-name">'.e($names[$k]).'</span></div>',
-                e($customers[$i % 4]),
-                '$ '.number_format($values[$k], 2),
-                '$ 2.66',
-                \Illuminate\Support\Facades\Blade::render('<x-tenant::status-badge :status="$s" />', ['s' => $statuses[$k]]),
-                $gateways[$i % 8],
-                strtoupper($date->format('D')).$date->format(', d M,Y'),
-                $actions,
-            ];
-        }
-    }
     $chevronLeft = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
     $chevronRight = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 @endphp
@@ -87,10 +54,8 @@
                 :mobile-cards="false"
                 :url="route('tenant.orders.data')"
                 :columns="$tableColumns"
-                :order="$isMock ? [] : [[$placedIndex === false ? 0 : $placedIndex, 'desc']]"
-                :mode="$isMock ? 'client' : 'server'"
-                :rows="$isMock ? $mockRows : null"
-                :searching="$isMock"
+                :order="[[$placedIndex === false ? 0 : $placedIndex, 'desc']]"
+                mode="server"
                 :page-length="12"
                 :length-change="false"
                 :responsive="false"
