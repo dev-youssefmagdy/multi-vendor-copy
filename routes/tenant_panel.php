@@ -466,6 +466,12 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
             Route::put('/themes/{theme}/countries', [ThemesController::class, 'updateCountries'])
                 ->whereNumber('theme')
                 ->name('themes.countries.update');
+            Route::get('/themes/{theme}/country-variants', [ThemesController::class, 'countryVariants'])
+                ->whereNumber('theme')
+                ->name('themes.country-variants');
+            Route::put('/themes/{theme}/country-variants', [ThemesController::class, 'updateCountryVariants'])
+                ->whereNumber('theme')
+                ->name('themes.country-variants.update');
         });
 
         Route::middleware('tenant.permission:store.pages.manage')->group(function () {

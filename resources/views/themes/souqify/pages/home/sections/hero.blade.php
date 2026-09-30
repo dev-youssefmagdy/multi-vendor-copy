@@ -84,11 +84,11 @@
             </div>
         </div>
         <!-- small screen hero -->
-        <div class="md:hidden swiper hero-slider max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-            <div class="swiper-wrapper h-64 rounded-xl overflow-hidden">
+        <div class="md:hidden swiper hero-slider max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 rounded-xl overflow-hidden">
+            <div class="swiper-wrapper h-80">
                 <!-- slide one -->
                 <div class="swiper-slide">
-                    <div class="relative rounded-2xl overflow-hidden p-3 h-full">
+                    <div class="relative rounded-2xl h-full">
                         @if ($heroBanner && $heroBanner->image_path)
                         <img loading="lazy" src="{{ $heroBanner->image_path }}" alt="{{ $heroBanner->title ?? $storeName }}"
                             class="absolute inset-0 w-full h-full object-cover" />

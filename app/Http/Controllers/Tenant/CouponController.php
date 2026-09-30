@@ -56,10 +56,14 @@ class CouponController extends Controller
             return response()->json(['success' => false, 'message' => __('This coupon is not available in your country.')], 422);
         }
 
-        $cartTotal = app(StorefrontRepository::class)->cartTotal();
+        $repo = app(StorefrontRepository::class);
+        $cartTotal = $repo->cartTotal();
 
         if ($coupon->minimum_spend !== null && $cartTotal < (float) $coupon->minimum_spend) {
-            $minimumSpend = number_format((float) $coupon->minimum_spend, 2);
+            $currency = $repo->currentCurrency();
+            $rate = (float) ($currency?->conversion_rate ?? 1.0);
+            $symbol = $currency?->symbol ?? '';
+            $minimumSpend = trim($symbol . ' ' . number_format((float) $coupon->minimum_spend * $rate, 2));
             return response()->json([
                 'success' => false,
                 'message' => __('This coupon requires a minimum spend of :amount.', ['amount' => $minimumSpend]),
@@ -81,9 +85,12 @@ class CouponController extends Controller
 
     private function transform(Coupon $coupon): array
     {
-        $cartTotal = app(StorefrontRepository::class)->cartTotal();
+        $repo = app(StorefrontRepository::class);
+        $cartTotal = $repo->cartTotal();
+        $currency = $repo->currentCurrency();
+        $rate = (float) ($currency?->conversion_rate ?? 1.0);
 
-        $discount = match ($coupon->type) {
+        $discountBase = match ($coupon->type) {
             CouponType::Percentage => $cartTotal * (float) $coupon->value / 100,
             CouponType::Fixed => min((float) $coupon->value, $cartTotal),
         };
@@ -91,9 +98,15 @@ class CouponController extends Controller
         return [
             'code' => $coupon->code,
             'type' => $coupon->type->value,
-            'value' => (float) $coupon->value,
-            'minimum_spend' => $coupon->minimum_spend !== null ? (float) $coupon->minimum_spend : null,
-            'discount_amount' => round($discount, 2),
+            'value' => $coupon->type === CouponType::Fixed
+                ? round((float) $coupon->value * $rate, 2)
+                : (float) $coupon->value,
+            'minimum_spend' => $coupon->minimum_spend !== null
+                ? round((float) $coupon->minimum_spend * $rate, 2)
+                : null,
+            'discount_amount' => round($discountBase * $rate, 2),
+            'currency_code' => $currency?->code ?? 'USD',
+            'currency_symbol' => $currency?->symbol ?? '$',
         ];
     }
 }

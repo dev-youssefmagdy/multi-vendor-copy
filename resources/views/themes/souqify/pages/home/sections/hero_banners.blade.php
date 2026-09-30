@@ -24,7 +24,7 @@
                                     class="xl:hidden" />Reality')
                                 !!}
                             </h3>
-                            <a href="{{ $pb1?->link ?? route('tenant.storefront.category') }}"
+                            <a href="{{ $pb1?->url ?? route('tenant.storefront.category') }}"
                                 class="inline-flex h-9 sm:h-14 px-6 bg-white text-blue-700 hover:bg-blue-50 transition rounded-lg items-center font-medium">
                                 {{ __('Shop Now') }}
                             </a>
@@ -48,7 +48,7 @@
                                 {!! $pb2?->title ? nl2br(e($pb2->title)) : __('Step Into the Summer<br
                                     class="xl:hidden" />Refresh') !!}
                             </h3>
-                            <a href="{{ $pb2?->link ?? route('tenant.storefront.category') }}"
+                            <a href="{{ $pb2?->url ?? route('tenant.storefront.category') }}"
                                 class="inline-flex h-9 sm:h-14 px-6 bg-white text-purple-600 hover:bg-purple-50 transition rounded-lg items-center font-medium">
                                 {{ __('Shop Now') }}
                             </a>

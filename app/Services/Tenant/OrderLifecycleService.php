@@ -43,6 +43,20 @@ class OrderLifecycleService
                 'order_number' => $order->uuid,
             ],
         );
+
+        if ($currentTenant = tenant()) {
+            $this->tenantNotifier->notify(
+                tenant: $currentTenant,
+                type: 'order',
+                title: 'New Order Received',
+                message: sprintf(
+                    'A new order #%s has been placed worth %s.',
+                    $order->uuid,
+                    number_format((float) ($order->total ?? 0), 2),
+                ),
+                data: ['order_number' => $order->uuid],
+            );
+        }
     }
 
     protected function incrementOrdersCount(Order $order): void

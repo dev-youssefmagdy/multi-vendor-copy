@@ -1,4 +1,28 @@
-@props(['nodes' => [], 'root' => true])
+@props(['nodes' => [], 'data' => null, 'root' => true])
+
+@php
+if ($data !== null && empty($nodes)) {
+    $toNodes = function(mixed $value, string $key, int $depth = 0) use (&$toNodes): array {
+        if (is_array($value) && !empty($value)) {
+            return [
+                'key' => $key,
+                'type' => array_is_list($value) ? 'array' : 'array',
+                'open' => $depth < 1,
+                'children' => collect($value)->map(fn($v, $k) => $toNodes($v, (string)$k, $depth + 1))->values()->all(),
+            ];
+        }
+        $type = match(true) {
+            is_bool($value) => 'bool',
+            is_int($value) => 'int',
+            is_float($value) => 'float',
+            is_null($value) => 'null',
+            default => 'string',
+        };
+        return ['key' => $key, 'type' => $type, 'desc' => is_null($value) ? 'null' : (string)$value];
+    };
+    $nodes = collect((array)$data)->map(fn($v, $k) => $toNodes($v, (string)$k, 0))->values()->all();
+}
+@endphp
 
 <ul {{ $attributes->class(['jt-tree', 'jt-tree-root' => $root]) }}>
     @foreach ($nodes as $node)

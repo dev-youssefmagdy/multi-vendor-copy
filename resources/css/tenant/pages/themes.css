@@ -342,6 +342,26 @@
     gap: 8px;
 }
 
+[data-cv-row].theme-country-row {
+    grid-template-columns: 24px 1fr auto auto;
+}
+
+.theme-cv-select {
+    background: var(--card2, #f4f4f5);
+    border: 1px solid var(--border, #e4e4e7);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: inherit;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+.theme-cv-select:focus {
+    outline: 2px solid var(--primary, #6366f1);
+    outline-offset: 1px;
+}
+
 .theme-scope-badge {
     display: inline-block;
     padding: 2px 8px;

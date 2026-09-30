@@ -22,6 +22,7 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Subscriber;
+use App\Services\TenantNotificationService;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantThemeColor;
 use Illuminate\Database\Eloquent\Model;
@@ -290,7 +291,9 @@ class TenantPanelService
 
     public function saveCustomer(array $attributes, ?Customer $customer = null): Customer
     {
-        return DB::transaction(function () use ($attributes, $customer) {
+        $isNew = $customer === null;
+
+        $saved = DB::transaction(function () use ($attributes, $customer) {
             $customer ??= new Customer();
             $customer->fill([
                 'full_name' => $attributes['full_name'],
@@ -310,6 +313,18 @@ class TenantPanelService
 
             return $customer->fresh();
         });
+
+        if ($isNew && ($currentTenant = tenant())) {
+            app(TenantNotificationService::class)->notify(
+                tenant: $currentTenant,
+                type: 'customer',
+                title: 'New Customer Added',
+                message: sprintf('A new customer "%s" has been added to your store.', $saved->full_name),
+                data: ['customer_id' => $saved->id],
+            );
+        }
+
+        return $saved;
     }
 
     public function savePage(array $attributes, ?Page $page = null): Page
@@ -938,6 +953,8 @@ class TenantPanelService
         $synced = [
             'store_name' => $shopName ?: 'My Store',
             'footer_copyright' => '© ' . date('Y') . ' ' . ($shopName ?: 'My Store') . '. All rights reserved.',
+            'logo_text_ar' => $shopName ?: 'My Store',
+            'logo_text_en' => $shopName ?: 'My Store',
         ];
 
         foreach ($synced as $key => $value) {
@@ -951,8 +968,6 @@ class TenantPanelService
             'logo_path' => '',
             'footer_text' => '',
             'logo_mode' => 'image',
-            'logo_text_ar' => $shopName ?: 'My Store',
-            'logo_text_en' => $shopName ?: 'My Store',
             'logo_color' => '#111827',
             'logo_bg_color' => '#ffffff',
             'logo_shape' => 'rectangle',

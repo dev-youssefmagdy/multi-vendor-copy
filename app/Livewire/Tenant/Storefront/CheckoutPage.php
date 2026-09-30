@@ -312,10 +312,14 @@ class CheckoutPage extends Component
             return;
         }
 
-        $cartTotal = app(StorefrontRepository::class)->cartTotal();
+        $repo = app(StorefrontRepository::class);
+        $cartTotal = $repo->cartTotal();
 
         if ($coupon->minimum_spend !== null && $cartTotal < (float) $coupon->minimum_spend) {
-            $minimumSpend = number_format((float) $coupon->minimum_spend, 2);
+            $currency = $repo->currentCurrency();
+            $rate = (float) ($currency?->conversion_rate ?? 1.0);
+            $symbol = $currency?->symbol ?? '';
+            $minimumSpend = trim($symbol . ' ' . number_format((float) $coupon->minimum_spend * $rate, 2));
             $message = __('This coupon requires a minimum spend of :amount.', ['amount' => $minimumSpend]);
             $this->addError('data.coupon.code', $message);
             $this->toast($message, 'warning');
@@ -654,7 +658,7 @@ class CheckoutPage extends Component
         if ($couponSession = session('storefront_coupon')) {
             $appliedCoupon = Coupon::query()->where('code', $couponSession)->first();
             if ($appliedCoupon && $appliedCoupon->minimum_spend !== null && $cartTotal < (float) $appliedCoupon->minimum_spend) {
-                $minimumSpend = number_format((float) $appliedCoupon->minimum_spend, 2);
+                $minimumSpend = trim($symbol . ' ' . number_format((float) $appliedCoupon->minimum_spend * $rate, 2));
                 session()->forget('storefront_coupon');
                 $this->data['coupon']['code'] = '';
                 $this->addError('data.coupon.code', __('Coupon removed: your cart total is below the minimum spend of :amount.', ['amount' => $minimumSpend]));

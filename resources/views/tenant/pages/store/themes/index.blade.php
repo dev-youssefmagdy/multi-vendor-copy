@@ -94,6 +94,17 @@
                                         Countries
                                     </button>
                                 @endif
+
+                                @if($theme['has_countries'])
+                                    <button type="button" class="theme-pill-btn"
+                                        data-theme-cv-open
+                                        data-theme-id="{{ $theme['theme_id'] }}"
+                                        data-theme-name="{{ $theme['theme_name'] }}"
+                                        data-cv-url="{{ route('tenant.store.themes.country-variants', $theme['theme_id']) }}"
+                                        data-cv-action="{{ route('tenant.store.themes.country-variants.update', $theme['theme_id']) }}">
+                                        Country Variants
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </article>
@@ -108,6 +119,7 @@
     </div>
 
     @include('tenant.pages.store.themes._countries-modal')
+    @include('tenant.pages.store.themes._country-variants-modal')
 @endsection
 
 @push('tenant-vite')

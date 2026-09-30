@@ -134,7 +134,7 @@ return [
         'disk' => 'local', // Example: 'local', 's3'             | Default: 'default'
         'rules' => ['required', 'file', 'max:51200'],          // Example: ['file', 'mimes:png,jpg'] | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,                                  // Example: 'tmp'                     | Default: 'livewire-tmp'
-        'middleware' => ['throttle:60,1', 'universal', InitializeTenancyByDomain::class],                                 // Example: 'throttle:5,1'            | Default: 'throttle:60,1'
+        'middleware' => ['throttle:60,1', 'universal'],                                 // Example: 'throttle:5,1'            | Default: 'throttle:60,1'
         'preview_mimes' => [                                  // Supported file types for temporary pre-signed file URLs...
             'png',
             'gif',

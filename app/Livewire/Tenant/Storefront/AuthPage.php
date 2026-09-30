@@ -5,6 +5,7 @@ namespace App\Livewire\Tenant\Storefront;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Tenant\Customer;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\TenantNotificationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -93,6 +94,17 @@ class AuthPage extends Component
         ]);
 
         Auth::guard('storefront')->login($customer);
+
+        if ($currentTenant = tenant()) {
+            app(TenantNotificationService::class)->notify(
+                tenant: $currentTenant,
+                type: 'customer',
+                title: 'New Customer Registered',
+                message: sprintf('"%s" just created an account on your storefront.', $customer->full_name),
+                data: ['customer_id' => $customer->id],
+            );
+        }
+
         $this->redirect(route('tenant.storefront.profile'));
     }
 

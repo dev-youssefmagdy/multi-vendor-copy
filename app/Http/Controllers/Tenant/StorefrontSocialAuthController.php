@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Customer;
+use App\Services\TenantNotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,6 +99,16 @@ class StorefrontSocialAuthController extends Controller
                 'provider_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
             ]);
+
+            if ($currentTenant = tenant()) {
+                app(TenantNotificationService::class)->notify(
+                    tenant: $currentTenant,
+                    type: 'customer',
+                    title: 'New Customer Registered',
+                    message: sprintf('"%s" just created an account via %s.', $customer->full_name, ucfirst($provider)),
+                    data: ['customer_id' => $customer->id],
+                );
+            }
         }
 
         Auth::guard('storefront')->login($customer, remember: true);
