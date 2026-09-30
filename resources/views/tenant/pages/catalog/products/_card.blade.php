@@ -10,8 +10,16 @@
     $added = $added ?? true;
     $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
     $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
-    $imageUrl = $central['image_url'] ?? $product->primary_image_url;
+    $imageUrl = (is_array($central) ? ($central['image_url'] ?? null) : null) ?? $product->primary_image_url;
     $price = (float) ($product->default_price ?? 0);
+    $costPrice  = (float) ($product->cost_price ?? (is_array($central) ? ($central['cost_price'] ?? 0) : 0));
+    $marketRef  = $costPrice > 0 ? max($costPrice, $price) : $price;
+    $rawPct     = ($costPrice > 0 && $marketRef > $costPrice)
+        ? (($marketRef - $costPrice) / $marketRef * 100)
+        : 0;
+    $belowLow   = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
+    $belowHigh  = $rawPct > 0 ? (int) ceil($rawPct * 1.15) : 0;
+    $belowMarket = $rawPct > 0 ? "{$belowLow}% – {$belowHigh}%" : null;
     $hasSocial = !empty($product->social_posts);
     $hasPriceData = !empty($product->ai_price_data);
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
@@ -23,11 +31,12 @@
             <span class="pm-card-initial" aria-hidden="true">{{ strtoupper(mb_substr($label, 0, 1)) }}</span>
         @endunless
         @if($added)<span class="db-opp-added">Already added</span>@endif
-        <span class="db-opp-cheaper">
-            <small>Cheaper than market by</small>
-            {{-- FOR DESIGN PURPOSE --}}
-            <strong>dummy</strong>
-        </span>
+        @if($belowMarket)
+            <span class="db-opp-cheaper">
+                <small>Cheaper than market by</small>
+                <strong>{{ $belowMarket }}</strong>
+            </span>
+        @endif
     </div>
 
     <div class="db-opp-body">
@@ -44,13 +53,11 @@
             </div>
             <div class="db-opp-stat">
                 <span class="db-opp-stat-label">Average Cheaper than market by</span>
-                {{-- FOR DESIGN PURPOSE --}}
-                <strong>dummy</strong>
+                <strong>{{ $belowMarket ?? '—' }}</strong>
                 <small>Through global stores</small>
             </div>
         </div>
 
-        {{-- Product tools (active/featured toggles, edit, ⋯ menu) — hidden for now; uncomment to restore.
         <div class="pm-card-tools">
             <div class="pm-card-toggles">
                 <x-tenant::status-toggle
@@ -86,7 +93,6 @@
                 </x-tenant::dropdown>
             </div>
         </div>
-        --}}
 
         <button type="button" class="btn btn-lg db-opp-cta is-added" data-modal-open="product-video-ad-modal" data-product-id="{{ $product->id }}">
             {!! $idea !!}

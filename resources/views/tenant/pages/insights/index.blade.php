@@ -169,9 +169,6 @@
         {{-- Tables --}}
         @foreach($tables ?? [] as $table)
             @if($table['id'] === 'order-analytics-monthly')
-                {{-- FOR DESIGN PURPOSE --}}
-                {{-- BACKEND TODO: mock rows — the live monthly data table only showed its loading state.
-                     Replace "dummy" with real values (the same rows come from OrderAnalyticsController::dataMonthly). --}}
                 <section class="an-card an-table-card fu d3">
                     <div class="an-table-head">
                         <h3>{{ $table['title'] }}</h3>
@@ -181,16 +178,18 @@
                         <table class="an-table" data-report-table="{{ $table['title'] }}">
                             <thead><tr><th>Month</th><th>Orders</th><th>Paid</th><th>Gross</th><th>Collected</th><th>AVG Order</th></tr></thead>
                             <tbody>
-                                @foreach(['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] as $month)
+                                @forelse($monthlyRows ?? [] as $row)
                                     <tr>
-                                        <td>{{ $month }}</td>
-                                        <td>dummy</td>
-                                        <td>dummy</td>
-                                        <td>dummy</td>
-                                        <td>dummy</td>
-                                        <td>dummy</td>
+                                        <td>{{ $row['label'] }}</td>
+                                        <td>{{ number_format($row['orders']) }}</td>
+                                        <td>{{ number_format($row['paid_orders']) }}</td>
+                                        <td>${{ number_format((float) $row['gross'], 2) }}</td>
+                                        <td>${{ number_format((float) $row['collected'], 2) }}</td>
+                                        <td>${{ number_format((float) $row['average'], 2) }}</td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr><td colspan="6" class="an-empty">No monthly data yet.</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

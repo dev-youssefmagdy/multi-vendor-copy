@@ -6,6 +6,15 @@
 --}}
 
 @php
+    $seriesData = collect($chartPayload['revenueDatasets'][0]['data'] ?? []);
+    $last  = $seriesData->last() ?? 0;
+    $prev  = $seriesData->slice(-2, 1)->first() ?? 0;
+    $trendPct = $prev > 0 ? round((($last - $prev) / $prev) * 100, 1) : 0;
+    $trendClass = $trendPct >= 0 ? 't-trend-up' : 't-trend-down';
+    $trendLabel = ($trendPct >= 0 ? '+' : '') . $trendPct . '%';
+@endphp
+
+@php
     $kpis = collect(['Orders', 'Average Order', 'Outstanding', 'Customers'])
         ->map(fn ($label) => collect($cards)->firstWhere('label', $label))
         ->filter()
@@ -51,8 +60,7 @@
             <div class="t-kpi db-kpi">
                 <div class="t-kpi-head">
                     <span class="t-kpi-label">{{ $kpi['label'] }}</span>
-                    {{-- FOR DESIGN PURPOSE --}}
-                    <span class="t-trend t-trend-up">{!! $trendUp !!} dummy</span>
+                    <span class="t-trend {{ $trendClass }}">{!! $trendUp !!} {{ $trendLabel }}</span>
                 </div>
                 <div class="t-kpi-value">{{ $kpi['value'] }}</div>
                 <p class="t-kpi-caption">{{ $kpi['caption'] }}</p>

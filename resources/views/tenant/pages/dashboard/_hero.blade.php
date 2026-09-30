@@ -51,8 +51,7 @@
                 <h2 class="db-hero-title">Your store is full of products, and daily opportunities are simply smart choices from them.</h2>
                 <p class="db-hero-text">Browse the entire catalog, search, filter, and adjust the appearance of any product in the homepage, Flash Sale, or Trending section.</p>
                 <ul class="db-hero-points">
-                    {{-- FOR DESIGN PURPOSE --}}
-                    <li>{!! $check !!} dummy active products</li>
+                    <li>{!! $check !!} {{ number_format($activeProductsCount) }} active products</li>
                     <li>{!! $check !!} Automatic inventory update</li>
                     <li>{!! $check !!} Direct source prices</li>
                 </ul>
@@ -87,8 +86,7 @@
                 </div>
                 <div class="db-power-chip is-left">
                     <span class="db-power-chip-title">Inventory</span>
-                    {{-- FOR DESIGN PURPOSE --}}
-                    <span class="db-power-chip-value is-warn">dummy</span>
+                    <span class="db-power-chip-value {{ $activeProductsCount > 0 ? 'is-good' : 'is-warn' }}">{{ $activeProductsCount > 0 ? 'Ready' : 'Pending' }}</span>
                 </div>
                 <div class="db-power-chip is-bottom">
                     <span class="db-power-chip-title">Profit</span>

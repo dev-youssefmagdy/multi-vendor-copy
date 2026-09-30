@@ -24,8 +24,17 @@ final class OwnProductsListController extends PanelController
         // Card grid (Own products tab): 12 own products per page, newest first.
         $products = $this->repo->queryOwnProducts([])->paginate(12)->withQueryString();
 
+        $ownProductStats = [
+            'total'    => $products->total(),
+            'active'   => \App\Models\Tenant\Product::query()
+                             ->where('is_own_product', true)->where('active', true)->count(),
+            'featured' => \App\Models\Tenant\Product::query()
+                             ->where('is_own_product', true)->where('featured', true)->count(),
+        ];
+
         return view('tenant.pages.catalog.own-products.index', [
-            'products' => $products,
+            'products'        => $products,
+            'ownProductStats' => $ownProductStats,
         ]);
     }
 

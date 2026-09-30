@@ -8,23 +8,7 @@
 --}}
 
 @php
-    // FOR DESIGN PURPOSE
-    $sampleVideo = 'https://assets.mixkit.co/videos/4705/4705-720.mp4';
-    $markets = ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor', 'iq' => 'IRQ', 'qa' => 'QTR'];
-
-    $ads = $ads ?? collect([
-        'photo-1590874103328-eac38a683ce7',
-        'photo-1525966222134-fcfa99b8ae77',
-        'photo-1505740420928-5e560c06d30e',
-    ])->map(fn ($photo) => [
-        'image' => "https://images.unsplash.com/{$photo}?w=900&q=70&auto=format&fit=crop",
-        'video' => $sampleVideo,
-        'platform' => 'Tiktok',
-        'duration' => '30s',
-        'title' => 'Stability test during exercise',
-        'hook' => 'I expected her to fall off with the first move… but she didn’t move.',
-        'markets' => $markets,
-    ])->all();
+    $ads = $ads ?? [];
 
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
     $tiktok = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z" fill="#69C9D0" transform="translate(-.6 -.5)"/><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z" fill="#EE1D52" transform="translate(.6 .5)"/><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z" fill="#000"/></svg>';
@@ -48,6 +32,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
     </x-tenant::country-picker>
 
+    @if(empty($ads))
+        <div class="empty-state-sm">No ads generated yet. <a href="{{ route('tenant.products.index') }}">Go to products</a> to generate social posts.</div>
+    @else
     <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1.25" aria-label="Successful advertisements">
         <div class="swiper-wrapper">
             @foreach($ads as $ad)
@@ -98,4 +85,5 @@
             @endforeach
         </div>
     </div>
+    @endif
 </section>

@@ -8,16 +8,7 @@
 --}}
 
 @php
-    // FOR DESIGN PURPOSE
-    $partner = $partner ?? [
-        'invite_link' => 'dummy',
-        'visits' => 'dummy',
-        'visits_trend' => 'dummy this month',
-        'traders' => 'dummy',
-        'active_traders' => 'dummy active traders',
-        'reward' => 'dummy',
-        'reward_status' => 'Ready to use',
-    ];
+    $partner = $partnerData ?? $partner ?? [];
 
     $trend = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 7.25l-7 7-4-4-6 6"/><path d="M16 7.25h4.5v4.5"/></svg>';
     $gift = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.25v6c0 2.12 0 3.18.66 3.84.66.66 1.72.66 3.84.66h6c2.12 0 3.18 0 3.84-.66.66-.66.66-1.72.66-3.84v-6"/><path d="M3 9.25c0-.94 0-1.41.3-1.7.29-.3.76-.3 1.7-.3h14c.94 0 1.41 0 1.7.3.3.29.3.76.3 1.7v.5c0 .94 0 1.41-.3 1.7-.29.3-.76.3-1.7.3H5c-.94 0-1.41 0-1.7-.3-.3-.29-.3-.76-.3-1.7z"/><path d="M12 7.25v14.5"/><path d="M12 7.25c-.63-1.94-1.9-4.5-4-4.5a2 2 0 0 0 0 4 M12 7.25c.63-1.94 1.9-4.5 4-4.5a2 2 0 0 1 0 4"/></svg>';

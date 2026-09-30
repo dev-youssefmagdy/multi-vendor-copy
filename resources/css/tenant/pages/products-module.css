@@ -146,9 +146,9 @@
     flex-direction: column;
     min-width: 0;
     border-radius: 24px;
-    overflow: hidden;
     background: var(--ds-surface);
 }
+.pm-grid .pm-card .db-opp-media { overflow: hidden; border-radius: 24px 24px 0 0; }
 
 .pm-card .db-opp-body { flex: 1; }
 

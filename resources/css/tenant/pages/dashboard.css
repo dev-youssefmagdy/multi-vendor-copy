@@ -586,6 +586,9 @@
     font-weight: 700;
     line-height: 1.5;
     color: var(--ds-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .db-opp-desc {
@@ -593,6 +596,10 @@
     font-size: 14px;
     line-height: 1.5;
     color: var(--ds-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .db-opp-markets h4 {

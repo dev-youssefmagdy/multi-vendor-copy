@@ -35,6 +35,7 @@ final class OrderAnalyticsController extends PanelController
             'description' => 'Analyze tenant order value, monthly collection performance, and queue mix directly from the tenant order tables.',
             'contentIntro' => 'Gross value, collected value, order counts, and customer momentum are all aggregated from tenant orders and related customers.',
             'statusRows' => $statusRows->values()->all(),
+            'monthlyRows' => collect($overview['monthly_rows'])->values()->all(),
             'cardsGridClass' => 'g-stats4',
             'cards' => Metric::cards($overview['cards']),
             'chartPayload' => $overview['chart_payload'],

@@ -11,7 +11,7 @@
 @endphp
 
 <article class="db-opp {{ $cardClass ?? '' }} {{ $opp['added'] ? 'is-added' : '' }}">
-    <div class="db-opp-media" style="background-image:url('{{ $opp['image'] }}')">
+    <div class="db-opp-media" @if(!empty($opp['image'])) style="background-image:url('{{ $opp['image'] }}')" @endif>
         @if($opp['added'])
             <span class="db-opp-added">Already added</span>
         @endif
@@ -88,13 +88,34 @@
         </div>
 
         <div class="db-opp-actions">
-            <button type="button" class="btn-tile">{!! $zap !!} Add to Flash Sale</button>
-            <button type="button" class="btn-tile">{!! $trendUp !!} Add to trending</button>
+            <a href="{{ route('tenant.store.flash-sales.index') }}" class="btn-tile"
+                data-product-id="{{ $opp['id'] ?? '' }}">
+                {!! $zap !!} Add to Flash Sale
+            </a>
+            @if(!empty($opp['id']))
+                <button type="button" class="btn-tile"
+                    data-action-url="{{ route('tenant.products.toggle-featured', $opp['id']) }}"
+                    data-action-method="PATCH"
+                    data-confirm="Mark this product as trending?"
+                    data-success="reload-page"
+                    data-product-id="{{ $opp['id'] }}">
+                    {!! $trendUp !!} Add to trending
+                </button>
+            @else
+                <button type="button" class="btn-tile">{!! $trendUp !!} Add to trending</button>
+            @endif
         </div>
 
-        <button type="button" class="btn btn-lg db-opp-cta {{ $opp['added'] ? 'is-added' : 'btn-primary' }}">
-            {!! $idea !!}
-            {{ $opp['added'] ? 'Create your Ad' : 'Add to store & create your Ad' }}
-        </button>
+        @if(!empty($opp['added']))
+            <button type="button" class="btn btn-lg db-opp-cta is-added"
+                data-modal-open="product-video-ad-modal"
+                data-product-id="{{ $opp['id'] ?? '' }}">
+                {!! $idea !!} Create your Ad
+            </button>
+        @else
+            <a href="{{ route('tenant.products.create') }}" class="btn btn-primary btn-lg db-opp-cta">
+                {!! $idea !!} Add to store &amp; create your Ad
+            </a>
+        @endif
     </div>
 </article>

@@ -85,9 +85,9 @@
       "resources/js/tenant/modules/payment-gateway.js"
     ]
   },
-  "_dashboard-BOfic93c.css": {
-    "file": "assets/dashboard-BOfic93c.css",
-    "src": "_dashboard-BOfic93c.css"
+  "_dashboard-LHKepARB.css": {
+    "file": "assets/dashboard-LHKepARB.css",
+    "src": "_dashboard-LHKepARB.css"
   },
   "_dom-B2MjGz4i.js": {
     "file": "assets/dom-B2MjGz4i.js",
@@ -2525,7 +2525,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Bu4edrsI.css",
+    "file": "assets/app-43FGTWAQ.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2576,7 +2576,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-CZP9MsIw.css",
+    "file": "assets/ecommet-Br66y1VL.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2859,7 +2859,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-zx6NWHC5.css",
+    "file": "assets/souqify-ZQ4O0YBF.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2868,7 +2868,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DjZV4pAh.css",
+    "file": "assets/app-C3xSXXwh.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3569,7 +3569,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-CDc-fasG.js",
+    "file": "assets/module-nav-2iOxGy18.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3578,8 +3578,8 @@
       "_mousewheel-C18axwlu.js"
     ],
     "css": [
-      "assets/module-nav-C12ytgB5.css",
-      "assets/dashboard-BOfic93c.css"
+      "assets/module-nav-DZU6ISng.css",
+      "assets/dashboard-LHKepARB.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
@@ -3607,7 +3607,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-grid.js": {
-    "file": "assets/products-grid--7ir-W9r.js",
+    "file": "assets/products-grid-Ctlvh-c0.js",
     "name": "products-grid",
     "src": "resources/js/tenant/pages/catalog/products-grid.js",
     "isEntry": true,
@@ -3615,7 +3615,7 @@
       "_events-Cyr27uQe.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },
@@ -3640,7 +3640,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-gpXbBcCJ.js",
+    "file": "assets/index-Bb4ePn2J.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3652,7 +3652,7 @@
       "_opportunities-BCPxEhxG.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css"
+      "assets/dashboard-LHKepARB.css"
     ]
   },
   "resources/js/tenant/pages/finance/billing-index.js": {
@@ -3753,17 +3753,17 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-DGe-MiVY.js",
+    "file": "assets/brand-create-CLWygDVb.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-C9z6qvIL.js",
+    "file": "assets/brand-index-Ch3hxorT.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
@@ -3771,7 +3771,7 @@
       "_mobile-kpi-carousel-DPYmdIv6.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/analytics-BeA5e-tf.css",
       "assets/orders-DUFjdNup.css"
     ]
@@ -3788,7 +3788,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-B2IP1IRO.js",
+    "file": "assets/manufacturing-create-Bsy5UxTo.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
     "isEntry": true,
@@ -3797,12 +3797,12 @@
       "_dom-B2MjGz4i.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/orders-DUFjdNup.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-C9z6qvIL.js",
+    "file": "assets/manufacturing-index-Ch3hxorT.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
@@ -3810,7 +3810,7 @@
       "_mobile-kpi-carousel-DPYmdIv6.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/analytics-BeA5e-tf.css",
       "assets/orders-DUFjdNup.css"
     ]
@@ -3827,12 +3827,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-RcwbsY7u.js",
+    "file": "assets/product-request-create-KUw3mFnc.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/orders-DUFjdNup.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3851,7 +3851,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-08W8aPvA.js",
+    "file": "assets/product-requests-index-u-pDzbVz.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
@@ -3859,7 +3859,7 @@
       "_mobile-kpi-carousel-DPYmdIv6.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/analytics-BeA5e-tf.css",
       "assets/orders-DUFjdNup.css",
       "assets/requests-CJpz01p_.css"
@@ -3878,7 +3878,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-C9z6qvIL.js",
+    "file": "assets/customers-index-Ch3hxorT.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
@@ -3886,7 +3886,7 @@
       "_mobile-kpi-carousel-DPYmdIv6.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/analytics-BeA5e-tf.css",
       "assets/orders-DUFjdNup.css"
     ]
@@ -3907,7 +3907,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-C9z6qvIL.js",
+    "file": "assets/orders-index-Ch3hxorT.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
@@ -3915,7 +3915,7 @@
       "_mobile-kpi-carousel-DPYmdIv6.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/analytics-BeA5e-tf.css",
       "assets/orders-DUFjdNup.css"
     ]
@@ -4232,7 +4232,7 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-DktZjOHe.js",
+    "file": "assets/todays-chances-aspa92wx.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
@@ -4240,7 +4240,7 @@
       "_opportunities-BCPxEhxG.js"
     ],
     "css": [
-      "assets/dashboard-BOfic93c.css",
+      "assets/dashboard-LHKepARB.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },

@@ -15,6 +15,41 @@ final class DashboardController extends PanelController
     {
         $overview = $repository->dashboardOverview();
 
+        $opportunities       = $repository->opportunityProductCards(6);
+        $newProducts         = $repository->newInProductCards(6);
+        $pendingPurchases    = $repository->pendingVendorPurchaseCount();
+        $activeProductsCount = \App\Models\Tenant\Product::query()->where('active', true)->count();
+
+        $partnerData = [
+            'invite_link'     => url('/ref/' . (tenant('id') ?? 'store')),
+            'visits'          => '—',
+            'visits_trend'    => '—',
+            'traders'         => '—',
+            'active_traders'  => '—',
+            'reward'          => '—',
+            'reward_status'   => '—',
+        ];
+
+        $adsData = \App\Models\Tenant\Product::query()
+            ->whereNotNull('social_posts')
+            ->where('social_posts', '!=', '[]')
+            ->orderByDesc('updated_at')
+            ->limit(6)
+            ->get()
+            ->flatMap(fn($p) => collect($p->social_posts ?? []))
+            ->take(6)
+            ->map(fn($post) => [
+                'image'    => $post['image_url'] ?? null,
+                'video'    => null,
+                'platform' => $post['platform'] ?? 'Social',
+                'duration' => '30s',
+                'title'    => $post['hook'] ?? 'View this post',
+                'hook'     => $post['content'] ?? '',
+                'markets'  => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE'],
+            ])
+            ->values()
+            ->all();
+
         $latestOrdersColumns = [
             ['title' => 'Order'],
             ['title' => 'Customer'],
@@ -71,6 +106,12 @@ final class DashboardController extends PanelController
             'topCustomersRows' => $topCustomersRows,
             'topProductsColumns' => $topProductsColumns,
             'topProductsRows' => $topProductsRows,
+            'opportunities'       => $opportunities,
+            'newProducts'         => $newProducts,
+            'pendingPurchases'    => $pendingPurchases,
+            'activeProductsCount' => $activeProductsCount,
+            'partnerData'         => $partnerData,
+            'ads'                 => $adsData,
         ]);
     }
 }

@@ -71,7 +71,7 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->name('tenant.dashboard');
 
     // Sidebar modules from the design that have no content yet — empty placeholder pages.
-    Route::view('/todays-chances', 'tenant.pages.todays-chances.index')
+    Route::get('/todays-chances', [\App\Http\Controllers\Tenant\Panel\Catalog\TodayChancesController::class, 'index'])
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.todays-chances');
     Route::view('/partner-program', 'tenant.pages.placeholder', ['title' => 'Partner Program'])

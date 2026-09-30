@@ -8,64 +8,7 @@
 --}}
 
 @php
-    // FOR DESIGN PURPOSE
-    $opportunities = $opportunities ?? [
-        [
-            'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=900&q=70&auto=format&fit=crop',
-            'added' => true,
-            'category' => 'electronics',
-            'trend' => 'rising',
-            'competition' => 'Low competition',
-            'title' => 'Sports smart watch',
-            'description' => 'Rapid demand, easy advertising content, and a margin that leaves you with a strong competitive advantage.',
-            'markets' => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor', 'iq' => 'IRQ', 'qa' => 'QTR'],
-            'below_market' => 'dummy',
-            'score' => 'dummy', 'score_pct' => 60,
-            'profit' => 'dummy', 'profit_pct' => 70,
-            'competition_level' => 'dummy', 'competition_pct' => 30,
-            'status' => 'Hot', 'status_pct' => 75,
-            'cost' => 'dummy',
-            'markup' => 'dummy',
-            'suggested_price' => 'dummy',
-        ],
-        [
-            'image' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=70&auto=format&fit=crop',
-            'added' => false,
-            'category' => 'electronics',
-            'trend' => 'rising',
-            'competition' => 'Low competition',
-            'title' => 'Sports smart watch',
-            'description' => 'Rapid demand, easy advertising content, and a margin that leaves you with a strong competitive advantage.',
-            'markets' => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor', 'iq' => 'IRQ', 'qa' => 'QTR'],
-            'below_market' => 'dummy',
-            'score' => 'dummy', 'score_pct' => 60,
-            'profit' => 'dummy', 'profit_pct' => 70,
-            'competition_level' => 'dummy', 'competition_pct' => 30,
-            'status' => 'Hot', 'status_pct' => 75,
-            'cost' => 'dummy',
-            'markup' => 'dummy',
-            'suggested_price' => 'dummy',
-        ],
-        [
-            'image' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=900&q=70&auto=format&fit=crop',
-            'added' => false,
-            'category' => 'electronics',
-            'trend' => 'rising',
-            'competition' => 'Low competition',
-            'title' => 'Sports smart watch',
-            'description' => 'Rapid demand, easy advertising content, and a margin that leaves you with a strong competitive advantage.',
-            'markets' => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor', 'iq' => 'IRQ', 'qa' => 'QTR'],
-            'below_market' => 'dummy',
-            'score' => 'dummy', 'score_pct' => 60,
-            'profit' => 'dummy', 'profit_pct' => 70,
-            'competition_level' => 'dummy', 'competition_pct' => 30,
-            'status' => 'Hot', 'status_pct' => 75,
-            'cost' => 'dummy',
-            'markup' => 'dummy',
-            'suggested_price' => 'dummy',
-        ],
-    ];
-
+    $opportunities = $opportunities ?? [];
 @endphp
 
 <section class="db-section fu d2">

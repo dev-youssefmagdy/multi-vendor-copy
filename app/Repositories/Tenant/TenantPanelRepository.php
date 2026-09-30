@@ -2524,4 +2524,252 @@ class TenantPanelRepository
             'unread' => (clone $base)->where('tenant_has_unread', true)->count(),
         ];
     }
+
+    /** Return the N most-recent central products added to this tenant's catalog. */
+    public function newInProducts(int $limit = 6): Collection
+    {
+        return Product::query()
+            ->with(['translations.language', 'files'])
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
+    /** Return the N products with the highest calculated opportunity score. */
+    public function opportunityProducts(int $limit = 6): Collection
+    {
+        return Product::query()
+            ->with(['translations.language', 'files'])
+            ->whereNotNull('cost_price')
+            ->whereColumn('cost_price', '<', 'default_price')
+            ->orderByRaw('(default_price - cost_price) / default_price DESC')
+            ->limit($limit)
+            ->get();
+    }
+
+    /** Count of vendor purchases (VendorSettlement) in Pending/Processing status for this tenant. */
+    public function pendingVendorPurchaseCount(): int
+    {
+        // VendorSettlement lives on the central DB — use tenancy()->central()
+        return (int) tenancy()->central(fn() =>
+            \App\Models\VendorSettlement::query()
+                ->where('tenant_id', tenant('id'))
+                ->whereIn('status', ['pending', 'processing'])
+                ->count()
+        );
+    }
+
+    public function buildOpportunityArray(\App\Models\Tenant\Product $product): array
+    {
+        $label       = $product->translationValue('name') ?? $product->slug ?? ('Product #' . $product->id);
+        $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
+        $imageUrl    = $product->primary_image_url;
+        $cost        = (float) ($product->cost_price ?? $product->default_price ?? 0);
+        $marketRef   = (float) ($product->default_price ?? 0);
+        $rawPct      = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
+        $lowPct      = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
+        $highPct     = $rawPct > 0 ? (int) ceil($rawPct * 1.15)  : 0;
+        $belowMarket = $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null;
+        $scorePct    = min(100, max(0, (int) $rawPct));
+        $profitPct   = min(100, max(0, (int) ($rawPct * 0.5)));
+        $markup      = $rawPct > 0 ? '+' . round($rawPct * 0.3, 0) . '%' : '+0%';
+        $suggested   = $cost > 0 ? '$' . number_format($cost * 1.5, 2) : '—';
+
+        return [
+            'id'                => $product->id,
+            'image'             => $imageUrl,
+            'added'             => true,
+            'category'          => $product->categories->first()?->translationValue('name') ?? 'General',
+            'trend'             => 'rising',
+            'competition'       => 'Low competition',
+            'title'             => $label,
+            'description'       => $description !== '' ? $description : 'No description yet.',
+            'markets'           => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor'],
+            'below_market'      => $belowMarket,
+            'score'             => $scorePct > 0 ? (string) $scorePct : '—',
+            'score_pct'         => $scorePct,
+            'profit'            => $rawPct > 0 ? '+' . round($rawPct * 0.25, 0) . '%' : '+0%',
+            'profit_pct'        => $profitPct,
+            'competition_level' => 'Low',
+            'competition_pct'   => 25,
+            'status'            => 'Hot',
+            'status_pct'        => 75,
+            'cost'              => $cost > 0 ? '$' . number_format($cost, 2) : '—',
+            'markup'            => $markup,
+            'suggested_price'   => $suggested,
+        ];
+    }
+
+    public function opportunityProductCards(int $limit = 6): array
+    {
+        $cards = $this->opportunityProducts($limit)
+            ->map(fn(\App\Models\Tenant\Product $p) => $this->buildOpportunityArray($p))
+            ->all();
+
+        return $cards ?: $this->sampleOpportunityCards($limit);
+    }
+
+    public function newInProductCards(int $limit = 6): array
+    {
+        $cards = $this->newInProducts($limit)->map(function (\App\Models\Tenant\Product $product) {
+            $cost = (float) ($product->cost_price ?? $product->default_price ?? 0);
+            $marketRef = (float) ($product->default_price ?? 0);
+            $rawPct = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
+            $lowPct = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
+            $highPct = $rawPct > 0 ? (int) ceil($rawPct * 1.15) : 0;
+            $opp = $this->buildOpportunityArray($product);
+            return [
+                'image'        => $opp['image'],
+                'title'        => $opp['title'],
+                'description'  => $opp['description'],
+                'below_market' => $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null,
+                'cost'         => $opp['cost'],
+            ];
+        })->all();
+
+        return $cards ?: $this->sampleNewInCards($limit);
+    }
+
+    private function sampleOpportunityCards(int $limit = 6): array
+    {
+        $samples = [
+            [
+                'title'       => 'Wireless Noise-Cancelling Headphones',
+                'description' => 'Premium over-ear headphones with active noise cancellation, 30-hour battery life, and foldable design for travel.',
+                'category'    => 'Electronics',
+                'cost'        => '$24.99',
+                'below_market'=> '35% – 42%',
+                'score'       => '87',
+                'score_pct'   => 87,
+                'profit'      => '+22%',
+                'profit_pct'  => 44,
+                'markup'      => '+30%',
+                'suggested_price' => '$34.99',
+            ],
+            [
+                'title'       => 'Portable Mini Projector 1080p',
+                'description' => 'Compact LED projector with WiFi mirroring, built-in speaker, and 120-inch projection for home cinema on the go.',
+                'category'    => 'Home & Living',
+                'cost'        => '$39.50',
+                'below_market'=> '28% – 34%',
+                'score'       => '79',
+                'score_pct'   => 79,
+                'profit'      => '+18%',
+                'profit_pct'  => 36,
+                'markup'      => '+25%',
+                'suggested_price' => '$52.00',
+            ],
+            [
+                'title'       => 'Smart Fitness Tracker Band',
+                'description' => 'Waterproof fitness band with heart-rate monitor, sleep tracking, step counter, and 7-day battery life.',
+                'category'    => 'Sports',
+                'cost'        => '$12.99',
+                'below_market'=> '40% – 48%',
+                'score'       => '92',
+                'score_pct'   => 92,
+                'profit'      => '+28%',
+                'profit_pct'  => 56,
+                'markup'      => '+35%',
+                'suggested_price' => '$19.99',
+            ],
+            [
+                'title'       => 'Electric Posture Corrector',
+                'description' => 'Intelligent posture reminder with vibration alerts, rechargeable battery, and discreet under-clothes design.',
+                'category'    => 'Health',
+                'cost'        => '$9.99',
+                'below_market'=> '45% – 55%',
+                'score'       => '83',
+                'score_pct'   => 83,
+                'profit'      => '+24%',
+                'profit_pct'  => 48,
+                'markup'      => '+32%',
+                'suggested_price' => '$15.99',
+            ],
+            [
+                'title'       => 'LED Strip Lights 10m RGB',
+                'description' => 'App-controlled RGB LED strips with music sync, 16 million colors, and easy peel-and-stick installation.',
+                'category'    => 'Home & Living',
+                'cost'        => '$7.49',
+                'below_market'=> '38% – 46%',
+                'score'       => '76',
+                'score_pct'   => 76,
+                'profit'      => '+20%',
+                'profit_pct'  => 40,
+                'markup'      => '+28%',
+                'suggested_price' => '$12.99',
+            ],
+            [
+                'title'       => 'Collapsible Silicone Water Bottle',
+                'description' => 'BPA-free foldable bottle with 600ml capacity, leak-proof lid, and heat-resistant material for hot and cold drinks.',
+                'category'    => 'Accessories',
+                'cost'        => '$4.99',
+                'below_market'=> '32% – 40%',
+                'score'       => '71',
+                'score_pct'   => 71,
+                'profit'      => '+15%',
+                'profit_pct'  => 30,
+                'markup'      => '+22%',
+                'suggested_price' => '$7.99',
+            ],
+        ];
+
+        $markets = ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor'];
+
+        return array_map(fn(array $s) => array_merge([
+            'id'                => null,
+            'image'             => null,
+            'added'             => false,
+            'trend'             => 'rising',
+            'competition'       => 'Low competition',
+            'competition_level' => 'Low',
+            'competition_pct'   => 20,
+            'status'            => 'Hot',
+            'status_pct'        => 80,
+            'markets'           => $markets,
+        ], $s), array_slice($samples, 0, $limit));
+    }
+
+    private function sampleNewInCards(int $limit = 6): array
+    {
+        $samples = [
+            [
+                'title'       => 'Magnetic Phone Car Mount',
+                'description' => 'Universal magnetic dashboard mount compatible with all smartphones, 360° rotation, strong magnet, no-scratch surface.',
+                'below_market'=> '30% – 38%',
+                'cost'        => '$5.99',
+            ],
+            [
+                'title'       => 'Bamboo Wireless Charging Pad',
+                'description' => 'Eco-friendly 15W fast wireless charger with bamboo surface, LED indicator, and universal Qi compatibility.',
+                'below_market'=> '25% – 32%',
+                'cost'        => '$8.49',
+            ],
+            [
+                'title'       => 'Stainless Steel Insulated Tumbler',
+                'description' => 'Double-wall vacuum tumbler keeps drinks cold 24h or hot 12h, sweat-free exterior, spill-proof lid included.',
+                'below_market'=> '33% – 40%',
+                'cost'        => '$10.99',
+            ],
+            [
+                'title'       => 'Portable Handheld Garment Steamer',
+                'description' => 'Fast heat-up fabric steamer with continuous steam for wrinkle removal, suitable for all fabric types.',
+                'below_market'=> '28% – 36%',
+                'cost'        => '$14.50',
+            ],
+            [
+                'title'       => 'UV Sanitizer Box with Wireless Charger',
+                'description' => 'Multi-function UV sterilization box doubles as a wireless charger, kills 99.9% of bacteria in 5 minutes.',
+                'below_market'=> '36% – 44%',
+                'cost'        => '$18.99',
+            ],
+            [
+                'title'       => 'Adjustable Laptop Stand Aluminium',
+                'description' => 'Portable aluminium laptop riser with 6 height levels, anti-slip pads, foldable for desk and travel use.',
+                'below_market'=> '22% – 30%',
+                'cost'        => '$16.99',
+            ],
+        ];
+
+        return array_map(fn(array $s) => array_merge(['image' => null], $s), array_slice($samples, 0, $limit));
+    }
 }

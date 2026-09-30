@@ -8,18 +8,7 @@
 --}}
 
 @php
-    // FOR DESIGN PURPOSE
-    $newProducts = $newProducts ?? collect([
-        'photo-1590874103328-eac38a683ce7',
-        'photo-1505740420928-5e560c06d30e',
-        'photo-1572635196237-14b3f281503f',
-    ])->map(fn ($photo) => [
-        'image' => "https://images.unsplash.com/{$photo}?w=900&q=70&auto=format&fit=crop",
-        'title' => 'Sports smart watch',
-        'description' => 'Rapid demand, easy advertising content, and a margin that leaves you with a strong competitive advantage.',
-        'below_market' => 'dummy',
-        'cost' => 'dummy',
-    ])->all();
+    $newProducts = $newProducts ?? [];
 
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
 @endphp
@@ -41,10 +30,12 @@
             @foreach($newProducts as $product)
                 <article class="db-opp swiper-slide">
                     <div class="db-opp-media" style="background-image:url('{{ $product['image'] }}')">
-                        <span class="db-opp-cheaper">
-                            <small>Cheaper than market by</small>
-                            <strong>{{ $product['below_market'] }}</strong>
-                        </span>
+                        @if(!empty($product['below_market']))
+                            <span class="db-opp-cheaper">
+                                <small>Cheaper than market by</small>
+                                <strong>{{ $product['below_market'] }}</strong>
+                            </span>
+                        @endif
                     </div>
 
                     <div class="db-opp-body">
@@ -56,12 +47,12 @@
                         <div class="db-opp-stats">
                             <div class="db-opp-stat is-dark is-half">
                                 <span class="db-opp-stat-label">Cost to your customer's door</span>
-                                <strong>{{ $product['cost'] }}</strong>
+                                <strong>{{ $product['cost'] ?? '—' }}</strong>
                                 <small>Product + International Shipping</small>
                             </div>
                             <div class="db-opp-stat">
                                 <span class="db-opp-stat-label">Average Cheaper than market by</span>
-                                <strong>{{ $product['below_market'] }}</strong>
+                                <strong>{{ $product['below_market'] ?? '—' }}</strong>
                                 <small>Through global stores</small>
                             </div>
                         </div>
