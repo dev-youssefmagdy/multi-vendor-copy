@@ -3,14 +3,6 @@
 @section('title', $badgeTitle)
 
 @section('content')
-    @if($badge->text === 'new-in')
-    {{-- New in tab: product card grid (new design). The other badges keep the assignment screen below. --}}
-    <div class="pm-page">
-        @include('tenant.pages.catalog._module-nav', ['activeTab' => 'new-in'])
-        {{-- FOR DESIGN PURPOSE --}}
-        @include('tenant.pages.catalog._mock-cards', ['pagerLabel' => 'New in pages'])
-    </div>
-    @else
     @include('tenant.pages.catalog._module-nav', ['activeTab' => $badge->text])
 
     <div class="pm-page-actions">
@@ -58,13 +50,8 @@
                 data-country-id="{{ $activeCountryId }}">Save assignment</button>
         </div>
     </x-tenant::card>
-    @endif
 @endsection
 
 @push('tenant-vite')
-    @if($badge->text === 'new-in')
-        @vite('resources/js/tenant/pages/catalog/products-grid.js')
-    @else
-        @vite('resources/js/tenant/pages/catalog/badge-show.js')
-    @endif
+    @vite('resources/js/tenant/pages/catalog/badge-show.js')
 @endpush

@@ -166,6 +166,9 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
+            // Force all packages (including datatables.net's nested copy) to share
+            // one jQuery instance so DataTable.Api is available to the responsive plugin.
+            'jquery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
             '@tenant': path.resolve(__dirname, 'resources/js/tenant'),
             '@tenant-css': path.resolve(__dirname, 'resources/css/tenant'),
         },
