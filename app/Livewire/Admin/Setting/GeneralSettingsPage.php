@@ -7,6 +7,7 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\Language;
 use App\Repositories\AppSettingRepository;
 use App\Services\AppSettingService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
@@ -130,6 +131,13 @@ class GeneralSettingsPage extends ContentPage
 
             if ($this->faviconUpload) {
                 $this->faviconPath = Storage::disk('public')->url($this->faviconUpload->store('settings/favicons', 'public'));
+            }
+
+            if ($validated['defaultLanguage']) {
+                DB::transaction(function () use ($validated) {
+                    Language::query()->update(['is_default' => false]);
+                    Language::query()->where('code', $validated['defaultLanguage'])->update(['is_default' => true]);
+                });
             }
 
             $service->saveMany([

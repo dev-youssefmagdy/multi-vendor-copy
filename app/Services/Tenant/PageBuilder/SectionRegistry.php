@@ -72,4 +72,21 @@ class SectionRegistry
     {
         return self::SECTIONS[$theme][$page] ?? [];
     }
+
+    /**
+     * Check whether the blade partial for a section key exists for the given
+     * theme + variant page folder.
+     *
+     * @param string $theme       Theme slug, e.g. "souqify"
+     * @param string $pageFolder  Variant page folder, e.g. "home" or "home-v2"
+     * @param string $sectionKey  Section key, e.g. "hero_banner"
+     */
+    public static function sectionViewExists(string $theme, string $pageFolder, string $sectionKey): bool
+    {
+        $path = resource_path(
+            'views/themes/' . $theme . '/pages/' . $pageFolder . '/sections/' . $sectionKey . '.blade.php'
+        );
+
+        return file_exists($path);
+    }
 }

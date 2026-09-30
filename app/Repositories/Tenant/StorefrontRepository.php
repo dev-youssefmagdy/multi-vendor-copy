@@ -1218,7 +1218,7 @@ class StorefrontRepository
             return $this->memo['active_flash_sales'];
         }
 
-        $countryId = $this->customerCountryId();
+        $countryId = $this->customerCountryId() ?? $this->detectedCountry()?->id;
 
         // Short TTL: the "active" window is time-based (start/end timestamps), so
         // a sale can flip active/inactive with no model write — keep this fresh

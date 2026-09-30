@@ -15,15 +15,15 @@ $flashRight = $flash->skip(4)->take(3);
 $flashSaleEnd = optional(($flashSales ?? collect())->first())->end_date;
 
 // Section collections mapped from available component data
-$trendingProds = $bestSelling ?? collect();
+$trendingProds = $trendingNowProducts ?? collect();
 $topProds = ($bestSelling ?? collect())->take(5);
 $newArrivals = $newInProducts ?? collect();
 $_flashAll = $flashProducts ?? collect();
 $exploreProds = $_flashAll->isNotEmpty() ? $_flashAll : ($newInProducts ?? collect());
-$featuredProds = $bestSelling ?? collect();
+$featuredProds = $featuredProducts ?? collect();
 $hotDealsProds = $flashProducts ?? collect();
 $specialProds = $topRatedProducts ?? collect();
-$recommendedProds = ($bestSelling ?? collect())->slice(5)->values();
+$recommendedProds = $recommendedProducts ?? collect();
 
 $promoCardBanner = $banners->skip(5)->first() ?? $promoBanners->first() ?? $heroBanner;
 $promoCardImage = $promoCardBanner?->image_url ??

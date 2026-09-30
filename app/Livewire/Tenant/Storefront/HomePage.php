@@ -168,6 +168,7 @@ class HomePage extends Component
         $topRatedPaginator = $repo->paginatedTopRatedProducts([], $topRatedLimit, 1);
 
         $trendingNowProducts = $repo->trendingNowProducts(10);
+        $featuredProducts = $repo->featuredProducts(10);
 
         $recommendedLimit = $this->perPage * $this->recommendedPage;
         $recommendedProducts = $repo->recommendedProducts($recommendedLimit);
@@ -215,6 +216,7 @@ class HomePage extends Component
             'activeProductTab' => $this->activeProductTab,
             'buyTogetherProducts' => $buyTogetherProducts,
             'trendingNowProducts' => $trendingNowProducts,
+            'featuredProducts' => $featuredProducts,
             'recommendedProducts' => $recommendedProducts,
             'hasMoreRecommended' => $this->hasMoreRecommended,
             'paginatedProducts' => $paginatedProducts,

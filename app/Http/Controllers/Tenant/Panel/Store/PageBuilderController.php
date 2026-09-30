@@ -36,6 +36,16 @@ final class PageBuilderController extends PanelController
         $sections = [];
 
         if ($selectedTheme) {
+            $selectedVariant = $selectedHomeVariantId
+                ? $availableVariants->firstWhere('id', $selectedHomeVariantId)
+                : null;
+
+            $pageFolder = $selectedVariant
+                ? (str_contains($selectedVariant->view ?? '', '.')
+                    ? last(explode('.', $selectedVariant->view))
+                    : ($selectedVariant->key ?? 'home'))
+                : 'home';
+
             $labels = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
             $defaultOrder = array_keys($labels);
 
@@ -64,6 +74,10 @@ final class PageBuilderController extends PanelController
 
             foreach ($orderedKeys as $key) {
                 if (!array_key_exists($key, $labels)) {
+                    continue;
+                }
+
+                if (!SectionRegistry::sectionViewExists($selectedTheme->slug, $pageFolder, $key)) {
                     continue;
                 }
 

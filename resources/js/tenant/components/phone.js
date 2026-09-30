@@ -46,6 +46,21 @@ export async function init(el) {
     visible.addEventListener('blur', sync);
     visible.addEventListener('countrychange', sync);
 
+    const countryFieldName = el.dataset.countryField;
+    if (countryFieldName) {
+        const isoMap = el.dataset.countryIsoMap ? JSON.parse(el.dataset.countryIsoMap) : {};
+        const form = el.closest('form');
+        const countrySelect = form?.querySelector(`[name="${CSS.escape(countryFieldName)}"]`);
+        if (countrySelect) {
+            countrySelect.addEventListener('change', () => {
+                const iso2 = isoMap[countrySelect.value];
+                if (iso2) {
+                    iti.setCountry(iso2.toLowerCase());
+                }
+            });
+        }
+    }
+
     el._tenantBeforeSubmit = sync;
     el.dataset.tenantReady = '1';
 }

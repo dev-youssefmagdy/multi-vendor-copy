@@ -74,6 +74,9 @@ final class OnboardingController extends PanelController
 
         $current = $this->service->logoSettings();
 
+        $savedLogoPathAr = $logoPathAr ?? ($current['logo_path_ar'] ?? '');
+        $savedLogoPathEn = $logoPathEn ?? ($current['logo_path_en'] ?? '');
+
         $appearanceService->saveAppearanceSettings([
             'logo_mode' => $validated['logo_mode'],
             'logo_text_ar' => $validated['logo_text_ar'] ?? '',
@@ -83,12 +86,19 @@ final class OnboardingController extends PanelController
             'logo_shape' => $validated['logo_shape'],
             'logo_font_ar' => $validated['logo_font_ar'],
             'logo_font_en' => $validated['logo_font_en'],
-            'logo_path_ar' => $logoPathAr ?? ($current['logo_path_ar'] ?? ''),
-            'logo_path_en' => $logoPathEn ?? ($current['logo_path_en'] ?? ''),
+            'logo_path_ar' => $savedLogoPathAr,
+            'logo_path_en' => $savedLogoPathEn,
         ]);
 
         return $this->success('Logo saved successfully.', [
             'setup' => $this->setupProgress(),
+            'logo' => [
+                'mode' => $validated['logo_mode'],
+                'text_ar' => $validated['logo_text_ar'] ?? '',
+                'text_en' => $validated['logo_text_en'] ?? '',
+                'path_ar' => $savedLogoPathAr,
+                'path_en' => $savedLogoPathEn,
+            ],
         ]);
     }
 

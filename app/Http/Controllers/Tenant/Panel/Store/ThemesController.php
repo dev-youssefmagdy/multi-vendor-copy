@@ -225,4 +225,88 @@ final class ThemesController extends PanelController
 
         return $this->success('Theme countries updated successfully.');
     }
+
+    public function countryVariants(Theme $theme): JsonResponse
+    {
+        $theme->load('countries');
+
+        $variantRows = tenancy()->central(fn () => HomeVariant::query()
+            ->where('theme_slug', strtolower($theme->slug))
+            ->where('is_active', true)
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get(['id', 'name', 'key'])
+        );
+
+        $assignments = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNotNull('country_id')
+            ->pluck('home_variant_id', 'country_id')
+            ->map(fn ($v) => (int) $v)
+            ->all();
+
+        $countries = $theme->countries->map(fn (ThemeCountry $c) => [
+            'country_id'      => (int) $c->country_id,
+            'name'            => $c->name,
+            'iso2'            => $c->iso2,
+            'flag_emoji'      => $c->flag_emoji,
+            'home_variant_id' => $assignments[$c->country_id] ?? null,
+        ])->values();
+
+        return response()->json([
+            'data' => [
+                'theme_id'   => $theme->id,
+                'theme_name' => $theme->name,
+                'variants'   => $variantRows->map(fn ($v) => ['id' => $v->id, 'name' => $v->name])->values(),
+                'countries'  => $countries,
+            ],
+        ]);
+    }
+
+    public function updateCountryVariants(Request $request, Theme $theme): JsonResponse
+    {
+        $theme->load('countries');
+        $allowedCountryIds = $theme->countries->pluck('country_id')->map(fn ($v) => (int) $v)->all();
+
+        $variantIds = tenancy()->central(fn () => HomeVariant::query()
+            ->where('theme_slug', strtolower($theme->slug))
+            ->where('is_active', true)
+            ->pluck('id')
+            ->map(fn ($v) => (int) $v)
+            ->all()
+        );
+
+        $assignments = $request->input('assignments', []);
+        if (! is_array($assignments)) {
+            $assignments = [];
+        }
+
+        foreach ($assignments as $row) {
+            $countryId  = isset($row['country_id'])      ? (int) $row['country_id']      : null;
+            $variantId  = isset($row['home_variant_id']) ? (int) $row['home_variant_id'] : null;
+
+            if (! $countryId || ! in_array($countryId, $allowedCountryIds, true)) {
+                continue;
+            }
+
+            if ($variantId === null || $variantId === 0) {
+                TenantHomeVariant::query()
+                    ->where('theme_id', $theme->id)
+                    ->where('country_id', $countryId)
+                    ->delete();
+                continue;
+            }
+
+            if (! in_array($variantId, $variantIds, true)) {
+                continue;
+            }
+
+            TenantHomeVariant::query()->updateOrCreate(
+                ['theme_id' => $theme->id, 'country_id' => $countryId],
+                ['home_variant_id' => $variantId]
+            );
+        }
+
+        return $this->success('Country variant overrides saved.');
+    }
 }

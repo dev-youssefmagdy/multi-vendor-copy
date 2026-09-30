@@ -185,8 +185,8 @@ class OnboardingService
                 'key' => 'profile',
                 'label' => 'Complete Your Profile',
                 'detail' => TenantNavigation::profileComplete()
-                    ? 'Your business name, logo, and contact info are set.'
-                    : 'Add your business name, logo, and contact info.',
+                    ? 'Your business name and contact info are set.'
+                    : 'Add your business name and contact info.',
                 'mandatory' => true,
                 'done' => TenantNavigation::profileComplete(),
                 'action_url' => route('tenant.settings.account', ['from' => 'onboarding']),

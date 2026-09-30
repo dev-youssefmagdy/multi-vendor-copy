@@ -137,7 +137,40 @@ function renderSetupItem(itemEl, item) {
     }
 }
 
-function applySetupProgress(root, setup) {
+function renderLogoPreview(root, logo) {
+    const itemEl = root.querySelector('[data-setup-item="logo"]');
+    if (!itemEl) {
+        return;
+    }
+    const content = qs('.ob-setup-item-content', itemEl);
+    if (!content) {
+        return;
+    }
+
+    if (logo.mode === 'image') {
+        const ar = logo.path_ar;
+        const en = logo.path_en;
+        if (!ar && !en) {
+            return;
+        }
+        const imgs = [ar, en]
+            .filter(Boolean)
+            .map(
+                (src) =>
+                    `<img src="${src}" alt="Logo" class="logo-preview-img" style="max-height:48px;max-width:120px;object-fit:contain;">`,
+            )
+            .join('');
+        content.innerHTML = `<div class="ob-logo-saved-preview">${imgs}</div>`;
+    } else if (logo.mode === 'text') {
+        const text = logo.text_en || logo.text_ar;
+        if (!text) {
+            return;
+        }
+        content.innerHTML = `<div class="ob-logo-saved-preview"><span class="ob-logo-saved-text">${text}</span></div>`;
+    }
+}
+
+function applySetupProgress(root, setup, logo) {
     if (!setup) {
         return;
     }
@@ -148,6 +181,10 @@ function applySetupProgress(root, setup) {
             renderSetupItem(itemEl, item);
         }
     });
+
+    if (logo) {
+        renderLogoPreview(root, logo);
+    }
 
     const doneCount = setup.done_count;
     const totalCount = setup.total_count;
@@ -175,7 +212,7 @@ function applySetupProgress(root, setup) {
 
 function initSetup(root) {
     on('tenant:onboarding:setup-updated', ({ response }) => {
-        applySetupProgress(root, response?.data?.setup);
+        applySetupProgress(root, response?.data?.setup, response?.data?.logo);
         emit(EVENTS.SETUP_PROGRESS_REFRESH);
     });
 

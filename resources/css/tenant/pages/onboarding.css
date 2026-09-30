@@ -60,3 +60,16 @@
     animation: ob-setup-item-highlight-pulse 1s ease-in-out 2;
     border-radius: 12px;
 }
+
+.ob-logo-saved-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0 4px;
+}
+
+.ob-logo-saved-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--t1);
+}

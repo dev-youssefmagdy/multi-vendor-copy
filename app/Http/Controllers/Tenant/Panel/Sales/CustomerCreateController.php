@@ -24,9 +24,12 @@ final class CustomerCreateController extends PanelController
 
     public function create(): View
     {
+        $countryRows = Country::with('translations.language')->orderBy('name')
+            ->get(['id', 'name', 'iso2']);
+
         return view('tenant.pages.sales.customers.create', [
-            'countries' => Country::with('translations.language')->orderBy('name')
-                ->get(['id', 'name'])->pluck('name', 'id'),
+            'countries'     => $countryRows->pluck('name', 'id'),
+            'countryIsoMap' => $countryRows->pluck('iso2', 'id'),
         ]);
     }
 

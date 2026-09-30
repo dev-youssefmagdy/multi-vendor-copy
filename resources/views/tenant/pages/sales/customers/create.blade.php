@@ -14,7 +14,7 @@
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="full_name" label="Full Name" required placeholder="Full name" />
                 <x-tenant::input type="email" name="email" label="Email" required placeholder="customer@example.com" />
-                <x-tenant::phone name="phone" label="Phone" />
+                <x-tenant::phone name="phone" label="Phone" country-field="country_id" :country-iso-map="$countryIsoMap" />
                 <x-tenant::select2 name="country_id" label="Country" :options="$countries" placeholder="— select country —" />
                 <x-tenant::select2 name="city_id" label="City" placeholder="— select city —"
                     ajax-url="{{ route('tenant.cities.by-country') }}?format=select2"

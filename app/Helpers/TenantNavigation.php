@@ -129,10 +129,16 @@ class TenantNavigation
     {
         $user = auth('tenant')->user();
 
+        $setupComplete = self::onboardingSetupComplete();
+
         return collect(self::sections())
-            ->map(function (array $section) use ($user) {
+            ->map(function (array $section) use ($user, $setupComplete) {
                 $items = collect($section['items'])
-                    ->map(function (array $item) use ($user) {
+                    ->map(function (array $item) use ($user, $setupComplete) {
+                        if (($item['route'] ?? null) === 'tenant.onboarding' && $setupComplete) {
+                            return null;
+                        }
+
                         if (in_array(($item['type'] ?? 'link'), ['link', 'external'])) {
                             return self::canAccessItem($item, $user) ? $item : null;
                         }
@@ -239,13 +245,12 @@ class TenantNavigation
         return $progress['done'] >= $progress['total'];
     }
 
-    /** Profile step: business name, logo, and a contact phone number set. */
+    /** Profile step: business name and a contact phone number set. */
     public static function profileComplete(): bool
     {
         $tenant = tenant();
 
-        return self::logoIsConfigured()
-            && filled($tenant?->phone)
+        return filled($tenant?->phone)
             && filled($tenant?->shop_name);
     }
 

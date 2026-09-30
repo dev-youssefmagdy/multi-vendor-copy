@@ -199,9 +199,20 @@ class TenantCatalogSyncService
                     ->lockForUpdate()
                     ->update(['central_language_id' => $language->id]);
 
-                Language::query()->updateOrCreate(
-                    ['central_language_id' => $language->id],
-                    [
+                $tenantLang = Language::query()->where('central_language_id', $language->id)->first();
+
+                if ($tenantLang) {
+                    $tenantLang->update([
+                        'code' => $language->code,
+                        'name' => $language->name,
+                        'native_name' => $language->native_name,
+                        'direction' => $language->direction->value,
+                        'is_active' => $language->is_active,
+                        'sort_order' => $language->sort_order,
+                    ]);
+                } else {
+                    Language::query()->create([
+                        'central_language_id' => $language->id,
                         'code' => $language->code,
                         'name' => $language->name,
                         'native_name' => $language->native_name,
@@ -209,8 +220,8 @@ class TenantCatalogSyncService
                         'is_active' => $language->is_active,
                         'is_default' => $language->is_default,
                         'sort_order' => $language->sort_order,
-                    ]
-                );
+                    ]);
+                }
             });
         }
 
@@ -263,17 +274,23 @@ class TenantCatalogSyncService
         $defaultLocale = $this->defaultLocale();
 
         foreach ($settings as $setting) {
-            $tenantSetting = Setting::query()->updateOrCreate(
-                ['name' => $setting->key],
-                [
-                    'value' => is_scalar($setting->value) || $setting->value === null
-                        ? (string) $setting->value
-                        : json_encode($setting->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                    'type' => $this->mapSettingType($setting->type),
-                    'group' => str_starts_with($setting->key, 'mail_') ? 'mail' : 'general',
-                    'options' => null,
-                ]
-            );
+            $centralValue = is_scalar($setting->value) || $setting->value === null
+                ? (string) $setting->value
+                : json_encode($setting->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+            $tenantSetting = Setting::query()->firstOrNew(['name' => $setting->key]);
+
+            $tenantSetting->fill([
+                'type' => $this->mapSettingType($setting->type),
+                'group' => str_starts_with($setting->key, 'mail_') ? 'mail' : 'general',
+                'options' => null,
+            ]);
+
+            if (!$tenantSetting->exists) {
+                $tenantSetting->value = $centralValue;
+            }
+
+            $tenantSetting->save();
 
             $tenantSetting->syncTranslations([
                 $defaultLocale => ['title' => str($setting->key)->replace('_', ' ')->headline()->toString()],

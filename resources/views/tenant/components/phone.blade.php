@@ -9,6 +9,8 @@
     'error' => null,
     'initialCountry' => 'sa',
     'preferred' => [],
+    'countryField' => null,
+    'countryIsoMap' => null,
 ])
 
 @php
@@ -21,7 +23,9 @@
 @endphp
 
 <x-tenant::field :name="$name" :label="$label" :help="$help" :required="$required" :id="$fieldId" :wrapper-class="$wrapperClass">
-    <div data-tenant-phone data-initial-country="{{ $initialCountry }}" data-preferred="{{ implode(',', $preferred) }}">
+    <div data-tenant-phone data-initial-country="{{ $initialCountry }}" data-preferred="{{ implode(',', $preferred) }}"
+        @if($countryField) data-country-field="{{ $countryField }}" @endif
+        @if($countryIsoMap) data-country-iso-map="{{ json_encode($countryIsoMap instanceof \Illuminate\Support\Collection ? $countryIsoMap->toArray() : $countryIsoMap) }}" @endif>
         <input type="tel" class="field-control t-phone-visible" autocomplete="tel">
         <input type="hidden" name="{{ $htmlName }}" id="{{ $fieldId }}" value="{{ $resolved }}" data-phone-e164
             class="{{ $error ? 'is-invalid' : '' }}">
