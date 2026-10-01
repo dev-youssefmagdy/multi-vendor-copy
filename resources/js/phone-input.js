@@ -89,7 +89,9 @@ function syncFullNumber(input, iti) {
         syncing.delete(input);
     }
 
-    syncLivewireProperty(input, input.value);
+    // Always use iti.getNumber() so the E.164 value (with country code) is
+    // sent to Livewire, not the national-only digits ITI displays in the field.
+    syncLivewireProperty(input, full || input.value);
 }
 
 // Fires before Livewire serialises ANY component's state, so wire:model.defer

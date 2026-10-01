@@ -160,14 +160,13 @@
                             @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
-                        {{-- Phone — no wire:model on the display input; synced to a hidden input --}}
-                        <div>
+                        {{-- Phone — wire-event="phone" lets phone-input.js call component.set('phone', e164) directly --}}
+                        <div wire:ignore>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                                 {{ __('Phone') }} <span class="font-normal text-gray-400">({{ __('optional') }})</span>
                             </label>
-                            <input id="register-phone-display" type="tel" data-phone-input placeholder="+1 555 000 0000"
+                            <input id="register-phone-display" type="tel" data-phone-input wire-event="phone" placeholder="+1 555 000 0000"
                                 class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all {{ $errors->has('phone') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20' }}">
-                            <input type="hidden" id="register-phone-hidden" wire:model="phone">
                             @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
 
@@ -658,26 +657,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // ── Phone input → hidden wire:model sync ─────────────────────────────
-    (function syncRegisterPhone() {
-        const displayInput = document.getElementById('register-phone-display');
-        const hiddenInput  = document.getElementById('register-phone-hidden');
-
-        if (!displayInput || !hiddenInput) return;
-
-        function pushToWire() {
-            const val = displayInput.value.trim();
-            if (val && typeof val === 'string' && !val.includes('[object')) {
-                hiddenInput.value = val;
-                hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-        }
-
-        displayInput.addEventListener('input',         pushToWire);
-        displayInput.addEventListener('blur',          pushToWire);
-        displayInput.addEventListener('countrychange', pushToWire);
-        displayInput.addEventListener('change',        pushToWire);
-    })();
 
     // ── Social OAuth popup ────────────────────────────────────────────────────
     let _socialPopup = null;
