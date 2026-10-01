@@ -673,6 +673,7 @@
             }
         }
 
+        displayInput.addEventListener('input',         pushToWire);
         displayInput.addEventListener('blur',          pushToWire);
         displayInput.addEventListener('countrychange', pushToWire);
         displayInput.addEventListener('change',        pushToWire);
