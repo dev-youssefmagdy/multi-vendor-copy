@@ -38,9 +38,10 @@
   <div class="hidden lg:block">
     <div class="flex items-center justify-between px-[32px] py-[12px]" style="background:var(--color-utility-bar-bg)">
       <div class="flex items-center gap-[16px]">
-        <a href="{{ route('tenant.home') }}" class="flex items-center gap-[4px]">
+        @php $topHeaderLinks ??= [['text' => __('Find a Store'), 'url' => route('tenant.home')], ['text' => __('Shop'), 'url' => route('tenant.storefront.best-selling')]]; @endphp
+        <a href="{{ $topHeaderLinks[0]['url'] }}" class="flex items-center gap-[4px]">
           <img src="{{ asset('souqify-1/assets/icons/icon-store-pin.svg') }}" alt="" class="size-[11px]" />
-          <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-utility-text)">{{ __('Find a Store') }}</span>
+          <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-utility-text)">{{ $topHeaderLinks[0]['text'] }}</span>
         </a>
         @auth('storefront')
           <a href="{{ route('tenant.storefront.profile') }}" class="flex items-center gap-[4px]">
@@ -48,9 +49,9 @@
             <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-utility-text)">{{ __('Order Tracking') }}</span>
           </a>
         @endauth
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="flex items-center gap-[4px]">
+        <a href="{{ $topHeaderLinks[1]['url'] }}" class="flex items-center gap-[4px]">
           <img src="{{ asset('souqify-1/assets/icons/icon-shop-bag.svg') }}" alt="" class="size-[11px]" />
-          <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-utility-text)">{{ __('Shop') }}</span>
+          <span class="text-[12px] tracking-[0.5px]" style="color:var(--color-utility-text)">{{ $topHeaderLinks[1]['text'] }}</span>
         </a>
       </div>
       <div class="flex items-center gap-[16px]">

@@ -9,6 +9,7 @@ use App\Http\Requests\Tenant\Panel\Store\SaveColorsRequest;
 use App\Http\Requests\Tenant\Panel\Store\SaveFooterRequest;
 use App\Http\Requests\Tenant\Panel\Store\SaveGeneralAppearanceRequest;
 use App\Http\Requests\Tenant\Panel\Store\SavePromoBannerRequest;
+use App\Http\Requests\Tenant\Panel\Store\SaveTopHeaderLinksRequest;
 use App\Models\Tenant\Setting;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -65,6 +66,12 @@ final class AppearanceController extends PanelController
             'languages' => $languages,
             'footerTranslations' => $this->footerTranslations($languages),
             'activeLocale' => $languages->firstWhere('is_default', true)?->code ?? $languages->first()?->code ?? config('app.fallback_locale', 'en'),
+            'topHeaderLinks' => [
+                'top_header_link_1_text' => (string) ($settings['top_header_link_1_text'] ?? ''),
+                'top_header_link_1_url'  => (string) ($settings['top_header_link_1_url'] ?? ''),
+                'top_header_link_2_text' => (string) ($settings['top_header_link_2_text'] ?? ''),
+                'top_header_link_2_url'  => (string) ($settings['top_header_link_2_url'] ?? ''),
+            ],
         ]);
     }
 
@@ -221,6 +228,20 @@ final class AppearanceController extends PanelController
     }
 
     public function validatePromoBanner(SavePromoBannerRequest $request): JsonResponse
+    {
+        return $this->validFormResponse();
+    }
+
+    // ── Top Header Links ──────────────────────────────────────────────────
+
+    public function saveTopHeaderLinks(SaveTopHeaderLinksRequest $request): JsonResponse
+    {
+        $this->service->saveTopHeaderLinks($request->validated());
+
+        return $this->success('Top header links saved successfully.');
+    }
+
+    public function validateTopHeaderLinks(SaveTopHeaderLinksRequest $request): JsonResponse
     {
         return $this->validFormResponse();
     }

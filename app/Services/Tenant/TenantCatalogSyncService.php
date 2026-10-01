@@ -614,8 +614,8 @@ class TenantCatalogSyncService
 
             $tenantCategory->syncTranslations($this->mergeTranslatedFields(
                 $tenantCategory,
-                $category->translationsByLocale(['name', 'slug', 'description']),
-                ['name', 'slug', 'description'],
+                $category->translationsByLocale(['name', 'slug', 'description', 'meta_keywords', 'meta_description']),
+                ['name', 'slug', 'description', 'meta_keywords', 'meta_description'],
                 ['name', 'slug', 'description', 'meta_keywords', 'meta_description']
             ));
             $map[$category->id] = $tenantCategory->id;
@@ -653,7 +653,7 @@ class TenantCatalogSyncService
             // this sync so its tenant row gets central_visible=false instead of
             // being purged by the cleanup step below, keeping the delete revertible.
             return CentralProduct::withTrashed()
-                ->with(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files'])
+                ->with(['translations.language', 'categories', 'variants.translations.language', 'variants.options.translations.language', 'variants.files', 'files'])
                 ->when(!empty($categoryIds), fn($q) => $q->whereHas('categories', fn($query) =>
                     $query->whereIn('id', $categoryIds)))
                 ->get();
@@ -662,7 +662,7 @@ class TenantCatalogSyncService
         // Products specifically assigned to this tenant
         $assignedProducts = $currentTenantId
             ? tenancy()->central(fn() => CentralProduct::withTrashed()
-                ->with(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files'])
+                ->with(['translations.language', 'categories', 'variants.translations.language', 'variants.options.translations.language', 'variants.files', 'files'])
                 ->whereHas('tenantAssignments', fn($q) => $q->where('tenant_id', $currentTenantId))
                 ->whereNotIn('id', $catalogProducts->pluck('id'))
                 ->get())
@@ -711,12 +711,12 @@ class TenantCatalogSyncService
             $tenantProduct->save();
 
             // A tenant's admin-approved name/description must survive future syncs;
-            // only meta_keywords (never approval-gated) and new locales still sync in.
+            // label, summary, meta_keywords, meta_description are never approval-gated so always sync.
             $tenantProduct->syncTranslations($this->mergeTranslatedFields(
                 $tenantProduct,
-                $tenantProduct->has_custom_translations ? [] : $product->translationsByLocale(['name', 'description']),
-                $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
-                ['name', 'description', 'meta_keywords']
+                $tenantProduct->has_custom_translations ? [] : $product->translationsByLocale(['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']),
+                $tenantProduct->has_custom_translations ? [] : ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
+                ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']
             ));
             $tenantProduct->categories()->sync(
                 $product->categories->pluck('id')->map(fn($id) => $categoryIdMap[$id] ?? null)->filter()->values()->all()
@@ -756,6 +756,11 @@ class TenantCatalogSyncService
                     'active' => $isNewVariant ? ($variant->status->value === 'active') : $tenantVariant->active,
                 ]);
                 $tenantVariant->save();
+
+                $variantTitleTranslations = $variant->translationsByLocale(['title']);
+                if (!empty(array_filter($variantTitleTranslations, fn($f) => !empty($f['title'])))) {
+                    $tenantVariant->syncTranslations($variantTitleTranslations);
+                }
             }
 
             // Mark assignment as synced
@@ -814,7 +819,7 @@ class TenantCatalogSyncService
 
         tenancy()->initialize($tenant);
 
-        $centralProduct->load(['translations.language', 'categories', 'variants.options.translations.language', 'variants.files', 'files', 'countries']);
+        $centralProduct->load(['translations.language', 'categories', 'variants.translations.language', 'variants.options.translations.language', 'variants.files', 'files', 'countries']);
 
         $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $centralProduct->id]);
         $isNewProduct = !$tenantProduct->exists;
@@ -842,9 +847,9 @@ class TenantCatalogSyncService
 
         $tenantProduct->syncTranslations($this->mergeTranslatedFields(
             $tenantProduct,
-            $tenantProduct->has_custom_translations ? [] : $centralProduct->translationsByLocale(['name', 'description']),
-            $tenantProduct->has_custom_translations ? [] : ['name', 'description'],
-            ['name', 'description', 'meta_keywords']
+            $tenantProduct->has_custom_translations ? [] : $centralProduct->translationsByLocale(['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']),
+            $tenantProduct->has_custom_translations ? [] : ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
+            ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']
         ));
         $tenantProduct->categories()->sync(
             Category::query()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->all()
@@ -896,6 +901,11 @@ class TenantCatalogSyncService
                 'active' => $isNewVariant ? ($variant->status->value === 'active') : $tenantVariant->active,
             ]);
             $tenantVariant->save();
+
+            $variantTitleTranslations = $variant->translationsByLocale(['title']);
+            if (!empty(array_filter($variantTitleTranslations, fn($f) => !empty($f['title'])))) {
+                $tenantVariant->syncTranslations($variantTitleTranslations);
+            }
         }
 
         tenancy()->central(fn() => ProductTenantAssignment::query()

@@ -229,8 +229,7 @@
                     </svg>
                 @endfor
             </div>
-            <span class="text-zinc-400 text-xs">{{ number_format($rating, 1) }}
-                (+{{ $ratingCount }})</span>
+            <span class="text-zinc-400 text-xs">({{ $rating > 0 ? number_format($rating, 1) : '0' }})</span>
         </div>
 
         <div class="flex items-center gap-0.5 md:gap-2 flex-wrap">

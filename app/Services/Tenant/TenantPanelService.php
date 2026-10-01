@@ -821,6 +821,16 @@ class TenantPanelService
         }
     }
 
+    public function saveTopHeaderLinks(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'appearance']
+            );
+        }
+    }
+
     public function savePromoBannerSettings(array $data): void
     {
         foreach ($data as $key => $value) {

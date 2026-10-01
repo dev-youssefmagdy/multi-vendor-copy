@@ -32,7 +32,7 @@ class Product extends Model
         });
     }
 
-    protected array $translated = ['name', 'description', 'meta_keywords'];
+    protected array $translated = ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'];
 
     protected $with = ['files'];
 

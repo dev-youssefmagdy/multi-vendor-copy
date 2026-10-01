@@ -28,9 +28,14 @@
 
     {{-- Rating + price --}}
     <div class="flex flex-col gap-[2.51px] lg:gap-[5.39px]">
+      @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
       <div class="flex gap-[5.03px] lg:gap-[10.79px] items-center">
-        <img src="{{ asset('elora-4/assets/icons/star-rating.svg') }}" alt="" class="h-[6.28px] lg:h-[13.48px] w-[43.05px] lg:w-[92.35px]" />
-        <span class="text-[8px] leading-[10px] lg:text-[17.16px] lg:leading-[22px] tracking-[0.31px] lg:tracking-[0.67px] whitespace-nowrap" style="color:var(--color-text-subtitle)">{{ $p['rating'] }}</span>
+        <div class="flex items-center gap-[1px]" style="height:6px">
+          @for ($__i = 1; $__i <= 5; $__i++)
+            <svg style="height:6px;width:6px" class="{{ $__i <= $__fs ? 'text-[#FFB00A]' : 'text-[#d1d5db]' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          @endfor
+        </div>
+        <span class="text-[8px] leading-[10px] lg:text-[17.16px] lg:leading-[22px] tracking-[0.31px] lg:tracking-[0.67px] whitespace-nowrap" style="color:var(--color-text-subtitle)">({{ $__rv }})</span>
       </div>
       <div class="flex gap-[5.03px] lg:gap-[10.79px] items-end">
         <p class="font-medium text-[12px] leading-[15px] lg:text-[25.74px] lg:leading-[32px] whitespace-nowrap text-[#0018E8] lg:text-[#F67501]">{{ $p['price'] }}</p>

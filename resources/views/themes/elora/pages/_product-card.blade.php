@@ -223,12 +223,7 @@
                     </div>
                 @endfor
             </div>
-            <span class="text-[11px] text-[#ADADAD] tracking-[0.5px]">
-                {{ number_format($rating, 1) }}
-                @if ($ratingCount > 0)
-                    (+{{ $ratingCount >= 1000 ? number_format($ratingCount / 1000, 1) . __('k') : $ratingCount }})
-                @endif
-            </span>
+            <span class="text-[11px] text-[#ADADAD] tracking-[0.5px]">({{ $rating > 0 ? number_format($rating, 1) : '0' }})</span>
         </div>
 
         {{-- Price: current on top, original (strikethrough) + % Off below --}}

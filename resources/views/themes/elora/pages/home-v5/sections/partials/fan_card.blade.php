@@ -71,9 +71,14 @@
       <p class="fan-desc font-normal text-[15.62px] leading-[20px] lg:text-[19.42px] lg:leading-[24px] tracking-[0.49px] lg:tracking-[0.61px] w-full truncate" style="color:var(--color-subtitle)">{{ !empty($p['description']) ? $p['description'] : __('Premium cotton blend') }}</p>
     </div>
     <div class="fan-rating-price flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start">
+      @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
       <div class="fan-stars-row flex gap-[7.86px] lg:gap-[9.77px] items-center justify-center">
-        <img src="{{ asset('elora-5/assets/icons/star-rating.svg') }}" alt="" class="fan-star-icon h-[9.82px] w-[67.26px] lg:h-[12.2px] lg:w-[83.62px]" />
-        <span class="fan-rating-text text-[12.5px] leading-[16px] lg:text-[15.54px] lg:leading-[20px] tracking-[0.49px] lg:tracking-[0.61px] whitespace-nowrap" style="color:var(--color-subtitle)">{{ $p['rating'] }}</span>
+        <div class="flex items-center gap-[1px]" style="height:10px">
+          @for ($__i = 1; $__i <= 5; $__i++)
+            <svg style="height:10px;width:10px" class="{{ $__i <= $__fs ? 'text-[#FFB00A]' : 'text-[#d1d5db]' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          @endfor
+        </div>
+        <span class="fan-rating-text text-[12.5px] leading-[16px] lg:text-[15.54px] lg:leading-[20px] tracking-[0.49px] lg:tracking-[0.61px] whitespace-nowrap" style="color:var(--color-subtitle)">({{ $__rv }})</span>
       </div>
       <div class="fan-price-row flex gap-[7.86px] lg:gap-[9.77px] items-end flex-wrap">
         <p class="fan-price font-medium text-[18.75px] leading-[24px] lg:text-[23.31px] lg:leading-[29px]" style="color:{{ $priceColor }}">{{ $p['price'] }}</p>
@@ -98,7 +103,6 @@
           <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
           <p class="fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] ?: ($p['delivery'] ?? __('Delivered by 24 March')) }}</p>
         </div>
-      @endif
     </div>
   </div>
 </a>

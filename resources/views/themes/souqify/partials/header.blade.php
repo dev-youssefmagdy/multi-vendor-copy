@@ -10,7 +10,8 @@
 <div class="hidden lg:block bg-stone-950 text-gray-300 text-xs">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
         <div class="hidden md:flex items-center gap-5">
-            <a href="{{ route('tenant.home') }}" class="flex items-center gap-1.5 hover:text-white transition">
+            @php $topHeaderLinks ??= [['text' => __('Find a Store'), 'url' => route('tenant.home')], ['text' => __('Shop'), 'url' => route('tenant.storefront.best-selling')]]; @endphp
+            <a href="{{ $topHeaderLinks[0]['url'] }}" class="flex items-center gap-1.5 hover:text-white transition">
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_181_12092)">
                         <path
@@ -27,7 +28,7 @@
                     </defs>
                 </svg>
 
-                <span>{{ __('Find a Store') }}</span>
+                <span>{{ $topHeaderLinks[0]['text'] }}</span>
             </a>
             @auth('storefront')
                 <a href="{{ route('tenant.storefront.profile') }}"
@@ -55,7 +56,7 @@
                     <span>{{ __('Order Tracking') }}</span>
                 </a>
             @endauth
-            <a href="{{ route('tenant.storefront.best-selling') }}"
+            <a href="{{ $topHeaderLinks[1]['url'] }}"
                 class="flex items-center gap-1.5 hover:text-white transition">
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_181_12104)">
@@ -75,7 +76,7 @@
                     </defs>
                 </svg>
 
-                <span>{{ __('Shop') }}</span>
+                <span>{{ $topHeaderLinks[1]['text'] }}</span>
             </a>
         </div>
         <div class="flex items-center gap-4 {{ app()->getLocale() == 'ar' ? 'mr-auto' : 'ml-auto' }}">

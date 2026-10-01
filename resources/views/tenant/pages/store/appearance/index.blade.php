@@ -15,6 +15,7 @@
         'general' => 'General',
         'colors' => 'Colors',
         'social_links' => 'Social Links',
+        'top_header_links' => 'Top Header Links',
         'promo_banner' => 'Promo Banner',
         'footer' => 'Footer',
     ]">
@@ -181,6 +182,32 @@
                     </div>
                 </x-tenant::form>
             </x-tenant::modal>
+        </x-tenant::tab-panel>
+
+        {{-- ─────────────────────────── TOP HEADER LINKS ─────────────────────────── --}}
+        <x-tenant::tab-panel key="top_header_links" :active="$activeTab === 'top_header_links'">
+            <x-tenant::form id="appearance-top-header-links-form"
+                :action="route('tenant.store.appearance.top-header-links')"
+                method="PUT"
+                :validate="route('tenant.store.appearance.top-header-links.validate')"
+                success="none">
+                <section class="card form-card">
+                    <div class="panel-head mb-5">
+                        <div>
+                            <h3 class="panel-title">Top Header Links</h3>
+                            <p class="panel-copy">Customize the two links shown in the top utility bar of the storefront. Leave a URL blank to use the default.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Links</button>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <x-tenant::input name="top_header_link_1_text" label="Link 1 – Text" placeholder="Find a Store" maxlength="80" :value="$topHeaderLinks['top_header_link_1_text']" />
+                        <x-tenant::input type="url" name="top_header_link_1_url" label="Link 1 – URL" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_1_url']" />
+                        <x-tenant::input name="top_header_link_2_text" label="Link 2 – Text" placeholder="Shop" maxlength="80" :value="$topHeaderLinks['top_header_link_2_text']" />
+                        <x-tenant::input type="url" name="top_header_link_2_url" label="Link 2 – URL" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_2_url']" />
+                    </div>
+                </section>
+            </x-tenant::form>
         </x-tenant::tab-panel>
 
         {{-- ────────────────────────────── PROMO BANNER ────────────────────────────── --}}

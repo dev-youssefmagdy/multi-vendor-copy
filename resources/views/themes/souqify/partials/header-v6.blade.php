@@ -32,11 +32,12 @@
   <div class="hidden lg:flex flex-col bg-white">
     <div class="flex items-center justify-between px-[32px] py-[12px]" style="background:var(--color-topbar)">
       <div class="flex items-center gap-[16px]">
-        <span class="flex items-center gap-[4px] text-[12px] tracking-[0.5px]" style="color:var(--color-topbar-text)">{{ __('Find a Store') }}</span>
+        @php $topHeaderLinks ??= [['text' => __('Find a Store'), 'url' => route('tenant.home')], ['text' => __('Shop'), 'url' => route('tenant.storefront.best-selling')]]; @endphp
+        <a href="{{ $topHeaderLinks[0]['url'] }}" class="flex items-center gap-[4px] text-[12px] tracking-[0.5px]" style="color:var(--color-topbar-text)">{{ $topHeaderLinks[0]['text'] }}</a>
         @auth('storefront')
           <a href="{{ route('tenant.storefront.profile') }}" class="flex items-center gap-[4px] text-[12px] tracking-[0.5px]" style="color:var(--color-topbar-text)">{{ __('Order Tracking') }}</a>
         @endauth
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="flex items-center gap-[4px] text-[12px] tracking-[0.5px]" style="color:var(--color-topbar-text)">{{ __('Shop') }}</a>
+        <a href="{{ $topHeaderLinks[1]['url'] }}" class="flex items-center gap-[4px] text-[12px] tracking-[0.5px]" style="color:var(--color-topbar-text)">{{ $topHeaderLinks[1]['text'] }}</a>
       </div>
       <div class="flex items-center gap-[16px]">
         @if($hasFreeShipping ?? false)

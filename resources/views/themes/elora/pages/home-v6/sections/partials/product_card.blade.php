@@ -44,9 +44,14 @@
       <p class="font-normal text-[13.4481px] lg:text-[23.0714px] leading-[17px] lg:leading-[29px] tracking-[0.422654px] lg:tracking-[0.725102px] w-full truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium cotton blend') }}</p>
     </div>
     <div class="flex flex-col gap-[3.38px] lg:gap-[5.8px] items-start">
+      @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
       <div class="flex gap-[6.76px] lg:gap-[11.6px] items-center justify-center">
-        <img src="{{ asset('elora-2/assets/icons/star-rating.svg') }}" alt="" class="h-[8.45px] w-[57.9px] lg:h-[14.5px] lg:w-[99.33px]" />
-        <p class="font-normal text-[10.7585px] lg:text-[18.4571px] leading-[14px] lg:leading-[23px] tracking-[0.422654px] lg:tracking-[0.725102px] whitespace-nowrap" style="color:var(--color-text-subtitle)">{{ $p['rating'] }}</p>
+        <div class="flex items-center gap-[1px]" style="height:8px">
+          @for ($__i = 1; $__i <= 5; $__i++)
+            <svg style="height:8px;width:8px" class="{{ $__i <= $__fs ? 'text-[#FFB00A]' : 'text-[#d1d5db]' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          @endfor
+        </div>
+        <p class="font-normal text-[10.7585px] lg:text-[18.4571px] leading-[14px] lg:leading-[23px] tracking-[0.422654px] lg:tracking-[0.725102px] whitespace-nowrap" style="color:var(--color-text-subtitle)">({{ $__rv }})</p>
       </div>
       <div class="flex gap-[6.76px] lg:gap-[11.6px] items-end">
         <p class="font-medium text-[16.1377px] lg:text-[27.6857px] leading-[20px] lg:leading-[35px] whitespace-nowrap" style="color:{{ $p['priceColor'] ?? 'var(--color-text-primary)' }}">{{ $p['price'] }}</p>

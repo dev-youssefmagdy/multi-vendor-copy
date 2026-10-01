@@ -533,6 +533,9 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
             Route::put('/appearance/promo-banner', [AppearanceController::class, 'savePromoBanner'])->name('appearance.promo-banner');
             Route::post('/appearance/promo-banner/validate', [AppearanceController::class, 'validatePromoBanner'])->name('appearance.promo-banner.validate');
 
+            Route::put('/appearance/top-header-links', [AppearanceController::class, 'saveTopHeaderLinks'])->name('appearance.top-header-links');
+            Route::post('/appearance/top-header-links/validate', [AppearanceController::class, 'validateTopHeaderLinks'])->name('appearance.top-header-links.validate');
+
             Route::put('/appearance/footer', [AppearanceController::class, 'saveFooter'])->name('appearance.footer');
             Route::post('/appearance/footer/validate', [AppearanceController::class, 'validateFooter'])->name('appearance.footer.validate');
         });

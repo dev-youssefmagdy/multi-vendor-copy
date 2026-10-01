@@ -436,6 +436,10 @@ class StorefrontRepository
                 'logo_font_en',
                 'logo_path_ar',
                 'logo_path_en',
+                'top_header_link_1_text',
+                'top_header_link_1_url',
+                'top_header_link_2_text',
+                'top_header_link_2_url',
             ])
             ->with('translations.language')
             ->get()
@@ -511,6 +515,29 @@ class StorefrontRepository
 
         return (string) ($setting?->translationValue('value') ?? $setting?->value)
             ?: __(':year All rights reserved.', ['year' => date('Y')]);
+    }
+
+    /**
+     * Returns the two configurable top-header links.
+     * Falls back to sane defaults when the settings have not been saved yet.
+     *
+     * @return array<int, array{text: string, url: string}>
+     */
+    public function topHeaderLinks(): array
+    {
+        $settings = $this->appearanceSettings();
+        $val = fn(string $key) => (string) (($settings[$key] ?? null)?->value ?? '');
+
+        return [
+            [
+                'text' => $val('top_header_link_1_text') ?: __('Find a Store'),
+                'url'  => $val('top_header_link_1_url') ?: route('tenant.home'),
+            ],
+            [
+                'text' => $val('top_header_link_2_text') ?: __('Shop'),
+                'url'  => $val('top_header_link_2_url') ?: route('tenant.storefront.best-selling'),
+            ],
+        ];
     }
 
     public function socialLinks(): Collection

@@ -114,9 +114,7 @@ $badge optional ribbon arrow label (top-left of image)
             @for ($i = 1; $i <= 5; $i++)
                 <div class="star {{ $i <= $fullStars ? 'filled' : 'empty' }}"></div>
             @endfor
-            @if ($rating > 0)
-                <span class="text-xs text-gray3 ml-1">{{ number_format($rating, 1) }}</span>
-            @endif
+            <span class="text-xs text-gray3 ml-1">({{ $rating > 0 ? number_format($rating, 1) : '0' }})</span>
         </div>
 
         <div class="flex items-end gap-1.5 mb-1">

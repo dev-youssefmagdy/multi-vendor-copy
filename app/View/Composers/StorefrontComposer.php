@@ -61,6 +61,7 @@ class StorefrontComposer
                 'currentLanguage' => $currentLanguage,
                 'currentCurrency' => $currentCurrency,
                 'hasFreeShipping' => $this->hasFreeShippingForCurrentCountry(),
+                'topHeaderLinks' => $this->repo->topHeaderLinks(),
             ]);
         }
 
