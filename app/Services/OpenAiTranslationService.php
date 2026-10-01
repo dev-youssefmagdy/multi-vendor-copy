@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
@@ -113,6 +114,10 @@ class OpenAiTranslationService
             ->withToken((string) config('services.openai.api_key'))
             ->acceptJson()
             ->timeout((int) config('services.openai.timeout', 120))
+            ->retry(3, 2000, function (\Throwable $e) {
+                return $e instanceof RequestException
+                    && in_array($e->response?->status(), [429, 500, 502, 503, 520, 521, 522, 524], true);
+            }, throw: false)
             ->post('/chat/completions', [
                 'model' => (string) config('services.openai.translation_model', 'gpt-4.1-mini'),
                 'temperature' => 0.1,

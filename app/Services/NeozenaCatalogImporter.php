@@ -761,10 +761,12 @@ class NeozenaCatalogImporter
 
                 $image = $manager->read($sourceBinary)->scaleDown(width: $maxDimension, height: $maxDimension);
                 $encoded = $image->toJpeg(82);
+                unset($image);
                 $suffix = Str::contains($key, '_') ? Str::after($key, '_') : $key;
                 $path = sprintf('%s/%s-%s.jpg', $directory, $basename, $suffix);
 
                 $storage->put($path, (string) $encoded);
+                unset($encoded);
 
                 $model->files()->create([
                     'external_id' => $originalFile->external_id,
@@ -777,6 +779,8 @@ class NeozenaCatalogImporter
                     'size' => $storage->size($path),
                 ]);
             }
+
+            unset($sourceBinary);
         } catch (\Throwable $e) {
             Log::warning('Neozena image derivative generation failed', [
                 'file_id' => $originalFile->id,
@@ -796,22 +800,23 @@ class NeozenaCatalogImporter
             $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION) ?: 'bin');
             $contents = $response->body();
             $mime = $response->header('Content-Type') ?: null;
+            $size = strlen($contents);
             $directory = sprintf('%s/%s', Str::plural(class_basename($model)), $model->getKey());
             $filename = sprintf('%s.%s', Str::uuid(), $extension);
             $path = sprintf('%s/%s', strtolower($directory), $filename);
 
-
-            Storage::disk(FileStorageType::Public ->value)->put($path, $contents);
+            Storage::disk(FileStorageType::Public->value)->put($path, $contents);
+            unset($contents);
 
             return $model->files()->create([
                 'external_id' => $externalId,
                 'key' => $key,
                 'path' => $path,
-                'storage_type' => FileStorageType::Public ->value,
+                'storage_type' => FileStorageType::Public->value,
                 'file_type' => ($fileType ?? FileType::Image)->value,
                 'mime_type' => $mime,
                 'extension' => $extension,
-                'size' => strlen($contents),
+                'size' => $size,
             ]);
         } catch (\Throwable $e) {
             Log::warning('Neozena file download failed', [

@@ -6,6 +6,7 @@ use App\Models\Tenant as TenantModel;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Product;
 use App\Services\Tenant\StoreTranslatorService;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -18,6 +19,9 @@ use Throwable;
  */
 class TranslateProductsJob extends TranslatesStoreSection
 {
+    // Products is the heaviest section; give it double the base timeout.
+    public int $timeout = 3600;
+
     public function section(): string
     {
         return 'products';
@@ -147,6 +151,15 @@ class TranslateProductsJob extends TranslatesStoreSection
             throw $e;
         } finally {
             tenancy()->end();
+        }
+    }
+
+    public function failed(Throwable $e): void
+    {
+        // If the job was already recorded in failed_jobs (e.g. timed out twice
+        // due to a worker/process-level timeout race), ignore the duplicate.
+        if ($e instanceof UniqueConstraintViolationException) {
+            return;
         }
     }
 }

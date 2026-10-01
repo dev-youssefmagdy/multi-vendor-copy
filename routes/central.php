@@ -515,3 +515,13 @@ Route::get('prod', [DevToolsController::class, 'importNeozenaProducts']);
 
 //     return response()->json($productArr);
 // });
+
+// Route::get('test', function () {
+//     for ($i = 1; $i <= 10; $i++) {
+//         //php artisan neozena:import --page=10 --only-page
+//         \Artisan::call('neozena:import', [
+//             '--page' => $i,
+//             '--only-page' => true,
+//         ]);
+//     }
+// });
