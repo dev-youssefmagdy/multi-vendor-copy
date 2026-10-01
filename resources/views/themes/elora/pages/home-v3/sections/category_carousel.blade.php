@@ -21,7 +21,7 @@
       <div
         class="categories-row no-scrollbar flex items-center gap-[10px] lg:gap-[14px]"
       >
-        @foreach ($categories->take(4) as $cat)
+        @foreach ($categories as $cat)
           @php
             $catName = $cat->translationValue('name') ?? $cat->name;
             $catNameDisplay = \Illuminate\Support\Str::limit($catName, 15);
