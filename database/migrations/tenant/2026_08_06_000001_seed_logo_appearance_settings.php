@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class extends Migration {
     public function up(): void
     {
-        $storeName = (string) (Setting::query()->where('name', 'store_name')->value('value') ?: '');
+        $storeName = (string) (Setting::query()->where('name', 'store_name')->value('value') ?: tenant()?->name ?: '');
         $storeNameByLocale = [];
 
         $storeNameSetting = Setting::query()->with('translations.language')->where('name', 'store_name')->first();

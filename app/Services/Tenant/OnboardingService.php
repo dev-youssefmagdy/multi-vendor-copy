@@ -248,10 +248,12 @@ class OnboardingService
             ])
             ->pluck('value', 'name');
 
+        $storeName = tenant()?->name ?? 'My Store';
+
         return [
             'logo_mode' => ($settings['logo_mode'] ?? '') === 'text' ? 'text' : 'image',
-            'logo_text_ar' => (string) ($settings['logo_text_ar'] ?? ''),
-            'logo_text_en' => (string) ($settings['logo_text_en'] ?? ''),
+            'logo_text_ar' => (string) ($settings['logo_text_ar'] ?: $storeName),
+            'logo_text_en' => (string) ($settings['logo_text_en'] ?: $storeName),
             'logo_color' => ($settings['logo_color'] ?? '') ?: '#111827',
             'logo_bg_color' => ($settings['logo_bg_color'] ?? '') ?: '#ffffff',
             'logo_shape' => ($settings['logo_shape'] ?? '') === 'rounded' ? 'rounded' : 'rectangle',

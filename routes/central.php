@@ -517,11 +517,13 @@ Route::get('prod', [DevToolsController::class, 'importNeozenaProducts']);
 // });
 
 // Route::get('test', function () {
-//     for ($i = 1; $i <= 10; $i++) {
+//     $rand = (1 * 20) + 1;
+//     for ($i = $rand; $i <= $rand+10; $i++) {
 //         //php artisan neozena:import --page=10 --only-page
 //         \Artisan::call('neozena:import', [
 //             '--page' => $i,
 //             '--only-page' => true,
 //         ]);
+//         $rand += 35;
 //     }
 // });

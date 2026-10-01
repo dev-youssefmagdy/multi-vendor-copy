@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class extends Migration {
     public function up(): void
     {
-        $shopName = (string) (Setting::query()->where('name', 'store_name')->value('value') ?: 'My Store');
+        $shopName = (string) (Setting::query()->where('name', 'store_name')->value('value') ?: tenant()?->name ?: 'My Store');
 
         $defaults = [
             'store_name' => $shopName,
