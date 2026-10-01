@@ -11,13 +11,16 @@
         $__url = route('tenant.storefront.product', $product->slug);
         $__sellPrice = round((float) $pricing['current_price'] * $rate, 2);
         $__oldPrice = $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null;
+        $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+        $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+        $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
 
         return [
             'id' => $product->id,
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,
-            'sold' => __('70% Sold'),
+            'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
             'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'subtitle' => $product->centralProduct?->category?->translationValue('name') ?? '',

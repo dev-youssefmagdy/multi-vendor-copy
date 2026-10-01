@@ -8,7 +8,7 @@
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
         </div>
         <div class="flex h-[15px] lg:h-[28px] items-center justify-center p-[3px] lg:p-[6px] relative rounded-bl-[4px] lg:rounded-bl-[8px] rounded-tr-[4px] lg:rounded-tr-[8px] shrink-0 lg:w-[71px]" style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}">
-          <p class="font-normal text-[8px] lg:text-[14px] lg:leading-[18px] tracking-[0.3px] lg:tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badgeText'] ?? ($p['sold'] ?? __('70% Sold')) }}</p>
+          <p class="font-normal text-[8px] lg:text-[14px] lg:leading-[18px] tracking-[0.3px] lg:tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badgeText'] ?? ($p['sold'] ?? '') }}</p>
         </div>
       </div>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"

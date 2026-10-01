@@ -12,7 +12,7 @@
     <span
       class="absolute flex items-center justify-center top-0 end-0 h-[15.43px] lg:h-auto px-[3.31px] lg:px-[6px] lg:py-[4px] text-[7.71px] lg:text-[12px] font-normal max-lg:leading-[10px] max-lg:tracking-[0.2755px] rounded-tr-none rounded-bl-[4.41px] lg:rounded-tr-[8px] lg:rounded-bl-[8px]"
       style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
-      >{{ $p['badge'] ?? __('70% Sold') }}</span
+      >{{ $p['badge'] ??? '' }}</span
     >
     <button
       type="button"

@@ -10,7 +10,9 @@
         class="absolute top-[8px] start-[8px] flex items-center justify-center size-[37px] bg-white rounded-full shadow-[0_5px_5px_rgba(0,0,0,0.15)]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[23px]" alt="" />
       </button>
-      <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-es-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
+      @if (!empty($p['sold']))
+      <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-es-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
+      @endif
       <div aria-hidden="true" class="absolute bottom-[8px] end-[8px] flex items-center justify-center w-[66px] h-[52px] bg-[#FDFDFD] rounded-[19px] shadow-sm">
         <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="size-[28px]" alt="" />
       </div>

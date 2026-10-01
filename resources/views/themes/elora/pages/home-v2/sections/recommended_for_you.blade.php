@@ -27,6 +27,9 @@
               ])->values()->all()
               : null;
           $productName = $product->translationValue('name') ?? $product->slug;
+          $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+          $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+          $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
 
           return [
               'id' => $product->id,
@@ -41,6 +44,7 @@
               'price' => $symbol . number_format($sellPrice * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+              'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
               'delivered' => $hasDiscount ? null : __('Delivered by :date', ['date' => $deliveryDate]),
               'stockLeft' => $showLowStock ? __('Only :count left', ['count' => $stockQty]) : null,
               'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
@@ -89,7 +93,7 @@
                 $p['badgeBg'] = 'var(--color-error)';
                 $p['badgeText'] = 'var(--color-white)';
             } else {
-                $p['badgeLabel'] = __('70% Sold');
+                $p['badgeLabel'] = $p['sold'] ?? __('Sold');
                 $p['badgeBg'] = 'var(--color-accent-yellow)';
                 $p['badgeText'] = 'var(--color-black)';
             }

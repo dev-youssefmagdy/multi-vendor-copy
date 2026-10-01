@@ -9,7 +9,7 @@
             <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div class="flex h-[22.44px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">
-            <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ __('70% Sold') }}</p>
+            <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</p>
           </div>
         </div>
         <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"

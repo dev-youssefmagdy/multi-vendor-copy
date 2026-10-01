@@ -21,9 +21,8 @@
             'rawPrice' => round((float) $pricing['current_price'] * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : null,
-            // Design-only fields with no backing data yet.
             'weight' => null,
-            'sold' => '70% ' . __('Sold'),
+            'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
             'badge' => '🔥 ' . __('Trending Now'),
             'delivery' => __('Delivered by 24 March'),
             'stock' => __('Only 5 left'),

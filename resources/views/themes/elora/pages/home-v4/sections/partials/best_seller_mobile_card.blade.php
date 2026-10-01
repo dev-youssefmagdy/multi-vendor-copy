@@ -16,7 +16,7 @@
       class="absolute top-0 end-0 flex items-center justify-center px-[4.08px] h-[19.05px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
       style="background: var(--color-accent-yellow)"
     >
-      <p class="font-normal text-[9.52px] leading-[12px] tracking-[0.34px] whitespace-nowrap" style="color: var(--color-black)">{{ __('70% Sold') }}</p>
+      <p class="font-normal text-[9.52px] leading-[12px] tracking-[0.34px] whitespace-nowrap" style="color: var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</p>
     </span>
 
     <button

@@ -10,7 +10,9 @@
         class="absolute top-[4px] start-[4px] bg-white cursor-pointer shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[4px] lg:p-[6px] rounded-full size-[18px] lg:size-[29px]">
         <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" alt="" class="size-[10px] lg:size-[18px]" />
       </button>
-      <span class="absolute top-0 end-0 text-[8px] lg:text-[11px] font-normal tracking-[0.3px] lg:tracking-[0.4px] px-[4px] py-[2px] lg:px-[5px] lg:py-[3px] rounded-es-[5px] lg:rounded-es-[6px] whitespace-nowrap" style="background:#FFD428; color:#242424">{{ $p['sold'] ?? 70 }}% {{ __('Sold') }}</span>
+      @if (!empty($p['sold']))
+      <span class="absolute top-0 end-0 text-[8px] lg:text-[11px] font-normal tracking-[0.3px] lg:tracking-[0.4px] px-[4px] py-[2px] lg:px-[5px] lg:py-[3px] rounded-es-[5px] lg:rounded-es-[6px] whitespace-nowrap" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
+      @endif
       <div aria-hidden="true" class="absolute bottom-[4px] end-[4px] flex items-center justify-center w-[29px] h-[23px] lg:w-[51px] lg:h-[41px] bg-[#FDFDFD] rounded-[8px] lg:rounded-[14px] shadow-sm">
         <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="" class="size-[12px] lg:size-[22px]" />
       </div>

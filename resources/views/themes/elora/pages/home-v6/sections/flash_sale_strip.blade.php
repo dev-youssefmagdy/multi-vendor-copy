@@ -17,11 +17,14 @@
           $weightGrams = $variantWeight > 0
               ? $variantWeight
               : (int) ($product->centralProduct->weight_grams ?? $product->weight_grams ?? 0);
+          $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+          $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+          $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('70% Sold'),
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : ($__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : __('Sold')),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
               'badgeColor' => $hasDiscount ? '#fff' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),

@@ -9,7 +9,7 @@
       <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
     </div>
     <div class="absolute top-0 start-0 flex items-center justify-center px-[10px] py-[5px] rounded-bl-[8px] rounded-tr-[6px] lg:rounded-tr-[8px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
-      <p class="font-normal text-[11px] lg:text-[14px] tracking-[0.3px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : __('70% Sold')) }}</p>
+      <p class="font-normal text-[11px] lg:text-[14px] tracking-[0.3px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : ($p['sold'] ?? __('Sold'))) }}</p>
     </div>
     @if (!empty($p['favData']))
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"

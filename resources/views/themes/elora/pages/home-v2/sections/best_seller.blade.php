@@ -27,12 +27,15 @@
               ])->values()->all()
               : null;
           $productName = $product->translationValue('name') ?? $product->slug;
+          $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+          $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+          $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
 
           return [
               'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('OFF') : __('70% Sold'),
+              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('OFF') : ($__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : __('Sold')),
               'badgeBg' => $hasDiscount ? 'var(--color-secondary)' : 'var(--color-accent-yellow)',
               'badgeText' => $hasDiscount ? 'var(--color-white)' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($productName, 30),

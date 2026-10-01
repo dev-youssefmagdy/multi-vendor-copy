@@ -36,7 +36,7 @@
                 $p['badgeBg'] = 'var(--color-error)';
                 $p['badgeColor'] = '#FFFFFF';
             } else {
-                $p['badgeText'] = $p['sold'] ?? __('70% Sold');
+                $p['badgeText'] = $p['sold'] ?? __('Sold');
                 $p['badgeBg'] = 'var(--color-accent-yellow)';
                 $p['badgeColor'] = 'var(--color-black)';
             }

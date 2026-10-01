@@ -43,7 +43,7 @@
       </button>
     @endif
     <div class="fan-badge absolute top-0 end-0 flex items-center justify-center px-[5.17px] py-[5.17px] lg:px-[6.42px] lg:py-[6.42px] rounded-tl-[6.89px] rounded-br-[6.89px] lg:rounded-tl-[8.56px] lg:rounded-br-[8.56px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
-      <p class="fan-badge-text font-normal text-[12.05px] leading-[15px] lg:text-[14.98px] lg:leading-[19px] tracking-[0.43px] lg:tracking-[0.54px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : __('70% Sold')) }}</p>
+      <p class="fan-badge-text font-normal text-[12.05px] leading-[15px] lg:text-[14.98px] lg:leading-[19px] tracking-[0.43px] lg:tracking-[0.54px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : ($p['sold'] ?? __('Sold'))) }}</p>
     </div>
     @if (!empty($p['isOutOfStock']))
       <div class="fan-cart-btn absolute bottom-[4.91px] end-[5.89px] lg:bottom-[7.32px] lg:end-[7.32px] flex items-center justify-center px-[11.78px] py-[3.93px] lg:px-[14.65px] lg:py-[4.88px] rounded-[15.71px] lg:rounded-[19.53px] shrink-0 w-[55.98px] h-[44.19px] lg:w-[69.59px] lg:h-[54.94px] bg-white shadow opacity-50 cursor-not-allowed">

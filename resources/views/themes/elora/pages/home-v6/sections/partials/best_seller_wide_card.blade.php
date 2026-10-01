@@ -12,7 +12,7 @@
             <span
           class="flex items-center h-[15px] px-[3px] lg:h-[26px] lg:px-[6px] text-[8px] lg:text-[13px] font-normal tracking-[0.28px] lg:tracking-normal rounded-br-[4px] lg:rounded-br-[8px]"
           style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
-          >{{ $p['badge'] ?? __('70% Sold') }}</span
+          >{{ $p['badge'] ??? '' }}</span
         >
       </div>
       <button type="button" aria-label="{{ __('Add to cart') }}" class="flex items-center justify-center w-[36px] h-[28px] lg:w-auto lg:h-[48px] lg:px-[12px] rounded-[10px] lg:rounded-[17px]" style="background: var(--color-bg-main)">

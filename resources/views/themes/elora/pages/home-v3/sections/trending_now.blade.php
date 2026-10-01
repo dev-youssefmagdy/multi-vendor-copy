@@ -25,6 +25,10 @@
               'added' => time(),
           ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
+          $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+          $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+          $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
+
           return [
               'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
@@ -36,6 +40,7 @@
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'sold' => $__soldPct > 0 ? $__soldPct : null,
               'favData' => $favData,
           ];
       });

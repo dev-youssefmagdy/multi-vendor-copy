@@ -358,6 +358,11 @@ class Product extends Model
         $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
         $realPrice = $pricing['original_price'];
 
+        $soldCount = (int) ($this->centralProduct?->sold_count ?? 0);
+        $stockLeft = (int) ($this->stock ?? 0);
+        $soldTotal = $soldCount + $stockLeft;
+        $soldPct = $soldTotal > 0 ? (int) round($soldCount / $soldTotal * 100) : 0;
+
         $weightGrams = $this->centralProduct?->weight_grams ?? $this->weight_grams ?? null;
         $weightLabel = $weightGrams
             ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
@@ -390,6 +395,7 @@ class Product extends Model
             'oldPrice' => $hasDiscount && $realPrice !== null ? $symbol . number_format($realPrice * $rate, 2) : null,
             'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? ' (+' . $ratingCount . ')' : ''),
+            'sold' => $soldPct > 0 ? $soldPct . '% ' . __('Sold') : null,
         ];
     }
 

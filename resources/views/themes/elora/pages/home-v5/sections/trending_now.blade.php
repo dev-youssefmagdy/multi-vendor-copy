@@ -24,6 +24,9 @@
               : null;
           $isOutOfStock = $product->stockStatus() === 'out_of_stock';
           $sellPrice = (float) $pricing['current_price'];
+          $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
+          $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
+          $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
           $displayReal = $hasDiscount && $pricing['original_price'] !== null ? number_format((float) $pricing['original_price'] * $rate, 2) : null;
           $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
           $favData = json_encode([
@@ -52,6 +55,7 @@
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
+              'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
               'stock' => '',
               'delivery' => __('Delivered by') . ' ' . $deliveryDate,
               'favData' => $favData,

@@ -18,7 +18,7 @@
       </button>
     @endif
     <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[5.41px] rounded-tl-[6px] rounded-br-[6px] shrink-0" style="background:var(--color-yellow)">
-      <p class="font-normal text-[10px] lg:text-[12.62px] lg:leading-[16px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : __('70% Sold') }}</p>
+      <p class="font-normal text-[10px] lg:text-[12.62px] lg:leading-[16px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : ($p['sold'] ?? __('Sold')) }}</p>
     </div>
     @if (!empty($p['isOutOfStock']))
       <div class="absolute bottom-[6px] end-[6px] lg:bottom-[6.17px] lg:end-[6.17px] flex items-center justify-center p-[7px] lg:px-[12.34px] lg:py-[4.11px] rounded-full lg:rounded-[16.46px] shrink-0 size-[32px] lg:w-[58.64px] lg:h-[46.29px] bg-white shadow opacity-50 cursor-not-allowed">
