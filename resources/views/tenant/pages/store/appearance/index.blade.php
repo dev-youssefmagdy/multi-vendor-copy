@@ -189,6 +189,7 @@
                 :action="route('tenant.store.appearance.promo-banner')"
                 method="PUT"
                 :validate="route('tenant.store.appearance.promo-banner.validate')"
+                :files="true"
                 success="none">
                 <section class="card form-card">
                     <div class="panel-head mb-5">
@@ -205,8 +206,23 @@
                         <div class="span-2">
                             <x-tenant::input name="promo_banner_subtitle" label="Subtitle" placeholder="Up to 50% off selected items" maxlength="255" :value="$promoBanner['promo_banner_subtitle']" />
                         </div>
-                        <x-tenant::input type="url" name="promo_banner_link" label="Link URL" placeholder="https://" maxlength="500" :value="$promoBanner['promo_banner_link']" />
-                        <x-tenant::input type="url" name="promo_banner_image_url" label="Image URL" placeholder="https://" maxlength="1000" :value="$promoBanner['promo_banner_image_url']" />
+                        <div class="span-2">
+                            <x-tenant::input type="url" name="promo_banner_link" label="Link URL" placeholder="https://" maxlength="500" :value="$promoBanner['promo_banner_link']" />
+                        </div>
+                        <x-tenant::image-upload
+                            name="promo_banner_image"
+                            label="Banner Image (Desktop)"
+                            :current="$promoBanner['promo_banner_image_url'] ?: null"
+                            :removable="true"
+                            aspect="16/5"
+                            help="Recommended: 1280 × 400 px. Max 4 MB." />
+                        <x-tenant::image-upload
+                            name="promo_banner_mobile_image"
+                            label="Banner Image (Mobile)"
+                            :current="$promoBanner['promo_banner_mobile_image_url'] ?: null"
+                            :removable="true"
+                            aspect="4/3"
+                            help="Recommended: 800 × 600 px. Max 4 MB." />
                     </div>
                 </section>
             </x-tenant::form>

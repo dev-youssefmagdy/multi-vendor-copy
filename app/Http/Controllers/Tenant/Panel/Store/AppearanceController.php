@@ -55,11 +55,12 @@ final class AppearanceController extends PanelController
             'colorThemes' => $this->repo->appearanceColorThemes(),
             'socialLinks' => $this->repo->socialLinks(),
             'promoBanner' => [
-                'promo_banner_title' => $settings['promo_banner_title'] ?? '',
-                'promo_banner_subtitle' => $settings['promo_banner_subtitle'] ?? '',
-                'promo_banner_link' => $settings['promo_banner_link'] ?? '',
-                'promo_banner_cta_text' => $settings['promo_banner_cta_text'] ?? '',
-                'promo_banner_image_url' => $settings['promo_banner_image_url'] ?? '',
+                'promo_banner_title'              => $settings['promo_banner_title'] ?? '',
+                'promo_banner_subtitle'           => $settings['promo_banner_subtitle'] ?? '',
+                'promo_banner_link'               => $settings['promo_banner_link'] ?? '',
+                'promo_banner_cta_text'           => $settings['promo_banner_cta_text'] ?? '',
+                'promo_banner_image_url'          => $settings['promo_banner_image_url'] ?? '',
+                'promo_banner_mobile_image_url'   => $settings['promo_banner_mobile_image_url'] ?? '',
             ],
             'languages' => $languages,
             'footerTranslations' => $this->footerTranslations($languages),
@@ -190,7 +191,31 @@ final class AppearanceController extends PanelController
 
     public function savePromoBanner(SavePromoBannerRequest $request): JsonResponse
     {
-        $this->service->savePromoBannerSettings($request->validated());
+        $current = $this->repo->appearanceSettings();
+        $data = $request->validated();
+
+        $imageUrl = $current['promo_banner_image_url'] ?? '';
+        if ($request->boolean('remove_promo_banner_image')) {
+            $imageUrl = '';
+        } elseif ($request->hasFile('promo_banner_image')) {
+            $imageUrl = tenant_asset($request->file('promo_banner_image')->store('appearances/banners', 'public'));
+        }
+
+        $mobileImageUrl = $current['promo_banner_mobile_image_url'] ?? '';
+        if ($request->boolean('remove_promo_banner_mobile_image')) {
+            $mobileImageUrl = '';
+        } elseif ($request->hasFile('promo_banner_mobile_image')) {
+            $mobileImageUrl = tenant_asset($request->file('promo_banner_mobile_image')->store('appearances/banners', 'public'));
+        }
+
+        $this->service->savePromoBannerSettings([
+            'promo_banner_title'            => $data['promo_banner_title'] ?? '',
+            'promo_banner_subtitle'         => $data['promo_banner_subtitle'] ?? '',
+            'promo_banner_link'             => $data['promo_banner_link'] ?? '',
+            'promo_banner_cta_text'         => $data['promo_banner_cta_text'] ?? '',
+            'promo_banner_image_url'        => $imageUrl,
+            'promo_banner_mobile_image_url' => $mobileImageUrl,
+        ]);
 
         return $this->success('Promotional banner updated.');
     }

@@ -1,19 +1,25 @@
 @php
     use App\Models\Tenant\Setting;
     $promoBannerImageUrl = Setting::query()->where('name', 'promo_banner_image_url')->value('value') ?: null;
+    $promoBannerMobileImageUrl = Setting::query()->where('name', 'promo_banner_mobile_image_url')->value('value') ?: null;
     $promoBannerLink = Setting::query()->where('name', 'promo_banner_link')->value('value') ?: '#';
     $promoBannerTitle = Setting::query()->where('name', 'promo_banner_title')->value('value') ?: null;
     $promoBannerSubtitle = Setting::query()->where('name', 'promo_banner_subtitle')->value('value') ?: null;
     $promoBannerCta = Setting::query()->where('name', 'promo_banner_cta_text')->value('value') ?: __('Shop Now');
 @endphp
 
-@if ($promoBannerImageUrl || $promoBannerTitle)
+@if ($promoBannerImageUrl || $promoBannerMobileImageUrl || $promoBannerTitle)
     <section class="px-5 mb-7">
         <a href="{{ $promoBannerLink }}"
             class="relative block rounded-[20px] overflow-hidden bg-[#0f172a] min-h-[220px] max-w-[1280px] mx-auto">
-            @if ($promoBannerImageUrl)
-                <img src="{{ $promoBannerImageUrl }}" alt="{{ $promoBannerTitle }}"
-                    class="w-full h-[280px] object-cover opacity-65" loading="lazy">
+            @if ($promoBannerImageUrl || $promoBannerMobileImageUrl)
+                <picture>
+                    @if ($promoBannerMobileImageUrl)
+                        <source media="(max-width: 767px)" srcset="{{ $promoBannerMobileImageUrl }}">
+                    @endif
+                    <img src="{{ $promoBannerImageUrl ?? $promoBannerMobileImageUrl }}" alt="{{ $promoBannerTitle }}"
+                        class="w-full h-[280px] object-cover opacity-65" loading="lazy">
+                </picture>
             @endif
             @if ($promoBannerTitle || $promoBannerSubtitle)
                 <div class="absolute inset-0 flex flex-col justify-center px-9">
