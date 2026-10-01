@@ -375,7 +375,7 @@
                         style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD4 100%); border: 1px solid #FFD6A8; box-shadow: 0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1)">
                         <h3 class="text-base sm:text-lg font-semibold text-[#0A0A0A] font-['Inter'] leading-7">{{ __('Need Help?') }}</h3>
                         <p class="text-sm text-[#364153] font-['Inter'] leading-5">{{ __('If you have any questions about your order, please contact our support team.') }}</p>
-                        <a href="{{ route('website.contact') }}" class="self-start text-sm font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-2 hover:bg-orange-100 transition-colors">
+                        <a href="{{ route('tenant.storefront.page', 'contact-us') }}" class="self-start text-sm font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-2 hover:bg-orange-100 transition-colors">
                             {{ __('Contact Support') }}
                         </a>
                     </div>

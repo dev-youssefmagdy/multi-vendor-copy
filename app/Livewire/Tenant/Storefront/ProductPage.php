@@ -94,6 +94,7 @@ class ProductPage extends Component
         }
 
         session(['storefront_cart' => $cart]);
+        app(\App\Services\UserInteractionTracker::class)->trackCart($product->id);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added', itemName: $itemName, qty: 1);
         $this->dispatch('tracking-event', name: 'add_to_cart', params: [
@@ -115,6 +116,7 @@ class ProductPage extends Component
 
         if (!$this->viewContentTracked) {
             $this->viewContentTracked = true;
+            app(\App\Services\UserInteractionTracker::class)->trackView($product->id);
             $this->dispatch('tracking-event', name: 'view_content', params: [
                 'content_ids' => [$product->id],
                 'content_name' => $product->translationValue('name') ?? $product->slug,

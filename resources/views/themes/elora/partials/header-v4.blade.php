@@ -43,18 +43,26 @@
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          aria-label="Notifications"
-          class="flex items-center justify-center rounded-full size-[40px] shrink-0"
-          style="background: var(--color-surface)"
-        >
-          <img
-            src="{{ asset('elora-4/assets/icons/icon-bell-outline.svg') }}"
-            alt=""
-            class="size-[20px]"
-          />
-        </button>
+        <div class="flex items-center gap-[10px] shrink-0">
+          <button type="button" onclick="window.Livewire && window.Livewire.dispatch('open-locale-modal', { tab: 'currency' })"
+              class="flex flex-col items-center leading-none cursor-pointer"
+              aria-label="{{ __('Currency & Language') }}">
+              <span class="text-[10px] font-light tracking-[0.5px]" style="color: var(--color-text-primary)">{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span>
+              <span class="text-[11px] font-semibold tracking-[0.5px]" style="color: var(--color-text-primary)">{{ $currentCurrency?->code ?? 'USD' }}</span>
+          </button>
+          <button
+            type="button"
+            aria-label="Notifications"
+            class="flex items-center justify-center rounded-full size-[40px] shrink-0"
+            style="background: var(--color-surface)"
+          >
+            <img
+              src="{{ asset('elora-4/assets/icons/icon-bell-outline.svg') }}"
+              alt=""
+              class="size-[20px]"
+            />
+          </button>
+        </div>
       </div>
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"

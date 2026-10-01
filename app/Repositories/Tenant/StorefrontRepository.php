@@ -1189,7 +1189,19 @@ class StorefrontRepository
 
     public function recommendedProducts(int $limit = 10): Collection
     {
-        return $this->memo['recommended_' . $limit . '_' . ($this->customerCountryId() ?? 'def')] ??= app(\App\Services\HomeProductService::class)->getRecommended($limit, $this->customerCountryId());
+        $key = 'recommended_' . $limit . '_' . ($this->customerCountryId() ?? 'def');
+        if (isset($this->memo[$key])) {
+            return $this->memo[$key];
+        }
+
+        $service = app(\App\Services\HomeProductService::class);
+        $products = $service->getRecommended($limit, $this->customerCountryId());
+
+        if ($products->isEmpty()) {
+            $products = $service->getInteractionBased($limit, $this->customerCountryId());
+        }
+
+        return $this->memo[$key] = $products;
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator

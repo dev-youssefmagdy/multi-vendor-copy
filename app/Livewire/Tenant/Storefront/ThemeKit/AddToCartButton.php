@@ -58,6 +58,7 @@ class AddToCartButton extends Component
             'qty' => $existingQty + $this->qty,
         ];
         session(['storefront_cart' => $cart]);
+        app(\App\Services\UserInteractionTracker::class)->trackCart($this->product);
 
         // Vendor-facing simplified event
         $this->dispatch('cart-updated');

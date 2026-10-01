@@ -1,13 +1,13 @@
     @if ($categories->isNotEmpty())
     @php
-      $shopByCatFallbackImgs = ['shop-cat-accessories.png', 'shop-cat-fashion.png', 'shop-cat-electronics.png'];
-      $shopByCatTiles = $categories->take(3)->map(function ($cat, $index) use ($shopByCatFallbackImgs) {
-          return [
-              'name' => \Illuminate\Support\Str::limit($cat->translationValue('name') ?? $cat->name, 20),
-              'image' => $cat->thumb_url ?? asset('elora-5/assets/images/' . $shopByCatFallbackImgs[$index % 3]),
-              'url' => route('tenant.storefront.category', $cat->slug),
+      $fallbacks = collect(glob(public_path('elora-5/assets/images/shop-cat-*.png')))->map(fn($p) => basename($p))->values();
+      $shopByCatTiles = $categories->take(5)->values()->map(function ($cat, $index) use ($fallbacks) {
+          return (object) [
+              'name'  => \Illuminate\Support\Str::limit($cat->translationValue('name') ?? $cat->name, 20),
+              'image' => $cat->thumb_url ?? ($fallbacks->isNotEmpty() ? asset('elora-5/assets/images/' . $fallbacks->get($index % $fallbacks->count())) : null),
+              'url'   => route('tenant.storefront.category', $cat->slug),
           ];
-      })->values();
+      });
     @endphp
     <!-- ============ SHOP BY CATEGORY ============ -->
     <section
@@ -21,11 +21,32 @@
         {{ __('Shop by Category') }}
       </h2>
       <div
-        class="grid grid-cols-2 lg:flex gap-[10px] lg:gap-[16px] w-full lg:w-auto lg:max-w-[790px]"
+        class="grid grid-cols-2 lg:flex gap-[10px] lg:gap-[16px] w-full lg:w-auto"
       >
+        {{-- Left column: tiles [3] + [4] (desktop only) --}}
+        @if ($shopByCatTiles->get(3) || $shopByCatTiles->get(4))
+          <div class="hidden lg:flex flex-col gap-[16px]">
+            @if ($shopByCatTiles->get(3))
+              <a href="{{ $shopByCatTiles->get(3)->url }}" class="shop-cat-tile h-[147px] lg:w-[253px]">
+                <img src="{{ $shopByCatTiles->get(3)->image }}" alt="{{ $shopByCatTiles->get(3)->name }}" />
+                <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(19, 32, 146, 0) 30%, rgba(19, 32, 146, 0.55) 100%);"></div>
+                <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]">{{ $shopByCatTiles->get(3)->name }}</span>
+              </a>
+            @endif
+            @if ($shopByCatTiles->get(4))
+              <a href="{{ $shopByCatTiles->get(4)->url }}" class="shop-cat-tile h-[147px] lg:w-[253px]">
+                <img src="{{ $shopByCatTiles->get(4)->image }}" alt="{{ $shopByCatTiles->get(4)->name }}" />
+                <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(19, 32, 146, 0) 30%, rgba(19, 32, 146, 0.55) 100%);"></div>
+                <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]">{{ $shopByCatTiles->get(4)->name }}</span>
+              </a>
+            @endif
+          </div>
+        @endif
+
+        {{-- Center: large tile [0] --}}
         @if ($shopByCatTiles->get(0))
-          <a href="{{ $shopByCatTiles[0]['url'] }}" class="shop-cat-tile h-[200px] lg:h-[310px] lg:w-[253px]">
-            <img src="{{ $shopByCatTiles[0]['image'] }}" alt="{{ $shopByCatTiles[0]['name'] }}" />
+          <a href="{{ $shopByCatTiles->get(0)->url }}" class="shop-cat-tile col-span-2 lg:col-span-1 h-[200px] lg:h-[310px] lg:w-[253px]">
+            <img src="{{ $shopByCatTiles->get(0)->image }}" alt="{{ $shopByCatTiles->get(0)->name }}" />
             <div
               class="absolute inset-0"
               style="
@@ -37,51 +58,11 @@
               "
             ></div>
             <span class="shop-cat-label text-[16px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
-              >{{ $shopByCatTiles[0]['name'] }}</span
+              >{{ $shopByCatTiles->get(0)->name }}</span
             >
           </a>
         @endif
-        <div class="flex flex-col gap-[10px] lg:gap-[16px]">
-          @if ($shopByCatTiles->get(1))
-            <a href="{{ $shopByCatTiles[1]['url'] }}" class="shop-cat-tile h-[95px] lg:h-[147px] lg:w-[253px]">
-              <img src="{{ $shopByCatTiles[1]['image'] }}" alt="{{ $shopByCatTiles[1]['name'] }}" />
-              <div
-                class="absolute inset-0"
-                style="
-                  background: linear-gradient(
-                    180deg,
-                    rgba(19, 32, 146, 0) 30%,
-                    rgba(19, 32, 146, 0.55) 100%
-                  );
-                "
-              ></div>
-              <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
-                >{{ $shopByCatTiles[1]['name'] }}</span
-              >
-            </a>
-          @endif
-          @if ($shopByCatTiles->get(2))
-            <a href="{{ $shopByCatTiles[2]['url'] }}" class="shop-cat-tile h-[95px] lg:h-[147px] lg:w-[253px]">
-              <img
-                src="{{ $shopByCatTiles[2]['image'] }}"
-                alt="{{ $shopByCatTiles[2]['name'] }}"
-              />
-              <div
-                class="absolute inset-0"
-                style="
-                  background: linear-gradient(
-                    180deg,
-                    rgba(19, 32, 146, 0) 30%,
-                    rgba(19, 32, 146, 0.55) 100%
-                  );
-                "
-              ></div>
-              <span class="shop-cat-label text-[14px] lg:text-[24px] lg:leading-[150%] lg:tracking-[0.66px]"
-                >{{ $shopByCatTiles[2]['name'] }}</span
-              >
-            </a>
-          @endif
-        </div>
+
       </div>
       <a
         href="{{ route('tenant.storefront.category') }}"

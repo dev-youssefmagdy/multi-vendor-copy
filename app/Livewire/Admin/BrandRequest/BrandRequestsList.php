@@ -52,11 +52,18 @@ class BrandRequestsList extends ListPage
 
         $tenants = Tenant::query()->orderBy('data->name')->get(['id', 'data->name as name']);
 
+        $counts = BrandRequest::query()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending', [BrandRequestStatus::Pending->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as approved', [BrandRequestStatus::Approved->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as completed', [BrandRequestStatus::Completed->value])
+            ->first();
+
         $stats = [
-            'total' => BrandRequest::count(),
-            'pending' => BrandRequest::where('status', BrandRequestStatus::Pending->value)->count(),
-            'approved' => BrandRequest::where('status', BrandRequestStatus::Approved->value)->count(),
-            'completed' => BrandRequest::where('status', BrandRequestStatus::Completed->value)->count(),
+            'total' => (int) ($counts->total ?? 0),
+            'pending' => (int) ($counts->pending ?? 0),
+            'approved' => (int) ($counts->approved ?? 0),
+            'completed' => (int) ($counts->completed ?? 0),
         ];
 
         return array_merge(parent::pageData(), [

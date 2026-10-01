@@ -38,19 +38,27 @@
               <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
             </a>
           </div>
-          <button
-            type="button"
-            aria-label="Notifications"
-            class="relative flex items-center justify-center rounded-full size-[36px]"
-            style="background: var(--color-page-bg)"
-          >
-            <img src="{{ asset('elora-5/assets/icons/icon-bell.svg') }}" alt="" class="size-[20px]" />
-            <span
-              class="absolute -top-[2px] -right-[2px] flex items-center justify-center rounded-full size-[15px] text-[9px] font-medium text-white"
-              style="background: var(--color-secondary)"
-              >0</span
+          <div class="flex items-center gap-[10px]">
+            <button type="button" onclick="Livewire.dispatch('open-locale-modal')"
+                class="flex flex-col items-center leading-none cursor-pointer"
+                aria-label="{{ __('Currency & Language') }}">
+                <span class="text-[10px] font-light tracking-[0.5px]" style="color: var(--color-black)">{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span>
+                <span class="text-[11px] font-semibold tracking-[0.5px]" style="color: var(--color-black)">{{ $currentCurrency?->code ?? 'USD' }}</span>
+            </button>
+            <button
+              type="button"
+              aria-label="Notifications"
+              class="relative flex items-center justify-center rounded-full size-[36px]"
+              style="background: var(--color-page-bg)"
             >
-          </button>
+              <img src="{{ asset('elora-5/assets/icons/icon-bell.svg') }}" alt="" class="size-[20px]" />
+              <span
+                class="absolute -top-[2px] -right-[2px] flex items-center justify-center rounded-full size-[15px] text-[9px] font-medium text-white"
+                style="background: var(--color-secondary)"
+                >0</span
+              >
+            </button>
+          </div>
         </div>
         <div class="flex items-center gap-[8px]">
           <form action="{{ route('tenant.storefront.search') }}" method="GET"

@@ -22,13 +22,21 @@
         </button>
         <x-storefront-logo :storeName="$storeName" class="h-[28px] w-auto" />
     </div>
-    <button
-        type="button"
-        aria-label="Notifications"
-        class="bg-white rounded-full size-[40px] flex items-center justify-center"
-    >
-        <img src="{{ asset('elora-1/assets/icons/bell.svg') }}" alt="" class="h-[15px] w-[14px]" />
-    </button>
+    <div class="flex items-center gap-[10px]">
+        <button type="button" onclick="Livewire.dispatch('open-locale-modal')"
+            class="flex flex-col items-center leading-none cursor-pointer"
+            aria-label="{{ __('Currency & Language') }}">
+            <span class="text-white text-[10px] font-light tracking-[0.5px]">{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span>
+            <span class="text-white text-[11px] font-semibold tracking-[0.5px]">{{ $currentCurrency?->code ?? 'USD' }}</span>
+        </button>
+        <button
+            type="button"
+            aria-label="Notifications"
+            class="bg-white rounded-full size-[40px] flex items-center justify-center"
+        >
+            <img src="{{ asset('elora-1/assets/icons/bell.svg') }}" alt="" class="h-[15px] w-[14px]" />
+        </button>
+    </div>
     <form
         action="{{ route('tenant.storefront.search') }}"
         method="GET"

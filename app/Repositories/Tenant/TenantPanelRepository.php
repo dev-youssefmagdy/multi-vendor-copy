@@ -43,14 +43,14 @@ use Illuminate\Support\Facades\DB;
 
 class TenantPanelRepository
 {
-    public $orders;
+    private ?Collection $orders = null;
     protected $customers;
     protected $subscriptions;
     private ?array $profitabilityRowsCache = null;
 
-    function __construct()
+    protected function orders(): Collection
     {
-        $this->orders = Order::query()->with('items.product')->get();
+        return $this->orders ??= Order::query()->with('items.product')->get();
     }
 
     protected function customers(): Collection
@@ -65,7 +65,7 @@ class TenantPanelRepository
 
     public function dashboardStats(): array
     {
-        $orders = $this->orders;
+        $orders = $this->orders();
         $customers = $this->customers();
         $subscriptions = $this->subscriptions();
 
@@ -111,7 +111,7 @@ class TenantPanelRepository
 
     public function dashboardSeries(): array
     {
-        $orders = $this->orders;
+        $orders = $this->orders();
         $customers = $this->customers();
         $subscriptions = $this->subscriptions();
         $customerOrderCounts = $customers->keyBy('id')->map(fn(Customer $customer) => (int) $customer->orders_count);
@@ -541,7 +541,7 @@ class TenantPanelRepository
 
     public function orderStats(): array
     {
-        $orders = $this->orders;
+        $orders = $this->orders();
         $grossSales = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
         $collectedSales = $orders
             ->filter(fn(Order $order) => $order->paid)
@@ -697,7 +697,7 @@ class TenantPanelRepository
 
     public function billingStats(): array
     {
-        $orders = $this->orders;
+        $orders = $this->orders();
         $grossSales = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
         $collectedSales = $orders
             ->filter(fn(Order $order) => $order->paid)
@@ -2460,10 +2460,16 @@ class TenantPanelRepository
     {
         $tenantId = tenant('id');
 
+        $counts = \App\Models\BrandRequest::where('tenant_id', $tenantId)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending', [\App\Enums\BrandRequestStatus::Pending->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as approved', [\App\Enums\BrandRequestStatus::Approved->value])
+            ->first();
+
         return [
-            'total' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->count(),
-            'pending' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Pending->value)->count(),
-            'approved' => \App\Models\BrandRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\BrandRequestStatus::Approved->value)->count(),
+            'total' => (int) ($counts->total ?? 0),
+            'pending' => (int) ($counts->pending ?? 0),
+            'approved' => (int) ($counts->approved ?? 0),
         ];
     }
 

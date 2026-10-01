@@ -98,7 +98,6 @@ class CartPage extends Component
 
         $cart[$key]['qty'] = $qty;
         session(['storefront_cart' => $cart]);
-        $this->toast(__('Cart quantity updated.'), 'success');
         $this->dispatch('cartUpdated');
     }
 

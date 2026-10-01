@@ -2542,7 +2542,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-43FGTWAQ.css",
+    "file": "assets/app-DGzfPKyk.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2593,7 +2593,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Br66y1VL.css",
+    "file": "assets/ecommet-CBPI3SE2.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2876,7 +2876,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-ZQ4O0YBF.css",
+    "file": "assets/souqify-B9yU_xTn.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2885,7 +2885,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-C3xSXXwh.css",
+    "file": "assets/app-B2BrPWem.css",
     "name": "app",
     "names": [
       "app.css"
@@ -4180,7 +4180,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/themes.js": {
-    "file": "assets/themes-CLp0T2SD.js",
+    "file": "assets/themes-CpS-8Fqz.js",
     "name": "themes",
     "src": "resources/js/tenant/pages/store/themes.js",
     "isEntry": true,
@@ -4189,7 +4189,7 @@
       "_modals-RblV8vWW.js"
     ],
     "css": [
-      "assets/themes-7ZV-aH2q.css"
+      "assets/themes-CgXp04dW.css"
     ]
   },
   "resources/js/tenant/pages/support/help.js": {

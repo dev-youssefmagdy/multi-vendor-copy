@@ -178,6 +178,7 @@ class CategoryPage extends Component
             ? array_merge($cart[$key], ['qty' => $cart[$key]['qty'] + 1])
             : ['product_id' => $productId, 'qty' => 1];
         session(['storefront_cart' => $cart]);
+        app(\App\Services\UserInteractionTracker::class)->trackCart($productId);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added');
     }

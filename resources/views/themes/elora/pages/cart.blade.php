@@ -122,8 +122,13 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                         {{-- Select All Header --}}
                         <div class="hidden sm:flex items-center justify-between pb-4 border-b border-[#C0C0C0]">
                             <label class="flex items-center gap-4 cursor-pointer">
-                                <input type="checkbox" id="cartSelectAll" checked
-                                    class="w-5 h-5 rounded-[4px] appearance-none bg-white border border-black checked:bg-[#171717] checked:border-[#171717] cursor-pointer relative before:content-[''] before:absolute before:hidden checked:before:block before:w-[5px] before:h-[9px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2">
+                                <span class="relative inline-flex w-5 h-5 shrink-0">
+                                    <input type="checkbox" id="cartSelectAll" checked
+                                        class="peer w-5 h-5 rounded-[4px] appearance-none bg-white border border-black checked:bg-[#171717] checked:border-[#171717] cursor-pointer">
+                                    <svg class="pointer-events-none absolute inset-0 hidden peer-checked:block text-white w-5 h-5 p-[3px]" viewBox="0 0 12 12" fill="none">
+                                        <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
                                 <span class="text-[#171717] text-sm font-medium font-['Outfit'] tracking-[0.5px]"
                                     id="cartSelectionLabel">{{ __('Select all (:count)', ['count' => $itemCount]) }}</span>
                             </label>
@@ -170,9 +175,14 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                             <div class="cart-line-item flex items-center gap-4" data-subtotal="{{ $subtotal }}">
                                 {{-- Checkbox --}}
                                 <div class="hidden sm:flex items-center shrink-0">
-                                    <input type="checkbox"
-                                        class="cart-line-checkbox w-6 h-6 rounded-[4px] appearance-none bg-white border border-black checked:bg-[#171717] checked:border-[#171717] cursor-pointer relative before:content-[''] before:absolute before:hidden checked:before:block before:w-[5px] before:h-[9px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2"
-                                        checked>
+                                    <span class="relative inline-flex w-6 h-6">
+                                        <input type="checkbox"
+                                            class="cart-line-checkbox peer w-6 h-6 rounded-[4px] appearance-none bg-white border border-black checked:bg-[#171717] checked:border-[#171717] cursor-pointer"
+                                            checked>
+                                        <svg class="pointer-events-none absolute inset-0 hidden peer-checked:block text-white w-6 h-6 p-[4px]" viewBox="0 0 12 12" fill="none">
+                                            <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
                                 </div>
                                 {{-- Image + Info wrapper --}}
                                 <div class="flex gap-4 flex-1 min-w-0">
@@ -241,9 +251,11 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                 @endif
                                             </div>
                                             {{-- Qty control (+/-) --}}
-                                            <div class="flex items-center gap-4 px-2 py-2 border border-[#E0E0E0] rounded-3xl">
+                                            <div class="flex items-center gap-4 px-2 py-2 border border-[#E0E0E0] rounded-3xl"
+                                                x-data="{ qty: {{ $qty }} }"
+                                                wire:key="qty-ctrl-{{ $key }}">
                                                 <button type="button"
-                                                    wire:click="updateQty('{{ $key }}', {{ max(1, $qty - 1) }})"
+                                                    @click="if(qty > 1){ qty--; $wire.updateQty('{{ $key }}', qty) } else { $wire.updateQty('{{ $key }}', 0) }"
                                                     class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition"
                                                     aria-label="{{ __('Decrease quantity') }}">
                                                     <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
@@ -251,10 +263,10 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                     </svg>
                                                 </button>
                                                 <div class="w-[18px] h-[18px] bg-[#FFD3C0] rounded-full flex items-center justify-center">
-                                                    <span class="text-[#FF4D00] text-xs font-medium font-['Outfit'] tracking-[0.5px] leading-none">{{ $qty }}</span>
+                                                    <span x-text="qty" class="text-[#FF4D00] text-xs font-medium font-['Outfit'] tracking-[0.5px] leading-none"></span>
                                                 </div>
                                                 <button type="button"
-                                                    wire:click="updateQty('{{ $key }}', {{ $qty + 1 }})"
+                                                    @click="qty++; $wire.updateQty('{{ $key }}', qty)"
                                                     class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition"
                                                     aria-label="{{ __('Increase quantity') }}">
                                                     <svg width="18" height="18" fill="none" viewBox="0 0 18 18">

@@ -254,6 +254,13 @@
                 <span>{{ __('Sign In') }}</span>
             </a>
         @endauth
+        <button type="button" onclick="Livewire.dispatch('open-locale-modal')" class="mob-nav-item">
+            <div class="flex flex-col items-center leading-none gap-[1px]">
+                <span class="text-[10px] font-bold">{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span>
+                <span class="text-[10px] font-bold">{{ $currentCurrency?->code ?? 'USD' }}</span>
+            </div>
+            <span>{{ __('Currency') }}</span>
+        </button>
     </div>
     <a href="{{ route('tenant.storefront.cart') }}" class="mob-nav-item cart-nav">
         <div class="cart-nav-inner w-16 h-16 rounded-full shadow-2xl">

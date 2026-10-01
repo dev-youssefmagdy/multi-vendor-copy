@@ -711,7 +711,7 @@
                 <label class="flex items-center justify-between gap-3 cursor-pointer rounded-[12px] border border-[#ececec] px-4 py-3.5 hover:border-main/40 hover:bg-main/[0.03] transition">
                     <span class="text-[13px] text-[#333] font-medium">{{ __('Set as default address') }}</span>
                     <span class="relative inline-flex shrink-0">
-                        <input wire:model="data.modal.is_default" type="checkbox" class="peer sr-only">
+                        <input wire:model.live="data.modal.is_default" type="checkbox" class="peer sr-only">
                         <span class="w-9 h-5 rounded-full bg-[#dcdcdc] peer-checked:bg-main transition-colors"></span>
                         <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></span>
                     </span>

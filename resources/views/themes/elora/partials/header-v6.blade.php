@@ -37,21 +37,29 @@
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            id="mobileMenuBtn"
-            aria-label="Open menu"
-            aria-expanded="false"
-            aria-controls="mobileDrawer"
-            class="elora-v6-menu-btn flex flex-col items-center justify-center cursor-pointer"
-          >
-            <img src="{{ asset('elora-2/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
-            <span
-              class="text-[10px] tracking-[0.5px]"
-              style="color: var(--color-text-primary)"
-              >menu</span
+          <div class="flex items-center gap-[14px]">
+            <button type="button" onclick="Livewire.dispatch('open-locale-modal')"
+                class="flex flex-col items-center leading-none cursor-pointer"
+                aria-label="{{ __('Currency & Language') }}">
+                <span class="text-[10px] font-light tracking-[0.5px]" style="color: var(--color-text-primary)">{{ strtoupper($currentLanguage?->code ?? 'EN') }}/</span>
+                <span class="text-[11px] font-semibold tracking-[0.5px]" style="color: var(--color-text-primary)">{{ $currentCurrency?->code ?? 'USD' }}</span>
+            </button>
+            <button
+              type="button"
+              id="mobileMenuBtn"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="mobileDrawer"
+              class="elora-v6-menu-btn flex flex-col items-center justify-center cursor-pointer"
             >
-          </button>
+              <img src="{{ asset('elora-2/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
+              <span
+                class="text-[10px] tracking-[0.5px]"
+                style="color: var(--color-text-primary)"
+                >menu</span
+              >
+            </button>
+          </div>
         </div>
         <form action="{{ route('tenant.storefront.search') }}" method="GET"
           data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"

@@ -87,6 +87,7 @@ class HomePage extends Component
         }
 
         session(['storefront_cart' => $cart]);
+        app(\App\Services\UserInteractionTracker::class)->trackCart($productId);
         $this->dispatch('cartUpdated');
         $this->dispatch('storefront-cart-added');
     }

@@ -414,7 +414,7 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                                     @error('addrCountryId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
                                 <label class="flex items-center gap-2.5 cursor-pointer select-none bg-[#FAFAFA] rounded-xl px-3.5 py-3 border border-[#F0F0F0]">
-                                    <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#171717] rounded" />
+                                    <input wire:model.live="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[#171717] rounded" />
                                     <span class="text-[13.5px] font-medium text-[#171717]">{{ __('Set as default address') }}</span>
                                 </label>
                             </div>

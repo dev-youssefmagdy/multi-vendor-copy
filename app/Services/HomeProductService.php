@@ -79,12 +79,56 @@ class HomeProductService
     public function getRecommended(int $limit, ?int $countryId = null): Collection
     {
         return $this->cacheRemember("recommended:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
-            $badged = $this->byBadge('recommended', $limit, $countryId);
+            return $this->byBadge('recommended', $limit, $countryId);
+        });
+    }
 
-            if ($badged->isNotEmpty()) {
-                return $badged;
-            }
+    /**
+     * Personalized recommendations based on the current user's session interactions
+     * (viewed and carted products). Returns products from the same categories as
+     * the interacted products, excluding the ones already interacted with.
+     * Falls back to newest products when no interactions exist.
+     */
+    public function getInteractionBased(int $limit, ?int $countryId = null): Collection
+    {
+        $interactedIds = app(\App\Services\UserInteractionTracker::class)->interactedProductIds();
 
+        if (empty($interactedIds)) {
+            return $this->getStaticFallback($limit, $countryId);
+        }
+
+        $categoryIds = \App\Models\Tenant\Product::query()
+            ->whereIn('id', $interactedIds)
+            ->where('active', true)
+            ->with('categories:id')
+            ->get()
+            ->flatMap(fn($p) => $p->categories->pluck('id'))
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($categoryIds)) {
+            return $this->getStaticFallback($limit, $countryId);
+        }
+
+        $products = $this->baseQuery()
+            ->whereNotIn('products.id', $interactedIds)
+            ->whereHas('categories', fn($q) => $q->whereIn('id', $categoryIds))
+            ->orderByDesc('products.orders_count')
+            ->orderByDesc('products.created_at')
+            ->limit($limit)
+            ->get();
+
+        if ($products->isEmpty()) {
+            return $this->getStaticFallback($limit, $countryId);
+        }
+
+        return $products;
+    }
+
+    protected function getStaticFallback(int $limit, ?int $countryId = null): Collection
+    {
+        return $this->cacheRemember("recommended_fallback:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
             $excludeIds = $this->getNewIn($limit, $countryId)
                 ->pluck('id')
                 ->merge($this->getFeatured($limit, $countryId)->pluck('id'));
