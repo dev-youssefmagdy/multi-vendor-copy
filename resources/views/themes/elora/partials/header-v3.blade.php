@@ -28,7 +28,7 @@
               <span
                 class="text-[10px] tracking-[0.5px]"
                 style="color: var(--color-text-primary)"
-                >menu</span
+                >{{ __('menu') }}</span
               >
             </button>
           </div>
@@ -51,7 +51,7 @@
               type="text"
               name="q"
               value="{{ request('q') }}"
-              placeholder="Search..."
+              placeholder="{{ __('Search...') }}"
               autocomplete="off"
               class="bg-transparent outline-none text-[16px] w-full"
               style="color: var(--color-gray)"
@@ -81,7 +81,7 @@
           <span
             class="text-[10px] tracking-[0.5px]"
             style="color: var(--color-text-primary)"
-            >menu</span
+            >{{ __('menu') }}</span
           >
         </button>
         <a href="{{ route('tenant.home') }}">
@@ -101,7 +101,7 @@
             type="text"
             name="q"
             value="{{ request('q') }}"
-            placeholder="Search..."
+            placeholder="{{ __('Search...') }}"
             autocomplete="off"
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-text-placeholder)"
@@ -146,7 +146,7 @@
             <span
               class="text-[14px] tracking-[0.5px]"
               style="color: var(--color-black-alt)"
-              >Favorite</span
+              >{{ __('Favorite') }}</span
             >
           </a>
           <a
@@ -165,7 +165,7 @@
               <span
                 class="text-[14px] tracking-[0.5px]"
                 style="color: var(--color-black-alt)"
-                >Cart</span
+                >{{ __('Cart') }}</span
               >
             </span>
           </a>
@@ -256,7 +256,7 @@
           type="text"
           name="q"
           value="{{ request('q') }}"
-          placeholder="Search..."
+          placeholder="{{ __('Search...') }}"
           autocomplete="off"
           class="bg-transparent outline-none text-[14px] w-full"
           style="color: var(--color-text-placeholder)"
@@ -317,7 +317,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Favorite</span
+            >{{ __('Favorite') }}</span
           >
         </a>
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[10px]">
@@ -325,7 +325,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Cart</span
+            >{{ __('Cart') }}</span
           >
           <span
             id="elora-v3-mob-cart-badge"

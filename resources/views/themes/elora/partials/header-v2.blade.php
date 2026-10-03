@@ -18,7 +18,7 @@
             alt=""
             class="size-[38px] -mb-1 invert"
         />
-        <span class="text-white text-[10px] tracking-[0.5px]">menu</span>
+        <span class="text-white text-[10px] tracking-[0.5px]">{{ __('menu') }}</span>
         </button>
         <x-storefront-logo :storeName="$storeName" class="h-[28px] w-auto" />
     </div>
@@ -58,7 +58,7 @@
             name="q"
             value="{{ request('q') }}"
             autocomplete="off"
-            placeholder="Search..."
+            placeholder="{{ __('Search...') }}"
             class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full min-w-0"
             />
         </div>
@@ -91,7 +91,7 @@
         class="flex flex-col items-center justify-center cursor-pointer"
     >
         <img src="{{ asset('elora-1/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
-        <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
+        <span class="text-[10px] tracking-[0.5px] text-black">{{ __('menu') }}</span>
     </button>
     <a href="{{ route('tenant.home') }}">
         <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
@@ -116,7 +116,7 @@
         name="q"
         value="{{ request('q') }}"
         autocomplete="off"
-        placeholder="Search..."
+        placeholder="{{ __('Search...') }}"
         class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full"
         />
     </div>
@@ -167,7 +167,7 @@
         <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Favorite</span
+            >{{ __('Favorite') }}</span
         >
         </a>
         <a
@@ -186,7 +186,7 @@
             <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Cart</span
+            >{{ __('Cart') }}</span
             >
         </span>
         </a>
@@ -198,7 +198,7 @@
         >
         <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
         <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
-            <span class="block text-[var(--color-text-faint)]">Welcome</span>
+            <span class="block text-[var(--color-text-faint)]">{{ __('Welcome') }}</span>
             <span class="block" style="color: var(--color-black-alt)"
             >{{ auth('storefront')->user()->name }}</span
             >
@@ -212,9 +212,9 @@
         >
         <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
         <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
-            <span class="block text-[var(--color-text-faint)]">Welcome</span>
+            <span class="block text-[var(--color-text-faint)]">{{ __('Welcome') }}</span>
             <span class="block" style="color: var(--color-black-alt)"
-            >Sign in / Register</span
+            >{{ __('Sign in / Register') }}</span
             >
         </span>
         </a>
@@ -276,7 +276,7 @@
           name="q"
           value="{{ request('q') }}"
           autocomplete="off"
-          placeholder="Search..."
+          placeholder="{{ __('Search...') }}"
           class="bg-transparent outline-none text-[14px] text-[var(--color-text-placeholder)] w-full"
         />
       </div>
@@ -344,7 +344,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Favorite</span
+            >{{ __('Favorite') }}</span
           >
         </a>
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[10px]">
@@ -352,7 +352,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Cart</span
+            >{{ __('Cart') }}</span
           >
           <span
             id="elora-v2-mob-cart-badge"

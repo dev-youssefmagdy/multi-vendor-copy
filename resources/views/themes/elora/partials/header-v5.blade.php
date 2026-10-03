@@ -31,7 +31,7 @@
               <span
                 class="text-[8px] tracking-[0.3px]"
                 style="color: var(--color-black)"
-                >menu</span
+                >{{ __('menu') }}</span
               >
             </button>
             <a href="{{ route('tenant.home') }}">
@@ -79,7 +79,7 @@
               name="q"
               value="{{ request('q') }}"
               autocomplete="off"
-              placeholder="Search..."
+              placeholder="{{ __('Search...') }}"
               class="bg-transparent outline-none text-[15px] w-full"
               style="color: var(--color-gray)"
             />
@@ -112,7 +112,7 @@
           class="flex flex-col items-center justify-center cursor-pointer"
         >
           <img src="{{ asset('elora-5/assets/icons/menu.svg') }}" alt="" class="size-[38px] -mb-1" />
-          <span class="text-[10px] tracking-[0.5px] text-black">menu</span>
+          <span class="text-[10px] tracking-[0.5px] text-black">{{ __('menu') }}</span>
         </button>
         <a href="{{ route('tenant.home') }}">
           <x-storefront-logo :storeName="$storeName" class="h-[38px] w-auto" />
@@ -132,7 +132,7 @@
             name="q"
             value="{{ request('q') }}"
             autocomplete="off"
-            placeholder="Search..."
+            placeholder="{{ __('Search...') }}"
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
@@ -184,7 +184,7 @@
             <span
               class="text-[14px] tracking-[0.5px]"
               style="color: var(--color-black-alt)"
-              >Favorite</span
+              >{{ __('Favorite') }}</span
             >
           </a>
           <a
@@ -203,7 +203,7 @@
               <span
                 class="text-[14px] tracking-[0.5px]"
                 style="color: var(--color-black-alt)"
-                >Cart</span
+                >{{ __('Cart') }}</span
               >
             </span>
           </a>
@@ -291,7 +291,7 @@
         />
         <input
           type="search"
-          placeholder="Search..."
+          placeholder="{{ __('Search...') }}"
           class="bg-transparent outline-none text-[14px] w-full"
           style="color: var(--color-gray)"
         />
@@ -351,7 +351,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Favorite</span
+            >{{ __('Favorite') }}</span
           >
         </a>
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[10px]">
@@ -359,7 +359,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Cart</span
+            >{{ __('Cart') }}</span
           >
           <span
             id="elora-v5-mob-cart-badge"

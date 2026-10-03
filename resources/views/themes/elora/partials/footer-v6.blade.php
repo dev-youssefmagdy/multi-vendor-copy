@@ -10,7 +10,7 @@
             </a>
             <div class="flex flex-col gap-[16px]">
               <p class="font-medium text-[16px] text-white">
-                Connect with {{ $storeName }}
+                {{ __('Connect with') }} {{ $storeName }}
               </p>
               @if (isset($socialLinks) && $socialLinks->isNotEmpty())
                 <div class="flex gap-[16px] items-center">
@@ -38,26 +38,26 @@
             </div>
           </div>
           <div class="flex flex-col gap-[12px]">
-            <p class="font-semibold text-[16px] text-white">We accept</p>
+            <p class="font-semibold text-[16px] text-white">{{ __('We accept') }}</p>
             <div class="flex gap-[12px]">
               <img
                 src="{{ asset('elora-2/assets/icons/pay-visa.png') }}"
-                alt="Visa"
+                alt="{{ __('Visa') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-2/assets/icons/pay-mastercard.png') }}"
-                alt="Mastercard"
+                alt="{{ __('Mastercard') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-2/assets/icons/pay-applepay.png') }}"
-                alt="Apple Pay"
+                alt="{{ __('Apple Pay') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-2/assets/icons/pay-fawry.png') }}"
-                alt="Fawry Pay"
+                alt="{{ __('Fawry Pay') }}"
                 class="h-[38px] w-[56px] object-cover rounded"
               />
             </div>
@@ -68,36 +68,36 @@
           class="flex flex-col sm:flex-row gap-[32px] sm:gap-[60px] lg:gap-[0] lg:justify-between lg:flex-1"
         >
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Customer service</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Customer service') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
               style="color: var(--color-footer-text-muted)"
             >
-              <a href="{{ route('tenant.storefront.page', 'return-refund-policy') }}">Return and refund policy</a>
-              <a href="{{ route('tenant.storefront.page', 'intellectual-property-policy') }}">Intellectual property policy</a>
-              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">Shipping info</a>
-              <a href="{{ route('tenant.storefront.page', 'report-suspicious-activity') }}">Report suspicious activity</a>
+              <a href="{{ route('tenant.storefront.page', 'return-refund-policy') }}">{{ __('Return and refund policy') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'intellectual-property-policy') }}">{{ __('Intellectual property policy') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">{{ __('Shipping info') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'report-suspicious-activity') }}">{{ __('Report suspicious activity') }}</a>
             </div>
           </div>
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Policies</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Policies') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px]"
               style="color: var(--color-footer-text-muted)"
             >
-              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">Shipping</a>
-              <a href="{{ route('tenant.storefront.page', 'payment-info') }}">Payment</a>
-              <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">Privacy</a>
+              <a href="{{ route('tenant.storefront.page', 'shipping-info') }}">{{ __('Shipping') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'payment-info') }}">{{ __('Payment') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">{{ __('Privacy') }}</a>
             </div>
           </div>
           <div class="flex flex-col gap-[26px]">
-            <p class="font-medium text-[20px] text-white">Company info</p>
+            <p class="font-medium text-[20px] text-white">{{ __('Company info') }}</p>
             <div
               class="flex flex-col gap-[16px] text-[14px] tracking-[0.5px] text-white"
             >
-              <a href="{{ route('tenant.storefront.page', 'about-us') }}">About {{ $storeName }}</a>
-              <a href="{{ route('tenant.storefront.page', 'contact-us') }}">Contact us</a>
-              <a href="{{ route('tenant.storefront.page', 'faqs') }}">FAQs</a>
+              <a href="{{ route('tenant.storefront.page', 'about-us') }}">{{ __('About') }} {{ $storeName }}</a>
+              <a href="{{ route('tenant.storefront.page', 'contact-us') }}">{{ __('Contact us') }}</a>
+              <a href="{{ route('tenant.storefront.page', 'faqs') }}">{{ __('FAQs') }}</a>
             </div>
           </div>
         </div>
@@ -107,11 +107,11 @@
         class="flex flex-wrap items-center justify-center gap-[24px] lg:gap-[88px] py-[15px] text-[14px] tracking-[0.5px] text-white"
         style="background: var(--color-footer-subbar)"
       >
-        <a href="{{ route('tenant.storefront.page', 'terms-of-use') }}">Terms of use</a>
-        <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">Privacy policy</a>
-        <a href="{{ route('tenant.storefront.page', 'privacy-choices') }}">Your privacy choices</a>
-        <a href="{{ route('tenant.storefront.page', 'support') }}">Support</a>
-        <a href="{{ route('tenant.storefront.page', 'faqs') }}">FAQ</a>
+        <a href="{{ route('tenant.storefront.page', 'terms-of-use') }}">{{ __('Terms of use') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'privacy-policy') }}">{{ __('Privacy policy') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'privacy-choices') }}">{{ __('Your privacy choices') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'support') }}">{{ __('Support') }}</a>
+        <a href="{{ route('tenant.storefront.page', 'faqs') }}">{{ __('FAQ') }}</a>
       </div>
       <div
         class="flex items-center justify-center py-[18px] text-[14px] tracking-[0.5px] text-white text-center"

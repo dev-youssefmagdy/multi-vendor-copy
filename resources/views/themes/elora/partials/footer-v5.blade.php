@@ -40,26 +40,26 @@
             </div>
           </div>
           <div class="flex flex-col gap-[12px]">
-            <p class="font-semibold text-[16px] text-white">We accept</p>
+            <p class="font-semibold text-[16px] text-white">{{ __('We accept') }}</p>
             <div class="flex gap-[12px]">
               <img
                 src="{{ asset('elora-5/assets/icons/pay-visa.png') }}"
-                alt="Visa"
+                alt="{{ __('Visa') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-5/assets/icons/pay-mastercard.png') }}"
-                alt="Mastercard"
+                alt="{{ __('Mastercard') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-5/assets/icons/pay-applepay.png') }}"
-                alt="Apple Pay"
+                alt="{{ __('Apple Pay') }}"
                 class="h-[37px] w-[56px] object-cover rounded"
               />
               <img
                 src="{{ asset('elora-5/assets/icons/pay-fawry.png') }}"
-                alt="Fawry Pay"
+                alt="{{ __('Fawry Pay') }}"
                 class="h-[38px] w-[56px] object-cover rounded"
               />
             </div>
