@@ -63,7 +63,7 @@
             {{-- Logo + social --}}
             <div class="flex flex-col gap-3 mt-4 md:mt-[32px]">
                 <a href="{{ route('tenant.home') }}" class="hidden md:flex items-center mb-2">
-                    <x-storefront-logo :storeName="$storeName" class="h-[30px] max-w-[120px] object-contain" />
+                    <x-storefront-footer-logo :storeName="$storeName" class="h-[30px] max-w-[120px] object-contain" />
                 </a>
 
                 @if ($footerText)

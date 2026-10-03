@@ -436,6 +436,17 @@ class StorefrontRepository
                 'logo_font_en',
                 'logo_path_ar',
                 'logo_path_en',
+                'footer_logo_mode',
+                'footer_logo_text_ar',
+                'footer_logo_text_en',
+                'footer_logo_color',
+                'footer_logo_bg_color',
+                'footer_logo_shape',
+                'footer_logo_font_ar',
+                'footer_logo_font_en',
+                'footer_logo_path_ar',
+                'footer_logo_path_en',
+                'footer_logo_width',
                 'top_header_link_1_text',
                 'top_header_link_1_url',
                 'top_header_link_2_text',
@@ -499,6 +510,53 @@ class StorefrontRepository
             'color' => $color,
             'bg_color' => $bgColor,
             'shape' => $shape,
+        ];
+    }
+
+    /**
+     * The footer logo for the current locale. Falls back to the header logo
+     * when no footer-specific image has been saved.
+     *
+     * @return array{mode:string,image_url:?string,text:string,font_family:string,color:string,bg_color:string,shape:string,width:string}
+     */
+    public function resolvedFooterLogo(): array
+    {
+        $settings = $this->appearanceSettings();
+        $value = fn(string $name) => (string) (($settings[$name] ?? null)?->value ?? '');
+
+        $locale = app()->getLocale() === 'ar' ? 'ar' : 'en';
+        $footerMode = $value('footer_logo_mode');
+
+        // No footer logo configured at all → fall back to header logo entirely.
+        if ($footerMode === '') {
+            return array_merge($this->resolvedLogo(), ['width' => '']);
+        }
+
+        $fonts = self::LOGO_FONTS[$locale];
+        $fontKey = $value('footer_logo_font_' . $locale) ?: $value('footer_logo_font_en');
+        $fontFamily = $fonts[$fontKey]['family'] ?? reset($fonts)['family'];
+
+        $text = $value('footer_logo_text_' . $locale) ?: $this->storeName();
+        $color = $value('footer_logo_color') ?: '#111827';
+        $bgColor = $value('footer_logo_bg_color') ?: '#ffffff';
+        $shape = $value('footer_logo_shape') === 'rounded' ? 'rounded' : 'rectangle';
+        $imageUrl = $value('footer_logo_path_' . $locale) ?: $value('footer_logo_path_en') ?: null;
+        $mode = $footerMode === 'text' ? 'text' : 'image';
+        $width = $value('footer_logo_width');
+
+        if ($mode === 'image' && !$imageUrl) {
+            $mode = 'text';
+        }
+
+        return [
+            'mode' => $mode,
+            'image_url' => $mode === 'image' ? $imageUrl : null,
+            'text' => $text,
+            'font_family' => $fontFamily,
+            'color' => $color,
+            'bg_color' => $bgColor,
+            'shape' => $shape,
+            'width' => $width,
         ];
     }
 

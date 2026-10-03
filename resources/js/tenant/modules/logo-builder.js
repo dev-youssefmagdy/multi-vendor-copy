@@ -4,12 +4,15 @@
 // text/image mode switch, font preview, colour/background/shape preview,
 // and the transparent-background toggle. Image upload preview itself is
 // handled by the generic `x-tenant::image-upload` component.
+//
+// Supports a configurable field prefix via data-logo-builder="prefix_" so the
+// footer logo builder (prefix "footer_logo_") can reuse the same logic.
 import '@tenant-css/pages/logo-fonts.css';
 
-function applyPreviewStyle(root) {
-    const colorField = root.querySelector('[name="logo_color"]');
-    const bgField = root.querySelector('[name="logo_bg_color"]');
-    const shapeField = root.querySelector('[name="logo_shape"]');
+function applyPreviewStyle(root, prefix) {
+    const colorField = root.querySelector(`[name="${prefix}color"]`);
+    const bgField = root.querySelector(`[name="${prefix}bg_color"]`);
+    const shapeField = root.querySelector(`[name="${prefix}shape"]`);
 
     const color = colorField?.value || '#111827';
     const bgColor = bgField?.value || '#ffffff';
@@ -51,12 +54,12 @@ function bindTextPreview(root) {
     });
 }
 
-function bindColorPreview(root) {
-    const colorField = root.querySelector('[name="logo_color"]');
-    const bgField = root.querySelector('[name="logo_bg_color"]');
-    const shapeField = root.querySelector('[name="logo_shape"]');
+function bindColorPreview(root, prefix) {
+    const colorField = root.querySelector(`[name="${prefix}color"]`);
+    const bgField = root.querySelector(`[name="${prefix}bg_color"]`);
+    const shapeField = root.querySelector(`[name="${prefix}shape"]`);
 
-    const refresh = () => applyPreviewStyle(root);
+    const refresh = () => applyPreviewStyle(root, prefix);
 
     colorField?.addEventListener('change', refresh);
     bgField?.addEventListener('change', refresh);
@@ -91,9 +94,14 @@ function initLogoBuilder(root) {
     }
     root.dataset.logoBuilderBound = '1';
 
+    // data-logo-builder="" or data-logo-builder="logo_" → prefix "logo_"
+    // data-logo-builder="footer_logo_"                   → prefix "footer_logo_"
+    const raw = root.dataset.logoBuilder || '';
+    const prefix = raw || 'logo_';
+
     bindModeSwitch(root);
     bindTextPreview(root);
-    bindColorPreview(root);
+    bindColorPreview(root, prefix);
 }
 
 document.querySelectorAll('[data-logo-builder]').forEach(initLogoBuilder);

@@ -2087,6 +2087,17 @@ class TenantPanelRepository
                 'top_header_link_1_url',
                 'top_header_link_2_text',
                 'top_header_link_2_url',
+                'footer_logo_mode',
+                'footer_logo_text_ar',
+                'footer_logo_text_en',
+                'footer_logo_color',
+                'footer_logo_bg_color',
+                'footer_logo_shape',
+                'footer_logo_font_ar',
+                'footer_logo_font_en',
+                'footer_logo_path_ar',
+                'footer_logo_path_en',
+                'footer_logo_width',
             ])
             ->get()
             ->pluck('value', 'name')

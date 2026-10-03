@@ -261,14 +261,41 @@
                 :action="route('tenant.store.appearance.footer')"
                 method="PUT"
                 :validate="route('tenant.store.appearance.footer.validate')"
+                :files="true"
                 success="none">
+                <section class="card form-card">
+                    <div class="panel-head mb-5">
+                        <div>
+                            <h3 class="panel-title">Store Identity – Footer</h3>
+                            <p class="panel-copy">Set the logo displayed in the storefront footer. Supports text and image modes, just like the header logo.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Footer</button>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        @include('tenant.pages.store._footer-logo-builder', [
+                            'footerLogoMode'    => $footerLogo['footer_logo_mode'],
+                            'footerLogoTextAr'  => $footerLogo['footer_logo_text_ar'],
+                            'footerLogoTextEn'  => $footerLogo['footer_logo_text_en'],
+                            'footerLogoColor'   => $footerLogo['footer_logo_color'],
+                            'footerLogoBgColor' => $footerLogo['footer_logo_bg_color'],
+                            'footerLogoShape'   => $footerLogo['footer_logo_shape'],
+                            'footerLogoFontAr'  => $footerLogo['footer_logo_font_ar'],
+                            'footerLogoFontEn'  => $footerLogo['footer_logo_font_en'],
+                            'footerLogoPathAr'  => $footerLogo['footer_logo_path_ar'],
+                            'footerLogoPathEn'  => $footerLogo['footer_logo_path_en'],
+                            'footerLogoWidth'   => $footerLogo['footer_logo_width'],
+                            'logoFonts'         => $logoFonts,
+                        ])
+                    </div>
+                </section>
+
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
                             <h3 class="panel-title">Footer Settings</h3>
                             <p class="panel-copy">Manage the text and copyright notice displayed in the storefront footer. Provide a translation for each enabled language.</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Footer</button>
                     </div>
 
                     <x-tenant::locale-tabs :languages="$languages->map(fn ($l) => ['code' => $l->code, 'name' => $l->native_name ?? $l->name, 'is_default' => $l->is_default])" :active="$activeLocale">

@@ -66,6 +66,19 @@ final class AppearanceController extends PanelController
             'languages' => $languages,
             'footerTranslations' => $this->footerTranslations($languages),
             'activeLocale' => $languages->firstWhere('is_default', true)?->code ?? $languages->first()?->code ?? config('app.fallback_locale', 'en'),
+            'footerLogo' => [
+                'footer_logo_mode'     => ($settings['footer_logo_mode'] ?? '') === 'text' ? 'text' : 'image',
+                'footer_logo_text_ar'  => (string) ($settings['footer_logo_text_ar'] ?? ''),
+                'footer_logo_text_en'  => (string) ($settings['footer_logo_text_en'] ?? ''),
+                'footer_logo_color'    => ($settings['footer_logo_color'] ?? '') ?: '#111827',
+                'footer_logo_bg_color' => ($settings['footer_logo_bg_color'] ?? '') ?: '#ffffff',
+                'footer_logo_shape'    => ($settings['footer_logo_shape'] ?? '') === 'rounded' ? 'rounded' : 'rectangle',
+                'footer_logo_font_ar'  => ($settings['footer_logo_font_ar'] ?? '') ?: 'cairo',
+                'footer_logo_font_en'  => ($settings['footer_logo_font_en'] ?? '') ?: 'poppins',
+                'footer_logo_path_ar'  => ($settings['footer_logo_path_ar'] ?? '') ?: null,
+                'footer_logo_path_en'  => ($settings['footer_logo_path_en'] ?? '') ?: null,
+                'footer_logo_width'    => (string) ($settings['footer_logo_width'] ?? ''),
+            ],
             'topHeaderLinks' => [
                 'top_header_link_1_text' => (string) ($settings['top_header_link_1_text'] ?? ''),
                 'top_header_link_1_url'  => (string) ($settings['top_header_link_1_url'] ?? ''),
@@ -250,6 +263,34 @@ final class AppearanceController extends PanelController
 
     public function saveFooter(SaveFooterRequest $request): JsonResponse
     {
+        $current = $this->repo->appearanceSettings();
+
+        $footerLogoPathAr = null;
+        $footerLogoPathEn = null;
+
+        if ($request->hasFile('footer_logo_upload_ar')) {
+            $footerLogoPathAr = tenant_asset($request->file('footer_logo_upload_ar')->store('appearances/logos', 'public'));
+        }
+        if ($request->hasFile('footer_logo_upload_en')) {
+            $footerLogoPathEn = tenant_asset($request->file('footer_logo_upload_en')->store('appearances/logos', 'public'));
+        }
+
+        $validated = $request->validated();
+
+        $this->service->saveFooterLogoSettings([
+            'footer_logo_mode'     => $validated['footer_logo_mode'],
+            'footer_logo_text_ar'  => $validated['footer_logo_text_ar'] ?? '',
+            'footer_logo_text_en'  => $validated['footer_logo_text_en'] ?? '',
+            'footer_logo_color'    => $validated['footer_logo_color'],
+            'footer_logo_bg_color' => $validated['footer_logo_bg_color'],
+            'footer_logo_shape'    => $validated['footer_logo_shape'],
+            'footer_logo_font_ar'  => $validated['footer_logo_font_ar'],
+            'footer_logo_font_en'  => $validated['footer_logo_font_en'],
+            'footer_logo_path_ar'  => $footerLogoPathAr ?? ((string) (($current['footer_logo_path_ar'] ?? null)?->value ?? '')),
+            'footer_logo_path_en'  => $footerLogoPathEn ?? ((string) (($current['footer_logo_path_en'] ?? null)?->value ?? '')),
+            'footer_logo_width'    => (string) ($validated['footer_logo_width'] ?? ''),
+        ]);
+
         $this->service->saveFooterTranslations($request->validated('translations', []));
 
         return $this->success('Footer settings saved successfully.');

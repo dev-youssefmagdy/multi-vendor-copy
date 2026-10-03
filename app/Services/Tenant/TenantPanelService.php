@@ -955,6 +955,46 @@ class TenantPanelService
         });
     }
 
+    /**
+     * Persist all footer logo settings (mode, text, fonts, colors, image paths, width).
+     *
+     * @param array<string,string> $data
+     */
+    public function saveFooterLogoSettings(array $data): void
+    {
+        $pathKeys = ['footer_logo_path_ar', 'footer_logo_path_en'];
+
+        $previousPaths = [];
+        foreach ($pathKeys as $pathKey) {
+            if (array_key_exists($pathKey, $data)) {
+                $previousPaths[$pathKey] = (string) (Setting::query()->where('name', $pathKey)->value('value') ?? '');
+            }
+        }
+
+        foreach ($data as $key => $value) {
+            Setting::query()->updateOrCreate(
+                ['name' => $key],
+                ['value' => (string) ($value ?? ''), 'group' => 'appearance']
+            );
+        }
+
+        foreach ($previousPaths as $pathKey => $previousPath) {
+            $newPath = (string) ($data[$pathKey] ?? '');
+            if (!$previousPath || $previousPath === $newPath) {
+                continue;
+            }
+
+            $stillUsed = Setting::query()
+                ->whereIn('name', array_merge($pathKeys, ['logo_path_ar', 'logo_path_en']))
+                ->where('value', $previousPath)
+                ->exists();
+
+            if (!$stillUsed) {
+                $this->deleteStoredAsset($previousPath);
+            }
+        }
+    }
+
     public function seedAppearanceDefaults(string $shopName = ''): void
     {
         // Store name and copyright are derived from the tenant's shop name, so
