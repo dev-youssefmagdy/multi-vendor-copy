@@ -103,6 +103,7 @@
           <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
           <p class="fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] ?: ($p['delivery'] ?? __('Delivered by 24 March')) }}</p>
         </div>
+      @endif
     </div>
   </div>
 </a>

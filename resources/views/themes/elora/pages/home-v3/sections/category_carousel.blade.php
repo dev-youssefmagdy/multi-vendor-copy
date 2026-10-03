@@ -27,14 +27,12 @@
             $catNameDisplay = \Illuminate\Support\Str::limit($catName, 15);
           @endphp
           <a href="{{ route('tenant.storefront.category', $cat->slug) }}"
-            class="relative isolate shrink-0 flex items-center h-[62px] lg:h-[93px] w-[140px] lg:w-[215px] rounded-[18px] lg:rounded-[28px] bg-white overflow-hidden p-[5px] lg:p-[7px] gap-[2px] lg:gap-[3.5px]"
+            class="relative isolate shrink-0 flex items-center h-[62px] lg:h-[93px] w-[140px] lg:w-[215px] rounded-e-[18px] lg:rounded-e-[28px] bg-white overflow-hidden p-[5px] lg:p-[7px] gap-[2px] lg:gap-[3.5px]"
           >
+            {{-- Diagonal mirrors in RTL so the pink panel always sits on the text (start) side --}}
             <span
-              class="absolute inset-0 z-0"
-              style="
-                background: var(--color-brand-pink);
-                clip-path: polygon(0 0, 82% 0, 58% 100%, 0 100%);
-              "
+              class="absolute inset-0 z-0 [clip-path:polygon(0_0,82%_0,58%_100%,0_100%)] rtl:[clip-path:polygon(100%_0,18%_0,42%_100%,100%_100%)]"
+              style="background: var(--color-brand-pink)"
             ></span>
             <p
               class="relative z-[1] flex-1 min-w-0 truncate font-semibold text-white text-[13px] lg:text-[20.7px] tracking-[0.5px] lg:tracking-[0.86px] leading-[150%]"

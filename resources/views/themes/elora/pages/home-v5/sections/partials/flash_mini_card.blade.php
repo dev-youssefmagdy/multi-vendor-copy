@@ -57,6 +57,7 @@
           <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="size-[10px] lg:size-[18.89px] shrink-0" />
           <p class="font-medium text-[8px] lg:text-[14.17px] lg:leading-[18px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['left'] }}</p>
         </div>
+      @endif
     </div>
   </div>
 </a>

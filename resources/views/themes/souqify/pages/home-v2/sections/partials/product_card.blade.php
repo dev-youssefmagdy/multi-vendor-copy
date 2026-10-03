@@ -26,6 +26,7 @@
         <img src="{{ asset('souqify-1/assets/icons/ribbon-ticket.svg') }}" class="absolute inset-0 h-full w-auto" alt="" />
         <span class="relative ps-[8px] lg:ps-[12px] pe-[16px] lg:pe-[22px] text-white text-[9px] lg:text-[12px] font-medium tracking-[0.5px] whitespace-nowrap">{{ $p['badge'] }}</span>
       </div>
+    @endif
   </div>
   <div class="flex flex-col gap-[5px] lg:gap-[8px] p-[5px] lg:p-[8px] w-full">
     <div class="flex items-start justify-between gap-[4px]">
@@ -51,6 +52,7 @@
         <div class="flex items-center justify-center px-[5px] py-[4px] lg:px-[6px] lg:py-[5px]" style="background:var(--color-badge-discount-yellow, #ffd428)">
           <span class="text-[9px] lg:text-[11px] tracking-[0.5px] whitespace-nowrap" style="color:var(--color-text-primary)">{{ $p['discount'] }}</span>
         </div>
+      @endif
     </div>
   </div>
 </div>

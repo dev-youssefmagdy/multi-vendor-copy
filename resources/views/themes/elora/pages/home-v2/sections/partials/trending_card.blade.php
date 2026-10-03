@@ -43,6 +43,7 @@
           <div role="button" tabindex="0" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault()" class="cart-btn flex items-center justify-center">
             <img src="{{ asset('elora-1/assets/icons/cart-plus.svg') }}" alt="{{ __('Add to cart') }}" class="icon" />
           </div>
+        @endif
       </div>
     </div>
 
@@ -69,6 +70,7 @@
             <p class="progress-text font-normal" style="letter-spacing: 0.31px; color: var(--color-accent-purple)">{{ $p['ordered'] }}</p>
           @endif
         </div>
+      @endif
 
       <div class="flex flex-col items-start" style="gap: 2.5px">
         @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
@@ -96,6 +98,7 @@
             <img src="{{ asset('elora-1/assets/icons/truck-delivery-green.svg') }}" alt="" class="meta-icon shrink-0" />
             <span class="font-medium whitespace-nowrap truncate min-w-0" style="color: var(--color-success)">{{ $p['delivered'] }}</span>
           </div>
+        @endif
       </div>
     </div>
   </a>

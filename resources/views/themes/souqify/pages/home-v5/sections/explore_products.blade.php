@@ -13,8 +13,8 @@
 
 {{-- Figma: Frame 1984080218 (1440x437.46) - white, 24px 56px padding, 24px gap.
      60px centred title + the 225.46px tile row + the Explore all button.
-     Each tile is the product photo over an orange 133.07 disc (the existing
-     shop-blob-{1..3}.svg assets), then a 21.4983px label.
+     Each tile is the 172x162 product photo centered over the orange
+     pattern, then a 21.4983px label.
      Values are clamp(min, <value>/1440*100vw, max) off the 1440 canvas. --}}
 <style>
     .sqv5-shop {
@@ -59,20 +59,22 @@
         position: relative;
         display: flex;
         justify-content: center;
-        align-items: flex-end;
+        align-items: center;
         width: 100%;
-        /* 159.03 wide x 158.22 tall */
-        aspect-ratio: 159.03 / 158.22;
+        /* Image box: 172 x 162 on desktop, scaled down with the tile below that */
+        max-width: 172px;
+        aspect-ratio: 172 / 162;
     }
-    .sqv5-shop__blob {
+    /* Orange pattern centered under the product image */
+    .sqv5-shop__pattern {
         position: absolute;
         left: 50%;
-        bottom: 0;
-        /* Subtract: 133.07 of the 159.03 group = 83.7%. */
+        top: 50%;
         width: 83.7%;
         aspect-ratio: 1;
-        transform: translateX(-50%);
-        object-fit: contain;
+        transform: translate(-50%, -50%);
+        background: url('{{ asset('souqify-4/assets/images/shop-by-category-pattern.png') }}') center / contain no-repeat;
+        pointer-events: none;
     }
     .sqv5-shop__img {
         position: relative;
@@ -80,7 +82,7 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-        object-position: bottom center;
+        object-position: center;
     }
     .sqv5-shop__label {
         font-family: 'Outfit', sans-serif;
@@ -166,7 +168,7 @@
           @endphp
           <a href="{{ route('tenant.storefront.category', $category->slug) }}" class="swiper-slide sqv5-shop__tile" wire:key="shopcat-v5-{{ $category->id }}">
             <div class="sqv5-shop__art">
-              <img src="{{ asset('souqify-4/assets/icons/shop-blob-' . (($index % 3) + 1) . '.svg') }}" alt="" class="sqv5-shop__blob" />
+              <span class="sqv5-shop__pattern" aria-hidden="true"></span>
               <img src="{{ $__img }}" alt="{{ $__name }}" class="sqv5-shop__img" />
             </div>
             <p class="sqv5-shop__label">{{ $__name }}</p>

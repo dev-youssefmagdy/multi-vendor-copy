@@ -40,6 +40,7 @@
         </div>
         <p class="text-[11px] tracking-[0.4px]" style="color:var(--color-progress-fill)">{{ $p['progressLabel'] }}</p>
       </div>
+    @endif
     <div class="flex flex-col gap-[4px] items-start">
       @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
       <div class="flex gap-[8px] items-center justify-center">

@@ -52,6 +52,7 @@
         </div>
         <p class="text-[10px]" style="color:var(--color-price-blue)">{{ $p['ordered'] }}</p>
       </div>
+    @endif
     <div class="flex flex-col gap-[2.51px] lg:gap-[4.31px] items-start">
       @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
       <div class="flex gap-[5.03px] lg:gap-[8.61px] items-center">
@@ -85,6 +86,7 @@
           <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="size-[12px] lg:size-[20.56px] shrink-0" />
           <p class="font-medium text-[8px] lg:text-[13.70px] leading-[10px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['delivery'] ?? __('Delivered by 24 March') }}</p>
         </div>
+      @endif
     </div>
   </div>
 </a>

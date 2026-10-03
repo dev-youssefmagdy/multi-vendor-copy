@@ -37,8 +37,13 @@
         font-size: 28px;
         line-height: 150%;
         text-align: center;
-        color: transparent;
-        -webkit-text-stroke: 1px var(--color-brand-pink, #FF1A90);
+        /* Outfit's glyphs are built from overlapping contours, so a plain stroke
+           also draws the seams inside letters. Filling with the section background
+           and painting the stroke underneath hides them; 2px under the fill leaves
+           the comp's visible 1px outline. */
+        color: var(--color-page-bg, #FFFFFF);
+        -webkit-text-stroke: 2px #FF1A90;
+        paint-order: stroke fill;
         margin: 0;
     }
 
@@ -68,21 +73,21 @@
         justify-content: center;
         align-items: flex-end;
         width: 100%;
-        /* 168.28 wide x 157.97 tall */
-        aspect-ratio: 168.28 / 157.97;
+        /* Image box: 152 x 147 on desktop, scaled down with the tile below that */
+        max-width: 152px;
+        aspect-ratio: 152 / 147;
     }
-    /* Rectangle 5979: 96.16 x 104.74, rounded at the top only. */
+    /* Rectangle 5979: 96.16 x 104.74 pink (#FF1A90) arch pattern. */
     .sqv6-shop__arch {
         position: absolute;
         left: 50%;
         bottom: 0;
         transform: translateX(-50%);
-        /* 96.16 / 168.28 */
-        width: 57.14%;
-        /* 104.74 / 157.97 */
-        height: 66.3%;
-        background: var(--color-brand-pink, #FF1A90);
-        border-radius: 999px 999px 0 0;
+        /* 96.16 / 152 */
+        width: 63.26%;
+        /* 104.74 / 147 */
+        height: 71.25%;
+        background: url('{{ asset('souqify-5/assets/images/shop-by-category-pattern.png') }}') center bottom / 100% 100% no-repeat;
     }
     .sqv6-shop__img {
         position: relative;
@@ -99,7 +104,7 @@
         line-height: 1.4945;            /* 34 / 22.7483 */
         letter-spacing: 0.5px;
         text-align: center;
-        color: var(--color-brand-pink, #FF1A90);
+        color: #FF1A90;
         margin: 0;
         max-width: 100%;
     }

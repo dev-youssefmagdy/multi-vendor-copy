@@ -21,7 +21,7 @@
       <span
           class="flex items-center justify-center h-[21.89px] px-[4.45px] lg:h-[37.25px] lg:px-[7.63px] text-[10.3739px] lg:text-[17.7974px] font-normal leading-[13px] lg:leading-[22px] tracking-[0.370497px] lg:tracking-[0.635622px] text-white rounded-tr-[5.928px] rounded-bl-[5.928px] lg:rounded-tr-[10.17px] lg:rounded-bl-[10.17px]"
           style="background:{{ $p['badgeBg'] ?? 'var(--color-primary)' }}; color:{{ $p['badgeColor'] ?? '#fff' }}"
-          >{{ $p['badge'] ??? '' }}</span
+          >{{ $p['badge'] ?? '' }}</span
         >
   
       </div>

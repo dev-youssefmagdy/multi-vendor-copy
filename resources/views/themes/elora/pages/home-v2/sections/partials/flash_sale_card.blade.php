@@ -139,5 +139,6 @@
           style="color: var(--color-success)"
         >{{ $p['delivered'] }}</p>
       </div>
+    @endif
   </div>
 </a>

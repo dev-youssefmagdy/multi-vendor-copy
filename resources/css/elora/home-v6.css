@@ -103,8 +103,9 @@
   height: 336px;
 }
 @media (min-width: 1024px) {
+  /* 3 rows × 148px card image + 2 × 12px row gap (spaceBetween) */
   .elora-v6-root .flash-swiper .swiper-wrapper {
-    height: 396px;
+    height: 468px;
   }
 }
 .elora-v6-root .card-swiper .swiper-wrapper {

@@ -76,7 +76,7 @@
         position: relative;
         display: flex;
         justify-content: center;
-        align-items: flex-end;
+        align-items: center;
         /* "Repeat group 1" is 90.62 square; the group boxes run 91.31-103.31 tall
            because the image overhangs the petals. */
         width: 100%;
@@ -92,11 +92,12 @@
         /* Figma puts "Repeat group 1" at top:0.69 inside the 91.31-tall group
            (Group 40 / Group 41), so the cluster sits at the top of the art box and
            the product image overhangs it downward. */
-        top: 0.69px;
+        /* Centered on the art box so it sits directly behind the image */
+        top: 50%;
         width: 100%;
         aspect-ratio: 1;
-        transform: translateX(-50%);
-        background: url('{{ asset('souqify-3/assets/icons/cat-leaves-teal.svg') }}') center / contain no-repeat;
+        transform: translate(-50%, -50%);
+        background: url('{{ asset('souqify-2/assets/images/categories-pattern.png') }}') center / contain no-repeat;
     }
 
     .sqv3-cats__img {
@@ -106,10 +107,12 @@
            117% (Group 43, 106). Sizing the box at the widest and letting
            object-fit:contain letterbox inside it reproduces all four without
            per-category values. */
-        width: 117%;
-        height: 100%;
+        /* Real category thumbnails are opaque photos, not cut-outs, so a full-size
+           image hid the pattern entirely. 70% keeps the petals visible around it. */
+        width: 70%;
+        height: 70%;
         object-fit: contain;
-        object-position: bottom center;
+        object-position: center;
     }
     .sqv3-cats__label {
         font-family: 'Outfit', sans-serif;

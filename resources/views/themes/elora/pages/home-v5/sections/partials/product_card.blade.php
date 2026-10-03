@@ -79,6 +79,7 @@
           <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="size-[12px] lg:size-[15px] shrink-0" />
           <p class="font-medium text-[9px] lg:text-[11px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] }}</p>
         </div>
+      @endif
     </div>
   </div>
 </a>

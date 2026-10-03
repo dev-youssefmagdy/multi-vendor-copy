@@ -20,7 +20,7 @@
         <span
         class="flex items-center justify-center h-[13.03px] px-[2.79px] lg:h-[22.36px] lg:px-[4.79px] text-[6.51604px] lg:text-[11.1789px] font-normal leading-[8px] lg:leading-[14px] tracking-[0.232716px] lg:tracking-[0.399245px] rounded-tr-[3.723px] rounded-bl-[3.723px] lg:rounded-tr-[6.38792px] lg:rounded-bl-[6.38792px]"
         style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
-        >{{ $p['badge'] ??? '' }}</span
+        >{{ $p['badge'] ?? '' }}</span
       >
     </div>
     <button

@@ -35,6 +35,7 @@
       <div role="button" tabindex="0" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault()" class="bg-[var(--color-bg-main)] flex h-[45px] items-center justify-center px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[57px]" style="background:var(--color-text-primary)">
         <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" alt="{{ __('Add to cart') }}" class="size-[24px]" />
       </div>
+    @endif
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[4px] items-start tracking-[0.5px] w-full">
@@ -71,5 +72,6 @@
           <p class="font-medium text-[var(--color-success)] text-[12px] whitespace-nowrap">{{ $p['delivered'] }}</p>
         </div>
       </div>
+    @endif
   </div>
 </a>

@@ -44,7 +44,7 @@ wire:ignore
     <div class="flex flex-row items-start gap-[16px] lg:gap-[31.58px] h-[115px] lg:h-[227px] w-max">
 
       {{-- 1: Women bags --}}
-      <a href="{{ $bags['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
+      <a href="{{ $bags['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center p-[8px] lg:p-[16px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $bags['name'] }}
         </p>
@@ -52,7 +52,7 @@ wire:ignore
       </a>
 
       {{-- 2: Gaming --}}
-      <a href="{{ $gaming['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
+      <a href="{{ $gaming['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center p-[8px] lg:p-[16px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $gaming['name'] }}
         </p>
@@ -61,13 +61,13 @@ wire:ignore
 
       {{-- 3: Home Accessories + Electronics (stack) --}}
       <div class="flex flex-col gap-[12px] lg:gap-[23.69px] w-[132px] lg:w-[260.56px] h-full shrink-0">
-        <a href="{{ $home['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px]">
+        <a href="{{ $home['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px]">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $home['name'] }}
           </p>
           <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] left-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:left-[173.7px] lg:top-[-21.71px] object-contain" />
         </a>
-        <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px]">
+        <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px]">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $electronics['name'] }}
           </p>
@@ -76,7 +76,7 @@ wire:ignore
       </div>
 
       {{-- 4: Women bags (repeat) --}}
-      <a href="{{ $bags['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
+      <a href="{{ $bags['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center p-[8px] lg:p-[16px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $bags['name'] }}
         </p>
@@ -85,13 +85,13 @@ wire:ignore
 
       {{-- 5: Home Accessories + Electronics (stack, repeat) --}}
       <div class="flex flex-col gap-[12px] lg:gap-[23.69px] w-[132px] lg:w-[260.56px] h-full shrink-0">
-        <a href="{{ $home['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px]">
+        <a href="{{ $home['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px]">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $home['name'] }}
           </p>
           <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] left-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:left-[173.7px] lg:top-[-21.71px] object-contain" />
         </a>
-        <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px]">
+        <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px]">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $electronics['name'] }}
           </p>
@@ -100,7 +100,7 @@ wire:ignore
       </div>
 
       {{-- 6: Gaming (repeat) --}}
-      <a href="{{ $gaming['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
+      <a href="{{ $gaming['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center p-[8px] lg:p-[16px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden w-[90.5px] lg:w-[166.99px] h-full shrink-0">
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $gaming['name'] }}
         </p>

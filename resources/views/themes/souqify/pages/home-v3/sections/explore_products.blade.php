@@ -90,7 +90,7 @@
         width: 30.93%;                  /* 61.84 / 199.94 */
         aspect-ratio: 1;
         transform: rotate(23.64deg);
-        background: url('{{ asset('souqify-3/assets/icons/cat-leaves-white.svg') }}') center / contain no-repeat;
+        background: url('{{ asset('souqify-2/assets/images/shop-by-category-pattern.png') }}') center / contain no-repeat;
         z-index: 2;
         pointer-events: none;
     }

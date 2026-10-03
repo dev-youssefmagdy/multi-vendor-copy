@@ -238,7 +238,8 @@
         .sqv3-flash__endsin {
             /* 33.0192px */
             font-size: clamp(16px, 2.293vw, 33.0192px);
-            writing-mode: vertical-rl;
+            text-align: center;
+            transform: rotate(180deg);
         }
         .sqv3-flash__box {
             /* 126.57 x 121.07 */
