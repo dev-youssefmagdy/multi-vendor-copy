@@ -25,6 +25,12 @@
     --font-main: 'Outfit', sans-serif;
 }
 
+/* Keep wide content (carousels, rotated cards) from widening the page,
+   which also stretches the fixed mobile tab bar past the screen */
+html, body {
+    overflow-x: clip;
+}
+
 body {
     font-family: var(--font-main);
     background-color: var(--color-gray-lightest);

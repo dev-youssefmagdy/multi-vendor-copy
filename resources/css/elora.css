@@ -1983,6 +1983,12 @@ body[data-page="index"] .mob-cam-btn {
     flex-shrink: 0;
 }
 
+/* Keep wide content (carousels, rotated cards) from widening the page,
+   which also stretches the fixed mobile tab bar past the screen */
+html, body {
+    overflow-x: clip;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 639px) {
 

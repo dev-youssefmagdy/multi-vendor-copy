@@ -80,14 +80,17 @@
   </div>
 </footer>
 
+<!-- Reserves the tab bar's height (8 + 56 + 16px) so it never covers the end of the page -->
+<div class="lg:hidden h-[80px]" aria-hidden="true"></div>
+
 <!-- ============ MOBILE FIXED BOTTOM TAB BAR ============ -->
-<nav class="mobile-tabbar lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center gap-[12px] px-[16px] pb-[16px] pt-[8px]" style="background:var(--color-bg-main)">
-  <div class="bg-white flex flex-1 items-center justify-between h-[56px] px-[14px] rounded-full" style="box-shadow:var(--shadow-card)">
-    <a href="{{ route('tenant.home') }}" data-mobile-tab class="mobile-tab {{ request()->routeIs('tenant.home') ? 'is-active-tab' : '' }} flex items-center gap-[6px]">
+<nav class="mobile-tabbar lg:hidden fixed bottom-0 left-0 right-0 z-30 w-full max-w-[100vw] box-border flex items-center gap-[12px] px-[16px] pb-[16px] pt-[8px]" style="background:var(--color-bg-main)">
+  <div class="bg-white flex flex-1 min-w-0 items-center justify-between gap-[8px] h-[56px] px-[14px] rounded-full overflow-hidden" style="box-shadow:var(--shadow-card)">
+    <a href="{{ route('tenant.home') }}" data-mobile-tab class="mobile-tab {{ request()->routeIs('tenant.home') ? 'is-active-tab' : '' }} flex items-center gap-[6px] min-w-0">
       <span class="flex items-center justify-center size-[30px] rounded-tr-[10px] rounded-bl-[10px]" style="background:var(--color-brand-pink)">
         <img src="{{ asset('souqify-5/assets/icons/nav-home.svg') }}" alt="" class="size-[16px]" />
       </span>
-      <span class="text-[13px]" style="color:var(--color-brand-pink)">{{ __('Home') }}</span>
+      <span class="text-[13px] truncate" style="color:var(--color-brand-pink)">{{ __('Home') }}</span>
     </a>
     <a href="{{ route('tenant.storefront.best-selling') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-orders.svg') }}" alt="{{ __('Orders') }}" class="size-[22px]" /></a>
     <a href="{{ route('tenant.storefront.category') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-deals.svg') }}" alt="{{ __('Deals') }}" class="size-[22px]" /></a>

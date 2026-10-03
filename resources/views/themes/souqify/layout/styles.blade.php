@@ -28,6 +28,11 @@
         scroll-behavior: smooth;
     }
 
+    /* Keep wide content from widening the page (and the fixed mobile tab bar) */
+    html, body {
+        overflow-x: clip;
+    }
+
     body {
         font-family: 'Outfit', sans-serif;
     }

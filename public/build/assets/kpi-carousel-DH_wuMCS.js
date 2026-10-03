@@ -1,1 +1,0 @@
-import{t as e}from"./mobile-kpi-carousel-DPYmdIv6.js";function t(t){e(t)}export{t as init};

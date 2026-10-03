@@ -67,6 +67,12 @@
 
 /* ============ Screen-specific CSS not covered by Tailwind utilities ============ */
 
+/* .card-swiper slides are overflow: visible — keep them from widening the page
+   (which also stretched the fixed mobile tab bar past the screen) */
+html, body {
+  overflow-x: clip;
+}
+
 body {
   font-family: var(--font-family-base);
   background: var(--color-bg-main);
