@@ -1,6 +1,6 @@
     {{-- ── Hero Banner ────────────────────────────────────────────────────── --}}
     <section class="hero-wrapper" wire:ignore>
-        <div class="swiper hero-slider max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div class="swiper hero-slider w-full">
             <div class="swiper-wrapper">
                 @foreach ($banners as $idx => $banner)
                 @php

@@ -21,16 +21,15 @@
         height: clamp(240px, 71.5vw, 300px);
         background: var(--color-bg-main);
     }
+    /* The banner image covers the whole hero, edge to edge, behind the copy. */
     .sqv4-hero__media {
         position: absolute;
-        right: 0;
-        bottom: 0;
-        /* The model sits fully inside the frame on mobile - nothing cropped. */
-        height: 92%;
-        max-width: 50%;
-        width: auto;
-        object-fit: contain;
-        object-position: right bottom;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
     }
     .sqv4-hero__content {
         position: relative;
@@ -87,11 +86,6 @@
             height: clamp(420px, 43.681vw, 629px);
             padding: 24px clamp(24px, 3.889vw, 56px);
         }
-        .sqv4-hero__media {
-            right: clamp(0px, 2.778vw, 40px);
-            height: 115%;
-            max-width: none;
-        }
         .sqv4-hero__content {
             /* 828px wide, 38px gap */
             max-width: clamp(420px, 57.5vw, 828px);
@@ -124,10 +118,12 @@
       @foreach ($__heroSlides as $banner)
         <div class="swiper-slide">
           <div class="sqv4-hero__slide">
+            @if (!empty($banner?->image_path))
             <img
-              src="{{ $banner->image_path ?? asset('souqify-3/assets/images/hero-shopping-woman.png') }}"
+              src="{{ $banner->image_path }}" onerror="this.remove()"
               alt="{{ $banner->title ?? ($storeName ?? '') }}"
               class="sqv4-hero__media" />
+            @endif
             <div class="sqv4-hero__content">
               <h1 class="sqv4-hero__title">
                 {!! $banner && $banner->title

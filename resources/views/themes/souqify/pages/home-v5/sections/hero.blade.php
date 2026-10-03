@@ -81,15 +81,15 @@
         color: #FFFFFF;
         white-space: nowrap;
     }
+    /* The banner image covers the whole hero, edge to edge, behind the copy. */
     .sqv5-hero__photo {
         position: absolute;
-        right: 0;
-        top: 0;
+        inset: 0;
+        width: 100%;
         height: 100%;
-        width: auto;
-        max-width: 52%;
-        object-fit: contain;
-        object-position: right;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
     }
 
     @media (min-width: 1024px) {
@@ -117,9 +117,6 @@
             /* 27.2821px */
             font-size: clamp(18px, 1.8946vw, 27.2821px);
         }
-        .sqv5-hero__photo {
-            max-width: 46%;
-        }
     }
 </style>
 
@@ -146,7 +143,9 @@
                 <span class="sqv5-hero__cta-label">{{ __('Shop Now') }}</span>
               </a>
             </div>
-            <img src="{{ $banner->image_path ?? asset('souqify-4/assets/images/hero-photo.png') }}" alt="{{ $banner->title ?? $storeName }}" class="sqv5-hero__photo" />
+            @if (!empty($banner?->image_path))
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="sqv5-hero__photo" />
+            @endif
           </div>
         </div>
       @empty
@@ -162,7 +161,6 @@
                   <span class="sqv5-hero__cta-label">{{ $__slide['cta'] }}</span>
                 </a>
               </div>
-              <img src="{{ asset('souqify-4/assets/images/hero-photo.png') }}" alt="" class="sqv5-hero__photo" />
             </div>
           </div>
         @endforeach

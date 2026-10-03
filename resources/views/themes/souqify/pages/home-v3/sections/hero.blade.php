@@ -23,8 +23,12 @@
       @forelse ($__heroBanners as $banner)
         <div class="swiper-slide">
           <div class="{{ $__slideCls }}">
-            <img src="{{ $banner->image_path ?? asset('souqify-2/assets/images/hero-mobile.jpg') }}" alt="{{ $banner->title ?? $storeName }}" class="lg:hidden absolute inset-0 h-full w-full object-cover" />
-            <img src="{{ $banner->image_path ?? asset('souqify-2/assets/images/hero-desktop.jpg') }}" alt="{{ $banner->title ?? $storeName }}" class="hidden lg:block absolute inset-0 h-full w-full object-cover" />
+            @if (!empty($banner?->image_path))
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="lg:hidden absolute inset-0 h-full w-full object-cover" />
+            @endif
+            @if (!empty($banner?->image_path))
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="hidden lg:block absolute inset-0 h-full w-full object-cover" />
+            @endif
             <div class="{{ $__overlayCls }}" style="{{ $__overlayBg }}"></div>
             <div class="{{ $__contentCls }}">
               <h1 class="{{ $__titleCls }}">
@@ -40,8 +44,6 @@
         @foreach ($__fallbackSlides as $__slide)
           <div class="swiper-slide">
             <div class="{{ $__slideCls }}">
-              <img src="{{ asset('souqify-2/assets/images/hero-mobile.jpg') }}" alt="" class="lg:hidden absolute inset-0 h-full w-full object-cover" />
-              <img src="{{ asset('souqify-2/assets/images/hero-desktop.jpg') }}" alt="" class="hidden lg:block absolute inset-0 h-full w-full object-cover" />
               <div class="{{ $__overlayCls }}" style="{{ $__overlayBg }}"></div>
               <div class="{{ $__contentCls }}">
                 <h1 class="{{ $__titleCls }}">

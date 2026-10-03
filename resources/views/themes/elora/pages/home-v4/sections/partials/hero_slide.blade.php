@@ -91,30 +91,11 @@
     </a>
   </div>
 
-  {{-- ═══════════════════════════════════════════════════════════════════
-       RIGHT PANEL — product / lifestyle photo
-       Mobile: fixed w-[142px], full height, object-cover
-       Desktop: flex-1 (takes remaining 892px-ish), full height,
-                image overflows top/bottom slightly (191.83% height trick)
-  ═══════════════════════════════════════════════════════════════════ --}}
-  <div class="relative shrink-0 h-full
-              w-[142px]
-              lg:flex-1 lg:w-auto">
-
-    {{-- Desktop: overflows vertically for dramatic crop (Figma spec: top:-8.82%, h:191.83%) --}}
-    <div class="hidden lg:block absolute inset-0 overflow-hidden">
-      <img src="{{ $img }}"
-           alt="{{ is_array($lines) && count($lines) ? implode(' ', $lines) : ($title ?? '') }}"
-           class="absolute left-0 w-full max-w-none object-cover"
-           style="height: 191.83%; top: -8.82%;"
-           loading="eager"
-           fetchpriority="high">
-    </div>
-
-    {{-- Mobile: simple cover fill --}}
+  {{-- The banner image covers the whole slide, edge to edge, behind the copy --}}
+  <div class="absolute inset-0">
     <img src="{{ $img }}"
          alt="{{ is_array($lines) && count($lines) ? implode(' ', $lines) : ($title ?? '') }}"
-         class="lg:hidden absolute inset-0 w-full h-full object-cover"
+         class="absolute inset-0 w-full h-full object-cover"
          loading="eager"
          fetchpriority="high">
   </div>

@@ -1819,7 +1819,8 @@ body[data-page="index"] .hero-img {
     display: block;
     max-height: 420px;
     object-fit: cover;
-    border-radius: 16px;
+    /* Full-width hero: edge to edge, so no rounded corners */
+    border-radius: 0;
 }
 
 /* prev/next arrows */
@@ -2022,7 +2023,7 @@ html, body {
 
     body[data-page="index"] .hero-img {
         max-height: 106px;
-        border-radius: 7px;
+        border-radius: 0;
     }
 
     body[data-page="index"] .hero-arrow {

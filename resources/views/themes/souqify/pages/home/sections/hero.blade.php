@@ -1,5 +1,5 @@
     <!-- hero section -->
-    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 lg:pt-10">
+    <section class="w-full lg:pt-10">
         <!-- large screen hero -->
         <div class="hidden md:grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
             <!-- Main hero -->
@@ -84,7 +84,7 @@
             </div>
         </div>
         <!-- small screen hero -->
-        <div class="md:hidden swiper hero-slider max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 rounded-xl overflow-hidden">
+        <div class="md:hidden swiper hero-slider w-full overflow-hidden">
             <div class="swiper-wrapper h-80">
                 <!-- slide one -->
                 <div class="swiper-slide">
