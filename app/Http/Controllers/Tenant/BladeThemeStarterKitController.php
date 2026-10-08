@@ -15,7 +15,12 @@ class BladeThemeStarterKitController extends Controller
     public function download(): StreamedResponse
     {
         $sourceDir = resource_path('blade-theme-starter-kit');
-        $tmpZip    = storage_path('app/tmp/blade-theme-starter-kit-' . Str::random(8) . '.zip');
+
+        if (!is_dir($sourceDir)) {
+            abort(404, 'Starter kit not found.');
+        }
+
+        $tmpZip = storage_path('app/tmp/blade-theme-starter-kit-' . Str::random(8) . '.zip');
 
         if (!is_dir(dirname($tmpZip))) {
             mkdir(dirname($tmpZip), 0755, true);

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Setting;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\BladeTheme;
+use App\Services\Tenant\BladeThemeService;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -43,19 +44,16 @@ class BladeThemeQueuePage extends Component
     {
         $this->authorizePermission('settings.templates.manage');
 
-        $theme = BladeTheme::query()->findOrFail($id);
-        $theme->update([
-            'status' => BladeTheme::STATUS_APPROVED,
-            'rejection_reason' => null,
-            'reviewed_at' => now(),
-            'reviewed_by' => auth('admin')->user()?->name ?? auth('admin')->user()?->email,
-        ]);
+        $reviewerName = auth('admin')->user()?->name ?? auth('admin')->user()?->email ?? 'admin';
 
-        // Create the 'custom' Theme variant row in THIS tenant's own DB only —
-        // Theme is per-tenant, so no other tenant ever sees it. Lets the
-        // variant card show up on Store → Appearance → Themes immediately,
-        // without requiring the tenant to visit /store/blade-theme first.
-        $tenantModel = \App\Models\Tenant::query()->find($theme->tenant_id);
+        // Delegate to the service — it handles DB update, symlink re-link (if already
+        // active), and keeps the logic in one place rather than split across admin UI.
+        app(BladeThemeService::class)->approve($id, $reviewerName);
+
+        // Create the 'custom' Theme variant row in THIS tenant's own DB so the
+        // variant card shows up on Store → Appearance → Themes immediately.
+        $theme = BladeTheme::query()->find($id);
+        $tenantModel = $theme ? \App\Models\Tenant::query()->find($theme->tenant_id) : null;
         if ($tenantModel) {
             tenancy()->initialize($tenantModel);
             \App\Models\Tenant\Theme::query()->firstOrCreate(

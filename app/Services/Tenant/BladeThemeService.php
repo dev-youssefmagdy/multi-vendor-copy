@@ -34,7 +34,7 @@ class BladeThemeService
 
     /** Denylist scan — blocks the literal patterns; NOT a substitute for admin review. */
     private const BLOCKED_PATTERNS = [
-        '<?php', '<?=', 'system(', 'exec(', 'shell_exec(', 'passthru(', 'eval(',
+        '<?php', '<?=', '@php', 'system(', 'exec(', 'shell_exec(', 'passthru(', 'eval(',
         'proc_open(', 'popen(', 'assert(', 'call_user_func(', 'call_user_func_array(',
         '`', // backtick shell execution operator
     ];
@@ -75,7 +75,7 @@ class BladeThemeService
             throw new RuntimeException('The uploaded file is not a valid ZIP archive.');
         }
 
-        $found = [];
+        $allNormalized = [];
 
         try {
             for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -94,22 +94,32 @@ class BladeThemeService
                     continue;
                 }
 
-                $lower = strtolower($normalized);
-                $isBlade = Str::endsWith($lower, '.blade.php');
+                $allNormalized[$i] = $normalized;
+            }
+
+            // Strip a single common top-level wrapper directory if present (e.g. from
+            // macOS/Windows "zip folder" behavior producing blade-theme-starter-kit/pages/…).
+            $prefix = $this->detectCommonPrefix(array_values($allNormalized));
+
+            $found = [];
+            foreach ($allNormalized as $normalized) {
+                $relative = $prefix !== '' ? substr($normalized, strlen($prefix)) : $normalized;
+                $lower    = strtolower($relative);
+                $isBlade  = Str::endsWith($lower, '.blade.php');
                 $extension = pathinfo($lower, PATHINFO_EXTENSION);
 
                 if (!$isBlade && !in_array($extension, self::ALLOWED_EXTENSIONS, true)) {
-                    throw new RuntimeException("Disallowed file type: {$name}");
+                    throw new RuntimeException("Disallowed file type: {$normalized}");
                 }
 
                 if ($isBlade) {
-                    $contents = (string) $zip->getFromIndex($i);
+                    $contents = (string) $zip->getFromName($normalized);
                     foreach (self::BLOCKED_PATTERNS as $pattern) {
                         if (stripos($contents, $pattern) !== false) {
-                            throw new RuntimeException("Blocked pattern \"{$pattern}\" found in {$name}.");
+                            throw new RuntimeException("Blocked pattern \"{$pattern}\" found in {$normalized}.");
                         }
                     }
-                    $found[] = $normalized;
+                    $found[] = $relative;
                 }
             }
 
@@ -127,7 +137,18 @@ class BladeThemeService
                 mkdir($absoluteExtractPath, 0755, true);
             }
 
-            $zip->extractTo($absoluteExtractPath);
+            // Extract, stripping the wrapper prefix from each entry's destination path.
+            foreach ($allNormalized as $originalPath) {
+                $destRelative = $prefix !== '' ? substr($originalPath, strlen($prefix)) : $originalPath;
+                $destAbsolute = $absoluteExtractPath . '/' . $destRelative;
+                $destDir      = dirname($destAbsolute);
+
+                if (!is_dir($destDir)) {
+                    mkdir($destDir, 0755, true);
+                }
+
+                file_put_contents($destAbsolute, $zip->getFromName($originalPath));
+            }
         } finally {
             $zip->close();
         }
@@ -263,12 +284,22 @@ class BladeThemeService
     /** Admin-only: approve a pending theme. Does NOT activate it — the vendor still has to activate it from Store → Themes. */
     public function approve(int $themeId, string $reviewerName): void
     {
-        BladeTheme::query()->findOrFail($themeId)->update([
+        $theme = BladeTheme::query()->findOrFail($themeId);
+
+        $theme->update([
             'status' => BladeTheme::STATUS_APPROVED,
             'rejection_reason' => null,
             'reviewed_at' => now(),
             'reviewed_by' => $reviewerName,
         ]);
+
+        // If this version was already marked active (e.g. previously approved, then
+        // re-submitted after a rejection), recreate the live-views symlink so the
+        // storefront reflects the freshly approved files without the vendor needing
+        // to deactivate and re-activate manually.
+        if ($theme->is_active) {
+            $this->relinkLiveViews($theme->tenant_id);
+        }
     }
 
     public function reject(int $themeId, string $reason, string $reviewerName): void
@@ -283,8 +314,43 @@ class BladeThemeService
     }
 
 
+    public function isLiveViewsPathHealthy(string $tenantId): bool
+    {
+        $path = $this->liveViewsPath($tenantId);
+        return is_dir($path) && is_readable($path);
+    }
+
+    /**
+     * Detects a single common top-level directory shared by all paths, returning
+     * the prefix including its trailing slash, or '' if paths are already at root.
+     *
+     * @param  string[] $paths
+     */
+    private function detectCommonPrefix(array $paths): string
+    {
+        if (empty($paths)) {
+            return '';
+        }
+
+        // Find the leading directory component of the first path.
+        $firstSlash = strpos($paths[0], '/');
+        if ($firstSlash === false) {
+            return '';
+        }
+
+        $candidate = substr($paths[0], 0, $firstSlash + 1); // e.g. "blade-theme-starter-kit/"
+
+        foreach ($paths as $path) {
+            if (!str_starts_with($path, $candidate)) {
+                return '';
+            }
+        }
+
+        return $candidate;
+    }
+
     /** Symlinks the active theme's storage_path into the private path IdentifyTenantTheme looks for. */
-    private function relinkLiveViews(string $tenantId): void
+    public function relinkLiveViews(string $tenantId): void
     {
         $theme = $this->activeBladeTheme($tenantId);
 

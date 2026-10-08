@@ -9,13 +9,13 @@
 @if ($banners->isNotEmpty())
 <section class="hero">
     @foreach ($banners as $banner)
-        @php
-            $img = $banner->image_path ?? null;
-            $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/'))) : null;
-        @endphp
         <div class="hero-slide">
-            @if ($imgUrl)
-                <img src="{{ $imgUrl }}" alt="{{ $banner->translationValue('title') }}">
+            @if ($banner->image_path)
+                @if (filter_var($banner->image_path, FILTER_VALIDATE_URL))
+                    <img src="{{ $banner->image_path }}" alt="{{ $banner->translationValue('title') }}">
+                @else
+                    <img src="{{ asset('storage/' . ltrim($banner->image_path, '/')) }}" alt="{{ $banner->translationValue('title') }}">
+                @endif
             @endif
             @if ($banner->translationValue('title'))
                 <h2>{{ $banner->translationValue('title') }}</h2>

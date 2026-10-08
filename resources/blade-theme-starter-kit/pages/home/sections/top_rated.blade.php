@@ -1,10 +1,9 @@
-{{-- $best_sellers — Collection<Product> --}}
-@if ($best_sellers->isNotEmpty())
-<section class="best-sellers">
-    <h2>Best Sellers</h2>
-    <a href="{{ route('tenant.storefront.best-selling') }}">View All</a>
+{{-- $top_rated_products — Collection<Product> --}}
+@if ($top_rated_products->isNotEmpty())
+<section class="top-rated">
+    <h2>Top Rated</h2>
     <div class="product-grid">
-        @foreach ($best_sellers as $product)
+        @foreach ($top_rated_products as $product)
             <div class="product-card">
                 <a href="{{ route('tenant.storefront.product', $product->slug) }}">
                     @if ($product->primary_image_url)
@@ -13,7 +12,7 @@
                     <h3>{{ $product->translationValue('name') ?? $product->slug }}</h3>
                     <span>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($product->storefrontPricing()['current_price'] * ($currentCurrency?->conversion_rate ?? 1.0), 2) }}</span>
                 </a>
-                @livewire('storefront.add-to-cart-button', ['product' => $product->id], key('best-' . $product->id))
+                @livewire('storefront.add-to-cart-button', ['product' => $product->id], key('top-' . $product->id))
             </div>
         @endforeach
     </div>

@@ -157,12 +157,14 @@ trait SetsUpTenantPanel
 
     protected function setSetting(string $name, mixed $value): Setting
     {
-        return Setting::create([
-            'name' => $name,
-            'value' => $value,
-            'type' => \App\Enums\Tenant\SettingType::String->value,
-            'group' => 'general',
-        ]);
+        return Setting::updateOrCreate(
+            ['name' => $name],
+            [
+                'value' => $value,
+                'type' => \App\Enums\Tenant\SettingType::String->value,
+                'group' => 'general',
+            ]
+        );
     }
 
     /** Prefix a panel-relative path with the tenant's test host. */

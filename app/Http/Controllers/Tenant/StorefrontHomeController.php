@@ -29,13 +29,14 @@ class StorefrontHomeController extends Controller
         $rootCategories = $repo->rootCategoriesWithChildren();
         $categories = $repo->activeCategories();
 
-        $banners = $repo->activeBanners();
-        $flash_sales = $repo->activeFlashSales();
-        $new_arrivals = $repo->newInProducts(10)->getCollection();
+        $banners             = $repo->activeBanners();
+        $flash_sales         = $repo->activeFlashSales();
+        $new_arrivals        = $repo->newInProducts(10)->getCollection();
         $recommended_products = $repo->recommendedProducts(10);
-        $best_sellers = $repo->bestSellingProducts(10)->getCollection();
-        $trending_products = $repo->trendingNowProducts(10);
-        $featured_products = $repo->featuredProducts(10);
+        $best_sellers        = $repo->bestSellingProducts(10)->getCollection();
+        $trending_products   = $repo->trendingNowProducts(10);
+        $featured_products   = $repo->featuredProducts(10);
+        $top_rated_products  = $repo->paginatedTopRatedProducts([], 10)->getCollection();
 
         return view('pages.home.index', compact(
             'storeName',
@@ -53,6 +54,7 @@ class StorefrontHomeController extends Controller
             'best_sellers',
             'trending_products',
             'featured_products',
+            'top_rated_products',
         ));
     }
 }

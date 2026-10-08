@@ -28,10 +28,26 @@ class ServeBladeThemeHome
         }
 
         $service = app(BladeThemeService::class);
-        $active = $service->activeBladeTheme((string) $tenant->getTenantKey());
+        $tenantId = (string) $tenant->getTenantKey();
+        $active = $service->activeBladeTheme($tenantId);
 
         if (!$active) {
             return $next($request);
+        }
+
+        // Guard: DB says active but the symlink may be stale (e.g. after a re-deploy).
+        // Attempt self-heal; if it still fails, fall through to the default Livewire home
+        // rather than throwing a "View not found" 500.
+        if (!$service->isLiveViewsPathHealthy($tenantId)) {
+            try {
+                $service->relinkLiveViews($tenantId);
+            } catch (\Throwable) {
+                return $next($request);
+            }
+
+            if (!$service->isLiveViewsPathHealthy($tenantId)) {
+                return $next($request);
+            }
         }
 
         $view = app(StorefrontHomeController::class)->__invoke(app(\App\Repositories\Tenant\StorefrontRepository::class));

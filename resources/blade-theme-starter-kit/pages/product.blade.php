@@ -61,11 +61,10 @@
         <h2>You May Also Like</h2>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px">
             @foreach ($related as $p)
-                @php $pr = $p->storefrontPricing(); @endphp
                 <a href="{{ route('tenant.storefront.product', $p->slug) }}" style="border:1px solid #eee;border-radius:12px;padding:12px;display:block">
                     @if ($p->primary_image_url)<img src="{{ $p->primary_image_url }}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px">@endif
                     <p style="margin-top:8px">{{ $p->translationValue('name') ?? $p->slug }}</p>
-                    <strong>{{ $symbol }}{{ number_format($pr['current_price'] * $rate, 2) }}</strong>
+                    <strong>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($p->storefrontPricing()['current_price'] * ($currentCurrency?->conversion_rate ?? 1.0), 2) }}</strong>
                 </a>
             @endforeach
         </div>
