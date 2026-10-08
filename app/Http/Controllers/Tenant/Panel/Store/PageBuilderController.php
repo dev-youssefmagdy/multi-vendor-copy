@@ -40,10 +40,10 @@ final class PageBuilderController extends PanelController
                 ? $availableVariants->firstWhere('id', $selectedHomeVariantId)
                 : null;
 
-            $pageFolder = $selectedVariant
-                ? (str_contains($selectedVariant->view ?? '', '.')
+            $pageFolder = $selectedVariant && filled($selectedVariant->view)
+                ? (str_contains($selectedVariant->view, '.')
                     ? last(explode('.', $selectedVariant->view))
-                    : ($selectedVariant->key ?? 'home'))
+                    : $selectedVariant->view)
                 : 'home';
 
             $labels = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
