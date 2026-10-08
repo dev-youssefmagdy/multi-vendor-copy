@@ -136,7 +136,7 @@
 /* ── Table ──────────────────────────────────────────────────────────────── */
 
 .ds-table.tw,
-.ds-table .tw { overflow-x: auto; }
+.ds-table .tw { overflow: visible; }
 
 .ds-table table.tb {
     width: 100%;

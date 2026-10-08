@@ -133,6 +133,13 @@ export async function init(el) {
             if (card?.classList.contains('ds-mcards')) {
                 labelTableCells(el);
             }
+            // DataTables re-renders tbody rows on every draw, but it captures
+            // innerHTML *after* JS has set data-tenant-ready="1", so new nodes
+            // arrive pre-marked and initComponents skips them (no listeners).
+            // Strip the marker from every tbody descendant so they reinitialize.
+            el.querySelectorAll('tbody [data-tenant-ready]').forEach((node) => {
+                delete node.dataset.tenantReady;
+            });
             initComponents(el.closest('.tw') || el);
             updateBulkBar(el);
             el.dispatchEvent(new CustomEvent('tenant:table:drawn', { bubbles: true }));

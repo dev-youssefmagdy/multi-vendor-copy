@@ -71,7 +71,7 @@
     border-radius: 10px;
     box-shadow: var(--shadow);
     padding: 6px;
-    z-index: 40;
+    z-index: 9999;
 }
 .t-dropdown[data-align="end"] .t-dropdown-menu { right: 0; }
 .t-dropdown-menu.is-above { top: auto; bottom: calc(100% + 6px); }
