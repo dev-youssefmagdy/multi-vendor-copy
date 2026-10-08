@@ -23,7 +23,7 @@ class AuthPage extends Component
     // Register
     public string $regName = '';
     public string $regEmail = '';
-    public string $regPhone = '';
+    public mixed $regPhone = '';
     public string $regPassword = '';
     public string $regConfirm = '';
 
@@ -80,14 +80,14 @@ class AuthPage extends Component
         $this->validate([
             'regName' => 'required|string|max:120',
             'regEmail' => 'required|email|unique:customers,email',
-            'regPhone' => 'nullable|string|max:30',
+            'regPhone' => 'nullable|max:30',
             'regPassword' => 'required|min:8|same:regConfirm',
         ]);
 
         $customer = Customer::create([
             'full_name' => $this->regName,
             'email'     => $this->regEmail,
-            'phone'     => $this->regPhone,
+            'phone'     => is_array($this->regPhone) ? ($this->regPhone['full'] ?? '') : (string) $this->regPhone,
             'password'  => Hash::make($this->regPassword),
             'active'    => true,
             'language'  => session('storefront_language'),
