@@ -1,5 +1,5 @@
 @if(count($variants))
-    <x-tenant::table :headers="['Variant', 'Main Price', 'Weight', 'Vendor Sell Price', 'Status']" class="variants-table">
+    <x-tenant::table :headers="['Variant', 'Main Price', 'Weight', 'Sell Price', 'Status']" class="variants-table">
         @foreach($variants as $index => $variant)
             <tr>
                 <td class="variants-table-variant-cell">
