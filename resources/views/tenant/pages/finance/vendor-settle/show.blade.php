@@ -53,7 +53,7 @@
                         id="vendor-settle-{{ $order->id }}"
                         title="Pay Central"
                         :action="route('tenant.finance.vendor-purchase-settle.pay', ['orderId' => $order->id])"
-                        :validate="route('tenant.finance.vendor-purchase-settle.pay.validate')"
+                        :validate="route('tenant.finance.vendor-purchase-settle.pay.validate', ['orderId' => $order->id])"
                         :presented="$presented"
                         submit-label="Proceed to Payment"
                         :inline="true"
