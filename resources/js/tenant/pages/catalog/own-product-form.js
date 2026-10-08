@@ -26,6 +26,25 @@ if (form) {
         countries.querySelector('[data-op-country-empty]').hidden = shown > 0;
     });
 
+    // ── Country picker: "Select all countries" ticks/unticks every country and
+    //    mirrors the individual ticks (checked when all, indeterminate when some) ──
+    const selectAll = countries?.querySelector('[data-op-country-all]');
+    if (selectAll) {
+        const boxes = () => countries.querySelectorAll('input[name="countries[]"]');
+        const syncSelectAll = () => {
+            const all = [...boxes()];
+            const ticked = all.filter((box) => box.checked).length;
+            selectAll.checked = all.length > 0 && ticked === all.length;
+            selectAll.indeterminate = ticked > 0 && ticked < all.length;
+        };
+        selectAll.addEventListener('change', () => {
+            boxes().forEach((box) => { box.checked = selectAll.checked; });
+            selectAll.indeterminate = false;
+        });
+        boxes().forEach((box) => box.addEventListener('change', syncSelectAll));
+        syncSelectAll();
+    }
+
     // ── Primary image thumbnail: red ✕ clears a new pick, or marks the saved
     //    image for removal (remove_primary_image) ─────────────────────────────
     const primary = form.querySelector('[data-op-primary]');

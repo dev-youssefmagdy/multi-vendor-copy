@@ -47,6 +47,12 @@
                         <input type="search" placeholder="Search" aria-label="Search countries" data-op-country-search>
                     </label>
                     <ul class="op-country-list" role="list">
+                        <li class="op-country-all-item">
+                            <label class="ds-check op-country op-country-all">
+                                <input type="checkbox" data-op-country-all @checked(count($countryOptions) && count(array_diff(array_keys($countryOptions), $selectedCountries)) === 0)>
+                                <span>Select all countries</span>
+                            </label>
+                        </li>
                         @foreach($countryOptions as $code => $country)
                             <li data-op-country="{{ strtolower($country) }}">
                                 <label class="ds-check op-country">
