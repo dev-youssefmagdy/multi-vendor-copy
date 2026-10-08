@@ -4,11 +4,7 @@
       >
         <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
           <div class="flex flex-col gap-[32px]">
-            <img
-              src="{{ asset('elora-5/assets/icons/logo-elora-white.svg') }}"
-              alt="{{ $storeName }}"
-              class="h-[32px] w-auto"
-            />
+            <x-storefront-footer-logo :storeName="$storeName" class="h-[32px] w-auto" />
             <div class="flex flex-col gap-[16px]">
               <p class="font-medium text-[16px] text-white">
                 {{ __('Connect with') }} {{ $storeName }}
