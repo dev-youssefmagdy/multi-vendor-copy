@@ -46,7 +46,7 @@
         @else
             <div class="pm-grid fu d1">
                 @foreach($products as $product)
-                    @include('tenant.pages.catalog.products._card', ['product' => $product, 'central' => null, 'added' => false])
+                    @include('tenant.pages.catalog.products._card', ['product' => $product, 'central' => null, 'added' => false, 'showMarket' => false])
                 @endforeach
             </div>
 

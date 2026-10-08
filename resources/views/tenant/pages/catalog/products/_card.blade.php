@@ -4,10 +4,13 @@
     social / video ad / AI price / share / price list menu.
     "dummy" = market comparison data the backend doesn't provide yet.
     Pass $added = false to hide the "Already added" badge (Own products).
+    Pass $showMarket = false to hide the "cheaper than market" comparison
+    (Own products — not meaningful for the vendor's own items).
 --}}
 
 @php
     $added = $added ?? true;
+    $showMarket = $showMarket ?? true;
     $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
     $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
     $imageUrl = (is_array($central) ? ($central['image_url'] ?? null) : null) ?? $product->primary_image_url;
@@ -19,7 +22,7 @@
         : 0;
     $belowLow   = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
     $belowHigh  = $rawPct > 0 ? (int) ceil($rawPct * 1.15) : 0;
-    $belowMarket = $rawPct > 0 ? "{$belowLow}% – {$belowHigh}%" : null;
+    $belowMarket = ($showMarket && $rawPct > 0) ? "{$belowLow}% – {$belowHigh}%" : null;
     $hasSocial = !empty($product->social_posts);
     $hasPriceData = !empty($product->ai_price_data);
     $idea = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17.5c0-1.4.9-2.5 1.8-3.6A7 7 0 1 0 5 9.25c0 1.8.7 3.4 1.8 4.6.9 1.1 1.8 2.2 1.8 3.6"/><path d="M9 21.25h6M9.5 17.5h5"/><path d="M16.5 2.25l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4z"/></svg>';
@@ -45,17 +48,19 @@
             <p class="db-opp-desc pm-card-desc">{{ $description !== '' ? $description : 'No description yet.' }}</p>
         </div>
 
-        <div class="db-opp-stats pm-card-stats">
+        <div class="db-opp-stats pm-card-stats {{ $showMarket ? '' : 'is-single' }}">
             <div class="db-opp-stat is-dark is-half">
                 <span class="db-opp-stat-label">Cost to your customer's door</span>
                 <strong>${{ number_format($price, 2) }}</strong>
                 <small>Product + International Shipping</small>
             </div>
-            <div class="db-opp-stat">
-                <span class="db-opp-stat-label">Average Cheaper than market by</span>
-                <strong>{{ $belowMarket ?? '—' }}</strong>
-                <small>Through global stores</small>
-            </div>
+            @if($showMarket)
+                <div class="db-opp-stat">
+                    <span class="db-opp-stat-label">Average Cheaper than market by</span>
+                    <strong>{{ $belowMarket ?? '—' }}</strong>
+                    <small>Through global stores</small>
+                </div>
+            @endif
         </div>
 
         <div class="pm-card-tools">
