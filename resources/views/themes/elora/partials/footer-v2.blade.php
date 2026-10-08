@@ -5,51 +5,35 @@
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
         <div class="flex flex-col gap-[32px]">
         <x-storefront-footer-logo :storeName="$storeName" class="h-[32px] w-auto" />
+        @if (isset($socialLinks) && $socialLinks->isNotEmpty())
         <div class="flex flex-col gap-[16px]">
             <p class="font-medium text-[16px] text-white">
-            {{ __('Connect with ELORA') }}
+            {{ __('Connect with') }} {{ $storeName }}
             </p>
-            @php
-                $socialLinksByIcon = (isset($socialLinks) ? $socialLinks : collect())->keyBy(fn($link) => $link->icon?->name);
-            @endphp
             <div class="flex gap-[16px] items-center">
-            <a href="{{ $socialLinksByIcon->get('facebook')?->url ?? '#' }}" target="_blank" rel="noopener noreferrer">
-                <img
-                    src="{{ asset('elora-1/assets/icons/social-facebook.svg') }}"
-                    alt="{{ __('Facebook') }}"
-                    class="size-[24px]"
-                />
-            </a>
-            <a href="{{ $socialLinksByIcon->get('twitter')?->url ?? '#' }}" target="_blank" rel="noopener noreferrer">
-                <img
-                    src="{{ asset('elora-1/assets/icons/social-twitter.svg') }}"
-                    alt="{{ __('Twitter') }}"
-                    class="size-[24px]"
-                />
-            </a>
-            <a href="{{ $socialLinksByIcon->get('instagram')?->url ?? '#' }}" target="_blank" rel="noopener noreferrer">
-                <img
-                    src="{{ asset('elora-1/assets/icons/social-instagram.svg') }}"
-                    alt="{{ __('Instagram') }}"
-                    class="size-[24px]"
-                />
-            </a>
-            <a href="{{ $socialLinksByIcon->get('youtube')?->url ?? '#' }}" target="_blank" rel="noopener noreferrer">
-                <img
-                    src="{{ asset('elora-1/assets/icons/social-youtube.svg') }}"
-                    alt="{{ __('YouTube') }}"
-                    class="size-[32px]"
-                />
-            </a>
-            <a href="{{ $socialLinksByIcon->get('linkedin')?->url ?? '#' }}" target="_blank" rel="noopener noreferrer">
-                <img
-                    src="{{ asset('elora-1/assets/icons/social-linkedin.svg') }}"
-                    alt="{{ __('LinkedIn') }}"
-                    class="size-[24px]"
-                />
-            </a>
+            @foreach ($socialLinks as $link)
+                @php
+                    $iconAsset = match ($link->icon?->name) {
+                        'facebook' => 'social-facebook.svg',
+                        'twitter' => 'social-twitter.svg',
+                        'instagram' => 'social-instagram.svg',
+                        'youtube' => 'social-youtube.svg',
+                        'linkedin' => 'social-linkedin.svg',
+                        default => 'social-facebook.svg',
+                    };
+                @endphp
+                <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
+                    aria-label="{{ ucfirst($link->icon?->name ?? 'social') }}">
+                    <img
+                        src="{{ asset('elora-1/assets/icons/' . $iconAsset) }}"
+                        alt="{{ ucfirst($link->icon?->name ?? 'social') }}"
+                        class="{{ $link->icon?->name === 'youtube' ? 'size-[32px]' : 'size-[24px]' }}"
+                    />
+                </a>
+            @endforeach
             </div>
         </div>
+        @endif
         </div>
         <div class="flex flex-col gap-[12px]">
         <p class="font-semibold text-[16px] text-white">{{ __('We accept') }}</p>
@@ -131,7 +115,7 @@
     class="flex items-center justify-center py-[18px] text-[14px] tracking-[0.5px] text-white text-center"
     style="background: var(--color-footer-bar)"
     >
-    {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'ELORA') . '. ' . __('All Rights Reserved.')) }}
+    {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . $storeName . '. ' . __('All Rights Reserved.')) }}
     </div>
 </footer>
 

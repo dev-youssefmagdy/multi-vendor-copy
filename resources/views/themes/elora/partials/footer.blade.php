@@ -14,11 +14,9 @@
                 {{-- Logo --}}
                 <x-storefront-footer-logo :storeName="$storeName" class="h-9 sm:h-11 w-auto mb-5 mx-auto sm:mx-0" />
 
-                {{-- Connect with ELORA --}}
-                <p class="hidden sm:block text-sm font-semibold text-white mb-3">{{ __('Connect with ELORA') }}</p>
-
                 {{-- Social icons: rendered from Store → Appearance → Social Links --}}
                 @if (isset($socialLinks) && $socialLinks->isNotEmpty())
+                <p class="hidden sm:block text-sm font-semibold text-white mb-3">{{ __('Connect with') }} {{ $storeName }}</p>
                     <div class="flex items-center justify-center sm:justify-start gap-2 mb-6 flex-wrap">
                         @foreach ($socialLinks as $link)
                             <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
@@ -170,7 +168,7 @@
 
     {{-- ── Copyright bar ──────────────────────────────────────────────────────── --}}
     <div class="py-3 text-center text-xs sm:text-sm text-white/50" style="background:#323232">
-        {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'ELORA') . '. ' . __('All Rights Reserved.')) }}
+        {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . $storeName . '. ' . __('All Rights Reserved.')) }}
     </div>
 
 </footer>
