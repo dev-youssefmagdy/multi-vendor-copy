@@ -29,7 +29,12 @@
         </div>
 
         @if(empty($sections))
-            <x-tenant::empty-state title="No sections available" copy="This theme has no registered Home page sections yet." />
+            @if($isCustomTheme)
+                <x-tenant::empty-state title="No sections found"
+                    copy="Your uploaded theme does not include any section files. Add blade files under pages/home/sections/ in your theme ZIP and re-upload to use the page builder." />
+            @else
+                <x-tenant::empty-state title="No sections available" copy="This theme has no registered Home page sections yet." />
+            @endif
         @else
             <x-tenant::sortable-list id="page-builder-sections-sortable"
                 :save-url="route('tenant.store.page-builder.order', ['theme_id' => $selectedThemeId, 'home_variant_id' => $selectedHomeVariantId])"

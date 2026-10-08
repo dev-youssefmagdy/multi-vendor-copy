@@ -349,6 +349,36 @@ class BladeThemeService
         return $candidate;
     }
 
+    /**
+     * Returns section keys discovered from pages/home/sections/*.blade.php in the
+     * active theme's live-views path. Returns [] when the theme is not yet active
+     * or the sections directory doesn't exist.
+     *
+     * @return string[]
+     */
+    public function discoveredHomeSectionKeys(string $tenantId): array
+    {
+        $sectionsDir = $this->liveViewsPath($tenantId) . '/pages/home/sections';
+
+        if (!is_dir($sectionsDir)) {
+            return [];
+        }
+
+        $keys = [];
+        foreach (glob($sectionsDir . '/*.blade.php') ?: [] as $file) {
+            $keys[] = basename($file, '.blade.php');
+        }
+        sort($keys);
+
+        return $keys;
+    }
+
+    /** Converts a snake_case section key into a human-readable label. */
+    public static function keyToLabel(string $key): string
+    {
+        return ucwords(str_replace('_', ' ', $key));
+    }
+
     /** Symlinks the active theme's storage_path into the private path IdentifyTenantTheme looks for. */
     public function relinkLiveViews(string $tenantId): void
     {

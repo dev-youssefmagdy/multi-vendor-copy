@@ -89,4 +89,19 @@ class SectionRegistry
 
         return file_exists($path);
     }
+
+    /**
+     * Check whether a section partial exists at an arbitrary base path.
+     * Used for uploaded custom themes whose views live under the live-views
+     * symlink rather than resources/views/themes/.
+     *
+     * @param string $basePath   Absolute path to the theme root (e.g. the live-views symlink target)
+     * @param string $sectionKey Section key, e.g. "hero"
+     */
+    public static function sectionViewExistsAtPath(string $basePath, string $sectionKey): bool
+    {
+        $path = rtrim($basePath, '/') . '/pages/home/sections/' . $sectionKey . '.blade.php';
+
+        return file_exists($path);
+    }
 }

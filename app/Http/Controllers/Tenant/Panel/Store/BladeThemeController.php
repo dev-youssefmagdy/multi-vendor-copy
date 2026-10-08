@@ -79,8 +79,9 @@ final class BladeThemeController extends PanelController
 
     public function destroy(int $upload): JsonResponse
     {
-        tenancy()->central(function () use ($upload): void {
-            $tenantId = (string) tenant()->getTenantKey();
+        $tenantId = (string) tenant()->getTenantKey();
+
+        tenancy()->central(function () use ($upload, $tenantId): void {
             $theme = BladeTheme::query()->where('tenant_id', $tenantId)->findOrFail($upload);
 
             if ($theme->is_active) {

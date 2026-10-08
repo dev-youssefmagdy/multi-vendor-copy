@@ -9,6 +9,7 @@ use App\Models\HomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\BladeThemeService;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ final class PageBuilderController extends PanelController
 
     public function __construct(
         private readonly TenantPanelRepository $repo,
+        private readonly BladeThemeService $bladeThemeService,
     ) {
     }
 
@@ -46,7 +48,21 @@ final class PageBuilderController extends PanelController
                     : $selectedVariant->view)
                 : 'home';
 
-            $labels = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
+            // For uploaded custom themes, discover sections dynamically from the live
+            // symlink path. For built-in themes, use the static SectionRegistry.
+            if ($selectedTheme->slug === 'custom') {
+                $tenantId     = tenant()->getTenantKey();
+                $liveBasePath = $this->bladeThemeService->liveViewsPath($tenantId);
+                $discoveredKeys = $this->bladeThemeService->discoveredHomeSectionKeys($tenantId);
+                $labels = collect($discoveredKeys)
+                    ->mapWithKeys(fn ($k) => [$k => BladeThemeService::keyToLabel($k)])
+                    ->all();
+                $viewExists = fn (string $key) => SectionRegistry::sectionViewExistsAtPath($liveBasePath, $key);
+            } else {
+                $labels     = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
+                $viewExists = fn (string $key) => SectionRegistry::sectionViewExists($selectedTheme->slug, $pageFolder, $key);
+            }
+
             $defaultOrder = array_keys($labels);
 
             $rows = TenantPageSection::query()
@@ -77,7 +93,7 @@ final class PageBuilderController extends PanelController
                     continue;
                 }
 
-                if (!SectionRegistry::sectionViewExists($selectedTheme->slug, $pageFolder, $key)) {
+                if (!$viewExists($key)) {
                     continue;
                 }
 
@@ -97,6 +113,7 @@ final class PageBuilderController extends PanelController
             'selectedThemeId' => $selectedThemeId,
             'selectedHomeVariantId' => $selectedHomeVariantId,
             'sections' => $sections,
+            'isCustomTheme' => $selectedTheme?->slug === 'custom',
         ]);
     }
 
