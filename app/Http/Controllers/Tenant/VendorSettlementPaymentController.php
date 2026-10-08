@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Tenant;
 
+use App\Enums\PaymentGatewayType;
 use App\Http\Controllers\Controller;
 use App\Mail\VendorSettlementAdminMail;
 use App\Mail\VendorSettlementMail;
@@ -62,6 +63,7 @@ class VendorSettlementPaymentController extends Controller
         $centralGatewayModel = tenancy()->central(
             fn() => \App\Models\PaymentGateway::query()
                 ->where('code', $gateway)
+                ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->where('status', 'active')
                 ->first()
         );
@@ -176,6 +178,7 @@ class VendorSettlementPaymentController extends Controller
         $centralGatewayModel = tenancy()->central(
             fn() => \App\Models\PaymentGateway::query()
                 ->where('code', $gateway)
+                ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->where('status', 'active')
                 ->first()
         );

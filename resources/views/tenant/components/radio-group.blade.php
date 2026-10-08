@@ -22,7 +22,7 @@
 @endphp
 
 <x-tenant::field :name="$name" :label="$label" :help="$help" :required="$required" :id="$id" :wrapper-class="$wrapperClass">
-    <div class="t-radio-group t-radio-group--{{ $variant }}" style="--cols: {{ $columns }}">
+    <div {{ $attributes->merge(['class' => 't-radio-group t-radio-group--'.$variant, 'style' => '--cols: '.$columns]) }}>
         @foreach($normalized as $option)
             <label class="t-radio-{{ $variant === 'default' ? 'default toggle-field' : $variant }}">
                 <input type="radio" name="{{ $htmlName }}" value="{{ $option['value'] }}"

@@ -9,6 +9,10 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
+    @if ($errors->has('payment'))
+        <div class="card section-gap notice-error">{{ $errors->first('payment') }}</div>
+    @endif
+
     <x-tenant::stats-grid :stats="$stats" />
 
     <x-tenant::datatable id="vendor-purchases-table" :url="route('tenant.finance.vendor-purchases.data')" :columns="$columns" title="Purchase Ledger" quick-search search-placeholder="Order UUID or customer">
