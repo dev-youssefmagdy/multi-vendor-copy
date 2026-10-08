@@ -13,8 +13,80 @@ use App\Enums\OrderStatus;
 $currency = $currentCurrency ?? null;
 $symbol = $currency?->symbol ?? '$';
 $rate = (float) ($currency?->conversion_rate ?? 1.0);
+
+$profileUrl = fn (array $query = []) => route('tenant.storefront.profile', $query);
+$orderFilters = [
+    null => __('All'),
+    'pending' => __('Pending'),
+    'processing' => __('Processing'),
+    'shipped' => __('Shipped'),
+    'delivered' => __('Delivered'),
+    'cancelled' => __('Cancelled'),
+];
+$filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
 @endphp
-<div class="bg-white">
+<div class="elora-profile bg-white">
+    <style>
+        .elora-profile .ep-nav-link {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            line-height: 1.35;
+            color: #555;
+            text-align: start;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 6px;
+            border-inline-start: 3px solid transparent;
+            transition: background-color .15s, color .15s, border-color .15s;
+            user-select: none;
+        }
+        .elora-profile .ep-nav-link:hover {
+            background: #fff5f2;
+            color: #111827;
+        }
+        .elora-profile .ep-nav-link:focus-visible {
+            outline: 2px solid #111827;
+            outline-offset: 1px;
+        }
+        .elora-profile .ep-nav-link.is-active {
+            background: rgba(255, 77, 0, .07);
+            color: #111827;
+            font-weight: 500;
+            border-inline-start-color: #111827;
+        }
+        .elora-profile .ep-nav-link.is-danger { color: #dc2626; }
+        .elora-profile .ep-nav-link.is-danger:hover { background: #fef2f2; color: #b91c1c; }
+
+        .elora-profile .ep-filter-tab {
+            flex-shrink: 0;
+            padding: 8px 20px;
+            border-radius: 32px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            color: #555;
+            white-space: nowrap;
+            transition: all .2s;
+        }
+        .elora-profile .ep-filter-tab:hover:not(.is-active) { border-color: #171717; color: #171717; }
+        .elora-profile .ep-filter-tab.is-active { background: #171717; border-color: #171717; color: #fff; }
+
+        .elora-profile .ep-mobile-tabs,
+        .elora-profile .ep-mobile-filters { display: flex; }
+        .elora-profile .ep-mobile-filters { scrollbar-width: none; }
+        .elora-profile .ep-mobile-filters::-webkit-scrollbar { display: none; }
+        .elora-profile .ep-sidebar { display: none; }
+
+        @media (min-width: 1024px) {
+            .elora-profile .ep-sidebar { display: block; }
+            .elora-profile .ep-mobile-tabs,
+            .elora-profile .ep-mobile-filters { display: none; }
+        }
+    </style>
+
     {{-- ═══ Mobile sidebar drawer (hidden on desktop) ═══ --}}
     <div id="elora-profile-drawer-overlay"
         class="fixed inset-0 bg-black/40 z-[900] hidden lg:hidden"
@@ -27,7 +99,7 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
         <div class="flex items-center justify-between px-5 py-4 border-b border-[#F0F0F0]">
             <span class="font-semibold text-[#171717]">{{ __('My Account') }}</span>
             <button type="button" onclick="eloraProfileDrawerClose()"
-                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition">
+                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -37,32 +109,25 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
         {{-- User info --}}
         <div class="px-5 py-4 border-b border-[#F0F0F0]">
             <p class="text-base font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
-            <p class="text-sm text-[#ADADAD] mb-3">{{ $customer->email }}</p>
-            <button wire:click="setTab('profile')" onclick="eloraProfileDrawerClose()"
-                class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors">
+            <p class="text-sm text-[#ADADAD] mb-3 break-all">{{ $customer->email }}</p>
+            <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')" onclick="eloraProfileDrawerClose()"
+                class="inline-block text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors cursor-pointer">
                 {{ __('Edit') }}
-            </button>
+            </a>
         </div>
 
         {{-- My Orders nav --}}
         <div class="px-5 py-4 border-b border-[#F0F0F0]">
             <p class="text-sm font-semibold text-[#171717] mb-3">{{ __('My Orders') }}</p>
             <nav class="flex flex-col gap-0.5">
-                <div wire:click="filterStatus(null)" onclick="eloraProfileDrawerClose()"
-                    class="sidebar-nav-item {{ $statusFilter === null && $activeTab === 'orders' ? 'active' : '' }}">
-                    {{ __('All') }}
-                </div>
-                @foreach ([
-                'pending' => __('Pending'),
-                'processing' => __('Processing'),
-                'shipped' => __('Shipped'),
-                'delivered' => __('Delivered'),
-                'cancelled' => __('Cancelled'),
-                ] as $val => $label)
-                <div wire:click="filterStatus('{{ $val }}')" onclick="eloraProfileDrawerClose()"
-                    class="sidebar-nav-item {{ $statusFilter === $val && $activeTab === 'orders' ? 'active' : '' }}">
+                @foreach ($orderFilters as $val => $label)
+                @php $val = $val === '' ? null : $val; $isActive = $activeTab === 'orders' && $statusFilter === $val; @endphp
+                <a href="{{ $profileUrl($val ? ['status' => $val] : []) }}"
+                    wire:click.prevent="filterStatus({{ $val ? "'{$val}'" : 'null' }})" onclick="eloraProfileDrawerClose()"
+                    @if ($isActive) aria-current="page" @endif
+                    class="ep-nav-link {{ $isActive ? 'is-active' : '' }}">
                     {{ $label }}
-                </div>
+                </a>
                 @endforeach
             </nav>
         </div>
@@ -71,18 +136,20 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
         <div class="px-5 py-4">
             <p class="text-sm font-semibold text-[#171717] mb-3">{{ __('Settings') }}</p>
             <nav class="flex flex-col gap-0.5">
-                <div wire:click="setTab('profile')" onclick="eloraProfileDrawerClose()"
-                    class="sidebar-settings-item">
+                <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')" onclick="eloraProfileDrawerClose()"
+                    @if ($activeTab === 'profile') aria-current="page" @endif
+                    class="ep-nav-link {{ $activeTab === 'profile' ? 'is-active' : '' }}">
                     {{ __('My personal details') }}
-                </div>
-                <div wire:click="setTab('returns')" onclick="eloraProfileDrawerClose()"
-                    class="sidebar-settings-item">
+                </a>
+                <a href="{{ $profileUrl(['tab' => 'returns']) }}" wire:click.prevent="setTab('returns')" onclick="eloraProfileDrawerClose()"
+                    @if ($activeTab === 'returns') aria-current="page" @endif
+                    class="ep-nav-link {{ $activeTab === 'returns' ? 'is-active' : '' }}">
                     {{ __('Returns') }}
-                </div>
-                <div wire:click="logout" onclick="eloraProfileDrawerClose()"
-                    class="sidebar-settings-item" style="color:#dc2626">
+                </a>
+                <button type="button" wire:click="logout" onclick="eloraProfileDrawerClose()"
+                    class="ep-nav-link is-danger">
                     {{ __('Sign out') }}
-                </div>
+                </button>
             </nav>
         </div>
     </div>
@@ -94,14 +161,27 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
             <div class="flex items-center gap-1 flex-wrap">
                 <a href="{{ route('tenant.home') }}"
                     class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Home') }}</a>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="m9 18 6-6-6-6" />
                 </svg>
-                <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : ($activeTab === 'returns' ? __('Returns') : __('Orders')) }}</span>
+                @if ($activeTab === 'orders')
+                    @if ($statusFilter)
+                        <a href="{{ $profileUrl() }}" wire:click.prevent="filterStatus(null)"
+                            class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Orders') }}</a>
+                        <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                        <span class="text-[#1B1B1B]">{{ $filterLabel }}</span>
+                    @else
+                        <span class="text-[#1B1B1B]">{{ __('Orders') }}</span>
+                    @endif
+                @else
+                    <span class="text-[#1B1B1B]">{{ $activeTab === 'profile' ? __('Profile') : __('Returns') }}</span>
+                @endif
             </div>
             {{-- Hamburger: only on mobile --}}
-            <button id="elora-profile-menu-btn" type="button"
-                class="lg:hidden flex flex-col gap-1 p-2 rounded-md hover:bg-gray-100 transition"
+            <button id="elora-profile-menu-btn" type="button" onclick="eloraProfileDrawerOpen()"
+                class="lg:hidden flex flex-col gap-1 p-2 rounded-md hover:bg-gray-100 transition cursor-pointer"
                 aria-label="{{ __('Menu') }}">
                 <span class="block w-5 h-0.5 bg-[#171717]"></span>
                 <span class="block w-5 h-0.5 bg-[#171717]"></span>
@@ -114,16 +194,16 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
         <div class="flex gap-6 lg:gap-8 items-start">
 
             {{-- ════ LEFT SIDEBAR (desktop) ════ --}}
-            <div class="desktop-sidebar flex-shrink-0" style="width:234px">
+            <aside class="ep-sidebar flex-shrink-0" style="width:234px">
 
                 {{-- User info card --}}
                 <div class="bg-white border border-[#F0F0F0] rounded-lg p-5 mb-4">
                     <p class="text-lg font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
-                    <p class="text-sm text-[#ADADAD] mb-3">{{ $customer->email }}</p>
-                    <button wire:click="setTab('profile')"
-                        class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors">
+                    <p class="text-sm text-[#ADADAD] mb-3 break-all">{{ $customer->email }}</p>
+                    <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
+                        class="inline-block text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors cursor-pointer">
                         {{ __('Edit') }}
-                    </button>
+                    </a>
                 </div>
 
                 {{-- My Orders nav --}}
@@ -132,76 +212,71 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                         {{ __('My Orders') }}
                     </p>
                     <nav class="flex flex-col gap-0.5">
-                        <div wire:click="filterStatus(null)"
-                            class="sidebar-nav-item {{ $statusFilter === null && $activeTab === 'orders' ? 'active' : '' }}">
-                            {{ __('All') }}
-                        </div>
-                        @foreach ([
-                        'pending' => __('Pending'),
-                        'processing' => __('Processing'),
-                        'shipped' =>
-                        __('Shipped'),
-                        'delivered' => __('Delivered'),
-                        'cancelled' => __('Cancelled')
-                        ] as $val =>
-                        $label)
-                        <div wire:click="filterStatus('{{ $val }}')"
-                            class="sidebar-nav-item {{ $statusFilter === $val && $activeTab === 'orders' ? 'active' : '' }}">
+                        @foreach ($orderFilters as $val => $label)
+                        @php $val = $val === '' ? null : $val; $isActive = $activeTab === 'orders' && $statusFilter === $val; @endphp
+                        <a href="{{ $profileUrl($val ? ['status' => $val] : []) }}"
+                            wire:click.prevent="filterStatus({{ $val ? "'{$val}'" : 'null' }})"
+                            @if ($isActive) aria-current="page" @endif
+                            class="ep-nav-link {{ $isActive ? 'is-active' : '' }}">
                             {{ $label }}
-                        </div>
+                        </a>
                         @endforeach
                     </nav>
                 </div>
 
-                {{--     Settings nav --}}
+                {{-- Settings nav --}}
                 <div class="bg-white border border-[#F0F0F0] rounded-lg p-4">
                     <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">
                         {{ __('Settings') }}</p>
                     <nav class="flex flex-col gap-0.5">
-
-                        <div wire:click="setTab('profile')" class="sidebar-settings-item">
-                            {{ __('My personal details') }}</div>
-                        <div wire:click="setTab('returns')" class="sidebar-settings-item">
-                            {{ __('Returns') }}</div>
-                        <div wire:click="logout" class="sidebar-settings-item" style="color:#dc2626">
-                            {{ __('Sign out') }}</div>
+                        <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
+                            @if ($activeTab === 'profile') aria-current="page" @endif
+                            class="ep-nav-link {{ $activeTab === 'profile' ? 'is-active' : '' }}">
+                            {{ __('My personal details') }}</a>
+                        <a href="{{ $profileUrl(['tab' => 'returns']) }}" wire:click.prevent="setTab('returns')"
+                            @if ($activeTab === 'returns') aria-current="page" @endif
+                            class="ep-nav-link {{ $activeTab === 'returns' ? 'is-active' : '' }}">
+                            {{ __('Returns') }}</a>
+                        <button type="button" wire:click="logout" class="ep-nav-link is-danger">
+                            {{ __('Sign out') }}</button>
                     </nav>
                 </div>
-            </div>
+            </aside>
 
             {{-- ════ MAIN CONTENT ════ --}}
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 transition-opacity duration-150"
+                wire:loading.class="opacity-50 pointer-events-none" wire:target="setTab,filterStatus">
 
-                {{-- Mobile tab nav (visible on mobile only, hidden at ≥900px via CSS) --}}
-                <div class="mobile-profile-tabs items-center gap-2 mb-5" style="display:none">
-                    <button wire:click="setTab('orders')"
-                        class="flex-1 py-2.5 text-sm font-semibold rounded-full border transition
+                {{-- Mobile tab nav (visible below lg only) --}}
+                <div class="ep-mobile-tabs items-center gap-2 mb-5">
+                    <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')"
+                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'orders' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('My Orders') }}
-                    </button>
-                    <button wire:click="setTab('profile')"
-                        class="flex-1 py-2.5 text-sm font-semibold rounded-full border transition
+                    </a>
+                    <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
+                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'profile' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('Profile & Addresses') }}
-                    </button>
-                    <button wire:click="setTab('returns')"
-                        class="flex-1 py-2.5 text-sm font-semibold rounded-full border transition
+                    </a>
+                    <a href="{{ $profileUrl(['tab' => 'returns']) }}" wire:click.prevent="setTab('returns')"
+                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'returns' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('Returns') }}
-                    </button>
+                    </a>
                 </div>
 
                 @if ($activeTab === 'returns')
 
                 <div class="max-w-[700px]">
                     <div class="flex items-center gap-3 mb-6">
-                        <button wire:click="setTab('orders')"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors">
-                            <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" stroke-width="2"
+                        <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')" aria-label="{{ __('Back to orders') }}"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors cursor-pointer">
+                            <svg class="w-4 h-4 text-[#555] rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path d="m15 18-6-6 6-6" stroke-linecap="round" />
                             </svg>
-                        </button>
+                        </a>
                         <h2 class="text-xl font-bold text-[#171717]">{{ __('Return Requests') }}</h2>
                     </div>
 
@@ -265,13 +340,13 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                 {{-- Profile Info --}}
                 <div class="max-w-[500px]">
                     <div class="flex items-center gap-3 mb-6">
-                        <button wire:click="setTab('orders')"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors">
-                            <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" stroke-width="2"
+                        <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')" aria-label="{{ __('Back to orders') }}"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors cursor-pointer">
+                            <svg class="w-4 h-4 text-[#555] rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path d="m15 18-6-6 6-6" stroke-linecap="round" />
                             </svg>
-                        </button>
+                        </a>
                         <h2 class="text-xl font-bold text-[#171717]">{{ __('Profile Information') }}</h2>
                     </div>
                     <div class="flex flex-col gap-4">
@@ -444,9 +519,9 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
 
                 <div class="relative mb-4">
                     <input type="text" id="orderSearch" placeholder="{{ __('Item name / Order ID / Tracking No.') }}"
-                        class="w-full border border-[#E0E0E0] rounded-full bg-white px-4 py-3 pr-12 text-sm text-[#171717] placeholder-[#ADADAD] outline-none focus:border-[#ADADAD] transition-colors"
+                        class="w-full border border-[#E0E0E0] rounded-full bg-white ps-4 pe-12 py-3 text-sm text-[#171717] placeholder-[#ADADAD] outline-none focus:border-[#ADADAD] transition-colors"
                         oninput="searchOrders()" />
-                    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#ADADAD]" fill="none"
+                    <svg class="absolute end-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#ADADAD] pointer-events-none" fill="none"
                         stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.35-4.35" />
@@ -467,39 +542,42 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                     </p>
                 </div>
 
-                {{--     Mobile filter tabs --}}
-                <div class="mobile-filter-tabs gap-2 overflow-x-auto pb-1 mb-4" style="scrollbar-width:none">
-                    <button wire:click="filterStatus(null)"
-                        class="filter-tab flex-shrink-0 {{ $statusFilter === null ? 'active' : '' }}">
-                        {{ __('All') }}
-                    </button>
-                    @foreach ([
-                    'pending' => __('Pending'),
-                    'processing' => __('Processing'),
-                    'shipped' => __('Shipped'),
-                    'delivered' => __('Delivered'),
-                    'cancelled' => __('Cancelled')
-                    ] as $val => $label)
-                    <button wire:click="filterStatus('{{ $val }}')"
-                        class="filter-tab flex-shrink-0 {{ $statusFilter === $val ? 'active' : '' }}">
+                {{-- Mobile filter tabs (below lg) --}}
+                <div class="ep-mobile-filters gap-2 overflow-x-auto pb-1 mb-4">
+                    @foreach ($orderFilters as $val => $label)
+                    @php $val = $val === '' ? null : $val; @endphp
+                    <a href="{{ $profileUrl($val ? ['status' => $val] : []) }}"
+                        wire:click.prevent="filterStatus({{ $val ? "'{$val}'" : 'null' }})"
+                        class="ep-filter-tab {{ $statusFilter === $val ? 'is-active' : '' }}">
                         {{ $label }}
-                    </button>
+                    </a>
                     @endforeach
                 </div>
 
                 {{-- Orders --}}
                 @if ($orders->isEmpty())
-                {{--   Empty state --}}
-                <div id="emptyState" class="hidden flex flex-col items-center justify-center py-24 text-center">
-                    <img loading="lazy" src="{{ asset('elora/assets/images/empty-orders.svg') }}" alt="{{ __('broken heart') }}">
-                    <h2 class=" text-xl font-semibold text-[#333] mb-2">{{ __('No Orders yet !?') }}</h2>
-                    <p class="text-sm text-[#888] mb-6">
-                        {{ __('You don\'t have any orders at the moment.') }}
-                    </p>
-                    <a href="{{ route('tenant.home') }}"
-                        class="px-8 py-3 bg-[#171717] text-white text-sm font-medium rounded-full hover:bg-black transition-colors">
-                        {{ __('Continue Shopping') }}
-                    </a>
+                {{-- Empty state --}}
+                <div class="flex flex-col items-center justify-center py-16 sm:py-24 text-center">
+                    <img loading="lazy" src="{{ asset('elora/assets/images/empty-orders.svg') }}" alt="" class="max-w-[220px] mb-4">
+                    @if ($statusFilter)
+                        <h2 class="text-xl font-semibold text-[#333] mb-2">{{ __('No :status orders', ['status' => mb_strtolower($filterLabel)]) }}</h2>
+                        <p class="text-sm text-[#888] mb-6">
+                            {{ __('You don\'t have any orders with this status at the moment.') }}
+                        </p>
+                        <a href="{{ $profileUrl() }}" wire:click.prevent="filterStatus(null)"
+                            class="px-8 py-3 bg-[#171717] text-white text-sm font-medium rounded-full hover:bg-black transition-colors cursor-pointer">
+                            {{ __('View all orders') }}
+                        </a>
+                    @else
+                        <h2 class="text-xl font-semibold text-[#333] mb-2">{{ __('No Orders yet !?') }}</h2>
+                        <p class="text-sm text-[#888] mb-6">
+                            {{ __('You don\'t have any orders at the moment.') }}
+                        </p>
+                        <a href="{{ route('tenant.home') }}"
+                            class="px-8 py-3 bg-[#171717] text-white text-sm font-medium rounded-full hover:bg-black transition-colors">
+                            {{ __('Continue Shopping') }}
+                        </a>
+                    @endif
                 </div>
                 @else
                 <div class="flex flex-col gap-4" id="ordersList">
@@ -668,6 +746,9 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
                     </div>
                     @endforeach
                 </div>
+                <p id="orderSearchEmpty" class="hidden text-center py-12 text-sm text-[#808080]">
+                    {{ __('No orders match your search.') }}
+                </p>
                 @endif
 
                 @endif
@@ -679,14 +760,19 @@ $rate = (float) ($currency?->conversion_rate ?? 1.0);
 @push('scripts')
 <script>
 function searchOrders() {
-    const q = document.getElementById('orderSearch').value.toLowerCase();
-    document.querySelectorAll('.order-card').forEach(card => {
+    const input = document.getElementById('orderSearch');
+    if (!input) return;
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.elora-profile .order-card').forEach(card => {
         const id = (card.dataset.id || '').toLowerCase();
         const name = (card.dataset.name || '').toLowerCase();
         const date = (card.dataset.date || '').toLowerCase();
-        card.style.display = (!q || id.includes(q) || name.includes(q) || date.includes(q)) ?
-            '' : 'none';
+        const match = !q || id.includes(q) || name.includes(q) || date.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
     });
+    document.getElementById('orderSearchEmpty')?.classList.toggle('hidden', visible > 0);
 }
 
 // ── Mobile profile drawer ─────────────────────────────────────────────────
@@ -715,13 +801,11 @@ function eloraProfileDrawerClose() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const btn = document.getElementById('elora-profile-menu-btn');
     const drawer = document.getElementById('elora-profile-drawer');
     if (drawer && document.documentElement.dir === 'rtl') {
         drawer.classList.remove('translate-x-full');
         drawer.classList.add('-translate-x-full');
     }
-    if (btn) btn.addEventListener('click', eloraProfileDrawerOpen);
 });
 </script>
 @endpush
@@ -753,6 +837,12 @@ function profileSwal(message, type) {
         },
     }).fire({ icon: type || 'success', title: message });
 }
+
+// ── Keep the order search applied after Livewire re-renders ──────────────
+Livewire.hook('commit', ({ component, succeed }) => {
+    if (component.id !== $wire.$id) return;
+    succeed(() => queueMicrotask(() => window.searchOrders?.()));
+});
 
 // ── Listen for profile-swal Livewire events ───────────────────────────────
 $wire.on('profile-swal', (event) => {

@@ -13,6 +13,7 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductRate;
 use App\Repositories\Tenant\StorefrontRepository;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class ProfilePage extends Component
@@ -20,7 +21,19 @@ class ProfilePage extends Component
     use HasStorefrontLayout;
     use SanitizesPhoneNumber;
 
+    /** Sidebar filter value => order statuses it covers (matches the badge grouping in the views). */
+    private const STATUS_FILTERS = [
+        'pending'    => [OrderStatus::Pending],
+        'processing' => [OrderStatus::Processing],
+        'shipped'    => [OrderStatus::Shipped],
+        'delivered'  => [OrderStatus::Delivered, OrderStatus::Completed],
+        'cancelled'  => [OrderStatus::Cancelled, OrderStatus::Rejected],
+    ];
+
+    #[Url(as: 'tab', except: 'orders')]
     public string $activeTab = 'orders';
+
+    #[Url(as: 'status', except: null)]
     public ?string $statusFilter = null;
 
     // Address form
@@ -42,15 +55,21 @@ class ProfilePage extends Component
             $this->redirect(route('tenant.storefront.login'));
         }
 
-        $tab = request()->query('tab');
-        if (is_string($tab)) {
-            $this->setTab($tab);
+        // Sanitize values hydrated from the query string (?tab=…&status=…)
+        $this->setTab($this->activeTab);
+        if (!array_key_exists((string) $this->statusFilter, self::STATUS_FILTERS)) {
+            $this->statusFilter = null;
         }
     }
 
     public function setTab(string $tab): void
     {
         $this->activeTab = in_array($tab, ['orders', 'profile', 'wishlist', 'returns']) ? $tab : 'orders';
+
+        // The status filter only applies to the orders list
+        if ($this->activeTab !== 'orders') {
+            $this->statusFilter = null;
+        }
     }
 
     public function openAddressModal(?int $id = null): void
@@ -174,7 +193,10 @@ class ProfilePage extends Component
 
     public function filterStatus(?string $status): void
     {
-        $this->statusFilter = $status;
+        // Order filters always bring the orders list back into view,
+        // even when the profile or returns panel is currently open.
+        $this->activeTab = 'orders';
+        $this->statusFilter = array_key_exists((string) $status, self::STATUS_FILTERS) ? $status : null;
     }
 
     public function logout(): void
@@ -280,9 +302,9 @@ class ProfilePage extends Component
 
         $orders = $repo->customerOrders($customer);
 
-        if ($this->statusFilter) {
-            $statusEnum = OrderStatus::from($this->statusFilter);
-            $orders = $orders->filter(fn($o) => $o->status === $statusEnum)->values();
+        if ($this->statusFilter && isset(self::STATUS_FILTERS[$this->statusFilter])) {
+            $statuses = self::STATUS_FILTERS[$this->statusFilter];
+            $orders = $orders->filter(fn($o) => in_array($o->status, $statuses, true))->values();
         }
 
         $reviewedProductIds = $customer
