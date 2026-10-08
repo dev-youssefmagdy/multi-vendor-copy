@@ -1,6 +1,8 @@
 {{-- Shared order-details body: snapshot, financials, line items, tracking, address, payment payload, activity.
      Reused by Sales > Orders show and Finance > Billing show — keep both callers in sync when editing. --}}
-@php($financials = $order['financials'] ?? [])
+@php
+    $financials = $order['financials'] ?? [];
+@endphp
 <div class="details-grid">
     <section class="details-panel">
         <div class="details-header">
@@ -119,12 +121,62 @@
     <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($order['shipping_address'] ?? [])" />
 </section>
 
+@php
+    $payment = app(\App\Support\Tenant\Payments\PaymentDetailsPresenter::class)
+        ->present($order['payment_details'] ?? [], $order['payment_method'] ?? null);
+@endphp
 <section class="details-panel full">
     <div class="details-header">
         <h4 class="panel-title">Payment Details</h4>
-        <p class="panel-copy">Gateway response payload with nested JSON nodes kept expandable.</p>
+        <p class="panel-copy">Key payment information reported by the payment gateway.</p>
     </div>
-    <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($order['payment_details'] ?? [])" />
+    @if(!$payment['has_data'])
+        <div class="json-empty">No payment details were recorded for this order.</div>
+    @else
+        <div class="details-list">
+            <div class="details-kv">
+                <span class="details-label">Gateway</span>
+                <span class="details-value">{{ $payment['gateway_label'] }}</span>
+            </div>
+            @if($payment['status'])
+                <div class="details-kv">
+                    <span class="details-label">Gateway status</span>
+                    <span class="pay-status pay-status-{{ $payment['status']['tone'] }}">{{ $payment['status']['label'] }}</span>
+                </div>
+            @endif
+            @foreach($payment['headline'] as $row)
+                <div class="details-kv">
+                    <span class="details-label">{{ $row['label'] }}</span>
+                    @if(!empty($row['href']))
+                        <a class="details-value" href="{{ $row['href'] }}" target="_blank" rel="noopener noreferrer">{{ $row['value'] }}</a>
+                    @else
+                        <span class="details-value {{ !empty($row['mono']) ? 'pay-mono' : '' }}">{{ $row['value'] }}</span>
+                    @endif
+                </div>
+            @endforeach
+            @if($payment['note'])
+                <div class="details-kv">
+                    <span class="details-label">Note</span>
+                    <span class="details-value">{{ $payment['note'] }}</span>
+                </div>
+            @endif
+        </div>
+
+        @if(!empty($payment['raw']))
+            <details class="json-collapse">
+                <summary class="json-collapse-summary">
+                    <div>
+                        <div class="details-inline-title">Full gateway response</div>
+                        <div class="details-inline-copy">Technical payload for support and reconciliation (sensitive values masked).</div>
+                    </div>
+                    <span class="json-collapse-badge">Expand</span>
+                </summary>
+                <div class="json-collapse-body">
+                    <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($payment['raw'])" :open-depth="0" />
+                </div>
+            </details>
+        @endif
+    @endif
 </section>
 
 @if(!empty($order['activities']))
