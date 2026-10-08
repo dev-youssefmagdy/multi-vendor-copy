@@ -7,14 +7,17 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\UploadBladeThemeRequest;
 use App\Models\BladeTheme;
+use App\Models\HomeVariant;
+use App\Models\Tenant\TenantPageSection;
+use App\Models\Tenant\Theme;
 use App\Services\Tenant\BladeThemeService;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use RuntimeException;
 use Throwable;
-use Illuminate\Support\Facades\Log;
 
 final class BladeThemeController extends PanelController
 {
@@ -81,20 +84,43 @@ final class BladeThemeController extends PanelController
     {
         $tenantId = (string) tenant()->getTenantKey();
 
-        tenancy()->central(function () use ($upload, $tenantId): void {
-            $theme = BladeTheme::query()->where('tenant_id', $tenantId)->findOrFail($upload);
+        try {
+            $deletedVariantId = tenancy()->central(function () use ($upload, $tenantId): ?int {
+                $theme = BladeTheme::query()->where('tenant_id', $tenantId)->findOrFail($upload);
 
-            if ($theme->is_active) {
-                return;
+                if ($theme->is_active) {
+                    throw new RuntimeException('Cannot delete an active blade theme. Deactivate it first.');
+                }
+
+                $path = storage_path('app/'.$theme->storage_path);
+                if (is_dir($path)) {
+                    File::deleteDirectory($path);
+                }
+
+                $variantId = null;
+                $variant = HomeVariant::query()->where('blade_theme_id', $theme->id)->first();
+                if ($variant) {
+                    $variantId = $variant->id;
+                    $variant->delete();
+                }
+
+                $theme->delete();
+
+                return $variantId;
+            });
+        } catch (RuntimeException $e) {
+            return $this->failure($e->getMessage(), 422);
+        }
+
+        if ($deletedVariantId !== null) {
+            $customTheme = Theme::query()->where('slug', 'custom')->first();
+            if ($customTheme) {
+                TenantPageSection::query()
+                    ->where('theme_id', $customTheme->id)
+                    ->where('home_variant_id', $deletedVariantId)
+                    ->delete();
             }
-
-            $path = storage_path('app/'.$theme->storage_path);
-            if (is_dir($path)) {
-                File::deleteDirectory($path);
-            }
-
-            $theme->delete();
-        });
+        }
 
         return $this->success('Theme deleted.');
     }

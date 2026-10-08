@@ -6,12 +6,14 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\UpdateThemeCountriesRequest;
+use App\Models\BladeTheme;
 use App\Models\HomeVariant;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\ThemeCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\BladeThemeService;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\Tenant\Metric;
 use Illuminate\Http\JsonResponse;
@@ -37,6 +39,7 @@ final class ThemesController extends PanelController
             ->orderBy('theme_slug')
             ->orderByDesc('is_default')
             ->orderBy('name')
+            ->with('bladeTheme')
             ->get()
         );
 
@@ -59,16 +62,20 @@ final class ThemesController extends PanelController
             $enabledCount = $theme->countries->where('is_enabled', true)->count();
             $totalCount = $theme->countries->count();
 
+            $bladeTheme = $variant->bladeTheme ?? null;
+            $bladeStatus = $bladeTheme?->status;
+            $canActivate = $bladeTheme === null || $bladeStatus === BladeTheme::STATUS_APPROVED;
+
             $isActive = $isUniversal
                 ? ($activeVariantId !== null && (int) $activeVariantId === (int) $variant->id)
                 : (bool) $theme->is_active;
 
             if ($isUniversal) {
-                $actionLabel = $isActive ? 'Active' : 'Set Active';
-                $actionMethod = $isActive ? null : 'activateVariant';
+                $actionLabel = $isActive ? 'Active' : ($canActivate ? 'Set Active' : ucfirst((string) $bladeStatus));
+                $actionMethod = ($isActive || !$canActivate) ? null : 'activateVariant';
                 $actionClass = $isActive
                     ? 'theme-pill-btn is-disabled'
-                    : 'theme-pill-btn is-primary';
+                    : ($canActivate ? 'theme-pill-btn is-primary' : 'theme-pill-btn is-disabled');
             } else {
                 $actionLabel = $isActive ? 'Deactivate' : 'Activate';
                 $actionMethod = $isActive ? 'deactivateTheme' : 'activateTheme';
@@ -106,6 +113,9 @@ final class ThemesController extends PanelController
                     ? 'All countries'
                     : sprintf('%d of %d countries', $enabledCount, $totalCount),
                 'has_countries' => $totalCount > 0,
+                'blade_status' => $bladeStatus,
+                'blade_filename' => $bladeTheme?->original_filename,
+                'can_activate' => $canActivate,
             ];
         })->filter()->values()->all();
 
@@ -164,6 +174,24 @@ final class ThemesController extends PanelController
 
     public function activateVariant(Theme $theme, int $variant): JsonResponse
     {
+        if ($theme->slug === 'custom') {
+            try {
+                app(BladeThemeService::class)->activateSpecificVariant(
+                    (string) tenant()->getTenantKey(),
+                    $variant,
+                );
+            } catch (\RuntimeException $e) {
+                return $this->failure($e->getMessage(), 422);
+            }
+
+            TenantHomeVariant::query()->updateOrCreate(
+                ['theme_id' => $theme->id, 'country_id' => null],
+                ['home_variant_id' => $variant]
+            );
+
+            return $this->success('Blade theme variant activated successfully.');
+        }
+
         $this->service->activateTheme($theme);
 
         TenantHomeVariant::query()->updateOrCreate(

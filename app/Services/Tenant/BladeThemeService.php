@@ -3,7 +3,10 @@
 namespace App\Services\Tenant;
 
 use App\Models\BladeTheme;
+use App\Models\HomeVariant;
 use App\Models\Tenant as TenantModel;
+use App\Models\Tenant\TenantPageSection;
+use App\Models\Tenant\Theme;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -155,7 +158,7 @@ class BladeThemeService
         }
 
         return tenancy()->central(function () use ($tenantId, $version, $relativePath, $file) {
-            return BladeTheme::query()->create([
+            $bladeTheme = BladeTheme::query()->create([
                 'tenant_id' => $tenantId,
                 'version' => $version,
                 'storage_path' => $relativePath,
@@ -164,6 +167,18 @@ class BladeThemeService
                 'is_active' => false,
                 'uploaded_at' => now(),
             ]);
+
+            HomeVariant::query()->create([
+                'theme_slug'     => 'custom',
+                'key'            => $version,
+                'name'           => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'description'    => 'Uploaded blade theme',
+                'is_default'     => false,
+                'is_active'      => true,
+                'blade_theme_id' => $bladeTheme->id,
+            ]);
+
+            return $bladeTheme;
         });
     }
 
@@ -188,7 +203,7 @@ class BladeThemeService
         return tenancy()->central(fn() => BladeTheme::query()
             ->where('tenant_id', $tenantId)
             ->where('status', BladeTheme::STATUS_APPROVED)
-            // ->where('is_active', true)
+            ->where('is_active', true)
             ->latest('id')
             ->first());
     }
@@ -226,7 +241,9 @@ class BladeThemeService
                 return false;
             }
 
-            BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
+            BladeTheme::query()->where('tenant_id', $tenantId)
+            ->where('id', '!=', $theme->id)
+            ->update(['is_active' => false]);
             $theme->update(['is_active' => true]);
 
             return true;
@@ -404,10 +421,10 @@ class BladeThemeService
         return ucwords(str_replace('_', ' ', $key));
     }
 
-    /** Symlinks the active theme's storage_path into the private path IdentifyTenantTheme looks for. */
-    public function relinkLiveViews(string $tenantId): void
+    /** Symlinks a blade theme's storage_path into the private path IdentifyTenantTheme looks for. */
+    public function relinkLiveViews(string $tenantId, ?BladeTheme $theme = null): void
     {
-        $theme = $this->activeBladeTheme($tenantId);
+        $theme ??= $this->activeBladeTheme($tenantId);
 
         $liveLink = $this->liveViewsPath($tenantId);
 
@@ -425,5 +442,73 @@ class BladeThemeService
 
         $source = storage_path('app/' . $theme->storage_path);
         symlink($source, $liveLink);
+    }
+
+    /**
+     * Activate a specific blade theme version identified by its HomeVariant.
+     * Called from ThemesController::activateVariant() when theme slug is 'custom'.
+     */
+    public function activateSpecificVariant(string $tenantId, int $homeVariantId): void
+    {
+        $bladeTheme = tenancy()->central(function () use ($tenantId, $homeVariantId) {
+            $variant = HomeVariant::query()->findOrFail($homeVariantId);
+
+            if (!$variant->blade_theme_id) {
+                throw new RuntimeException('This variant has no linked blade theme.');
+            }
+
+            $bladeTheme = BladeTheme::query()
+                ->where('id', $variant->blade_theme_id)
+                ->where('tenant_id', $tenantId)
+                ->where('status', BladeTheme::STATUS_APPROVED)
+                ->firstOrFail();
+            BladeTheme::query()->where('tenant_id', $tenantId)
+            ->where('id', '!=', $bladeTheme->id)->update(['is_active' => false]);
+            $bladeTheme->update(['is_active' => 1]);
+
+            return $bladeTheme;
+        });
+        $this->relinkLiveViews($tenantId, $bladeTheme);
+        $this->seedPageBuilderSectionsForVariant($tenantId, $bladeTheme, $homeVariantId);
+        $this->syncThemeRow(activate: true);
+    }
+
+    /**
+     * Discover sections from pages/home/sections/ in a specific blade theme version
+     * and upsert TenantPageSection rows for the given HomeVariant.
+     */
+    public function seedPageBuilderSectionsForVariant(string $tenantId, BladeTheme $bladeTheme, int $homeVariantId): void
+    {
+        $sectionsDir = storage_path('app/' . $bladeTheme->storage_path) . '/pages/home/sections';
+
+        if (!is_dir($sectionsDir)) {
+            return;
+        }
+
+        $keys = [];
+        foreach (glob($sectionsDir . '/*.blade.php') ?: [] as $file) {
+            $keys[] = basename($file, '.blade.php');
+        }
+        sort($keys);
+
+        $theme = Theme::query()->where('slug', 'custom')->first();
+        if (!$theme) {
+            return;
+        }
+
+        foreach ($keys as $i => $key) {
+            TenantPageSection::query()->updateOrCreate(
+                [
+                    'theme_id'        => $theme->id,
+                    'home_variant_id' => $homeVariantId,
+                    'page'            => 'home',
+                    'section_key'     => $key,
+                ],
+                [
+                    'sort_order' => $i,
+                    'is_visible' => true,
+                ]
+            );
+        }
     }
 }

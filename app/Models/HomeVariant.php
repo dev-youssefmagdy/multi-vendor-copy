@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\BladeTheme;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Admin-managed catalog of homepage layout variants for a theme.
@@ -25,6 +27,7 @@ class HomeVariant extends Model
         'view',
         'is_default',
         'is_active',
+        'blade_theme_id',
     ];
 
     protected function casts(): array
@@ -40,5 +43,10 @@ class HomeVariant extends Model
     public function scopeForTheme($query, string $slug)
     {
         return $query->where('theme_slug', $slug);
+    }
+
+    public function bladeTheme(): BelongsTo
+    {
+        return $this->belongsTo(BladeTheme::class);
     }
 }
