@@ -9,11 +9,14 @@ use App\Enums\OrderStatus;
 use App\Exceptions\Tenant\PanelActionException;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Sales\UpdateShippingStatusRequest;
+use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Order;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\OrderLifecycleService;
+use App\Services\Tenant\VendorPurchaseService;
 use App\Support\OrderProfitCalculator;
 use App\Support\Tenant\Metric;
+use App\Support\Tenant\Payments\InlineGatewayPresenter;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +28,8 @@ final class OrdersController extends PanelController
 {
     public function __construct(
         private readonly TenantPanelRepository $repo,
+        private readonly VendorPurchaseService $purchaseService,
+        private readonly InlineGatewayPresenter $presenter,
     ) {
     }
 
@@ -106,7 +111,31 @@ final class OrdersController extends PanelController
             'orderId' => $orderId,
             'order' => $this->repo->orderDetail($order),
             'shippingStatuses' => OrderShippingStatus::cases(),
+            'settlement' => $this->settlementContext($order),
         ]);
+    }
+
+    /**
+     * Pay-central context for the order detail page — mirrors Finance > Vendor Purchases > Pay Central.
+     * Null when the order owes nothing, is already settled, or the user cannot settle purchases.
+     */
+    private function settlementContext(Order $order): ?array
+    {
+        $user = auth('tenant')->user();
+
+        if (
+            (float) $order->vendor_cost <= 0
+            || $order->vendor_settled
+            || !$user instanceof AdminUser
+            || !$user->hasPermission('finance.vendor-purchases.view')
+        ) {
+            return null;
+        }
+
+        return [
+            'breakdown' => $this->purchaseService->previewBreakdown($order, null),
+            'presented' => $this->presenter->present(collect($this->repo->centralGatewaysForPayment())),
+        ];
     }
 
     public function updateShippingStatus(UpdateShippingStatusRequest $request, int $orderId): JsonResponse
