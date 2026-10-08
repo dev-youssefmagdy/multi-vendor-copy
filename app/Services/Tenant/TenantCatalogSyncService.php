@@ -693,14 +693,19 @@ class TenantCatalogSyncService
             $isNewProduct = !$tenantProduct->exists;
             $isTenantOwned = isset($assignedProductIds[$product->id]);
 
-            $centralProductPrice = $product->sale_price ?: $product->base_price;
-            $basePrice = $this->applyProfit($centralProductPrice);
-            $countryPrices = $this->buildCountryPrices($basePrice, $product, $shippingCosts);
+            $productCosts = $this->centralShippingCosts($product, $shippingCosts);
+            $productPricing = $this->catalogPricing(
+                app(TenantPricingService::class)->centralBasePrice($product),
+                $productCosts,
+                $tenantProduct->profit,
+            );
 
             $tenantProduct->fill([
                 'slug' => $product->slug,
-                'price' => $isNewProduct ? $countryPrices : $tenantProduct->price,
-                'default_price' => $basePrice,
+                'price' => $productPricing['prices'],
+                'default_price' => $productPricing['default'],
+                'profit' => $productPricing['profit'],
+                'fixed_shipping_costs' => $productCosts,
                 'weight_grams' => $tenantProduct->weight_grams ?? $product->weight_grams,
                 'active' => $isNewProduct ? ($product->status->value === 'published') : $tenantProduct->active,
                 'central_visible' => $product->isVisibleToTenants(),
@@ -735,10 +740,12 @@ class TenantCatalogSyncService
                     'product_id' => $tenantProduct->id,
                 ]);
                 $isNewVariant = !$tenantVariant->exists;
-                $centralVariantPrice = $variant->price ?? $product->sale_price ?? $product->base_price;
-                $baseVariantPrice = $this->applyProfit($centralVariantPrice);
-                $variantWeight = $variant->weight_grams !== null ? (int) $variant->weight_grams : (int) ($product->weight_grams ?? 0);
-                $variantCountryPrices = $this->buildCountryPrices($baseVariantPrice, $product, $shippingCosts, $variantWeight);
+                $centralVariantPrice = (float) ($variant->price ?? app(TenantPricingService::class)->centralBasePrice($product));
+                $variantPricing = $this->catalogPricing(
+                    $centralVariantPrice,
+                    $this->centralShippingCosts($variant, $shippingCosts) ?? $productCosts,
+                    $tenantVariant->profit,
+                );
                 $centralThumb = $variant->relationLoaded('files')
                     ? $variant->files->firstWhere('key', 'variant_thumb')
                     : $variant->files()->where('key', 'variant_thumb')->first();
@@ -747,8 +754,9 @@ class TenantCatalogSyncService
                     'option_ids' => $variant->options->pluck('id')->map(fn($id) => (int) $id)->all(),
                     'real_price' => $centralVariantPrice,
                     'weight_grams' => $tenantVariant->weight_grams ?? $variant->weight_grams,
-                    'sell_price' => $isNewVariant ? $variantCountryPrices : $tenantVariant->sell_price,
-                    'default_sell_price' => $baseVariantPrice,
+                    'sell_price' => $variantPricing['prices'],
+                    'default_sell_price' => $variantPricing['default'],
+                    'profit' => $variantPricing['profit'],
                     'stock' => /*$isNewVariant ? */ ($variant->stock ?? 0) ?? $tenantVariant->stock,
                     'margin_percentage' => $isNewVariant ? $this->profitPercentage : $tenantVariant->margin_percentage,
                     'thumbnail_path' => $tenantVariant->thumbnail_path
@@ -775,6 +783,16 @@ class TenantCatalogSyncService
         ProductVariant::query()
             ->whereNotNull('central_product_variant_id')
             ->when($variantIds !== [], fn($query) => $query->whereNotIn('central_product_variant_id', $variantIds), fn($query) => $query)
+            ->delete();
+
+        // Blank variants without a central link on a catalog product are leftovers of
+        // the old product-form bug; the real variants were re-created above.
+        ProductVariant::query()
+            ->whereNull('central_product_variant_id')
+            ->whereIn('product_id', Product::withoutGlobalScope('centralVisible')
+                ->whereNotNull('central_product_id')
+                ->where('is_own_product', false)
+                ->select('id'))
             ->delete();
 
         // Only delete catalog products that are no longer in either the catalog or the tenant assignments
@@ -824,14 +842,19 @@ class TenantCatalogSyncService
         $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $centralProduct->id]);
         $isNewProduct = !$tenantProduct->exists;
 
-        $centralProductPrice = $centralProduct->sale_price ?: $centralProduct->base_price;
-        $basePrice = $this->applyProfit($centralProductPrice);
-        $countryPrices = $this->buildCountryPrices($basePrice, $centralProduct, $shippingCosts);
+        $productCosts = $this->centralShippingCosts($centralProduct, $shippingCosts);
+        $productPricing = $this->catalogPricing(
+            app(TenantPricingService::class)->centralBasePrice($centralProduct),
+            $productCosts,
+            $tenantProduct->profit,
+        );
 
         $tenantProduct->fill([
             'slug' => $centralProduct->slug,
-            'price' => $isNewProduct ? $countryPrices : $tenantProduct->price,
-            'default_price' => $basePrice,
+            'price' => $productPricing['prices'],
+            'default_price' => $productPricing['default'],
+            'profit' => $productPricing['profit'],
+            'fixed_shipping_costs' => $productCosts,
             'weight_grams' => $tenantProduct->weight_grams ?? $centralProduct->weight_grams,
             'active' => $isNewProduct ? ($centralProduct->status->value === 'published') : $tenantProduct->active,
             'central_visible' => $centralProduct->isVisibleToTenants(),
@@ -880,10 +903,12 @@ class TenantCatalogSyncService
                 'product_id' => $tenantProduct->id,
             ]);
             $isNewVariant = !$tenantVariant->exists;
-            $centralVariantPrice = $variant->price ?? $centralProduct->sale_price ?? $centralProduct->base_price;
-            $baseVariantPrice = $this->applyProfit($centralVariantPrice);
-            $variantWeight = $variant->weight_grams !== null ? (int) $variant->weight_grams : (int) ($centralProduct->weight_grams ?? 0);
-            $variantCountryPrices = $this->buildCountryPrices($baseVariantPrice, $centralProduct, $shippingCosts, $variantWeight);
+            $centralVariantPrice = (float) ($variant->price ?? app(TenantPricingService::class)->centralBasePrice($centralProduct));
+            $variantPricing = $this->catalogPricing(
+                $centralVariantPrice,
+                $this->centralShippingCosts($variant, $shippingCosts) ?? $productCosts,
+                $tenantVariant->profit,
+            );
             $centralThumb = $variant->relationLoaded('files')
                 ? $variant->files->firstWhere('key', 'variant_thumb')
                 : $variant->files()->where('key', 'variant_thumb')->first();
@@ -892,8 +917,9 @@ class TenantCatalogSyncService
                 'option_ids' => $variant->options->pluck('id')->map(fn($id) => (int) $id)->all(),
                 'real_price' => $centralVariantPrice,
                 'weight_grams' => $tenantVariant->weight_grams ?? $variant->weight_grams,
-                'sell_price' => $isNewVariant ? $variantCountryPrices : $tenantVariant->sell_price,
-                'default_sell_price' => $baseVariantPrice,
+                'sell_price' => $variantPricing['prices'],
+                'default_sell_price' => $variantPricing['default'],
+                'profit' => $variantPricing['profit'],
                 'stock' => $variant->stock ?? 0,
                 'margin_percentage' => $isNewVariant ? $this->profitPercentage : $tenantVariant->margin_percentage,
                 'thumbnail_path' => $tenantVariant->thumbnail_path
@@ -908,6 +934,13 @@ class TenantCatalogSyncService
             }
         }
 
+        if (!$tenantProduct->is_own_product) {
+            ProductVariant::query()
+                ->where('product_id', $tenantProduct->id)
+                ->whereNull('central_product_variant_id')
+                ->delete();
+        }
+
         tenancy()->central(fn() => ProductTenantAssignment::query()
             ->where('product_id', $centralProduct->id)
             ->where('tenant_id', $tenant->id)
@@ -915,46 +948,37 @@ class TenantCatalogSyncService
     }
 
     /**
-     * Build the per-country price JSON array for a product.
+     * Central `{country_id: shipping}` map for a product or variant: the stored
+     * JSON when present, otherwise derived from weight x active per-gram rules.
      *
-     * Keys: "default" (base price without shipping), and one key per active country.
-     * Value: base price + flat shipping cost for that country.
-     *
-     * Shipping resolution order:
-     *   1. Product-level flat override (central product.fixed_shipping_costs[country_id])
-     *   2. Weight-based cost (FixedShippingCost.price_per_gram × weight_grams)
-     *   3. Zero (no shipping configured for this country)
-     *
-     * For variants, pass the variant's own weight_grams via $weightOverride so the
-     * cost is computed from the variant's weight instead of the parent product's.
+     * @param Collection<int, FixedShippingCost> $rules
+     * @return array<string, float>|null
      */
-    protected function buildCountryPrices(float $basePrice, CentralProduct $product, Collection $shippingCosts, ?int $weightOverride = null): array
+    protected function centralShippingCosts(object $central, Collection $rules): ?array
     {
-        $prices = ['default' => $basePrice];
-
-        $fixedJson = is_array($product->fixed_shipping_costs) ? $product->fixed_shipping_costs : [];
-        $weight = $weightOverride ?? (int) ($product->weight_grams ?? 0);
-
-        foreach ($shippingCosts as $countryId => $record) {
-            $key = (string) $countryId;
-            $shipping = array_key_exists($key, $fixedJson)
-                ? (float) $fixedJson[$key]
-                : ($weight > 0 ? round((float) $record->price_per_gram * $weight, 2) : 0.0);
-            $prices[$key] = round($basePrice + $shipping, 2);
+        if (is_array($central->fixed_shipping_costs) && $central->fixed_shipping_costs !== []) {
+            return $central->fixed_shipping_costs;
         }
 
-        return $prices;
+        $weight = (int) ($central->weight_grams ?? 0);
+
+        if ($weight <= 0 || $rules->isEmpty()) {
+            return null;
+        }
+
+        return $rules
+            ->mapWithKeys(fn($rule, $countryId) => [(string) $countryId => round((float) $rule->price_per_gram * $weight, 2)])
+            ->all();
     }
 
-    protected function applyProfit(float|int|string|null $centralPrice): float
+    /**
+     * @param array<string, mixed>|null $costs
+     * @param array<string, mixed>|null $existingProfit
+     * @return array{prices: array<string, float>, default: float, profit: array<string, array<string, mixed>>}
+     */
+    protected function catalogPricing(float $base, ?array $costs, ?array $existingProfit): array
     {
-        $price = max(0, (float) $centralPrice);
-
-        if ($this->profitPercentage <= 0) {
-            return $price;
-        }
-
-        return round($price * (1 + $this->profitPercentage / 100), 2);
+        return app(TenantPricingService::class)->forCatalog($base, $costs, $existingProfit, $this->profitPercentage);
     }
 
     protected function inferCurrencyCode($currency): string

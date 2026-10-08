@@ -8,6 +8,7 @@ use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
 use App\Models\Tenant\ProductVariant;
+use App\Services\Tenant\TenantPricingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -35,6 +36,8 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
 
     private const CHUNK_SIZE = 500;
 
+    private TenantPricingService $pricing;
+
     /**
      * @param int|null $centralProductId  Push a single central product (and its variants) instead of the whole catalog.
      * @param int|null $centralVariantId  Push a single central product variant (and its parent product's price) instead of the whole catalog.
@@ -48,6 +51,7 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
 
     public function handle(): void
     {
+        $this->pricing = new TenantPricingService();
         $jobStart = microtime(true);
         info('[SyncCentralProductPriceToTenantsJob] handle: start', [
             'centralProductId' => $this->centralProductId,
@@ -82,7 +86,7 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
             ->when($targetProductId !== null, fn($q) => $q->whereKey($targetProductId))
             ->get()
             ->mapWithKeys(fn($p) => [
-                $p->id => (float) ($p->sale_price ?? $p->base_price ?? 0),
+                $p->id => (new TenantPricingService())->centralBasePrice($p),
             ])
             ->all();
 
@@ -143,6 +147,7 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
         $productUpdates = [];
         $productIds = [];
         $salePriceByTenantProductId = [];
+        $productCostsByTenantProductId = [];
 
         $step = microtime(true);
 
@@ -159,6 +164,7 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
             ];
             $productIds[] = $tenantProduct->id;
             $salePriceByTenantProductId[$tenantProduct->id] = $tenantProduct->central_product_id;
+            $productCostsByTenantProductId[$tenantProduct->id] = $centralCosts;
         }
 
         info('[SyncCentralProductPriceToTenantsJob] syncForTenant: recalculated product prices', [
@@ -190,9 +196,10 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
                 ->select(['id', 'profit', 'real_price', 'product_id', 'central_product_variant_id'])
                 ->get();
 
-            $centralCostsByVariantId = CentralProductVariant::query()
+            $centralVariants = CentralProductVariant::query()
                 ->whereIn('id', $variants->pluck('central_product_variant_id')->filter()->all())
-                ->pluck('fixed_shipping_costs', 'id');
+                ->get(['id', 'price', 'fixed_shipping_costs'])
+                ->keyBy('id');
 
             foreach ($variants as $variant) {
                 $centralProductId = $salePriceByTenantProductId[$variant->product_id] ?? null;
@@ -201,13 +208,18 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
                     continue;
                 }
 
-                $rawCentralCosts = $centralCostsByVariantId[$variant->central_product_variant_id] ?? null;
-                $costsForVariant = (array) (json_decode((string) $rawCentralCosts, true) ?? []);
-                $realPrice = (float) ($variant->real_price ?? 0);
+                // real_price mirrors the central variant price, so a central variant
+                // price change must refresh it before prices are re-derived.
+                $centralVariant = $centralVariants->get($variant->central_product_variant_id);
+                $realPrice = $centralVariant ? (float) $centralVariant->price : (float) ($variant->real_price ?? 0);
+                $costsForVariant = $centralVariant && is_array($centralVariant->fixed_shipping_costs) && $centralVariant->fixed_shipping_costs !== []
+                    ? $centralVariant->fixed_shipping_costs
+                    : ($productCostsByTenantProductId[$variant->product_id] ?? []);
 
                 [$vPrices, $vNewProfit] = $this->recalculate($realPrice, $costsForVariant, $variant->profit);
 
                 $variantUpdates[$variant->id] = [
+                    'real_price' => $realPrice,
                     'sell_price' => json_encode($vPrices, JSON_THROW_ON_ERROR),
                     'default_sell_price' => $vPrices['default'] ?? 0,
                     'profit' => json_encode($vNewProfit, JSON_THROW_ON_ERROR),
@@ -221,7 +233,7 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
         ]);
 
         $step = microtime(true);
-        $this->flushBatchedUpdate('product_variants', $variantUpdates, ['sell_price', 'default_sell_price', 'profit']);
+        $this->flushBatchedUpdate('product_variants', $variantUpdates, ['real_price', 'sell_price', 'default_sell_price', 'profit']);
         info('[SyncCentralProductPriceToTenantsJob] syncForTenant: flushed variant updates', [
             'duration_ms' => round((microtime(true) - $step) * 1000, 2),
         ]);
@@ -233,29 +245,16 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
      */
     private function recalculate(float $basePrice, array $costs, mixed $existingProfit): array
     {
-        if ($existingProfit !== null) {
-            $profitData = is_string($existingProfit) ? (json_decode($existingProfit, true) ?? []) : ($existingProfit ?? []);
-        } else {
-            $tenantPct = (float) (tenant('profit_percentage') ?? 0);
-            $profitData = [];
-            foreach (['default', ...array_keys($costs)] as $k) {
-                $profitData[(string) $k] = ['profit_type' => 'percentage', 'profit_value' => $tenantPct, 'total_profit' => 0];
-            }
-        }
+        $profit = is_string($existingProfit) ? json_decode($existingProfit, true) : $existingProfit;
 
-        $prices = [];
-        $newProfit = [];
+        $result = $this->pricing->forCatalog(
+            $basePrice,
+            $costs,
+            is_array($profit) ? $profit : null,
+            (float) (tenant('profit_percentage') ?? 0),
+        );
 
-        foreach ($profitData as $key => $row) {
-            $type = ($row['profit_type'] ?? 'percentage') === 'fixed' ? 'fixed' : 'percentage';
-            $value = (float) ($row['profit_value'] ?? 0);
-            $shipping = (float) ($costs[(string) $key] ?? 0);
-            $profitAmt = $type === 'percentage' ? round($basePrice * $value / 100, 2) : round($value, 2);
-            $prices[(string) $key] = round($basePrice + $profitAmt + $shipping, 2);
-            $newProfit[(string) $key] = ['profit_type' => $type, 'profit_value' => $value, 'total_profit' => $profitAmt];
-        }
-
-        return [$prices, $newProfit];
+        return [$result['prices'], $result['profit']];
     }
 
     /**

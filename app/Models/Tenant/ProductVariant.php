@@ -181,8 +181,13 @@ class ProductVariant extends Model
     {
         $raw = $this->centralVariant?->fixed_shipping_costs;
         $fixedArr = is_array($raw) ? $raw : (array) json_decode($raw ?: '[]', true);
-        $fixedShippingCost = $fixedArr[(string) $countryId] ?? 0;
-        return $fixedShippingCost;
+
+        // Same fallback as catalog sync: a variant without its own costs uses the product's.
+        if ($fixedArr === []) {
+            $fixedArr = (array) ($this->product?->fixed_shipping_costs ?? []);
+        }
+
+        return (float) ($fixedArr[(string) $countryId] ?? 0);
     }
 
     /**

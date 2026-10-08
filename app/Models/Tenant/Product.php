@@ -261,8 +261,8 @@ class Product extends Model
     public static function computeFinalPrice(float $basePrice, string $profitType, float $profitValue, float $shipping): float
     {
         $profitAmount = $profitType === 'fixed'
-            ? $profitValue
-            : ($basePrice * $profitValue / 100);
+            ? round($profitValue, 2)
+            : round($basePrice * $profitValue / 100, 2);
 
         return round($basePrice + $profitAmount + $shipping, 2);
     }

@@ -3,10 +3,10 @@
         @foreach($variants as $index => $variant)
             <tr>
                 <td class="variants-table-variant-cell">
-                    <input type="hidden" name="variants.{{ $index }}.id" value="{{ $variant['id'] }}">
-                    <input type="hidden" name="variants.{{ $index }}.central_product_variant_id" value="{{ $variant['central_product_variant_id'] }}">
-                    <input type="hidden" name="variants.{{ $index }}.real_price" value="{{ $variant['real_price'] }}">
-                    <input type="hidden" name="variants.{{ $index }}.active" value="{{ $variant['active'] ? 1 : 0 }}">
+                    <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant['id'] }}">
+                    <input type="hidden" name="variants[{{ $index }}][central_product_variant_id]" value="{{ $variant['central_product_variant_id'] }}">
+                    <input type="hidden" name="variants[{{ $index }}][real_price]" value="{{ $variant['real_price'] }}">
+                    <input type="hidden" name="variants[{{ $index }}][active]" value="{{ $variant['active'] ? 1 : 0 }}">
                     <div class="entity-row">
                         @if(!empty($variant['image_url']))
                             <img src="{{ $variant['image_url'] }}" alt="{{ $variant['title'] }}" class="entity-thumb" loading="lazy" width="44" height="44">

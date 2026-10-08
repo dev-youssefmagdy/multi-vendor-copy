@@ -76,6 +76,12 @@ class TenantPanelService
     {
         return DB::transaction(function () use ($attributes, $product) {
             $product ??= new Product();
+            $pricing = app(TenantPricingService::class);
+
+            // Central-linked products derive price/profit from the central cost via
+            // TenantPricingService (see docs/product-pricing-sync-lifecycle.md); only
+            // own products keep the legacy scalar -> {default: x} behaviour below.
+            $centralLinked = filled($attributes['central_product_id'] ?? $product->central_product_id);
 
             // `price` may arrive as an array (per-country JSON map) or as a
             // legacy scalar (e.g. from the own-product form). Normalise here.
@@ -146,10 +152,18 @@ class TenantPanelService
                 $productFill['return_conditions'] = $attributes['return_conditions'] ?: null;
             }
 
+            if ($centralLinked && $product->exists) {
+                unset($productFill['price'], $productFill['default_price']);
+            }
+
             $product->fill($productFill);
             $product->save();
             $product->categories()->sync($attributes['category_ids'] ?? []);
             $product->syncTranslations($attributes['translations'] ?? []);
+
+            if ($centralLinked) {
+                $this->applyCentralLinkedProductPrice($product, $pricing, is_numeric($incomingPrice) ? (float) $incomingPrice : null);
+            }
 
             if (array_key_exists('variants', $attributes)) {
                 $keptVariantIds = [];
@@ -167,31 +181,80 @@ class TenantPanelService
                             ->first();
                     }
 
-                    $variant ??= $product->variants()->make();
+                    $centralVariant = null;
 
-                    // Normalise sell_price (may be scalar or array).
-                    $incomingSellPrice = $variantAttributes['sell_price'] ?? $variant->sell_price ?? $variantAttributes['real_price'] ?? 0;
-                    if (is_numeric($incomingSellPrice)) {
-                        $newSellPrice = ['default' => (float) $incomingSellPrice];
-                        $newDefaultSellPrice = (float) $incomingSellPrice;
-                    } elseif (is_array($incomingSellPrice) && !empty($incomingSellPrice)) {
-                        $newSellPrice = $incomingSellPrice;
-                        $newDefaultSellPrice = (float) ($incomingSellPrice['default'] ?? min(array_filter($incomingSellPrice, 'is_numeric')) ?: 0);
-                    } else {
-                        $newSellPrice = $variant->sell_price ?? ['default' => 0];
-                        $newDefaultSellPrice = (float) ($variant->default_sell_price ?? 0);
+                    if ($centralLinked) {
+                        // Central variants are owned by catalog sync: the form may only
+                        // re-price/toggle a variant that maps to a real central variant.
+                        $centralVariantId = $variant?->central_product_variant_id ?? ($variantAttributes['central_product_variant_id'] ?? null);
+                        $centralVariant = filled($centralVariantId)
+                            ? \App\Models\ProductVariant::query()
+                                ->where('product_id', $product->central_product_id)
+                                ->find($centralVariantId)
+                            : null;
+
+                        if (!$centralVariant) {
+                            if ($variant) {
+                                $keptVariantIds[] = $variant->id;
+                            }
+
+                            continue;
+                        }
                     }
 
+                    $variant ??= $product->variants()->make();
+
                     $fill = [
-                        'central_product_variant_id' => $variantAttributes['central_product_variant_id'] ?? $variant->central_product_variant_id,
-                        'title' => trim((string) ($variantAttributes['title'] ?? '')) ?: null,
-                        'sku' => trim((string) ($variantAttributes['sku'] ?? '')) ?: null,
-                        'weight_grams' => ($variantAttributes['weight_grams'] ?? '') !== '' && ($variantAttributes['weight_grams'] ?? null) !== null ? (int) $variantAttributes['weight_grams'] : null,
-                        'real_price' => $variantAttributes['real_price'] ?? $variant->real_price ?? 0,
-                        'sell_price' => $newSellPrice,
-                        'default_sell_price' => $newDefaultSellPrice,
                         'active' => (bool) ($variantAttributes['active'] ?? $variant->active ?? true),
                     ];
+
+                    foreach (['title', 'sku'] as $textField) {
+                        if (array_key_exists($textField, $variantAttributes)) {
+                            $fill[$textField] = trim((string) $variantAttributes[$textField]) ?: null;
+                        }
+                    }
+
+                    if (array_key_exists('weight_grams', $variantAttributes)) {
+                        $fill['weight_grams'] = ($variantAttributes['weight_grams'] ?? '') !== '' && $variantAttributes['weight_grams'] !== null
+                            ? (int) $variantAttributes['weight_grams']
+                            : null;
+                    }
+
+                    $submittedSellPrice = $variantAttributes['sell_price'] ?? null;
+
+                    if ($centralVariant) {
+                        $fill['central_product_variant_id'] = $centralVariant->id;
+                        $fill['real_price'] = (float) $centralVariant->price;
+
+                        $result = $this->centralLinkedPrices(
+                            $pricing,
+                            (float) $centralVariant->price,
+                            $centralVariant->fixed_shipping_costs ?: $product->fixed_shipping_costs,
+                            $variant->profit,
+                            is_numeric($submittedSellPrice) ? (float) $submittedSellPrice : null,
+                            $variant->exists ? (float) $variant->default_sell_price : null,
+                        );
+
+                        $fill['sell_price'] = $result['prices'];
+                        $fill['default_sell_price'] = $result['default'];
+                        $fill['profit'] = $result['profit'];
+                    } else {
+                        $fill['central_product_variant_id'] = $variantAttributes['central_product_variant_id'] ?? $variant->central_product_variant_id;
+                        $fill['real_price'] = $variantAttributes['real_price'] ?? $variant->real_price ?? 0;
+
+                        // Own products: legacy scalar -> {default: x} (no profit model).
+                        $incomingSellPrice = $submittedSellPrice ?? $variant->sell_price ?? $variantAttributes['real_price'] ?? 0;
+                        if (is_numeric($incomingSellPrice)) {
+                            $fill['sell_price'] = ['default' => (float) $incomingSellPrice];
+                            $fill['default_sell_price'] = (float) $incomingSellPrice;
+                        } elseif (is_array($incomingSellPrice) && !empty($incomingSellPrice)) {
+                            $fill['sell_price'] = $incomingSellPrice;
+                            $fill['default_sell_price'] = (float) ($incomingSellPrice['default'] ?? min(array_filter($incomingSellPrice, 'is_numeric')) ?: 0);
+                        } else {
+                            $fill['sell_price'] = $variant->sell_price ?? ['default' => 0];
+                            $fill['default_sell_price'] = (float) ($variant->default_sell_price ?? 0);
+                        }
+                    }
 
                     if (array_key_exists('option_ids', $variantAttributes)) {
                         $fill['option_ids'] = collect($variantAttributes['option_ids'] ?? [])
@@ -224,13 +287,73 @@ class TenantPanelService
                     $keptVariantIds[] = $variant->id;
                 }
 
-                $product->variants()
-                    ->when($keptVariantIds !== [], fn($query) => $query->whereNotIn('id', $keptVariantIds))
-                    ->delete();
+                // Removal of central variants is catalog sync's job, never the form's.
+                if (!$centralLinked) {
+                    $product->variants()
+                        ->when($keptVariantIds !== [], fn($query) => $query->whereNotIn('id', $keptVariantIds))
+                        ->delete();
+                }
             }
 
             return $product->fresh(['translations.language', 'categories', 'variants']);
         });
+    }
+
+    /**
+     * Re-derive a central-linked product's price cache and profit config.
+     * An unchanged default price is a no-op for the vendor's profit config; a
+     * changed one is pinned as a fixed profit on the "default" row only.
+     */
+    private function applyCentralLinkedProductPrice(Product $product, TenantPricingService $pricing, ?float $submittedDefault): void
+    {
+        $central = $product->centralProduct;
+
+        if (!$central) {
+            return;
+        }
+
+        $costs = $central->fixed_shipping_costs ?: $product->fixed_shipping_costs;
+
+        $result = $this->centralLinkedPrices(
+            $pricing,
+            $pricing->centralBasePrice($central),
+            $costs,
+            $product->profit,
+            $submittedDefault,
+            $product->wasRecentlyCreated ? null : (float) $product->default_price,
+        );
+
+        $product->forceFill([
+            'fixed_shipping_costs' => $costs,
+            'price' => $result['prices'],
+            'default_price' => $result['default'],
+            'profit' => $result['profit'],
+        ])->saveQuietly();
+    }
+
+    /**
+     * @param array<string, mixed>|null $costs
+     * @param array<string, mixed>|null $existingProfit
+     * @return array{prices: array<string, float>, default: float, profit: array<string, array<string, mixed>>}
+     */
+    private function centralLinkedPrices(
+        TenantPricingService $pricing,
+        float $base,
+        ?array $costs,
+        ?array $existingProfit,
+        ?float $submittedDefault,
+        ?float $storedDefault,
+    ): array {
+        $tenantPct = (float) (tenant('profit_percentage') ?? 0);
+        $result = $pricing->forCatalog($base, $costs, $existingProfit, $tenantPct);
+
+        $baseline = $storedDefault ?? $result['default'];
+
+        if ($submittedDefault !== null && abs($submittedDefault - $baseline) >= 0.005) {
+            $result = $pricing->forCatalog($base, $costs, $existingProfit, $tenantPct, $submittedDefault);
+        }
+
+        return $result;
     }
 
     public function saveCategory(array $attributes, ?Category $category = null): Category

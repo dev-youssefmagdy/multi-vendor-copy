@@ -8,6 +8,7 @@ use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
 use App\Models\Tenant\ProductVariant;
+use App\Services\Tenant\TenantPricingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -42,6 +43,8 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
     /** How many central products to handle per SQL CASE statement */
     private const CHUNK_SIZE = 500;
 
+    private TenantPricingService $pricing;
+
     /**
      * @param int|null $centralProductId  Push a single central product (and its variants) instead of the whole catalog.
      * @param int|null $centralVariantId  Push a single central product variant (and its parent product) instead of the whole catalog.
@@ -55,6 +58,7 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
 
     public function handle(): void
     {
+        $this->pricing = new TenantPricingService();
         $targetProductId = $this->centralProductId;
 
         if ($this->centralVariantId !== null) {
@@ -75,7 +79,7 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
             ->mapWithKeys(fn($p) => [
                 $p->id => [
                     'costs' => $p->fixed_shipping_costs,
-                    'sale_price' => (float) ($p->sale_price ?? $p->base_price ?? 0),
+                    'sale_price' => (new TenantPricingService())->centralBasePrice($p),
                 ]
             ])
             ->all();
@@ -143,29 +147,16 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
             $salePrice = $entry['sale_price'];
             $centralCosts = (array) ($entry['costs'] ?? []);
 
-            if ($tenantProduct->profit !== null) {
-                $profitData = json_decode($tenantProduct->profit, true) ?? [];
-            } else {
-                // No saved profit yet — seed every country (+ default) with the
-                // tenant's global profit_percentage so the first sync produces
-                // sensible prices rather than $0 markup.
-                $tenantPct = (float) (tenant('profit_percentage') ?? 0);
-                $profitData = [];
-                foreach (['default', ...array_keys($centralCosts)] as $k) {
-                    $profitData[(string) $k] = ['profit_type' => 'percentage', 'profit_value' => $tenantPct, 'total_profit' => 0];
-                }
-            }
+            $existingProfit = $tenantProduct->profit !== null ? json_decode($tenantProduct->profit, true) : null;
 
-            $prices = [];
-            $newProfit = [];
-            foreach ($profitData as $key => $row) {
-                $type = ($row['profit_type'] ?? 'percentage') === 'fixed' ? 'fixed' : 'percentage';
-                $value = (float) ($row['profit_value'] ?? 0);
-                $shipping = (float) ($centralCosts[(string) $key] ?? 0);
-                $profitAmt = $type === 'percentage' ? round($salePrice * $value / 100, 2) : round($value, 2);
-                $prices[(string) $key] = round($salePrice + $profitAmt + $shipping, 2);
-                $newProfit[(string) $key] = ['profit_type' => $type, 'profit_value' => $value, 'total_profit' => $profitAmt];
-            }
+            $result = $this->pricing->forCatalog(
+                $salePrice,
+                $centralCosts,
+                is_array($existingProfit) ? $existingProfit : null,
+                (float) (tenant('profit_percentage') ?? 0),
+            );
+            $prices = $result['prices'];
+            $newProfit = $result['profit'];
 
             $productUpdates[$tenantProduct->id] = [
                 'fixed_shipping_costs' => $entry['costs'] !== null ? json_encode($entry['costs'], JSON_THROW_ON_ERROR) : null,
@@ -205,30 +196,14 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
                 $variantCosts = $variantCostMap[$variant->central_product_variant_id] ?? null;
                 $costsForVariant = $variantCosts !== null ? (array) $variantCosts : $centralCosts;
 
-                if ($variant->profit !== null) {
-                    $variantProfit = $variant->profit ?? [];
-                } else {
-                    // No saved profit yet — seed every country (+ default) with the
-                    // tenant's global profit_percentage so the first sync produces
-                    // sensible prices rather than $0 markup.
-                    $tenantPct = (float) (tenant('profit_percentage') ?? 0);
-                    $variantProfit = [];
-                    foreach (['default', ...array_keys($costsForVariant)] as $k) {
-                        $variantProfit[(string) $k] = ['profit_type' => 'percentage', 'profit_value' => $tenantPct, 'total_profit' => 0];
-                    }
-                }
-
-                $realPrice = (float) ($variant->real_price ?? 0);
-                $vPrices = [];
-                $vNewProfit = [];
-                foreach ($variantProfit as $key => $row) {
-                    $type = ($row['profit_type'] ?? 'percentage') === 'fixed' ? 'fixed' : 'percentage';
-                    $value = (float) ($row['profit_value'] ?? 0);
-                    $shipping = (float) ($costsForVariant[(string) $key] ?? 0);
-                    $profitAmt = $type === 'percentage' ? round($realPrice * $value / 100, 2) : round($value, 2);
-                    $vPrices[(string) $key] = round($realPrice + $profitAmt + $shipping, 2);
-                    $vNewProfit[(string) $key] = ['profit_type' => $type, 'profit_value' => $value, 'total_profit' => $profitAmt];
-                }
+                $result = $this->pricing->forCatalog(
+                    (float) ($variant->real_price ?? 0),
+                    $costsForVariant,
+                    is_array($variant->profit) ? $variant->profit : null,
+                    (float) (tenant('profit_percentage') ?? 0),
+                );
+                $vPrices = $result['prices'];
+                $vNewProfit = $result['profit'];
 
                 $variantUpdates[$variant->id] = [
                     'sell_price' => json_encode($vPrices, JSON_THROW_ON_ERROR),
