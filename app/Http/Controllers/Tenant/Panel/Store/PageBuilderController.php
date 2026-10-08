@@ -51,13 +51,15 @@ final class PageBuilderController extends PanelController
             // For uploaded custom themes, discover sections dynamically from the live
             // symlink path. For built-in themes, use the static SectionRegistry.
             if ($selectedTheme->slug === 'custom') {
-                $tenantId     = tenant()->getTenantKey();
-                $liveBasePath = $this->bladeThemeService->liveViewsPath($tenantId);
+                $tenantId       = (string) tenant()->getTenantKey();
+                $versionBasePath = $this->bladeThemeService->activeVersionBasePath($tenantId);
                 $discoveredKeys = $this->bladeThemeService->discoveredHomeSectionKeys($tenantId);
+
                 $labels = collect($discoveredKeys)
                     ->mapWithKeys(fn ($k) => [$k => BladeThemeService::keyToLabel($k)])
                     ->all();
-                $viewExists = fn (string $key) => SectionRegistry::sectionViewExistsAtPath($liveBasePath, $key);
+                $viewExists = fn (string $key) => $versionBasePath !== null
+                    && SectionRegistry::sectionViewExistsAtPath($versionBasePath, $key);
             } else {
                 $labels     = SectionRegistry::labelsFor($selectedTheme->slug, self::PAGE);
                 $viewExists = fn (string $key) => SectionRegistry::sectionViewExists($selectedTheme->slug, $pageFolder, $key);

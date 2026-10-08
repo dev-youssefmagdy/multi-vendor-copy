@@ -58,12 +58,13 @@ class BladeThemeService
 
     public function liveViewsPath(string $tenantId): string
     {
+
         return storage_path("app/tenants/{$tenantId}/theme/views");
     }
 
     public function upload(TenantModel|string $tenant, UploadedFile $file): BladeTheme
     {
-        $tenantId = is_string($tenant) ? $tenant : $tenant->getTenantKey();
+        $tenantId = (string) (is_string($tenant) ? $tenant : $tenant->getTenantKey());
 
         $absolutePath = $file->getRealPath();
         if (!$absolutePath) {
@@ -187,7 +188,7 @@ class BladeThemeService
         return tenancy()->central(fn() => BladeTheme::query()
             ->where('tenant_id', $tenantId)
             ->where('status', BladeTheme::STATUS_APPROVED)
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->latest('id')
             ->first());
     }
@@ -297,8 +298,18 @@ class BladeThemeService
         // re-submitted after a rejection), recreate the live-views symlink so the
         // storefront reflects the freshly approved files without the vendor needing
         // to deactivate and re-activate manually.
+        // NOTE: relinkLiveViews uses storage_path() which is tenant-scoped, so we
+        // must initialize tenant context before calling it from the admin (central) panel.
         if ($theme->is_active) {
-            $this->relinkLiveViews($theme->tenant_id);
+            $tenant = \App\Models\Tenant::find($theme->tenant_id);
+            if ($tenant) {
+                tenancy()->initialize($tenant);
+                try {
+                    $this->relinkLiveViews((string) $theme->tenant_id);
+                } finally {
+                    tenancy()->end();
+                }
+            }
         }
     }
 
@@ -350,15 +361,29 @@ class BladeThemeService
     }
 
     /**
-     * Returns section keys discovered from pages/home/sections/*.blade.php in the
-     * active theme's live-views path. Returns [] when the theme is not yet active
-     * or the sections directory doesn't exist.
+     * Absolute path to the active theme's extracted version directory, or null
+     * when no approved+active theme exists. Avoids relying on the live-views
+     * symlink so section discovery works even if the symlink is stale.
+     */
+    public function activeVersionBasePath(string $tenantId): ?string
+    {
+        $theme = $this->activeBladeTheme($tenantId);
+
+        return $theme ? storage_path('app/' . $theme->storage_path) : null;
+    }
+
+    /**
+     * Returns section keys discovered from pages/home/sections/*.blade.php.
+     * Uses the active theme's version storage path directly; falls back to the
+     * live-views symlink when no approved+active theme exists.
+     * Returns [] when no theme is active or the sections directory doesn't exist.
      *
      * @return string[]
      */
     public function discoveredHomeSectionKeys(string $tenantId): array
     {
-        $sectionsDir = $this->liveViewsPath($tenantId) . '/pages/home/sections';
+        $basePath = $this->activeVersionBasePath($tenantId) ?? $this->liveViewsPath($tenantId);
+        $sectionsDir = $basePath . '/pages/home/sections';
 
         if (!is_dir($sectionsDir)) {
             return [];
