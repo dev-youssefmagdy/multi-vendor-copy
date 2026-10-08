@@ -5,7 +5,6 @@
         return $card;
       });
     @endphp
-    @if ($recommendedCards->isNotEmpty())
     <!-- ============ RECOMMENDED FOR YOU ============ -->
     <section
       class="relative px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
@@ -24,7 +23,7 @@
       <div
         class="grid grid-cols-2 lg:grid-cols-6 gap-[12px] lg:gap-[24px]"
       >
-        @foreach ($recommendedCards as $p)
+        @forelse ($recommendedCards as $p)
           @php
             $__badgeCycle = $loop->index % 3;
             if ($__badgeCycle === 0) {
@@ -44,7 +43,9 @@
           <div class="h-full" wire:key="recommended-{{ $p['id'] }}">
             @include('themes.elora.pages.home-v4.sections.partials.recommended_card', ['p' => $p])
           </div>
-        @endforeach
+        @empty
+          <p class="text-sm text-gray-500 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
+        @endforelse
       </div>
       @if ($hasMoreRecommended ?? false)
         <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-[8px]">
@@ -64,4 +65,3 @@
         style="background: linear-gradient(91.97deg, rgba(255, 255, 255, 0) 1.85%, #F3F3F3 95.21%);"
       ></div>
     </section>
-    @endif
