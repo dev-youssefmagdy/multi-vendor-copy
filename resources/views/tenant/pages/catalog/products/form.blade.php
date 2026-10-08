@@ -43,7 +43,7 @@
                 @endif
                 <x-tenant::input type="text" name="slug" label="Slug" :value="$product?->slug" />
                 <div>
-                    <x-tenant::input type="number" step="0.01" name="price" label="Vendor Sale Price" :value="$product ? number_format((float) ($product->default_price ?? 0), 2, '.', '') : '0.00'" />
+                    <x-tenant::input type="number" step="0.01" name="price" label="Sale Price" :value="$product ? number_format((float) ($product->default_price ?? 0), 2, '.', '') : '0.00'" />
                     @if($centralProduct)
                         <p class="entity-subtitle mt-2" data-central-current-price>Central current price: ${{ number_format((float) $centralProduct['current_price'], 2) }}</p>
                     @else
