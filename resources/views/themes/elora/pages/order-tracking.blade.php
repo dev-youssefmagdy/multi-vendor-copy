@@ -104,33 +104,7 @@
 
         {{-- ════ LEFT PROFILE SIDEBAR — hidden on mobile/tablet, visible lg+ ════ --}}
         @auth('storefront')
-        <div class="prof-sidebar flex-shrink-0 hidden lg:block" style="width:230px">
-            <div class="bg-white border border-[#F0F0F0] rounded-2xl p-5 mb-4 shadow-sm">
-                <p class="text-lg font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
-                <p class="text-sm text-[#ADADAD] mb-3">{{ $customer->email }}</p>
-                <a href="{{ route('tenant.storefront.profile') }}"
-                    class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors inline-block">
-                    {{ __('Edit') }}
-                </a>
-            </div>
-            <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 mb-4 shadow-sm">
-                <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">{{ __('My Orders') }}</p>
-                <nav class="flex flex-col gap-0.5">
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item active">{{ __('All Orders') }}</a>
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Pending') }}</a>
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Processing') }}</a>
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Shipped') }}</a>
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Delivered') }}</a>
-                    <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Cancelled') }}</a>
-                </nav>
-            </div>
-            <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 shadow-sm">
-                <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">{{ __('Settings') }}</p>
-                <nav class="flex flex-col gap-0.5">
-                    <a href="{{ route('tenant.storefront.profile') }}" class="settings-item">{{ __('My personal details') }}</a>
-                </nav>
-            </div>
-        </div>
+        @include('themes.elora.partials.account-sidebar', ['activeTab' => 'orders'])
         @endauth
 
         {{-- ════ MAIN TRACKING CONTENT ════ --}}
@@ -175,6 +149,16 @@
                     </div>
                 </div>
             </div>
+
+            {{-- ── After-sales: cancelled / refunded banner, cancel action, shipped notice ── --}}
+            @if (in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded], true))
+                @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                @include('livewire.tenant.storefront.partials.order-refunds-summary')
+            @elseif (auth('storefront')->check() && in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing, OrderStatus::Shipped], true))
+                <div class="flex flex-col items-start gap-3">
+                    @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelSize' => 'compact'])
+                </div>
+            @endif
 
             {{-- ── Two-column layout: Timeline + Sidebar (stacks on mobile) ── --}}
             <div class="flex flex-col xl:flex-row gap-6 items-start">

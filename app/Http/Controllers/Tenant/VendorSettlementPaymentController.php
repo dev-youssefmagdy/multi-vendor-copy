@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\VendorSettlementAdminMail;
 use App\Mail\VendorSettlementMail;
 use App\Models\AdminUser as CentralAdminUser;
+use App\Models\PaymentGateway;
 use App\Models\Tenant;
 use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Order;
@@ -17,6 +18,7 @@ use App\PaymentGateway\DTOs\PaymentCharge;
 use App\PaymentGateway\Exceptions\PaymentException;
 use App\PaymentGateway\PaymentManager;
 use App\Services\Tenant\VendorPurchaseService;
+use App\Support\OrderProfitCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -40,8 +42,7 @@ class VendorSettlementPaymentController extends Controller
     public function __construct(
         private readonly PaymentManager $manager,
         private readonly VendorPurchaseService $purchaseService,
-    ) {
-    }
+    ) {}
 
     // ─────────────────────────────────────────────────────────────────────────
     // 1. Charge
@@ -59,16 +60,22 @@ class VendorSettlementPaymentController extends Controller
             ->whereNull('vendor_settled_at')
             ->firstOrFail();
 
+        // A cancelled / refunded order owes central nothing (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
+        if (OrderProfitCalculator::isFinanciallyVoid($order)) {
+            return redirect()->route('tenant.finance.vendor-purchases')
+                ->withErrors(['payment' => __('This order was cancelled or refunded, so nothing is owed for it.')]);
+        }
+
         // Resolve central gateway model for fee calculation
         $centralGatewayModel = tenancy()->central(
-            fn() => \App\Models\PaymentGateway::query()
+            fn () => PaymentGateway::query()
                 ->where('code', $gateway)
                 ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->where('status', 'active')
                 ->first()
         );
 
-        if (!$centralGatewayModel) {
+        if (! $centralGatewayModel) {
             return redirect()->route('tenant.finance.vendor-purchases')
                 ->withErrors(['payment' => 'Selected payment gateway is not available.']);
         }
@@ -83,7 +90,7 @@ class VendorSettlementPaymentController extends Controller
             'order_id' => (string) $orderId,
             'email' => $admin->email ?? ($tenant->email ?? 'vendor@example.com'),
             'name' => $admin->name ?? $tenant->id,
-            'success_url' => route('tenant.vendor-settlement.success', $gateway) . '?order_id=' . $orderId,
+            'success_url' => route('tenant.vendor-settlement.success', $gateway).'?order_id='.$orderId,
             'cancel_url' => route('tenant.vendor-settlement.cancel', $gateway),
         ]);
 
@@ -150,7 +157,7 @@ class VendorSettlementPaymentController extends Controller
                 ->withErrors(['payment' => 'Payment verification failed. Please contact support.']);
         }
 
-        if (!$result->success) {
+        if (! $result->success) {
             return redirect()->route('tenant.finance.vendor-purchases')
                 ->withErrors(['payment' => $result->errorMessage ?? 'Payment was not successful.']);
         }
@@ -160,7 +167,7 @@ class VendorSettlementPaymentController extends Controller
         $adminEmail = $pending['admin_email'] ?? null;
         $adminName = $pending['admin_name'] ?? null;
 
-        if (!$orderId) {
+        if (! $orderId) {
             return redirect()->route('tenant.finance.vendor-purchases')
                 ->withErrors(['payment' => 'Settlement reference lost. Please contact support.']);
         }
@@ -170,22 +177,22 @@ class VendorSettlementPaymentController extends Controller
             ->whereNotNull('vendor_cost')
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return redirect()->route('tenant.finance.vendor-purchases')
                 ->withErrors(['payment' => 'Order not found.']);
         }
 
         $centralGatewayModel = tenancy()->central(
-            fn() => \App\Models\PaymentGateway::query()
+            fn () => PaymentGateway::query()
                 ->where('code', $gateway)
                 ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->where('status', 'active')
                 ->first()
         );
 
-        if (!$centralGatewayModel && !empty($pending['gateway_id'])) {
+        if (! $centralGatewayModel && ! empty($pending['gateway_id'])) {
             $centralGatewayModel = tenancy()->central(
-                fn() => \App\Models\PaymentGateway::query()->find($pending['gateway_id'])
+                fn () => PaymentGateway::query()->find($pending['gateway_id'])
             );
         }
 
@@ -226,7 +233,7 @@ class VendorSettlementPaymentController extends Controller
     private function handleSuccess(
         Tenant $tenant,
         Order $order,
-        ?\App\Models\PaymentGateway $centralGatewayModel,
+        ?PaymentGateway $centralGatewayModel,
         array $breakdown,
         ?string $transactionId,
         ?string $adminEmail,
@@ -235,12 +242,12 @@ class VendorSettlementPaymentController extends Controller
         session()->forget('tenant_vendor_settlement_pending');
 
         $gatewayFee = (float) ($breakdown['gateway_fee'] ?? 0);
-        $reference = $transactionId ?? ('manual-' . now()->timestamp);
+        $reference = $transactionId ?? ('manual-'.now()->timestamp);
 
         // Mark order as settled (writes to tenant DB – already in tenant context)
         $this->purchaseService->settle(
             $order,
-            $centralGatewayModel ?? new \App\Models\PaymentGateway(),
+            $centralGatewayModel ?? new PaymentGateway,
             $gatewayFee,
             $reference,
         );
@@ -286,7 +293,7 @@ class VendorSettlementPaymentController extends Controller
             try {
                 $settlementsUrl = route('admin.vendor-settlements.index');
                 $centralAdmins = tenancy()->central(
-                    fn() => CentralAdminUser::query()->where('status', 'active')->pluck('email')
+                    fn () => CentralAdminUser::query()->where('status', 'active')->pluck('email')
                 );
                 foreach ($centralAdmins as $adminMail) {
                     Mail::to($adminMail)->send(new VendorSettlementAdminMail($settlement, $settlementsUrl));

@@ -1,6 +1,7 @@
 {{--
     Ecommet – Order tracking page
     $order  Order (with items, activities, paymentGateway)
+    Shared after-sales partials: order-cancellation-summary, order-refunds-summary, order-cancel-action.
 --}}
 @php
     use App\Enums\OrderStatus;
@@ -99,6 +100,18 @@
                 </span>
             </div>
         </div>
+
+        {{-- After-sales: cancelled / refunded banner, cancel action, shipped notice --}}
+        @if (in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded], true))
+            <div class="flex flex-col gap-4 mb-8">
+                @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                @include('livewire.tenant.storefront.partials.order-refunds-summary')
+            </div>
+        @elseif (auth('storefront')->check() && in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing, OrderStatus::Shipped], true))
+            <div class="flex flex-col items-start gap-3 mb-8">
+                @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelSize' => 'compact'])
+            </div>
+        @endif
 
         {{-- Tracking meta --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 bg-[#fafafa] rounded-xl p-5 border border-[#eee]">

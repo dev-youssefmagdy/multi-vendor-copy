@@ -1,6 +1,9 @@
 {{--
 Elora – Order details page
 $order Order (with items, activities, paymentGateway)
+After-sales (optional, from OrderStatusPage): $canCancel, $cancelDecision, $cancelReasons,
+$cancellation, $refunds, $paymentState, $returnItems — rendered by the shared partials
+order-cancel-action, order-cancellation-summary, order-refunds-summary, return-item-action.
 --}}
 @push('body-attrs')data-page="client-order-details"@endpush
 
@@ -21,14 +24,20 @@ $order Order (with items, activities, paymentGateway)
         OrderStatus::Completed  => ['bg' => '#DCFCE7', 'color' => '#008236', 'border' => '#B9F8CF',  'label' => __('Completed')],
         OrderStatus::Cancelled  => ['bg' => '#FFF0F0', 'color' => '#dc2626', 'border' => '#FECACA',  'label' => __('Cancelled')],
         OrderStatus::Rejected   => ['bg' => '#FFF0F0', 'color' => '#dc2626', 'border' => '#FECACA',  'label' => __('Rejected')],
+        OrderStatus::Refunded   => ['bg' => '#F5F3FF', 'color' => '#6D28D9', 'border' => '#DDD6FE',  'label' => __('Refunded')],
         default                 => ['bg' => '#F5F5F5', 'color' => '#666',    'border' => '#E0E0E0',  'label' => $order->status->label()],
     };
 
     $carrier        = $order->shipping_address['carrier'] ?? null;
     $trackingNumber = null; // Tracking number is admin-only, not shown on storefront
-    $isFinalStatus  = in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected]);
+    $isFinalStatus  = in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded]);
     $isCompleted    = in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed]);
-    $canCancel      = in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing]);
+    $paymentState   = $paymentState ?? $order->paymentState();
+    $paymentColor   = match ($paymentState) {
+        \App\Enums\OrderPaymentStatus::Paid => '#00A63E',
+        \App\Enums\OrderPaymentStatus::Refunded, \App\Enums\OrderPaymentStatus::PartiallyRefunded => '#6D28D9',
+        default => '#808080',
+    };
 @endphp
 
 <div>
@@ -50,33 +59,7 @@ $order Order (with items, activities, paymentGateway)
 
             {{-- ════ LEFT SIDEBAR ════ --}}
             @auth('storefront')
-            <div class="prof-sidebar flex-shrink-0" style="width:230px">
-                <div class="bg-white border border-[#F0F0F0] rounded-2xl p-5 mb-4 shadow-sm">
-                    <p class="text-lg font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
-                    <p class="text-sm text-[#ADADAD] mb-3">{{ $customer->email }}</p>
-                    <a href="{{ route('tenant.storefront.profile') }}"
-                        class="text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors inline-block">
-                        {{ __('Edit') }}
-                    </a>
-                </div>
-                <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 mb-4 shadow-sm">
-                    <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">{{ __('My Orders') }}</p>
-                    <nav class="flex flex-col gap-0.5">
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item active">{{ __('All Orders') }}</a>
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Pending') }}</a>
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Processing') }}</a>
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Shipped') }}</a>
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Delivered') }}</a>
-                        <a href="{{ route('tenant.storefront.profile') }}" class="sidebar-item">{{ __('Cancelled') }}</a>
-                    </nav>
-                </div>
-                <div class="bg-white border border-[#F0F0F0] rounded-2xl p-4 shadow-sm">
-                    <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">{{ __('Settings') }}</p>
-                    <nav class="flex flex-col gap-0.5">
-                        <a href="{{ route('tenant.storefront.profile') }}" class="settings-item">{{ __('My personal details') }}</a>
-                    </nav>
-                </div>
-            </div>
+            @include('themes.elora.partials.account-sidebar', ['activeTab' => 'orders'])
             @endauth
 
             {{-- ════ MAIN DETAIL CONTENT ════ --}}
@@ -124,6 +107,14 @@ $order Order (with items, activities, paymentGateway)
                     </a>
                 </div>
 
+                {{-- ── Cancelled / refunded banner + refunds ── --}}
+                @if ($isFinalStatus || !empty($refunds ?? []))
+                <div class="flex flex-col gap-4 mb-5">
+                    @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                    @include('livewire.tenant.storefront.partials.order-refunds-summary')
+                </div>
+                @endif
+
                 {{-- ── Two-column content layout ── --}}
                 <div class="detail-layout flex gap-5 items-start">
 
@@ -157,9 +148,7 @@ $order Order (with items, activities, paymentGateway)
                                         @endif
                                         <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }}</p>
                                         <p class="text-base text-[#242424] leading-6">{{ $fmt($item->sub_total) }}</p>
-                                        @if ($isCompleted)
-                                            @include('livewire.tenant.storefront.partials.return-item-action')
-                                        @endif
+                                        @include('livewire.tenant.storefront.partials.return-item-action')
                                     </div>
                                 </div>
                                 @endforeach
@@ -269,8 +258,8 @@ $order Order (with items, activities, paymentGateway)
                                     </div>
                                     <div class="flex items-center justify-between text-sm">
                                         <span class="text-[#808080] leading-5">{{ __('Payment Status') }}</span>
-                                        <span class="leading-5 {{ $order->paid ? 'text-[#00A63E]' : 'text-[#808080]' }}">
-                                            {{ $order->paid ? __('Paid') : __('Unpaid') }}
+                                        <span class="leading-5" style="color:{{ $paymentColor }}">
+                                            {{ $paymentState->label() }}
                                         </span>
                                     </div>
                                 </div>
@@ -313,6 +302,9 @@ $order Order (with items, activities, paymentGateway)
                                 {{ __('Leave a Review') }}
                             </button>
                             @endif
+
+                            {{-- Cancel order (policy-guarded) / shipped notice --}}
+                            @include('livewire.tenant.storefront.partials.order-cancel-action')
 
                         </div>
                     </div>

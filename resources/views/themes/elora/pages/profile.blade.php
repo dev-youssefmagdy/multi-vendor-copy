@@ -27,38 +27,6 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
 @endphp
 <div class="elora-profile bg-white">
     <style>
-        .elora-profile .ep-nav-link {
-            display: block;
-            width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            line-height: 1.35;
-            color: #555;
-            text-align: start;
-            text-decoration: none;
-            cursor: pointer;
-            border-radius: 6px;
-            border-inline-start: 3px solid transparent;
-            transition: background-color .15s, color .15s, border-color .15s;
-            user-select: none;
-        }
-        .elora-profile .ep-nav-link:hover {
-            background: #fff5f2;
-            color: #111827;
-        }
-        .elora-profile .ep-nav-link:focus-visible {
-            outline: 2px solid #111827;
-            outline-offset: 1px;
-        }
-        .elora-profile .ep-nav-link.is-active {
-            background: rgba(255, 77, 0, .07);
-            color: #111827;
-            font-weight: 500;
-            border-inline-start-color: #111827;
-        }
-        .elora-profile .ep-nav-link.is-danger { color: #dc2626; }
-        .elora-profile .ep-nav-link.is-danger:hover { background: #fef2f2; color: #b91c1c; }
-
         .elora-profile .ep-filter-tab {
             flex-shrink: 0;
             padding: 8px 20px;
@@ -78,10 +46,8 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
         .elora-profile .ep-mobile-filters { display: flex; }
         .elora-profile .ep-mobile-filters { scrollbar-width: none; }
         .elora-profile .ep-mobile-filters::-webkit-scrollbar { display: none; }
-        .elora-profile .ep-sidebar { display: none; }
 
         @media (min-width: 1024px) {
-            .elora-profile .ep-sidebar { display: block; }
             .elora-profile .ep-mobile-tabs,
             .elora-profile .ep-mobile-filters { display: none; }
         }
@@ -194,54 +160,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
         <div class="flex gap-6 lg:gap-8 items-start">
 
             {{-- ════ LEFT SIDEBAR (desktop) ════ --}}
-            <aside class="ep-sidebar flex-shrink-0" style="width:234px">
-
-                {{-- User info card --}}
-                <div class="bg-white border border-[#F0F0F0] rounded-lg p-5 mb-4">
-                    <p class="text-lg font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
-                    <p class="text-sm text-[#ADADAD] mb-3 break-all">{{ $customer->email }}</p>
-                    <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
-                        class="inline-block text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors cursor-pointer">
-                        {{ __('Edit') }}
-                    </a>
-                </div>
-
-                {{-- My Orders nav --}}
-                <div class="bg-white border border-[#F0F0F0] rounded-lg p-4 mb-4">
-                    <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">
-                        {{ __('My Orders') }}
-                    </p>
-                    <nav class="flex flex-col gap-0.5">
-                        @foreach ($orderFilters as $val => $label)
-                        @php $val = $val === '' ? null : $val; $isActive = $activeTab === 'orders' && $statusFilter === $val; @endphp
-                        <a href="{{ $profileUrl($val ? ['status' => $val] : []) }}"
-                            wire:click.prevent="filterStatus({{ $val ? "'{$val}'" : 'null' }})"
-                            @if ($isActive) aria-current="page" @endif
-                            class="ep-nav-link {{ $isActive ? 'is-active' : '' }}">
-                            {{ $label }}
-                        </a>
-                        @endforeach
-                    </nav>
-                </div>
-
-                {{-- Settings nav --}}
-                <div class="bg-white border border-[#F0F0F0] rounded-lg p-4">
-                    <p class="text-base font-semibold text-[#171717] mb-3 pb-2 border-b border-[#F0F0F0]">
-                        {{ __('Settings') }}</p>
-                    <nav class="flex flex-col gap-0.5">
-                        <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
-                            @if ($activeTab === 'profile') aria-current="page" @endif
-                            class="ep-nav-link {{ $activeTab === 'profile' ? 'is-active' : '' }}">
-                            {{ __('My personal details') }}</a>
-                        <a href="{{ $profileUrl(['tab' => 'returns']) }}" wire:click.prevent="setTab('returns')"
-                            @if ($activeTab === 'returns') aria-current="page" @endif
-                            class="ep-nav-link {{ $activeTab === 'returns' ? 'is-active' : '' }}">
-                            {{ __('Returns') }}</a>
-                        <button type="button" wire:click="logout" class="ep-nav-link is-danger">
-                            {{ __('Sign out') }}</button>
-                    </nav>
-                </div>
-            </aside>
+            @include('themes.elora.partials.account-sidebar', ['livewire' => true])
 
             {{-- ════ MAIN CONTENT ════ --}}
             <div class="flex-1 min-w-0 transition-opacity duration-150"
@@ -625,6 +544,12 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                     'label' =>
                     __('Cancelled')
                     ],
+                    OrderStatus::Refunded => [
+                    'bg' => '#F5F3FF',
+                    'color' => '#6D28D9',
+                    'border' => '#DDD6FE',
+                    'label' => __('Refunded')
+                    ],
                     default => [
                     'bg' => '#F5F5F5',
                     'color' => '#666',
@@ -697,7 +622,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                                 </svg>
                             </a>
                             {{-- Track Order (non-final statuses) --}}
-                            @if (!in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed, OrderStatus::Cancelled, OrderStatus::Rejected]))
+                            @if (!in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed, OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded]))
                             <a href="{{ route('tenant.storefront.order-tracking', $order->uuid) }}"
                                 class="flex items-center justify-center gap-2 border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -735,13 +660,12 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                                 </svg>
                                 {{ __('Reorder') }}
                             </button>
-                            {{-- Cancel Order (pending/processing only) --}}
-                            @if (in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing]))
-                            <button onclick="swalCancelOrder('{{ $order->uuid }}')"
-                                class="flex items-center justify-center border border-red-200 text-red-500 text-sm font-normal rounded-full px-5 py-2.5 hover:border-red-400 hover:bg-red-50 transition-all whitespace-nowrap">
-                                {{ __('Cancel Order') }}
-                            </button>
-                            @endif
+                            {{-- Cancel Order (policy-guarded) → reason + confirmation modal --}}
+                            @include('livewire.tenant.storefront.partials.order-cancel-action', [
+                                'cancelPart' => 'trigger',
+                                'cancelSize' => 'compact',
+                                'cancelDecision' => $cancelDecisions[$order->uuid] ?? null,
+                            ])
                         </div>
                     </div>
                     @endforeach
@@ -756,6 +680,9 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
             </div>
         </div>
     </div>
+
+    {{-- Cancel-order modal (reason → confirmation), shared by every order card --}}
+    @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'modal'])
 </div>
 @push('scripts')
 <script>
@@ -898,25 +825,6 @@ window.swalLeaveReview = function (productId, productName) {
     }).then((result) => {
         if (result.isConfirmed) {
             $wire.submitReview(productId, result.value.stars, result.value.comment);
-        }
-    });
-};
-
-// ── SweetAlert2 cancel-order confirmation ─────────────────────────────────
-window.swalCancelOrder = function (uuid) {
-    Swal.fire({
-        title: @js(__('Cancel order?')),
-        text:  @js(__('This action cannot be undone. Are you sure you want to cancel this order?')),
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor:  '#6b7280',
-        confirmButtonText:  @js(__('Yes, cancel it')),
-        cancelButtonText:   @js(__('No, keep it')),
-        reverseButtons: true,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $wire.cancelOrder(uuid);
         }
     });
 };

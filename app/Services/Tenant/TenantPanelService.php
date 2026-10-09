@@ -99,7 +99,7 @@ class TenantPanelService
             }
 
             $productFill = [
-                'slug' => Str::slug($attributes['slug'] ?: data_get($attributes, 'translations.' . ($attributes['default_locale'] ?? 'en') . '.name', 'product')),
+                'slug' => Str::limit(Str::slug($attributes['slug'] ?: data_get($attributes, 'translations.' . ($attributes['default_locale'] ?? 'en') . '.name', 'product')), 255, ''),
                 'price' => $newPrice,
                 'default_price' => $newDefaultPrice,
                 'active' => (bool) ($attributes['active'] ?? true),

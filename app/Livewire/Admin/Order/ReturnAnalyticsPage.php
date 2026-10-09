@@ -40,7 +40,15 @@ class ReturnAnalyticsPage extends ContentPage
         $total = (clone $base)->count();
         $last30 = (clone $base)->where('created_at', '>=', now()->subDays(30))->count();
 
-        $approved = (clone $base)->whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::Refunded->value])->count();
+        // Accepted by a reviewer, whichever step of the workflow they are in now.
+        $approved = (clone $base)->whereIn('status', array_map(fn (ReturnStatus $status) => $status->value, [
+            ReturnStatus::Approved,
+            ReturnStatus::ItemReceived,
+            ReturnStatus::Inspected,
+            ReturnStatus::Refunded,
+            ReturnStatus::ExchangeShipped,
+            ReturnStatus::Exchanged,
+        ]))->count();
         $rejected = (clone $base)->where('status', ReturnStatus::Rejected->value)->count();
 
         $approvalRate = $total > 0 ? ($approved / $total) * 100 : 0;
@@ -64,7 +72,7 @@ class ReturnAnalyticsPage extends ContentPage
         $productLabels = $this->resolveProductLabels($topProductRows);
 
         $avgProcessingHours = (clone $base)
-            ->whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::Rejected->value, ReturnStatus::Refunded->value])
+            ->whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::Rejected->value, ReturnStatus::Refunded->value, ReturnStatus::Exchanged->value])
             ->get()
             ->avg(fn (ReturnRequest $r) => $r->created_at?->diffInHours($r->updated_at)) ?? 0;
 
@@ -101,7 +109,7 @@ class ReturnAnalyticsPage extends ContentPage
             'cards' => $this->presentMetricCards([
                 ['label' => 'Total Returns', 'value' => $total, 'format' => 'number', 'caption' => 'All-time return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Last 30 Days', 'value' => $last30, 'format' => 'number', 'caption' => 'Returns submitted this month', 'dot' => 'dot-blue', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved or refunded', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved, refunded or exchanged', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Rejection Rate', 'value' => $rejectionRate, 'format' => 'percent', 'caption' => 'Rejected requests', 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
                 ['label' => 'Avg Processing Time', 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => 'From submission to resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
@@ -154,13 +162,14 @@ class ReturnAnalyticsPage extends ContentPage
                 continue;
             }
 
-            tenancy()->initialize($tenantModel);
+            // Restores the previous (central) context afterwards instead of leaving the last tenant active.
+            $tenantModel->run(function () use ($tenantId, $tenantRows, $tenantModel, &$labels) {
+                $products = \App\Models\Tenant\Product::whereIn('id', $tenantRows->pluck('product_id'))->get();
 
-            $products = \App\Models\Tenant\Product::whereIn('id', $tenantRows->pluck('product_id'))->get();
-
-            foreach ($products as $product) {
-                $labels[$tenantId . ':' . $product->id] = ($product->translationValue('name') ?? $product->slug) . ' (' . ($tenantModel->name ?? $tenantId) . ')';
-            }
+                foreach ($products as $product) {
+                    $labels[$tenantId . ':' . $product->id] = ($product->translationValue('name') ?? $product->slug) . ' (' . ($tenantModel->name ?? $tenantId) . ')';
+                }
+            });
         }
 
         return $labels;

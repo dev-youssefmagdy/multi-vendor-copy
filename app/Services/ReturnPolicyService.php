@@ -6,6 +6,7 @@ use App\Models\AppSetting;
 use App\Models\Tenant;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\Setting as TenantSetting;
+use App\Support\Tenancy\RunsInTenant;
 
 /**
  * Resolves return-policy values (window days, non-returnable products, fee, conditions,
@@ -15,6 +16,8 @@ use App\Models\Tenant\Setting as TenantSetting;
  */
 class ReturnPolicyService
 {
+    use RunsInTenant;
+
     public const DEFAULT_WINDOW_DAYS = 14;
 
     private const ADMIN_KEYS = [
@@ -44,15 +47,12 @@ class ReturnPolicyService
     {
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->defaultPolicy();
         }
 
-        // Do not call tenancy()->end() here — mirrors ReturnRequestService::deliveredAt's
-        // convention of leaving the tenant context initialized for the calling request.
-        tenancy()->initialize($tenant);
-
-        $rows = TenantSetting::query()->where('group', 'return_policy')->get()->keyBy('name');
+        // Read in the tenant's context and restore the caller's context afterwards.
+        $rows = $this->inTenant($tenant, fn () => TenantSetting::query()->where('group', 'return_policy')->get()->keyBy('name'));
 
         return $this->buildPolicy(fn (string $key) => $rows->get(self::TENANT_KEYS[$key])?->value);
     }
@@ -76,18 +76,19 @@ class ReturnPolicyService
     {
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->defaultPolicy();
         }
 
-        tenancy()->initialize($tenant);
+        $isCentralProduct = $this->inTenant($tenant, function () use ($productId): bool {
+            if (! $productId) {
+                return true;
+            }
 
-        $isCentralProduct = true;
-
-        if ($productId) {
             $product = TenantProduct::find($productId);
-            $isCentralProduct = !$product || $product->central_product_id !== null;
-        }
+
+            return ! $product || $product->central_product_id !== null;
+        });
 
         return $isCentralProduct ? $this->getAdminPolicy() : $this->getTenantPolicy($tenantId);
     }
@@ -104,25 +105,23 @@ class ReturnPolicyService
     {
         $basePolicy = $this->resolvePolicy($tenantId, $productId);
 
-        if (!$productId) {
+        if (! $productId) {
             return $this->mergeDefaults($basePolicy);
         }
 
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->mergeDefaults($basePolicy);
         }
 
-        tenancy()->initialize($tenant);
-
-        $product = TenantProduct::withoutGlobalScopes()->find($productId);
+        $product = $this->inTenant($tenant, fn () => TenantProduct::withoutGlobalScopes()->find($productId));
 
         $isOwnProduct = $product && $product->central_product_id === null;
 
-        if (!$isOwnProduct || !$product->return_policy_override) {
+        if (! $isOwnProduct || ! $product->return_policy_override) {
             return $this->mergeDefaults($basePolicy, [
-                'is_returnable' => !in_array($productId, $basePolicy['non_returnable_ids'], true),
+                'is_returnable' => ! in_array($productId, $basePolicy['non_returnable_ids'], true),
             ]);
         }
 
@@ -158,7 +157,7 @@ class ReturnPolicyService
 
     private function decodeArray(?string $value): array
     {
-        if (!$value) {
+        if (! $value) {
             return [];
         }
 

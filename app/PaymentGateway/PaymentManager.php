@@ -8,6 +8,9 @@ use App\Models\PaymentGateway;
 use App\Models\Tenant\PaymentGateway as TenantPaymentGateway;
 use App\PaymentGateway\Contracts\PaymentGatewayInterface;
 use App\PaymentGateway\Exceptions\PaymentException;
+use App\PaymentGateway\Gateways\AbstractPaymentGateway;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 /**
  * PaymentManager — Strategy Context / Factory
@@ -47,7 +50,7 @@ class PaymentManager
         $class = $drivers[$key];
         $config = $this->resolveGatewayConfig($key);
 
-        if (!class_exists($class)) {
+        if (! class_exists($class)) {
             throw new \RuntimeException("Payment gateway class [{$class}] not found.");
         }
 
@@ -55,7 +58,7 @@ class PaymentManager
         // and receive the resolved `$config` by name in their constructor.
         $gateway = app()->make($class, ['config' => $config]);
 
-        if (!$gateway instanceof PaymentGatewayInterface) {
+        if (! $gateway instanceof PaymentGatewayInterface) {
             throw new \RuntimeException(
                 "Gateway class [{$class}] must implement PaymentGatewayInterface."
             );
@@ -65,13 +68,48 @@ class PaymentManager
     }
 
     /**
+     * Drop cached gateway instance(s). Instances are cached per key and carry the
+     * credentials of the tenant they were resolved for, so code that resolves a
+     * gateway for a specific tenant (e.g. refunds run from the central admin across
+     * tenants) must forget the cached instance first.
+     */
+    public function forget(?string $key = null): void
+    {
+        if ($key === null) {
+            $this->resolved = [];
+
+            return;
+        }
+
+        unset($this->resolved[$key]);
+    }
+
+    /**
+     * Whether the registered driver implements refunds (i.e. overrides
+     * AbstractPaymentGateway::refund(), which throws notSupported). Reads the
+     * driver class only — no credentials or DB access.
+     */
+    public function supportsRefunds(string $key): bool
+    {
+        $class = config('payment-gateways.drivers', [])[$key] ?? null;
+
+        if (! $class || ! class_exists($class) || ! method_exists($class, 'refund')) {
+            return false;
+        }
+
+        return (new \ReflectionMethod($class, 'refund'))->getDeclaringClass()->getName()
+            !== AbstractPaymentGateway::class;
+    }
+
+    /**
      * Determine which gateway to use from the request (e.g. ?gateway=stripe).
      * Falls back to the configured default gateway.
      */
-    public function fromRequest(?\Illuminate\Http\Request $request = null): PaymentGatewayInterface
+    public function fromRequest(?Request $request = null): PaymentGatewayInterface
     {
         $request ??= request();
         $key = $request->input('gateway') ?? config('payment-gateways.default', 'stripe');
+
         return $this->gateway($key);
     }
 
@@ -91,7 +129,7 @@ class PaymentManager
         if ($this->inTenantContext()) {
             return $this->storefrontGateways()
                 ->pluck('code')
-                ->filter(fn(string $code) => in_array($code, $drivers, true))
+                ->filter(fn (string $code) => in_array($code, $drivers, true))
                 ->values()
                 ->all();
         }
@@ -128,13 +166,13 @@ class PaymentManager
     public function storefrontGateways()
     {
 
-        if (!$this->inTenantContext()) {
+        if (! $this->inTenantContext()) {
             return PaymentGateway::query()
                 ->where('status', 'active')
                 ->where('type', PaymentGatewayType::Orders->value)
                 ->with('logoFile')
                 ->get()
-                ->map(fn(PaymentGateway $gateway) => [
+                ->map(fn (PaymentGateway $gateway) => [
                     'source' => 'central',
                     'id' => $gateway->id,
                     'code' => $gateway->code,
@@ -157,7 +195,7 @@ class PaymentManager
             ->get()
             // A vendor-supplied key that failed its connection check must not be
             // offered to customers — surfacing it only leads to a failed charge.
-            ->reject(fn(TenantPaymentGateway $gateway) => $gateway->use_own && $gateway->connection_status === 'not_connected')
+            ->reject(fn (TenantPaymentGateway $gateway) => $gateway->use_own && $gateway->connection_status === 'not_connected')
             ->map(function (TenantPaymentGateway $gateway): array {
                 $mode = $gateway->effective_mode;
                 $useOwn = $gateway->use_own == 1;
@@ -187,7 +225,7 @@ class PaymentManager
      *
      * @return array<int, array{id:int,code:string,name:string,mode:string,creds:array,fee_pct:float,fee_fixed:float}>
      */
-    public function vendorPaymentGateways(): \Illuminate\Support\Collection
+    public function vendorPaymentGateways(): Collection
     {
         $rows = tenancy()->central(function () {
             return PaymentGateway::query()
@@ -195,7 +233,7 @@ class PaymentManager
                 ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->orderBy('name')
                 ->get()
-                ->map(fn(PaymentGateway $gw) => [
+                ->map(fn (PaymentGateway $gw) => [
                     'id' => $gw->id,
                     'code' => $gw->code,
                     'name' => $gw->name,
@@ -259,8 +297,8 @@ class PaymentManager
 
         return $gateways
             ->pluck('code')
-            ->reject(fn(string $code) => $primary && $code === $primary->getKey())
-            ->map(fn(string $code) => $this->gateway($code))
+            ->reject(fn (string $code) => $primary && $code === $primary->getKey())
+            ->map(fn (string $code) => $this->gateway($code))
             ->values()
             ->all();
     }
@@ -278,7 +316,7 @@ class PaymentManager
         $empty = ['currencies' => [], 'merchant_countries' => [], 'customer_countries' => [], 'payment_methods' => []];
         $class = config('payment-gateways.drivers')[$key] ?? null;
 
-        if (!$class || !class_exists($class)) {
+        if (! $class || ! class_exists($class)) {
             return $empty;
         }
 
@@ -324,7 +362,7 @@ class PaymentManager
 
     private function findTenantGateway(string $key): ?TenantPaymentGateway
     {
-        if (!$this->inTenantContext()) {
+        if (! $this->inTenantContext()) {
             return null;
         }
 
@@ -347,10 +385,10 @@ class PaymentManager
     public function centralGateway(string $code): PaymentGatewayInterface
     {
         $centralModel = $this->inTenantContext()
-            ? tenancy()->central(fn() => $this->findCentralGateway($code, PaymentGatewayType::VendorPayments))
+            ? tenancy()->central(fn () => $this->findCentralGateway($code, PaymentGatewayType::VendorPayments))
             : $this->findCentralGateway($code, PaymentGatewayType::VendorPayments);
 
-        if (!$centralModel) {
+        if (! $centralModel) {
             throw PaymentException::gatewayNotFound($code);
         }
 
@@ -367,7 +405,7 @@ class PaymentManager
             'sandbox' => $this->isTestMode($centralModel->mode ?? PaymentGatewayMode::Live),
         ]);
 
-        if (!class_exists($class)) {
+        if (! class_exists($class)) {
             throw new \RuntimeException("Payment gateway class [{$class}] not found.");
         }
 
@@ -397,6 +435,6 @@ class PaymentManager
      */
     private function inTenantContext(): bool
     {
-        return !empty(tenant('id') ?? null);
+        return ! empty(tenant('id') ?? null);
     }
 }

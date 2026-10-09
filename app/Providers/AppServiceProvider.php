@@ -2,38 +2,41 @@
 
 namespace App\Providers;
 
+use App\Eloquent\Relations\CachedBelongsTo;
 use App\Http\Middleware\ApplyStorefrontSessionContext;
 use App\Http\Middleware\InitializeTenancyBySlug;
+use App\Livewire\Tenant\Storefront\ThemeKit\AddToCartButton;
+use App\Livewire\Tenant\Storefront\ThemeKit\CartIcon;
 use App\Models\Category;
+use App\Models\CentralCoupon;
+use App\Models\CentralFlashSale;
 use App\Models\Currency;
 use App\Models\EmailTemplate;
 use App\Models\File;
+use App\Models\HomeVariant;
 use App\Models\Language;
 use App\Models\PaymentGateway;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\StaticPage;
 use App\Models\Template;
-use App\Models\CentralFlashSale;
-use App\Models\CentralCoupon;
 use App\Models\TemplatePart;
+use App\Models\Tenant\Banner as TenantBanner;
+use App\Models\Tenant\Category as TenantCategory;
+use App\Models\Tenant\Currency as TenantCurrency;
+use App\Models\Tenant\FlashSale as TenantFlashSale;
+use App\Models\Tenant\Language as TenantLanguage;
 use App\Models\Tenant\Order as TenantOrder;
 use App\Models\Tenant\OrderItem as TenantOrderItem;
-use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Tenant\Product as TenantProduct;
-use App\Models\Tenant\ProductVariant as TenantProductVariant;
-use App\Models\Tenant\Category as TenantCategory;
-use App\Models\Tenant\Banner as TenantBanner;
-use App\Models\Tenant\FlashSale as TenantFlashSale;
 use App\Models\Tenant\ProductBadge as TenantProductBadge;
+use App\Models\Tenant\ProductVariant as TenantProductVariant;
 use App\Models\Tenant\Setting as TenantSetting;
-use App\Models\Tenant\Currency as TenantCurrency;
-use App\Models\Tenant\Language as TenantLanguage;
 use App\Models\Tenant\SocialLink as TenantSocialLink;
-use App\Models\Tenant\Theme as TenantTheme;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantThemeColor;
-use App\Models\HomeVariant;
+use App\Models\Tenant\Theme as TenantTheme;
+use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Variation;
 use App\Observers\CacheVersionObserver;
 use App\Observers\CentralCatalogSyncObserver;
@@ -44,10 +47,11 @@ use App\Observers\CentralTemplatePartObserver;
 use App\Observers\ProductFileObserver;
 use App\Observers\TenantOrderObserver;
 use App\Observers\TenantTransactionObserver;
-use App\Eloquent\Relations\CachedBelongsTo;
+use App\Services\Orders\OrderPolicyService;
 use App\Services\Tenant\TemplateRegistryService;
 use App\Services\Tenant\Templates\UploadedBladeTemplateStrategy;
 use App\Translation\TenantTranslator;
+use App\View\Composers\Tenant\ShellComposer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -71,6 +75,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(TemplateRegistryService::class);
+
+        // Per-request cache of the tenant order policy (cancellation / refund / exchange rules).
+        $this->app->scoped(OrderPolicyService::class);
 
         // Swap Laravel's default translator for one that resolves tenant DB
         // overrides (Settings > Translations) before falling back to the lang
@@ -99,14 +106,14 @@ class AppServiceProvider extends ServiceProvider
 
         View::addNamespace('tenant', resource_path('views/tenant'));
 
-        View::composer('tenant.layouts.partials.*', \App\View\Composers\Tenant\ShellComposer::class);
+        View::composer('tenant.layouts.partials.*', ShellComposer::class);
 
         TemplateRegistryService::register('custom', UploadedBladeTemplateStrategy::class);
 
         Event::listen(SocialiteWasCalled::class, [AppleExtendSocialite::class, 'handle']);
 
-        Livewire::component('storefront.add-to-cart-button', \App\Livewire\Tenant\Storefront\ThemeKit\AddToCartButton::class);
-        Livewire::component('storefront.cart-icon', \App\Livewire\Tenant\Storefront\ThemeKit\CartIcon::class);
+        Livewire::component('storefront.add-to-cart-button', AddToCartButton::class);
+        Livewire::component('storefront.cart-icon', CartIcon::class);
 
         // The central `/preview` route (tenant panel "Preview" button, admin
         // Templates page) renders the dedicated "preview" tenant's storefront
@@ -128,8 +135,8 @@ class AppServiceProvider extends ServiceProvider
             InitializeTenancyByDomain::class,
             PreventAccessFromCentralDomains::class,
             ApplyStorefrontSessionContext::class,
-                // Path-based tenancy (nogrgr.com/{slug}/…) – skips gracefully when
-                // the {tenant} route parameter is absent (subdomain/domain requests).
+            // Path-based tenancy (nogrgr.com/{slug}/…) – skips gracefully when
+            // the {tenant} route parameter is absent (subdomain/domain requests).
             InitializeTenancyBySlug::class,
         ]);
 
@@ -170,7 +177,7 @@ class AppServiceProvider extends ServiceProvider
         TenantOrder::observe(CacheVersionObserver::class);
         TenantOrderItem::observe(CacheVersionObserver::class);
 
-        $this->app->terminating(fn() => CachedBelongsTo::flushCache());
+        $this->app->terminating(fn () => CachedBelongsTo::flushCache());
 
         RateLimiter::for('tenant-validate', fn (Request $request) => Limit::perMinute(180)->by(
             $request->user('tenant')?->id ?: $request->ip(),
@@ -185,16 +192,16 @@ class AppServiceProvider extends ServiceProvider
 
         $host = request()->getHost();
 
-        if (!is_string($host) || $host === '') {
+        if (! is_string($host) || $host === '') {
             return;
         }
 
-        $baseCookie = (string) config('session.cookie', Str::slug((string) config('app.name', 'laravel')) . '-session');
+        $baseCookie = (string) config('session.cookie', Str::slug((string) config('app.name', 'laravel')).'-session');
         $hostCookie = Str::slug($host);
 
         config([
             'session.domain' => null,
-            'session.cookie' => $baseCookie . '-' . $hostCookie,
+            'session.cookie' => $baseCookie.'-'.$hostCookie,
         ]);
     }
 }

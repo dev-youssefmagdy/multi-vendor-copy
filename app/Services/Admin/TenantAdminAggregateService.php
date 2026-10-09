@@ -4,9 +4,10 @@ namespace App\Services\Admin;
 
 use App\Enums\ActivationStatus;
 use App\Enums\OrderPaymentStatus;
-use App\Enums\PaymentLogStatus;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentLogStatus;
+use App\Enums\TenantStatus;
 use App\Models\Tenant;
 use App\Models\Tenant\Currency as TenantCurrency;
 use App\Models\Tenant\Customer as TenantCustomer;
@@ -40,7 +41,7 @@ class TenantAdminAggregateService
             return TenantCustomer::query()
                 ->withCount('orders')
                 ->get()
-                ->map(fn(TenantCustomer $customer) => (object) [
+                ->map(fn (TenantCustomer $customer) => (object) [
                     'id' => $customer->id,
                     'tenant' => $tenant,
                     'tenant_id' => $tenant->getTenantKey(),
@@ -75,7 +76,7 @@ class TenantAdminAggregateService
                     'activities',
                 ])
                 ->get()
-                ->map(fn(TenantOrder $order) => $this->mapOrder($tenant, $order));
+                ->map(fn (TenantOrder $order) => $this->mapOrder($tenant, $order));
         });
     }
 
@@ -86,7 +87,7 @@ class TenantAdminAggregateService
         }
 
         return $this->paymentLogsCache = $this->orders()
-            ->map(fn(object $order) => (object) [
+            ->map(fn (object $order) => (object) [
                 'tenant' => $order->tenant,
                 'tenant_id' => $order->tenant_id,
                 'store_name' => $order->store_name,
@@ -95,11 +96,12 @@ class TenantAdminAggregateService
                 'customer_email' => $order->customer_email,
                 'gateway' => $order->payment_method ?: $order->payment_gateway ?: 'Unknown gateway',
                 'amount' => (float) $order->total_amount,
-                'status' => $order->payment_status === OrderPaymentStatus::Paid
-                    ? PaymentLogStatus::Paid
-                    : (in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true)
-                        ? PaymentLogStatus::Failed
-                        : PaymentLogStatus::Pending),
+                'status' => match (true) {
+                    $order->payment_status === OrderPaymentStatus::Refunded => PaymentLogStatus::Refunded,
+                    in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded], true) => PaymentLogStatus::Paid,
+                    in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true) => PaymentLogStatus::Failed,
+                    default => PaymentLogStatus::Pending,
+                },
                 'reference' => $order->payment_reference ?: $order->order_number,
                 'paid_at' => $order->paid_at,
                 'created_at' => $order->created_at,
@@ -122,15 +124,17 @@ class TenantAdminAggregateService
 
             $credits = (float) $transactions->where('type', 'credit')->sum('amount');
             $debits = (float) $transactions->where('type', 'debit')->sum('amount');
-            $grossSales = (float) $orders->sum(fn(TenantOrder $order) => $order->grand_total);
-            $paidOrders = $orders->filter(fn(TenantOrder $order) => $order->paid);
-            $collectedSales = (float) $paidOrders->sum(fn(TenantOrder $order) => $order->grand_total);
-            $ownerProfit = (float) $paidOrders->sum(fn(TenantOrder $order) => OrderProfitCalculator::effectiveOwnerProfitForOrder($order));
-            $vendorNetBalance = (float) $paidOrders->sum(fn(TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
+            // Cancelled / rejected / refunded orders produce no revenue and completed refunds are
+            // subtracted (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
+            $grossSales = (float) $orders->sum(fn (TenantOrder $order) => OrderProfitCalculator::netOrderTotal($order));
+            $paidOrders = $orders->filter(fn (TenantOrder $order) => $order->paid && ! OrderProfitCalculator::isFinanciallyVoid($order));
+            $collectedSales = (float) $paidOrders->sum(fn (TenantOrder $order) => OrderProfitCalculator::netOrderTotal($order));
+            $ownerProfit = (float) $paidOrders->sum(fn (TenantOrder $order) => OrderProfitCalculator::effectiveOwnerProfitForOrder($order));
+            $vendorNetBalance = (float) $paidOrders->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
             $pendingBalance = (float) $orders
                 ->where('paid', false)
-                ->filter(fn(TenantOrder $order) => !in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))
-                ->sum(fn(TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
+                ->reject(fn (TenantOrder $order) => OrderProfitCalculator::isFinanciallyVoid($order))
+                ->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
 
             $currency = TenantCurrency::query()->where('is_default', true)->value('code')
                 ?? TenantCurrency::query()->orderByDesc('is_active')->value('code')
@@ -147,10 +151,10 @@ class TenantAdminAggregateService
                     'gross_sales' => round($grossSales, 2),
                     'collected_sales' => round($collectedSales, 2),
                     'owner_profit' => round($ownerProfit, 2),
-                    'active_subscriptions' => $subscriptions->filter(fn(Subscription $subscription) => $this->humanizeEnum($subscription->status) === 'Active')->count(),
+                    'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $this->humanizeEnum($subscription->status) === 'Active')->count(),
                     'subscription_revenue' => round((float) $subscriptions->sum('price'), 2),
                     'transactions_count' => $transactions->count(),
-                    'subscriptions' => $subscriptions->map(fn(Subscription $subscription) => [
+                    'subscriptions' => $subscriptions->map(fn (Subscription $subscription) => [
                         'id' => $subscription->id,
                         'price' => (float) $subscription->price,
                         'status' => $this->humanizeEnum($subscription->status),
@@ -160,9 +164,9 @@ class TenantAdminAggregateService
                         'start_date' => $subscription->start_date,
                         'end_date' => $subscription->end_date,
                     ])->all(),
-                    'recent_transactions' => $transactions->sortByDesc(fn(TenantTransaction $transaction) => $transaction->created_at?->getTimestamp() ?? 0)
+                    'recent_transactions' => $transactions->sortByDesc(fn (TenantTransaction $transaction) => $transaction->created_at?->getTimestamp() ?? 0)
                         ->take(5)
-                        ->map(fn(TenantTransaction $transaction) => [
+                        ->map(fn (TenantTransaction $transaction) => [
                             'reference' => $transaction->uuid,
                             'direction' => $this->humanizeEnum($transaction->type),
                             'amount' => (float) $transaction->amount,
@@ -172,9 +176,9 @@ class TenantAdminAggregateService
                         ])
                         ->values()
                         ->all(),
-                    'recent_orders' => $orders->sortByDesc(fn(TenantOrder $order) => $order->created_at?->getTimestamp() ?? 0)
+                    'recent_orders' => $orders->sortByDesc(fn (TenantOrder $order) => $order->created_at?->getTimestamp() ?? 0)
                         ->take(5)
-                        ->map(fn(TenantOrder $order) => [
+                        ->map(fn (TenantOrder $order) => [
                             'order_number' => $order->uuid,
                             'customer_name' => $order->shipping_address['full_name'] ?? $order->customer?->full_name ?? 'Guest',
                             'total_amount' => (float) $order->grand_total,
@@ -184,7 +188,7 @@ class TenantAdminAggregateService
                         ])
                         ->values()
                         ->all(),
-                    'status' => $tenant->status === \App\Enums\TenantStatus::Active ? ActivationStatus::Active->value : ActivationStatus::Inactive->value,
+                    'status' => $tenant->status === TenantStatus::Active ? ActivationStatus::Active->value : ActivationStatus::Inactive->value,
                     'updated_at' => $transactions->max('created_at') ?? $subscriptions->max('updated_at') ?? $orders->max('updated_at') ?? $tenant->updated_at,
                 ],
             ];
@@ -297,6 +301,8 @@ class TenantAdminAggregateService
             'remaining_owner_profit' => $financials['remaining_owner_profit'],
             'remaining_tenant_profit' => $financials['remaining_tenant_profit'],
             'total_amount' => $financials['grand_total'],
+            'refunded_amount' => $financials['refunded_amount'],
+            'net_amount' => $financials['net_amount'],
             'payment_method' => $order->payment_method,
             'payment_gateway' => $paymentGateway,
             'vendor_gateway_id' => $order->vendor_gateway_id,
@@ -329,7 +335,7 @@ class TenantAdminAggregateService
                     'line_total' => round((float) $item->sub_total - (float) $item->discount + (float) $item->tax + (float) $item->shipping_fee, 2),
                 ];
             })->values()->all(),
-            'activities' => $order->activities->map(fn($activity) => [
+            'activities' => $order->activities->map(fn ($activity) => [
                 'title' => $activity->title,
                 'description' => $activity->description,
                 'created_at' => $activity->created_at,
@@ -339,10 +345,17 @@ class TenantAdminAggregateService
 
     protected function mapPaymentStatus(TenantOrder $order): OrderPaymentStatus
     {
-        if (!$order->paid) {
+        if (! $order->paid) {
             return in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true)
                 ? OrderPaymentStatus::Failed
                 : OrderPaymentStatus::Unpaid;
+        }
+
+        // Refunds take precedence over the payout / settlement state.
+        $paymentState = $order->paymentState();
+
+        if (in_array($paymentState, [OrderPaymentStatus::Refunded, OrderPaymentStatus::PartiallyRefunded], true)) {
+            return $paymentState;
         }
 
         // For central-gateway orders (customer paid through central platform),
@@ -350,13 +363,13 @@ class TenantAdminAggregateService
         // $isCentralGateway = $order->paymentGateway !== null && !$order->paymentGateway->use_own;
         $isCentralGateway = $order->vendor_gateway_id === null || $order->vendor_gateway_id === 'central';
 
-        if ($isCentralGateway && !$order->payout_released) {
+        if ($isCentralGateway && ! $order->payout_released) {
             return OrderPaymentStatus::PendingPayment;
         }
 
         // For own-gateway orders (tenant collected payment directly), the tenant
         // owes central their product/shipping cost. Show Pending Payment until settled.
-        if (!$isCentralGateway && (float) ($order->vendor_cost ?? 0) > 0 && $order->vendor_settled_at === null) {
+        if (! $isCentralGateway && (float) ($order->vendor_cost ?? 0) > 0 && $order->vendor_settled_at === null) {
             return OrderPaymentStatus::PendingPayment;
         }
 
@@ -373,6 +386,8 @@ class TenantAdminAggregateService
             'tax' => (float) $order->tax_amount,
             'shipping_total' => (float) $order->resolved_shipping_charge,
             'grand_total' => (float) $order->grand_total,
+            'refunded_amount' => round((float) ($order->refunded_amount ?? 0), 2),
+            'net_amount' => OrderProfitCalculator::netOrderTotal($order),
             'owner_profit' => OrderProfitCalculator::effectiveOwnerProfitForOrder($order),
             'vendor_net_total' => round(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2),
             'tenant_own_central' => round(OrderProfitCalculator::tenantOwnCentralForOrder($order), 2),
@@ -392,10 +407,10 @@ class TenantAdminAggregateService
         $product = $item->product ?? $item->variant?->product;
 
         if ($product && method_exists($product, 'translationValue')) {
-            return $product->translationValue('name') ?? $product->slug ?? 'Item #' . $item->id;
+            return $product->translationValue('name') ?? $product->slug ?? 'Item #'.$item->id;
         }
 
-        return $product?->name ?? $product?->slug ?? 'Item #' . $item->id;
+        return $product?->name ?? $product?->slug ?? 'Item #'.$item->id;
     }
 
     protected function humanizeEnum(mixed $value): string
@@ -414,7 +429,8 @@ class TenantAdminAggregateService
             OrderStatus::Processing => OrderShippingStatus::InDelivery,
             OrderStatus::Shipped => OrderShippingStatus::Shipped,
             OrderStatus::Delivered, OrderStatus::Completed => OrderShippingStatus::Delivered,
-            OrderStatus::Cancelled, OrderStatus::Rejected => OrderShippingStatus::Cancelled,
+            // A refunded order no longer has an active fulfilment, like a cancelled one.
+            OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded => OrderShippingStatus::Cancelled,
         };
     }
 }

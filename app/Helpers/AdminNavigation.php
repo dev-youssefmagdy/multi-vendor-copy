@@ -51,6 +51,7 @@ class AdminNavigation
                             ['label' => 'Orders List', 'route' => 'admin.orders.index', 'permission' => 'sales.orders.view'],
                             ['label' => 'Orders Report', 'route' => 'admin.orders.report', 'permission' => 'sales.orders.report.view'],
                             ['label' => 'Return Requests', 'route' => 'admin.orders.returns.index', 'permission' => 'sales.orders.view'],
+                            ['label' => 'Refunds', 'route' => 'admin.orders.refunds.index', 'permission' => 'sales.orders.view'],
                             ['label' => 'Return Analytics', 'route' => 'admin.orders.returns.analytics', 'permission' => 'sales.orders.view'],
                         ],
                     ],

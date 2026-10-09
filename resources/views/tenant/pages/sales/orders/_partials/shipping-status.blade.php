@@ -2,7 +2,7 @@
     $order = $order ?? [];
 @endphp
 <div id="shipping-status-panel">
-    @if(!empty($order['can_update_shipping']))
+    @if(!empty($order['can_update_shipping']) && empty($order['is_terminal']))
         <section class="details-panel">
             <div class="details-header">
                 <h4 class="panel-title">Shipping Status</h4>

@@ -3,6 +3,7 @@
 namespace App\Services\Mail;
 
 use App\Enums\ActivationStatus;
+use App\Enums\CancellationReason;
 use App\Enums\EmailTemplateAction;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
@@ -11,13 +12,14 @@ use App\Models\EmailTemplate as CentralEmailTemplate;
 use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\PaymentLog;
+use App\Models\Refund;
+use App\Models\ReturnRequest;
 use App\Models\Tenant;
 use App\Models\Tenant\Currency;
 use App\Models\Tenant\EmailTemplate as TenantEmailTemplate;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\Transaction;
 use App\Services\AdminNotificationService;
-use App\Services\Mail\MailConfigurationResolver;
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -30,12 +32,11 @@ class TemplateMailService
         private readonly MailConfigurationResolver $configurationResolver,
         private readonly MailManager $mailManager,
         private readonly AdminNotificationService $adminNotificationService,
-    ) {
-    }
+    ) {}
 
     public function sendCentralInvoice(Invoice $invoice, string $pdfBinary, ?string $locale = null): bool
     {
-        if (!filled($invoice->customer_email)) {
+        if (! filled($invoice->customer_email)) {
             return false;
         }
 
@@ -48,7 +49,7 @@ class TemplateMailService
                     'data' => $pdfBinary,
                     'name' => sprintf('%s.pdf', Str::slug($invoice->invoice_number)),
                     'options' => ['mime' => 'application/pdf'],
-                ]
+                ],
             ],
             $locale,
         );
@@ -69,7 +70,7 @@ class TemplateMailService
     {
         $recipient = $this->orderRecipient($order);
 
-        if (!$recipient) {
+        if (! $recipient) {
             return;
         }
 
@@ -91,7 +92,7 @@ class TemplateMailService
     {
         $vendorEmail = tenant()?->email;
 
-        if (!filled($vendorEmail)) {
+        if (! filled($vendorEmail)) {
             return;
         }
 
@@ -112,7 +113,7 @@ class TemplateMailService
             OrderShippingStatus::Pending => null,
         };
 
-        if (!$action) {
+        if (! $action) {
             return false;
         }
 
@@ -135,10 +136,11 @@ class TemplateMailService
             OrderStatus::Shipped => EmailTemplateAction::TenantShippingUpdate,
             OrderStatus::Delivered, OrderStatus::Completed => EmailTemplateAction::TenantOrderDelivered,
             OrderStatus::Cancelled, OrderStatus::Rejected => EmailTemplateAction::TenantOrderCancelled,
-            OrderStatus::Pending => null,
+            // The refund email is sent by the refund flow once a refund actually completes.
+            OrderStatus::Pending, OrderStatus::Refunded => null,
         };
 
-        if (!$action) {
+        if (! $action) {
             return false;
         }
 
@@ -153,7 +155,42 @@ class TemplateMailService
         );
     }
 
-    public function sendReturnStatusUpdate(\App\Models\ReturnRequest $returnRequest, Order $order): bool
+    /**
+     * Customer email for a cancelled order (any actor). {{cancellation_reason}} = reason label
+     * plus the free-text note; {{processed_at}} = when it was cancelled.
+     */
+    public function sendTenantOrderCancelled(Order $order): bool
+    {
+        return $this->sendTenantTemplate(
+            EmailTemplateAction::TenantOrderCancelled,
+            $this->orderRecipient($order),
+            $this->orderTokens($order, [
+                '{{cancellation_reason}}' => $this->cancellationReasonText($order),
+                '{{processed_at}}' => optional($order->cancelled_at ?? $order->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
+            ]),
+            [],
+            $this->orderLocale($order),
+        );
+    }
+
+    /** "Reason label — note" for a cancelled order; a generic word for legacy orders without a reason. */
+    protected function cancellationReasonText(Order $order): string
+    {
+        if ($order->cancellation_reason instanceof CancellationReason) {
+            $note = trim((string) $order->cancellation_note);
+
+            return $order->cancellation_reason->label().($note !== '' ? ' — '.$note : '');
+        }
+
+        return $order->status === OrderStatus::Rejected ? 'Rejected' : 'Cancelled';
+    }
+
+    /**
+     * Customer email for a return request status change. `$message` (e.g. return instructions,
+     * the rejection reason) is exposed as {{return_message}}; an exchange's tracking number as
+     * {{exchange_tracking_number}}.
+     */
+    public function sendReturnStatusUpdate(ReturnRequest $returnRequest, Order $order, ?string $message = null): bool
     {
         return $this->sendTenantTemplate(
             EmailTemplateAction::TenantReturnUpdate,
@@ -161,6 +198,9 @@ class TemplateMailService
             $this->orderTokens($order, [
                 '{{return_status}}' => $returnRequest->status->label(),
                 '{{return_reason}}' => $returnRequest->reason->label(),
+                '{{return_type}}' => $returnRequest->type?->label() ?? '',
+                '{{return_message}}' => (string) ($message ?? ''),
+                '{{exchange_tracking_number}}' => (string) ($returnRequest->exchange_tracking_number ?? ''),
                 '{{processed_at}}' => optional($returnRequest->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
             ]),
             [],
@@ -170,13 +210,13 @@ class TemplateMailService
 
     public function sendCentralTemplate(EmailTemplateAction $action, ?string $recipient, array $tokens = [], array $attachments = [], ?string $locale = null): bool
     {
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
         $template = $this->resolveCentralTemplate($action);
 
-        if (!$template) {
+        if (! $template) {
             return false;
         }
 
@@ -205,13 +245,13 @@ class TemplateMailService
 
     public function sendTenantTemplate(EmailTemplateAction $action, ?string $recipient, array $tokens = [], array $attachments = [], ?string $locale = null): bool
     {
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
         $template = $this->resolveTenantTemplate($action);
 
-        if (!$template) {
+        if (! $template) {
             return false;
         }
 
@@ -292,7 +332,7 @@ class TemplateMailService
         // settings page, not whichever transport (e.g. "log") the app happens to default to.
         $config['mailer'] = 'smtp';
 
-        if (!filled($config['host'] ?? null)) {
+        if (! filled($config['host'] ?? null)) {
             return ['success' => false, 'message' => 'Cannot send test email: SMTP host is not configured.'];
         }
 
@@ -313,24 +353,24 @@ class TemplateMailService
                 'error' => $e->getMessage(),
             ]);
 
-            return ['success' => false, 'message' => 'Failed to send test email: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Failed to send test email: '.$e->getMessage()];
         }
     }
 
     protected function testEmailBody(array $config): string
     {
-        return '<p>This is a test email sent from <strong>' . e(config('app.name', 'Multi Vendor')) . '</strong> to verify your mail configuration.</p>'
-            . '<p style="color:#6b7280;font-size:13px;">Mailer: ' . e($config['mailer'] ?? '-')
-            . '<br>Host: ' . e($config['host'] ?? '-')
-            . '<br>Port: ' . e($config['port'] ?? '-')
-            . '<br>Encryption: ' . e($config['encryption'] ?: 'none') . '</p>';
+        return '<p>This is a test email sent from <strong>'.e(config('app.name', 'Multi Vendor')).'</strong> to verify your mail configuration.</p>'
+            .'<p style="color:#6b7280;font-size:13px;">Mailer: '.e($config['mailer'] ?? '-')
+            .'<br>Host: '.e($config['host'] ?? '-')
+            .'<br>Port: '.e($config['port'] ?? '-')
+            .'<br>Encryption: '.e($config['encryption'] ?: 'none').'</p>';
     }
 
     protected function deliver(array $config, string $recipient, string $subject, string $body, array $attachments = []): bool
     {
-        $mailerName = 'runtime_' . Str::random(12);
+        $mailerName = 'runtime_'.Str::random(12);
 
-        config()->set('mail.mailers.' . $mailerName, $this->runtimeMailerConfig($config));
+        config()->set('mail.mailers.'.$mailerName, $this->runtimeMailerConfig($config));
 
         try {
             $mailer = $this->mailManager->mailer($mailerName);
@@ -345,14 +385,14 @@ class TemplateMailService
             return true;
         } finally {
             $this->mailManager->purge($mailerName);
-            config()->set('mail.mailers.' . $mailerName, null);
+            config()->set('mail.mailers.'.$mailerName, null);
         }
     }
 
     protected function runtimeMailerConfig(array $config): array
     {
         $mailer = strtolower(trim((string) ($config['mailer'] ?? 'smtp'))) ?: 'smtp';
-        $base = config('mail.mailers.' . $mailer, ['transport' => $mailer]);
+        $base = config('mail.mailers.'.$mailer, ['transport' => $mailer]);
 
         if ($mailer !== 'smtp') {
             return $base;
@@ -370,7 +410,7 @@ class TemplateMailService
 
     protected function resolveCentralTemplate(EmailTemplateAction $action): ?CentralEmailTemplate
     {
-        return $this->onCentral(fn() => CentralEmailTemplate::query()
+        return $this->onCentral(fn () => CentralEmailTemplate::query()
             ->where('action', $action->value)
             ->where('type', $action->templateType()->value)
             ->where('status', ActivationStatus::Active->value)
@@ -416,7 +456,7 @@ class TemplateMailService
         $dir = $rtl ? 'rtl' : 'ltr';
         $align = $rtl ? 'right' : 'left';
 
-        return '<div dir="' . $dir . '" style="direction:' . $dir . ';text-align:' . $align . ';">' . $body . '</div>';
+        return '<div dir="'.$dir.'" style="direction:'.$dir.';text-align:'.$align.';">'.$body.'</div>';
     }
 
     protected function commonTokens(array $config, ?Tenant $tenant = null): array
@@ -480,12 +520,12 @@ class TemplateMailService
             ])->filter()->implode(', '),
             '{{carrier_name}}' => '-',
             '{{tracking_number}}' => '-',
-            '{{tracking_url}}' => rtrim(url('/'), '/') . '/orders/' . $order->uuid,
+            '{{tracking_url}}' => rtrim(url('/'), '/').'/orders/'.$order->uuid,
             '{{estimated_delivery}}' => '-',
             '{{transaction_amount}}' => sprintf('%s %s', $currencyCode, number_format((float) $order->grand_total, 2)),
             '{{transaction_status}}' => $order->paid ? 'Paid' : 'Pending',
             '{{invoice_number}}' => '-',
-            '{{cancellation_reason}}' => $order->status === OrderStatus::Rejected ? 'Rejected' : 'Cancelled',
+            '{{cancellation_reason}}' => $this->cancellationReasonText($order),
             '{{transaction_number}}' => $paymentDetails['transaction_id'] ?? $order->uuid,
             '{{transaction_type}}' => $order->paid ? 'Charge' : 'Authorization',
             '{{wallet_balance}}' => '-',
@@ -499,7 +539,7 @@ class TemplateMailService
 
         if (tenant() && Route::has('tenant.storefront.order-invoice')) {
             $tokens['{{invoice_url}}'] = route('tenant.storefront.order-invoice', $order->uuid);
-            $tokens['{{invoice_number}}'] = 'INV-' . strtoupper(substr($order->uuid, 0, 8));
+            $tokens['{{invoice_number}}'] = 'INV-'.strtoupper(substr($order->uuid, 0, 8));
         }
 
         return array_replace($tokens, $overrides);
@@ -512,16 +552,16 @@ class TemplateMailService
             $productName = $item->product?->name ?? "Product #{$item->product_id}";
             $unitPrice = number_format((float) $item->price, 2);
             $subtotal = number_format((float) $item->sub_total, 2);
-            $discount = (float) $item->discount > 0 ? '-' . number_format((float) $item->discount, 2) : '-';
+            $discount = (float) $item->discount > 0 ? '-'.number_format((float) $item->discount, 2) : '-';
             $tax = (float) $item->tax > 0 ? number_format((float) $item->tax, 2) : '-';
 
             $rows .= '<tr style="border-bottom:1px solid #e5e7eb;">'
-                . '<td style="padding:8px 10px;font-size:13px;color:#111827;">' . e($productName) . '<br><span style="font-size:11px;color:#6b7280;">Qty: ' . (int) $item->qty . '</span></td>'
-                . '<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">' . $currency . ' ' . $unitPrice . '</td>'
-                . '<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">' . $discount . '</td>'
-                . '<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">' . $tax . '</td>'
-                . '<td style="padding:8px 10px;font-size:13px;font-weight:600;color:#111827;text-align:right;">' . $currency . ' ' . $subtotal . '</td>'
-                . '</tr>';
+                .'<td style="padding:8px 10px;font-size:13px;color:#111827;">'.e($productName).'<br><span style="font-size:11px;color:#6b7280;">Qty: '.(int) $item->qty.'</span></td>'
+                .'<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$unitPrice.'</td>'
+                .'<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">'.$discount.'</td>'
+                .'<td style="padding:8px 10px;font-size:13px;color:#374151;text-align:right;">'.$tax.'</td>'
+                .'<td style="padding:8px 10px;font-size:13px;font-weight:600;color:#111827;text-align:right;">'.$currency.' '.$subtotal.'</td>'
+                .'</tr>';
         }
 
         $subtotal = number_format($order->subtotal, 2);
@@ -532,32 +572,32 @@ class TemplateMailService
         $shipping = $order->resolved_shipping_charge > 0 ? number_format($order->resolved_shipping_charge, 2) : null;
         $grandTotal = number_format($order->grand_total, 2);
 
-        $summaryRows = '<tr><td colspan="4" style="padding:8px 10px;font-size:13px;color:#6b7280;text-align:right;">Subtotal</td><td style="padding:8px 10px;font-size:13px;color:#111827;text-align:right;">' . $currency . ' ' . $subtotal . '</td></tr>';
+        $summaryRows = '<tr><td colspan="4" style="padding:8px 10px;font-size:13px;color:#6b7280;text-align:right;">Subtotal</td><td style="padding:8px 10px;font-size:13px;color:#111827;text-align:right;">'.$currency.' '.$subtotal.'</td></tr>';
         if ($itemsDiscount) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Item Discounts</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-' . $currency . ' ' . $itemsDiscount . '</td></tr>';
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Item Discounts</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$itemsDiscount.'</td></tr>';
         }
         if ($orderDiscount) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Order Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-' . $currency . ' ' . $orderDiscount . '</td></tr>';
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Order Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$orderDiscount.'</td></tr>';
         }
         if ($tax) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Tax</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">' . $currency . ' ' . $tax . '</td></tr>';
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Tax</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$tax.'</td></tr>';
         }
         if ($shipping) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Shipping</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">' . $currency . ' ' . $shipping . '</td></tr>';
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Shipping</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$shipping.'</td></tr>';
         }
-        $summaryRows .= '<tr style="border-top:2px solid #e5e7eb;"><td colspan="4" style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#111827;text-align:right;">Grand Total</td><td style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#1d4ed8;text-align:right;">' . $currency . ' ' . $grandTotal . '</td></tr>';
+        $summaryRows .= '<tr style="border-top:2px solid #e5e7eb;"><td colspan="4" style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#111827;text-align:right;">Grand Total</td><td style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#1d4ed8;text-align:right;">'.$currency.' '.$grandTotal.'</td></tr>';
 
         return '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif;">'
-            . '<thead><tr style="background:#f8fafc;">'
-            . '<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:left;">Product</th>'
-            . '<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Unit Price</th>'
-            . '<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Discount</th>'
-            . '<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Tax</th>'
-            . '<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Subtotal</th>'
-            . '</tr></thead>'
-            . '<tbody>' . $rows . '</tbody>'
-            . '<tfoot>' . $summaryRows . '</tfoot>'
-            . '</table>';
+            .'<thead><tr style="background:#f8fafc;">'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:left;">Product</th>'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Unit Price</th>'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Discount</th>'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Tax</th>'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Subtotal</th>'
+            .'</tr></thead>'
+            .'<tbody>'.$rows.'</tbody>'
+            .'<tfoot>'.$summaryRows.'</tfoot>'
+            .'</table>';
     }
 
     protected function orderRecipient(Order $order): ?string
@@ -571,6 +611,7 @@ class TemplateMailService
     protected function orderLocale(Order $order): ?string
     {
         $order->loadMissing('customer');
+
         return filled($order->customer?->language) ? $order->customer->language : null;
     }
 
@@ -581,7 +622,7 @@ class TemplateMailService
             OrderStatus::Processing => OrderShippingStatus::InDelivery->label(),
             OrderStatus::Shipped => OrderShippingStatus::Shipped->label(),
             OrderStatus::Delivered, OrderStatus::Completed => OrderShippingStatus::Delivered->label(),
-            OrderStatus::Cancelled, OrderStatus::Rejected => OrderShippingStatus::Cancelled->label(),
+            OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded => OrderShippingStatus::Cancelled->label(),
         };
     }
 
@@ -591,7 +632,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -606,7 +647,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -615,7 +656,7 @@ class TemplateMailService
             $adminEmail,
             $this->orderTokensForCentral($order, [
                 '{{shipping_status}}' => $shippingStatus->label(),
-                '{{escalation_reason}}' => 'Delivery cancelled for order ' . $order->uuid,
+                '{{escalation_reason}}' => 'Delivery cancelled for order '.$order->uuid,
                 '{{assigned_team}}' => 'Central Operations',
             ]),
         );
@@ -625,7 +666,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -640,7 +681,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -655,7 +696,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -670,7 +711,7 @@ class TemplateMailService
     {
         $adminEmail = $this->centralAdminEmail();
 
-        if (!$adminEmail) {
+        if (! $adminEmail) {
             return false;
         }
 
@@ -687,7 +728,7 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
@@ -704,7 +745,7 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
@@ -714,7 +755,7 @@ class TemplateMailService
 
         $template = $this->resolveCentralTemplate(EmailTemplateAction::TenantSubscriptionRenewalReminder);
 
-        if (!$template) {
+        if (! $template) {
             return false;
         }
 
@@ -732,16 +773,41 @@ class TemplateMailService
         return false;
     }
 
-    public function sendTenantRefundProcessed(Order $order): bool
+    /**
+     * Customer email for a completed refund. With a Refund, the amount / reference / method /
+     * reason of that refund are exposed ({{refund_amount}}, {{refund_reference}},
+     * {{refund_method}}, {{refund_reason}}) and the generic transaction tokens describe it.
+     */
+    public function sendTenantRefundProcessed(Order $order, ?Refund $refund = null): bool
     {
+        $overrides = [
+            '{{transaction_status}}' => 'Refunded',
+            '{{processed_at}}' => optional($order->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
+            '{{cancellation_reason}}' => 'Order cancelled and refund issued.',
+        ];
+
+        if ($refund) {
+            $amount = sprintf('%s %s', $refund->currency ?: 'USD', number_format((float) $refund->amount, 2));
+            $method = $refund->refund_method?->label() ?? '-';
+
+            $overrides = array_replace($overrides, [
+                '{{processed_at}}' => optional($refund->processed_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
+                '{{cancellation_reason}}' => $refund->reason ?: '-',
+                '{{transaction_amount}}' => $amount,
+                '{{transaction_number}}' => $refund->reference,
+                '{{transaction_type}}' => 'Refund',
+                '{{payment_reference}}' => $refund->reference,
+                '{{refund_amount}}' => $amount,
+                '{{refund_reference}}' => $refund->reference,
+                '{{refund_method}}' => $method,
+                '{{refund_reason}}' => $refund->reason ?: '-',
+            ]);
+        }
+
         return $this->sendTenantTemplate(
             EmailTemplateAction::TenantRefundProcessed,
             $this->orderRecipient($order),
-            $this->orderTokens($order, [
-                '{{transaction_status}}' => 'Refunded',
-                '{{processed_at}}' => optional($order->updated_at)->format('M d, Y H:i') ?: now()->format('M d, Y H:i'),
-                '{{cancellation_reason}}' => 'Order cancelled and refund issued.',
-            ]),
+            $this->orderTokens($order, $overrides),
             [],
             $this->orderLocale($order),
         );
@@ -751,7 +817,7 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
@@ -773,7 +839,7 @@ class TemplateMailService
 
     public function sendRegistrationCompleteLink(string $email, string $planName, string $completeUrl, string $expiresAt, ?string $locale = null): bool
     {
-        if (!filled($email)) {
+        if (! filled($email)) {
             return false;
         }
 
@@ -795,7 +861,7 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
@@ -814,15 +880,15 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
         $config = $this->configurationResolver->central();
 
-        $template = $this->onCentral(fn() => $this->resolveCentralTemplate(EmailTemplateAction::AdminGatewayLimitWarning));
+        $template = $this->onCentral(fn () => $this->resolveCentralTemplate(EmailTemplateAction::AdminGatewayLimitWarning));
 
-        if (!$template) {
+        if (! $template) {
             return false;
         }
 
@@ -853,15 +919,15 @@ class TemplateMailService
     {
         $recipient = $tenant->email;
 
-        if (!filled($recipient)) {
+        if (! filled($recipient)) {
             return false;
         }
 
         $config = $this->configurationResolver->central();
 
-        $template = $this->onCentral(fn() => $this->resolveCentralTemplate(EmailTemplateAction::AdminGatewayLimitBlock));
+        $template = $this->onCentral(fn () => $this->resolveCentralTemplate(EmailTemplateAction::AdminGatewayLimitBlock));
 
-        if (!$template) {
+        if (! $template) {
             return false;
         }
 
@@ -891,15 +957,15 @@ class TemplateMailService
      */
     public function sendTenantEmailVerification(string $email, string $verifyUrl): bool
     {
-        if (!filled($email)) {
+        if (! filled($email)) {
             return false;
         }
 
         $storeName = tenant()?->data['shop_name'] ?? tenant()?->name ?? config('app.name', 'Multi Vendor');
         $subject = sprintf('Verify your email for %s', $storeName);
         $body = '<p>Please confirm your email address to finish setting up your vendor account.</p>'
-            . '<p><a href="' . e($verifyUrl) . '" style="display:inline-block;padding:10px 18px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;">Verify Email Address</a></p>'
-            . '<p style="color:#6b7280;font-size:12px;">If you did not create this account, no further action is required. This link expires in 60 minutes.</p>';
+            .'<p><a href="'.e($verifyUrl).'" style="display:inline-block;padding:10px 18px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;">Verify Email Address</a></p>'
+            .'<p style="color:#6b7280;font-size:12px;">If you did not create this account, no further action is required. This link expires in 60 minutes.</p>';
 
         $tenantConfig = $this->configurationResolver->tenant();
 
@@ -915,14 +981,15 @@ class TemplateMailService
     protected function centralAdminEmail(): ?string
     {
         $config = $this->configurationResolver->central();
+
         return filled($config['from_address']) ? $config['from_address'] : null;
     }
 
     protected function orderTokensForCentral(Order $order, array $overrides = []): array
     {
         $currentTenant = $order->getConnection()->getDatabaseName();
-        $tenantModel = $this->onCentral(fn() => Tenant::query()->get()
-            ->first(fn(Tenant $t) => tenancy()->central(fn() => true) || true));
+        $tenantModel = $this->onCentral(fn () => Tenant::query()->get()
+            ->first(fn (Tenant $t) => tenancy()->central(fn () => true) || true));
 
         $shippingAddress = is_array($order->shipping_address) ? $order->shipping_address : [];
         $paymentDetails = is_array($order->payment_details) ? $order->payment_details : [];
@@ -1035,7 +1102,7 @@ class TemplateMailService
         return array_replace([
             '{{tenant_name}}' => $tenant->data['shop_name'] ?? $tenant->name ?? '-',
             '{{tenant_email}}' => $tenant->email ?? '-',
-            '{{tenant_domain}}' => $this->onCentral(fn() => $tenant->domains()->first()?->domain ?? '-'),
+            '{{tenant_domain}}' => $this->onCentral(fn () => $tenant->domains()->first()?->domain ?? '-'),
             '{{sales_amount}}' => number_format($salesAmount, 2),
         ], $extra);
     }

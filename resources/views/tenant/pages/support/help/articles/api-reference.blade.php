@@ -207,15 +207,48 @@ GET /orders?status=pending
     "payment_method": "cod", "grand_total": 64.98, "created_at": "..." } ] }
 
 GET /orders/{uuid}
-→ 200 { "order": { "uuid": "5f2c...", "status": "pending", "subtotal": 58.48,
-    "discount_amount": 6.5, "tax_amount": 0, "shipping_charge": 5,
+→ 200 { "order": { "uuid": "5f2c...", "status": "pending", "paid": false,
+    "payment_method": "cod", "grand_total": 64.98, "created_at": "...",
+    "can_cancel": true,
+    "cancel_blocked_reason": null,
+    "can_request_return_instead": false,
+    "cancellation": null,
+    "payment_state": "unpaid",
+    "refunded_amount": 0,
+    "refunds": [],
+    "subtotal": 58.48, "discount_amount": 6.5, "tax_amount": 0, "shipping_charge": 5,
     "shipping_address": { ... }, "coupon_code": "SAVE10",
     "items": [ { "product_id": 501, "product_name": "Blue T-Shirt",
       "variant_id": 12, "qty": 2, "price": 29.24, "sub_total": 58.48 } ] } }
 
+  A cancelled order carries:
+    "cancellation": { "reason": "changed_mind", "reason_label": "Changed my mind",
+      "note": "Ordered the wrong size", "cancelled_at": "2026-10-09T10:15:00+00:00",
+      "cancelled_by": "customer", "cancelled_by_label": "You" }
+    "refunds": [ { "reference": "RF-20261009-AB12CD", "amount": 64.98, "currency": "USD",
+      "status": "completed", "status_label": "Completed",
+      "method": "original_payment", "method_label": "Original payment method",
+      "reason": "Changed my mind", "rejection_reason": null,
+      "requested_at": "...", "processed_at": "..." } ]
+  payment_state: paid | unpaid | partially_refunded | refunded
+  refund status: pending | processing | completed | failed | rejected
+
+GET /orders/cancellation-reasons
+→ 200 { "data": [ { "value": "changed_mind", "label": "Changed my mind", "requires_note": false },
+                  ...,
+                  { "value": "other", "label": "Other", "requires_note": true } ] }
+
 POST /orders/{uuid}/reorder → 200 { "success": true, "cart_count": 2 }
-POST /orders/{uuid}/cancel  → 200 { "success": true }
-    → 422 { "success": false, "message": "Order not found or cannot be cancelled." }
+
+POST /orders/{uuid}/cancel
+Content-Type: application/json
+
+{ "reason": "changed_mind", "note": "Ordered the wrong size" }
+
+→ 200 { "success": true, "message": "Order cancelled successfully.", "order": { ... } }
+→ 422 { "message": "Please choose a reason for cancelling.", "errors": { "reason": [ ... ] } }
+→ 422 { "success": false, "message": "This order has already been shipped. Once it's delivered you can request a return." }
+→ 404 { "success": false, "message": "Order not found." }
 CODE;
 @endphp
 
@@ -401,7 +434,16 @@ CODE;
 <div class="docs-code-block-head"><x-tenant::copy :value="$orders" label="Copy" /></div>
 <pre>{{ $orders }}</pre>
 </div>
-<p>Cancel is only allowed while the order is still <code>pending</code> or <code>processing</code>.</p>
+<p>
+    Cancelling needs a <code>reason</code> from <code>GET /orders/cancellation-reasons</code>; the
+    <code>note</code> is optional (max 1000 characters) but required when the reason's
+    <code>requires_note</code> is <code>true</code> (<code>other</code>). A <code>pending</code> order can always
+    be cancelled; a <code>processing</code> order only while your store's cancellation policy allows it
+    (Settings → Return Policy). Shipped, delivered, cancelled and refunded orders can't be cancelled —
+    the 422 response explains why, and <code>can_request_return_instead</code> tells you to offer a return.
+    Use <code>can_cancel</code> / <code>cancel_blocked_reason</code> from <code>GET /orders/{uuid}</code> to show or hide
+    your cancel button. Paid orders are refunded automatically; follow the refund in <code>refunds</code>.
+</p>
 
 <h3>Notes</h3>
 <ul>

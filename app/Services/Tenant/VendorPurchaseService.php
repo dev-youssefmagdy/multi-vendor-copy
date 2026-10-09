@@ -35,7 +35,11 @@ class VendorPurchaseService
     {
         $productCost = round(OrderProfitCalculator::tenantOwnCentralForOrder($order), 2);
         $centralProductCost = round((float) ($order->central_cost ?? 0), 2);
-        $shippingCost = round((float) ($order->shipping_charge ?? 0), 2);
+        // A cancelled / refunded order owes central nothing — product cost is already 0 via
+        // OrderProfitCalculator, and the shipping charge is dropped too.
+        $shippingCost = OrderProfitCalculator::isFinanciallyVoid($order)
+            ? 0.0
+            : round((float) ($order->shipping_charge ?? 0), 2);
         $subtotal = round($productCost + $shippingCost, 2);
         $gatewayFee = $gateway ? $this->gatewayFee($gateway, $subtotal) : 0.0;
 

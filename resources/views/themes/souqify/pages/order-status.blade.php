@@ -1,3 +1,10 @@
+{{--
+    Souqify – Order status page
+    $order  Order (with items, activities, paymentGateway)
+    After-sales (optional, from OrderStatusPage): $canCancel, $cancelDecision, $cancelReasons,
+    $cancellation, $refunds, $paymentState, $returnItems — rendered by the shared partials
+    order-cancel-action, order-cancellation-summary, order-refunds-summary, return-item-action.
+--}}
 @php
     use App\Enums\OrderStatus;
 
@@ -10,13 +17,21 @@
 
     $isDelivered = in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true);
     $isCancelled = in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true);
+    $isRefunded  = $order->status === OrderStatus::Refunded;
+    $paymentState = $paymentState ?? $order->paymentState();
+    $paymentClass = match ($paymentState) {
+        \App\Enums\OrderPaymentStatus::Paid => 'text-green-600',
+        \App\Enums\OrderPaymentStatus::Refunded, \App\Enums\OrderPaymentStatus::PartiallyRefunded => 'text-violet-700',
+        default => 'text-amber-600',
+    };
 
     $statusBadge = match (true) {
         $isDelivered => ['cls' => 'bg-green-100 border border-green-200 text-green-700', 'dot' => 'bg-green-500', 'label' => __('Delivered')],
         $order->status === OrderStatus::Pending => ['cls' => 'bg-amber-100 border border-amber-200 text-amber-700', 'dot' => 'bg-amber-400', 'label' => __('Pending')],
         $order->status === OrderStatus::Processing => ['cls' => 'bg-blue-100 border border-blue-200 text-blue-700', 'dot' => 'bg-blue-500', 'label' => __('Processing')],
         $order->status === OrderStatus::Shipped => ['cls' => 'bg-sky-100 border border-sky-200 text-sky-700', 'dot' => 'bg-sky-500', 'label' => __('Shipped')],
-        $isCancelled => ['cls' => 'bg-red-100 border border-red-200 text-red-700', 'dot' => 'bg-red-500', 'label' => __('Cancelled')],
+        $isCancelled => ['cls' => 'bg-red-100 border border-red-200 text-red-700', 'dot' => 'bg-red-500', 'label' => $order->status === OrderStatus::Rejected ? __('Rejected') : __('Cancelled')],
+        $isRefunded => ['cls' => 'bg-violet-100 border border-violet-200 text-violet-700', 'dot' => 'bg-violet-500', 'label' => __('Refunded')],
         default => ['cls' => 'bg-neutral-100 border border-neutral-200 text-neutral-700', 'dot' => 'bg-neutral-400', 'label' => $order->status->label()],
     };
 
@@ -106,6 +121,15 @@
                             {{ $statusBadge['label'] }}
                         </span>
                     </div>
+
+                    {{-- Cancelled / refunded banner + refunds --}}
+                    @if ($isCancelled || $isRefunded || !empty($refunds ?? []))
+                        <div class="flex flex-col gap-4 mb-6">
+                            @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                            @include('livewire.tenant.storefront.partials.order-refunds-summary')
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
 
                 {{-- ── LEFT column ───────────────────────────────────────────── --}}
@@ -148,9 +172,7 @@
                                         <p class="text-xs text-zinc-500 font-['Outfit'] tracking-wide">{{ $subInfo }}</p>
                                     @endif
                                     <p class="text-base text-neutral-800 font-['Outfit']">{{ $fmt($item->sub_total) }}</p>
-                                    @if ($isDelivered)
-                                        @include('livewire.tenant.storefront.partials.return-item-action')
-                                    @endif
+                                    @include('livewire.tenant.storefront.partials.return-item-action')
                                 </div>
                             </div>
                         @endforeach
@@ -272,8 +294,8 @@
                                 </div>
                                 <div class="flex items-start justify-between gap-3">
                                     <span class="text-sm text-zinc-500 font-['Arial'] leading-5">{{ __('Payment Status') }}</span>
-                                    <span class="text-sm font-['Arial'] leading-5 {{ $order->paid ? 'text-green-600' : 'text-amber-600' }}">
-                                        {{ $order->paid ? __('Paid') : __('Unpaid') }}
+                                    <span class="text-sm font-['Arial'] leading-5 {{ $paymentClass }}">
+                                        {{ $paymentState->label() }}
                                     </span>
                                 </div>
                             </div>
@@ -284,7 +306,7 @@
                     <div class="pt-2 flex flex-col gap-4">
 
                         {{-- 1. Track Order --}}
-                        @if (!$isCancelled)
+                        @if (!$isCancelled && !$isRefunded)
                             <button type="button" onclick="window.open('{{ route('tenant.storefront.order-tracking', $order->uuid) }}', '_blank')"
                                 class="w-full px-12 py-4 bg-[#242424] rounded-[32px] flex items-center justify-center gap-2 text-white text-base font-['Arial'] leading-6 hover:bg-black transition">
                                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="white" stroke-width="1.67" viewBox="0 0 20 20">
@@ -353,6 +375,9 @@
                                 {{ __('Download Invoice') }}
                             </a>
                         @endauth
+
+                        {{-- 5. Cancel order (policy-guarded) / shipped notice --}}
+                        @include('livewire.tenant.storefront.partials.order-cancel-action')
 
                     </div>
                 </div>

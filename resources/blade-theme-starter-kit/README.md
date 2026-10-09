@@ -110,3 +110,72 @@ partials/
   header.blade.php
   footer.blade.php
 ```
+
+---
+
+## Order Pages: Cancel, Return, Exchange & Refund (optional)
+
+These additions are **optional and backwards compatible**: no new required files, no
+renamed variables. Themes uploaded before this change keep working unchanged — they just
+won't show the new cancel / refund UI until you add the includes below.
+
+### Shared partials you can `@include`
+
+The platform ships ready-made, accessible (labels, focus handling, ESC closes dialogs) and
+RTL-safe partials. Include them by name from your theme files:
+
+| Partial | Use it in | What it renders |
+|---|---|---|
+| `livewire.tenant.storefront.partials.order-cancel-action` | `pages/order-status`, `pages/order-tracking`, `pages/profile` | "Cancel order" button + two-step modal (reason → "Are you sure…? This cannot be undone."). Shows "Already shipped — you can request a return after delivery" for shipped orders. Only shown to the order's owner while the store policy allows cancelling. |
+| `livewire.tenant.storefront.partials.order-cancellation-summary` | `pages/order-status`, `pages/order-tracking` | Red "cancelled" banner (reason, note, date/time, who cancelled) or a violet "refunded" banner. Renders nothing for other orders. |
+| `livewire.tenant.storefront.partials.order-refunds-summary` | `pages/order-status`, `pages/order-tracking` | One card per refund: reference, amount, method, status badge, requested / completed dates, rejection reason. Renders nothing when there are no refunds. |
+| `livewire.tenant.storefront.partials.return-item-action` | inside the items loop of `pages/order-status` (needs `$item`) | "Request Return" (with units left), the latest return status (links to the request), or "Return after delivery" for shipped orders. Hidden for cancelled / refunded orders. |
+| `livewire.tenant.storefront.partials.return-form-content` | `pages/order-return` | The complete return / exchange form. |
+
+`order-cancel-action` options (pass as the include's second argument):
+
+- `cancelPart`: `'all'` (default — notice + button + modal), `'trigger'`, `'notice'` or `'modal'`.
+  In an order **list** (profile), include `'trigger'` per order and `'modal'` **once** outside the loop.
+- `cancelSize`: `'full'` (default, full-width button) or `'compact'` (pill).
+- `cancelDecision`: on the profile page pass `$cancelDecisions[$order->uuid] ?? null`.
+
+```blade
+{{-- pages/order-status.blade.php --}}
+@include('livewire.tenant.storefront.partials.order-cancellation-summary')
+@include('livewire.tenant.storefront.partials.order-refunds-summary')
+@include('livewire.tenant.storefront.partials.order-cancel-action')
+
+{{-- pages/profile.blade.php: inside @foreach ($orders as $order) --}}
+@include('livewire.tenant.storefront.partials.order-cancel-action', [
+    'cancelPart' => 'trigger',
+    'cancelSize' => 'compact',
+    'cancelDecision' => $cancelDecisions[$order->uuid] ?? null,
+])
+{{-- …and once, after the loop --}}
+@include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'modal'])
+```
+
+The cancel modal is driven by Livewire; toasts are sent as the `order-status-swal` (order page)
+and `profile-swal` (profile page) browser events with `{ message, type }`.
+
+### New optional variables
+
+`pages/order-status.blade.php` (and `pages/order-tracking.blade.php` when shown from the order page):
+
+| Variable | Type | Description |
+|---|---|---|
+| `$canCancel` | `bool` | The logged-in owner may cancel this order now |
+| `$cancelDecision` | `CancellationDecision` | `->allowed`, `->code` (`shipped`, `delivered`, `processing_locked`, …), `->message`, `->suggestReturn` |
+| `$cancelReasons` | `array` | value → label of the reasons a customer can pick |
+| `$cancellation` | `array\|null` | `reason`, `reason_label`, `note`, `cancelled_at`, `cancelled_by`, `cancelled_by_label` (null unless cancelled) |
+| `$refunds` | `array` | Refunds: `reference`, `amount`, `currency`, `method_label`, `status`, `status_label`, `status_color`, `requested_at`, `processed_at`, `rejection_reason` |
+| `$paymentState` | `OrderPaymentStatus` | Paid / Unpaid / Partially refunded / Refunded (`->label()`, `->color()`) |
+| `$returnItems` | `array` | order item id → `remaining`, `returnable`, `has_open_request`, `errors` (delivered orders only) |
+
+`pages/profile.blade.php`: `$cancelDecisions` (order uuid → `CancellationDecision`) and `$cancelReasons`.
+
+`pages/order-return.blade.php`: `$remaining`, `$returnMethods`, `$exchangeEnabled`,
+`$exchangeOptions` (`id`, `label`, `price`, `stock`), `$selectedReason`, `$photosRequired`,
+`$descriptionRequired`, `$refundEstimate` (`itemsAmount`, `shippingAmount`, `returnFee`, `amount`).
+
+The order status can now also be `refunded` — give it a badge style if you map statuses yourself.

@@ -67,6 +67,7 @@ Route::prefix('v1')
             Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
 
             Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+            Route::get('/orders/cancellation-reasons', [OrderController::class, 'cancellationReasons'])->name('orders.cancellation-reasons');
             Route::get('/orders/{uuid}', [OrderController::class, 'show'])->name('orders.show');
             Route::post('/orders/{uuid}/reorder', [OrderController::class, 'reorder'])->name('orders.reorder');
             Route::post('/orders/{uuid}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');

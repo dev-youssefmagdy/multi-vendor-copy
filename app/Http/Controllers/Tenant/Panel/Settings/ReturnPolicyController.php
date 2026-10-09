@@ -15,6 +15,7 @@ use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Settings\SaveReturnPolicyRequest;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\Setting;
+use App\Services\Orders\OrderPolicyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Throwable;
@@ -65,6 +66,7 @@ final class ReturnPolicyController extends PanelController
                 'non_returnable_ids' => $nonReturnableIds,
                 'video_required_reasons' => $videoReasons,
             ],
+            'orderPolicy' => app(OrderPolicyService::class)->all(),
             'nonReturnableSelected' => $selectedProducts,
             'videoReasonOptions' => collect(ReturnReason::cases())->mapWithKeys(fn (ReturnReason $reason) => [$reason->value => $reason->value])->all(),
         ]);
@@ -75,11 +77,12 @@ final class ReturnPolicyController extends PanelController
         $validated = $request->validated();
 
         try {
-            $this->putSetting(self::KEYS['window_days'], $validated['window_days']);
+            $this->putSetting(self::KEYS['window_days'], (string) $validated['window_days']);
             $this->putSetting(self::KEYS['non_returnable_ids'], json_encode($request->toIntList()));
-            $this->putSetting(self::KEYS['fee'], $validated['fee']);
+            $this->putSetting(self::KEYS['fee'], (string) $validated['fee']);
             $this->putSetting(self::KEYS['conditions'], $validated['conditions'] ?? '');
             $this->putSetting(self::KEYS['video_required_reasons'], json_encode($request->toReasonList()));
+            app(OrderPolicyService::class)->update($request->orderPolicyValues());
         } catch (Throwable $exception) {
             report($exception);
 

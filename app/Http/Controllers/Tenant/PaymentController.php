@@ -14,6 +14,7 @@ use App\PaymentGateway\Exceptions\PaymentException;
 use App\PaymentGateway\GatewayConnectionChecker;
 use App\PaymentGateway\PaymentManager;
 use App\Services\AdminNotificationService;
+use App\Services\Orders\OrderCancellationService;
 use App\Services\Tenant\OrderLifecycleService;
 use App\Services\Tenant\StockService;
 use App\Services\TenantNotificationService;
@@ -44,8 +45,8 @@ class PaymentController extends Controller
         private readonly GatewayConnectionChecker $connectionChecker,
         private readonly TenantNotificationService $tenantNotificationService,
         private readonly AdminNotificationService $adminNotificationService,
-    ) {
-    }
+        private readonly OrderCancellationService $cancellationService,
+    ) {}
 
     // ─────────────────────────────────────────────────────────────────────────
     // 1. Charge
@@ -70,6 +71,12 @@ class PaymentController extends Controller
             ->where('customer_id', auth('storefront')->id())
             ->where('paid', false)
             ->firstOrFail();
+
+        // A cancelled / rejected / refunded order can never be paid again.
+        if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
+            return redirect()->route('tenant.storefront.order-status', $order->uuid)
+                ->withErrors(['payment' => __('This order has been cancelled and can no longer be paid.')]);
+        }
 
         $charge = PaymentCharge::fromArray([
             'amount' => $order->grand_total,
@@ -96,19 +103,11 @@ class PaymentController extends Controller
 
         if ($result->success) {
             // For synchronous gateways, we can mark the order as paid immediately.
-            $order->update([
-                'paid' => true,
-                'status' => OrderStatus::Processing,
-                'payment_details' => [
-                    'transaction_id' => $result->transactionId,
-                    'gateway' => $gateway,
-                    'raw' => $result->rawResponse,
-                ],
+            $this->confirmPayment($order, $gateway, [
+                'transaction_id' => $result->transactionId,
+                'gateway' => $gateway,
+                'raw' => $result->rawResponse,
             ]);
-            $freshOrder = $order->fresh();
-            $this->stockService->decrementForOrder($freshOrder);
-            $this->orderLifecycleService->recordProcessing($freshOrder);
-            $this->notifyAdminPaymentReceived($freshOrder, $gateway);
 
             $this->markCompanionOrderPaid($result->transactionId, $gateway, $result->rawResponse);
 
@@ -217,21 +216,12 @@ class PaymentController extends Controller
                     ->where('paid', false)
                     ->first();
 
-                $order?->update([
-                    'paid' => true,
-                    'status' => OrderStatus::Processing,
-                    'payment_details' => [
+                if ($order) {
+                    $this->confirmPayment($order, $gateway, [
                         'transaction_id' => $result->transactionId,
                         'gateway' => $gateway,
                         'raw' => $result->rawResponse,
-                    ],
-                ]);
-
-                if ($order) {
-                    $freshOrder = $order->fresh();
-                    $this->stockService->decrementForOrder($freshOrder);
-                    $this->orderLifecycleService->recordProcessing($freshOrder);
-                    $this->notifyAdminPaymentReceived($freshOrder, $gateway);
+                    ]);
                 }
 
                 $this->markCompanionOrderPaid($result->transactionId, $gateway, $result->rawResponse);
@@ -256,30 +246,55 @@ class PaymentController extends Controller
     {
         $companionUuid = session('storefront_companion_order_uuid');
 
-        if (!$companionUuid) {
+        if (! $companionUuid) {
             return;
         }
 
         $companion = Order::query()->where('uuid', $companionUuid)->where('paid', false)->first();
 
-        if (!$companion) {
+        if (! $companion) {
             return;
         }
 
-        $companion->update([
+        $this->confirmPayment($companion, $gateway, [
+            'transaction_id' => $transactionId,
+            'gateway' => $gateway,
+            'raw' => $raw,
+            'note' => 'Paid as companion order in split checkout',
+        ], notifyAdmin: false);
+    }
+
+    /**
+     * Record a confirmed gateway payment on an unpaid order. Normally: paid + Processing, stock
+     * deducted, lifecycle activity / emails. When the order was cancelled meanwhile, the payment
+     * is recorded but the order stays cancelled, no stock moves, and the money is refunded
+     * straight away (OrderCancellationService::recordPaymentAfterCancellation()).
+     *
+     * @param  array<string, mixed>  $paymentDetails
+     */
+    private function confirmPayment(Order $order, string $gateway, array $paymentDetails, bool $notifyAdmin = true): void
+    {
+        if ($order->isCancelled() && $this->cancellationService->recordPaymentAfterCancellation($order, $paymentDetails)) {
+            return;
+        }
+
+        if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
+            return;
+        }
+
+        $order->update([
             'paid' => true,
             'status' => OrderStatus::Processing,
-            'payment_details' => [
-                'transaction_id' => $transactionId,
-                'gateway' => $gateway,
-                'raw' => $raw,
-                'note' => 'Paid as companion order in split checkout',
-            ],
+            'payment_details' => $paymentDetails,
         ]);
 
-        $fresh = $companion->fresh();
-        $this->stockService->decrementForOrder($fresh);
-        $this->orderLifecycleService->recordProcessing($fresh);
+        $freshOrder = $order->fresh();
+        $this->stockService->decrementForOrder($freshOrder);
+        $this->orderLifecycleService->recordProcessing($freshOrder);
+
+        if ($notifyAdmin) {
+            $this->notifyAdminPaymentReceived($freshOrder, $gateway);
+        }
     }
 
     /**

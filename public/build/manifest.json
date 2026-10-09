@@ -2542,7 +2542,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-4fe2N2f7.css",
+    "file": "assets/app-8es5MWCo.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2593,7 +2593,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DLxYAtqC.css",
+    "file": "assets/ecommet-D0-NgIlB.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2876,7 +2876,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-C9uQrUJG.css",
+    "file": "assets/souqify-DA7jdnwN.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2885,7 +2885,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-C2_6ujtX.css",
+    "file": "assets/app-Q195QH_d.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3586,7 +3586,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-DFqu8AKY.js",
+    "file": "assets/module-nav-D-HjxzMW.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
@@ -3595,12 +3595,12 @@
       "_mousewheel-C18axwlu.js"
     ],
     "css": [
-      "assets/module-nav-DZU6ISng.css",
+      "assets/module-nav-D1O-YXD_.css",
       "assets/dashboard-BWAV6XC7.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
-    "file": "assets/own-product-form-CQ5ZO00N.js",
+    "file": "assets/own-product-form-CkKcs66S.js",
     "name": "own-product-form",
     "src": "resources/js/tenant/pages/catalog/own-product-form.js",
     "isEntry": true,

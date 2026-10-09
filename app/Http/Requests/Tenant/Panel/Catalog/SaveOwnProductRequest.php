@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Panel\Catalog;
 
+use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
 use App\Http\Requests\Tenant\Panel\TenantFormRequest;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -36,7 +37,7 @@ final class SaveOwnProductRequest extends TenantFormRequest
 
         $rules = [
             'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product?->id)],
-            'slug' => ['nullable', 'string', 'max:150'],
+            'slug' => ['nullable', 'string', 'max:255'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
@@ -51,6 +52,8 @@ final class SaveOwnProductRequest extends TenantFormRequest
             'category_ids.*' => ['integer', 'exists:categories,id'],
             'badge_ids' => ['array'],
             'badge_ids.*' => ['integer', 'exists:product_badges,id'],
+            'countries' => ['array'],
+            'countries.*' => ['string', Rule::in(array_keys(OwnProductController::COUNTRY_OPTIONS))],
             'primary_image' => ['nullable', 'image', 'max:4096'],
             'remove_primary_image' => ['boolean'],
             'gallery_files' => ['array'],

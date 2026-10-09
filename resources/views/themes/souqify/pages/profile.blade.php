@@ -206,13 +206,18 @@
                         'text-yellow-700', 'label' => ucfirst($statusVal)],
                         $statusVal === 'cancelled' => ['bg' => 'bg-red-100', 'text' => 'text-red-600', 'label' =>
                         __('Cancelled')],
+                        $statusVal === 'refunded' => ['bg' => 'bg-violet-100', 'text' => 'text-violet-700', 'label' =>
+                        __('Refunded')],
                         default => ['bg' => 'bg-neutral-100', 'text' => 'text-neutral-700', 'label' =>
                         ucfirst($statusVal)],
                         };
 
                         $isDelivered = $statusVal === 'delivered';
                         $isShipped = $statusVal === 'shipped';
-                        $isCancellable = in_array($statusVal, ['pending', 'paid', 'processing']);
+                        // Policy-based (OrderCancellationPolicy via ProfilePage); legacy status check as fallback.
+                        $isCancellable = isset($cancelDecisions[$order->uuid])
+                            ? $cancelDecisions[$order->uuid]->allowed
+                            : in_array($statusVal, ['pending', 'paid', 'processing']);
                         $isCancelled = $statusVal === 'cancelled';
                         @endphp
 
@@ -290,16 +295,11 @@
                                 </a>
 
                                 @if ($isCancellable)
-                                {{-- Cancel Order --}}
-                                <button type="button" wire:click="cancelOrder('{{ $order->uuid }}')"
-                                    wire:confirm="{{ __('This action cannot be undone. Are you sure you want to cancel this order?') }}"
-                                    class="w-full py-3 border border-red-600 rounded-[40px] flex items-center justify-center gap-2 text-red-600 text-base font-['Outfit'] hover:bg-red-50 transition">
-                                    <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
-                                        <path
-                                            d="M1 4h12M5 4V2.667A.667.667 0 0 1 5.667 2h2.666A.667.667 0 0 1 9 2.667V4M2.333 4l.667 9.333A.667.667 0 0 0 3.667 14h6.666a.667.667 0 0 0 .667-.667L11.667 4" />
-                                    </svg>
-                                    {{ __('Cancel order') }}
-                                </button>
+                                {{-- Cancel Order → reason + confirmation modal --}}
+                                @include('livewire.tenant.storefront.partials.order-cancel-action', [
+                                    'cancelPart' => 'trigger',
+                                    'cancelDecision' => $cancelDecisions[$order->uuid] ?? null,
+                                ])
                                 @else
                                 {{-- Track Order --}}
                                 <a href="{{ route('tenant.storefront.order-tracking', $order->uuid ?? $order->id) }}"
@@ -652,6 +652,9 @@
             </div>
         </div>
     </main>
+
+    {{-- Cancel-order modal (reason → confirmation), shared by every order card --}}
+    @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'modal'])
 </div>
 
 <script>

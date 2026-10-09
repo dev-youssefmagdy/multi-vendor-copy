@@ -17,9 +17,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 final class ReturnsController extends PanelController
 {
-    public function __construct(private readonly TenantPanelRepository $repo)
-    {
-    }
+    public function __construct(private readonly TenantPanelRepository $repo) {}
 
     public function index(Request $request): View
     {
@@ -40,6 +38,8 @@ final class ReturnsController extends PanelController
             'statusOptions' => $statusOptions,
             'columns' => [
                 TableColumn::make('order_number', 'Order')->orderable(false),
+                TableColumn::make('type', __('Type'))->orderable(false)->searchable(false),
+                TableColumn::make('quantity', __('Qty'))->orderable(false)->searchable(false),
                 TableColumn::make('status', 'Status')->orderable(false),
                 TableColumn::make('reason', 'Reason')->orderable(false),
                 TableColumn::make('refund', 'Refund')->orderable(false),
@@ -58,13 +58,15 @@ final class ReturnsController extends PanelController
         return DataTables::eloquent($query)
             ->editColumn('order_number', fn (ReturnRequest $r) => view('tenant.pages.sales.returns._cols.order', ['record' => $r])->render())
             ->editColumn('status', fn (ReturnRequest $r) => view('tenant.pages.sales.returns._cols.status', ['record' => $r])->render())
-            ->editColumn('reason', fn (ReturnRequest $r) => '<div class="entity-subtitle">' . e($r->reason->label()) . '</div>')
+            ->editColumn('type', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e($r->type?->label() ?? '—').'</div>')
+            ->editColumn('quantity', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.(int) ($r->quantity ?: 1).'</div>')
+            ->editColumn('reason', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e($r->reason->label()).'</div>')
             ->editColumn('refund', fn (ReturnRequest $r) => $r->refund_amount
-                ? '<div class="entity-title">$' . number_format((float) $r->refund_amount, 2) . '</div>'
+                ? '<div class="entity-title">$'.number_format((float) $r->refund_amount, 2).'</div>'
                 : '<span class="entity-subtitle">—</span>')
-            ->editColumn('date', fn (ReturnRequest $r) => '<div class="entity-subtitle">' . $r->created_at?->format('M d, Y') . '</div>')
+            ->editColumn('date', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.$r->created_at?->format('M d, Y').'</div>')
             ->addColumn('actions', fn (ReturnRequest $r) => view('tenant.pages.sales.returns._cols.actions', ['record' => $r])->render())
-            ->rawColumns(['order_number', 'status', 'reason', 'refund', 'date', 'actions'])
+            ->rawColumns(['order_number', 'type', 'quantity', 'status', 'reason', 'refund', 'date', 'actions'])
             ->toJson();
     }
 }

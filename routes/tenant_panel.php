@@ -2,20 +2,91 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Tenant\{EmailVerificationController, AiTranslationPaymentController, LanguagePaymentController, SubscriptionPaymentController, VendorSettlementPaymentController, ManufacturingPaymentController, TenantImpersonateController, BladeThemeStarterKitController, BrandRequestPaymentController};
-use App\Http\Controllers\Tenant\Panel\Finance\{BillingController, PayoutsController, SettlementPaymentsController, VendorPurchaseController, VendorSettleOrderController, WalletController, BuyLanguageController};
-use App\Http\Controllers\Tenant\Panel\Catalog\{OwnProductController, OwnProductsListController, BadgeController, BadgeSortController, CategoryController, CategoryProductsController, CategorySortController, EditRequestsController, ProductController, ProductModalsController, ProductSortController, ProductsListController};
-use App\Http\Controllers\Tenant\Panel\Store\{ThemesController, PagesController, PageFormController, BannerController, CouponController, FlashSaleController, AppearanceController, SocialLinkController, BladeThemeController, HomeVariantsController, PageBuilderController};
-use App\Http\Controllers\Tenant\Panel\Support\{TicketController, HelpController, NotificationsController};
-use App\Http\Controllers\Tenant\Panel\Requests\{ProductRequestController, BrandRequestController, ManufacturingController};
-use App\Http\Controllers\Tenant\Panel\Onboarding\OnboardingController;
-use App\Http\Controllers\Tenant\Panel\Settings\{AccountSettingsController, ComplianceCenterController, AdminsController, AiTranslationController, CurrenciesController, DomainsController, EmailTemplateController, GeneralSettingsController, LanguagesController, LanguagesManageController, MailConfigurationsController, PaymentGatewaysController, PaymentReadinessController, ReturnPolicyController, RolesPermissionsController, SubscribersController, TrackingSettingsController, TranslationsController};
 use App\Http\Controllers\ImageSearchController;
+use App\Http\Controllers\Tenant\AiTranslationPaymentController;
+use App\Http\Controllers\Tenant\BladeThemeStarterKitController;
+use App\Http\Controllers\Tenant\BrandRequestPaymentController;
+use App\Http\Controllers\Tenant\EmailVerificationController;
+use App\Http\Controllers\Tenant\LanguagePaymentController;
+use App\Http\Controllers\Tenant\ManufacturingPaymentController;
 use App\Http\Controllers\Tenant\Panel\Auth\LoginController;
-use App\Http\Controllers\Tenant\Panel\Insights\{AnalyticsController, CustomerLifetimeValueController, DashboardController, OrderAnalyticsController, ProductProfitabilityController, ShippingAnalyticsController};
-use App\Http\Controllers\Tenant\Panel\Sales\{CustomerCreateController, CustomerDetailController, CustomersController, OrdersController, ReturnAnalyticsController, ReturnController, ReturnsController};
-use App\Http\Controllers\Tenant\Panel\Shell\{ComplianceController, SetupProgressController};
+use App\Http\Controllers\Tenant\Panel\Catalog\BadgeController;
+use App\Http\Controllers\Tenant\Panel\Catalog\BadgeSortController;
+use App\Http\Controllers\Tenant\Panel\Catalog\CategoryController;
+use App\Http\Controllers\Tenant\Panel\Catalog\CategoryProductsController;
+use App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController;
+use App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController;
+use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
+use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductsListController;
+use App\Http\Controllers\Tenant\Panel\Catalog\ProductController;
+use App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController;
+use App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController;
+use App\Http\Controllers\Tenant\Panel\Catalog\ProductSortController;
+use App\Http\Controllers\Tenant\Panel\Catalog\TodayChancesController;
+use App\Http\Controllers\Tenant\Panel\Finance\BillingController;
+use App\Http\Controllers\Tenant\Panel\Finance\BuyLanguageController;
+use App\Http\Controllers\Tenant\Panel\Finance\PayoutsController;
+use App\Http\Controllers\Tenant\Panel\Finance\SettlementPaymentsController;
+use App\Http\Controllers\Tenant\Panel\Finance\VendorPurchaseController;
+use App\Http\Controllers\Tenant\Panel\Finance\VendorSettleOrderController;
+use App\Http\Controllers\Tenant\Panel\Finance\WalletController;
+use App\Http\Controllers\Tenant\Panel\Insights\AnalyticsController;
+use App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController;
+use App\Http\Controllers\Tenant\Panel\Insights\DashboardController;
+use App\Http\Controllers\Tenant\Panel\Insights\OrderAnalyticsController;
+use App\Http\Controllers\Tenant\Panel\Insights\ProductProfitabilityController;
+use App\Http\Controllers\Tenant\Panel\Insights\ShippingAnalyticsController;
+use App\Http\Controllers\Tenant\Panel\Onboarding\OnboardingController;
+use App\Http\Controllers\Tenant\Panel\Requests\BrandRequestController;
+use App\Http\Controllers\Tenant\Panel\Requests\ManufacturingController;
+use App\Http\Controllers\Tenant\Panel\Requests\ProductRequestController;
+use App\Http\Controllers\Tenant\Panel\Sales\CustomerCreateController;
+use App\Http\Controllers\Tenant\Panel\Sales\CustomerDetailController;
+use App\Http\Controllers\Tenant\Panel\Sales\CustomersController;
+use App\Http\Controllers\Tenant\Panel\Sales\OrdersController;
+use App\Http\Controllers\Tenant\Panel\Sales\RefundController;
+use App\Http\Controllers\Tenant\Panel\Sales\RefundsController;
+use App\Http\Controllers\Tenant\Panel\Sales\ReturnAnalyticsController;
+use App\Http\Controllers\Tenant\Panel\Sales\ReturnController;
+use App\Http\Controllers\Tenant\Panel\Sales\ReturnsController;
+use App\Http\Controllers\Tenant\Panel\Settings\AccountSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\AdminsController;
+use App\Http\Controllers\Tenant\Panel\Settings\AiTranslationController;
+use App\Http\Controllers\Tenant\Panel\Settings\ComplianceCenterController;
+use App\Http\Controllers\Tenant\Panel\Settings\CurrenciesController;
+use App\Http\Controllers\Tenant\Panel\Settings\DomainsController;
+use App\Http\Controllers\Tenant\Panel\Settings\EmailTemplateController;
+use App\Http\Controllers\Tenant\Panel\Settings\GeneralSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\LanguagesController;
+use App\Http\Controllers\Tenant\Panel\Settings\LanguagesManageController;
+use App\Http\Controllers\Tenant\Panel\Settings\MailConfigurationsController;
+use App\Http\Controllers\Tenant\Panel\Settings\PaymentGatewaysController;
+use App\Http\Controllers\Tenant\Panel\Settings\PaymentReadinessController;
+use App\Http\Controllers\Tenant\Panel\Settings\ReturnPolicyController;
+use App\Http\Controllers\Tenant\Panel\Settings\RolesPermissionsController;
+use App\Http\Controllers\Tenant\Panel\Settings\SubscribersController;
+use App\Http\Controllers\Tenant\Panel\Settings\TrackingSettingsController;
+use App\Http\Controllers\Tenant\Panel\Settings\TranslationsController;
+use App\Http\Controllers\Tenant\Panel\Shell\ComplianceController;
+use App\Http\Controllers\Tenant\Panel\Shell\SetupProgressController;
+use App\Http\Controllers\Tenant\Panel\Store\AppearanceController;
+use App\Http\Controllers\Tenant\Panel\Store\BannerController;
+use App\Http\Controllers\Tenant\Panel\Store\BladeThemeController;
+use App\Http\Controllers\Tenant\Panel\Store\CouponController;
+use App\Http\Controllers\Tenant\Panel\Store\FlashSaleController;
+use App\Http\Controllers\Tenant\Panel\Store\HomeVariantsController;
+use App\Http\Controllers\Tenant\Panel\Store\PageBuilderController;
+use App\Http\Controllers\Tenant\Panel\Store\PageFormController;
+use App\Http\Controllers\Tenant\Panel\Store\PagesController;
+use App\Http\Controllers\Tenant\Panel\Store\SocialLinkController;
+use App\Http\Controllers\Tenant\Panel\Store\ThemesController;
+use App\Http\Controllers\Tenant\Panel\Support\HelpController;
+use App\Http\Controllers\Tenant\Panel\Support\NotificationsController;
+use App\Http\Controllers\Tenant\Panel\Support\TicketController;
 use App\Http\Controllers\Tenant\Panel\UiKitController;
+use App\Http\Controllers\Tenant\SubscriptionPaymentController;
+use App\Http\Controllers\Tenant\TenantImpersonateController;
+use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LoginController::class, 'redirectToStart']);
@@ -71,7 +142,7 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->name('tenant.dashboard');
 
     // Sidebar modules from the design that have no content yet — empty placeholder pages.
-    Route::get('/todays-chances', [\App\Http\Controllers\Tenant\Panel\Catalog\TodayChancesController::class, 'index'])
+    Route::get('/todays-chances', [TodayChancesController::class, 'index'])
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.todays-chances');
     Route::view('/partner-program', 'tenant.pages.placeholder', ['title' => 'Partner Program'])
@@ -261,6 +332,39 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->middleware(['tenant.permission:sales.orders.view', 'throttle:tenant-validate'])
         ->name('tenant.orders.shipping-status.validate');
 
+    Route::post('/orders/{orderId}/cancel', [OrdersController::class, 'cancel'])
+        ->whereNumber('orderId')
+        ->middleware('tenant.permission:sales.orders.manage')
+        ->name('tenant.orders.cancel');
+
+    Route::post('/orders/{orderId}/cancel/validate', [OrdersController::class, 'validateCancel'])
+        ->whereNumber('orderId')
+        ->middleware(['tenant.permission:sales.orders.manage', 'throttle:tenant-validate'])
+        ->name('tenant.orders.cancel.validate');
+
+    Route::post('/orders/{orderId}/refunds', [OrdersController::class, 'storeRefund'])
+        ->whereNumber('orderId')
+        ->middleware('tenant.permission:sales.returns.manage')
+        ->name('tenant.orders.refunds.store');
+
+    Route::post('/orders/{orderId}/refunds/validate', [OrdersController::class, 'validateStoreRefund'])
+        ->whereNumber('orderId')
+        ->middleware(['tenant.permission:sales.returns.manage', 'throttle:tenant-validate'])
+        ->name('tenant.orders.refunds.validate');
+
+    Route::prefix('refunds')->name('tenant.refunds.')->middleware('tenant.permission:sales.returns.manage')->group(function () {
+        Route::get('/', [RefundsController::class, 'index'])->name('index');
+        Route::get('/data', [RefundsController::class, 'data'])->name('data');
+
+        Route::post('/{id}/retry', [RefundController::class, 'retry'])->whereNumber('id')->name('retry');
+
+        Route::post('/{id}/complete', [RefundController::class, 'complete'])->whereNumber('id')->name('complete');
+        Route::post('/{id}/complete/validate', [RefundController::class, 'validateComplete'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('complete.validate');
+
+        Route::post('/{id}/reject', [RefundController::class, 'reject'])->whereNumber('id')->name('reject');
+        Route::post('/{id}/reject/validate', [RefundController::class, 'validateReject'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('reject.validate');
+    });
+
     Route::prefix('returns')->name('tenant.returns.')->middleware('tenant.permission:sales.returns.manage')->group(function () {
         Route::get('/', [ReturnsController::class, 'index'])->name('index');
         Route::get('/data', [ReturnsController::class, 'data'])->name('data');
@@ -271,6 +375,7 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         Route::get('/{id}', [ReturnController::class, 'show'])->whereNumber('id')->name('show');
 
         Route::post('/{id}/approve', [ReturnController::class, 'approve'])->whereNumber('id')->name('approve');
+        Route::post('/{id}/approve/validate', [ReturnController::class, 'validateApprove'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('approve.validate');
 
         Route::post('/{id}/reject', [ReturnController::class, 'reject'])->whereNumber('id')->name('reject');
         Route::post('/{id}/reject/validate', [ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate');
@@ -279,6 +384,21 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         Route::post('/{id}/request-info/validate', [ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate');
 
         Route::post('/{id}/received', [ReturnController::class, 'markItemReceived'])->whereNumber('id')->name('received');
+
+        Route::post('/{id}/inspect', [ReturnController::class, 'inspect'])->whereNumber('id')->name('inspect');
+        Route::post('/{id}/inspect/validate', [ReturnController::class, 'validateInspect'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('inspect.validate');
+
+        Route::post('/{id}/issue-refund', [ReturnController::class, 'issueRefund'])->whereNumber('id')->name('issue-refund');
+        Route::post('/{id}/issue-refund/validate', [ReturnController::class, 'validateIssueRefund'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('issue-refund.validate');
+
+        Route::post('/{id}/exchange-shipped', [ReturnController::class, 'markExchangeShipped'])->whereNumber('id')->name('exchange-shipped');
+        Route::post('/{id}/exchange-shipped/validate', [ReturnController::class, 'validateExchangeShipped'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('exchange-shipped.validate');
+
+        Route::post('/{id}/exchange-completed', [ReturnController::class, 'markExchangeCompleted'])->whereNumber('id')->name('exchange-completed');
+
+        Route::post('/{id}/convert-to-refund', [ReturnController::class, 'convertToRefund'])->whereNumber('id')->name('convert-to-refund');
+
+        Route::post('/{id}/close', [ReturnController::class, 'close'])->whereNumber('id')->name('close');
 
         Route::post('/{id}/refunded', [ReturnController::class, 'markRefunded'])->whereNumber('id')->name('refunded');
         Route::post('/{id}/refunded/validate', [ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate');

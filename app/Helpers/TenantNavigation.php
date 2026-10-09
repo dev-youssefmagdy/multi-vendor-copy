@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Models\ProductEditRequest;
+use App\Models\ProductRequest;
 use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Language;
@@ -33,8 +35,9 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'All Orders', 'route' => 'tenant.orders.index', 'permission' => 'sales.orders.view'],
                             ['label' => 'Returns', 'route' => 'tenant.returns.index', 'permission' => 'sales.returns.manage'],
+                            ['label' => 'Refunds', 'route' => 'tenant.refunds.index', 'permission' => 'sales.returns.manage'],
                             ['label' => 'Return Analytics', 'route' => 'tenant.returns.analytics', 'permission' => 'sales.returns.manage'],
-                        ]
+                        ],
                     ],
                     ['type' => 'link', 'label' => 'Customers', 'route' => 'tenant.customers.index', 'icon' => 'admins', 'permission' => 'sales.customers.manage'],
                     [
@@ -50,7 +53,7 @@ class TenantNavigation
                             ['label' => 'Blade Theme', 'route' => 'tenant.store.blade-theme', 'permission' => 'store.blade-theme.manage'],
                             // Subscribers page hidden from navbar
                             // ['label' => 'Subscribers', 'route' => 'tenant.settings.subscribers', 'permission' => 'store.subscribers.manage'],
-                        ]
+                        ],
                     ],
                     [
                         'type' => 'group',
@@ -59,7 +62,7 @@ class TenantNavigation
                         'children' => [
                             ['label' => 'Coupons', 'route' => 'tenant.store.coupons.index', 'permission' => 'store.coupons.manage'],
                             ['label' => 'Flash Sales', 'route' => 'tenant.store.flash-sales.index', 'permission' => 'store.flash-sales.manage'],
-                        ]
+                        ],
                     ],
                     ['type' => 'link', 'label' => 'Analytics', 'route' => 'tenant.analytics', 'icon' => 'dashboard', 'permission' => 'analytics.view'],
                     [
@@ -70,7 +73,7 @@ class TenantNavigation
                             ['label' => 'Product Requests', 'route' => 'tenant.product-requests.index', 'permission' => 'catalog.products.manage', 'badge' => self::unreadProductRequestsCount() ?: null],
                             ['label' => 'Manufacturing Requests', 'route' => 'tenant.manufacturing.index', 'permission' => 'catalog.products.manage'],
                             ['label' => 'Brand Requests', 'route' => 'tenant.brand-requests.index', 'permission' => 'catalog.products.manage'],
-                        ]
+                        ],
                     ],
                     ['type' => 'link', 'label' => 'Partner Program', 'route' => 'tenant.partner-program', 'icon' => 'plans', 'permission' => 'dashboard.view'],
                     [
@@ -94,7 +97,7 @@ class TenantNavigation
                             ['label' => 'Domains', 'route' => 'tenant.settings.domains', 'permission' => 'settings.domains.manage'],
                             ['label' => 'Tracking', 'route' => 'tenant.settings.tracking', 'permission' => 'settings.tracking.manage'],
                             ['label' => 'Compliance Center', 'route' => 'tenant.settings.compliance', 'permission' => 'settings.account.manage'],
-                        ]
+                        ],
                     ],
                 ],
             ],
@@ -113,7 +116,7 @@ class TenantNavigation
                             ['label' => 'Settlement Payments', 'route' => 'tenant.finance.settlement-payments', 'permission' => 'finance.vendor-purchases.view'],
                             ['label' => 'Payouts Received', 'route' => 'tenant.finance.payouts', 'permission' => 'finance.wallet.view'],
                             // ['label' => 'Buy Languages', 'route' => 'tenant.finance.buy-languages', 'permission' => 'settings.languages.purchase'],
-                        ]
+                        ],
                     ],
                     ['type' => 'link', 'label' => 'Get Started', 'route' => 'tenant.onboarding', 'routeParameters' => ['tab' => 'tour'], 'icon' => 'settings', 'permission' => null],
                     ['type' => 'link', 'label' => 'Notifications', 'route' => 'tenant.notifications.index', 'icon' => 'notifications', 'permission' => 'dashboard.view'],
@@ -144,7 +147,7 @@ class TenantNavigation
                         }
 
                         $children = collect($item['children'] ?? [])
-                            ->filter(fn(array $child) => self::canAccessItem($child, $user))
+                            ->filter(fn (array $child) => self::canAccessItem($child, $user))
                             ->values()
                             ->all();
 
@@ -164,7 +167,7 @@ class TenantNavigation
 
                 return $section;
             })
-            ->filter(fn(array $section) => $section['items'] !== [])
+            ->filter(fn (array $section) => $section['items'] !== [])
             ->values()
             ->all();
     }
@@ -177,6 +180,7 @@ class TenantNavigation
                     if (self::itemMatchesRoute($item, $routeName) || self::routeMatchesFamily($item['route'], $routeName)) {
                         return ['section' => $section['label'], 'group' => null, 'label' => $item['label']];
                     }
+
                     continue;
                 }
 
@@ -382,7 +386,7 @@ class TenantNavigation
             ],
         ];
 
-        $done = collect($steps)->filter(fn(array $step) => $step['done'])->count();
+        $done = collect($steps)->filter(fn (array $step) => $step['done'])->count();
         $total = count($steps);
 
         foreach ($steps as &$step) {
@@ -420,11 +424,11 @@ class TenantNavigation
     {
         $tenantId = tenant()?->getTenantKey();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return 0;
         }
 
-        return tenancy()->central(fn() => \App\Models\ProductEditRequest::forTenant($tenantId)->where('status', 'pending')->count());
+        return tenancy()->central(fn () => ProductEditRequest::forTenant($tenantId)->where('status', 'pending')->count());
     }
 
     /** Count of the tenant's product requests with an unread admin reply, shown as a nav badge. */
@@ -432,11 +436,11 @@ class TenantNavigation
     {
         $tenantId = tenant()?->getTenantKey();
 
-        if (!$tenantId) {
+        if (! $tenantId) {
             return 0;
         }
 
-        return tenancy()->central(fn() => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count());
+        return tenancy()->central(fn () => ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count());
     }
 
     public static function themeSelected(): bool
@@ -491,10 +495,10 @@ class TenantNavigation
             ->pluck('value', 'name');
 
         if (($settings['logo_mode'] ?? '') === 'text') {
-            return !empty($settings['logo_text_ar']) || !empty($settings['logo_text_en']);
+            return ! empty($settings['logo_text_ar']) || ! empty($settings['logo_text_en']);
         }
 
-        return !empty($settings['logo_path_ar']) || !empty($settings['logo_path_en']);
+        return ! empty($settings['logo_path_ar']) || ! empty($settings['logo_path_en']);
     }
 
     /** Text direction for the active locale, read from the tenant's `languages` table. */
@@ -510,6 +514,7 @@ class TenantNavigation
         if (($item['type'] ?? 'link') === 'external') {
             return $item['url'] ?: '#';
         }
+
         return Route::has($item['route']) ? route($item['route'], $item['routeParameters'] ?? []) : '#';
     }
 
@@ -528,17 +533,18 @@ class TenantNavigation
     protected static function storefrontUrl(): string
     {
         $domain = tenant()?->domains()->first()?->domain;
-        if (!$domain) {
+        if (! $domain) {
             return '#';
         }
-        return (str_starts_with($domain, 'http') ? '' : 'https://') . $domain;
+
+        return (str_starts_with($domain, 'http') ? '' : 'https://').$domain;
     }
 
     protected static function canAccessItem(array $item, mixed $user): bool
     {
         $permission = $item['permission'] ?? null;
 
-        if (!$permission) {
+        if (! $permission) {
             return true;
         }
 
@@ -547,13 +553,13 @@ class TenantNavigation
 
     protected static function routeMatchesFamily(string $baseRoute, ?string $currentRoute): bool
     {
-        if (!$currentRoute) {
+        if (! $currentRoute) {
             return false;
         }
 
         $familyPrefix = Str::endsWith($baseRoute, '.index')
-            ? Str::beforeLast($baseRoute, '.index') . '.'
-            : $baseRoute . '.';
+            ? Str::beforeLast($baseRoute, '.index').'.'
+            : $baseRoute.'.';
 
         return Str::startsWith($currentRoute, $familyPrefix);
     }

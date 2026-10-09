@@ -6,12 +6,9 @@
     $arrowLeft = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M4 12l6-6M4 12l6 6"/></svg>';
     $uploadIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13v8M8.5 16.5 12 13l3.5 3.5"/><path d="M7 18.5A5 5 0 1 1 8.2 8.6 6 6 0 0 1 19.6 11a4 4 0 0 1-2.1 7.5"/></svg>';
 
-    // FOR DESIGN PURPOSE
-    // Countries the product is sold in — the design's country picker. Products have no
-    // country field yet, so the ticks are posted as countries[] and ignored by
-    // SaveOwnProductRequest. BACKEND TODO: persist countries[] and pass the saved codes here.
-    $countryOptions = ['qa' => 'Qatar', 'ma' => 'Morocco', 'fr' => 'France', 'eg' => 'Egypt', 'ae' => 'UAE', 'us' => 'USA', 'iq' => 'Iraq', 'gb' => 'United Kingdom'];
-    $selectedCountries = old('countries', []);
+    // Countries the product is sold in (OwnProductController::COUNTRY_OPTIONS), posted as
+    // countries[] ISO2 codes and saved as central ids in products.allowed_country_ids.
+    $selectedCountries = old('countries', $selectedCountries);
 @endphp
 
 @section('content')

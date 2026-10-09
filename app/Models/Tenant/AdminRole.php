@@ -11,7 +11,9 @@ class AdminRole extends Model
     use HasFactory;
 
     public const STORE_OWNER = 'Store Owner';
+
     public const MANAGER = 'Manager';
+
     public const SUPPORT = 'Support';
 
     protected $table = 'admin_roles';
@@ -43,7 +45,8 @@ class AdminRole extends Model
             'catalog.categories.manage' => 'Manage categories',
             'catalog.badges.manage' => 'Manage product badges',
             'sales.orders.view' => 'View orders',
-            'sales.returns.manage' => 'Manage return requests',
+            'sales.orders.manage' => 'Manage orders (cancel)',
+            'sales.returns.manage' => 'Manage return requests and refunds',
             'sales.customers.manage' => 'Manage customers',
             'analytics.view' => 'View analytics',
             'finance.wallet.view' => 'View wallet',
@@ -83,6 +86,7 @@ class AdminRole extends Model
                 'catalog.categories.manage',
                 'catalog.badges.manage',
                 'sales.orders.view',
+                'sales.orders.manage',
                 'sales.returns.manage',
                 'sales.customers.manage',
                 'analytics.view',

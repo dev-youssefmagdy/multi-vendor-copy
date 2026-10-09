@@ -11,6 +11,13 @@
         </div>
         <div class="page-actions">
             <a class="btn btn-secondary" href="{{ route('admin.orders.index') }}">← Orders</a>
+            @if (!empty($afterSales['can_cancel']))
+                <button type="button" class="btn" wire:click="openCancelModal" id="admin-cancel-order"
+                    style="background:var(--red);color:#fff;display:inline-flex;align-items:center;gap:7px">
+                    Cancel Order
+                </button>
+            @endif
+            @if ($canManage)
             <button type="button" class="btn btn-secondary" wire:click="$set('showReturnModal', true)"
                 style="display:inline-flex;align-items:center;gap:7px">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -19,6 +26,7 @@
                 </svg>
                 Create Return
             </button>
+            @endif
             <a class="btn btn-secondary" target="_blank"
                 href="{{ route('admin.orders.shipping-label', ['tenantId' => $tenantId, 'orderNumber' => $orderNumber]) }}"
                 style="display:inline-flex;align-items:center;gap:7px">
@@ -43,7 +51,8 @@
         </div>
     </div>
 
-    {{-- Tracking Number --}}
+    {{-- Tracking Number (no fulfilment left on cancelled / rejected / refunded orders) --}}
+    @unless ($shippingLocked)
     <div class="card fu d2 section-gap">
         <div class="details-header">
             <div style="display:flex;align-items:center;gap:10px">
@@ -120,6 +129,9 @@
             </x-btn>
         </div>
     </div>
+    @endunless
+
+    @include('livewire.admin.order.partials.after-sales-panels', ['afterSales' => $afterSales, 'canManage' => $canManage])
 
     <div class="page-stack section-gap">
         @include('livewire.admin.order.partials.order-details', [
@@ -128,6 +140,8 @@
             'showAttachments' => false,
         ])
     </div>
+
+    @include('livewire.admin.order.partials.order-cancel-refund-modals')
 
     {{-- Return Request Modal --}}
     @if($showReturnModal)

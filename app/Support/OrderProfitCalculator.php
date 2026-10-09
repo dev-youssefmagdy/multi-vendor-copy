@@ -2,14 +2,50 @@
 
 namespace App\Support;
 
+use App\Enums\OrderStatus;
 use App\Models\Tenant\Order as TenantOrder;
 
 /**
  * Canonical "effective owner profit" / "effective tenant profit" calculation.
  * Mirrors TenantLedgerService / OrderRepository / TenantAdminAggregateService.
+ *
+ * Refunds & cancellations (RETURN_EXCHANGE_REFUND_PLAN.md B.4 "Financial impact"):
+ * the *ForOrder() helpers treat a cancelled / rejected / refunded order as producing no
+ * money for anybody (owner profit, tenant profit and both payout directions are 0), and
+ * base the tenant's share on the net amount kept from the customer
+ * (grand_total − refunded_amount). Partial refunds are borne by the tenant's share; the
+ * owner profit (central's cut) is unchanged by them.
  */
 class OrderProfitCalculator
 {
+    /** Order statuses that never produce revenue. */
+    public const VOID_STATUSES = [OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded];
+
+    /**
+     * The order produces no revenue: cancelled, rejected, refunded, or its payment has been
+     * refunded in full.
+     */
+    public static function isFinanciallyVoid(TenantOrder $order): bool
+    {
+        if (in_array($order->status, self::VOID_STATUSES, true)) {
+            return true;
+        }
+
+        $refunded = round((float) ($order->refunded_amount ?? 0), 2);
+
+        return $refunded > 0 && $refunded >= round((float) $order->grand_total, 2);
+    }
+
+    /** Money kept from the customer: grand_total − completed refunds (0 for void orders). */
+    public static function netOrderTotal(TenantOrder $order): float
+    {
+        if (self::isFinanciallyVoid($order)) {
+            return 0.0;
+        }
+
+        return max(0.0, round((float) $order->grand_total - (float) ($order->refunded_amount ?? 0), 2));
+    }
+
     public static function effectiveOwnerProfit(?int $vendorGatewayId, ?float $vendorCost, ?float $ownerProfit): float
     {
         return (float) ($vendorGatewayId !== null ? $vendorCost : ($ownerProfit ?? 0));
@@ -22,16 +58,24 @@ class OrderProfitCalculator
 
     public static function effectiveOwnerProfitForOrder(TenantOrder $order): float
     {
+        if (self::isFinanciallyVoid($order)) {
+            return 0.0;
+        }
+
         return self::effectiveOwnerProfit($order->vendor_gateway_id, $order->vendor_cost, $order->owner_profit);
     }
 
     public static function effectiveTenantProfitForOrder(TenantOrder $order): float
     {
+        if (self::isFinanciallyVoid($order)) {
+            return 0.0;
+        }
+
         return self::effectiveTenantProfit(
             $order->vendor_gateway_id,
             $order->vendor_cost,
             $order->owner_profit,
-            (float) $order->grand_total
+            self::netOrderTotal($order)
         );
     }
 
@@ -54,6 +98,10 @@ class OrderProfitCalculator
 
     public static function tenantOwnCentralForOrder(TenantOrder $order): float
     {
+        if (self::isFinanciallyVoid($order)) {
+            return 0.0;
+        }
+
         return self::tenantOwnCentral($order->vendor_gateway_id, $order->vendor_cost, $order->owner_profit);
     }
 
@@ -66,11 +114,15 @@ class OrderProfitCalculator
 
     public static function centralOwnTenantForOrder(TenantOrder $order): float
     {
+        if (self::isFinanciallyVoid($order)) {
+            return 0.0;
+        }
+
         return self::centralOwnTenant(
             $order->vendor_gateway_id,
             $order->vendor_cost,
             $order->owner_profit,
-            (float) $order->grand_total
+            self::netOrderTotal($order)
         );
     }
 

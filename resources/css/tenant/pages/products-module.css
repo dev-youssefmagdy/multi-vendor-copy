@@ -175,7 +175,7 @@
 
 /* Dark "cost" box wider than the comparison box, like the design */
 .pm-card-stats { grid-template-columns: minmax(0, 185fr) minmax(0, 144fr); }
-/* Only the cost box (Own products) — let it span the full row */
+/* Only the cost box (own-products/_card) — let it span the full row */
 .pm-card-stats.is-single { grid-template-columns: minmax(0, 1fr); }
 .pm-card .db-opp-stat { min-height: 110px; }
 

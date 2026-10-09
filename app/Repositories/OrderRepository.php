@@ -6,18 +6,15 @@ use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Services\Admin\TenantAdminAggregateService;
-use App\Support\OrderProfitCalculator;
-use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Pagination\Paginator as PaginationState;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class OrderRepository
 {
-    public function __construct(protected TenantAdminAggregateService $aggregateService)
-    {
-    }
+    public function __construct(protected TenantAdminAggregateService $aggregateService) {}
 
     public function paginate(array $filters, int $perPage = 10): LengthAwarePaginator
     {
@@ -43,7 +40,7 @@ class OrderRepository
                         $order->tenant?->name,
                     ])));
 
-                    if (!str_contains($haystack, strtolower($search))) {
+                    if (! str_contains($haystack, strtolower($search))) {
                         return false;
                     }
                 }
@@ -62,6 +59,12 @@ class OrderRepository
                     if ($filter === 'paid' && $order->payment_status !== OrderPaymentStatus::Paid) {
                         return false;
                     }
+
+                    if (! in_array($filter, ['pending', 'unpaid', 'paid'], true)
+                        && ($status = OrderPaymentStatus::tryFrom($filter))
+                        && $order->payment_status !== $status) {
+                        return false;
+                    }
                 }
 
                 if (filled($filters['gateway'] ?? null) && ($order->payment_gateway ?: $order->payment_method) !== $filters['gateway']) {
@@ -70,7 +73,7 @@ class OrderRepository
 
                 return true;
             })
-            ->sortByDesc(fn(object $order) => $order->placed_at?->getTimestamp() ?? 0)
+            ->sortByDesc(fn (object $order) => $order->placed_at?->getTimestamp() ?? 0)
             ->values();
     }
 
@@ -91,15 +94,15 @@ class OrderRepository
                         $order->tenant?->name,
                     ])));
 
-                    if (!str_contains($haystack, strtolower($search))) {
+                    if (! str_contains($haystack, strtolower($search))) {
                         return false;
                     }
                 }
 
-                return !filled($filters['shipping_status'] ?? null)
+                return ! filled($filters['shipping_status'] ?? null)
                     || $order->shipping_status->value === $filters['shipping_status'];
             })
-            ->sortByDesc(fn(object $order) => $order->placed_at?->getTimestamp() ?? 0)
+            ->sortByDesc(fn (object $order) => $order->placed_at?->getTimestamp() ?? 0)
             ->values();
 
         return $this->paginateCollection($records, $perPage);
@@ -112,8 +115,8 @@ class OrderRepository
         return [
             'total' => $orders->count(),
             'paid' => $orders->where('payment_status', OrderPaymentStatus::Paid)->count(),
-            'shipping' => $orders->filter(fn(object $order) => in_array($order->shipping_status, [OrderShippingStatus::Pending, OrderShippingStatus::InDelivery], true))->count(),
-            'gross_revenue' => (float) $orders->sum('total_amount'),
+            'shipping' => $orders->filter(fn (object $order) => in_array($order->shipping_status, [OrderShippingStatus::Pending, OrderShippingStatus::InDelivery], true))->count(),
+            'gross_revenue' => (float) $orders->sum('net_amount'),
             'owner_profit' => (float) $orders->sum('owner_profit'),
         ];
     }
@@ -122,31 +125,34 @@ class OrderRepository
     {
         $orders = $this->aggregateService->orders();
 
+        $collected = $orders->filter(fn (object $order) => $this->isCollected($order));
+
         return [
-            'gross_revenue' => (float) $orders->sum('total_amount'),
-            'collected_revenue' => (float) $orders->where('payment_status', OrderPaymentStatus::Paid)->sum('total_amount'),
-            'owner_profit' => (float) $orders->where('payment_status', OrderPaymentStatus::Paid)->sum('owner_profit'),
-            'paid_orders' => $orders->where('payment_status', OrderPaymentStatus::Paid)->count(),
+            'gross_revenue' => (float) $orders->sum('net_amount'),
+            'collected_revenue' => (float) $collected->sum('net_amount'),
+            'owner_profit' => (float) $collected->sum('owner_profit'),
+            'paid_orders' => $collected->count(),
             'cancelled_orders' => $orders->where('status', OrderStatus::Cancelled)->count(),
+            'refunded_amount' => round((float) $orders->sum('refunded_amount'), 2),
         ];
     }
 
     public function paymentMethodOptions(): array
     {
         return ['' => 'All gateways'] + $this->aggregateService->orders()
-            ->map(fn(object $order) => $order->payment_gateway ?: $order->payment_method)
+            ->map(fn (object $order) => $order->payment_gateway ?: $order->payment_method)
             ->filter()
             ->unique()
             ->sort()
             ->values()
-            ->mapWithKeys(fn(string $gateway) => [$gateway => $gateway])
+            ->mapWithKeys(fn (string $gateway) => [$gateway => $gateway])
             ->all();
     }
 
     public function find(string $tenantId, string $orderNumber): ?object
     {
         return $this->aggregateService->orders()
-            ->first(fn(object $order) => (string) $order->tenant_id === $tenantId && (string) $order->order_number === $orderNumber);
+            ->first(fn (object $order) => (string) $order->tenant_id === $tenantId && (string) $order->order_number === $orderNumber);
     }
 
     public function orderDetail(object $order): array
@@ -163,7 +169,12 @@ class OrderRepository
             'shipping_status_value' => $order->shipping_status->value,
             'status' => $order->status->label(),
             'shipping_status' => $order->shipping_status->label(),
-            'paid' => $order->payment_status === OrderPaymentStatus::Paid,
+            'status_color' => $order->status->color(),
+            'payment_status_value' => $order->payment_status->value,
+            'payment_status' => $order->payment_status->label(),
+            'payment_status_color' => $order->payment_status->color(),
+            // Money was collected (a refund — full or partial — does not change that fact).
+            'paid' => in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded, OrderPaymentStatus::Refunded], true),
             'customer' => [
                 'name' => $order->customer_name ?: 'Guest',
                 'email' => $order->customer_email,
@@ -185,7 +196,10 @@ class OrderRepository
                 'tax' => $order->tax_amount,
                 'shipping_total' => $order->shipping_charge,
                 'grand_total' => $order->total_amount,
-                'owner_profit' => OrderProfitCalculator::effectiveOwnerProfit($order->vendor_gateway_id, $order->vendor_cost, $order->owner_profit),
+                // Already the refund/cancellation-aware value from TenantAdminAggregateService.
+                'owner_profit' => $order->owner_profit,
+                'refunded_amount' => $order->refunded_amount ?? 0.0,
+                'net_total' => $order->net_amount ?? $order->total_amount,
                 'vendor_net_total' => $order->vendor_net_total,
                 'tenant_own_central' => $order->tenant_own_central,
                 'central_own_tenant' => $order->central_own_tenant,
@@ -202,29 +216,29 @@ class OrderRepository
         $orders = $this->aggregateService->orders();
         $summary = $this->reportSummary();
         $months = collect(range(5, 0))
-            ->map(fn(int $offset) => Carbon::now()->startOfMonth()->subMonths($offset))
+            ->map(fn (int $offset) => Carbon::now()->startOfMonth()->subMonths($offset))
             ->values();
 
         $series = $months->map(function (Carbon $month) use ($orders) {
             $monthlyOrders = $orders->filter(
-                fn(object $order) => $order->placed_at?->year === $month->year && $order->placed_at?->month === $month->month
+                fn (object $order) => $order->placed_at?->year === $month->year && $order->placed_at?->month === $month->month
             );
 
             return [
                 'label' => $month->format('M'),
-                'gross' => round((float) $monthlyOrders->sum('total_amount'), 2),
-                'owner_profit' => round((float) $monthlyOrders->where('payment_status', OrderPaymentStatus::Paid)->sum('owner_profit'), 2),
-                'paid_orders' => $monthlyOrders->where('payment_status', OrderPaymentStatus::Paid)->count(),
-                'unpaid_orders' => $monthlyOrders->reject(fn(object $order) => $order->payment_status === OrderPaymentStatus::Paid)->count(),
+                'gross' => round((float) $monthlyOrders->sum('net_amount'), 2),
+                'owner_profit' => round((float) $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->sum('owner_profit'), 2),
+                'paid_orders' => $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->count(),
+                'unpaid_orders' => $monthlyOrders->reject(fn (object $order) => $this->isCollected($order))->count(),
             ];
         })->values();
 
         $statusBreakdown = collect(OrderStatus::cases())
-            ->map(fn(OrderStatus $status) => [
+            ->map(fn (OrderStatus $status) => [
                 'label' => $status->label(),
                 'value' => $orders->where('status', $status)->count(),
             ])
-            ->filter(fn(array $row) => $row['value'] > 0)
+            ->filter(fn (array $row) => $row['value'] > 0)
             ->values();
 
         $topTenants = $orders
@@ -235,8 +249,8 @@ class OrderRepository
                 return [
                     'tenant' => $first?->store_name ?? 'Unknown store',
                     'orders' => $tenantOrders->count(),
-                    'gross' => round((float) $tenantOrders->sum('total_amount'), 2),
-                    'owner_profit' => round((float) $tenantOrders->where('payment_status', OrderPaymentStatus::Paid)->sum('owner_profit'), 2),
+                    'gross' => round((float) $tenantOrders->sum('net_amount'), 2),
+                    'owner_profit' => round((float) $tenantOrders->filter(fn (object $order) => $this->isCollected($order))->sum('owner_profit'), 2),
                 ];
             })
             ->sortByDesc('gross')
@@ -244,18 +258,18 @@ class OrderRepository
             ->values();
 
         $gatewayMix = $orders
-            ->groupBy(fn(object $order) => $order->payment_gateway ?: $order->payment_method ?: 'Unknown')
-            ->map(fn(Collection $gatewayOrders, string $gateway) => [
+            ->groupBy(fn (object $order) => $order->payment_gateway ?: $order->payment_method ?: 'Unknown')
+            ->map(fn (Collection $gatewayOrders, string $gateway) => [
                 'gateway' => $gateway,
                 'orders' => $gatewayOrders->count(),
-                'gross' => round((float) $gatewayOrders->sum('total_amount'), 2),
+                'gross' => round((float) $gatewayOrders->sum('net_amount'), 2),
             ])
             ->sortByDesc('gross')
             ->take(6)
             ->values();
 
         $recentOrders = $orders
-            ->sortByDesc(fn(object $order) => $order->placed_at?->getTimestamp() ?? 0)
+            ->sortByDesc(fn (object $order) => $order->placed_at?->getTimestamp() ?? 0)
             ->take(8)
             ->values();
 
@@ -294,7 +308,7 @@ class OrderRepository
                     'layoutClass' => 'g-r2',
                     'cards' => [
                         ['title' => 'Revenue vs Owner Profit', 'description' => 'Rolling six-month marketplace sales and owner take.', 'canvas' => 'revenueChart'],
-                        ['title' => 'Order Status Mix', 'description' => 'How tenant orders are distributed by lifecycle state.', 'canvas' => 'donutChart', 'legend' => $statusBreakdown->map(fn(array $row) => ['label' => $row['label'], 'value' => number_format((int) $row['value'])])->all()],
+                        ['title' => 'Order Status Mix', 'description' => 'How tenant orders are distributed by lifecycle state.', 'canvas' => 'donutChart', 'legend' => $statusBreakdown->map(fn (array $row) => ['label' => $row['label'], 'value' => number_format((int) $row['value'])])->all()],
                     ],
                 ],
                 [
@@ -307,7 +321,7 @@ class OrderRepository
                 [
                     'layoutClass' => 'g-r1',
                     'cards' => [
-                        ['title' => 'Gateway Order Distribution', 'description' => 'Order counts grouped by tenant payment gateway.', 'canvas' => 'radarChart', 'metrics' => $gatewayMix->map(fn(array $row) => ['label' => $row['gateway'], 'value' => '$' . number_format((float) $row['gross'], 2) . ' / ' . number_format((int) $row['orders']) . ' orders'])->all()],
+                        ['title' => 'Gateway Order Distribution', 'description' => 'Order counts grouped by tenant payment gateway.', 'canvas' => 'radarChart', 'metrics' => $gatewayMix->map(fn (array $row) => ['label' => $row['gateway'], 'value' => '$'.number_format((float) $row['gross'], 2).' / '.number_format((int) $row['orders']).' orders'])->all()],
                     ],
                 ],
             ],
@@ -316,28 +330,43 @@ class OrderRepository
                     'title' => 'Top Tenants',
                     'description' => 'Highest-contributing stores by gross marketplace sales.',
                     'headers' => ['Tenant', 'Orders', 'Gross', 'Owner Profit'],
-                    'rows' => $topTenants->map(fn(array $row) => [
+                    'rows' => $topTenants->map(fn (array $row) => [
                         e($row['tenant']),
                         number_format((int) $row['orders']),
-                        '$' . number_format((float) $row['gross'], 2),
-                        '$' . number_format((float) $row['owner_profit'], 2),
+                        '$'.number_format((float) $row['gross'], 2),
+                        '$'.number_format((float) $row['owner_profit'], 2),
                     ])->all(),
                 ],
                 [
                     'title' => 'Recent Marketplace Orders',
                     'description' => 'Latest paid and unpaid orders coming from tenant stores.',
                     'headers' => ['Order', 'Tenant', 'Customer', 'Total', 'Payment', 'Status'],
-                    'rows' => $recentOrders->map(fn(object $order) => [
+                    'rows' => $recentOrders->map(fn (object $order) => [
                         e($order->order_number),
                         e($order->store_name),
-                        '<div class="entity-title">' . e($order->customer_name ?: 'Guest') . '</div><div class="entity-subtitle">' . e($order->customer_email ?: 'No email') . '</div>',
-                        '$' . number_format((float) $order->total_amount, 2),
-                        '<span class="badge ' . ($order->payment_status === OrderPaymentStatus::Paid ? 'badge-green' : 'badge-amber') . '">' . e($order->payment_status->label()) . '</span>',
-                        '<span class="badge badge-cyan">' . e($order->status->label()) . '</span>',
+                        '<div class="entity-title">'.e($order->customer_name ?: 'Guest').'</div><div class="entity-subtitle">'.e($order->customer_email ?: 'No email').'</div>',
+                        '$'.number_format((float) $order->total_amount, 2),
+                        '<span class="badge '.match ($order->payment_status) {
+                            OrderPaymentStatus::Paid => 'badge-green',
+                            OrderPaymentStatus::Refunded, OrderPaymentStatus::PartiallyRefunded => 'badge-violet',
+                            OrderPaymentStatus::Failed => 'badge-red',
+                            default => 'badge-amber',
+                        }.'">'.e($order->payment_status->label()).'</span>',
+                        '<span class="badge '.match ($order->status) {
+                            OrderStatus::Cancelled, OrderStatus::Rejected => 'badge-red',
+                            OrderStatus::Refunded => 'badge-violet',
+                            default => 'badge-cyan',
+                        }.'">'.e($order->status->label()).'</span>',
                     ])->all(),
                 ],
             ],
         ];
+    }
+
+    /** Paid and kept (fully or partly): counts towards collected revenue / owner profit. */
+    protected function isCollected(object $order): bool
+    {
+        return in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded], true);
     }
 
     protected function paginateCollection(Collection $items, int $perPage): LengthAwarePaginator

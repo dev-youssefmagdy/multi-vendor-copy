@@ -12,7 +12,15 @@
         <div class="details-list">
             <div class="details-kv"><span class="details-label">Order</span><span class="details-value">{{ $order['uuid'] ?? '-' }}</span></div>
             <div class="details-kv"><span class="details-label">Status</span><span class="details-value">{{ $order['status'] ?? '-' }}</span></div>
-            <div class="details-kv"><span class="details-label">Paid</span><span class="details-value">{{ !empty($order['paid']) ? 'Yes' : 'No' }}</span></div>
+            <div class="details-kv">
+                <span class="details-label">Paid</span>
+                <span class="details-value">
+                    {{ !empty($order['paid']) ? 'Yes' : 'No' }}
+                    @if(in_array($order['payment_state'] ?? null, ['refunded', 'partially_refunded'], true))
+                        <span class="badge badge-{{ $order['payment_state_color'] ?? 'violet' }}" data-payment-state><span class="badge-dot"></span>{{ $order['payment_state_label'] }}</span>
+                    @endif
+                </span>
+            </div>
             <div class="details-kv"><span class="details-label">Customer</span><span class="details-value">{{ $order['customer']['name'] ?? 'Guest' }}</span></div>
             <div class="details-kv"><span class="details-label">Email</span><span class="details-value">{{ $order['customer']['email'] ?? '-' }}</span></div>
             <div class="details-kv"><span class="details-label">Gateway</span><span class="details-value">{{ $order['payment_gateway'] ?? ($order['payment_method'] ?? '-') }}</span></div>

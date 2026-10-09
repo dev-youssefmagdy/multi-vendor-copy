@@ -2,12 +2,25 @@
 
 namespace App\Repositories\Tenant;
 
+use App\Enums\ActivationStatus;
+use App\Enums\BrandRequestStatus;
+use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PackageTerm;
+use App\Enums\PaymentGatewayType;
+use App\Enums\RefundStatus;
+use App\Enums\ReturnStatus;
 use App\Enums\Tenant\SubscriptionStatus;
 use App\Enums\WalletTransactionDirection;
+use App\Models\BrandRequest;
 use App\Models\Category as CentralCategory;
+use App\Models\HomeVariant;
+use App\Models\ManufacturingRequest;
 use App\Models\Product as CentralProduct;
+use App\Models\ProductRequest;
+use App\Models\Refund;
+use App\Models\ReturnRequest;
+use App\Models\SupportTicket;
 use App\Models\Tenant\AdminRole;
 use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Banner;
@@ -22,30 +35,38 @@ use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PaymentGateway;
-use App\PaymentGateway\PaymentManager;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
 use App\Models\Tenant\Subscriber;
 use App\Models\Tenant\Subscription;
+use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantNotification;
+use App\Models\Tenant\TenantThemeColor;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\Transaction;
-use App\Models\HomeVariant;
-use App\Models\Tenant\TenantHomeVariant;
-use App\Models\Tenant\TenantThemeColor;
+use App\Models\TenantPayout;
+use App\Models\Variation;
+use App\Models\VendorSettlement;
+use App\PaymentGateway\PaymentManager;
+use App\Support\OrderProfitCalculator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\LengthAwarePaginator as ManualPaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator as ManualPaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TenantPanelRepository
 {
     private ?Collection $orders = null;
+
     protected $customers;
+
     protected $subscriptions;
+
     private ?array $profitabilityRowsCache = null;
 
     protected function orders(): Collection
@@ -69,21 +90,21 @@ class TenantPanelRepository
         $customers = $this->customers();
         $subscriptions = $this->subscriptions();
 
-        $grossSales = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+        $grossSales = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $collectedSales = $orders
-            ->filter(fn(Order $order) => $order->paid)
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => $order->paid)
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $outstandingSales = $orders
-            ->filter(fn(Order $order) => !$order->paid && !in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => ! $order->paid && ! OrderProfitCalculator::isFinanciallyVoid($order))
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
 
-        $paidOrders = $orders->filter(fn(Order $order) => $order->paid);
+        $paidOrders = $orders->filter(fn (Order $order) => $order->paid);
         $centralProductsProfit = $paidOrders
-            ->filter(fn(Order $order) => $this->orderIsCentralType($order))
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['vendor_net_total']);
+            ->filter(fn (Order $order) => $this->orderIsCentralType($order))
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_net_total']);
         $ownProductsProfit = $paidOrders
-            ->filter(fn(Order $order) => !$this->orderIsCentralType($order))
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['vendor_net_total']);
+            ->filter(fn (Order $order) => ! $this->orderIsCentralType($order))
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_net_total']);
 
         return [
             'revenue' => round($collectedSales, 2),
@@ -91,17 +112,17 @@ class TenantPanelRepository
             'outstanding' => round($outstandingSales, 2),
             'balance' => round($this->tenantBalance(), 2),
             'orders' => $orders->count(),
-            'paid_orders' => $orders->filter(fn(Order $order) => $order->paid)->count(),
-            'pending_orders' => $orders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing], true))->count(),
+            'paid_orders' => $orders->filter(fn (Order $order) => $order->paid)->count(),
+            'pending_orders' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing], true))->count(),
             'customers' => $customers->count(),
-            'active_customers' => $customers->filter(fn(Customer $customer) => $customer->active)->count(),
-            'repeat_buyers' => $customers->filter(fn(Customer $customer) => (int) $customer->orders_count > 1)->count(),
+            'active_customers' => $customers->filter(fn (Customer $customer) => $customer->active)->count(),
+            'repeat_buyers' => $customers->filter(fn (Customer $customer) => (int) $customer->orders_count > 1)->count(),
             'products' => Product::query()->count(),
             'active_products' => Product::query()->where('active', true)->count(),
             'subscribers' => Subscriber::query()->count(),
             'subscriptions' => $subscriptions->count(),
-            'active_subscriptions' => $subscriptions->filter(fn(Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
-            'shipping' => round($orders->sum(fn(Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
+            'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
+            'shipping' => round($orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
             'avg_order' => $orders->isNotEmpty() ? round($grossSales / $orders->count(), 2) : 0.0,
             'vendor_net' => round($centralProductsProfit + $ownProductsProfit, 2),
             'central_products_profit' => round($centralProductsProfit, 2),
@@ -114,25 +135,25 @@ class TenantPanelRepository
         $orders = $this->orders();
         $customers = $this->customers();
         $subscriptions = $this->subscriptions();
-        $customerOrderCounts = $customers->keyBy('id')->map(fn(Customer $customer) => (int) $customer->orders_count);
+        $customerOrderCounts = $customers->keyBy('id')->map(fn (Customer $customer) => (int) $customer->orders_count);
 
         return $this->rollingMonths()->map(function (Carbon $date) use ($orders, $customers, $subscriptions, $customerOrderCounts) {
-            $monthOrders = $orders->filter(fn(Order $order) => $this->isSameMonth($order->created_at, $date));
-            $monthPaidOrders = $monthOrders->filter(fn(Order $order) => $order->paid);
-            $fulfilledOrders = $monthOrders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
+            $monthOrders = $orders->filter(fn (Order $order) => $this->isSameMonth($order->created_at, $date));
+            $monthPaidOrders = $monthOrders->filter(fn (Order $order) => $order->paid);
+            $fulfilledOrders = $monthOrders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
             $monthCustomerIds = $monthOrders->pluck('customer_id')->filter()->unique();
 
             return [
                 'label' => $date->format('M'),
-                'gross' => round($monthOrders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']), 2),
-                'revenue' => round($monthPaidOrders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']), 2),
+                'gross' => round($monthOrders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']), 2),
+                'revenue' => round($monthPaidOrders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']), 2),
                 'orders' => $monthOrders->count(),
                 'paid_orders' => $monthPaidOrders->count(),
                 'fulfilled_orders' => $fulfilledOrders->count(),
-                'shipping' => round($monthOrders->sum(fn(Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
-                'customers' => $customers->filter(fn(Customer $customer) => $this->isSameMonth($customer->created_at, $date))->count(),
-                'repeat_buyers' => $monthCustomerIds->filter(fn($customerId) => (int) ($customerOrderCounts[$customerId] ?? 0) > 1)->count(),
-                'subscriptions' => round($subscriptions->filter(fn(Subscription $subscription) => $this->isSameMonth($subscription->created_at, $date))->sum('price'), 2),
+                'shipping' => round($monthOrders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
+                'customers' => $customers->filter(fn (Customer $customer) => $this->isSameMonth($customer->created_at, $date))->count(),
+                'repeat_buyers' => $monthCustomerIds->filter(fn ($customerId) => (int) ($customerOrderCounts[$customerId] ?? 0) > 1)->count(),
+                'subscriptions' => round($subscriptions->filter(fn (Subscription $subscription) => $this->isSameMonth($subscription->created_at, $date))->sum('price'), 2),
             ];
         })->all();
     }
@@ -155,7 +176,7 @@ class TenantPanelRepository
     {
         $imageSearchIds = array_values(array_filter(
             (array) ($filters['image_search_ids'] ?? $filters['image_ids'] ?? []),
-            fn($id) => filled($id)
+            fn ($id) => filled($id)
         ));
 
         return Product::query()
@@ -163,9 +184,9 @@ class TenantPanelRepository
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
                 $query->where('slug', 'like', "%{$search}%")
-                    ->orWhereHas('translations', fn(Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
+                    ->orWhereHas('translations', fn (Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
             })
-            ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('active', $filters['status'] === 'active'))
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
                 $this->applyProductStockFilter($query, $filters['stock']);
             })
@@ -173,11 +194,11 @@ class TenantPanelRepository
                 $categoryIds = $this->resolveCategoryIdsWithDescendants((int) $filters['category']);
                 $query->whereHas('categories', fn (Builder $q) => $q->whereIn('categories.id', $categoryIds));
             })
-            ->when(!empty($imageSearchIds), function ($query) use ($imageSearchIds) {
+            ->when(! empty($imageSearchIds), function ($query) use ($imageSearchIds) {
                 $query->whereIn('central_product_id', $imageSearchIds);
                 $ids = implode(',', array_map('intval', $imageSearchIds));
                 $query->orderByRaw("FIELD(central_product_id, {$ids})");
-            }, fn($query) => $query->orderBy('order_number'));
+            }, fn ($query) => $query->orderBy('order_number'));
     }
 
     /**
@@ -190,7 +211,7 @@ class TenantPanelRepository
     {
         $category = Category::query()->with('children.children.children.children')->find($categoryId);
 
-        if (!$category) {
+        if (! $category) {
             return [$categoryId];
         }
 
@@ -198,7 +219,7 @@ class TenantPanelRepository
     }
 
     /**
-     * @param 'in'|'partial'|'out' $stock
+     * @param  'in'|'partial'|'out'  $stock
      */
     protected function applyProductStockFilter(Builder $query, string $stock): void
     {
@@ -207,7 +228,7 @@ class TenantPanelRepository
                 $q->where(function (Builder $noVariants) {
                     $noVariants->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
                 })->orWhere(function (Builder $hasVariants) {
-                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '>', 0));
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn ($v) => $v->where('stock', '>', 0));
                 });
             }),
             'in' => $query->where(function (Builder $q) {
@@ -216,12 +237,12 @@ class TenantPanelRepository
                         $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
                     });
                 })->orWhere(function (Builder $hasVariants) {
-                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn($v) => $v->where('stock', '<=', 0));
+                    $hasVariants->whereHas('variants')->whereDoesntHave('variants', fn ($v) => $v->where('stock', '<=', 0));
                 });
             }),
             'partial' => $query
-                ->whereHas('variants', fn($v) => $v->where('stock', '<=', 0))
-                ->whereHas('variants', fn($v) => $v->where('stock', '>', 0)),
+                ->whereHas('variants', fn ($v) => $v->where('stock', '<=', 0))
+                ->whereHas('variants', fn ($v) => $v->where('stock', '>', 0)),
             default => null,
         };
     }
@@ -259,7 +280,7 @@ class TenantPanelRepository
 
     public function centralProductSnapshot(?int $centralProductId): ?array
     {
-        if (!$centralProductId) {
+        if (! $centralProductId) {
             return null;
         }
 
@@ -269,8 +290,8 @@ class TenantPanelRepository
     public function centralProductSnapshots(array $centralProductIds): array
     {
         $ids = collect($centralProductIds)
-            ->filter(fn($id) => filled($id))
-            ->map(fn($id) => (int) $id)
+            ->filter(fn ($id) => filled($id))
+            ->map(fn ($id) => (int) $id)
             ->unique()
             ->values()
             ->all();
@@ -279,7 +300,7 @@ class TenantPanelRepository
             return [];
         }
 
-        $products = tenancy()->central(fn() => CentralProduct::query()
+        $products = tenancy()->central(fn () => CentralProduct::query()
             ->with([
                 'translations.language',
                 'categories.translations.language',
@@ -289,7 +310,7 @@ class TenantPanelRepository
             ->whereIn('id', $ids)
             ->get());
 
-        return $products->mapWithKeys(fn(CentralProduct $product) => [$product->id => $this->mapCentralProductSnapshot($product)])->all();
+        return $products->mapWithKeys(fn (CentralProduct $product) => [$product->id => $this->mapCentralProductSnapshot($product)])->all();
     }
 
     protected function mapCentralProductSnapshot(CentralProduct $product): array
@@ -298,7 +319,7 @@ class TenantPanelRepository
 
         return [
             'id' => $product->id,
-            'name' => $product->translationValue('name') ?? $product->sku ?? 'Product #' . $product->id,
+            'name' => $product->translationValue('name') ?? $product->sku ?? 'Product #'.$product->id,
             'slug' => $product->slug,
             'sku' => $product->sku,
             'status' => $product->status?->label() ?? (string) $product->status,
@@ -313,7 +334,7 @@ class TenantPanelRepository
             'description' => $product->translationValue('description') ?? '',
             'image_url' => $product->primary_image_url,
             'categories' => $product->categories
-                ->map(fn($category) => $category->translationValue('name') ?? $category->slug)
+                ->map(fn ($category) => $category->translationValue('name') ?? $category->slug)
                 ->filter()
                 ->values()
                 ->all(),
@@ -322,7 +343,7 @@ class TenantPanelRepository
                 ->values()
                 ->map(function ($variant) use ($product) {
                     $options = $variant->options
-                        ->map(fn($option) => $option->translationValue('name') ?? 'Option #' . $option->id)
+                        ->map(fn ($option) => $option->translationValue('name') ?? 'Option #'.$option->id)
                         ->filter()
                         ->values()
                         ->all();
@@ -330,7 +351,7 @@ class TenantPanelRepository
                     return [
                         'id' => $variant->id,
                         'sku' => $variant->sku,
-                        'title' => $variant->title ?: (implode(' / ', $options) ?: 'Variant #' . $variant->id),
+                        'title' => $variant->title ?: (implode(' / ', $options) ?: 'Variant #'.$variant->id),
                         'options' => $options,
                         'price' => (float) ($variant->price ?? $product->sale_price ?? $product->base_price),
                         'weight_grams' => $variant->weight_grams,
@@ -344,7 +365,7 @@ class TenantPanelRepository
 
     public function centralCategorySnapshot(?int $centralCategoryId): ?array
     {
-        if (!$centralCategoryId) {
+        if (! $centralCategoryId) {
             return null;
         }
 
@@ -354,8 +375,8 @@ class TenantPanelRepository
     public function centralCategorySnapshots(array $centralCategoryIds): array
     {
         $ids = collect($centralCategoryIds)
-            ->filter(fn($id) => filled($id))
-            ->map(fn($id) => (int) $id)
+            ->filter(fn ($id) => filled($id))
+            ->map(fn ($id) => (int) $id)
             ->unique()
             ->values()
             ->all();
@@ -364,7 +385,7 @@ class TenantPanelRepository
             return [];
         }
 
-        $categories = tenancy()->central(fn() => CentralCategory::query()
+        $categories = tenancy()->central(fn () => CentralCategory::query()
             ->with([
                 'translations.language',
                 'parent.translations.language',
@@ -374,7 +395,7 @@ class TenantPanelRepository
             ->get());
 
         return $categories
-            ->mapWithKeys(fn(CentralCategory $category) => [$category->id => $this->mapCentralCategorySnapshot($category)])
+            ->mapWithKeys(fn (CentralCategory $category) => [$category->id => $this->mapCentralCategorySnapshot($category)])
             ->all();
     }
 
@@ -382,7 +403,7 @@ class TenantPanelRepository
     {
         return [
             'id' => $category->id,
-            'name' => $category->translationValue('name') ?? $category->slug ?? 'Category #' . $category->id,
+            'name' => $category->translationValue('name') ?? $category->slug ?? 'Category #'.$category->id,
             'slug' => $category->slug,
             'status' => $category->status?->label() ?? (string) $category->status,
             'parent_name' => $category->parent?->translationValue('name') ?? $category->parent?->slug,
@@ -400,9 +421,9 @@ class TenantPanelRepository
     {
         $tenantId = tenant('id');
 
-        return \App\Models\ManufacturingRequest::query()
+        return ManufacturingRequest::query()
             ->where('tenant_id', $tenantId)
-            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('product_name', 'like', '%' . $filters['search'] . '%'))
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('product_name', 'like', '%'.$filters['search'].'%'))
             ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('status', $filters['status']))
             ->latest();
     }
@@ -421,7 +442,7 @@ class TenantPanelRepository
             ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'));
 
         if (filled($search)) {
-            $like = '%' . $search . '%';
+            $like = '%'.$search.'%';
             $query->where(function ($q) use ($like) {
                 $q->where('t.value', 'like', $like)
                     ->orWhere('p.slug', 'like', $like);
@@ -439,10 +460,10 @@ class TenantPanelRepository
             ->with(['translations.language', 'parent.translations.language', 'products'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
-                $query->whereHas('translations', fn(Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
+                $query->whereHas('translations', fn (Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
             })
-            ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
-            ->when(!empty($filters['mine'] ?? false), fn($query) => $query->whereNull('central_category_id'))
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('active', $filters['status'] === 'active'))
+            ->when(! empty($filters['mine'] ?? false), fn ($query) => $query->whereNull('central_category_id'))
             ->orderBy('order_number');
     }
 
@@ -510,12 +531,12 @@ class TenantPanelRepository
         return $this->buildOrdersQuery($filters)->get();
     }
 
-    public function queryOrders(array $filters): \Illuminate\Database\Eloquent\Builder
+    public function queryOrders(array $filters): Builder
     {
         return $this->buildOrdersQuery($filters);
     }
 
-    protected function buildOrdersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
+    protected function buildOrdersQuery(array $filters): Builder
     {
         return Order::query()
             ->with(['customer', 'items.product', 'items.variant.product', 'items.variant.centralVariant', 'paymentGateway'])
@@ -533,29 +554,29 @@ class TenantPanelRepository
                         });
                 });
             })
-            ->when(filled($filters['status'] ?? null), fn($query) => $query->where('status', $filters['status']))
-            ->when(($filters['paid'] ?? '') !== '', fn($query) => $query->where('paid', $filters['paid'] === 'paid'))
-            ->when(filled($filters['gateway'] ?? null), fn($query) => $query->where('payment_method', $filters['gateway']))
+            ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('status', $filters['status']))
+            ->when(($filters['paid'] ?? '') !== '', fn ($query) => $query->where('paid', $filters['paid'] === 'paid'))
+            ->when(filled($filters['gateway'] ?? null), fn ($query) => $query->where('payment_method', $filters['gateway']))
             ->latest();
     }
 
     public function orderStats(): array
     {
         $orders = $this->orders();
-        $grossSales = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+        $grossSales = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $collectedSales = $orders
-            ->filter(fn(Order $order) => $order->paid)
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => $order->paid)
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $outstandingSales = $orders
-            ->filter(fn(Order $order) => !$order->paid && !in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => ! $order->paid && ! OrderProfitCalculator::isFinanciallyVoid($order))
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
 
         return [
             'total' => $orders->count(),
-            'paid' => $orders->filter(fn(Order $order) => $order->paid)->count(),
-            'pending' => $orders->filter(fn(Order $order) => $order->status === OrderStatus::Pending)->count(),
-            'processing' => $orders->filter(fn(Order $order) => $order->status === OrderStatus::Processing)->count(),
-            'fulfilled' => $orders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true))->count(),
+            'paid' => $orders->filter(fn (Order $order) => $order->paid)->count(),
+            'pending' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Pending)->count(),
+            'processing' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Processing)->count(),
+            'fulfilled' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true))->count(),
             'gross' => round($grossSales, 2),
             'collected' => round($collectedSales, 2),
             'outstanding' => round($outstandingSales, 2),
@@ -573,17 +594,17 @@ class TenantPanelRepository
         return $this->buildCustomersQuery($filters)->get();
     }
 
-    public function queryCustomers(array $filters): \Illuminate\Database\Eloquent\Builder
+    public function queryCustomers(array $filters): Builder
     {
         return $this->buildCustomersQuery($filters)->with('orders');
     }
 
-    protected function buildCustomersQuery(array $filters): \Illuminate\Database\Eloquent\Builder
+    protected function buildCustomersQuery(array $filters): Builder
     {
         return Customer::query()
             ->withCount('orders')
             ->withMax('orders', 'created_at')
-            ->withCount(['orders as paid_orders_count' => fn($query) => $query->where('paid', true)])
+            ->withCount(['orders as paid_orders_count' => fn ($query) => $query->where('paid', true)])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
                 $query->where(function (Builder $searchQuery) use ($search) {
@@ -593,7 +614,7 @@ class TenantPanelRepository
                         ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
-            ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('active', $filters['status'] === 'active'))
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('active', $filters['status'] === 'active'))
             ->latest();
     }
 
@@ -604,9 +625,9 @@ class TenantPanelRepository
 
         return [
             'total' => $customers->count(),
-            'active' => $customers->filter(fn(Customer $customer) => $customer->active)->count(),
-            'buyers' => $customers->filter(fn(Customer $customer) => (int) $customer->orders_count > 0)->count(),
-            'repeat' => $customers->filter(fn(Customer $customer) => (int) $customer->orders_count > 1)->count(),
+            'active' => $customers->filter(fn (Customer $customer) => $customer->active)->count(),
+            'buyers' => $customers->filter(fn (Customer $customer) => (int) $customer->orders_count > 0)->count(),
+            'repeat' => $customers->filter(fn (Customer $customer) => (int) $customer->orders_count > 1)->count(),
             'avg_lifetime' => $lifetimeRows->isNotEmpty() ? round((float) $lifetimeRows->avg('total'), 2) : 0.0,
         ];
     }
@@ -622,10 +643,10 @@ class TenantPanelRepository
 
         $orders = $customer->orders->sortByDesc('created_at');
 
-        $totalSpent = round($orders->sum(fn(Order $o) => $this->orderFinancials($o)['grand_total']), 2);
-        $paidSpent = round($orders->filter(fn(Order $o) => $o->paid)->sum(fn(Order $o) => $this->orderFinancials($o)['grand_total']), 2);
+        $totalSpent = round($orders->sum(fn (Order $o) => $this->orderFinancials($o)['net_total']), 2);
+        $paidSpent = round($orders->filter(fn (Order $o) => $o->paid)->sum(fn (Order $o) => $this->orderFinancials($o)['net_total']), 2);
         $orderCount = $orders->count();
-        $paidCount = $orders->filter(fn(Order $o) => $o->paid)->count();
+        $paidCount = $orders->filter(fn (Order $o) => $o->paid)->count();
         $avgOrder = $orderCount > 0 ? round($totalSpent / $orderCount, 2) : 0.0;
         $lastOrderAt = $orders->first()?->created_at;
 
@@ -637,7 +658,7 @@ class TenantPanelRepository
             'paidCount' => $paidCount,
             'avgOrder' => $avgOrder,
             'lastOrderAt' => $lastOrderAt,
-            'orders' => $orders->map(fn(Order $o) => [
+            'orders' => $orders->map(fn (Order $o) => [
                 'id' => $o->id,
                 'uuid' => $o->uuid,
                 'status' => $o->status,
@@ -645,7 +666,7 @@ class TenantPanelRepository
                 'created_at' => $o->created_at,
                 'gateway' => $o->paymentGateway?->name ?? $o->payment_method,
                 'financials' => $this->orderFinancials($o),
-                'items' => $o->items->map(fn(OrderItem $item) => [
+                'items' => $o->items->map(fn (OrderItem $item) => [
                     'name' => $item->product?->translationValue('name') ?? $item->product?->slug ?? '—',
                     'variant' => $item->variant?->display_label,
                     'qty' => $item->qty,
@@ -678,8 +699,8 @@ class TenantPanelRepository
             'debits' => round($debits, 2),
             'balance' => round($credits - $debits, 2),
             'subscriptions' => $subscriptions->count(),
-            'active_subscriptions' => $subscriptions->filter(fn(Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
-            'mrr' => round($subscriptions->filter(fn(Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->sum(fn(Subscription $subscription) => $this->normalizedMonthlyValue($subscription)), 2),
+            'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
+            'mrr' => round($subscriptions->filter(fn (Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->sum(fn (Subscription $subscription) => $this->normalizedMonthlyValue($subscription)), 2),
             'revenue' => round((float) $subscriptions->sum('price'), 2),
             'transactions' => Transaction::query()->count(),
         ];
@@ -698,18 +719,18 @@ class TenantPanelRepository
     public function billingStats(): array
     {
         $orders = $this->orders();
-        $grossSales = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+        $grossSales = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $collectedSales = $orders
-            ->filter(fn(Order $order) => $order->paid)
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => $order->paid)
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
         $outstandingSales = $orders
-            ->filter(fn(Order $order) => !$order->paid && !in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))
-            ->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            ->filter(fn (Order $order) => ! $order->paid && ! OrderProfitCalculator::isFinanciallyVoid($order))
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
 
         return [
             'orders' => $orders->count(),
-            'paid' => $orders->filter(fn(Order $order) => $order->paid)->count(),
-            'unpaid' => $orders->filter(fn(Order $order) => !$order->paid)->count(),
+            'paid' => $orders->filter(fn (Order $order) => $order->paid)->count(),
+            'unpaid' => $orders->filter(fn (Order $order) => ! $order->paid)->count(),
             'revenue' => round($grossSales, 2),
             'collected' => round($collectedSales, 2),
             'outstanding' => round($outstandingSales, 2),
@@ -885,16 +906,16 @@ class TenantPanelRepository
 
         $connected = $activeGateways->isNotEmpty();
 
-        $metas = $activeGateways->map(fn(PaymentGateway $gateway) => $manager->meta($gateway->code));
+        $metas = $activeGateways->map(fn (PaymentGateway $gateway) => $manager->meta($gateway->code));
 
         $merchantCountries = $metas->pluck('merchant_countries')->flatten()->unique();
-        $currencies = $metas->pluck('currencies')->flatten()->map(fn($c) => strtoupper($c))->unique();
+        $currencies = $metas->pluck('currencies')->flatten()->map(fn ($c) => strtoupper($c))->unique();
         $paymentMethods = $metas->pluck('payment_methods')->flatten()->unique();
 
         $targetCurrencyCodes = Currency::query()
             ->where('is_active', true)
             ->pluck('code')
-            ->map(fn($c) => strtoupper($c))
+            ->map(fn ($c) => strtoupper($c))
             ->unique();
 
         $supportsInternational = $merchantCountries->count() > 1;
@@ -908,7 +929,7 @@ class TenantPanelRepository
                 'label' => 'Gateway connected',
                 'ready' => $connected,
                 'caption' => $connected
-                    ? $activeGateways->count() . ' active gateway(s)'
+                    ? $activeGateways->count().' active gateway(s)'
                     : 'Connect a payment gateway to start accepting orders.',
             ],
             [
@@ -952,7 +973,7 @@ class TenantPanelRepository
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             })
-            ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('status', $filters['status']))
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('status', $filters['status']))
             ->latest('updated_at');
     }
 
@@ -979,7 +1000,7 @@ class TenantPanelRepository
     {
         return AdminRole::query()
             ->withCount('admins')
-            ->when(filled($filters['search'] ?? null), fn($query) => $query->where('name', 'like', '%' . trim((string) $filters['search']) . '%'))
+            ->when(filled($filters['search'] ?? null), fn ($query) => $query->where('name', 'like', '%'.trim((string) $filters['search']).'%'))
             ->latest('updated_at');
     }
 
@@ -1016,12 +1037,12 @@ class TenantPanelRepository
                         ->orWhere('subject', 'like', "%{$search}%");
                 });
             })
-            ->when(($filters['status'] ?? '') !== '', fn($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
             ->latest('updated_at')
             ->paginate($perPage);
     }
 
-    public function queryEmailTemplates(array $filters): \Illuminate\Database\Eloquent\Builder
+    public function queryEmailTemplates(array $filters): Builder
     {
         return EmailTemplate::query()
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
@@ -1059,7 +1080,7 @@ class TenantPanelRepository
      */
     public function variationGroups()
     {
-        return \App\Models\Variation::query()
+        return Variation::query()
             ->with(['translations.language', 'options.translations.language'])
             ->get();
     }
@@ -1155,7 +1176,7 @@ class TenantPanelRepository
             ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'));
 
         if (filled($search)) {
-            $like = '%' . $search . '%';
+            $like = '%'.$search.'%';
             $query->where(function ($q) use ($like) {
                 $q->where('t.value', 'like', $like)
                     ->orWhere('p.slug', 'like', $like);
@@ -1167,7 +1188,7 @@ class TenantPanelRepository
             ->orderBy(DB::raw('COALESCE(t.value, p.slug)'))
             ->forPage($page, $perPage)
             ->get()
-            ->mapWithKeys(fn($row) => [(int) $row->id => $row->name])
+            ->mapWithKeys(fn ($row) => [(int) $row->id => $row->name])
             ->all();
 
         return [
@@ -1197,7 +1218,7 @@ class TenantPanelRepository
             ->whereIn('p.id', $ids)
             ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'))
             ->pluck('name', 'p.id')
-            ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
+            ->mapWithKeys(fn ($name, $id) => [(int) $id => $name])
             ->all();
     }
 
@@ -1215,14 +1236,14 @@ class TenantPanelRepository
         }
 
         // Eager-load only the one file we need per product.
-        $products = \App\Models\Tenant\Product::query()
-            ->with(['files' => fn($q) => $q->whereIn('key', ['primary_medium', 'primary_original'])->orderByDesc('key')])
+        $products = Product::query()
+            ->with(['files' => fn ($q) => $q->whereIn('key', ['primary_medium', 'primary_original'])->orderByDesc('key')])
             ->with('centralProduct')
             ->whereIn('id', $ids)
             ->get(['id', 'central_product_id']);
 
         return $products
-            ->mapWithKeys(fn($product) => [(int) $product->id => ($product->primary_image_url ?? asset('elora/assets/images/product-default.png'))])
+            ->mapWithKeys(fn ($product) => [(int) $product->id => ($product->primary_image_url ?? asset('elora/assets/images/product-default.png'))])
             ->all();
     }
 
@@ -1233,24 +1254,24 @@ class TenantPanelRepository
 
     public function customerLifetimeRows(): array
     {
-        return Customer::query()->with(['orders' => fn($query) => $query->with('items')])->get()->map(function (Customer $customer) {
+        return Customer::query()->with(['orders' => fn ($query) => $query->with('items')])->get()->map(function (Customer $customer) {
             $orders = $customer->orders;
             $count = $orders->count();
-            $total = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
-            $paidTotal = $orders->filter(fn(Order $order) => $order->paid)->sum(fn(Order $order) => $this->orderFinancials($order)['grand_total']);
+            $total = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
+            $paidTotal = $orders->filter(fn (Order $order) => $order->paid)->sum(fn (Order $order) => $this->orderFinancials($order)['net_total']);
 
             return [
                 'id' => $customer->id,
                 'name' => $customer->full_name,
                 'email' => $customer->email,
                 'orders' => $count,
-                'paid_orders' => $orders->filter(fn(Order $order) => $order->paid)->count(),
+                'paid_orders' => $orders->filter(fn (Order $order) => $order->paid)->count(),
                 'total' => round($total, 2),
                 'paid_total' => round($paidTotal, 2),
                 'average' => $count > 0 ? round($total / $count, 2) : 0.0,
                 'last_order' => $orders->sortByDesc('created_at')->first()?->created_at,
             ];
-        })->filter(fn(array $row) => $row['orders'] > 0)->sortByDesc('total')->values()->all();
+        })->filter(fn (array $row) => $row['orders'] > 0)->sortByDesc('total')->values()->all();
     }
 
     public function paymentMethodOptions(): array
@@ -1261,7 +1282,7 @@ class TenantPanelRepository
             ->distinct()
             ->orderBy('payment_method')
             ->pluck('payment_method')
-            ->mapWithKeys(fn(string $method) => [$method => str($method)->replace(['_', '-'], ' ')->headline()->toString()])
+            ->mapWithKeys(fn (string $method) => [$method => str($method)->replace(['_', '-'], ' ')->headline()->toString()])
             ->all();
     }
 
@@ -1330,7 +1351,7 @@ class TenantPanelRepository
 
             $rows->push([
                 'id' => $v->id,
-                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Variant #' . $v->id),
+                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Variant #'.$v->id),
                 'real_price' => (float) $v->real_price,
                 'sell_price' => (float) $v->sell_price,
                 'sold_qty' => $soldQty,
@@ -1352,8 +1373,8 @@ class TenantPanelRepository
             $revenue = (float) $p->revenue;
 
             $rows->push([
-                'id' => 'product-' . $p->product_id,
-                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Product #' . $p->product_id),
+                'id' => 'product-'.$p->product_id,
+                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Product #'.$p->product_id),
                 'real_price' => 0.0,
                 'sell_price' => 0.0,
                 'sold_qty' => $soldQty,
@@ -1369,7 +1390,7 @@ class TenantPanelRepository
         }
 
         return $rows
-            ->sortByDesc(fn(array $row) => ($row['profit'] * 1000000) + ($row['revenue'] * 1000) + ($row['sold_qty'] * 10) + $row['margin'])
+            ->sortByDesc(fn (array $row) => ($row['profit'] * 1000000) + ($row['revenue'] * 1000) + ($row['sold_qty'] * 10) + $row['margin'])
             ->take($limit)
             ->values()
             ->all();
@@ -1450,7 +1471,7 @@ class TenantPanelRepository
                 ['label' => 'Average Order', 'value' => $stats['avg_order'], 'format' => 'currency', 'caption' => 'Average gross order value across the tenant.', 'dot' => 'dot-violet'],
             ],
             'status_rows' => $statusRows,
-            'monthly_rows' => $series->map(fn(array $row) => [
+            'monthly_rows' => $series->map(fn (array $row) => [
                 'label' => $row['label'],
                 'orders' => $row['orders'],
                 'paid_orders' => $row['paid_orders'],
@@ -1515,9 +1536,9 @@ class TenantPanelRepository
     {
         $orders = $this->orders;
         $series = collect($this->dashboardSeries());
-        $fulfilledOrders = $orders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
-        $shippingRevenue = $orders->sum(fn(Order $order) => $this->orderFinancials($order)['shipping_total']);
-        $weight = OrderItem::query()->get()->sum(fn(OrderItem $item) => (float) $item->weight * (int) $item->qty);
+        $fulfilledOrders = $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
+        $shippingRevenue = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']);
+        $weight = OrderItem::query()->get()->sum(fn (OrderItem $item) => (float) $item->weight * (int) $item->qty);
         $statusRows = $this->shippingStatusBreakdown($orders);
 
         return [
@@ -1528,7 +1549,7 @@ class TenantPanelRepository
                 ['label' => 'Ship Weight', 'value' => round($weight, 2), 'format' => 'number', 'suffix' => 'kg', 'caption' => 'Combined recorded shipping weight across order items.', 'dot' => 'dot-violet'],
             ],
             'status_rows' => $statusRows,
-            'monthly_rows' => $series->map(fn(array $row) => [
+            'monthly_rows' => $series->map(fn (array $row) => [
                 'label' => $row['label'],
                 'orders' => $row['orders'],
                 'fulfilled' => $row['fulfilled_orders'],
@@ -1634,7 +1655,7 @@ class TenantPanelRepository
             $revenue = (float) $p->revenue;
 
             $rows->push([
-                'id' => 'product-' . $p->product_id,
+                'id' => 'product-'.$p->product_id,
                 'name' => $p->name,
                 'real_price' => 0.0,
                 'sell_price' => 0.0,
@@ -1651,7 +1672,7 @@ class TenantPanelRepository
         }
 
         $rows = $rows
-            ->sortByDesc(fn(array $row) => ($row['profit'] * 1000000) + ($row['revenue'] * 1000) + ($row['sold_qty'] * 10) + $row['margin'])
+            ->sortByDesc(fn (array $row) => ($row['profit'] * 1000000) + ($row['revenue'] * 1000) + ($row['sold_qty'] * 10) + $row['margin'])
             ->values();
 
         if ($limit !== null) {
@@ -1690,10 +1711,10 @@ class TenantPanelRepository
         $topRows = $rows->take(8)->values();
 
         $marginBands = [
-            'Loss / Flat' => $rows->filter(fn(array $row) => $row['margin'] <= 0)->count(),
-            '1-15%' => $rows->filter(fn(array $row) => $row['margin'] > 0 && $row['margin'] <= 15)->count(),
-            '15-35%' => $rows->filter(fn(array $row) => $row['margin'] > 15 && $row['margin'] <= 35)->count(),
-            '35%+' => $rows->filter(fn(array $row) => $row['margin'] > 35)->count(),
+            'Loss / Flat' => $rows->filter(fn (array $row) => $row['margin'] <= 0)->count(),
+            '1-15%' => $rows->filter(fn (array $row) => $row['margin'] > 0 && $row['margin'] <= 15)->count(),
+            '15-35%' => $rows->filter(fn (array $row) => $row['margin'] > 15 && $row['margin'] <= 35)->count(),
+            '35%+' => $rows->filter(fn (array $row) => $row['margin'] > 35)->count(),
         ];
 
         return [
@@ -1726,7 +1747,7 @@ class TenantPanelRepository
 
         // An order is "own products only" when every item belongs to a vendor-created product
         $isOwnProductsOnly = $order->items->isNotEmpty() && $order->items->every(
-            fn($item) => $item->product && ($item->product->is_own_product || $item->product->is_tenant_owned)
+            fn ($item) => $item->product && ($item->product->is_own_product || $item->product->is_tenant_owned)
         );
 
         $shippingStatus = $this->deriveShippingStatus($order);
@@ -1738,7 +1759,12 @@ class TenantPanelRepository
             'shipping_status' => $shippingStatus?->label(),
             'shipping_status_value' => $shippingStatus?->value ?? '',
             'can_update_shipping' => $isOwnProductsOnly,
+            // Cancelled / rejected / refunded: no more shipping transitions (the panel hides the controls).
+            'is_terminal' => $order->status instanceof OrderStatus && $order->status->isTerminal(),
             'paid' => $order->paid,
+            'payment_state' => $order->paymentState()->value,
+            'payment_state_label' => $order->paymentState()->label(),
+            'payment_state_color' => $order->paymentState()->color(),
             'payment_method' => $order->payment_method,
             'payment_gateway' => filled($order->payment_method)
                 ? str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString()
@@ -1762,8 +1788,8 @@ class TenantPanelRepository
                         ?? $item->product?->slug
                         ?? $item->variant?->product?->translationValue('name')
                         ?? $item->variant?->product?->slug
-                        ?? ('Item #' . $item->id),
-                    'variant' => $item->variant?->display_label ?? ($item->variant?->id ? 'Variant #' . $item->variant->id : null),
+                        ?? ('Item #'.$item->id),
+                    'variant' => $item->variant?->display_label ?? ($item->variant?->id ? 'Variant #'.$item->variant->id : null),
                     'qty' => (int) $item->qty,
                     'price' => (float) $item->price,
                     'sub_total' => (float) $item->sub_total,
@@ -1773,7 +1799,7 @@ class TenantPanelRepository
                     'line_total' => $lineTotal,
                 ];
             })->all(),
-            'activities' => $order->activities->map(fn($activity) => [
+            'activities' => $order->activities->map(fn ($activity) => [
                 'title' => $activity->title,
                 'description' => $activity->description,
                 'created_at' => $activity->created_at,
@@ -1795,14 +1821,14 @@ class TenantPanelRepository
         ];
     }
 
-    protected function deriveShippingStatus(Order $order): ?\App\Enums\OrderShippingStatus
+    protected function deriveShippingStatus(Order $order): ?OrderShippingStatus
     {
         return match ($order->status) {
-            \App\Enums\OrderStatus::Pending => \App\Enums\OrderShippingStatus::Pending,
-            \App\Enums\OrderStatus::Processing => \App\Enums\OrderShippingStatus::InDelivery,
-            \App\Enums\OrderStatus::Shipped => \App\Enums\OrderShippingStatus::Shipped,
-            \App\Enums\OrderStatus::Delivered => \App\Enums\OrderShippingStatus::Delivered,
-            \App\Enums\OrderStatus::Cancelled => \App\Enums\OrderShippingStatus::Cancelled,
+            OrderStatus::Pending => OrderShippingStatus::Pending,
+            OrderStatus::Processing => OrderShippingStatus::InDelivery,
+            OrderStatus::Shipped => OrderShippingStatus::Shipped,
+            OrderStatus::Delivered => OrderShippingStatus::Delivered,
+            OrderStatus::Cancelled => OrderShippingStatus::Cancelled,
             default => null,
         };
     }
@@ -1817,7 +1843,7 @@ class TenantPanelRepository
         $items = $order->relationLoaded('items') ? $order->items : $order->items()->with('product')->get();
         $product = $items->first()?->product;
 
-        return !($product && ($product->is_own_product || $product->is_tenant_owned));
+        return ! ($product && ($product->is_own_product || $product->is_tenant_owned));
     }
 
     protected function orderFinancials(Order $order): array
@@ -1831,12 +1857,18 @@ class TenantPanelRepository
         $orderTax = round($subtotal * ((float) ($order->tax_percentage ?? 0) / 100), 2);
         $shippingTotal = round((float) ($order->shipping_charge ?: $itemsShipping), 2);
         $grandTotal = round($subtotal - $itemsDiscount - $orderDiscount + $itemsTax + $orderTax + $shippingTotal, 2);
-        $vendorNet = round(\App\Support\OrderProfitCalculator::effectiveTenantProfit(
+        $refundedAmount = round((float) ($order->refunded_amount ?? 0), 2);
+        // Revenue actually kept: cancelled / rejected / refunded orders count for nothing and
+        // completed refunds are subtracted (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
+        $netTotal = OrderProfitCalculator::isFinanciallyVoid($order)
+            ? 0.0
+            : max(0.0, round($grandTotal - $refundedAmount, 2));
+        $vendorNet = $netTotal > 0 ? round(OrderProfitCalculator::effectiveTenantProfit(
             $order->vendor_gateway_id,
             $order->vendor_cost,
             $order->owner_profit,
-            $grandTotal
-        ), 2);
+            $netTotal
+        ), 2) : 0.0;
 
         return [
             'subtotal' => $subtotal,
@@ -1846,13 +1878,15 @@ class TenantPanelRepository
             'tax' => $orderTax,
             'shipping_total' => $shippingTotal,
             'grand_total' => $grandTotal,
-            'owner_profit' => round(\App\Support\OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 2),
+            'refunded_amount' => $refundedAmount,
+            'net_total' => $netTotal,
+            'owner_profit' => round(OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 2),
             'vendor_cost' => round((float) ($order->vendor_cost ?? 0), 2),
             'vendor_net_total' => $vendorNet,
-            'tenant_own_central' => round(\App\Support\OrderProfitCalculator::tenantOwnCentralForOrder($order), 2),
-            'central_own_tenant' => round(\App\Support\OrderProfitCalculator::centralOwnTenantForOrder($order), 2),
-            'remaining_owner_profit' => round(\App\Support\OrderProfitCalculator::remainingTenantOwnCentralForOrder($order), 2),
-            'remaining_tenant_profit' => round(\App\Support\OrderProfitCalculator::remainingCentralOwnTenantForOrder($order), 2),
+            'tenant_own_central' => round(OrderProfitCalculator::tenantOwnCentralForOrder($order), 2),
+            'central_own_tenant' => round(OrderProfitCalculator::centralOwnTenantForOrder($order), 2),
+            'remaining_owner_profit' => round(OrderProfitCalculator::remainingTenantOwnCentralForOrder($order), 2),
+            'remaining_tenant_profit' => round(OrderProfitCalculator::remainingCentralOwnTenantForOrder($order), 2),
         ];
     }
 
@@ -1860,7 +1894,7 @@ class TenantPanelRepository
     {
         $start = now()->startOfMonth()->subMonths($months - 1);
 
-        return collect(range(0, $months - 1))->map(fn(int $offset) => $start->copy()->addMonths($offset));
+        return collect(range(0, $months - 1))->map(fn (int $offset) => $start->copy()->addMonths($offset));
     }
 
     protected function isSameMonth($value, Carbon $month): bool
@@ -1891,11 +1925,11 @@ class TenantPanelRepository
         $orders ??= Order::query()->get();
 
         return collect(OrderStatus::cases())
-            ->map(fn(OrderStatus $status) => [
+            ->map(fn (OrderStatus $status) => [
                 'label' => $status->label(),
-                'count' => $orders->filter(fn(Order $order) => $order->status === $status)->count(),
+                'count' => $orders->filter(fn (Order $order) => $order->status === $status)->count(),
             ])
-            ->filter(fn(array $row) => $row['count'] > 0)
+            ->filter(fn (array $row) => $row['count'] > 0)
             ->values()
             ->all();
     }
@@ -1903,11 +1937,11 @@ class TenantPanelRepository
     protected function shippingStatusBreakdown(Collection $orders): array
     {
         return [
-            ['label' => 'Pending', 'count' => $orders->filter(fn(Order $order) => $order->status === OrderStatus::Pending)->count()],
-            ['label' => 'Processing', 'count' => $orders->filter(fn(Order $order) => $order->status === OrderStatus::Processing)->count()],
-            ['label' => 'Shipped', 'count' => $orders->filter(fn(Order $order) => $order->status === OrderStatus::Shipped)->count()],
-            ['label' => 'Delivered', 'count' => $orders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))->count()],
-            ['label' => 'Cancelled', 'count' => $orders->filter(fn(Order $order) => in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))->count()],
+            ['label' => 'Pending', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Pending)->count()],
+            ['label' => 'Processing', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Processing)->count()],
+            ['label' => 'Shipped', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Shipped)->count()],
+            ['label' => 'Delivered', 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))->count()],
+            ['label' => 'Cancelled', 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))->count()],
         ];
     }
 
@@ -1949,7 +1983,6 @@ class TenantPanelRepository
     {
         return SocialLink::query()->orderBy('serial_number')->get();
     }
-
 
     /**
      * One entry per tenant theme, each holding one entry per home variant with
@@ -2020,7 +2053,7 @@ class TenantPanelRepository
     {
         $repo = app(StorefrontRepository::class);
         $theme = $repo->currentTheme();
-        if (!$theme) {
+        if (! $theme) {
             return null;
         }
 
@@ -2042,14 +2075,14 @@ class TenantPanelRepository
             ?: (parse_url((string) config('app.url', 'http://localhost'), PHP_URL_HOST) ?: 'localhost');
         $scheme = parse_url((string) config('app.url', 'http://localhost'), PHP_URL_SCHEME) ?: 'http';
 
-        return $scheme . '://' . $centralDomain . '/preview?' . http_build_query($query);
+        return $scheme.'://'.$centralDomain.'/preview?'.http_build_query($query);
     }
 
     /** Default color values for one theme's home variant (used to build dynamic validation rules and for the reset action). */
     public function themeVariantColorDefaults(int $themeId, int $variantId): array
     {
         $theme = Theme::query()->find($themeId);
-        if (!$theme) {
+        if (! $theme) {
             return [];
         }
 
@@ -2123,7 +2156,7 @@ class TenantPanelRepository
     /**
      * Paginate orders that have a vendor cost (i.e. products sourced from central).
      */
-    public function paginateVendorPurchases(array $filters, int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function paginateVendorPurchases(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         return $this->queryVendorPurchases($filters)->paginate($perPage);
     }
@@ -2133,12 +2166,12 @@ class TenantPanelRepository
         return $this->queryVendorPurchases($filters)->get();
     }
 
-    public function queryVendorPurchases(array $filters): \Illuminate\Database\Eloquent\Builder
+    public function queryVendorPurchases(array $filters): Builder
     {
         return $this->buildVendorPurchasesQuery($filters);
     }
 
-    protected function buildVendorPurchasesQuery(array $filters): \Illuminate\Database\Eloquent\Builder
+    protected function buildVendorPurchasesQuery(array $filters): Builder
     {
         return Order::query()
             ->with(['customer', 'items.product', 'items.variant'])
@@ -2155,7 +2188,7 @@ class TenantPanelRepository
                 $search = trim((string) $filters['search']);
                 $query->where(function ($q) use ($search) {
                     $q->where('uuid', 'like', "%{$search}%")
-                        ->orWhereHas('customer', fn($cq) => $cq->where('full_name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
+                        ->orWhereHas('customer', fn ($cq) => $cq->where('full_name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
                 });
             })
             ->latest();
@@ -2175,8 +2208,11 @@ class TenantPanelRepository
             'total' => $orders->count(),
             'unsettled_count' => $unsettled->count(),
             'settled_count' => $settled->count(),
-            'total_owed' => round($unsettled->sum(fn(Order $o) => (float) $o->vendor_cost + (float) $o->shipping_charge), 2),
-            'total_settled' => round($settled->sum(fn(Order $o) => (float) $o->vendor_total_with_fee), 2),
+            // Cancelled / refunded orders owe central nothing.
+            'total_owed' => round($unsettled
+                ->reject(fn (Order $o) => OrderProfitCalculator::isFinanciallyVoid($o))
+                ->sum(fn (Order $o) => (float) $o->vendor_cost + (float) $o->shipping_charge), 2),
+            'total_settled' => round($settled->sum(fn (Order $o) => (float) $o->vendor_total_with_fee), 2),
         ];
     }
 
@@ -2190,8 +2226,8 @@ class TenantPanelRepository
     {
         return tenancy()->central(function () {
             return \App\Models\PaymentGateway::query()
-                ->where('status', \App\Enums\ActivationStatus::Active->value)
-                ->where('type', \App\Enums\PaymentGatewayType::VendorPayments->value)
+                ->where('status', ActivationStatus::Active->value)
+                ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->orderBy('name')
                 ->get()
                 ->mapWithKeys(function (\App\Models\PaymentGateway $gw) {
@@ -2200,13 +2236,16 @@ class TenantPanelRepository
                     $feeLabel = '';
                     if ($pct > 0 || $fixed > 0) {
                         $parts = [];
-                        if ($fixed > 0)
-                            $parts[] = '$' . number_format($fixed, 2);
-                        if ($pct > 0)
-                            $parts[] = number_format($pct, 4) . '%';
-                        $feeLabel = ' (' . implode(' + ', $parts) . ')';
+                        if ($fixed > 0) {
+                            $parts[] = '$'.number_format($fixed, 2);
+                        }
+                        if ($pct > 0) {
+                            $parts[] = number_format($pct, 4).'%';
+                        }
+                        $feeLabel = ' ('.implode(' + ', $parts).')';
                     }
-                    return [$gw->id => $gw->name . $feeLabel];
+
+                    return [$gw->id => $gw->name.$feeLabel];
                 })
                 ->all();
         });
@@ -2217,7 +2256,7 @@ class TenantPanelRepository
      */
     public function findCentralGateway(int $id): ?\App\Models\PaymentGateway
     {
-        return tenancy()->central(fn() => \App\Models\PaymentGateway::query()->find($id));
+        return tenancy()->central(fn () => \App\Models\PaymentGateway::query()->find($id));
     }
 
     /**
@@ -2233,8 +2272,8 @@ class TenantPanelRepository
     {
         return tenancy()->central(function () {
             return \App\Models\PaymentGateway::query()
-                ->where('status', \App\Enums\ActivationStatus::Active->value)
-                ->where('type', \App\Enums\PaymentGatewayType::VendorPayments->value)
+                ->where('status', ActivationStatus::Active->value)
+                ->where('type', PaymentGatewayType::VendorPayments->value)
                 ->orderBy('name')
                 ->get()
                 ->map(function (\App\Models\PaymentGateway $gw) {
@@ -2262,7 +2301,7 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->getTenantKey();
 
-        return \App\Models\VendorSettlement::query()
+        return VendorSettlement::query()
             ->where('tenant_id', $tenantId)
             ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
             ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
@@ -2280,16 +2319,16 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->getTenantKey();
 
-        $totalCount = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
-        $totalPaid = \App\Models\VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('total');
-        $thisMonth = \App\Models\VendorSettlement::query()
+        $totalCount = VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalPaid = VendorSettlement::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('total');
+        $thisMonth = VendorSettlement::query()
             ->where('tenant_id', $tenantId)
             ->where('status', 'paid')
             ->whereMonth('settled_at', now()->month)
             ->whereYear('settled_at', now()->year)
             ->sum('total');
 
-        $statuses = \App\Models\VendorSettlement::query()
+        $statuses = VendorSettlement::query()
             ->where('tenant_id', $tenantId)
             ->distinct()
             ->pluck('status', 'status')
@@ -2313,7 +2352,7 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->getTenantKey();
 
-        return \App\Models\TenantPayout::query()
+        return TenantPayout::query()
             ->where('tenant_id', $tenantId)
             ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
             ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
@@ -2330,16 +2369,16 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->getTenantKey();
 
-        $totalCount = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
-        $totalReceived = \App\Models\TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('amount');
-        $thisMonth = \App\Models\TenantPayout::query()
+        $totalCount = TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->count();
+        $totalReceived = TenantPayout::query()->where('tenant_id', $tenantId)->where('status', 'paid')->sum('amount');
+        $thisMonth = TenantPayout::query()
             ->where('tenant_id', $tenantId)
             ->where('status', 'paid')
             ->whereMonth('paid_at', now()->month)
             ->whereYear('paid_at', now()->year)
             ->sum('amount');
 
-        $statuses = \App\Models\TenantPayout::query()
+        $statuses = TenantPayout::query()
             ->where('tenant_id', $tenantId)
             ->distinct()
             ->pluck('status', 'status')
@@ -2363,14 +2402,55 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->id;
 
-        return \App\Models\ReturnRequest::query()
+        return ReturnRequest::query()
             ->where('tenant_id', $tenantId)
             ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
                 $search = trim((string) $filters['search']);
-                $query->where('order_number', 'like', '%' . $search . '%');
+                $query->where('order_number', 'like', '%'.$search.'%');
             })
             ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
             ->latest();
+    }
+
+    /**
+     * Refunds are central rows (App\Models\Refund, CentralConnection) keyed by tenant_id, so this
+     * always hits the central database, scoped to the current tenant.
+     */
+    public function queryRefunds(array $filters): Builder
+    {
+        return Refund::query()
+            ->forTenant((string) tenant()->id)
+            ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
+                $search = trim((string) $filters['search']);
+                $query->where(function (Builder $searchQuery) use ($search) {
+                    $searchQuery
+                        ->where('reference', 'like', '%'.$search.'%')
+                        ->orWhere('order_number', 'like', '%'.$search.'%');
+                });
+            })
+            ->when(filled($filters['status'] ?? null), fn (Builder $query) => $query->where('status', $filters['status']))
+            ->when(filled($filters['source'] ?? null), fn (Builder $query) => $query->where('source', $filters['source']))
+            ->latest('id');
+    }
+
+    /** @return array{refunded_amount: float, pending: int, failed: int, completed: int} */
+    public function refundStats(): array
+    {
+        $rows = Refund::query()
+            ->forTenant((string) tenant()->id)
+            ->selectRaw('status, count(*) as total, coalesce(sum(amount), 0) as amount')
+            ->groupBy('status')
+            ->get()
+            ->keyBy(fn ($row) => $row->status instanceof RefundStatus ? $row->status->value : (string) $row->status);
+
+        $count = fn (RefundStatus $status): int => (int) ($rows->get($status->value)?->total ?? 0);
+
+        return [
+            'refunded_amount' => round((float) ($rows->get(RefundStatus::Completed->value)?->amount ?? 0), 2),
+            'pending' => $count(RefundStatus::Pending) + $count(RefundStatus::Processing),
+            'failed' => $count(RefundStatus::Failed),
+            'completed' => $count(RefundStatus::Completed),
+        ];
     }
 
     public function returnStats(): array
@@ -2378,10 +2458,10 @@ class TenantPanelRepository
         $tenantId = tenant()->id;
 
         return [
-            'total' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->count(),
-            'pending' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Pending->value)->count(),
-            'approved' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Approved->value)->count(),
-            'refunded' => \App\Models\ReturnRequest::where('tenant_id', $tenantId)->where('status', \App\Enums\ReturnStatus::Refunded->value)->count(),
+            'total' => ReturnRequest::where('tenant_id', $tenantId)->count(),
+            'pending' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Pending->value)->count(),
+            'approved' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Approved->value)->count(),
+            'refunded' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Refunded->value)->count(),
         ];
     }
 
@@ -2393,13 +2473,13 @@ class TenantPanelRepository
     {
         $tenantId = tenant()->id;
 
-        $base = \App\Models\ReturnRequest::query()->where('tenant_id', $tenantId);
+        $base = ReturnRequest::query()->where('tenant_id', $tenantId);
 
         $total = (clone $base)->count();
         $last30 = (clone $base)->where('created_at', '>=', now()->subDays(30))->count();
 
-        $approved = (clone $base)->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Refunded->value])->count();
-        $rejected = (clone $base)->where('status', \App\Enums\ReturnStatus::Rejected->value)->count();
+        $approved = (clone $base)->whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::Refunded->value])->count();
+        $rejected = (clone $base)->where('status', ReturnStatus::Rejected->value)->count();
 
         $approvalRate = $total > 0 ? ($approved / $total) * 100 : 0;
         $rejectionRate = $total > 0 ? ($rejected / $total) * 100 : 0;
@@ -2424,14 +2504,14 @@ class TenantPanelRepository
             ->mapWithKeys(fn (Product $p) => [$p->id => $p->translationValue('name') ?? $p->slug]);
 
         $avgProcessingHours = (clone $base)
-            ->whereIn('status', [\App\Enums\ReturnStatus::Approved->value, \App\Enums\ReturnStatus::Rejected->value, \App\Enums\ReturnStatus::Refunded->value])
+            ->whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::Rejected->value, ReturnStatus::Refunded->value])
             ->get()
-            ->avg(fn (\App\Models\ReturnRequest $r) => $r->created_at?->diffInHours($r->updated_at)) ?? 0;
+            ->avg(fn (ReturnRequest $r) => $r->created_at?->diffInHours($r->updated_at)) ?? 0;
 
         $monthly = (clone $base)
             ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
             ->get()
-            ->groupBy(fn (\App\Models\ReturnRequest $r) => $r->created_at?->format('Y-m'))
+            ->groupBy(fn (ReturnRequest $r) => $r->created_at?->format('Y-m'))
             ->map->count();
 
         $monthlyRows = collect(range(0, 5))
@@ -2465,7 +2545,7 @@ class TenantPanelRepository
 
     public function queryBrandRequests(array $filters): Builder
     {
-        return \App\Models\BrandRequest::query()
+        return BrandRequest::query()
             ->where('tenant_id', tenant('id'))
             ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
             ->latest();
@@ -2475,10 +2555,10 @@ class TenantPanelRepository
     {
         $tenantId = tenant('id');
 
-        $counts = \App\Models\BrandRequest::where('tenant_id', $tenantId)
+        $counts = BrandRequest::where('tenant_id', $tenantId)
             ->selectRaw('COUNT(*) as total')
-            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending', [\App\Enums\BrandRequestStatus::Pending->value])
-            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as approved', [\App\Enums\BrandRequestStatus::Approved->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending', [BrandRequestStatus::Pending->value])
+            ->selectRaw('SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as approved', [BrandRequestStatus::Approved->value])
             ->first();
 
         return [
@@ -2490,14 +2570,14 @@ class TenantPanelRepository
 
     public function paginateNotifications(int $perPage = 20): LengthAwarePaginator
     {
-        return \App\Models\Tenant\TenantNotification::query()
+        return TenantNotification::query()
             ->latest()
             ->paginate($perPage);
     }
 
     public function unreadNotificationsCount(): int
     {
-        return \App\Models\Tenant\TenantNotification::unread()->count();
+        return TenantNotification::unread()->count();
     }
 
     /**
@@ -2507,7 +2587,7 @@ class TenantPanelRepository
      */
     public function queryProductRequests(array $filters): Builder
     {
-        return \App\Models\ProductRequest::forTenant((string) tenant('id'))
+        return ProductRequest::forTenant((string) tenant('id'))
             ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
             ->orderByDesc('last_reply_at');
     }
@@ -2517,9 +2597,9 @@ class TenantPanelRepository
         $tenantId = (string) tenant('id');
 
         return [
-            'total' => \App\Models\ProductRequest::forTenant($tenantId)->count(),
-            'open' => \App\Models\ProductRequest::forTenant($tenantId)->open()->count(),
-            'unread' => \App\Models\ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count(),
+            'total' => ProductRequest::forTenant($tenantId)->count(),
+            'open' => ProductRequest::forTenant($tenantId)->open()->count(),
+            'unread' => ProductRequest::forTenant($tenantId)->where('tenant_has_unread', true)->count(),
         ];
     }
 
@@ -2529,7 +2609,7 @@ class TenantPanelRepository
      */
     public function querySupportTickets(array $filters): Builder
     {
-        return \App\Models\SupportTicket::forTenant((string) tenant('id'))
+        return SupportTicket::forTenant((string) tenant('id'))
             ->orderByDesc('last_reply_at')
             ->orderByDesc('id');
     }
@@ -2537,7 +2617,7 @@ class TenantPanelRepository
     public function supportTicketStats(): array
     {
         $tenantId = (string) tenant('id');
-        $base = \App\Models\SupportTicket::forTenant($tenantId);
+        $base = SupportTicket::forTenant($tenantId);
 
         return [
             'total' => (clone $base)->count(),
@@ -2572,11 +2652,10 @@ class TenantPanelRepository
     public function pendingVendorPurchaseCount(): int
     {
         // VendorSettlement lives on the central DB — use tenancy()->central()
-        return (int) tenancy()->central(fn() =>
-            \App\Models\VendorSettlement::query()
-                ->where('tenant_id', tenant('id'))
-                ->whereIn('status', ['pending', 'processing'])
-                ->count()
+        return (int) tenancy()->central(fn () => VendorSettlement::query()
+            ->where('tenant_id', tenant('id'))
+            ->whereIn('status', ['pending', 'processing'])
+            ->count()
         );
     }
 
@@ -2600,7 +2679,7 @@ class TenantPanelRepository
             return [];
         }
 
-        $now   = \Illuminate\Support\Carbon::now();
+        $now = Carbon::now();
         $day30 = $now->copy()->subDays(30)->toDateTimeString();
         $day60 = $now->copy()->subDays(60)->toDateTimeString();
 
@@ -2627,8 +2706,8 @@ class TenantPanelRepository
             ->keyBy('product_id');
 
         $categoryIds = $categoryRows->pluck('category_id')->filter()->unique()->values()->all();
-        $peerCounts  = [];
-        if (!empty($categoryIds)) {
+        $peerCounts = [];
+        if (! empty($categoryIds)) {
             $peerCounts = DB::table('category_product as cp')
                 ->join('products as p', 'p.id', '=', 'cp.product_id')
                 ->whereIn('cp.category_id', $categoryIds)
@@ -2641,14 +2720,14 @@ class TenantPanelRepository
 
         $result = [];
         foreach ($productIds as $pid) {
-            $row     = $salesRows->get($pid);
-            $catRow  = $categoryRows->get($pid);
-            $catId   = $catRow ? (int) $catRow->category_id : 0;
-            $peers   = max(0, (int) ($peerCounts[$catId] ?? 1) - 1); // exclude the product itself
+            $row = $salesRows->get($pid);
+            $catRow = $categoryRows->get($pid);
+            $catId = $catRow ? (int) $catRow->category_id : 0;
+            $peers = max(0, (int) ($peerCounts[$catId] ?? 1) - 1); // exclude the product itself
 
             $result[$pid] = [
                 'recent_orders' => (int) ($row?->recent ?? 0),
-                'prior_orders'  => (int) ($row?->prior_count ?? 0),
+                'prior_orders' => (int) ($row?->prior_count ?? 0),
                 'category_peers' => $peers,
             ];
         }
@@ -2662,47 +2741,47 @@ class TenantPanelRepository
      * @param  array{recent_orders:int,prior_orders:int,competition:int}|null  $context
      * @param  array<string,string>  $countryMap  country_id → ['iso2'=>..,'name'=>..]
      */
-    public function buildOpportunityArray(\App\Models\Tenant\Product $product, ?array $context = null, array $countryMap = []): array
+    public function buildOpportunityArray(Product $product, ?array $context = null, array $countryMap = []): array
     {
-        $label       = $product->translationValue('name') ?? $product->slug ?? ('Product #' . $product->id);
-        $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
-        $imageUrl    = $product->primary_image_url;
-        $cost        = (float) ($product->cost_price ?? $product->default_price ?? 0);
-        $marketRef   = (float) ($product->default_price ?? 0);
-        $rawPct      = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
-        $lowPct      = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
-        $highPct     = $rawPct > 0 ? (int) ceil($rawPct * 1.15)  : 0;
+        $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
+        $description = Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
+        $imageUrl = $product->primary_image_url;
+        $cost = (float) ($product->cost_price ?? $product->default_price ?? 0);
+        $marketRef = (float) ($product->default_price ?? 0);
+        $rawPct = ($cost > 0 && $marketRef > $cost) ? (($marketRef - $cost) / $marketRef * 100) : 0;
+        $lowPct = $rawPct > 0 ? (int) floor($rawPct * 0.85) : 0;
+        $highPct = $rawPct > 0 ? (int) ceil($rawPct * 1.15) : 0;
 
         // Prefer AI price data for below_market calculation
         $aiPriceData = is_array($product->ai_price_data) ? $product->ai_price_data : null;
-        $aiMin       = isset($aiPriceData['min_price']) ? (float) $aiPriceData['min_price'] : null;
-        $aiMax       = isset($aiPriceData['max_price']) ? (float) $aiPriceData['max_price'] : null;
+        $aiMin = isset($aiPriceData['min_price']) ? (float) $aiPriceData['min_price'] : null;
+        $aiMax = isset($aiPriceData['max_price']) ? (float) $aiPriceData['max_price'] : null;
         if ($cost > 0 && $aiMin !== null && $aiMax !== null && $aiMin > $cost) {
-            $pctFromMin  = (int) round(($aiMin - $cost) / $aiMin * 100);
-            $pctFromMax  = (int) round(($aiMax - $cost) / $aiMax * 100);
-            $belowMarket = min($pctFromMin, $pctFromMax) . '% – ' . max($pctFromMin, $pctFromMax) . '%';
+            $pctFromMin = (int) round(($aiMin - $cost) / $aiMin * 100);
+            $pctFromMax = (int) round(($aiMax - $cost) / $aiMax * 100);
+            $belowMarket = min($pctFromMin, $pctFromMax).'% – '.max($pctFromMin, $pctFromMax).'%';
         } elseif ($cost > 0 && $aiMin !== null && $aiMin > $cost) {
-            $pctFromMin  = (int) round(($aiMin - $cost) / $aiMin * 100);
-            $belowMarket = $pctFromMin . '%';
+            $pctFromMin = (int) round(($aiMin - $cost) / $aiMin * 100);
+            $belowMarket = $pctFromMin.'%';
         } else {
             $belowMarket = $rawPct > 0 ? "{$lowPct}% – {$highPct}%" : null;
         }
-        $scorePct    = min(100, max(0, (int) $rawPct));
-        $profitPct   = min(100, max(0, (int) ($rawPct * 0.5)));
-        $markup      = $rawPct > 0 ? '+' . round($rawPct * 0.3, 0) . '%' : '+0%';
-        $suggested   = $cost > 0 ? '$' . number_format($cost * 1.5, 2) : '—';
+        $scorePct = min(100, max(0, (int) $rawPct));
+        $profitPct = min(100, max(0, (int) ($rawPct * 0.5)));
+        $markup = $rawPct > 0 ? '+'.round($rawPct * 0.3, 0).'%' : '+0%';
+        $suggested = $cost > 0 ? '$'.number_format($cost * 1.5, 2) : '—';
 
-        $inFlashSale = \App\Models\Tenant\FlashSale::query()
+        $inFlashSale = FlashSale::query()
             ->where(function ($q) use ($product) {
                 $q->where('product_id', $product->id)
-                  ->orWhereHas('products', fn($r) => $r->where('products.id', $product->id));
+                    ->orWhereHas('products', fn ($r) => $r->where('products.id', $product->id));
             })
             ->where('active', true)
             ->exists();
 
         // --- Trend (rising / falling / stable) based on order count change ---
         $recentOrders = $context['recent_orders'] ?? 0;
-        $priorOrders  = $context['prior_orders']  ?? 0;
+        $priorOrders = $context['prior_orders'] ?? 0;
 
         if ($recentOrders > $priorOrders) {
             $trend = 'rising';
@@ -2714,13 +2793,13 @@ class TenantPanelRepository
 
         // --- Product status (Hot / Warm / Cool) based on last-30-day sales ---
         if ($recentOrders >= 5) {
-            $status    = 'Hot';
+            $status = 'Hot';
             $statusPct = 90;
         } elseif ($recentOrders >= 1) {
-            $status    = 'Warm';
+            $status = 'Warm';
             $statusPct = 55;
         } else {
-            $status    = 'Cool';
+            $status = 'Cool';
             $statusPct = 20;
         }
 
@@ -2728,22 +2807,22 @@ class TenantPanelRepository
         $competitorCount = $context['category_peers'] ?? 0;
         if ($competitorCount <= 1) {
             $competitionLabel = 'Low';
-            $competitionText  = 'Low competition';
-            $competitionPct   = 20;
+            $competitionText = 'Low competition';
+            $competitionPct = 20;
         } elseif ($competitorCount <= 4) {
             $competitionLabel = 'Medium';
-            $competitionText  = 'Medium competition';
-            $competitionPct   = 55;
+            $competitionText = 'Medium competition';
+            $competitionPct = 55;
         } else {
             $competitionLabel = 'High';
-            $competitionText  = 'High competition';
-            $competitionPct   = 85;
+            $competitionText = 'High competition';
+            $competitionPct = 85;
         }
 
         // --- Markets: use allowed_country_ids mapped to iso2 + short name ---
         $allowedIds = (array) ($product->allowed_country_ids ?? []);
-        $markets    = [];
-        if (!empty($allowedIds) && !empty($countryMap)) {
+        $markets = [];
+        if (! empty($allowedIds) && ! empty($countryMap)) {
             foreach ($allowedIds as $cid) {
                 /** @var array{iso2:string,name:string}|null $entry */
                 $entry = $countryMap[(int) $cid] ?? null;
@@ -2758,29 +2837,29 @@ class TenantPanelRepository
         }
 
         return [
-            'id'                => $product->id,
-            'image'             => $imageUrl,
-            'added'             => true,
-            'featured'          => (bool) $product->featured,
-            'in_flash_sale'     => $inFlashSale,
-            'category'          => $product->categories->first()?->translationValue('name') ?? 'General',
-            'trend'             => $trend,
-            'competition'       => $competitionText,
-            'title'             => $label,
-            'description'       => $description !== '' ? $description : 'No description yet.',
-            'markets'           => $markets,
-            'below_market'      => $belowMarket,
-            'score'             => $scorePct > 0 ? (string) $scorePct : '—',
-            'score_pct'         => $scorePct,
-            'profit'            => $rawPct > 0 ? '+' . round($rawPct * 0.25, 0) . '%' : '+0%',
-            'profit_pct'        => $profitPct,
+            'id' => $product->id,
+            'image' => $imageUrl,
+            'added' => true,
+            'featured' => (bool) $product->featured,
+            'in_flash_sale' => $inFlashSale,
+            'category' => $product->categories->first()?->translationValue('name') ?? 'General',
+            'trend' => $trend,
+            'competition' => $competitionText,
+            'title' => $label,
+            'description' => $description !== '' ? $description : 'No description yet.',
+            'markets' => $markets,
+            'below_market' => $belowMarket,
+            'score' => $scorePct > 0 ? (string) $scorePct : '—',
+            'score_pct' => $scorePct,
+            'profit' => $rawPct > 0 ? '+'.round($rawPct * 0.25, 0).'%' : '+0%',
+            'profit_pct' => $profitPct,
             'competition_level' => $competitionLabel,
-            'competition_pct'   => $competitionPct,
-            'status'            => $status,
-            'status_pct'        => $statusPct,
-            'cost'              => $cost > 0 ? '$' . number_format($cost, 2) : '—',
-            'markup'            => $markup,
-            'suggested_price'   => $suggested,
+            'competition_pct' => $competitionPct,
+            'status' => $status,
+            'status_pct' => $statusPct,
+            'cost' => $cost > 0 ? '$'.number_format($cost, 2) : '—',
+            'markup' => $markup,
+            'suggested_price' => $suggested,
         ];
     }
 
@@ -2801,25 +2880,26 @@ class TenantPanelRepository
             return $this->sampleOpportunityCards($limit);
         }
 
-        $ids     = $products->pluck('id')->map(fn($id) => (int) $id)->all();
+        $ids = $products->pluck('id')->map(fn ($id) => (int) $id)->all();
         $context = $this->opportunityContext($ids);
 
-        return $products->map(fn(\App\Models\Tenant\Product $p) => $this->buildOpportunityArray($p, $context[$p->id] ?? null))->all();
+        return $products->map(fn (Product $p) => $this->buildOpportunityArray($p, $context[$p->id] ?? null))->all();
     }
 
     public function newInProductCards(int $limit = 6): array
     {
-        $cards = $this->newInProducts($limit)->map(function (\App\Models\Tenant\Product $product) {
+        $cards = $this->newInProducts($limit)->map(function (Product $product) {
             $opp = $this->buildOpportunityArray($product);
+
             return [
-                'id'           => $opp['id'],
-                'image'        => $opp['image'],
-                'title'        => $opp['title'],
-                'description'  => $opp['description'],
+                'id' => $opp['id'],
+                'image' => $opp['image'],
+                'title' => $opp['title'],
+                'description' => $opp['description'],
                 'below_market' => $opp['below_market'],
-                'cost'         => $opp['cost'],
-                'featured'     => $opp['featured'],
-                'in_flash_sale'=> $opp['in_flash_sale'],
+                'cost' => $opp['cost'],
+                'featured' => $opp['featured'],
+                'in_flash_sale' => $opp['in_flash_sale'],
             ];
         })->all();
 
@@ -2830,98 +2910,98 @@ class TenantPanelRepository
     {
         $samples = [
             [
-                'title'       => 'Wireless Noise-Cancelling Headphones',
+                'title' => 'Wireless Noise-Cancelling Headphones',
                 'description' => 'Premium over-ear headphones with active noise cancellation, 30-hour battery life, and foldable design for travel.',
-                'category'    => 'Electronics',
-                'cost'        => '$24.99',
-                'below_market'=> '35% – 42%',
-                'score'       => '87',
-                'score_pct'   => 87,
-                'profit'      => '+22%',
-                'profit_pct'  => 44,
-                'markup'      => '+30%',
+                'category' => 'Electronics',
+                'cost' => '$24.99',
+                'below_market' => '35% – 42%',
+                'score' => '87',
+                'score_pct' => 87,
+                'profit' => '+22%',
+                'profit_pct' => 44,
+                'markup' => '+30%',
                 'suggested_price' => '$34.99',
             ],
             [
-                'title'       => 'Portable Mini Projector 1080p',
+                'title' => 'Portable Mini Projector 1080p',
                 'description' => 'Compact LED projector with WiFi mirroring, built-in speaker, and 120-inch projection for home cinema on the go.',
-                'category'    => 'Home & Living',
-                'cost'        => '$39.50',
-                'below_market'=> '28% – 34%',
-                'score'       => '79',
-                'score_pct'   => 79,
-                'profit'      => '+18%',
-                'profit_pct'  => 36,
-                'markup'      => '+25%',
+                'category' => 'Home & Living',
+                'cost' => '$39.50',
+                'below_market' => '28% – 34%',
+                'score' => '79',
+                'score_pct' => 79,
+                'profit' => '+18%',
+                'profit_pct' => 36,
+                'markup' => '+25%',
                 'suggested_price' => '$52.00',
             ],
             [
-                'title'       => 'Smart Fitness Tracker Band',
+                'title' => 'Smart Fitness Tracker Band',
                 'description' => 'Waterproof fitness band with heart-rate monitor, sleep tracking, step counter, and 7-day battery life.',
-                'category'    => 'Sports',
-                'cost'        => '$12.99',
-                'below_market'=> '40% – 48%',
-                'score'       => '92',
-                'score_pct'   => 92,
-                'profit'      => '+28%',
-                'profit_pct'  => 56,
-                'markup'      => '+35%',
+                'category' => 'Sports',
+                'cost' => '$12.99',
+                'below_market' => '40% – 48%',
+                'score' => '92',
+                'score_pct' => 92,
+                'profit' => '+28%',
+                'profit_pct' => 56,
+                'markup' => '+35%',
                 'suggested_price' => '$19.99',
             ],
             [
-                'title'       => 'Electric Posture Corrector',
+                'title' => 'Electric Posture Corrector',
                 'description' => 'Intelligent posture reminder with vibration alerts, rechargeable battery, and discreet under-clothes design.',
-                'category'    => 'Health',
-                'cost'        => '$9.99',
-                'below_market'=> '45% – 55%',
-                'score'       => '83',
-                'score_pct'   => 83,
-                'profit'      => '+24%',
-                'profit_pct'  => 48,
-                'markup'      => '+32%',
+                'category' => 'Health',
+                'cost' => '$9.99',
+                'below_market' => '45% – 55%',
+                'score' => '83',
+                'score_pct' => 83,
+                'profit' => '+24%',
+                'profit_pct' => 48,
+                'markup' => '+32%',
                 'suggested_price' => '$15.99',
             ],
             [
-                'title'       => 'LED Strip Lights 10m RGB',
+                'title' => 'LED Strip Lights 10m RGB',
                 'description' => 'App-controlled RGB LED strips with music sync, 16 million colors, and easy peel-and-stick installation.',
-                'category'    => 'Home & Living',
-                'cost'        => '$7.49',
-                'below_market'=> '38% – 46%',
-                'score'       => '76',
-                'score_pct'   => 76,
-                'profit'      => '+20%',
-                'profit_pct'  => 40,
-                'markup'      => '+28%',
+                'category' => 'Home & Living',
+                'cost' => '$7.49',
+                'below_market' => '38% – 46%',
+                'score' => '76',
+                'score_pct' => 76,
+                'profit' => '+20%',
+                'profit_pct' => 40,
+                'markup' => '+28%',
                 'suggested_price' => '$12.99',
             ],
             [
-                'title'       => 'Collapsible Silicone Water Bottle',
+                'title' => 'Collapsible Silicone Water Bottle',
                 'description' => 'BPA-free foldable bottle with 600ml capacity, leak-proof lid, and heat-resistant material for hot and cold drinks.',
-                'category'    => 'Accessories',
-                'cost'        => '$4.99',
-                'below_market'=> '32% – 40%',
-                'score'       => '71',
-                'score_pct'   => 71,
-                'profit'      => '+15%',
-                'profit_pct'  => 30,
-                'markup'      => '+22%',
+                'category' => 'Accessories',
+                'cost' => '$4.99',
+                'below_market' => '32% – 40%',
+                'score' => '71',
+                'score_pct' => 71,
+                'profit' => '+15%',
+                'profit_pct' => 30,
+                'markup' => '+22%',
                 'suggested_price' => '$7.99',
             ],
         ];
 
         $markets = ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE', 'fr' => 'FRA', 'ma' => 'Mor'];
 
-        return array_map(fn(array $s) => array_merge([
-            'id'                => null,
-            'image'             => null,
-            'added'             => false,
-            'trend'             => 'rising',
-            'competition'       => 'Low competition',
+        return array_map(fn (array $s) => array_merge([
+            'id' => null,
+            'image' => null,
+            'added' => false,
+            'trend' => 'rising',
+            'competition' => 'Low competition',
             'competition_level' => 'Low',
-            'competition_pct'   => 20,
-            'status'            => 'Hot',
-            'status_pct'        => 80,
-            'markets'           => $markets,
+            'competition_pct' => 20,
+            'status' => 'Hot',
+            'status_pct' => 80,
+            'markets' => $markets,
         ], $s), array_slice($samples, 0, $limit));
     }
 
@@ -2929,43 +3009,43 @@ class TenantPanelRepository
     {
         $samples = [
             [
-                'title'       => 'Magnetic Phone Car Mount',
+                'title' => 'Magnetic Phone Car Mount',
                 'description' => 'Universal magnetic dashboard mount compatible with all smartphones, 360° rotation, strong magnet, no-scratch surface.',
-                'below_market'=> '30% – 38%',
-                'cost'        => '$5.99',
+                'below_market' => '30% – 38%',
+                'cost' => '$5.99',
             ],
             [
-                'title'       => 'Bamboo Wireless Charging Pad',
+                'title' => 'Bamboo Wireless Charging Pad',
                 'description' => 'Eco-friendly 15W fast wireless charger with bamboo surface, LED indicator, and universal Qi compatibility.',
-                'below_market'=> '25% – 32%',
-                'cost'        => '$8.49',
+                'below_market' => '25% – 32%',
+                'cost' => '$8.49',
             ],
             [
-                'title'       => 'Stainless Steel Insulated Tumbler',
+                'title' => 'Stainless Steel Insulated Tumbler',
                 'description' => 'Double-wall vacuum tumbler keeps drinks cold 24h or hot 12h, sweat-free exterior, spill-proof lid included.',
-                'below_market'=> '33% – 40%',
-                'cost'        => '$10.99',
+                'below_market' => '33% – 40%',
+                'cost' => '$10.99',
             ],
             [
-                'title'       => 'Portable Handheld Garment Steamer',
+                'title' => 'Portable Handheld Garment Steamer',
                 'description' => 'Fast heat-up fabric steamer with continuous steam for wrinkle removal, suitable for all fabric types.',
-                'below_market'=> '28% – 36%',
-                'cost'        => '$14.50',
+                'below_market' => '28% – 36%',
+                'cost' => '$14.50',
             ],
             [
-                'title'       => 'UV Sanitizer Box with Wireless Charger',
+                'title' => 'UV Sanitizer Box with Wireless Charger',
                 'description' => 'Multi-function UV sterilization box doubles as a wireless charger, kills 99.9% of bacteria in 5 minutes.',
-                'below_market'=> '36% – 44%',
-                'cost'        => '$18.99',
+                'below_market' => '36% – 44%',
+                'cost' => '$18.99',
             ],
             [
-                'title'       => 'Adjustable Laptop Stand Aluminium',
+                'title' => 'Adjustable Laptop Stand Aluminium',
                 'description' => 'Portable aluminium laptop riser with 6 height levels, anti-slip pads, foldable for desk and travel use.',
-                'below_market'=> '22% – 30%',
-                'cost'        => '$16.99',
+                'below_market' => '22% – 30%',
+                'cost' => '$16.99',
             ],
         ];
 
-        return array_map(fn(array $s) => array_merge(['image' => null], $s), array_slice($samples, 0, $limit));
+        return array_map(fn (array $s) => array_merge(['image' => null], $s), array_slice($samples, 0, $limit));
     }
 }

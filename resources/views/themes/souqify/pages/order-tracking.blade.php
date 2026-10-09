@@ -1,3 +1,7 @@
+{{--
+    Souqify – Order tracking page
+    Shared after-sales partials: order-cancellation-summary, order-refunds-summary, order-cancel-action.
+--}}
 @php
 use App\Enums\OrderStatus;
 
@@ -213,7 +217,19 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
             <p class="text-base font-bold text-[#001537]">{{ __('This order was cancelled.') }}</p>
             <p class="text-xs text-[#747474] mt-1">{{ __('If you have questions, please contact support.') }}</p>
         </div>
+        <div class="flex flex-col gap-4 text-start">
+            @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+            @include('livewire.tenant.storefront.partials.order-refunds-summary')
+        </div>
         @else
+        @if ($order->status === OrderStatus::Refunded || auth('storefront')->check())
+        <div class="flex flex-col gap-3">
+            @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+            @include('livewire.tenant.storefront.partials.order-refunds-summary')
+            @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'notice'])
+            @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'trigger'])
+        </div>
+        @endif
         {{-- ── Blue status card ──────────────────────────────────── --}}
         <div class="rounded-2xl p-3 flex flex-col gap-2" style="background:#0159ED;">
             {{-- Status header --}}
@@ -423,18 +439,8 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                     @endif
                 </div>
                 <div class="flex gap-3">
-                    @if (!$isCancelled && in_array($order->status, [OrderStatus::Pending, OrderStatus::Processing],
-                    true))
-                    <button type="button"
-                        class="h-14 px-6 flex items-center justify-center gap-2 rounded-lg border border-[#DE1709] text-[#DE1709] text-base font-normal hover:bg-red-50 transition">
-                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M2.25 13.5C1.8375 13.5 1.48438 13.3531 1.19062 13.0594C0.896875 12.7656 0.75 12.4125 0.75 12V2.25H0V0.75H3.75V0H8.25V0.75H12V2.25H11.25V12C11.25 12.4125 11.1031 12.7656 10.8094 13.0594C10.5156 13.3531 10.1625 13.5 9.75 13.5H2.25ZM9.75 2.25H2.25V12H9.75V2.25ZM3.75 10.5H5.25V3.75H3.75V10.5ZM6.75 10.5H8.25V3.75H6.75V10.5ZM2.25 2.25V12V2.25Z"
-                                fill="#DE1709" />
-                        </svg>
-
-                        {{ __('Cancel order') }}
-                    </button>
+                    @if (!$isCancelled)
+                    @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'trigger', 'cancelSize' => 'compact'])
                     @endif
                     <a href="mailto:support@{{ request()->getHost() }}"
                         class="h-14 px-6 flex items-center justify-center gap-2 bg-[#0159ED] rounded-lg text-white text-base font-normal hover:bg-blue-700 transition">
@@ -460,12 +466,27 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                 </div>
                 <h2 class="text-xl font-bold text-[#001537] mb-2">{{ __('This order was cancelled.') }}</h2>
                 <p class="text-sm text-[#747474]">{{ __('If you have questions, please contact support.') }}</p>
+                <div class="w-full flex flex-col gap-4 mt-6 text-start">
+                    @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                    @include('livewire.tenant.storefront.partials.order-refunds-summary')
+                </div>
                 <button type="button" wire:click="showDetails"
                     class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#0159ED] text-[#0159ED] text-sm font-semibold hover:bg-blue-50 transition">
                     ← {{ __('Order details') }}
                 </button>
             </div>
             @else
+            {{-- ── Refunded banner / shipped notice ─────────────────────── --}}
+            @if ($order->status === OrderStatus::Refunded)
+            <div class="flex flex-col gap-4 mb-6">
+                @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                @include('livewire.tenant.storefront.partials.order-refunds-summary')
+            </div>
+            @elseif (auth('storefront')->check() && $order->status === OrderStatus::Shipped)
+            <div class="mb-6">
+                @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'notice'])
+            </div>
+            @endif
             {{-- ── Main two-column layout ───────────────────────────────── --}}
             <div class="grid grid-cols-1 lg:grid-cols-[1fr_394px] gap-6 items-start">
 
@@ -783,4 +804,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
         </div>
     </main>
 </div>{{-- end desktop wrapper --}}
+
+{{-- Cancel-order modal (when rendered by the order page's tracking mode) --}}
+@include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'modal'])
 </div>

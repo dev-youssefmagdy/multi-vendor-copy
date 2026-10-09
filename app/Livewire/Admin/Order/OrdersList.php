@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Order;
 
 use App\Enums\OrderPaymentStatus;
+use App\Enums\OrderStatus;
 use App\Livewire\Admin\Base\ListPage;
 use App\Repositories\OrderRepository;
 use Livewire\WithPagination;
@@ -52,8 +53,8 @@ class OrdersList extends ListPage
             'records' => $records,
             'filterFields' => [
                 ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Order, customer, or tenant'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All statuses', 'pending' => 'Pending', 'processing' => 'Processing', 'completed' => 'Completed', 'shipped' => 'Shipped', 'delivered' => 'Delivered', 'cancelled' => 'Cancelled', 'rejected' => 'Rejected']],
-                ['label' => 'Payment', 'model' => 'paymentFilter', 'type' => 'select', 'options' => ['' => 'All payments', 'paid' => 'Paid', 'unpaid' => 'Unpaid', 'pending' => 'Pending']],
+                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All statuses'] + collect(OrderStatus::cases())->mapWithKeys(fn (OrderStatus $status) => [$status->value => $status->label()])->all()],
+                ['label' => 'Payment', 'model' => 'paymentFilter', 'type' => 'select', 'options' => ['' => 'All payments', 'paid' => 'Paid', 'unpaid' => 'Unpaid', 'pending' => 'Pending', 'refunded' => OrderPaymentStatus::Refunded->label(), 'partially_refunded' => OrderPaymentStatus::PartiallyRefunded->label()]],
                 ['label' => 'Gateway', 'model' => 'gatewayFilter', 'type' => 'select', 'options' => $repository->paymentMethodOptions()],
             ],
             'filtersNote' => 'Track aggregated tenant order flow across all stores by lifecycle and payment state.',
@@ -75,9 +76,10 @@ class OrdersList extends ListPage
                 . '<div class="entity-subtitle">'
                 . ($order->discount_percentage > 0 ? e(number_format($order->discount_percentage, 1)) . '% off · ' : '')
                 . '$' . e(number_format((float) $order->owner_profit, 2)) . ' owner profit'
+                . ((float) $order->refunded_amount > 0 ? ' · $' . e(number_format((float) $order->refunded_amount, 2)) . ' refunded' : '')
                 . '</div>',
-                '<div class="entity-title"><span class="badge ' . match ($order->payment_status) { OrderPaymentStatus::Paid => 'badge-green', OrderPaymentStatus::PendingPayment => 'badge-yellow', default => 'badge-amber'} . '">' . e($order->payment_status->label()) . '</span></div><div class="entity-subtitle">' . e($order->payment_method ?: $order->payment_gateway ?: 'Unknown gateway') . '</div>',
-                '<div class="entity-title"><span class="badge badge-cyan">' . e($order->status->label()) . '</span></div><div class="entity-subtitle">' . e($order->shipping_status->label()) . '</div>',
+                '<div class="entity-title"><span class="badge ' . match ($order->payment_status) { OrderPaymentStatus::Paid => 'badge-green', OrderPaymentStatus::PendingPayment => 'badge-yellow', OrderPaymentStatus::Refunded, OrderPaymentStatus::PartiallyRefunded => 'badge-violet', OrderPaymentStatus::Failed => 'badge-red', default => 'badge-amber'} . '">' . e($order->payment_status->label()) . '</span></div><div class="entity-subtitle">' . e($order->payment_method ?: $order->payment_gateway ?: 'Unknown gateway') . '</div>',
+                '<div class="entity-title"><span class="badge ' . match ($order->status) { OrderStatus::Cancelled, OrderStatus::Rejected => 'badge-red', OrderStatus::Refunded => 'badge-violet', OrderStatus::Delivered, OrderStatus::Completed => 'badge-green', default => 'badge-cyan'} . '">' . e($order->status->label()) . '</span></div><div class="entity-subtitle">' . e($order->shipping_status->label()) . '</div>',
                 '<a href="' . route('admin.orders.show', [$order->tenant_id, $order->order_number]) . '" class="link-btn">View</a>',
             ])->all(),
             'tableDescription' => $records->total() . ' aggregated tenant orders matched the current filters.',

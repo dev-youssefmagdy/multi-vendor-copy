@@ -2,32 +2,56 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
+use App\Enums\OrderStatus;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
+use App\Livewire\Tenant\Storefront\Concerns\ManagesOrderCancellation;
 use App\Models\ReturnRequest;
+use App\Models\Tenant\Order;
 use App\Models\Tenant\ProductRate;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\ReturnRequestService;
+use App\Support\Tenant\Storefront\OrderAfterSalesPresenter;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class OrderStatusPage extends Component
 {
     use HasStorefrontLayout;
+    use ManagesOrderCancellation;
 
     public string $uuid = '';
+
     public string $mode = 'details';
 
     // ── Review modal state ───────────────────────────────────────────────────
-    public bool   $showReviewModal  = false;
-    public ?int   $reviewProductId  = null;
-    public int    $reviewStars      = 5;
-    public string $reviewComment    = '';
+    public bool $showReviewModal = false;
+
+    public ?int $reviewProductId = null;
+
+    public int $reviewStars = 5;
+
+    public string $reviewComment = '';
 
     public function mount(string $uuid): void
     {
         $this->uuid = $uuid;
 
         $this->fireOrderConfirmationTracking();
+
+        // ?cancel=1 (e.g. the "Cancel order" link of the tracking page / account order list)
+        // opens the cancel modal right away when the customer may cancel this order.
+        if (request()->boolean('cancel')) {
+            $order = $this->customerOrderForCancellation($uuid);
+
+            if ($order && $this->customerCancelDecision($order)->allowed) {
+                $this->openCancelModal($uuid);
+            }
+        }
+    }
+
+    protected function cancellationToastEvent(): string
+    {
+        return 'order-status-swal';
     }
 
     /**
@@ -37,13 +61,13 @@ class OrderStatusPage extends Component
      */
     protected function fireOrderConfirmationTracking(): void
     {
-        $sessionKey = 'tracking_purchase_fired_' . $this->uuid;
+        $sessionKey = 'tracking_purchase_fired_'.$this->uuid;
         if (session()->has($sessionKey)) {
             return;
         }
 
         $order = app(StorefrontRepository::class)->orderByUuid($this->uuid);
-        if (!$order) {
+        if (! $order) {
             return;
         }
 
@@ -74,22 +98,23 @@ class OrderStatusPage extends Component
     {
         $customer = Auth::guard('storefront')->user();
 
-        if (!$customer) {
+        if (! $customer) {
             $this->dispatch('order-status-swal', message: __('Please login to leave a review.'), type: 'error');
+
             return;
         }
 
-        $repo  = app(StorefrontRepository::class);
+        $repo = app(StorefrontRepository::class);
         $order = $repo->orderByUuid($this->uuid);
 
-        if (!$order) {
+        if (! $order) {
             return;
         }
 
         // Auto-select the first product
         $this->reviewProductId = $order->items->first()?->product_id;
-        $this->reviewStars     = 5;
-        $this->reviewComment   = '';
+        $this->reviewStars = 5;
+        $this->reviewComment = '';
         $this->showReviewModal = true;
     }
 
@@ -102,38 +127,41 @@ class OrderStatusPage extends Component
     {
         $customer = Auth::guard('storefront')->user();
 
-        if (!$customer) {
+        if (! $customer) {
             $this->dispatch('order-status-swal', message: __('Please login to leave a review.'), type: 'error');
+
             return;
         }
 
         $this->validate([
             'reviewProductId' => 'required|integer',
-            'reviewStars'     => 'required|integer|min:1|max:5',
-            'reviewComment'   => 'nullable|string|max:1000',
+            'reviewStars' => 'required|integer|min:1|max:5',
+            'reviewComment' => 'nullable|string|max:1000',
         ]);
 
-        $repo  = app(StorefrontRepository::class);
+        $repo = app(StorefrontRepository::class);
         $order = $repo->orderByUuid($this->uuid);
 
         $productIds = $order?->items->pluck('product_id')->filter()->toArray() ?? [];
 
-        if (!in_array($this->reviewProductId, $productIds)) {
+        if (! in_array($this->reviewProductId, $productIds)) {
             $this->dispatch('order-status-swal', message: __('Invalid product selected.'), type: 'error');
+
             return;
         }
 
         if (ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customer->id)->exists()) {
             $this->showReviewModal = false;
             $this->dispatch('order-status-swal', message: __('You have already reviewed this product.'), type: 'error');
+
             return;
         }
 
         ProductRate::create([
-            'product_id'  => $this->reviewProductId,
+            'product_id' => $this->reviewProductId,
             'customer_id' => $customer->id,
-            'stars'       => $this->reviewStars,
-            'comment'     => $this->reviewComment ?: null,
+            'stars' => $this->reviewStars,
+            'comment' => $this->reviewComment ?: null,
         ]);
 
         $this->showReviewModal = false;
@@ -150,21 +178,22 @@ class OrderStatusPage extends Component
         $repo = app(StorefrontRepository::class);
         $order = $repo->orderByUuid($this->uuid);
 
-        if (!$order) {
+        if (! $order) {
             $this->dispatch('order-status-swal', message: __('Order not found.'), type: 'error');
+
             return;
         }
 
         $cart = session('storefront_cart', []);
 
         foreach ($order->items as $item) {
-            if (!$item->product_id) {
+            if (! $item->product_id) {
                 continue;
             }
 
             $key = $item->product_variant_id
-                ? 'v_' . $item->product_variant_id
-                : 'p_' . $item->product_id;
+                ? 'v_'.$item->product_variant_id
+                : 'p_'.$item->product_id;
 
             if (isset($cart[$key])) {
                 $cart[$key]['qty'] += max(1, (int) $item->qty);
@@ -172,7 +201,7 @@ class OrderStatusPage extends Component
                 $cart[$key] = [
                     'product_id' => $item->product_id,
                     'variant_id' => $item->product_variant_id ?: null,
-                    'qty'        => max(1, (int) $item->qty),
+                    'qty' => max(1, (int) $item->qty),
                 ];
             }
         }
@@ -184,28 +213,43 @@ class OrderStatusPage extends Component
 
     public function render()
     {
-        $repo     = app(StorefrontRepository::class);
-        $order    = $repo->orderByUuid($this->uuid);
+        $repo = app(StorefrontRepository::class);
+        $order = $repo->orderByUuid($this->uuid);
         $customer = Auth::guard('storefront')->user();
 
-        if (!$order) {
+        if (! $order) {
             abort(404);
         }
 
         $returnRequests = ReturnRequest::where('tenant_id', tenant()->id)
             ->where('order_number', $order->uuid)
             ->with('notes')
+            ->latest('id')
             ->get();
 
-        $returnWindowOpen = app(ReturnRequestService::class)->isWithinReturnWindow(tenant()->id, $order->uuid);
+        $returnService = app(ReturnRequestService::class);
+        $returnWindowOpen = $returnService->isWithinReturnWindow(tenant()->id, $order->uuid);
+
+        $isOwner = $customer && (int) $order->customer_id === (int) $customer->id;
+        $cancelDecision = $this->customerCancelDecision($order);
 
         $data = array_merge($this->sharedData(), [
-            'order'              => $order,
+            'order' => $order,
             'reviewedProductIds' => $customer
                 ? ProductRate::where('customer_id', $customer->id)->pluck('product_id')->toArray()
                 : [],
-            'returnRequests'     => $returnRequests,
-            'returnWindowOpen'   => $returnWindowOpen,
+            'returnRequests' => $returnRequests,
+            'returnWindowOpen' => $returnWindowOpen,
+            // After-sales (RETURN_EXCHANGE_REFUND_PLAN.md B.3.4 / B.8) — read by the shared partials
+            // order-cancel-action, order-cancellation-summary, order-refunds-summary, return-item-action.
+            'canCancel' => $isOwner && $cancelDecision->allowed,
+            'cancelViaModal' => true,
+            'cancelDecision' => $cancelDecision,
+            'cancelReasons' => $this->customerCancellationReasons(),
+            'cancellation' => OrderAfterSalesPresenter::cancellation($order),
+            'refunds' => OrderAfterSalesPresenter::refundsFor($order),
+            'paymentState' => $order->paymentState(),
+            'returnItems' => $this->returnItems($order, $returnService),
         ]);
 
         $viewName = $this->mode === 'tracking' ? 'order-tracking' : 'order-status';
@@ -214,8 +258,35 @@ class OrderStatusPage extends Component
 
         return view($this->pageView($viewName), $data)
             ->layout($this->storefrontLayout(), [
-                'title' => $storeName ? __('Order Status') . " — {$storeName}" : __('Order Status'),
+                'title' => $storeName ? __('Order Status')." — {$storeName}" : __('Order Status'),
                 'metaDescription' => '',
             ]);
+    }
+
+    /**
+     * Per order line: units left to return and whether a new request is possible (keyed by
+     * order item id), so return-item-action doesn't query per item. Only delivered orders can be
+     * returned, so other statuses skip the lookups.
+     *
+     * @return array<int, array{remaining: int, returnable: bool, has_open_request: bool, errors: list<string>}>
+     */
+    private function returnItems(Order $order, ReturnRequestService $service): array
+    {
+        if (! $order->status instanceof OrderStatus || ! $order->status->isDelivered()) {
+            return [];
+        }
+
+        $rows = [];
+
+        foreach ($service->eligibleItems($order, (string) tenant('id'), withExchangeOptions: false) as $row) {
+            $rows[$row['order_item_id']] = [
+                'remaining' => $row['remaining'],
+                'returnable' => $row['returnable'],
+                'has_open_request' => $row['has_open_request'],
+                'errors' => $row['errors'],
+            ];
+        }
+
+        return $rows;
     }
 }

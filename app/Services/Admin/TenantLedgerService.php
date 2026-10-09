@@ -2,12 +2,11 @@
 
 namespace App\Services\Admin;
 
-use App\Enums\OrderStatus;
 use App\Models\Tenant;
-use App\Models\TenantPayout;
-use App\Models\VendorSettlement;
 use App\Models\Tenant\Currency as TenantCurrency;
 use App\Models\Tenant\Order as TenantOrder;
+use App\Models\TenantPayout;
+use App\Models\VendorSettlement;
 use App\Support\OrderProfitCalculator;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -80,14 +79,14 @@ class TenantLedgerService
 
     public function find(string $tenantId): ?object
     {
-        return $this->ledger()->first(fn(object $entry) => (string) $entry->tenant_id === $tenantId);
+        return $this->ledger()->first(fn (object $entry) => (string) $entry->tenant_id === $tenantId);
     }
 
     /**
      * Build ledger entries for only the given tenant IDs, initializing tenancy
      * once per tenant instead of looping over every tenant in the system.
      *
-     * @param array<int, string> $tenantIds
+     * @param  array<int, string>  $tenantIds
      * @return Collection<string, object> keyed by tenant_id
      */
     public function forTenants(array $tenantIds): Collection
@@ -137,6 +136,7 @@ class TenantLedgerService
         return [
             'gross_sales' => (float) $ledger->sum('gross_sales'),
             'collected_sales' => (float) $ledger->sum('collected_sales'),
+            'refunded_total' => (float) $ledger->sum('refunded_total'),
             'discount_total' => (float) $ledger->sum('discount_total') + (float) $ledger->sum('items_discount_total'),
             'tax_total' => (float) $ledger->sum('tax_total') + (float) $ledger->sum('items_tax_total'),
             'shipping_total' => (float) $ledger->sum('shipping_total'),
@@ -158,43 +158,45 @@ class TenantLedgerService
     protected function buildEntry(Tenant $tenant, Collection $tenantPayouts, Collection $tenantSettlements): object
     {
         $orders = TenantOrder::query()->get();
-        $paid = $orders->filter(fn(TenantOrder $o) => $o->paid);
-        $cancelledLike = [OrderStatus::Cancelled, OrderStatus::Rejected];
+        // Paid orders that still produce money: cancelled / rejected / refunded orders are excluded
+        // from every payout, profit and revenue total (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
+        $allPaid = $orders->filter(fn (TenantOrder $o) => $o->paid);
+        $paid = $allPaid->reject(fn (TenantOrder $o) => OrderProfitCalculator::isFinanciallyVoid($o));
 
         // Gateway classification: vendor_gateway_id !== null → vendor collected payment
-        $isVendorGateway = fn(TenantOrder $o): bool =>
-            OrderProfitCalculator::orderPaidFromTenantGatewayForOrder($o);
+        $isVendorGateway = fn (TenantOrder $o): bool => OrderProfitCalculator::orderPaidFromTenantGatewayForOrder($o);
 
         // Effective owner profit: once a vendor purchase gateway is attached (vendor_gateway_id
         // set), central's cut for the order is the vendor_cost owed back to central, not the
         // originally recorded owner_profit. Mirrors OrderRepository / TenantAdminAggregateService.
-        $effectiveOwnerProfit = fn(TenantOrder $o): float =>
-            OrderProfitCalculator::effectiveOwnerProfitForOrder($o);
+        $effectiveOwnerProfit = fn (TenantOrder $o): float => OrderProfitCalculator::effectiveOwnerProfitForOrder($o);
 
         $vendorGatewayPaid = $paid->filter($isVendorGateway);
-        $centralGatewayPaid = $paid->filter(fn(TenantOrder $o) => !$isVendorGateway($o));
+        $centralGatewayPaid = $paid->filter(fn (TenantOrder $o) => ! $isVendorGateway($o));
 
         // Informational totals across all paid orders
-        $grossSales = (float) $orders->sum(fn(TenantOrder $o) => (float) $o->grand_total);
-        $collectedSales = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->grand_total);
-        $subtotal = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->subtotal);
-        $itemsDiscount = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->items_discount);
-        $discount = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->discount_amount);
-        $itemsTax = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->items_tax);
-        $tax = (float) $paid->sum(fn(TenantOrder $o) => (float) $o->tax_amount);
-        $shipping = (float) $paid->sum(fn(TenantOrder $o) => (float) ($o->resolved_shipping_charge ?? $o->shipping_charge));
+        // Net of completed refunds; void orders count for 0.
+        $grossSales = (float) $orders->sum(fn (TenantOrder $o) => OrderProfitCalculator::netOrderTotal($o));
+        $collectedSales = (float) $paid->sum(fn (TenantOrder $o) => OrderProfitCalculator::netOrderTotal($o));
+        $refundedTotal = (float) $allPaid->sum(fn (TenantOrder $o) => (float) ($o->refunded_amount ?? 0));
+        $subtotal = (float) $paid->sum(fn (TenantOrder $o) => (float) $o->subtotal);
+        $itemsDiscount = (float) $paid->sum(fn (TenantOrder $o) => (float) $o->items_discount);
+        $discount = (float) $paid->sum(fn (TenantOrder $o) => (float) $o->discount_amount);
+        $itemsTax = (float) $paid->sum(fn (TenantOrder $o) => (float) $o->items_tax);
+        $tax = (float) $paid->sum(fn (TenantOrder $o) => (float) $o->tax_amount);
+        $shipping = (float) $paid->sum(fn (TenantOrder $o) => (float) ($o->resolved_shipping_charge ?? $o->shipping_charge));
         $ownerProfit = (float) $paid->sum($effectiveOwnerProfit);
-        $vendorCost = (float) $paid->sum(fn(TenantOrder $o) => (float) ($o->vendor_cost ?? 0));
-        $vendorGatewayFee = (float) $paid->sum(fn(TenantOrder $o) => (float) ($o->vendor_gateway_fee ?? 0));
+        $vendorCost = (float) $paid->sum(fn (TenantOrder $o) => (float) ($o->vendor_cost ?? 0));
+        $vendorGatewayFee = (float) $paid->sum(fn (TenantOrder $o) => (float) ($o->vendor_gateway_fee ?? 0));
 
         // --- Gateway-based balance model ---
         // Vendor profit: central collected → vendor earns (grand_total − effective owner profit)
         $vendorProfitTotal = (float) $centralGatewayPaid->sum(
-            fn(TenantOrder $o) => round(OrderProfitCalculator::centralOwnTenantForOrder($o), 2)
+            fn (TenantOrder $o) => round(OrderProfitCalculator::centralOwnTenantForOrder($o), 2)
         );
         // Central profit: vendor collected → vendor owes central the effective owner profit
         $centralProfitTotal = (float) $vendorGatewayPaid->sum(
-            fn(TenantOrder $o) => round(OrderProfitCalculator::tenantOwnCentralForOrder($o), 2)
+            fn (TenantOrder $o) => round(OrderProfitCalculator::tenantOwnCentralForOrder($o), 2)
         );
 
         $vendorBalance = round($vendorProfitTotal - $centralProfitTotal, 2);
@@ -202,9 +204,8 @@ class TenantLedgerService
 
         // Outstanding: vendor-gateway orders not yet settled with central
         $unsettled = $vendorGatewayPaid->filter(
-            fn(TenantOrder $o) => $o->vendor_settled_at === null
+            fn (TenantOrder $o) => $o->vendor_settled_at === null
         );
-
 
         // Outstanding: central profit owed to central, net of paid vendor settlements
         $settlementsReceived = (float) $tenantSettlements->sum('total');
@@ -218,8 +219,8 @@ class TenantLedgerService
 
         $pendingBalance = (float) $orders
             ->where('paid', false)
-            ->filter(fn(TenantOrder $o) => !in_array($o->status, $cancelledLike, true))
-            ->sum(fn(TenantOrder $o) => max(0, (float) $o->grand_total - $effectiveOwnerProfit($o)));
+            ->reject(fn (TenantOrder $o) => OrderProfitCalculator::isFinanciallyVoid($o))
+            ->sum(fn (TenantOrder $o) => max(0, (float) $o->grand_total - $effectiveOwnerProfit($o)));
 
         $currency = TenantCurrency::query()->where('is_default', true)->value('code')
             ?? TenantCurrency::query()->orderByDesc('is_active')->value('code')
@@ -236,6 +237,7 @@ class TenantLedgerService
             'paid_orders_count' => $paid->count(),
             'gross_sales' => round($grossSales, 2),
             'collected_sales' => round($collectedSales, 2),
+            'refunded_total' => round($refundedTotal, 2),
             'subtotal_total' => round($subtotal, 2),
             'items_discount_total' => round($itemsDiscount, 2),
             'discount_total' => round($discount, 2),
@@ -257,7 +259,7 @@ class TenantLedgerService
             'net_payable_to_tenant' => round(max(0.0, $centralOwesTenant), 2),
             'settlements_received' => round($settlementsReceived, 2),
             'payouts_sent' => round($payoutsSent, 2),
-            'unsettled_orders' => $unsettled->map(fn(TenantOrder $o) => [
+            'unsettled_orders' => $unsettled->map(fn (TenantOrder $o) => [
                 'id' => $o->id,
                 'uuid' => $o->uuid,
                 'grand_total' => (float) $o->grand_total,
@@ -266,7 +268,7 @@ class TenantLedgerService
                 'vendor_gateway_fee' => (float) ($o->vendor_gateway_fee ?? 0),
                 'created_at' => $o->created_at,
             ])->values()->all(),
-            'recent_paid_orders' => $paid->sortByDesc('created_at')->take(5)->map(fn(TenantOrder $o) => [
+            'recent_paid_orders' => $paid->sortByDesc('created_at')->take(5)->map(fn (TenantOrder $o) => [
                 'uuid' => $o->uuid,
                 'grand_total' => (float) $o->grand_total,
                 'owner_profit' => $effectiveOwnerProfit($o),

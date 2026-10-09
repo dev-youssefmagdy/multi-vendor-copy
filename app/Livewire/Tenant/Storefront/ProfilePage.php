@@ -3,31 +3,40 @@
 namespace App\Livewire\Tenant\Storefront;
 
 use App\Concerns\SanitizesPhoneNumber;
+use App\Enums\CancellationActor;
+use App\Enums\CancellationReason;
 use App\Enums\OrderStatus;
+use App\Exceptions\OrderActionException;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
+use App\Livewire\Tenant\Storefront\Concerns\ManagesOrderCancellation;
 use App\Models\Country;
-use Illuminate\Validation\Rule;
+use App\Models\ReturnRequest;
+use App\Models\Tenant\Customer;
 use App\Models\Tenant\CustomerAddress;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductRate;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\Orders\OrderCancellationService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class ProfilePage extends Component
 {
     use HasStorefrontLayout;
+    use ManagesOrderCancellation;
     use SanitizesPhoneNumber;
 
     /** Sidebar filter value => order statuses it covers (matches the badge grouping in the views). */
     private const STATUS_FILTERS = [
-        'pending'    => [OrderStatus::Pending],
+        'pending' => [OrderStatus::Pending],
         'processing' => [OrderStatus::Processing],
-        'shipped'    => [OrderStatus::Shipped],
-        'delivered'  => [OrderStatus::Delivered, OrderStatus::Completed],
-        'cancelled'  => [OrderStatus::Cancelled, OrderStatus::Rejected],
+        'shipped' => [OrderStatus::Shipped],
+        'delivered' => [OrderStatus::Delivered, OrderStatus::Completed],
+        'cancelled' => [OrderStatus::Cancelled, OrderStatus::Rejected],
+        'refunded' => [OrderStatus::Refunded],
     ];
 
     #[Url(as: 'tab', except: 'orders')]
@@ -38,26 +47,36 @@ class ProfilePage extends Component
 
     // Address form
     public bool $showAddressModal = false;
+
     public ?int $editingAddressId = null;
+
     public string $addrLabel = '';
+
     public string $addrFullName = '';
+
     public string $addrPhone = '';
+
     public string $addrLine1 = '';
+
     public string $addrCity = '';
+
     public string $addrState = '';
+
     public string $addrCountry = '';
+
     public ?int $addrCountryId = null;
+
     public bool $addrIsDefault = false;
 
     public function mount(): void
     {
-        if (!Auth::guard('storefront')->check()) {
+        if (! Auth::guard('storefront')->check()) {
             $this->redirect(route('tenant.storefront.login'));
         }
 
         // Sanitize values hydrated from the query string (?tab=…&status=…)
         $this->setTab($this->activeTab);
-        if (!array_key_exists((string) $this->statusFilter, self::STATUS_FILTERS)) {
+        if (! array_key_exists((string) $this->statusFilter, self::STATUS_FILTERS)) {
             $this->statusFilter = null;
         }
     }
@@ -76,10 +95,12 @@ class ProfilePage extends Component
     {
         $this->resetAddressForm();
         if ($id) {
-            /** @var \App\Models\Tenant\Customer $customer */
+            /** @var Customer $customer */
             $customer = Auth::guard('storefront')->user();
             $addr = CustomerAddress::where('id', $id)->where('customer_id', $customer->id)->first();
-            if (!$addr) return;
+            if (! $addr) {
+                return;
+            }
             $this->editingAddressId = $addr->id;
             $this->addrLabel = $addr->label ?? '';
             $this->addrFullName = $addr->full_name ?? '';
@@ -104,29 +125,29 @@ class ProfilePage extends Component
     public function saveAddress(): void
     {
         $this->validate([
-            'addrFullName'  => 'required|string|max:100',
-            'addrLine1'     => 'required|string|max:255',
-            'addrCity'      => 'required|string|max:100',
+            'addrFullName' => 'required|string|max:100',
+            'addrLine1' => 'required|string|max:255',
+            'addrCity' => 'required|string|max:100',
             'addrCountryId' => ['required', 'integer', Rule::exists('mysql.countries', 'id')],
-            'addrPhone'     => 'nullable|string|max:30',
-            'addrState'     => 'nullable|string|max:100',
-            'addrLabel'     => 'nullable|string|max:50',
+            'addrPhone' => 'nullable|string|max:30',
+            'addrState' => 'nullable|string|max:100',
+            'addrLabel' => 'nullable|string|max:50',
         ]);
 
-        /** @var \App\Models\Tenant\Customer $customer */
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
 
         $data = [
-            'customer_id'    => $customer->id,
-            'label'          => $this->addrLabel ?: null,
-            'full_name'      => $this->addrFullName,
-            'phone'          => $this->sanitizePhone($this->addrPhone),
+            'customer_id' => $customer->id,
+            'label' => $this->addrLabel ?: null,
+            'full_name' => $this->addrFullName,
+            'phone' => $this->sanitizePhone($this->addrPhone),
             'address_line_1' => $this->addrLine1,
-            'city'           => $this->addrCity,
-            'state'          => $this->addrState ?: null,
-            'country_id'     => $this->addrCountryId,
-            'country'        => Country::on('mysql')->find($this->addrCountryId)?->name ?? '',
-            'is_default'     => $this->addrIsDefault,
+            'city' => $this->addrCity,
+            'state' => $this->addrState ?: null,
+            'country_id' => $this->addrCountryId,
+            'country' => Country::on('mysql')->find($this->addrCountryId)?->name ?? '',
+            'is_default' => $this->addrIsDefault,
         ];
 
         if ($this->addrIsDefault) {
@@ -138,7 +159,7 @@ class ProfilePage extends Component
                 ->where('customer_id', $customer->id)
                 ->update($data);
         } else {
-            if (!CustomerAddress::where('customer_id', $customer->id)->exists()) {
+            if (! CustomerAddress::where('customer_id', $customer->id)->exists()) {
                 $data['is_default'] = true;
             }
             CustomerAddress::create($data);
@@ -150,10 +171,12 @@ class ProfilePage extends Component
 
     public function deleteAddress(int $id): void
     {
-        /** @var \App\Models\Tenant\Customer $customer */
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
         $addr = CustomerAddress::where('id', $id)->where('customer_id', $customer->id)->first();
-        if (!$addr) return;
+        if (! $addr) {
+            return;
+        }
 
         $wasDefault = $addr->is_default;
         $addr->delete();
@@ -167,9 +190,11 @@ class ProfilePage extends Component
 
     public function setDefaultAddress(int $id): void
     {
-        /** @var \App\Models\Tenant\Customer $customer */
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
-        if (!CustomerAddress::where('id', $id)->where('customer_id', $customer->id)->exists()) return;
+        if (! CustomerAddress::where('id', $id)->where('customer_id', $customer->id)->exists()) {
+            return;
+        }
 
         CustomerAddress::where('customer_id', $customer->id)->update(['is_default' => false]);
         CustomerAddress::where('id', $id)->update(['is_default' => true]);
@@ -209,7 +234,7 @@ class ProfilePage extends Component
 
     public function reorder(string $uuid): void
     {
-        /** @var \App\Models\Tenant\Customer $customer */
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
 
         $order = Order::where('uuid', $uuid)
@@ -217,21 +242,22 @@ class ProfilePage extends Component
             ->with('items')
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             $this->toast(__('Order not found.'), 'error');
+
             return;
         }
 
         $cart = session('storefront_cart', []);
 
         foreach ($order->items as $item) {
-            if (!$item->product_id) {
+            if (! $item->product_id) {
                 continue;
             }
 
             $key = $item->product_variant_id
-                ? 'v_' . $item->product_variant_id
-                : 'p_' . $item->product_id;
+                ? 'v_'.$item->product_variant_id
+                : 'p_'.$item->product_id;
 
             if (isset($cart[$key])) {
                 $cart[$key]['qty'] += max(1, (int) $item->qty);
@@ -249,39 +275,75 @@ class ProfilePage extends Component
         $this->dispatch('profile-swal', message: __('Items added to your cart.'), type: 'success');
     }
 
-    public function cancelOrder(string $uuid): void
+    protected function cancellationToastEvent(): string
     {
-        /** @var \App\Models\Tenant\Customer $customer */
+        return 'profile-swal';
+    }
+
+    /**
+     * Cancel one of the customer's orders through OrderCancellationService (policy, stock
+     * restore, refund, notifications).
+     *
+     * Without a reason (e.g. an older theme's one-click button) nothing is cancelled: the reason +
+     * confirmation modal (order-cancel-action partial) opens instead — there is no default reason.
+     * With an explicit reason the reason/note rules apply and the order is cancelled directly.
+     */
+    public function cancelOrder(string $uuid, ?string $reason = null, ?string $note = null): void
+    {
+        if (blank($reason)) {
+            $this->openCancelModal($uuid);
+
+            return;
+        }
+
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
 
         $order = Order::where('uuid', $uuid)
             ->where('customer_id', $customer->id)
-            ->whereIn('status', [OrderStatus::Pending, OrderStatus::Processing])
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             $this->dispatch('profile-swal', message: __('Order not found or cannot be cancelled.'), type: 'error');
+
             return;
         }
 
-        $order->update(['status' => OrderStatus::Cancelled]);
+        $reasonEnum = CancellationReason::tryFrom((string) $reason);
+
+        if (! $reasonEnum || ! $reasonEnum->isAllowedFor(CancellationActor::Customer)) {
+            $this->dispatch('profile-swal', message: __('Please choose a valid cancellation reason.'), type: 'error');
+
+            return;
+        }
+
+        try {
+            app(OrderCancellationService::class)->cancel($order, CancellationActor::Customer, $customer->id, $reasonEnum, $note);
+        } catch (OrderActionException $e) {
+            $this->dispatch('profile-swal', message: $e->getMessage(), type: 'error');
+
+            return;
+        }
+
         $this->dispatch('profile-swal', message: __('Order cancelled successfully.'), type: 'success');
     }
 
     public function submitReview(int $productId, int $stars, string $comment): void
     {
-        /** @var \App\Models\Tenant\Customer $customer */
+        /** @var Customer $customer */
         $customer = Auth::guard('storefront')->user();
 
         $stars = max(1, min(5, $stars));
 
-        if (!Product::find($productId)) {
+        if (! Product::find($productId)) {
             $this->dispatch('profile-swal', message: __('Product not found.'), type: 'error');
+
             return;
         }
 
         if (ProductRate::where('product_id', $productId)->where('customer_id', $customer->id)->exists()) {
             $this->dispatch('profile-swal', message: __('You have already reviewed this product.'), type: 'error');
+
             return;
         }
 
@@ -304,7 +366,7 @@ class ProfilePage extends Component
 
         if ($this->statusFilter && isset(self::STATUS_FILTERS[$this->statusFilter])) {
             $statuses = self::STATUS_FILTERS[$this->statusFilter];
-            $orders = $orders->filter(fn($o) => in_array($o->status, $statuses, true))->values();
+            $orders = $orders->filter(fn ($o) => in_array($o->status, $statuses, true))->values();
         }
 
         $reviewedProductIds = $customer
@@ -317,16 +379,26 @@ class ProfilePage extends Component
             ->get();
 
         $returnRequests = $customer
-            ? \App\Models\ReturnRequest::where('tenant_id', tenant()->id)
+            ? ReturnRequest::where('tenant_id', tenant()->id)
                 ->where('customer_id', $customer->id)
-                ->with(['notes' => fn($q) => $q->where('customer_visible', true)->latest()->limit(1)])
+                ->with(['notes' => fn ($q) => $q->where('customer_visible', true)->latest()->limit(1)])
                 ->latest()
                 ->get()
             : collect();
 
+        // Which orders the customer may cancel right now (pure policy check, one cached settings read).
+        $cancelDecisions = [];
+
+        foreach ($orders as $order) {
+            $cancelDecisions[$order->uuid] = $this->customerCancelDecision($order);
+        }
+
         $data = array_merge($this->sharedData(), [
             'customer' => $customer,
             'orders' => $orders,
+            'cancelDecisions' => $cancelDecisions,
+            'cancelViaModal' => true,
+            'cancelReasons' => $this->customerCancellationReasons(),
             'returnRequests' => $returnRequests,
             'activeTab' => $this->activeTab,
             'statusFilter' => $this->statusFilter,
@@ -350,7 +422,7 @@ class ProfilePage extends Component
 
         return view($this->pageView('profile'), $data)
             ->layout($this->storefrontLayout(), [
-                'title' => $storeName ? __('My Account') . " — {$storeName}" : __('My Account'),
+                'title' => $storeName ? __('My Account')." — {$storeName}" : __('My Account'),
                 'metaDescription' => '',
             ]);
     }

@@ -4,17 +4,16 @@ namespace App\Livewire\Tenant\Storefront\Concerns;
 
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
+use App\Services\Tenant\StockService;
 
 trait ChecksCartStock
 {
     /**
      * Validate stock availability for a product/variant.
      *
-     * @param  Product             $product
-     * @param  ProductVariant|null $variant
-     * @param  int                 $requestedQty   Qty being added or set as new total
-     * @param  int                 $existingCartQty Already in the cart for this line
-     * @return string|null  null = OK, string = error message
+     * @param  int  $requestedQty  Qty being added or set as new total
+     * @param  int  $existingCartQty  Already in the cart for this line
+     * @return string|null null = OK, string = error message
      */
     protected function checkProductStock(
         Product $product,
@@ -22,43 +21,14 @@ trait ChecksCartStock
         int $requestedQty,
         int $existingCartQty = 0
     ): ?string {
-        $central = $product->centralProduct
-            ?? $product->load('centralProduct')->centralProduct;
-
         $productName = $product->translationValue('name') ?? $product->slug;
 
-        // Own products (no central) use the tenant product's (or variant's) own stock field.
-        // A null stock value means unlimited — skip the check.
-        if (!$central) {
-            // Fall back to product-level stock when the variant has no per-variant stock set.
-            $ownStock = $variant ? ($variant->stock ?? $product->stock ?? null) : $product->stock;
-            if ($ownStock === null) {
-                return null;
-            }
-            $stock = (int) $ownStock;
-            $available = $stock - $existingCartQty;
-            if ($stock <= 0 || $available <= 0) {
-                return __('Sorry, ":name" is out of stock.', ['name' => $productName]);
-            }
-            if ($requestedQty > $available) {
-                return __('Sorry, only :count item(s) of ":name" are available to add (stock: :stock, already in cart: :in_cart).', [
-                    'count'   => $available,
-                    'name'    => $productName,
-                    'stock'   => $stock,
-                    'in_cart' => $existingCartQty,
-                ]);
-            }
-            return null;
-        }
+        // Own products use the tenant product's (or variant's) stock; central-catalog products are
+        // only limited when the central product manages stock. Null = unlimited — skip the check.
+        $stock = app(StockService::class)->availableStock($product, $variant);
 
-        if (!($central->manage_stock ?? false)) {
+        if ($stock === null) {
             return null;
-        }
-
-        if ($variant) {
-            $stock = (int) ($variant->stock ?? $variant->centralVariant?->stock ?? 0);
-        } else {
-            $stock = (int) ($product->stock ?? 0);
         }
 
         // How many units are still purchasable (stock minus what's already in cart)
@@ -70,9 +40,9 @@ trait ChecksCartStock
 
         if ($requestedQty > $available) {
             return __('Sorry, only :count item(s) of ":name" are available to add (stock: :stock, already in cart: :in_cart).', [
-                'count'   => $available,
-                'name'    => $productName,
-                'stock'   => $stock,
+                'count' => $available,
+                'name' => $productName,
+                'stock' => $stock,
                 'in_cart' => $existingCartQty,
             ]);
         }
@@ -88,7 +58,7 @@ trait ChecksCartStock
      */
     protected function resolveCartEntryModels(string $key, array $entry): array
     {
-        if (str_starts_with($key, 'v_') && !empty($entry['variant_id'])) {
+        if (str_starts_with($key, 'v_') && ! empty($entry['variant_id'])) {
             $variant = ProductVariant::with([
                 'product.centralProduct',
                 'product.variants',
@@ -106,4 +76,3 @@ trait ChecksCartStock
         return [$product, $variant];
     }
 }
-

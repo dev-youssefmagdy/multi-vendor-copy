@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Order;
 
 use App\Enums\ReturnStatus;
+use App\Enums\ReturnType;
 use App\Livewire\Admin\Base\ListPage;
 use App\Models\ReturnRequest;
 use App\Models\Tenant;
@@ -26,7 +27,7 @@ class OrderReturnsList extends ListPage
             'actionLabel'        => null,
             'filtersDescription' => 'Filter returns by status and search by order number or tenant.',
             'tableTitle'         => 'Return Requests',
-            'headers'            => ['Order', 'Tenant', 'Status', 'Reason', 'Refund', 'Date', 'Actions'],
+            'headers'            => ['Order', 'Tenant', 'Type', 'Qty', 'Status', 'Reason', 'Refund', 'Date', 'Actions'],
             'secondaryActionLabel' => 'Return Analytics',
             'secondaryActionUrl'   => route('admin.orders.returns.analytics'),
         ];
@@ -53,9 +54,9 @@ class OrderReturnsList extends ListPage
 
         $stats = [
             'total'    => ReturnRequest::count(),
-            'pending'  => ReturnRequest::where('status', ReturnStatus::Pending->value)->count(),
-            'approved' => ReturnRequest::where('status', ReturnStatus::Approved->value)->count(),
-            'refunded' => ReturnRequest::where('status', ReturnStatus::Refunded->value)->count(),
+            'pending'  => ReturnRequest::whereIn('status', [ReturnStatus::Pending->value, ReturnStatus::AwaitingMerchantReview->value, ReturnStatus::AwaitingInfo->value])->count(),
+            'approved' => ReturnRequest::whereIn('status', [ReturnStatus::Approved->value, ReturnStatus::ItemReceived->value, ReturnStatus::Inspected->value, ReturnStatus::ExchangeShipped->value])->count(),
+            'refunded' => ReturnRequest::whereIn('status', [ReturnStatus::Refunded->value, ReturnStatus::Exchanged->value])->count(),
         ];
 
         $statusOptions = ['' => 'All statuses'];
@@ -71,14 +72,16 @@ class OrderReturnsList extends ListPage
             ],
             'statistics' => $this->presentMetricCards([
                 ['label' => 'Total Returns', 'value' => $stats['total'],   'format' => 'number', 'caption' => 'All return requests',      'dot' => 'dot-cyan',  'glow' => 'card-glow-cyan'],
-                ['label' => 'Pending Review','value' => $stats['pending'],  'format' => 'number', 'caption' => 'Awaiting admin decision',  'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Approved',      'value' => $stats['approved'],'format' => 'number', 'caption' => 'Returns accepted',          'dot' => 'dot-blue',  'glow' => 'card-glow-blue'],
-                ['label' => 'Refunded',      'value' => $stats['refunded'],'format' => 'number', 'caption' => 'Amount returned',           'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Pending Review','value' => $stats['pending'],  'format' => 'number', 'caption' => 'Awaiting a decision or customer info',  'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Approved',      'value' => $stats['approved'],'format' => 'number', 'caption' => 'Accepted, in progress',        'dot' => 'dot-blue',  'glow' => 'card-glow-blue'],
+                ['label' => 'Resolved',      'value' => $stats['refunded'],'format' => 'number', 'caption' => 'Refunded or exchanged',  'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
             'statisticsGridClass' => 'g-stats4',
             'rows' => $records->map(fn(ReturnRequest $r) => [
                 '<div class="entity-title">' . e($r->order_number) . '</div>',
                 '<div class="entity-subtitle">' . e($tenantNames[$r->tenant_id] ?? $r->tenant_id) . '</div>',
+                '<span class="badge ' . ($r->isExchange() ? 'badge-cyan' : 'badge-gray') . '">' . e($r->type?->label() ?? ReturnType::Return->label()) . '</span>',
+                '<div class="entity-subtitle">' . (int) ($r->quantity ?: 1) . '</div>',
                 $this->statusBadge($r->status),
                 '<div class="entity-subtitle">' . e($r->reason->label()) . '</div>',
                 $r->refund_amount ? '<div class="entity-title">$' . number_format((float) $r->refund_amount, 2) . '</div>' : '<span class="entity-subtitle">—</span>',
@@ -102,7 +105,7 @@ class OrderReturnsList extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['ID', 'Order Number', 'Tenant', 'Status', 'Reason', 'Refund Amount', 'Created At'];
+        return ['ID', 'Order Number', 'Tenant', 'Type', 'Quantity', 'Status', 'Reason', 'Refund Amount', 'Created At'];
     }
 
     protected function exportRows(): array
@@ -114,6 +117,8 @@ class OrderReturnsList extends ListPage
             $r->id,
             $r->order_number,
             $tenantNames[$r->tenant_id] ?? $r->tenant_id,
+            $r->type?->label() ?? ReturnType::Return->label(),
+            (int) ($r->quantity ?: 1),
             $r->status->label(),
             $r->reason->label(),
             $r->refund_amount,

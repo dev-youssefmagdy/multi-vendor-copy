@@ -281,6 +281,7 @@ Route::group([
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', OrdersList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('index');
         Route::get('/report', OrdersReportPage::class)->middleware('admin.permission:sales.orders.report.view,sales.orders.manage')->name('report');
+        Route::get('/refunds', \App\Livewire\Admin\Order\RefundsList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('refunds.index');
         Route::get('/returns', OrderReturnsList::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.index');
         Route::get('/returns/analytics', \App\Livewire\Admin\Order\ReturnAnalyticsPage::class)->middleware('admin.permission:sales.orders.view,sales.orders.manage')->name('returns.analytics');
         Route::get('/returns/{id}', OrderReturnDetailPage::class)->middleware('admin.permission:sales.orders.manage')->name('returns.show');

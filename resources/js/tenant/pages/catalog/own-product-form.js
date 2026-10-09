@@ -26,22 +26,26 @@ if (form) {
         countries.querySelector('[data-op-country-empty]').hidden = shown > 0;
     });
 
-    // ── Country picker: "Select all countries" ticks/unticks every country and
-    //    mirrors the individual ticks (checked when all, indeterminate when some) ──
+    // ── Country picker: "Select all countries" ticks/unticks the countries the
+    //    search currently shows (hidden ones keep their ticks) and mirrors them
+    //    (checked when all shown are ticked, indeterminate when some) ──────────
     const selectAll = countries?.querySelector('[data-op-country-all]');
     if (selectAll) {
         const boxes = () => countries.querySelectorAll('input[name="countries[]"]');
+        const shownBoxes = () => [...boxes()].filter((box) => !box.closest('[data-op-country]')?.hidden);
         const syncSelectAll = () => {
-            const all = [...boxes()];
-            const ticked = all.filter((box) => box.checked).length;
-            selectAll.checked = all.length > 0 && ticked === all.length;
-            selectAll.indeterminate = ticked > 0 && ticked < all.length;
+            const shown = shownBoxes();
+            const ticked = shown.filter((box) => box.checked).length;
+            selectAll.disabled = shown.length === 0;
+            selectAll.checked = shown.length > 0 && ticked === shown.length;
+            selectAll.indeterminate = ticked > 0 && ticked < shown.length;
         };
         selectAll.addEventListener('change', () => {
-            boxes().forEach((box) => { box.checked = selectAll.checked; });
+            shownBoxes().forEach((box) => { box.checked = selectAll.checked; });
             selectAll.indeterminate = false;
         });
         boxes().forEach((box) => box.addEventListener('change', syncSelectAll));
+        countries.querySelector('[data-op-country-search]')?.addEventListener('input', syncSelectAll);
         syncSelectAll();
     }
 

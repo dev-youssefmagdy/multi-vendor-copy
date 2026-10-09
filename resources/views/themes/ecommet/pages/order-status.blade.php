@@ -1,6 +1,9 @@
 {{--
     Ecommet – Order status page
     $order  Order (with items, activities, paymentGateway)
+    After-sales (optional, from OrderStatusPage): $canCancel, $cancelDecision, $cancelReasons,
+    $cancellation, $refunds, $paymentState, $returnItems — rendered by the shared partials
+    order-cancel-action, order-cancellation-summary, order-refunds-summary, return-item-action.
 --}}
 @php
     use App\Enums\OrderStatus;
@@ -18,6 +21,7 @@
         OrderStatus::Completed  => ['bg' => '#DCFCE7',   'text' => '#15803d', 'label' => __('Completed')],
         OrderStatus::Cancelled  => ['bg' => '#FEE2E2',   'text' => '#dc2626', 'label' => __('Cancelled')],
         OrderStatus::Rejected   => ['bg' => '#FEE2E2',   'text' => '#dc2626', 'label' => __('Rejected')],
+        OrderStatus::Refunded   => ['bg' => '#EDE9FE',   'text' => '#6D28D9', 'label' => __('Refunded')],
         default                 => ['bg' => '#F5F5F5',   'text' => '#666',    'label' => $order->status->label()],
     };
 
@@ -30,6 +34,8 @@
     $statusValue   = $order->status->value;
     $timelineOrder = array_keys($timeline);
     $activeIdx     = array_search($statusValue, $timelineOrder);
+    $paymentState  = $paymentState ?? $order->paymentState();
+    $isClosedOrder = in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected, OrderStatus::Refunded], true);
 @endphp
 
 <div class="bg-white pb-20">
@@ -63,8 +69,16 @@
             @endif
         </div>
 
-        {{-- Timeline (non-cancelled orders) --}}
-        @if (!in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected]))
+        {{-- Cancelled / refunded banner + refunds --}}
+        @if ($isClosedOrder || !empty($refunds ?? []))
+            <div class="flex flex-col gap-4 mb-8">
+                @include('livewire.tenant.storefront.partials.order-cancellation-summary')
+                @include('livewire.tenant.storefront.partials.order-refunds-summary')
+            </div>
+        @endif
+
+        {{-- Timeline (orders still being fulfilled) --}}
+        @if (!$isClosedOrder)
             <div class="flex items-center justify-between mb-10 overflow-x-auto no-scrollbar px-4">
                 @foreach ($timelineOrder as $idx => $stepKey)
                     @php $isActive = $activeIdx !== false && $idx <= $activeIdx; @endphp
@@ -124,9 +138,7 @@
                             </div>
                             <div class="text-[14px] font-bold text-[#242424] shrink-0">
                                 {{ $fmt($item->sub_total) }}
-                                @if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))
-                                    <div>@include('livewire.tenant.storefront.partials.return-item-action')</div>
-                                @endif
+                                <div>@include('livewire.tenant.storefront.partials.return-item-action')</div>
                             </div>
                         </div>
                     @endforeach
@@ -185,13 +197,21 @@
 
                     <div class="border-t border-[#eee] mt-4 pt-4 text-[12px] text-gray-medium flex flex-col gap-1.5">
                         <div><span class="font-medium text-[#444]">{{ __('Payment:') }}</span> {{ $order->paymentGateway?->label ?? $order->payment_method ?? __('N/A') }}</div>
+                        <div><span class="font-medium text-[#444]">{{ __('Payment Status') }}:</span> {{ $paymentState->label() }}</div>
                         @if ($order->shipping_address)
                             <div><span class="font-medium text-[#444]">{{ __('Ship to:') }}</span> {{ $order->shipping_address['address'] ?? '' }}, {{ $order->shipping_address['name'] ?? '' }}</div>
                         @endif
                     </div>
                 </div>
+
+                {{-- Cancel order (policy-guarded) / shipped notice --}}
+                <div class="mt-4 flex flex-col gap-3">
+                    @include('livewire.tenant.storefront.partials.order-cancel-action')
+                </div>
             </div>
 
         </div>
     </div>
+
+    @include('livewire.tenant.storefront.partials.after-sales-toast', ['toastEvent' => 'order-status-swal'])
 </div>

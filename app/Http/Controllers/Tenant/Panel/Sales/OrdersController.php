@@ -4,19 +4,33 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Tenant\Panel\Sales;
 
+use App\Enums\CancellationActor;
+use App\Enums\CancellationReason;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
+use App\Enums\RefundMethod;
+use App\Enums\RefundSource;
+use App\Enums\RefundStatus;
 use App\Exceptions\Tenant\PanelActionException;
 use App\Http\Controllers\Tenant\Panel\PanelController;
+use App\Http\Requests\Tenant\Panel\Sales\CancelOrderRequest;
+use App\Http\Requests\Tenant\Panel\Sales\StoreManualRefundRequest;
 use App\Http\Requests\Tenant\Panel\Sales\UpdateShippingStatusRequest;
+use App\Models\Refund;
 use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Order;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Orders\OrderCancellationPolicy;
+use App\Services\Orders\OrderCancellationService;
+use App\Services\Orders\OrderPolicyService;
+use App\Services\Refunds\RefundActor;
+use App\Services\Refunds\RefundService;
 use App\Services\Tenant\OrderLifecycleService;
 use App\Services\Tenant\VendorPurchaseService;
 use App\Support\OrderProfitCalculator;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\Payments\InlineGatewayPresenter;
+use App\Support\Tenant\Refunds\RefundPresenter;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,8 +44,7 @@ final class OrdersController extends PanelController
         private readonly TenantPanelRepository $repo,
         private readonly VendorPurchaseService $purchaseService,
         private readonly InlineGatewayPresenter $presenter,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): View
     {
@@ -112,7 +125,43 @@ final class OrdersController extends PanelController
             'order' => $this->repo->orderDetail($order),
             'shippingStatuses' => OrderShippingStatus::cases(),
             'settlement' => $this->settlementContext($order),
+            'afterSales' => $this->afterSalesContext($order),
         ]);
+    }
+
+    /**
+     * Cancellation + refunds context for the order detail page (RETURN_EXCHANGE_REFUND_PLAN.md B.8
+     * Vendor). Actions are only offered when the policy and the user's permissions allow them; the
+     * endpoints enforce the same rules.
+     *
+     * @return array<string, mixed>
+     */
+    private function afterSalesContext(Order $order): array
+    {
+        $user = auth('tenant')->user();
+        $canManageOrders = $user instanceof AdminUser && $user->hasPermission('sales.orders.manage');
+        $canManageRefunds = $user instanceof AdminUser && $user->hasPermission('sales.returns.manage');
+        $paymentState = $order->paymentState();
+
+        return [
+            'can_cancel' => $canManageOrders
+                && app(OrderCancellationPolicy::class)->canCancel($order, CancellationActor::Vendor, app(OrderPolicyService::class)),
+            'cancel_reasons' => CancellationReason::options(CancellationActor::Vendor),
+            'cancellation' => $order->isCancelled() ? [
+                'status' => $order->status->label(),
+                'reason' => $order->cancellation_reason?->label(),
+                'note' => $order->cancellation_note,
+                'cancelled_at' => $order->cancelled_at?->format('M d, Y H:i'),
+                'cancelled_by' => $order->cancelled_by_type?->label(),
+            ] : null,
+            'can_manage_refunds' => $canManageRefunds,
+            'refundable_amount' => app(RefundService::class)->refundableAmount($order),
+            'refunded_amount' => round((float) $order->refunded_amount, 2),
+            'payment_state' => $paymentState->value,
+            'payment_state_label' => $paymentState->label(),
+            'payment_state_color' => $paymentState->color(),
+            'refunds' => $order->refundsQuery()->latest('id')->get()->map(fn (Refund $refund) => RefundPresenter::panel($refund))->values()->all(),
+        ];
     }
 
     /**
@@ -126,8 +175,8 @@ final class OrdersController extends PanelController
         if (
             (float) $order->vendor_cost <= 0
             || $order->vendor_settled
-            || !$user instanceof AdminUser
-            || !$user->hasPermission('finance.vendor-purchases.view')
+            || ! $user instanceof AdminUser
+            || ! $user->hasPermission('finance.vendor-purchases.view')
         ) {
             return null;
         }
@@ -143,18 +192,18 @@ final class OrdersController extends PanelController
         $order = Order::query()->findOrFail($orderId);
         $detail = $this->repo->orderDetail($order);
 
-        if (!($detail['can_update_shipping'] ?? false)) {
+        if (! ($detail['can_update_shipping'] ?? false)) {
             throw new PanelActionException('Shipping status can only be updated for your own products orders.', 403);
         }
 
         $status = OrderShippingStatus::tryFrom($request->validated('shipping_status'));
 
-        if (!$status) {
+        if (! $status) {
             return $this->failure('Invalid shipping status selected.', 422);
         }
 
         try {
-            $updated = app(OrderLifecycleService::class)->updateShippingStatus($order, $status);
+            $updated = app(OrderLifecycleService::class)->updateShippingStatus($order, $status, CancellationActor::Vendor, $this->adminId());
         } catch (InvalidArgumentException $e) {
             return $this->failure($e->getMessage(), 422);
         }
@@ -177,5 +226,89 @@ final class OrdersController extends PanelController
     public function validateUpdateShippingStatus(UpdateShippingStatusRequest $request, int $orderId): JsonResponse
     {
         return $this->validFormResponse();
+    }
+
+    public function validateCancel(CancelOrderRequest $request, int $orderId): JsonResponse
+    {
+        return $this->validFormResponse();
+    }
+
+    /**
+     * Vendor cancels the order (staff reason + note). Policy, stock restore, cancellation refund
+     * and notifications are handled by OrderCancellationService; a blocked cancellation renders
+     * as a 422 with the policy message (OrderActionException).
+     */
+    public function cancel(CancelOrderRequest $request, int $orderId, OrderCancellationService $service): JsonResponse
+    {
+        $order = $service->cancel(
+            Order::query()->findOrFail($orderId),
+            CancellationActor::Vendor,
+            $this->adminId(),
+            $request->cancellationReason(),
+            $request->cancellationNote(),
+        );
+
+        return $this->success(__('Order cancelled successfully.'), $this->orderRefundState($order->load('items')));
+    }
+
+    public function validateStoreRefund(StoreManualRefundRequest $request, int $orderId): JsonResponse
+    {
+        return $this->validFormResponse();
+    }
+
+    /**
+     * Manual (goodwill / remaining) refund on a paid order. Approved by the vendor at creation and
+     * sent to the original gateway right away when it supports refunds; otherwise it stays
+     * pending until it is marked completed manually.
+     */
+    public function storeRefund(StoreManualRefundRequest $request, int $orderId, RefundService $refunds): JsonResponse
+    {
+        $order = Order::query()->with('items')->findOrFail($orderId);
+        $admin = auth('tenant')->user();
+        $actor = RefundActor::vendor($admin?->id, $admin?->name);
+
+        $refund = $refunds->create(
+            $order,
+            RefundSource::Manual,
+            (float) $request->validated('amount'),
+            (string) $request->validated('reason'),
+            $actor,
+        );
+
+        if ($refund->refund_method === RefundMethod::OriginalPayment) {
+            $refund = $refunds->execute($refund, $actor);
+        }
+
+        $message = match ($refund->status) {
+            RefundStatus::Completed => __('Refund completed.'),
+            RefundStatus::Failed => __('The refund was created but the payment gateway could not process it. Retry it or complete it manually.'),
+            default => __('Refund created. Mark it as completed once the money has been returned to the customer.'),
+        };
+
+        return $this->success($message, array_merge(
+            ['refund' => RefundPresenter::panel($refund)],
+            $this->orderRefundState($order->refresh()->load('items')),
+        ));
+    }
+
+    private function adminId(): ?int
+    {
+        $id = auth('tenant')->id();
+
+        return $id !== null ? (int) $id : null;
+    }
+
+    /** @return array<string, mixed> */
+    private function orderRefundState(Order $order): array
+    {
+        return [
+            'status' => $order->status->label(),
+            'status_value' => $order->status->value,
+            'payment_state' => $order->paymentState()->value,
+            'payment_state_label' => $order->paymentState()->label(),
+            'refunded_amount' => round((float) $order->refunded_amount, 2),
+            'refundable_amount' => app(RefundService::class)->refundableAmount($order),
+            'refunds' => $order->refundsQuery()->latest('id')->get()->map(fn (Refund $refund) => RefundPresenter::panel($refund))->values()->all(),
+        ];
     }
 }

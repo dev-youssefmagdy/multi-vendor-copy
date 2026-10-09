@@ -14,12 +14,12 @@ enum ReturnReason: string
     public function label(): string
     {
         return match ($this) {
-            self::Defective => 'Defective / Damaged',
-            self::WrongItem => 'Wrong Item Received',
-            self::NotAsDescribed => 'Not as Described',
-            self::ChangedMind => 'Changed My Mind',
-            self::SizeOrFit => 'Size or Fit Issue',
-            self::Other => 'Other',
+            self::Defective => __('Defective / Damaged'),
+            self::WrongItem => __('Wrong Item Received'),
+            self::NotAsDescribed => __('Not as Described'),
+            self::ChangedMind => __('Changed My Mind'),
+            self::SizeOrFit => __('Size or Fit Issue'),
+            self::Other => __('Other'),
         };
     }
 
@@ -30,5 +30,35 @@ enum ReturnReason: string
             self::Defective, self::WrongItem, self::NotAsDescribed => true,
             default => false,
         };
+    }
+
+    /**
+     * The seller is responsible (damaged, wrong or misdescribed item): the return fee is
+     * waived and shipping is refunded when the whole order comes back.
+     */
+    public function isSellerFault(): bool
+    {
+        return match ($this) {
+            self::Defective, self::WrongItem, self::NotAsDescribed => true,
+            self::ChangedMind, self::SizeOrFit, self::Other => false,
+        };
+    }
+
+    /** At least one photo is mandatory as evidence (photos are optional otherwise). */
+    public function requiresPhotos(): bool
+    {
+        return $this->isSellerFault();
+    }
+
+    /** A description (min 10 chars) is mandatory for seller-fault reasons. */
+    public function requiresDescription(): bool
+    {
+        return $this->isSellerFault();
+    }
+
+    /** @return list<self> */
+    public static function sellerFaultReasons(): array
+    {
+        return array_values(array_filter(self::cases(), fn (self $reason) => $reason->isSellerFault()));
     }
 }

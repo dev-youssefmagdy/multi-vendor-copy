@@ -2,12 +2,16 @@
 
 namespace App\Services\Tenant;
 
+use App\Enums\CancellationActor;
+use App\Enums\CancellationReason;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
+use App\Exceptions\OrderActionException;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\Product;
-use App\Services\Mail\TemplateMailService;
 use App\Services\AdminNotificationService;
+use App\Services\Mail\TemplateMailService;
+use App\Services\Orders\OrderCancellationService;
 use App\Services\TenantNotificationService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -18,8 +22,8 @@ class OrderLifecycleService
         private readonly TemplateMailService $templateMailService,
         private readonly TenantNotificationService $tenantNotifier,
         private readonly AdminNotificationService $adminNotifier,
-    ) {
-    }
+        private readonly OrderCancellationService $cancellationService,
+    ) {}
 
     public function recordPlaced(Order $order): void
     {
@@ -64,7 +68,7 @@ class OrderLifecycleService
         $productIds = $order->items()
             ->with('variant')
             ->get()
-            ->map(fn($item) => $item->product_id ?? $item->variant?->product_id)
+            ->map(fn ($item) => $item->product_id ?? $item->variant?->product_id)
             ->filter()
             ->unique();
 
@@ -89,16 +93,39 @@ class OrderLifecycleService
         );
     }
 
-    public function updateShippingStatus(Order $order, OrderShippingStatus $shippingStatus): Order
-    {
+    /**
+     * Move the order through the delivery flow. "Cancelled" is a real cancellation: it goes
+     * through OrderCancellationService (reason unable_to_fulfil) so stock and refunds stay
+     * consistent, and the cancellation policy decides whether it is still possible.
+     *
+     * @param  CancellationActor  $actor  who changes the status (vendor in the panel, admin centrally)
+     *
+     * @throws InvalidArgumentException for cancelled / rejected / refunded orders
+     * @throws OrderActionException when the order can no longer be cancelled
+     */
+    public function updateShippingStatus(
+        Order $order,
+        OrderShippingStatus $shippingStatus,
+        CancellationActor $actor = CancellationActor::Vendor,
+        ?int $actorId = null,
+    ): Order {
         $targetStatus = $this->mapShippingStatusToOrderStatus($shippingStatus);
 
-        if (in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true)) {
-            throw new InvalidArgumentException('Cancelled or rejected orders cannot be moved through shipping states.');
+        if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
+            throw new InvalidArgumentException('Cancelled, rejected or refunded orders cannot be moved through shipping states.');
         }
 
         if ($order->status === $targetStatus) {
             return $order->fresh(['activities']);
+        }
+
+        if ($shippingStatus === OrderShippingStatus::Cancelled) {
+            $this->cancellationService->cancel($order, $actor, $actorId, CancellationReason::UnableToFulfil);
+
+            $updatedOrder = $order->fresh(['activities']);
+            $this->templateMailService->sendAdminShippingEscalation($updatedOrder, $shippingStatus);
+
+            return $updatedOrder;
         }
 
         DB::transaction(function () use ($order, $shippingStatus, $targetStatus): void {
@@ -110,10 +137,6 @@ class OrderLifecycleService
 
         $updatedOrder = $order->fresh(['activities']);
         $this->templateMailService->sendTenantShippingUpdate($updatedOrder, $shippingStatus);
-
-        if ($shippingStatus === OrderShippingStatus::Cancelled) {
-            $this->templateMailService->sendAdminShippingEscalation($updatedOrder, $shippingStatus);
-        }
 
         $this->tenantNotifier->notify(
             tenant: tenant(),
@@ -152,23 +175,48 @@ class OrderLifecycleService
         };
     }
 
-    public function updateOrderStatus(Order $order, OrderStatus $orderStatus): Order
-    {
+    /**
+     * Change the order status. Cancelling delegates to OrderCancellationService (reason
+     * unable_to_fulfil, policy-guarded, stock restore + refund + notifications). Cancelled /
+     * rejected / refunded orders are final, and Refunded is only reached through refunds.
+     *
+     * @param  CancellationActor  $actor  who changes the status (vendor in the panel, admin centrally)
+     *
+     * @throws InvalidArgumentException for a final order or a manual switch to Refunded
+     * @throws OrderActionException when the order can no longer be cancelled
+     */
+    public function updateOrderStatus(
+        Order $order,
+        OrderStatus $orderStatus,
+        CancellationActor $actor = CancellationActor::Vendor,
+        ?int $actorId = null,
+    ): Order {
         if ($order->status === $orderStatus) {
+            return $order->fresh(['activities']);
+        }
+
+        if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
+            throw new InvalidArgumentException('Cancelled, rejected or refunded orders can no longer change status.');
+        }
+
+        if ($orderStatus === OrderStatus::Refunded) {
+            throw new InvalidArgumentException('An order becomes Refunded automatically once its refunds are completed.');
+        }
+
+        if ($orderStatus === OrderStatus::Cancelled) {
+            $this->cancellationService->cancel($order, $actor, $actorId, CancellationReason::UnableToFulfil);
+
             return $order->fresh(['activities']);
         }
 
         DB::transaction(function () use ($order, $orderStatus): void {
             $order->update(['status' => $orderStatus]);
-            $this->appendActivity($order->fresh(), 'Status updated', 'Order status changed to ' . $orderStatus->label() . '.');
+            $this->appendActivity($order->fresh(), 'Status updated', 'Order status changed to '.$orderStatus->label().'.');
         });
 
         $updatedOrder = $order->fresh(['activities']);
+        // No "refund processed" email here: RefundService sends it when a refund actually completes.
         $this->templateMailService->sendTenantStatusUpdate($updatedOrder, $orderStatus);
-
-        if (in_array($orderStatus, [OrderStatus::Cancelled, OrderStatus::Rejected], true)) {
-            $this->templateMailService->sendTenantRefundProcessed($updatedOrder);
-        }
 
         $this->tenantNotifier->notify(
             tenant: tenant(),

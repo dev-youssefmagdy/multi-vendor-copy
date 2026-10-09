@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\CancellationActor;
 use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Models\Tenant;
@@ -17,14 +18,13 @@ class OrderFulfillmentService
         protected OrderLifecycleService $lifecycleService,
         protected TenantNotificationService $tenantNotifier,
         protected AdminNotificationService $adminNotifier,
-    ) {
-    }
+    ) {}
 
     public function updateShippingStatus(string $tenantId, string $orderNumber, OrderShippingStatus $shippingStatus): void
     {
         $tenant = Tenant::query()->find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             throw new RuntimeException('Tenant could not be found for this order.');
         }
 
@@ -36,11 +36,11 @@ class OrderFulfillmentService
 
             $order = Order::query()->where('uuid', $orderNumber)->first();
 
-            if (!$order) {
+            if (! $order) {
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
 
-            $this->lifecycleService->updateShippingStatus($order, $shippingStatus);
+            $this->lifecycleService->updateShippingStatus($order, $shippingStatus, CancellationActor::Admin, $this->adminId());
         } finally {
             if ($initialized) {
                 tenancy()->end();
@@ -52,7 +52,7 @@ class OrderFulfillmentService
     {
         $tenant = Tenant::query()->find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             throw new RuntimeException('Tenant could not be found for this order.');
         }
 
@@ -64,11 +64,11 @@ class OrderFulfillmentService
 
             $order = Order::query()->where('uuid', $orderNumber)->first();
 
-            if (!$order) {
+            if (! $order) {
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
 
-            $this->lifecycleService->updateOrderStatus($order, $orderStatus);
+            $this->lifecycleService->updateOrderStatus($order, $orderStatus, CancellationActor::Admin, $this->adminId());
 
             $this->tenantNotifier->notify(
                 tenant: $tenant,
@@ -88,7 +88,7 @@ class OrderFulfillmentService
     {
         $tenant = Tenant::query()->find($tenantId);
 
-        if (!$tenant) {
+        if (! $tenant) {
             throw new RuntimeException('Tenant could not be found for this order.');
         }
 
@@ -100,7 +100,7 @@ class OrderFulfillmentService
 
             $order = Order::query()->where('uuid', $orderNumber)->first();
 
-            if (!$order) {
+            if (! $order) {
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
 
@@ -118,5 +118,13 @@ class OrderFulfillmentService
                 tenancy()->end();
             }
         }
+    }
+
+    /** The signed-in platform admin (recorded as the actor of cancellations). */
+    protected function adminId(): ?int
+    {
+        $id = auth('admin')->id();
+
+        return $id !== null ? (int) $id : null;
     }
 }

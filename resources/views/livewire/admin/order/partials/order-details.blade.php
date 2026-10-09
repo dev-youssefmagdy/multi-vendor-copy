@@ -49,6 +49,12 @@
                         class="details-value">{{ $order['shipping_status'] ?? '-' }}</span></div>
                 <div class="details-kv"><span class="details-label">Paid</span><span
                         class="details-value">{{ !empty($order['paid']) ? 'Yes' : 'No' }}</span></div>
+                @if (!empty($order['payment_status']))
+                    <div class="details-kv"><span class="details-label">Payment State</span><span
+                            class="details-value"><span
+                                class="badge badge-{{ $order['payment_status_color'] ?? 'gray' }}">{{ $order['payment_status'] }}</span></span>
+                    </div>
+                @endif
                 <div class="details-kv"><span class="details-label">Customer</span><span
                         class="details-value">{{ $order['customer']['name'] ?? 'Guest' }}</span></div>
                 <div class="details-kv"><span class="details-label">Email</span><span

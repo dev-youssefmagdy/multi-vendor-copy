@@ -56,7 +56,7 @@ class ValidateRoutesTest extends TestCase
             $this->assertSame(
                 200,
                 $response->getStatusCode(),
-                "Route [{$name}] expected valid:true for payload " . json_encode($payload) . ' but got ' . $response->getContent()
+                "Route [{$name}] expected valid:true for payload ".json_encode($payload).' but got '.$response->getContent()
             );
             $response->assertJson(['valid' => true]);
         }
@@ -87,6 +87,8 @@ class ValidateRoutesTest extends TestCase
     /** Validate routes whose FormRequest has no required fields — an empty payload legitimately passes. */
     private const NO_REQUIRED_FIELDS = [
         'tenant.own-products.validate',
+        'tenant.refunds.complete.validate',
+        'tenant.returns.approve.validate',
         'tenant.settings.mail.validate',
         'tenant.settings.tracking.validate',
     ];
@@ -99,7 +101,7 @@ class ValidateRoutesTest extends TestCase
         foreach (Route::getRoutes() as $route) {
             $name = $route->getName();
 
-            if (!$name || !str_starts_with($name, 'tenant.') || !str_ends_with($name, '.validate')) {
+            if (! $name || ! str_starts_with($name, 'tenant.') || ! str_ends_with($name, '.validate')) {
                 continue;
             }
 
@@ -131,10 +133,10 @@ class ValidateRoutesTest extends TestCase
         ];
 
         foreach ($ids as $key => $value) {
-            $uri = str_replace('{' . $key . '}', (string) $value, $uri);
+            $uri = str_replace('{'.$key.'}', (string) $value, $uri);
         }
 
-        return '/' . ltrim($uri, '/');
+        return '/'.ltrim($uri, '/');
     }
 
     private function makeProduct(): Product
@@ -198,6 +200,8 @@ class ValidateRoutesTest extends TestCase
             'tenant.manufacturing.messages.validate' => ['message' => 'Any update?'],
             'tenant.manufacturing.pay.validate' => ['gateway' => 'stripe', 'payment_request_id' => 1],
             'tenant.onboarding.logo.validate' => self::UNSUPPORTED, // requires a real uploaded file
+            'tenant.orders.cancel.validate' => ['reason' => 'out_of_stock'],
+            'tenant.orders.refunds.validate' => ['amount' => 10, 'reason' => 'Goodwill refund'],
             'tenant.orders.shipping-status.validate' => ['shipping_status' => 'pending'],
             'tenant.own-products.validate' => [], // no required fields
             'tenant.product-requests.validate' => [
@@ -210,6 +214,11 @@ class ValidateRoutesTest extends TestCase
                 'active_locale' => 'en',
                 'translations' => ['en' => ['name' => 'Test Product']],
             ],
+            'tenant.refunds.complete.validate' => ['reference' => 'BANK-123'],
+            'tenant.refunds.reject.validate' => ['reason' => 'The customer kept the item.'],
+            'tenant.returns.exchange-shipped.validate' => ['tracking_number' => 'TRK-123456'],
+            'tenant.returns.inspect.validate' => ['inspection_result' => 'passed'],
+            'tenant.returns.issue-refund.validate' => ['amount' => 10],
             'tenant.returns.notes.validate' => ['note_text' => 'Internal note.'],
             'tenant.returns.refunded.validate' => ['refund_amount' => 10],
             'tenant.returns.reject.validate' => ['reject_reason' => 'Item damaged in transit.'],

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Tenant\Panel\Settings;
 
 use App\Enums\ReturnReason;
 use App\Http\Requests\Tenant\Panel\TenantFormRequest;
+use App\Services\Orders\OrderPolicyService;
 
 final class SaveReturnPolicyRequest extends TenantFormRequest
 {
@@ -17,6 +18,12 @@ final class SaveReturnPolicyRequest extends TenantFormRequest
             'fee' => ['required', 'numeric', 'min:0'],
             'conditions' => ['nullable', 'string', 'max:5000'],
             'video_required_reasons' => ['nullable', 'string'],
+            // Cancellation & refunds card (OrderPolicyService, B.7). Optional so older clients keep working.
+            OrderPolicyService::CANCELLATION_ALLOW_PROCESSING => ['nullable', 'boolean'],
+            OrderPolicyService::CANCELLATION_WINDOW_HOURS => ['nullable', 'integer', 'min:0', 'max:8760'],
+            OrderPolicyService::AUTO_REFUND_ON_CANCEL => ['nullable', 'boolean'],
+            OrderPolicyService::EXCHANGE_ENABLED => ['nullable', 'boolean'],
+            OrderPolicyService::RESTOCK_RETURNED_ITEMS => ['nullable', 'boolean'],
         ];
     }
 
@@ -28,6 +35,7 @@ final class SaveReturnPolicyRequest extends TenantFormRequest
             'fee' => 'return fee',
             'conditions' => 'accepted conditions',
             'video_required_reasons' => 'reasons requiring video',
+            OrderPolicyService::CANCELLATION_WINDOW_HOURS => 'cancellation window (hours)',
         ];
     }
 
@@ -46,6 +54,26 @@ final class SaveReturnPolicyRequest extends TenantFormRequest
         if (is_array($videoReasons)) {
             $this->merge(['video_required_reasons' => implode(',', $videoReasons)]);
         }
+    }
+
+    /**
+     * The order-policy values that were actually submitted (missing keys stay untouched).
+     *
+     * @return array<string, bool|int>
+     */
+    public function orderPolicyValues(): array
+    {
+        $values = [];
+
+        foreach (OrderPolicyService::DEFAULTS as $key => $default) {
+            if (! $this->filled($key) && ! ($this->has($key) && is_bool($default))) {
+                continue;
+            }
+
+            $values[$key] = is_bool($default) ? $this->boolean($key) : (int) $this->input($key);
+        }
+
+        return $values;
     }
 
     public function toIntList(): array

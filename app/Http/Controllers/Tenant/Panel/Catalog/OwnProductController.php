@@ -8,8 +8,10 @@ use App\Enums\FileStorageType;
 use App\Enums\FileType;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Catalog\SaveOwnProductRequest;
+use App\Models\Country;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
+use App\Models\VariationOption;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Http\JsonResponse;
@@ -19,11 +21,20 @@ use Illuminate\View\View;
 
 final class OwnProductController extends PanelController
 {
+    /**
+     * Countries offered by the "sold in" picker, keyed by lowercase ISO2 code
+     * (matches x-tenant::flag artwork). Ticks are saved as central country ids
+     * in products.allowed_country_ids.
+     */
+    public const COUNTRY_OPTIONS = [
+        'qa' => 'Qatar', 'ma' => 'Morocco', 'fr' => 'France', 'eg' => 'Egypt',
+        'ae' => 'UAE', 'us' => 'USA', 'iq' => 'Iraq', 'gb' => 'United Kingdom',
+    ];
+
     public function __construct(
         private readonly TenantPanelRepository $repo,
         private readonly TenantPanelService $service,
-    ) {
-    }
+    ) {}
 
     public function create(): View
     {
@@ -44,6 +55,7 @@ final class OwnProductController extends PanelController
 
     public function update(SaveOwnProductRequest $request, Product $product): JsonResponse
     {
+
         abort_unless($product->is_own_product, 404);
 
         return $this->save($request, $product);
@@ -78,7 +90,7 @@ final class OwnProductController extends PanelController
         $savedProduct = $this->service->saveProduct([
             'central_product_id' => null,
             'sku' => $request->input('sku') ?: null,
-            'slug' => $request->input('slug') ?: null,
+            'slug' => $this->resolveSlug($request, $product, $defaultLocale),
             'price' => $request->input('base_price', 0),
             'sale_price' => $request->input('sale_price') ?: null,
             'cost_price' => $request->input('cost_price') ?: null,
@@ -102,6 +114,14 @@ final class OwnProductController extends PanelController
             'return_video_required' => $returnPolicyOverride && $request->boolean('return_video_required'),
             'return_conditions' => $returnPolicyOverride ? ($request->input('return_conditions') ?: null) : null,
         ], $product);
+
+        // Ticked countries → central country ids. None ticked = no country
+        // preference (NULL), same convention as catalog-synced products.
+        $countryCodes = array_map('strtoupper', array_values(array_filter((array) $request->input('countries', []), fn ($code) => filled($code))));
+        $countryIds = $countryCodes === []
+            ? []
+            : Country::query()->whereIn('iso2', $countryCodes)->pluck('id')->map(fn ($id) => (int) $id)->sort()->values()->all();
+        $savedProduct->update(['allowed_country_ids' => $countryIds === [] ? null : $countryIds]);
 
         $savedProduct->badges()->sync(array_values(array_filter((array) $request->input('badge_ids', []), fn ($id) => filled($id))));
 
@@ -170,6 +190,29 @@ final class OwnProductController extends PanelController
     /**
      * @return list<array{id:?int,option_ids:list<int>,title:?string,sku:?string,weight_grams:?int,real_price:mixed,sell_price:mixed,stock:int,active:bool,image:?UploadedFile,remove_image:bool}>
      */
+    /**
+     * On update, keep the stored slug unless the vendor edited it or renamed
+     * the product — an untouched form must never rewrite the product URL.
+     * Null lets the service regenerate it from the default-locale name.
+     */
+    private function resolveSlug(SaveOwnProductRequest $request, ?Product $product, string $defaultLocale): ?string
+    {
+        $inputSlug = trim((string) $request->input('slug', ''));
+
+        if ($product === null || blank($product->slug)) {
+            return $inputSlug ?: null;
+        }
+
+        if ($inputSlug !== '' && $inputSlug !== $product->slug) {
+            return $inputSlug;
+        }
+
+        $currentName = trim((string) $product->translationValue('name', $defaultLocale));
+        $newName = trim((string) $request->input("translations.{$defaultLocale}.name", ''));
+
+        return $newName === '' || $newName === $currentName ? $product->slug : null;
+    }
+
     private function normalizeVariants(SaveOwnProductRequest $request): array
     {
         $variants = $request->input('variants', []);
@@ -222,6 +265,7 @@ final class OwnProductController extends PanelController
         $existingGallery = collect();
         $categoryIds = [];
         $selectedBadgeIds = [];
+        $selectedCountries = [];
         $productData = null;
 
         if ($product) {
@@ -234,13 +278,18 @@ final class OwnProductController extends PanelController
 
             $categoryIds = $product->categories->pluck('id')->all();
             $selectedBadgeIds = $product->badges->pluck('id')->all();
+
+            $allowedCountryIds = (array) ($product->allowed_country_ids ?? []);
+            $selectedCountries = $allowedCountryIds === []
+                ? []
+                : Country::query()->whereIn('id', $allowedCountryIds)->pluck('iso2')->map(fn ($code) => strtolower((string) $code))->all();
             $existingImage = $product->primary_image_url;
             $existingGallery = $product->files->where('key', 'gallery')->values();
 
             $allOptionIds = $product->variants->flatMap(fn ($v) => (array) $v->option_ids)->filter()->unique()->values()->all();
             $optionMap = $allOptionIds === []
                 ? collect()
-                : \App\Models\VariationOption::query()->whereIn('id', $allOptionIds)->get(['id', 'variation_id'])->keyBy('id');
+                : VariationOption::query()->whereIn('id', $allOptionIds)->get(['id', 'variation_id'])->keyBy('id');
 
             $variants = $product->variants->map(function ($variant) use ($optionMap) {
                 $pairs = collect((array) $variant->option_ids)
@@ -315,6 +364,8 @@ final class OwnProductController extends PanelController
             'variationsJson' => $variationsJson,
             'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
             'selectedBadgeIds' => $selectedBadgeIds,
+            'countryOptions' => self::COUNTRY_OPTIONS,
+            'selectedCountries' => $selectedCountries,
         ];
     }
 }
