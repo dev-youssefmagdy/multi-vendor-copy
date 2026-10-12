@@ -52,7 +52,8 @@
 
 @include('themes.souqify.pages.home-v4.sections.partials.deal_card_styles')
 
-{{-- Figma: Frame 1984080238 (1440x472.07) - 24px 56px padding, 12px gap, no fill.
+{{-- Figma: Frame 1984080238 (1440x472.07) - 24px 56px padding, 12px gap, filled
+     with a "Mesh gradient" shader (tessellation 128).
      Frame 1984079779 is a plain horizontal scroller: equal 226.67x362.07 cards,
      17px apart, no rotation and no size falloff. --}}
 <style>
@@ -66,6 +67,10 @@
         align-items: flex-start;
         padding: 24px var(--sqv4-flash-pad);
         gap: 12px;
+        /* Figma's mesh-gradient shader (4x4 Catmull-Rom mesh, blended in linear
+           light) baked to an image - the shader stretches to the frame, so the
+           image does too. */
+        background: url('{{ asset('souqify-3/assets/images/newin-mesh-gradient.webp') }}') center / 100% 100% no-repeat;
     }
     .sqv4-newin__head {
         display: flex;
