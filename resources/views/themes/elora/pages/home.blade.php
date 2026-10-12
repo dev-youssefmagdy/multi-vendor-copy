@@ -12,7 +12,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
     @vite('resources/css/elora/home.css')
 @endpush
 
-<main class="w-full">
+<main data-home-root class="w-full">
 
     <!--========= mobile header ==========  -->
     <div class="sm:hidden mb-14" style="background: linear-gradient(89.62deg, #C94F1A 0.07%, #F56323 57.6%, #BA3800 100%);">

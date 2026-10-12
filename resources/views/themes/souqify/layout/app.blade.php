@@ -217,6 +217,7 @@
     @livewireScripts
     @include('themes.souqify.layout.' . $scriptsKey)
     @stack('scripts')
+    @include('storefront.partials.home-reveal')
 
     {{-- Variant selection modal --}}
     <div id="variant-select-modal" class="fixed inset-0 z-[9998] items-center justify-center"

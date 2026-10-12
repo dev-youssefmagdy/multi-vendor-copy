@@ -12,7 +12,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
 {{-- ============================================================
      SINGLE ROOT WRAPPER (Livewire requires one root element)
      ============================================================ --}}
-<div class="elora-v5-root">
+<div data-home-root class="elora-v5-root">
     @php
         $__homeSections = $homeSections ?? \App\Services\Tenant\PageBuilder\SectionRegistry::defaultsFor('elora', 'home');
     @endphp

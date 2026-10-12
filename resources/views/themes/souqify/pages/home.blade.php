@@ -42,7 +42,7 @@ $symbol = $currency->symbol ?? '$';
 $rate = (float) ($currency->conversion_rate ?? 1);
 @endphp
 
-<div>
+<div data-home-root>
     <!--========= mobile header ==========  -->
     <div class="lg:hidden text-white bg-gradient-to-r from-[#002562] via-[#144AA6] to-[#003387] mb-14 pt-6 px-4">
         <div class="flex items-center justify-between">

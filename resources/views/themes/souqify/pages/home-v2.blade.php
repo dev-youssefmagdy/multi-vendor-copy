@@ -9,7 +9,7 @@
 {{-- ============================================================
      SINGLE ROOT WRAPPER (Livewire requires one root element)
      ============================================================ --}}
-<div class="souqify-v2-root" style="background:var(--color-page-bg)">
+<div data-home-root class="souqify-v2-root" style="background:var(--color-page-bg)">
     @php
         $__homeSections = $homeSections ?? \App\Services\Tenant\PageBuilder\SectionRegistry::defaultsFor('souqify', 'home');
     @endphp
