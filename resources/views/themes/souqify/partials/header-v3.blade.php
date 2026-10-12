@@ -130,7 +130,7 @@
           <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[22px] opacity-70" /></button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color: var(--color-text-placeholder)" />
           <button type="button" data-image-search-trigger="storefront-image-search-modal-v3" aria-label="{{ __('Search by Image') }}">
-            <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="size-[20px] opacity-70" />
+            <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="h-[20px] w-[27.5px] opacity-70" />
           </button>
         </div>
       </form>
