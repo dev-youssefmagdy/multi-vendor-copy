@@ -49,13 +49,16 @@ export function closeMobileSidebar() {
     document.body.style.overflow = '';
 }
 
+// Desktop collapse = icon rail (see components/sidebar.css), driven by a class on
+// <html> so the inline script in the layout <head> can restore it before paint.
+function applyDesktopSidebar() {
+    document.documentElement.classList.toggle('sb-rail', sbCollapsed);
+}
+
 export function toggleDesktopSidebar() {
     sbCollapsed = !sbCollapsed;
     window.localStorage.setItem('tenant-sb-collapsed', sbCollapsed ? '1' : '0');
-    byId('sb')?.classList.toggle('sb-hide', sbCollapsed);
-    byId('nav')?.classList.toggle('nav-full', sbCollapsed);
-    byId('nav2')?.classList.toggle('nav-full', sbCollapsed);
-    byId('mn')?.classList.toggle('mn-full', sbCollapsed);
+    applyDesktopSidebar();
 }
 
 export function handleHamburger() {
@@ -81,10 +84,7 @@ export function syncSidebarLayout() {
         return;
     }
 
-    sidebar.classList.toggle('sb-hide', sbCollapsed);
-    nav.classList.toggle('nav-full', sbCollapsed);
-    byId('nav2')?.classList.toggle('nav-full', sbCollapsed);
-    main.classList.toggle('mn-full', sbCollapsed);
+    applyDesktopSidebar();
 }
 
 export function setActiveNav(target) {

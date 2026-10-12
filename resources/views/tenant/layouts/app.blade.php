@@ -9,6 +9,12 @@
     <meta name="tenant-login-url" content="{{ route('tenant.login') }}">
     <meta name="tenant-id" content="{{ tenant('id') }}">
     <title>@yield('title', 'Dashboard') · {{ tenant('name') ? tenant('name').' Vendor Panel' : 'Vendor Panel' }}</title>
+    {{-- Restore the collapsed (icon rail) sidebar before first paint, so it doesn't flash open --}}
+    <script>
+        try {
+            if (localStorage.getItem('tenant-sb-collapsed') === '1') document.documentElement.classList.add('sb-rail');
+        } catch (e) {}
+    </script>
     @vite(['resources/css/tenant/app.css', 'resources/js/tenant/app.js'])
     @stack('tenant-vite')
 </head>

@@ -30,9 +30,12 @@ body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-h
 
 .t-scope #nav svg { flex-shrink: 0; }
 
-/* Hamburger — only needed when the sidebar is off-canvas */
+/* Hamburger — opens the off-canvas sidebar on mobile, and collapses the
+   sidebar to its icon rail on desktop (see components/sidebar.css) */
 .t-scope #nav .ham {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
     min-width: 40px;

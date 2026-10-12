@@ -298,3 +298,52 @@
     background: currentColor;
     box-shadow: none;
 }
+
+/* ── Collapsible sidebar: icon rail (desktop only) ──────────────────────────
+   The header's menu button toggles html.sb-rail (remembered in localStorage as
+   tenant-sb-collapsed). The sidebar shrinks to an 88px rail: the 8px edge bar
+   plus a 72px icon pill. Hovering or tabbing into it expands it back to full
+   width over the page, so labels, sub-menus and the store card stay reachable
+   without shifting the content. */
+@media (min-width: 1024px) {
+    .t-scope #sb {
+        transition: width .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s ease;
+    }
+
+    html.sb-rail .t-scope #sb { width: 88px; }
+
+    html.sb-rail .t-scope #sb:hover,
+    html.sb-rail .t-scope #sb:focus-within {
+        width: var(--ds-sb-width);
+        box-shadow: 12px 0 32px rgba(0, 0, 0, .12);
+    }
+
+    html.sb-rail .t-scope #nav,
+    html.sb-rail .t-scope #nav2 { left: 88px; }
+
+    html.sb-rail .t-scope #mn { margin-left: 88px; }
+
+    /* Collapsed (not hovered): icons only */
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) :is(.ni-label, .ng-arrow, .ni-badge, .user-meta, .su-logout, .t-setup-progress) {
+        display: none;
+    }
+
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) .ng-kids { max-height: 0; }
+
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) :is(.ni, .ng-trigger) {
+        justify-content: center;
+        padding: 0;
+    }
+
+    /* External-link arrow after the label */
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) .ni > svg:not(:first-of-type) { display: none; }
+
+    /* Logo: keep just the emblem (left part of the wordmark) */
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) .sb-logo {
+        width: 40px;
+        object-fit: cover;
+        object-position: left center;
+    }
+
+    html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) .su-inner { justify-content: center; padding-inline: 0; }
+}
