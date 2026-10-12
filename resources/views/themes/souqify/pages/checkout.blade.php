@@ -19,15 +19,15 @@
     <!-- =========== BREADCRUMB =========== -->
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav class="flex items-center gap-2 text-sm text-neutral-500">
-            <a href="{{ route('tenant.home') }}" class="hover:text-blue-700 transition">{{ __('Home') }}</a>
+            <a href="{{ route('tenant.home') }}" class="hover:text-[color:var(--sq-primary)] transition">{{ __('Home') }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-            <a href="{{ route('tenant.storefront.cart') }}" class="hover:text-blue-700 transition">{{ __('My Cart') }}</a>
+            <a href="{{ route('tenant.storefront.cart') }}" class="hover:text-[color:var(--sq-primary)] transition">{{ __('My Cart') }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-            <span class="text-blue-700 font-medium">{{ __('Checkout') }}</span>
+            <span class="text-[color:var(--sq-primary)] font-medium">{{ __('Checkout') }}</span>
         </nav>
     </div>
     @if (session('error') || $errors->has('payment'))
@@ -51,7 +51,7 @@
                             <h2 class="text-lg sm:text-xl font-medium text-neutral-900">{{ __('Shipping information') }}
                             </h2>
                             <button type="button" wire:click="openAddressModal('shipping')"
-                                class="flex items-center gap-1 text-blue-700/80 text-sm hover:text-blue-700 transition">
+                                class="flex items-center gap-1 text-[color:var(--sq-primary)] text-sm hover:text-[color:var(--sq-primary)] transition">
                                 {{ $data['shipping']['address_id'] ? __('Edit Address') : __('Add Address') }}
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -65,12 +65,12 @@
                                 @foreach($savedAddresses as $addr)
                                     <button type="button" wire:click="selectShippingAddress({{ $addr->id }})"
                                         class="border-2 rounded-xl p-4 flex items-start gap-4 text-left w-full transition
-                                                                                                {{ $data['shipping']['address_id'] == $addr->id ? 'border-blue-700 bg-blue-50' : 'border-neutral-200 hover:border-neutral-300 bg-white' }}">
+                                                                                                {{ $data['shipping']['address_id'] == $addr->id ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary-soft)]' : 'border-neutral-200 hover:border-neutral-300 bg-white' }}">
                                         <span
                                             class="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition
-                                                                                                {{ $data['shipping']['address_id'] == $addr->id ? 'border-blue-700' : 'border-stone-300' }}">
+                                                                                                {{ $data['shipping']['address_id'] == $addr->id ? 'border-[color:var(--sq-primary)]' : 'border-stone-300' }}">
                                             @if($data['shipping']['address_id'] == $addr->id)
-                                                <span class="w-2.5 h-2.5 rounded-full bg-blue-700"></span>
+                                                <span class="w-2.5 h-2.5 rounded-full bg-[color:var(--sq-primary)]"></span>
                                             @endif
                                         </span>
                                         <div class="flex-1 min-w-0">
@@ -81,7 +81,7 @@
                                                 @endif
                                                 @if($addr->is_default)
                                                     <span
-                                                        class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">{{ __('Default') }}</span>
+                                                        class="px-2 py-0.5 bg-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)] text-xs rounded-full font-medium">{{ __('Default') }}</span>
                                                 @endif
                                             </div>
                                             <p class="text-neutral-500 text-xs mt-1">
@@ -91,7 +91,7 @@
                                     </button>
                                 @endforeach
                                 <button type="button" wire:click="openAddressModal('shipping',true)"
-                                    class="border-2 border-dashed border-neutral-300 rounded-xl p-4 text-sm text-neutral-500 hover:border-blue-400 hover:text-blue-600 transition flex items-center justify-center gap-2">
+                                    class="border-2 border-dashed border-neutral-300 rounded-xl p-4 text-sm text-neutral-500 hover:border-[color:var(--sq-primary-muted)] hover:text-[color:var(--sq-primary)] transition flex items-center justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 4v16m8-8H4" />
@@ -105,8 +105,8 @@
                             </div>
                         @endif
                         <div
-                            class="rounded-2xl px-4 py-4 flex items-start gap-3 {{ !$shippingAvailable && $shippingMessage ? 'border border-red-200 bg-red-50' : 'border border-blue-100 bg-blue-50/60' }}">
-                            <svg class="w-5 h-5 shrink-0 mt-0.5 {{ !$shippingAvailable && $shippingMessage ? 'text-red-500' : 'text-blue-700' }}"
+                            class="rounded-2xl px-4 py-4 flex items-start gap-3 {{ !$shippingAvailable && $shippingMessage ? 'border border-red-200 bg-red-50' : 'border border-[color:var(--sq-primary-soft-2)] bg-[color:var(--sq-primary-soft)]' }}">
+                            <svg class="w-5 h-5 shrink-0 mt-0.5 {{ !$shippingAvailable && $shippingMessage ? 'text-red-500' : 'text-[color:var(--sq-primary)]' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 @if(!$shippingAvailable && $shippingMessage)
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -125,7 +125,7 @@
                                 @else
                                     <div class="flex items-center justify-between gap-3 flex-wrap">
                                         <p class="text-sm font-semibold text-slate-900">{{ __('Shipping is calculated by address') }}</p>
-                                        <span class="text-sm font-semibold text-blue-700">{{ $formattedShipping }}</span>
+                                        <span class="text-sm font-semibold text-[color:var(--sq-primary)]">{{ $formattedShipping }}</span>
                                     </div>
                                     <p class="text-xs text-neutral-500 mt-1">
                                         {{ collect([$shippingZoneLabel, $shippingRateLabel])->filter()->implode(' / ') ?: __('Shipping fees update automatically after you change the delivery address.') }}
@@ -163,10 +163,10 @@
                             <div class="flex gap-3">
                                 <input type="text" wire:model="data.coupon.code" wire:keydown.enter="applyCoupon()"
                                     placeholder="{{ __('Enter coupon or promo code') }}"
-                                    class="flex-1 h-12 px-4 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm min-w-10" />
+                                    class="flex-1 h-12 px-4 rounded-xl border border-neutral-300 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] text-sm min-w-10" />
                                 <button type="button" wire:click="applyCoupon()" wire:loading.attr="disabled"
                                     wire:target="applyCoupon"
-                                    class="px-5 h-12 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-sm font-medium transition disabled:opacity-70">
+                                    class="px-5 h-12 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-xl text-sm font-medium transition disabled:opacity-70">
                                     <span wire:loading wire:target="applyCoupon"
                                         class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                                     <span wire:loading.remove wire:target="applyCoupon">{{ __('Apply') }}</span>
@@ -182,7 +182,7 @@
                     <div class="flex flex-col gap-4">
                         <label class="inline-flex items-center gap-3 cursor-pointer w-max">
                             <input type="checkbox" wire:model.live="data.billing.same_as_shipping"
-                                class="w-4 h-4 rounded border-neutral-300 text-blue-700 focus:ring-blue-300">
+                                class="w-4 h-4 rounded border-neutral-300 text-[color:var(--sq-primary)] focus:ring-[color:var(--sq-primary-muted)]">
                             <span class="text-sm text-neutral-600 font-medium">{{ __('Billing address is same as shipping') }}</span>
                         </label>
 
@@ -190,7 +190,7 @@
                             <div class="flex items-center justify-between flex-wrap gap-2">
                                 <h2 class="text-lg sm:text-xl font-medium text-neutral-900">{{ __('Billing address') }}</h2>
                                 <button type="button" wire:click="openAddressModal('billing')"
-                                    class="flex items-center gap-1 text-blue-700/80 text-sm hover:text-blue-700 transition">
+                                    class="flex items-center gap-1 text-[color:var(--sq-primary)] text-sm hover:text-[color:var(--sq-primary)] transition">
                                     {{ $data['billing']['address_id'] ? __('Edit Billing Address') : __('Add Billing Address') }}
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -204,12 +204,12 @@
                                     @foreach($savedAddresses as $addr)
                                         <button type="button" wire:click="selectBillingAddress({{ $addr->id }})"
                                             class="border rounded-xl p-4 flex items-start gap-4 text-left w-full transition
-                                                                                                                                {{ $data['billing']['address_id'] == $addr->id ? 'border-blue-700 bg-blue-50' : 'border-neutral-200 hover:border-neutral-300 bg-white' }}">
+                                                                                                                                {{ $data['billing']['address_id'] == $addr->id ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary-soft)]' : 'border-neutral-200 hover:border-neutral-300 bg-white' }}">
                                             <span
                                                 class="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition
-                                                                                                                                {{ $data['billing']['address_id'] == $addr->id ? 'border-blue-700' : 'border-stone-300' }}">
+                                                                                                                                {{ $data['billing']['address_id'] == $addr->id ? 'border-[color:var(--sq-primary)]' : 'border-stone-300' }}">
                                                 @if($data['billing']['address_id'] == $addr->id)
-                                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-700"></span>
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-[color:var(--sq-primary)]"></span>
                                                 @endif
                                             </span>
                                             <div class="flex-1 min-w-0">
@@ -220,7 +220,7 @@
                                                     @endif
                                                     @if($addr->is_default)
                                                         <span
-                                                            class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">{{ __('Default') }}</span>
+                                                            class="px-2 py-0.5 bg-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)] text-xs rounded-full font-medium">{{ __('Default') }}</span>
                                                     @endif
                                                 </div>
                                                 <p class="text-neutral-500 text-xs mt-1">
@@ -235,20 +235,20 @@
                                     <div class="sm:col-span-2 flex flex-col gap-1">
                                         <label class="text-sm font-medium text-slate-700">{{ __('Full Name') }}</label>
                                         <input type="text" wire:model="data.billing.name" placeholder="{{ __('Full Name') }}"
-                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
+                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] text-sm">
                                         @error('data.billing.name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                                     </div>
                                     <div class="flex flex-col gap-1">
                                         <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
                                         <input type="email" wire:model="data.billing.email" placeholder="{{ __('Email') }}"
-                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
+                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] text-sm">
                                         @error('data.billing.email') <p class="text-red-500 text-xs">{{ $message }}</p>
                                         @enderror
                                     </div>
                                     <div class="flex flex-col gap-1" wire:ignore>
                                         <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
                                         <input type="tel" data-phone-input wire-event="data.billing.phone" value="{{ $data['billing']['phone'] ?? '' }}" placeholder="{{ __('Phone') }}"
-                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm">
+                                            class="h-11 px-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] text-sm">
                                         @error('data.billing.phone') <p class="text-red-500 text-xs">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -256,7 +256,7 @@
                                         <label class="text-sm font-medium text-slate-700">{{ __('Address') }}</label>
                                         <textarea wire:model="data.billing.address" rows="3"
                                             placeholder="{{ __('Street address, city, country') }}"
-                                            class="px-3 py-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-blue-300 text-sm resize-none"></textarea>
+                                            class="px-3 py-3 rounded-lg border border-neutral-300 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] text-sm resize-none"></textarea>
                                         @error('data.billing.address') <p class="text-red-500 text-xs">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -272,14 +272,14 @@
                         <div class="flex flex-col gap-3">
                             @foreach($gateways as $gw)
                                 <label wire:key="gw-{{ $gw['id'] }}"
-                                    class="rounded-2xl border px-4 py-4 cursor-pointer transition bg-white hover:border-blue-300 {{ $selectedPayment === $gw['code'] ? 'border-blue-700 ring-2 ring-blue-100' : 'border-neutral-200' }}">
+                                    class="rounded-2xl border px-4 py-4 cursor-pointer transition bg-white hover:border-[color:var(--sq-primary-muted)] {{ $selectedPayment === $gw['code'] ? 'border-[color:var(--sq-primary)] ring-2 ring-[color:var(--sq-primary-soft-2)]' : 'border-neutral-200' }}">
                                     <input type="radio" class="sr-only"
                                         wire:click="selectPayment('{{ $gw['code'] }}', {{ $gw['id'] }})"
                                         name="payment_choice" value="{{ $gw['code'] }}"
                                         @checked($selectedPayment === $gw['code'])>
                                     <div class="flex items-center gap-3">
                                         <span
-                                            class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition {{ $selectedPayment === $gw['code'] ? 'border-blue-700 bg-blue-700' : 'border-stone-300' }}">
+                                            class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition {{ $selectedPayment === $gw['code'] ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)]' : 'border-stone-300' }}">
                                             @if($selectedPayment === $gw['code'])
                                                 <span class="w-2 h-2 rounded-full bg-white"></span>
                                             @endif
@@ -307,12 +307,12 @@
                             @endforeach
 
                             {{--<label
-                                class="rounded-2xl border px-4 py-4 cursor-pointer transition bg-white hover:border-blue-300 {{ $selectedPayment === 'cod' ? 'border-blue-700 ring-2 ring-blue-100' : 'border-neutral-200' }}">
+                                class="rounded-2xl border px-4 py-4 cursor-pointer transition bg-white hover:border-[color:var(--sq-primary-muted)] {{ $selectedPayment === 'cod' ? 'border-[color:var(--sq-primary)] ring-2 ring-[color:var(--sq-primary-soft-2)]' : 'border-neutral-200' }}">
                                 <input type="radio" class="sr-only" wire:click="selectPayment('cod')"
                                     name="payment_choice" value="cod" @checked($selectedPayment==='cod' )>
                                 <div class="flex items-center gap-3">
                                     <span
-                                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition {{ $selectedPayment === 'cod' ? 'border-blue-700 bg-blue-700' : 'border-stone-300' }}">
+                                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition {{ $selectedPayment === 'cod' ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)]' : 'border-stone-300' }}">
                                         @if($selectedPayment === 'cod')
                                         <span class="w-2 h-2 rounded-full bg-white"></span>
                                         @endif
@@ -365,14 +365,14 @@
                                     <div class="flex flex-col gap-3">
                                         <input type="text" id="card-number" inputmode="numeric" autocomplete="cc-number"
                                             placeholder="{{ __('Card number') }}"
-                                            class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-blue-300 transition bg-white tracking-widest">
+                                            class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] transition bg-white tracking-widest">
                                         <div class="grid grid-cols-2 gap-3">
                                             <input type="text" id="card-expiry" inputmode="numeric" autocomplete="cc-exp"
                                                 placeholder="{{ __('MM / YY') }}" maxlength="7"
-                                                class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-blue-300 transition bg-white">
+                                                class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] transition bg-white">
                                             <input type="text" id="card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                                 placeholder="{{ __('CVC') }}" maxlength="4"
-                                                class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-blue-300 transition bg-white">
+                                                class="w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-neutral-400 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] transition bg-white">
                                         </div>
                                         @if($activeInlineGateway['code'] === 'authorize_net')
                                             <input type="hidden" id="auth-net-descriptor" wire:model="data.payment.authnet_desc">
@@ -507,7 +507,7 @@
                             @endif
                             <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses)
                                 wire:loading.attr="disabled" wire:target="placeOrder"
-                                class="h-14 sm:h-16 w-full bg-blue-700 hover:bg-blue-800 text-white rounded-full text-xl sm:text-2xl font-medium transition flex items-center justify-center gap-2 disabled:opacity-70 {{ !$shippingAvailable || !$hasAddresses ? 'opacity-60 cursor-not-allowed' : '' }}">
+                                class="h-14 sm:h-16 w-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-full text-xl sm:text-2xl font-medium transition flex items-center justify-center gap-2 disabled:opacity-70 {{ !$shippingAvailable || !$hasAddresses ? 'opacity-60 cursor-not-allowed' : '' }}">
                                 <span wire:loading wire:target="placeOrder"
                                     class="inline-block w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                                 {{ __('Pay') }} {{ $formattedFinalTotal }}
@@ -520,14 +520,14 @@
                             <span>{{ __('Powered by') }}</span>
                             <span class="font-bold text-gray-700">{{ __('Souqify') }}</span>
                             <span>|</span>
-                            <a href="#" class="underline hover:text-blue-700 transition">{{ __('Terms') }}</a>
-                            <a href="#" class="underline hover:text-blue-700 transition">{{ __('Privacy') }}</a>
+                            <a href="#" class="underline hover:text-[color:var(--sq-primary)] transition">{{ __('Terms') }}</a>
+                            <a href="#" class="underline hover:text-[color:var(--sq-primary)] transition">{{ __('Privacy') }}</a>
                         </div> -->
 
                         <!-- Trust badges -->
                         <div class="grid grid-cols-2 gap-3 pt-2">
                             <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
-                                <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-[color:var(--sq-primary)]" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -538,7 +538,7 @@
                                 <p class="text-xs text-neutral-500">{{ __('Orders over $100') }}</p>
                             </div>
                             {{-- <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
-                                <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-[color:var(--sq-primary)]" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -576,8 +576,8 @@
             <div class="bg-white rounded-3xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh] overflow-hidden shadow-2xl ring-1 ring-black/5"
                 wire:click.stop>
                 <div class="flex items-start gap-3.5 px-6 sm:px-8 pt-6 sm:pt-7 pb-5">
-                    <div class="shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="shrink-0 w-10 h-10 rounded-full bg-[color:var(--sq-primary-soft)] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[color:var(--sq-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
@@ -609,19 +609,19 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-sm font-medium text-slate-700">{{ __('Full Name') }}</label>
                             <input type="text" wire:model="data.modal.full_name" placeholder="{{ __('Full Name') }}"
-                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                             @error('data.modal.full_name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
                         <div class="flex flex-col gap-1" wire:ignore>
                             <label class="text-sm font-medium text-slate-700">{{ __('Phone') }}</label>
                             <input type="tel" data-phone-input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" placeholder="{{ __('Phone') }}"
-                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                             @error('data.modal.phone') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
                         <div class="flex flex-col gap-1">
                             <label class="text-sm font-medium text-slate-700">{{ __('Email') }}</label>
                             <input type="email" wire:model="data.modal.email" placeholder="{{ __('Email') }}"
-                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                             @error('data.modal.email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -634,20 +634,20 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-sm font-medium text-slate-700">{{ __('Address') }}</label>
                             <input type="text" wire:model="data.modal.line1" placeholder="{{ __('Street address, P.O. box') }}"
-                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                             @error('data.modal.line1') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1">
                                 <label class="text-sm font-medium text-slate-700">{{ __('City') }}</label>
                                 <input type="text" wire:model="data.modal.city" placeholder="{{ __('City') }}"
-                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                                 @error('data.modal.city') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                             </div>
                             <div class="flex flex-col gap-1">
                                 <label class="text-sm font-medium text-slate-700">{{ __('State / Province') }}</label>
                                 <input type="text" wire:model="data.modal.state" placeholder="{{ __('State or province') }}"
-                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition text-sm">
+                                    class="h-11 px-3 rounded-xl border border-neutral-300 outline-none focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft-2)] transition text-sm">
                                 @error('data.modal.state') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -666,7 +666,7 @@
                         <span class="text-sm text-slate-700 font-medium">{{ __('Set as default address') }}</span>
                         <span class="relative inline-flex shrink-0">
                             <input type="checkbox" wire:model="data.modal.is_default" class="peer sr-only">
-                            <span class="w-9 h-5 rounded-full bg-neutral-300 peer-checked:bg-blue-700 transition-colors"></span>
+                            <span class="w-9 h-5 rounded-full bg-neutral-300 peer-checked:bg-[color:var(--sq-primary)] transition-colors"></span>
                             <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></span>
                         </span>
                     </label>
@@ -679,7 +679,7 @@
                     </button>
                     <button type="button" wire:click="saveNewAddress()" wire:loading.attr="disabled"
                         wire:target="saveNewAddress"
-                        class="flex-1 h-12 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-medium text-sm transition flex items-center justify-center gap-2 disabled:opacity-70">
+                        class="flex-1 h-12 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-full font-medium text-sm transition flex items-center justify-center gap-2 disabled:opacity-70">
                         <span wire:loading wire:target="saveNewAddress"
                             class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                         {{ $data['modal']['address_id'] ? __('Update Address') : __('Save Address') }}

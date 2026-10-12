@@ -9,7 +9,7 @@
                     <div class="bg-white rounded-2xl border border-neutral-200 p-5 sticky top-4">
                         <div class="flex items-center gap-3 pb-4 mb-4 border-b border-neutral-100">
                             <div
-                                class="w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold text-lg">
+                                class="w-12 h-12 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center font-bold text-lg">
                                 {{ strtoupper(substr($customer->full_name ?? 'U', 0, 1)) }}
                             </div>
                             <div class="min-w-0 flex-1">
@@ -22,7 +22,7 @@
                         <nav class="space-y-1">
                             <button type="button" wire:click="setTab('orders')"
                                 class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-3
-                                    {{ $activeTab === 'orders' ? 'bg-blue-700 text-white' : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                                    {{ $activeTab === 'orders' ? 'bg-[color:var(--sq-primary)] text-white' : 'text-neutral-700 hover:bg-[color:var(--sq-primary-soft)] hover:text-[color:var(--sq-primary)]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -31,7 +31,7 @@
                             </button>
                             <button type="button" wire:click="setTab('profile')"
                                 class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-3
-                                    {{ $activeTab === 'profile' ? 'bg-blue-700 text-white' : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                                    {{ $activeTab === 'profile' ? 'bg-[color:var(--sq-primary)] text-white' : 'text-neutral-700 hover:bg-[color:var(--sq-primary-soft)] hover:text-[color:var(--sq-primary)]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -40,7 +40,7 @@
                             </button>
                             <button type="button" wire:click="setTab('wishlist')"
                                 class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-3
-                                    {{ $activeTab === 'wishlist' ? 'bg-blue-700 text-white' : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                                    {{ $activeTab === 'wishlist' ? 'bg-[color:var(--sq-primary)] text-white' : 'text-neutral-700 hover:bg-[color:var(--sq-primary-soft)] hover:text-[color:var(--sq-primary)]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -49,7 +49,7 @@
                             </button>
                             <button type="button" wire:click="setTab('returns')"
                                 class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-3
-                                    {{ $activeTab === 'returns' ? 'bg-blue-700 text-white' : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                                    {{ $activeTab === 'returns' ? 'bg-[color:var(--sq-primary)] text-white' : 'text-neutral-700 hover:bg-[color:var(--sq-primary-soft)] hover:text-[color:var(--sq-primary)]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
@@ -76,7 +76,7 @@
                     <div class="lg:hidden mb-5 space-y-3">
                         {{-- User info card --}}
                         <div class="bg-white rounded-2xl border border-neutral-200 px-4 py-3 flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold text-base shrink-0">
+                            <div class="w-11 h-11 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center font-bold text-base shrink-0">
                                 {{ strtoupper(substr($customer->full_name ?? 'U', 0, 1)) }}
                             </div>
                             <div class="min-w-0 flex-1">
@@ -96,7 +96,7 @@
                         <div class="bg-white rounded-2xl border border-neutral-200 p-1.5 flex gap-1">
                             <button wire:click="setTab('orders')"
                                 class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition
-                                    {{ $activeTab === 'orders' ? 'bg-blue-700 text-white shadow-sm' : 'text-neutral-500 hover:text-blue-700 hover:bg-blue-50' }}">
+                                    {{ $activeTab === 'orders' ? 'bg-[color:var(--sq-primary)] text-white shadow-sm' : 'text-neutral-500 hover:text-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)]' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -105,7 +105,7 @@
                             </button>
                             <button wire:click="setTab('profile')"
                                 class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition
-                                    {{ $activeTab === 'profile' ? 'bg-blue-700 text-white shadow-sm' : 'text-neutral-500 hover:text-blue-700 hover:bg-blue-50' }}">
+                                    {{ $activeTab === 'profile' ? 'bg-[color:var(--sq-primary)] text-white shadow-sm' : 'text-neutral-500 hover:text-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)]' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -114,7 +114,7 @@
                             </button>
                             <button wire:click="setTab('wishlist')"
                                 class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition
-                                    {{ $activeTab === 'wishlist' ? 'bg-blue-700 text-white shadow-sm' : 'text-neutral-500 hover:text-blue-700 hover:bg-blue-50' }}">
+                                    {{ $activeTab === 'wishlist' ? 'bg-[color:var(--sq-primary)] text-white shadow-sm' : 'text-neutral-500 hover:text-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)]' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -123,7 +123,7 @@
                             </button>
                             <button wire:click="setTab('returns')"
                                 class="flex-1 flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl text-xs font-semibold transition
-                                    {{ $activeTab === 'returns' ? 'bg-blue-700 text-white shadow-sm' : 'text-neutral-500 hover:text-blue-700 hover:bg-blue-50' }}">
+                                    {{ $activeTab === 'returns' ? 'bg-[color:var(--sq-primary)] text-white shadow-sm' : 'text-neutral-500 hover:text-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)]' }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
@@ -169,13 +169,13 @@
                     <div class="flex items-center gap-2 overflow-x-auto whitespace-nowrap no-scrollbar mb-6">
                         <button type="button" wire:click="filterStatus(null)"
                             class="px-4 py-1.5 rounded-full border text-xs transition shrink-0
-                                    {{ !$statusFilter ? 'border-blue-700 bg-blue-700 text-white font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-blue-700' }}">
+                                    {{ !$statusFilter ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)] text-white font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-[color:var(--sq-primary)]' }}">
                             {{ __('All') }}
                         </button>
                         @foreach (\App\Enums\OrderStatus::cases() as $st)
                         <button type="button" wire:click="filterStatus('{{ $st->value }}')"
                             class="px-4 py-1.5 rounded-full border text-xs transition shrink-0 capitalize
-                                        {{ $statusFilter === $st->value ? 'border-blue-700 bg-blue-700 text-white font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-blue-700' }}">
+                                        {{ $statusFilter === $st->value ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)] text-white font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-[color:var(--sq-primary)]' }}">
                             {{ str_replace('_', ' ', $st->value) }}
                         </button>
                         @endforeach
@@ -200,7 +200,7 @@
                         $statusConfig = match(true) {
                         $statusVal === 'delivered' => ['bg' => 'bg-green-100 border border-green-200', 'text' =>
                         'text-green-700', 'label' => __('Delivered')],
-                        in_array($statusVal, ['shipped']) => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700', 'label'
+                        in_array($statusVal, ['shipped']) => ['bg' => 'bg-[color:var(--sq-primary-soft-2)]', 'text' => 'text-[color:var(--sq-primary)]', 'label'
                         => __('Shipped')],
                         in_array($statusVal, ['pending', 'paid', 'processing']) => ['bg' => 'bg-yellow-100', 'text' =>
                         'text-yellow-700', 'label' => ucfirst($statusVal)],
@@ -272,9 +272,9 @@
                                         @endif
                                     </p>
                                     <p class="text-base text-neutral-800 font-['Outfit']">{{ $orderTotal }}</p>
-                                    <a href="{{ route('tenant.storefront.order-status', $order->uuid ?? $order->id) }}" class="lg:hidden text-[#0159ED] font-['Outfit'] flex items-center justify-end"><svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M1.8125 10.1633C1.10417 9.24333 0.75 8.7825 0.75 7.41667C0.75 6.05 1.10417 5.59083 1.8125 4.67C3.22667 2.83333 5.59833 0.75 9.08333 0.75C12.5683 0.75 14.94 2.83333 16.3542 4.67C17.0625 5.59167 17.4167 6.05083 17.4167 7.41667C17.4167 8.78333 17.0625 9.2425 16.3542 10.1633C14.94 12 12.5683 14.0833 9.08333 14.0833C5.59833 14.0833 3.22667 12 1.8125 10.1633Z" stroke="#0159ED" stroke-width="1.5" />
-                                            <path d="M11.5859 7.41699C11.5859 8.08003 11.3225 8.71592 10.8537 9.18476C10.3849 9.6536 9.74898 9.91699 9.08594 9.91699C8.4229 9.91699 7.78701 9.6536 7.31817 9.18476C6.84933 8.71592 6.58594 8.08003 6.58594 7.41699C6.58594 6.75395 6.84933 6.11807 7.31817 5.64922C7.78701 5.18038 8.4229 4.91699 9.08594 4.91699C9.74898 4.91699 10.3849 5.18038 10.8537 5.64922C11.3225 6.11807 11.5859 6.75395 11.5859 7.41699Z" stroke="#0159ED" stroke-width="1.5" />
+                                    <a href="{{ route('tenant.storefront.order-status', $order->uuid ?? $order->id) }}" class="lg:hidden text-[color:var(--sq-primary)] font-['Outfit'] flex items-center justify-end"><svg width="19" height="15" viewBox="0 0 19 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1.8125 10.1633C1.10417 9.24333 0.75 8.7825 0.75 7.41667C0.75 6.05 1.10417 5.59083 1.8125 4.67C3.22667 2.83333 5.59833 0.75 9.08333 0.75C12.5683 0.75 14.94 2.83333 16.3542 4.67C17.0625 5.59167 17.4167 6.05083 17.4167 7.41667C17.4167 8.78333 17.0625 9.2425 16.3542 10.1633C14.94 12 12.5683 14.0833 9.08333 14.0833C5.59833 14.0833 3.22667 12 1.8125 10.1633Z" stroke-width="1.5" style="stroke: var(--sq-primary)" />
+                                            <path d="M11.5859 7.41699C11.5859 8.08003 11.3225 8.71592 10.8537 9.18476C10.3849 9.6536 9.74898 9.91699 9.08594 9.91699C8.4229 9.91699 7.78701 9.6536 7.31817 9.18476C6.84933 8.71592 6.58594 8.08003 6.58594 7.41699C6.58594 6.75395 6.84933 6.11807 7.31817 5.64922C7.78701 5.18038 8.4229 4.91699 9.08594 4.91699C9.74898 4.91699 10.3849 5.18038 10.8537 5.64922C11.3225 6.11807 11.5859 6.75395 11.5859 7.41699Z" stroke-width="1.5" style="stroke: var(--sq-primary)" />
                                         </svg>
                                         {{ __('View') }}
                                     </a>
@@ -370,7 +370,7 @@
                         <p class="mt-4 text-base text-[#242424]">{{ __('No orders yet!') }}</p>
                         <p class="text-base text-[#717171]">{{ __("You don't have any orders at the moment.") }}</p>
                         <a href="{{ route('tenant.home') }}"
-                            class="inline-block mt-4 px-6 py-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold transition">
+                            class="inline-block mt-4 px-6 py-2 rounded-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-semibold transition">
                             {{ __('Start Shopping') }}
                         </a>
                     </div>
@@ -424,11 +424,11 @@
                                 @endif
                                 <div class="mt-3 flex items-center gap-4">
                                     <a href="{{ route('tenant.storefront.order-status', $ret->order_number) }}"
-                                        class="text-xs font-medium underline text-neutral-500 hover:text-blue-700">
+                                        class="text-xs font-medium underline text-neutral-500 hover:text-[color:var(--sq-primary)]">
                                         {{ __('View Order') }}
                                     </a>
                                     <a href="{{ route('tenant.storefront.return-detail', $ret->id) }}"
-                                        class="text-xs font-medium underline text-blue-700 hover:opacity-75">
+                                        class="text-xs font-medium underline text-[color:var(--sq-primary)] hover:opacity-75">
                                         {{ __('View Details') }}
                                     </a>
                                 </div>
@@ -450,9 +450,9 @@
                         <div class="flex items-center gap-2">
                             <input type="text" id="souqify-fav-search" oninput="souqifyFavSearch(this.value)"
                                 placeholder="{{ __('Search wishlist') }}"
-                                class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-blue-700" />
+                                class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-[color:var(--sq-primary)]" />
                             <select id="souqify-fav-sort" onchange="souqifyFavSort(this.value)"
-                                class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-blue-700">
+                                class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-[color:var(--sq-primary)]">
                                 <option value="recent">{{ __('Recently added') }}</option>
                                 <option value="price-asc">{{ __('Price: Low to High') }}</option>
                                 <option value="price-desc">{{ __('Price: High to Low') }}</option>
@@ -476,7 +476,7 @@
                             {{ __('Browse products and tap the heart icon to save your favorites.') }}
                         </p>
                         <a href="{{ route('tenant.home') }}"
-                            class="inline-block px-7 py-3 rounded-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold transition">
+                            class="inline-block px-7 py-3 rounded-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-semibold transition">
                             {{ __('Start Shopping') }}
                         </a>
                     </div>
@@ -515,7 +515,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-base font-bold text-slate-900">{{ __('Saved Addresses') }}</h3>
                                 <button type="button" wire:click="openAddressModal()"
-                                    class="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-700 text-white text-xs font-semibold hover:bg-blue-800 transition">
+                                    class="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[color:var(--sq-primary)] text-white text-xs font-semibold hover:bg-[color:var(--sq-primary-hover)] transition">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     {{ __('Add Address') }}
                                 </button>
@@ -550,7 +550,7 @@
                                             </button>
                                             @endif
                                             <button type="button" wire:click="openAddressModal({{ $addr->id }})"
-                                                class="p-1.5 rounded-lg text-neutral-400 hover:text-blue-600 hover:bg-blue-50 transition" title="{{ __('Edit') }}">
+                                                class="p-1.5 rounded-lg text-neutral-400 hover:text-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)] transition" title="{{ __('Edit') }}">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                             </button>
                                             <button type="button" wire:click="deleteAddress({{ $addr->id }})"
@@ -574,7 +574,7 @@
                             <div class="bg-white rounded-[20px] shadow-2xl ring-1 ring-black/5 w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
                                 <div class="flex items-center justify-between px-6 py-5 border-b border-neutral-100 shrink-0">
                                     <div class="flex items-center gap-3">
-                                        <span class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-700 shrink-0">
+                                        <span class="w-9 h-9 rounded-full bg-[color:var(--sq-primary-soft)] flex items-center justify-center text-[color:var(--sq-primary)] shrink-0">
                                             <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         </span>
                                         <h3 class="text-[17px] font-bold text-slate-900 tracking-tight">
@@ -589,32 +589,32 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('Full Name') }} <span class="text-red-500">*</span></label>
-                                            <input wire:model="addrFullName" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('Full Name') }}" />
+                                            <input wire:model="addrFullName" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('Full Name') }}" />
                                             @error('addrFullName') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('Label') }}</label>
-                                            <input wire:model="addrLabel" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('e.g. Home, Work') }}" />
+                                            <input wire:model="addrLabel" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('e.g. Home, Work') }}" />
                                         </div>
                                     </div>
                                     <div wire:ignore>
                                         <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('Phone') }}</label>
-                                        <input wire-event="addrPhone" value="{{$addrPhone ?? ''}}" type="tel" data-phone-input class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('Phone') }}" />
+                                        <input wire-event="addrPhone" value="{{$addrPhone ?? ''}}" type="tel" data-phone-input class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('Phone') }}" />
                                     </div>
                                     <div>
                                         <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('Address') }} <span class="text-red-500">*</span></label>
-                                        <input wire:model="addrLine1" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('Street address') }}" />
+                                        <input wire:model="addrLine1" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('Street address') }}" />
                                         @error('addrLine1') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('City') }} <span class="text-red-500">*</span></label>
-                                            <input wire:model="addrCity" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('City') }}" />
+                                            <input wire:model="addrCity" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('City') }}" />
                                             @error('addrCity') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label class="text-xs font-semibold text-neutral-500 block mb-1.5">{{ __('State / Region') }}</label>
-                                            <input wire:model="addrState" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-50" placeholder="{{ __('State') }}" />
+                                            <input wire:model="addrState" type="text" class="w-full border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm outline-none transition focus:border-[color:var(--sq-primary)] focus:ring-4 focus:ring-[color:var(--sq-primary-soft)]" placeholder="{{ __('State') }}" />
                                         </div>
                                     </div>
                                     <div>
@@ -627,7 +627,7 @@
                                         @error('addrCountryId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                     </div>
                                     <label class="flex items-center gap-2.5 cursor-pointer select-none bg-neutral-50 rounded-xl px-3.5 py-3 border border-neutral-100">
-                                        <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-blue-700 rounded" />
+                                        <input wire:model="addrIsDefault" type="checkbox" class="w-4 h-4 accent-[color:var(--sq-primary)] rounded" />
                                         <span class="text-[13.5px] font-medium text-neutral-700">{{ __('Set as default address') }}</span>
                                     </label>
                                 </div>
@@ -637,7 +637,7 @@
                                         {{ __('Cancel') }}
                                     </button>
                                     <button type="button" wire:click="saveAddress"
-                                        class="flex-1 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-full transition shadow-sm">
+                                        class="flex-1 py-2.5 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-semibold rounded-full transition shadow-sm">
                                         {{ __('Save') }}
                                     </button>
                                 </div>
@@ -699,14 +699,14 @@
                 <a href="${item.url || '#'}" class="block relative aspect-square bg-zinc-50 overflow-hidden">${img}
                     <button type="button" onclick="event.preventDefault(); souqifyRemoveFav(${idx})"
                         class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-red-50 transition" title="{{ __('Remove') }}">
-                        <svg class="w-4 h-4" fill="#0159ED" stroke="#0159ED" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg class="w-4 h-4" stroke-width="1.8" viewBox="0 0 24 24" style="fill: var(--sq-primary); stroke: var(--sq-primary)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
                 </a>
                 <div class="p-3 flex flex-col gap-1.5">
-                    <a href="${item.url || '#'}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-blue-700">${item.name || ''}</a>
+                    <a href="${item.url || '#'}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-[color:var(--sq-primary)]">${item.name || ''}</a>
                     <div class="flex items-center gap-0.5">${stars}</div>
                     <div class="flex items-baseline gap-2 mt-1">
-                        <span class="text-base font-bold text-blue-700">$${parseFloat(item.price || 0).toFixed(2)}</span>
+                        <span class="text-base font-bold text-[color:var(--sq-primary)]">$${parseFloat(item.price || 0).toFixed(2)}</span>
                         ${old}
                     </div>
                 </div>

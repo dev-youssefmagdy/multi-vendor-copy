@@ -12,11 +12,11 @@
     <!-- =========== BREADCRUMB =========== -->
     <div class="hidden lg:block max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav class="flex items-center gap-2 text-sm text-neutral-500">
-            <a href="{{ route('tenant.home') }}" class="hover:text-blue-700 transition">{{ __('Home') }}</a>
+            <a href="{{ route('tenant.home') }}" class="hover:text-[color:var(--sq-primary)] transition">{{ __('Home') }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-            <span class="text-blue-700 font-medium">{{ __('My Cart') }}</span>
+            <span class="text-[color:var(--sq-primary)] font-medium">{{ __('My Cart') }}</span>
         </nav>
     </div>
 
@@ -108,7 +108,7 @@
                                         </div>
                                     @endif
                                 </div>
-                                <p class="text-lg sm:text-2xl font-medium text-blue-700 shrink-0">
+                                <p class="text-lg sm:text-2xl font-medium text-[color:var(--sq-primary)] shrink-0">
                                     {{ $symbol }}{{ $itemPrice }}
                                 </p>
                             </div>
@@ -116,7 +116,7 @@
                                 <div
                                     class="bg-violet-50 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-3 sm:gap-4">
                                     <button wire:click="updateQty('{{ $item['key'] }}', {{ max(1, $item['qty'] - 1) }})"
-                                        class="w-6 h-6 flex items-center justify-center text-stone-400 hover:text-blue-700 transition"
+                                        class="w-6 h-6 flex items-center justify-center text-stone-400 hover:text-[color:var(--sq-primary)] transition"
                                         aria-label="{{ __('Decrease') }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -126,7 +126,7 @@
                                     <span
                                         class="text-base sm:text-lg font-medium text-neutral-800 min-w-[16px] text-center">{{ $item['qty'] }}</span>
                                     <button wire:click="updateQty('{{ $item['key'] }}', {{ $item['qty'] + 1 }})"
-                                        class="w-6 h-6 flex items-center justify-center text-blue-700 hover:text-blue-800 transition"
+                                        class="w-6 h-6 flex items-center justify-center text-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary-hover)] transition"
                                         aria-label="{{ __('Increase') }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,7 +155,7 @@
                         <h3 class="text-xl font-medium mb-2">{{ __('Your cart is empty') }}</h3>
                         <p class="text-neutral-500 mb-6">{{ __("Looks like you haven't added anything yet.") }}</p>
                         <a href="{{ route('tenant.storefront.category') }}"
-                            class="inline-block px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-medium transition">
+                            class="inline-block px-6 py-3 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg font-medium transition">
                             {{ __('Continue Shopping') }}
                         </a>
                     </div>
@@ -201,7 +201,7 @@
                         <div class="flex justify-between items-center pt-4 border-t border-stone-300">
                             <span class="text-slate-900 text-lg sm:text-xl">{{ __('Total') }}</span>
                             <span
-                                class="text-blue-700 text-2xl sm:text-3xl font-medium">{{ $symbol }}{{ number_format($orderTotal * $rate, 2) }}</span>
+                                class="text-[color:var(--sq-primary)] text-2xl sm:text-3xl font-medium">{{ $symbol }}{{ number_format($orderTotal * $rate, 2) }}</span>
                         </div>
                     </div>
 
@@ -218,7 +218,7 @@
                         @else
                             <div class="flex gap-2">
                                 <input type="text" wire:model="couponCode" placeholder="{{ __('Enter code') }}"
-                                    class="flex-1 h-12 px-4 bg-gray-100 rounded-lg text-sm placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-blue-300" />
+                                    class="flex-1 h-12 px-4 bg-gray-100 rounded-lg text-sm placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)]" />
                                 <button wire:click="applyCoupon"
                                     class="h-12 px-5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition">{{ __('Apply') }}</button>
                             </div>
@@ -232,7 +232,7 @@
                     <div
                         class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0 flex flex-col gap-3">
                         <a href="{{ route('tenant.storefront.checkout') }}"
-                            class="h-14 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-medium text-base flex items-center justify-center gap-2 transition">
+                            class="h-14 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg font-medium text-base flex items-center justify-center gap-2 transition">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -249,7 +249,7 @@
                     <!-- Trust badges -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
-                            <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-[color:var(--sq-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -259,7 +259,7 @@
                             <p class="text-xs text-neutral-500">{{ __('when you add more :weight to cart', ['weight' => $weightLabel($shippingThreshold)]) }}</p>
                         </div>
                         {{-- <div class="bg-zinc-100 rounded-2xl p-4 flex flex-col gap-1">
-                            <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-[color:var(--sq-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
@@ -315,14 +315,14 @@
                 <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Complete the Collection') }}</h2>
                 <div class="flex items-center gap-2">
                     <button onclick="scrollCarousel('collection', -1)"
-                        class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                        class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                         aria-label="{{ __('Previous') }}">
                         <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button onclick="scrollCarousel('collection', 1)"
-                        class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                        class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
                         aria-label="{{ __('Next') }}">
                         <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -350,7 +350,7 @@
                             @endif
                         </div>
                         <h3 class="font-medium text-zinc-900 mb-1 line-clamp-1">{{ $cpName }}</h3>
-                        <p class="text-blue-700 font-medium">{{ $symbol }}{{ $cpPrice }}</p>
+                        <p class="text-[color:var(--sq-primary)] font-medium">{{ $symbol }}{{ $cpPrice }}</p>
                     </a>
                 @endforeach
             </div>
@@ -365,14 +365,14 @@
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
                         <button onclick="scrollCarousel('recommended', -1)"
-                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                             aria-label="{{ __('Previous') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <button onclick="scrollCarousel('recommended', 1)"
-                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
                             aria-label="{{ __('Next') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -380,7 +380,7 @@
                         </button>
                     </div>
                     <a href="{{ route('tenant.storefront.category') }}"
-                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        class="text-[color:var(--sq-primary)] font-medium text-sm hover:underline flex items-center gap-1">
                         {{ __('view all products') }}
                         <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
                             <path
@@ -407,14 +407,14 @@
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
                         <button onclick="scrollCarousel('hot-deals', -1)"
-                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                             aria-label="{{ __('Previous') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <button onclick="scrollCarousel('hot-deals', 1)"
-                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
                             aria-label="{{ __('Next') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -422,7 +422,7 @@
                         </button>
                     </div>
                     <a href="{{ route('tenant.storefront.category') }}"
-                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        class="text-[color:var(--sq-primary)] font-medium text-sm hover:underline flex items-center gap-1">
                         {{ __('view all products') }}
                         <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
                             <path
@@ -449,14 +449,14 @@
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
                         <button onclick="scrollCarousel('explore', -1)"
-                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                            class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                             aria-label="{{ __('Previous') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <button onclick="scrollCarousel('explore', 1)"
-                            class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                            class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
                             aria-label="{{ __('Next') }}">
                             <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -464,7 +464,7 @@
                         </button>
                     </div>
                     <a href="{{ route('tenant.storefront.category') }}"
-                        class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">
+                        class="text-[color:var(--sq-primary)] font-medium text-sm hover:underline flex items-center gap-1">
                         {{ __('view all products') }}
                         <svg class="w-3 h-3 rtl:rotate-180" fill="currentColor" viewBox="0 0 20 20">
                             <path

@@ -71,13 +71,13 @@
     <div class="bg-white border-b border-neutral-200 hidden lg:block">
         <div
             class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 text-sm text-neutral-600 overflow-x-auto no-scrollbar">
-            <a href="{{route('tenant.home')}}" class="hover:text-blue-700 transition shrink-0">{{ __('Home') }}</a>
+            <a href="{{route('tenant.home')}}" class="hover:text-[color:var(--sq-primary)] transition shrink-0">{{ __('Home') }}</a>
             @foreach ($categoryAncestors as $ancestor)
             <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             <a href="{{ route('tenant.storefront.category', $ancestor->slug) }}"
-                class="hover:text-blue-700 transition shrink-0">
+                class="hover:text-[color:var(--sq-primary)] transition shrink-0">
                 {{ $ancestor->translationValue('name') ?? $ancestor->slug }}
             </a>
             @endforeach
@@ -85,7 +85,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             <span
-                class="text-blue-700 font-medium shrink-0">{{ $product->translationValue('name') ?? $product->slug }}</span>
+                class="text-[color:var(--sq-primary)] font-medium shrink-0">{{ $product->translationValue('name') ?? $product->slug }}</span>
         </div>
     </div>
 
@@ -179,7 +179,7 @@
                         @foreach($mediaItems as $idx => $item)
                         @if($item['type'] === 'video')
                         <button type="button" data-thumb-idx="{{ $idx }}"
-                            class="sq-thumb shrink-0 p-1 !h-20 !w-[88px] rounded-lg overflow-hidden cursor-pointer relative bg-[#E6E6E6] flex items-center justify-center border-2 {{ $idx === 0 ? 'border-[#004AC6]' : 'border-transparent' }}">
+                            class="sq-thumb shrink-0 p-1 !h-20 !w-[88px] rounded-lg overflow-hidden cursor-pointer relative bg-[#E6E6E6] flex items-center justify-center border-2 {{ $idx === 0 ? 'border-[color:var(--sq-primary-hover)]' : 'border-transparent' }}">
                             @if(!empty($item['poster']))
                             <img loading="lazy" class="w-full h-full object-cover opacity-60" src="{{ $item['poster'] }}" alt="">
                             @else
@@ -188,7 +188,7 @@
                             <div class="absolute inset-0 flex flex-col items-center justify-center gap-1">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M5 3l14 9-14 9V3z" fill="#0159ED" />
+                                    <path d="M5 3l14 9-14 9V3z" style="fill: var(--sq-primary)" />
                                 </svg>
                                 <span
                                     class="text-[11px] font-medium tracking-wide text-[#1210159ED212] leading-tight">{{ __('Play Video') }}</span>
@@ -196,7 +196,7 @@
                         </button>
                         @else
                         <button type="button" data-thumb-idx="{{ $idx }}"
-                            class="sq-thumb shrink-0 !w-[88px] !h-20 rounded-lg overflow-hidden cursor-pointer border-2 {{ $idx === 0 ? 'border-[#004AC6]' : 'border-transparent' }}">
+                            class="sq-thumb shrink-0 !w-[88px] !h-20 rounded-lg overflow-hidden cursor-pointer border-2 {{ $idx === 0 ? 'border-[color:var(--sq-primary-hover)]' : 'border-transparent' }}">
                             <img loading="lazy" class="w-full h-full object-cover opacity-60" src="{{ $item['src'] }}"
                                 alt="{{ $item['alt'] ?? '' }}">
                         </button>
@@ -236,7 +236,7 @@
                     </div>
                     <!--bottom left badges -->
                     <div
-                        class="flex items-center gap-2 pl-12 lg:pl-20 pr-1 absolute bottom-0 left-0 z-10 bg-[#0159ED] py-2 rounded-se-xl max-w-[90%] overflow-hidden text-[#FDFDFD]">
+                        class="flex items-center gap-2 pl-12 lg:pl-20 pr-1 absolute bottom-0 left-0 z-10 bg-[color:var(--sq-primary)] py-2 rounded-se-xl max-w-[90%] overflow-hidden text-[#FDFDFD]">
                         <span class="text-xs lg:text-base flex items-center gap-1">
                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -253,25 +253,25 @@
                                     d="M11.6843 4.93158C12.5231 4.74533 13.6156 3.91283 13.7818 3.50283C13.8793 3.26283 13.3931 2.88783 13.2631 2.73658C12.9656 2.39158 13.0856 2.22158 13.2006 1.81033C13.3318 1.34283 13.0206 0.826585 12.5793 0.624085C12.1381 0.421585 11.6106 0.485335 11.1668 0.682835C10.7231 0.880335 10.3443 1.19783 9.97305 1.51033C9.7018 1.33908 9.2693 0.582835 8.5693 1.07408C8.08555 1.41283 8.0418 2.15033 8.1043 2.73908C8.25055 4.09783 8.58555 4.80283 9.2168 4.99283C10.0143 5.23283 10.8968 5.10659 11.6843 4.93158Z"
                                     fill="#FDFDFD" />
                                 <path
-                                    d="M13.0469 1.02344C12.9406 2.85469 11.1544 4.06969 10.3069 4.60469L10.8569 5.07719C10.8569 5.07719 11.2056 5.08469 11.6831 4.93219C12.5019 4.67219 13.6981 3.93719 13.7806 3.50344C13.9019 2.87219 13.2544 3.00969 13.1081 2.51094C13.0319 2.24719 13.4794 1.74844 13.0469 1.02344ZM9.97438 1.51219C9.97438 1.51219 9.65563 1.18594 9.41938 1.03719C9.30188 1.25844 9.21813 1.49844 9.17688 1.74594C9.10313 2.18094 9.17688 2.79844 9.35063 3.25844C9.37813 3.32969 9.48063 3.31844 9.49188 3.24344C9.64188 2.25469 9.97438 1.51219 9.97438 1.51219Z"
-                                    fill="#0159ED" />
+                                    d="M13.0469 1.02344C12.9406 2.85469 11.1544 4.06969 10.3069 4.60469L10.8569 5.07719C10.8569 5.07719 11.2056 5.08469 11.6831 4.93219C12.5019 4.67219 13.6981 3.93719 13.7806 3.50344C13.9019 2.87219 13.2544 3.00969 13.1081 2.51094C13.0319 2.24719 13.4794 1.74844 13.0469 1.02344ZM9.97438 1.51219C9.97438 1.51219 9.65563 1.18594 9.41938 1.03719C9.30188 1.25844 9.21813 1.49844 9.17688 1.74594C9.10313 2.18094 9.17688 2.79844 9.35063 3.25844C9.37813 3.32969 9.48063 3.31844 9.49188 3.24344C9.64188 2.25469 9.97438 1.51219 9.97438 1.51219Z" style="fill: var(--sq-primary)"
+                                    />
                                 <path
                                     d="M7.74307 4.77056C7.74307 4.77056 3.84432 5.19181 2.08557 8.57681C0.326818 11.9618 1.82182 14.0143 3.40432 14.7618C4.98682 15.5093 8.97432 15.7731 11.5681 15.1581C14.1618 14.5431 14.8106 13.2681 14.6893 12.0368C14.5131 10.2393 12.8431 9.13431 12.8431 9.13431C12.8431 9.13431 12.9093 6.91431 11.1868 5.47306C9.65807 4.19306 7.74307 4.77056 7.74307 4.77056Z"
                                     fill="#FDFDFD" />
                                 <path
-                                    d="M9.34405 10.4664C8.5078 9.41137 7.5203 9.27012 7.20405 8.89137C7.03155 8.68512 6.9303 8.47637 6.96905 8.21762C7.0103 7.94262 7.32905 7.75262 7.57655 7.70637C7.8653 7.65137 8.55405 7.68012 9.1328 8.23137C9.2703 8.36137 9.2203 8.56387 9.21655 8.74512C9.20655 9.13387 9.7628 9.51137 10.2128 9.18637C10.6641 8.86012 10.3178 8.13387 10.0266 7.78137C9.80655 7.51512 9.00905 6.92887 8.0178 6.83637C7.73905 6.81012 6.6178 6.64387 5.9703 7.87512C5.78405 8.22887 5.7153 9.08387 6.6903 9.80637C6.89405 9.95762 7.95155 10.4951 8.2453 10.8439C8.75405 11.4476 8.4053 11.9789 8.0078 12.0489C6.92405 12.2389 6.3103 11.6526 6.19655 11.3314C6.1153 11.1026 6.2003 10.8551 6.0953 10.6401C5.9878 10.4189 5.7678 10.3314 5.5353 10.4051C4.7728 10.6476 5.0153 11.4814 5.3528 11.9401C5.71405 12.4314 6.1578 12.7276 6.65655 12.8901C8.5178 13.4964 9.4128 12.5389 9.56905 11.8376C9.68405 11.3239 9.67155 10.8789 9.34405 10.4664Z"
-                                    fill="#0159ED" />
+                                    d="M9.34405 10.4664C8.5078 9.41137 7.5203 9.27012 7.20405 8.89137C7.03155 8.68512 6.9303 8.47637 6.96905 8.21762C7.0103 7.94262 7.32905 7.75262 7.57655 7.70637C7.8653 7.65137 8.55405 7.68012 9.1328 8.23137C9.2703 8.36137 9.2203 8.56387 9.21655 8.74512C9.20655 9.13387 9.7628 9.51137 10.2128 9.18637C10.6641 8.86012 10.3178 8.13387 10.0266 7.78137C9.80655 7.51512 9.00905 6.92887 8.0178 6.83637C7.73905 6.81012 6.6178 6.64387 5.9703 7.87512C5.78405 8.22887 5.7153 9.08387 6.6903 9.80637C6.89405 9.95762 7.95155 10.4951 8.2453 10.8439C8.75405 11.4476 8.4053 11.9789 8.0078 12.0489C6.92405 12.2389 6.3103 11.6526 6.19655 11.3314C6.1153 11.1026 6.2003 10.8551 6.0953 10.6401C5.9878 10.4189 5.7678 10.3314 5.5353 10.4051C4.7728 10.6476 5.0153 11.4814 5.3528 11.9401C5.71405 12.4314 6.1578 12.7276 6.65655 12.8901C8.5178 13.4964 9.4128 12.5389 9.56905 11.8376C9.68405 11.3239 9.67155 10.8789 9.34405 10.4664Z" style="fill: var(--sq-primary)"
+                                    />
                                 <path d="M8.89531 6.12305C7.31156 9.50555 7.03906 13.7768 7.03906 13.7768"
-                                    stroke="#0159ED" stroke-width="0.625" stroke-miterlimit="10" />
+                                    stroke-width="0.625" stroke-miterlimit="10" style="stroke: var(--sq-primary)" />
                                 <path
-                                    d="M10.209 3.99507C11.264 4.33882 11.4977 5.29257 11.4215 5.55257C11.3302 5.85757 10.1615 4.67007 8.42398 4.74132C7.81648 4.76632 7.99273 4.39382 8.27398 4.17882C8.64523 3.89507 9.26898 3.69007 10.209 3.99507Z"
-                                    fill="#0159ED" />
+                                    d="M10.209 3.99507C11.264 4.33882 11.4977 5.29257 11.4215 5.55257C11.3302 5.85757 10.1615 4.67007 8.42398 4.74132C7.81648 4.76632 7.99273 4.39382 8.27398 4.17882C8.64523 3.89507 9.26898 3.69007 10.209 3.99507Z" style="fill: var(--sq-primary)"
+                                    />
                                 <path
-                                    d="M10.209 3.99507C11.264 4.33882 11.4977 5.29257 11.4215 5.55257C11.3302 5.85757 10.1615 4.67007 8.42398 4.74132C7.81648 4.76632 7.99273 4.39382 8.27398 4.17882C8.64523 3.89507 9.26898 3.69007 10.209 3.99507Z"
-                                    fill="#0159ED" />
+                                    d="M10.209 3.99507C11.264 4.33882 11.4977 5.29257 11.4215 5.55257C11.3302 5.85757 10.1615 4.67007 8.42398 4.74132C7.81648 4.76632 7.99273 4.39382 8.27398 4.17882C8.64523 3.89507 9.26898 3.69007 10.209 3.99507Z" style="fill: var(--sq-primary)"
+                                    />
                                 <path
-                                    d="M12.0622 7.35678C12.1947 7.26553 12.6397 7.42303 12.7647 8.29428C12.8259 8.72053 12.8447 9.13303 12.8447 9.13303C12.8447 9.13303 12.3197 8.66178 12.1459 8.33053C11.9272 7.91178 11.8422 7.50678 12.0622 7.35678Z"
-                                    fill="#0159ED" />
+                                    d="M12.0622 7.35678C12.1947 7.26553 12.6397 7.42303 12.7647 8.29428C12.8259 8.72053 12.8447 9.13303 12.8447 9.13303C12.8447 9.13303 12.3197 8.66178 12.1459 8.33053C11.9272 7.91178 11.8422 7.50678 12.0622 7.35678Z" style="fill: var(--sq-primary)"
+                                    />
                             </svg> -->
 
                             <!-- <span class="whitespace-nowrap">{{ __('$20 credit in case of delay') }}</span> -->
@@ -319,9 +319,9 @@
 
                 <!-- Price block -->
                 <div class="flex flex-wrap items-center gap-3">
-                    <span class="text-3xl sm:text-4xl text-blue-700 font-medium">{{ $symbol }}<span id="sq-sell-price">{{ $displaySell }}</span></span>
+                    <span class="text-3xl sm:text-4xl text-[color:var(--sq-primary)] font-medium">{{ $symbol }}<span id="sq-sell-price">{{ $displaySell }}</span></span>
                     <span id="sq-real-price" class="text-base text-neutral-400 line-through {{ ($hasDiscount && $displayReal !== null) ? '' : 'hidden' }}">{{ $symbol }}<span id="sq-real-price-val">{{ $displayReal }}</span></span>
-                    <span id="sq-save-badge" class="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded {{ ($hasDiscount && $displayReal !== null) ? '' : 'hidden' }}">{{ __('SAVE') }}
+                    <span id="sq-save-badge" class="bg-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)] text-xs font-semibold px-2.5 py-1 rounded {{ ($hasDiscount && $displayReal !== null) ? '' : 'hidden' }}">{{ __('SAVE') }}
                         {{ $symbol }}<span id="sq-save-amount">{{ $savedAmount }}</span></span>
                 </div>
                 @if($pricing['is_flash_sale'])
@@ -371,7 +371,7 @@
                         <span class="sq-desc-fade" aria-hidden="true"></span>
                     </div>
                     <button id="sq-desc-toggle" type="button"
-                        class="mt-1 flex items-center gap-1 text-[#0159ED] text-sm font-medium hover:underline focus:outline-none">
+                        class="mt-1 flex items-center gap-1 text-[color:var(--sq-primary)] text-sm font-medium hover:underline focus:outline-none">
                         <span>{{ __('See more') }}</span>
                         <svg id="sq-desc-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
                             stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -461,7 +461,7 @@
                 @if($shippingCountries->isNotEmpty())
                 <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
                     <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
-                        <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
                         </svg>
@@ -484,7 +484,7 @@
                 @if(isset($returnPolicy))
                 <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
                     <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
-                        <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 .49-3.75" />
                         </svg>
                         <span>{{ __('Return & Refund Policy') }}</span>
@@ -557,10 +557,10 @@
                         <button type="button" data-variant-id="{{ $v->id }}" onclick="sqSelectVariant({{ $v->id }})" title="{{ $vTitle }}"
                             @if($vMediaIndex !== null) onmouseenter="window.sqGoToMediaIndex && window.sqGoToMediaIndex({{ $vMediaIndex }})" @endif
                             @if(!$vIsInStock) aria-disabled="true" @endif
-                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50 cursor-not-allowed' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[#004AC6] bg-[#E1E2ED] text-[#004AC6]' : 'border-neutral-300 hover:border-[#004AC6]') . (!$vIsInStock ? ' line-through' : '') }}">
+                            class="transition-all active:scale-95 {{ !$vIsInStock ? 'opacity-50 cursor-not-allowed' : '' }} {{ $vThumb || $vSwatch ? '' : 'px-4 py-2 rounded-lg border text-sm font-medium ' . ($vIsActive ? 'border-[color:var(--sq-primary-hover)] bg-[#E1E2ED] text-[color:var(--sq-primary-hover)]' : 'border-neutral-300 hover:border-[color:var(--sq-primary-hover)]') . (!$vIsInStock ? ' line-through' : '') }}">
                             @if($vThumb)
                             {{-- Image swatch --}}
-                            <div data-variant-ring class="relative w-[60px] h-[60px] rounded-xl border-2 p-0.5 overflow-hidden {{ $vIsActive ? 'border-[#004AC6] bg-[#E1E2ED]' : 'border-transparent ring-1 ring-neutral-200' }}">
+                            <div data-variant-ring class="relative w-[60px] h-[60px] rounded-xl border-2 p-0.5 overflow-hidden {{ $vIsActive ? 'border-[color:var(--sq-primary-hover)] bg-[#E1E2ED]' : 'border-transparent ring-1 ring-neutral-200' }}">
                                 <img loading="lazy" src="{{ $vThumb }}" alt="{{ $vTitle }}"
                                     class="w-full h-full object-cover rounded-lg" />
                                 @if(!$vIsInStock)
@@ -571,7 +571,7 @@
                             </div>
                             @elseif($vSwatch)
                             {{-- Color swatch --}}
-                            <div data-variant-ring class="relative w-9 h-9 rounded-full border-2 p-0.5 {{ $vIsActive ? 'border-[#004AC6]' : 'border-transparent ring-1 ring-neutral-300' }}">
+                            <div data-variant-ring class="relative w-9 h-9 rounded-full border-2 p-0.5 {{ $vIsActive ? 'border-[color:var(--sq-primary-hover)]' : 'border-transparent ring-1 ring-neutral-300' }}">
                                 <div class="w-full h-full rounded-full" style="background: {{ $vSwatch }};"></div>
                                 @if(!$vIsInStock)
                                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -593,7 +593,7 @@
                 <div
                     class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0  flex items-center gap-3">
                     <button type="button" id="sq-add-to-cart-btn" onclick="sqAddToCart()" @if(!$isInStock) disabled @endif
-                        class="flex-1 h-14 {{ $isInStock ? 'bg-blue-700 hover:bg-blue-800' : 'bg-neutral-400 cursor-not-allowed' }} text-white rounded-lg flex items-center justify-center gap-2 transition font-medium text-base">
+                        class="flex-1 h-14 {{ $isInStock ? 'bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)]' : 'bg-neutral-400 cursor-not-allowed' }} text-white rounded-lg flex items-center justify-center gap-2 transition font-medium text-base">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -728,7 +728,7 @@
                     <p class="text-xs text-[#434655]">{{ __('Full coverage protection') }}</p>
                 </div> --}}
                 <div class="flex flex-wrap items-center gap-2 mt-auto pt-2 justify-center">
-                    <div class="px-2.5 py-1 bg-white rounded text-[11px] font-bold text-blue-700">{{ __('VISA') }}</div>
+                    <div class="px-2.5 py-1 bg-white rounded text-[11px] font-bold text-[color:var(--sq-primary)]">{{ __('VISA') }}</div>
                     <div class="px-2.5 py-1 bg-white rounded text-[11px] font-bold text-emerald-600">{{ __('tabby') }}
                     </div>
                     <div class="px-2.5 py-1 bg-white rounded text-[11px] font-bold text-rose-500">
@@ -785,7 +785,7 @@
             $nameParts = explode(' ', trim($review->customer?->full_name ?? __('Anonymous')));
             $initials = strtoupper(substr($nameParts[0] ?? '', 0, 1)) . strtoupper(substr($nameParts[1] ?? '', 0, 1));
             $avatarClasses = [
-            'bg-blue-100 text-blue-700',
+            'bg-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)]',
             'bg-emerald-100 text-emerald-700',
             'bg-purple-100
             text-purple-700',
@@ -858,13 +858,13 @@
             <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Complete the Collection') }}</h2>
             <div class="flex items-center gap-2">
                 <button onclick="scrollCarousel('collection', -1)"
-                    class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition"
+                    class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                     aria-label="{{ __('Previous') }}"><svg class="w-4 h-4" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg></button>
                 <button onclick="scrollCarousel('collection', 1)"
-                    class="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition"
+                    class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
                     aria-label="{{ __('Next') }}"><svg class="w-4 h-4" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -882,7 +882,7 @@
                         alt="{{ $rp->translationValue('name') ?? $rp->slug }}" />
                 </div>
                 <h3 class="font-medium text-zinc-900 mb-1 line-clamp-1">{{ $rp->translationValue('name') ?? $rp->slug }}</h3>
-                <p class="text-blue-700 font-medium">
+                <p class="text-[color:var(--sq-primary)] font-medium">
                     {{ $symbol }}{{ number_format($rpPricing['current_price'] * $rate, 2) }}
                 </p>
             </a>
@@ -897,7 +897,7 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Recommended For You') }}</h2>
             <a href="{{ route('tenant.storefront.category') }}"
-                class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">{{ __('View all products') }}
+                class="text-[color:var(--sq-primary)] font-medium text-sm hover:underline flex items-center gap-1">{{ __('View all products') }}
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path
                         d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
@@ -920,8 +920,8 @@
                         class="absolute top-3 left-3 bg-orange-500 text-white text-xs font-medium px-2.5 py-1 rounded-md">{{ $rpBadge }}</span>
                     @endif
                     <button type="button" onclick="event.preventDefault(); sqQuickAddToCart({{ $rp->id }})"
-                        class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-blue-50 transition"
-                        aria-label="{{ __('Add to cart') }}"><svg class="w-4 h-4 text-blue-700" fill="none"
+                        class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-[color:var(--sq-primary-soft)] transition"
+                        aria-label="{{ __('Add to cart') }}"><svg class="w-4 h-4 text-[color:var(--sq-primary)]" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -946,7 +946,7 @@
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <span
-                            class="text-blue-700 font-semibold">{{ $symbol }}{{ number_format($rpSell * $rate, 2) }}</span>
+                            class="text-[color:var(--sq-primary)] font-semibold">{{ $symbol }}{{ number_format($rpSell * $rate, 2) }}</span>
                         @if($rpDiscount && $rpReal)
                         <span
                             class="text-neutral-400 text-xs line-through">{{ $symbol }}{{ number_format($rpReal * $rate, 2) }}</span>
@@ -968,7 +968,7 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl sm:text-3xl font-medium text-zinc-900">{{ __('Explore Products') }}</h2>
             <a href="{{ route('tenant.storefront.category') }}"
-                class="text-blue-700 font-medium text-sm hover:underline flex items-center gap-1">{{ __('View all products') }}
+                class="text-[color:var(--sq-primary)] font-medium text-sm hover:underline flex items-center gap-1">{{ __('View all products') }}
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path
                         d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" />
@@ -991,8 +991,8 @@
                         class="absolute top-3 left-3 bg-orange-500 text-white text-xs font-medium px-2.5 py-1 rounded-md">{{ $epBadge }}</span>
                     @endif
                     <button type="button" onclick="event.preventDefault(); sqQuickAddToCart({{ $ep->id }})"
-                        class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-blue-50 transition"
-                        aria-label="{{ __('Add to cart') }}"><svg class="w-4 h-4 text-blue-700" fill="none"
+                        class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-[color:var(--sq-primary-soft)] transition"
+                        aria-label="{{ __('Add to cart') }}"><svg class="w-4 h-4 text-[color:var(--sq-primary)]" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -1017,7 +1017,7 @@
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <span
-                            class="text-blue-700 font-semibold">{{ $symbol }}{{ number_format($epSell * $rate, 2) }}</span>
+                            class="text-[color:var(--sq-primary)] font-semibold">{{ $symbol }}{{ number_format($epSell * $rate, 2) }}</span>
                         @if($epDiscount && $epReal)
                         <span
                             class="text-neutral-400 text-xs line-through">{{ $symbol }}{{ number_format($epReal * $rate, 2) }}</span>
@@ -1075,7 +1075,7 @@
                 @php
                 $rParts = explode(' ', trim($rev->customer?->full_name ?? __('Anonymous')));
                 $rInitials = strtoupper(substr($rParts[0] ?? '', 0, 1)) . strtoupper(substr($rParts[1] ?? '', 0, 1));
-                $rColors = ['bg-blue-100 text-blue-700','bg-emerald-100 text-emerald-700','bg-purple-100
+                $rColors = ['bg-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)]','bg-emerald-100 text-emerald-700','bg-purple-100
                 text-purple-700','bg-rose-100 text-rose-700','bg-amber-100 text-amber-700'];
                 $rColor = $rColors[$loop->index % count($rColors)];
                 @endphp
@@ -1182,7 +1182,7 @@
 
                 {{-- Facebook --}}
                 <a id="souqify-share-facebook" href="#" target="_blank" rel="noopener noreferrer"
-                    class="flex flex-col items-center gap-1.5 p-3 rounded-xl hover:bg-blue-50 transition-colors group">
+                    class="flex flex-col items-center gap-1.5 p-3 rounded-xl hover:bg-[color:var(--sq-primary-soft)] transition-colors group">
                     <span
                         class="w-11 h-11 flex items-center justify-center rounded-full bg-[#1877F2] text-white shadow-sm group-hover:scale-105 transition-transform">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -1228,7 +1228,7 @@
                 </svg>
                 <span id="souqify-share-url-text" class="flex-1 text-sm text-gray-600 truncate select-all"></span>
                 <button id="souqify-copy-btn" onclick="souqifyCopyShareUrl()"
-                    class="flex-shrink-0 text-xs font-semibold text-white bg-[#001537] hover:bg-[#0159ED] px-3 py-1.5 rounded-lg transition-colors">
+                    class="flex-shrink-0 text-xs font-semibold text-white bg-[#001537] hover:bg-[color:var(--sq-primary)] px-3 py-1.5 rounded-lg transition-colors">
                     {{ __('Copy') }}
                 </button>
             </div>
@@ -1382,7 +1382,7 @@
 
         document.querySelectorAll('.sq-thumb').forEach(function (thumb) {
             var isActive = Number(thumb.dataset.thumbIdx) === index;
-            thumb.classList.toggle('border-[#004AC6]', isActive);
+            thumb.classList.toggle('border-[color:var(--sq-primary-hover)]', isActive);
             thumb.classList.toggle('border-transparent', !isActive);
         });
 
@@ -1614,18 +1614,18 @@
             if (ring) {
                 if (isActive) {
                     ring.classList.remove('border-transparent', 'ring-1', 'ring-neutral-200', 'ring-neutral-300');
-                    ring.classList.add('border-[#004AC6]', 'bg-[#E1E2ED]');
+                    ring.classList.add('border-[color:var(--sq-primary-hover)]', 'bg-[#E1E2ED]');
                 } else {
-                    ring.classList.remove('border-[#004AC6]', 'bg-[#E1E2ED]');
+                    ring.classList.remove('border-[color:var(--sq-primary-hover)]', 'bg-[#E1E2ED]');
                     ring.classList.add('border-transparent', 'ring-1', 'ring-neutral-200');
                 }
             } else {
                 // Text pill – classes live on the button itself
                 if (isActive) {
                     btn.classList.remove('border-neutral-300');
-                    btn.classList.add('border-[#004AC6]', 'bg-[#E1E2ED]', 'text-[#004AC6]');
+                    btn.classList.add('border-[color:var(--sq-primary-hover)]', 'bg-[#E1E2ED]', 'text-[color:var(--sq-primary-hover)]');
                 } else {
-                    btn.classList.remove('border-[#004AC6]', 'bg-[#E1E2ED]', 'text-[#004AC6]');
+                    btn.classList.remove('border-[color:var(--sq-primary-hover)]', 'bg-[#E1E2ED]', 'text-[color:var(--sq-primary-hover)]');
                     btn.classList.add('border-neutral-300');
                 }
             }

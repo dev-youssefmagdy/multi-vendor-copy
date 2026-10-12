@@ -63,8 +63,8 @@
     <button
         type="button"
         x-on:click="open ? (open = false) : openDropdown()"
-        class="w-full h-11 px-3 flex items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-300 transition {{ $labelClass }}"
-        :class="open ? 'ring-2 ring-blue-300 border-blue-400' : ''"
+        class="w-full h-11 px-3 flex items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[color:var(--sq-primary-muted)] transition {{ $labelClass }}"
+        :class="open ? 'ring-2 ring-[color:var(--sq-primary-muted)] border-[color:var(--sq-primary-muted)]' : ''"
     >
         <span class="flex items-center gap-2 truncate">
             <template x-if="selected">
@@ -105,7 +105,7 @@
     >
         {{-- Search --}}
         <div class="p-2 border-b border-neutral-100">
-            <div class="flex items-center gap-2 px-2.5 py-1.5 bg-neutral-50 rounded-lg border border-neutral-200 focus-within:ring-2 focus-within:ring-blue-300">
+            <div class="flex items-center gap-2 px-2.5 py-1.5 bg-neutral-50 rounded-lg border border-neutral-200 focus-within:ring-2 focus-within:ring-[color:var(--sq-primary-muted)]">
                 <svg class="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z"/>
                 </svg>
@@ -128,13 +128,13 @@
                     <button
                         type="button"
                         x-on:click="select(country)"
-                        class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 transition text-left"
-                        :class="selected && selected.id === country.id ? 'bg-blue-50 font-medium text-blue-700' : ''"
+                        class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-[color:var(--sq-primary-soft)] transition text-left"
+                        :class="selected && selected.id === country.id ? 'bg-[color:var(--sq-primary-soft)] font-medium text-[color:var(--sq-primary)]' : ''"
                     >
                         <span x-text="country.flag" class="text-base leading-none w-5 text-center"></span>
                         <span x-text="country.name" class="truncate"></span>
                         <template x-if="selected && selected.id === country.id">
-                            <svg class="w-3.5 h-3.5 ml-auto text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 ml-auto text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                             </svg>
                         </template>

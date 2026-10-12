@@ -164,7 +164,7 @@
         @else
             <button wire:click="addToCart({{ $product->id }})" wire:loading.attr="disabled"
                 wire:target="addToCart({{ $product->id }})"
-                class="absolute bottom-3 right-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-blue-700 hover:text-white transition group/cart"
+                class="absolute bottom-3 right-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-[color:var(--sq-primary)] hover:text-white transition group/cart"
                 aria-label="{{ __('Add to cart') }}">
                 <svg class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -198,7 +198,7 @@
 
         {{-- Trending badge --}}
         <div
-            class="absolute top-0 left-0 {{ $isOutOfStock ? 'bg-neutral-700' : 'bg-blue-700' }} text-white text-[10px] px-3 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
+            class="absolute top-0 left-0 {{ $isOutOfStock ? 'bg-neutral-700' : 'bg-[color:var(--sq-primary)]' }} text-white text-[10px] px-3 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
             @if ($isOutOfStock)
                 {{ __('Out of Stock') }}
             @else
@@ -234,7 +234,7 @@
 
         <div class="flex items-center gap-0.5 md:gap-2 flex-wrap">
             <span
-                class="text-blue-700 text-base sm:text-xl font-semibold leading-none">{{ $symbol }}{{ $displaySell }}</span>
+                class="text-[color:var(--sq-primary)] text-base sm:text-xl font-semibold leading-none">{{ $symbol }}{{ $displaySell }}</span>
             @if ($displayReal)
                 <span class="text-neutral-400 text-sm line-through">{{ $symbol }}{{ $displayReal }}</span>
                 <span class="{{ $discBadgeCls }} text-xs px-1 sm:px-2 py-0.5 rounded font-medium">{{ $discountPct }}%

@@ -4,7 +4,7 @@
             <nav class="text-xs text-neutral-500 flex items-center gap-2 mb-4">
                 <a
                     href="{{ route('tenant.home') }}"
-                    class="hover:text-blue-700"
+                    class="hover:text-[color:var(--sq-primary)]"
                     >{{ __("Home") }}</a
                 >
                 <span>/</span>
@@ -29,12 +29,12 @@
                         id="souqify-fav-search"
                         oninput="souqifyFavSearch(this.value)"
                         placeholder="{{ __('Search wishlist') }}"
-                        class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-blue-700"
+                        class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-[color:var(--sq-primary)]"
                     />
                     <select
                         id="souqify-fav-sort"
                         onchange="souqifyFavSort(this.value)"
-                        class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-blue-700"
+                        class="h-10 px-4 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-[color:var(--sq-primary)]"
                     >
                         <option value="recent">
                             {{ __("Recently added") }}
@@ -84,7 +84,7 @@
                 </p>
                 <a
                     href="{{ route('tenant.home') }}"
-                    class="inline-block px-7 py-3 rounded-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold transition"
+                    class="inline-block px-7 py-3 rounded-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-semibold transition"
                 >
                     {{ __("Start Shopping") }}
                 </a>
@@ -122,14 +122,14 @@
                                 <a href="${item.url || '#'}" class="block relative aspect-square bg-zinc-50 overflow-hidden">${img}
                                     <button type="button" onclick="event.preventDefault(); souqifyRemoveFav(${idx})"
                                         class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-red-50 transition" title="{{ __('Remove') }}">
-                                        <svg class="w-4 h-4" fill="#0159ED" stroke="#0159ED" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                        <svg class="w-4 h-4" stroke-width="1.8" viewBox="0 0 24 24" style="fill: var(--sq-primary); stroke: var(--sq-primary)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                                     </button>
                                 </a>
                                 <div class="p-3 flex flex-col gap-1.5">
-                                    <a href="${item.url || '#'}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-blue-700">${item.name || ''}</a>
+                                    <a href="${item.url || '#'}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-[color:var(--sq-primary)]">${item.name || ''}</a>
                                     <div class="flex items-center gap-0.5">${stars}</div>
                                     <div class="flex items-baseline gap-2 mt-1">
-                                        <span class="text-base font-bold text-blue-700">$${parseFloat(item.price || 0).toFixed(2)}</span>
+                                        <span class="text-base font-bold text-[color:var(--sq-primary)]">$${parseFloat(item.price || 0).toFixed(2)}</span>
                                         ${old}
                                     </div>
                                 </div>

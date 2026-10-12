@@ -58,6 +58,7 @@
                 $headerKey = 'header-v2';
                 $footerKey = 'footer-v2';
                 $stylesKey = 'styles-v2';
+                $primaryColor = 'var(--color-brand-purple, #8B03BD)';
                 $scriptsKey = 'scripts-v2';
             @endphp
             @break
@@ -66,6 +67,7 @@
                 $headerKey = 'header-v3';
                 $footerKey = 'footer-v3';
                 $stylesKey = 'styles-v3';
+                $primaryColor = 'var(--color-souqify-teal, #199387)';
                 $scriptsKey = 'scripts-v3';
             @endphp
             @break
@@ -74,6 +76,7 @@
                 $headerKey = 'header-v4';
                 $footerKey = 'footer-v4';
                 $stylesKey = 'styles-v4';
+                $primaryColor = 'var(--color-brand-green, #5A9B00)';
                 $scriptsKey = 'scripts-v4';
             @endphp
             @break
@@ -82,6 +85,7 @@
                 $headerKey = 'header-v5';
                 $footerKey = 'footer-v5';
                 $stylesKey = 'styles-v5';
+                $primaryColor = 'var(--color-primary, #EC910A)';
                 $scriptsKey = 'scripts-v5';
             @endphp
             @break
@@ -90,6 +94,7 @@
                 $headerKey = 'header-v6';
                 $footerKey = 'footer-v6';
                 $stylesKey = 'styles-v6';
+                $primaryColor = 'var(--color-brand-pink, #FF1A90)';
                 $scriptsKey = 'scripts-v6';
             @endphp
             @break
@@ -98,6 +103,7 @@
                 $headerKey = 'header';
                 $footerKey = 'footer';
                 $stylesKey = 'styles';
+                $primaryColor = null;
                 $scriptsKey = 'scripts';
             @endphp
     @endswitch
@@ -105,6 +111,30 @@
     @livewireStyles
     @include('themes.souqify.layout.' . $stylesKey)
     @include('storefront.partials.theme-color-overrides')
+
+    {{-- Shared primary-colour tokens. Each edition points --sq-primary at its own
+         brand colour, so the shared inner pages (product, cart, checkout, profile,
+         category, offers, orders...) follow the edition's colour system, not just
+         the home page. The default edition keeps its original blue. --}}
+    <style id="souqify-primary-tokens">
+        :root {
+            @if ($primaryColor)
+                --sq-primary: {!! $primaryColor !!};
+                --sq-primary-hover: color-mix(in srgb, var(--sq-primary) 82%, #000);
+                --sq-primary-deep: color-mix(in srgb, var(--sq-primary) 50%, #000);
+                --sq-primary-muted: color-mix(in srgb, var(--sq-primary) 45%, #fff);
+                --sq-primary-soft-2: color-mix(in srgb, var(--sq-primary) 16%, #fff);
+                --sq-primary-soft: color-mix(in srgb, var(--sq-primary) 7%, #fff);
+            @else
+                --sq-primary: #1d4ed8;
+                --sq-primary-hover: #1e40af;
+                --sq-primary-deep: #002460;
+                --sq-primary-muted: #93c5fd;
+                --sq-primary-soft-2: #dbeafe;
+                --sq-primary-soft: #eff6ff;
+            @endif
+        }
+    </style>
     @include('storefront.partials.tracking-scripts')
     @stack('styles')
     @stack('head')

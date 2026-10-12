@@ -2,7 +2,7 @@
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-6">
             <nav class="text-xs text-neutral-500 flex items-center gap-2 mb-2">
-                <a href="{{ route('tenant.home') }}" class="hover:text-blue-700">{{ __('Home') }}</a>
+                <a href="{{ route('tenant.home') }}" class="hover:text-[color:var(--sq-primary)]">{{ __('Home') }}</a>
                 <span>/</span>
                 <span class="text-slate-900">{{ __('New In') }}</span>
             </nav>
@@ -17,9 +17,9 @@
                     <input type="hidden" name="category_id" value="{{ $currentCategoryId }}">
                 @endif
                 <input type="text" name="keyword" value="{{ $search }}" placeholder="{{ __('Search items') }}"
-                    class="px-4 py-2 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-blue-700 min-w-[180px] flex-1 max-w-md">
+                    class="px-4 py-2 rounded-full border border-neutral-200 text-sm bg-white focus:outline-none focus:border-[color:var(--sq-primary)] min-w-[180px] flex-1 max-w-md">
                 <button type="submit"
-                    class="px-5 py-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold transition">
+                    class="px-5 py-2 rounded-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-semibold transition">
                     {{ __('Apply') }}
                 </button>
             </form>
@@ -28,13 +28,13 @@
                 class="flex items-center gap-2 overflow-x-auto whitespace-nowrap no-scrollbar pb-1 mt-4 pt-4 border-t border-neutral-100">
                 <a href="{{ route('tenant.storefront.new-in', array_filter(['keyword' => $search !== '' ? $search : null])) }}"
                     class="px-4 py-1.5 rounded-full border text-xs transition shrink-0
-                        {{ !$currentCategoryId ? 'border-blue-700 bg-blue-50 text-blue-700 font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-blue-700' }}">
+                        {{ !$currentCategoryId ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary-soft)] text-[color:var(--sq-primary)] font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-[color:var(--sq-primary)]' }}">
                     {{ __('All categories') }}
                 </a>
                 @foreach ($categories as $category)
                     <a href="{{ route('tenant.storefront.new-in', array_filter(['keyword' => $search !== '' ? $search : null, 'category_id' => $category->id])) }}"
                         class="px-4 py-1.5 rounded-full border text-xs transition shrink-0
-                                        {{ $currentCategoryId === $category->id ? 'border-blue-700 bg-blue-50 text-blue-700 font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-blue-700' }}">
+                                        {{ $currentCategoryId === $category->id ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary-soft)] text-[color:var(--sq-primary)] font-semibold' : 'border-neutral-200 text-neutral-600 hover:border-[color:var(--sq-primary)]' }}">
                         {{ $category->name }}
                     </a>
                 @endforeach

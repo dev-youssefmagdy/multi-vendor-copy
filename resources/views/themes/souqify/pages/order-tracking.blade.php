@@ -166,7 +166,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                     </div>
                     @elseif ($mActive)
                     {{-- Blue active circle --}}
-                    <div class="w-7 h-7 rounded-full bg-[#0159ED] flex items-center justify-center -mt-0.5">
+                    <div class="w-7 h-7 rounded-full bg-[color:var(--sq-primary)] flex items-center justify-center -mt-0.5">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M14.1329 6.48302C14.4292 7.93701 14.2181 9.44862 13.5347 10.7658C12.8514 12.0829 11.7371 13.126 10.3778 13.7211C9.01848 14.3161 7.49625 14.4272 6.06495 14.0357C4.63365 13.6443 3.3798 12.774 2.51251 11.5699C1.64522 10.3659 1.21691 8.90098 1.299 7.41938C1.38109 5.93779 1.96863 4.52912 2.96362 3.42829C3.95862 2.32746 5.30093 1.601 6.76671 1.37007C8.2325 1.13914 9.73315 1.41769 11.0184 2.15927"
@@ -193,7 +193,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
             @php $mIsActive = $mi === $mobileCurrentIdx; @endphp
             <div style="width:{{ $mi === 2 ? '64px' : '40px' }}; text-align: center;">
                 <span class="text-[10px] leading-[13px]"
-                    style="letter-spacing:0.5px; font-weight:{{ $mIsActive ? '600' : '400' }}; color:{{ $mIsActive ? '#0159ED' : '#001537' }};">
+                    style="letter-spacing:0.5px; font-weight:{{ $mIsActive ? '600' : '400' }}; color:{{ $mIsActive ? 'var(--sq-primary)' : '#001537' }};">
                     {{ $mstage['label'] }}
                 </span>
             </div>
@@ -231,7 +231,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
         </div>
         @endif
         {{-- ── Blue status card ──────────────────────────────────── --}}
-        <div class="rounded-2xl p-3 flex flex-col gap-2" style="background:#0159ED;">
+        <div class="rounded-2xl p-3 flex flex-col gap-2" style="background:var(--sq-primary);">
             {{-- Status header --}}
             <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between">
@@ -274,22 +274,22 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                 <svg class="w-7 h-7" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M9.32813 12.0013V4.0013C9.32813 3.64768 9.18765 3.30854 8.9376 3.05849C8.68755 2.80844 8.34841 2.66797 7.99479 2.66797H2.66146C2.30784 2.66797 1.9687 2.80844 1.71865 3.05849C1.4686 3.30854 1.32813 3.64768 1.32812 4.0013V11.3346C1.32813 11.5114 1.39836 11.681 1.52339 11.806C1.64841 11.9311 1.81798 12.0013 1.99479 12.0013H3.32813"
-                        stroke="#0159ED" stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M10 12.001H6" stroke="#0159ED" stroke-width="0.846883" stroke-linecap="round"
-                        stroke-linejoin="round" />
+                        stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
+                    <path d="M10 12.001H6" stroke-width="0.846883" stroke-linecap="round"
+                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                     <path
                         d="M12.6615 12.0007H13.9948C14.1716 12.0007 14.3412 11.9304 14.4662 11.8054C14.5912 11.6804 14.6615 11.5108 14.6615 11.334V8.90065C14.6612 8.74936 14.6095 8.60266 14.5148 8.48465L12.1948 5.58465C12.1324 5.50657 12.0533 5.44351 11.9633 5.40012C11.8733 5.35673 11.7747 5.33413 11.6748 5.33398H9.32812"
-                        stroke="#0159ED" stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" />
+                        stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                     <path
                         d="M11.3333 13.3337C12.0697 13.3337 12.6667 12.7367 12.6667 12.0003C12.6667 11.2639 12.0697 10.667 11.3333 10.667C10.597 10.667 10 11.2639 10 12.0003C10 12.7367 10.597 13.3337 11.3333 13.3337Z"
-                        stroke="#0159ED" stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" />
+                        stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                     <path
                         d="M4.66927 13.3337C5.40565 13.3337 6.0026 12.7367 6.0026 12.0003C6.0026 11.2639 5.40565 10.667 4.66927 10.667C3.93289 10.667 3.33594 11.2639 3.33594 12.0003C3.33594 12.7367 3.93289 13.3337 4.66927 13.3337Z"
-                        stroke="#0159ED" stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" />
+                        stroke-width="0.846883" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                 </svg>
 
                 <div class="flex flex-col gap-1">
-                    <span class="text-xs font-medium text-[#0159ED] leading-[15px]"
+                    <span class="text-xs font-medium text-[color:var(--sq-primary)] leading-[15px]"
                         style="letter-spacing:0.5px;">{{ __('Current Status') }}</span>
                     <span class="text-[10px] text-[#8F8F8F] leading-[13px]" style="letter-spacing:0.5px;">
                         {{ __('Your package is currently') }} {{ $pageTitle }}.
@@ -379,7 +379,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
         </div>
 
         {{-- ── Need Help card ────────────────────────────────────── --}}
-        <div class="rounded-2xl p-3 flex flex-col gap-3 border border-[#0159ED]"
+        <div class="rounded-2xl p-3 flex flex-col gap-3 border border-[color:var(--sq-primary)]"
             style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD4 100%); box-shadow: 0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);">
             <span class="text-sm font-medium text-[#0A0A0A] leading-[18px]"
                 style="letter-spacing:0.5px;">{{ __('Need Help?') }}</span>
@@ -406,13 +406,13 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
             {{-- ── Breadcrumb ──────────────────────────────────────────────── --}}
             <nav class="flex items-center gap-1 text-sm mb-5" style="letter-spacing:0.5px;">
                 <a href="{{ route('tenant.home') }}"
-                    class="text-[#808080] hover:text-[#0159ED] transition">{{ __('Home') }}</a>
+                    class="text-[#808080] hover:text-[color:var(--sq-primary)] transition">{{ __('Home') }}</a>
                 <svg class="w-4 h-4 text-[#8F8F8F]" fill="none" stroke="currentColor" stroke-width="1.5"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
                 <a href="{{ route('tenant.storefront.profile') }}"
-                    class="text-[#8F8F8F] hover:text-[#0159ED] transition">{{ __('Orders') }}</a>
+                    class="text-[#8F8F8F] hover:text-[color:var(--sq-primary)] transition">{{ __('Orders') }}</a>
                 <svg class="w-4 h-4 text-[#1B1B1B]" fill="none" stroke="currentColor" stroke-width="1.5"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -429,11 +429,11 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                         <span class="text-[#808080]">{{ __('Expected delivery') }}: </span>
                         @if ($order->expected_delivery_at ?? null)
                         <span
-                            class="text-[#0159ED] font-medium">{{ \Carbon\Carbon::parse($order->expected_delivery_at)->format('l, M j \b\y g:i A') }}</span>
+                            class="text-[color:var(--sq-primary)] font-medium">{{ \Carbon\Carbon::parse($order->expected_delivery_at)->format('l, M j \b\y g:i A') }}</span>
                         @elseif ($trackingNumber)
-                        <span class="text-[#0159ED] font-medium">{{ __('Tracking') }}: {{ $trackingNumber }}</span>
+                        <span class="text-[color:var(--sq-primary)] font-medium">{{ __('Tracking') }}: {{ $trackingNumber }}</span>
                         @else
-                        <span class="text-[#0159ED] font-medium">{{ __('See activity log below') }}</span>
+                        <span class="text-[color:var(--sq-primary)] font-medium">{{ __('See activity log below') }}</span>
                         @endif
                     </p>
                     @endif
@@ -443,7 +443,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                     @include('livewire.tenant.storefront.partials.order-cancel-action', ['cancelPart' => 'trigger', 'cancelSize' => 'compact'])
                     @endif
                     <a href="mailto:support@{{ request()->getHost() }}"
-                        class="h-14 px-6 flex items-center justify-center gap-2 bg-[#0159ED] rounded-lg text-white text-base font-normal hover:bg-blue-700 transition">
+                        class="h-14 px-6 flex items-center justify-center gap-2 bg-[color:var(--sq-primary)] rounded-lg text-white text-base font-normal hover:bg-[color:var(--sq-primary)] transition">
                         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -471,7 +471,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                     @include('livewire.tenant.storefront.partials.order-refunds-summary')
                 </div>
                 <button type="button" wire:click="showDetails"
-                    class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#0159ED] text-[#0159ED] text-sm font-semibold hover:bg-blue-50 transition">
+                    class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[color:var(--sq-primary)] text-[color:var(--sq-primary)] text-sm font-semibold hover:bg-[color:var(--sq-primary-soft)] transition">
                     ← {{ __('Order details') }}
                 </button>
             </div>
@@ -497,7 +497,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                     <div class="relative">
                         {{-- Connecting lines --}}
                         <div class="absolute left-[30px] right-[33px] top-5 h-1 bg-[#D0D0D0] hidden sm:block"></div>
-                        <div class="absolute left-[30px] top-5 h-1 bg-[#0159ED] hidden sm:block transition-all" style="width: calc({{ $progressPct }}% * (100% - 63px) / 100 + {{ $progressPct > 0 ? '0px' : '0px' }});
+                        <div class="absolute left-[30px] top-5 h-1 bg-[color:var(--sq-primary)] hidden sm:block transition-all" style="width: calc({{ $progressPct }}% * (100% - 63px) / 100 + {{ $progressPct > 0 ? '0px' : '0px' }});
                                                width: calc(({{ $currentIdx }} / 3) * (100% - 63px));"></div>
 
                         <div class="relative grid grid-cols-4 gap-1 sm:gap-2">
@@ -513,7 +513,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                             style="box-shadow: 0 0 11.5px 6px #CADAFF; border-radius: 12px;"></div>
                                         @endif
                                         <div class="relative w-10 h-10 rounded-xl flex items-center justify-center
-                                                                {{ $future ? 'bg-[#D0D0D0]' : 'bg-[#0159ED]' }}">
+                                                                {{ $future ? 'bg-[#D0D0D0]' : 'bg-[color:var(--sq-primary)]' }}">
                                             @if ($stage['icon'] === 'clipboard')
                                             <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -552,7 +552,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                     {{-- Label --}}
                                     <span
                                         class="text-xs sm:text-sm leading-5
-                                                            {{ $active ? 'text-[#0159ED] font-bold' : ($future ? 'text-[#8F8F8F] font-medium' : 'text-[#747474] font-semibold') }}">
+                                                            {{ $active ? 'text-[color:var(--sq-primary)] font-bold' : ($future ? 'text-[#8F8F8F] font-medium' : 'text-[#747474] font-semibold') }}">
                                         {{ $stage['label'] }}
                                     </span>
                                 </div>
@@ -587,7 +587,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                 {{-- Dot + line --}}
                                 <div class="flex flex-col items-center w-3 shrink-0 self-stretch">
                                     <div
-                                        class="w-3 h-[10px] rounded-xl {{ $isFirst ? 'bg-[#0159ED]' : 'bg-[#E0E3E5]' }}">
+                                        class="w-3 h-[10px] rounded-xl {{ $isFirst ? 'bg-[color:var(--sq-primary)]' : 'bg-[#E0E3E5]' }}">
                                     </div>
                                     @if (!$isLast)
                                     <div class="w-0.5 flex-1 bg-[#E0E3E5] mt-2"></div>
@@ -605,7 +605,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                     @endif
                                     @if ($location)
                                     <p
-                                        class="text-sm font-medium leading-5 pt-1 {{ $isFirst ? 'text-[#0159ED]' : 'text-[#747474]' }}">
+                                        class="text-sm font-medium leading-5 pt-1 {{ $isFirst ? 'text-[color:var(--sq-primary)]' : 'text-[#747474]' }}">
                                         {{ $location }}
                                     </p>
                                     @endif
@@ -626,7 +626,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                     class="text-xs uppercase leading-[18px] text-[#747474]">{{ $order->updated_at?->isToday() ? __('TODAY') : strtoupper($order->updated_at?->format('M j')) }}</span>
                             </div>
                             <div class="flex flex-col items-center w-3 shrink-0">
-                                <div class="w-3 h-[10px] rounded-xl bg-[#0159ED]"></div>
+                                <div class="w-3 h-[10px] rounded-xl bg-[color:var(--sq-primary)]"></div>
                             </div>
                             <div class="flex-1">
                                 <p class="text-base font-semibold leading-6 text-[#001537]">{{ $pageTitle }}</p>
@@ -679,8 +679,8 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                         <linearGradient id="paint0_linear_5_2550" x1="76.4322" y1="47.9407" x2="119.892"
                                             y2="177.579" gradientUnits="userSpaceOnUse">
                                             <stop offset="0.406173" stop-color="#D8D8D8" />
-                                            <stop offset="0.436044" stop-color="#2563EB" />
-                                            <stop offset="1" stop-color="#2563EB" />
+                                            <stop offset="0.436044" style="stop-color: var(--sq-primary)" />
+                                            <stop offset="1" style="stop-color: var(--sq-primary)" />
                                         </linearGradient>
                                         <clipPath id="clip0_5_2550">
                                             <rect width="38.1854" height="38.1854" fill="white"
@@ -703,7 +703,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-xl bg-[#F1F4F6] border-2 border-white flex items-center justify-center shrink-0 overflow-hidden">
-                                    <svg class="w-6 h-6 text-[#0159ED]" viewBox="0 0 24 24" fill="none"
+                                    <svg class="w-6 h-6 text-[color:var(--sq-primary)]" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -717,7 +717,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                 </div>
                             </div>
                             <button type="button"
-                                class="w-full h-14 bg-[#0159ED] hover:bg-blue-700 transition rounded-lg flex items-center justify-center gap-2 text-white text-base font-normal">
+                                class="w-full h-14 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary)] transition rounded-lg flex items-center justify-center gap-2 text-white text-base font-normal">
                                 <svg width="20" height="19" viewBox="0 0 20 19" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -741,8 +741,8 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
                                     <svg width="16" height="20" viewBox="0 0 16 20" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
-                                            d="M8 10C8.55 10 9.02083 9.80417 9.4125 9.4125C9.80417 9.02083 10 8.55 10 8C10 7.45 9.80417 6.97917 9.4125 6.5875C9.02083 6.19583 8.55 6 8 6C7.45 6 6.97917 6.19583 6.5875 6.5875C6.19583 6.97917 6 7.45 6 8C6 8.55 6.19583 9.02083 6.5875 9.4125C6.97917 9.80417 7.45 10 8 10ZM8 17.35C10.0333 15.4833 11.5417 13.7875 12.525 12.2625C13.5083 10.7375 14 9.38333 14 8.2C14 6.38333 13.4208 4.89583 12.2625 3.7375C11.1042 2.57917 9.68333 2 8 2C6.31667 2 4.89583 2.57917 3.7375 3.7375C2.57917 4.89583 2 6.38333 2 8.2C2 9.38333 2.49167 10.7375 3.475 12.2625C4.45833 13.7875 5.96667 15.4833 8 17.35ZM8 20C5.31667 17.7167 3.3125 15.5958 1.9875 13.6375C0.6625 11.6792 0 9.86667 0 8.2C0 5.7 0.804167 3.70833 2.4125 2.225C4.02083 0.741667 5.88333 0 8 0C10.1167 0 11.9792 0.741667 13.5875 2.225C15.1958 3.70833 16 5.7 16 8.2C16 9.86667 15.3375 11.6792 14.0125 13.6375C12.6875 15.5958 10.6833 17.7167 8 20Z"
-                                            fill="#0159ED" />
+                                            d="M8 10C8.55 10 9.02083 9.80417 9.4125 9.4125C9.80417 9.02083 10 8.55 10 8C10 7.45 9.80417 6.97917 9.4125 6.5875C9.02083 6.19583 8.55 6 8 6C7.45 6 6.97917 6.19583 6.5875 6.5875C6.19583 6.97917 6 7.45 6 8C6 8.55 6.19583 9.02083 6.5875 9.4125C6.97917 9.80417 7.45 10 8 10ZM8 17.35C10.0333 15.4833 11.5417 13.7875 12.525 12.2625C13.5083 10.7375 14 9.38333 14 8.2C14 6.38333 13.4208 4.89583 12.2625 3.7375C11.1042 2.57917 9.68333 2 8 2C6.31667 2 4.89583 2.57917 3.7375 3.7375C2.57917 4.89583 2 6.38333 2 8.2C2 9.38333 2.49167 10.7375 3.475 12.2625C4.45833 13.7875 5.96667 15.4833 8 17.35ZM8 20C5.31667 17.7167 3.3125 15.5958 1.9875 13.6375C0.6625 11.6792 0 9.86667 0 8.2C0 5.7 0.804167 3.70833 2.4125 2.225C4.02083 0.741667 5.88333 0 8 0C10.1167 0 11.9792 0.741667 13.5875 2.225C15.1958 3.70833 16 5.7 16 8.2C16 9.86667 15.3375 11.6792 14.0125 13.6375C12.6875 15.5958 10.6833 17.7167 8 20Z" style="fill: var(--sq-primary)"
+                                            />
                                     </svg>
 
                                 </div>
@@ -793,7 +793,7 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
 
                     {{-- Back to order details --}}
                     <button type="button" wire:click="showDetails"
-                        class="w-full h-12 flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white hover:border-[#0159ED] hover:text-[#0159ED] text-sm font-semibold text-[#001537] transition">
+                        class="w-full h-12 flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] text-sm font-semibold text-[#001537] transition">
                         ← {{ __('Back to Order Details') }}
                     </button>
                 </div>

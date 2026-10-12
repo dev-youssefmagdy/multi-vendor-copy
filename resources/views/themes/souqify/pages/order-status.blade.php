@@ -28,7 +28,7 @@
     $statusBadge = match (true) {
         $isDelivered => ['cls' => 'bg-green-100 border border-green-200 text-green-700', 'dot' => 'bg-green-500', 'label' => __('Delivered')],
         $order->status === OrderStatus::Pending => ['cls' => 'bg-amber-100 border border-amber-200 text-amber-700', 'dot' => 'bg-amber-400', 'label' => __('Pending')],
-        $order->status === OrderStatus::Processing => ['cls' => 'bg-blue-100 border border-blue-200 text-blue-700', 'dot' => 'bg-blue-500', 'label' => __('Processing')],
+        $order->status === OrderStatus::Processing => ['cls' => 'bg-[color:var(--sq-primary-soft-2)] border border-[color:var(--sq-primary-soft-2)] text-[color:var(--sq-primary)]', 'dot' => 'bg-[color:var(--sq-primary)]', 'label' => __('Processing')],
         $order->status === OrderStatus::Shipped => ['cls' => 'bg-sky-100 border border-sky-200 text-sky-700', 'dot' => 'bg-sky-500', 'label' => __('Shipped')],
         $isCancelled => ['cls' => 'bg-red-100 border border-red-200 text-red-700', 'dot' => 'bg-red-500', 'label' => $order->status === OrderStatus::Rejected ? __('Rejected') : __('Cancelled')],
         $isRefunded => ['cls' => 'bg-violet-100 border border-violet-200 text-violet-700', 'dot' => 'bg-violet-500', 'label' => __('Refunded')],
@@ -61,7 +61,7 @@
                     <aside class="lg:col-span-3">
                         <div class="bg-white rounded-2xl border border-neutral-200 p-5 sticky top-4">
                             <div class="flex items-center gap-3 pb-4 mb-4 border-b border-neutral-100">
-                                <div class="w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold text-lg shrink-0">
+                                <div class="w-12 h-12 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center font-bold text-lg shrink-0">
                                     {{ strtoupper(substr($customer->full_name ?? 'U', 0, 1)) }}
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -71,12 +71,12 @@
                             </div>
                             <nav class="space-y-1">
                                 <a href="{{ route('tenant.storefront.profile') }}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-700 text-white transition">
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium bg-[color:var(--sq-primary)] text-white transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                     {{ __('My Orders') }}
                                 </a>
                                 <a href="{{ route('tenant.storefront.profile') }}"
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-neutral-700 hover:bg-blue-50 hover:text-blue-700 transition">
+                                    class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-neutral-700 hover:bg-[color:var(--sq-primary-soft)] hover:text-[color:var(--sq-primary)] transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                     {{ __('Profile') }}
                                 </a>
@@ -234,7 +234,7 @@
                             <ol class="relative border-s-2 border-neutral-200 ms-2 space-y-6">
                                 @foreach ($order->activities as $act)
                                     <li class="ms-6">
-                                        <span class="absolute -start-[7px] mt-1 w-3 h-3 rounded-full bg-blue-700 ring-4 ring-white"></span>
+                                        <span class="absolute -start-[7px] mt-1 w-3 h-3 rounded-full bg-[color:var(--sq-primary)] ring-4 ring-white"></span>
                                         <p class="text-sm font-semibold text-slate-900">{{ $act->description }}</p>
                                         <p class="text-xs text-neutral-500 mt-1">{{ $act->created_at?->format('M j, Y H:i') }}</p>
                                     </li>
@@ -346,8 +346,8 @@
                             </button>
                         @else
                             <button type="button" wire:click="openReviewModal"
-                                class="w-full px-12 py-4 bg-transparent border border-[#0159ED] rounded-[32px] flex items-center justify-center gap-2 text-[#0159ED] text-base font-['Arial'] leading-6 hover:bg-blue-50 transition">
-                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="#0159ED" stroke-width="1.67" viewBox="0 0 20 20">
+                                class="w-full px-12 py-4 bg-transparent border border-[color:var(--sq-primary)] rounded-[32px] flex items-center justify-center gap-2 text-[color:var(--sq-primary)] text-base font-['Arial'] leading-6 hover:bg-[color:var(--sq-primary-soft)] transition">
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke-width="1.67" viewBox="0 0 20 20" style="stroke: var(--sq-primary)">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 1.67l2.47 5.32 5.86.85-4.24 4.13 1 5.84L10 15.17l-5.09 2.64 1-5.84L1.67 7.84l5.86-.85z"/>
                                 </svg>
                                 {{ __('Leave a Review') }}
@@ -358,7 +358,7 @@
                         @auth('storefront')
                             <a href="{{ route('tenant.storefront.order-invoice', $order->uuid) }}"
                                 target="_blank"
-                                class="w-full px-12 py-4 bg-[#0159ED] rounded-[32px] flex items-center justify-center gap-2 text-white text-base font-['Arial'] leading-6 hover:bg-blue-800 transition">
+                                class="w-full px-12 py-4 bg-[color:var(--sq-primary)] rounded-[32px] flex items-center justify-center gap-2 text-white text-base font-['Arial'] leading-6 hover:bg-[color:var(--sq-primary-hover)] transition">
                                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="white" stroke-width="1.67" viewBox="0 0 20 20">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 2v9M6 8l4 4 4-4"/>
                                     <path stroke-linecap="round" d="M3 15v2a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 17 17v-2"/>
@@ -367,7 +367,7 @@
                             </a>
                         @else
                             <a href="{{ route('tenant.storefront.login') }}"
-                                class="w-full px-12 py-4 bg-[#0159ED] rounded-[32px] flex items-center justify-center gap-2 text-white text-base font-['Arial'] leading-6 hover:bg-blue-800 transition">
+                                class="w-full px-12 py-4 bg-[color:var(--sq-primary)] rounded-[32px] flex items-center justify-center gap-2 text-white text-base font-['Arial'] leading-6 hover:bg-[color:var(--sq-primary-hover)] transition">
                                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="white" stroke-width="1.67" viewBox="0 0 20 20">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 2v9M6 8l4 4 4-4"/>
                                     <path stroke-linecap="round" d="M3 15v2a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 17 17v-2"/>
@@ -410,7 +410,7 @@
 
                             <textarea wire:model="reviewComment" rows="4"
                                       placeholder="{{ __('Write your comment (optional)') }}"
-                                      class="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none focus:border-blue-400 transition resize-none mb-5 font-['Outfit']">
+                                      class="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-800 placeholder-neutral-400 outline-none focus:border-[color:var(--sq-primary-muted)] transition resize-none mb-5 font-['Outfit']">
                 </textarea>
 
                             <div class="flex gap-3">
@@ -420,7 +420,7 @@
                                 </button>
                                 <button type="button" wire:click="submitReview"
                                         wire:loading.attr="disabled" wire:target="submitReview"
-                                        class="flex-1 py-3 rounded-[32px] bg-[#0159ED] text-white text-sm font-semibold hover:bg-blue-800 transition disabled:opacity-60 font-['Outfit']">
+                                        class="flex-1 py-3 rounded-[32px] bg-[color:var(--sq-primary)] text-white text-sm font-semibold hover:bg-[color:var(--sq-primary-hover)] transition disabled:opacity-60 font-['Outfit']">
                                     <span wire:loading.remove wire:target="submitReview">{{ __('Submit Review') }}</span>
                                     <span wire:loading wire:target="submitReview">{{ __('Submitting…') }}</span>
                                 </button>

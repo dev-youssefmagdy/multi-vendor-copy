@@ -15,26 +15,26 @@
     <div class="bg-white border-b border-neutral-200">
         <div
             class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-2 text-sm text-neutral-600 overflow-x-auto no-scrollbar">
-            <a href="{{ route('tenant.home') }}" class="hover:text-blue-700 transition shrink-0">{{ __('Home') }}</a>
+            <a href="{{ route('tenant.home') }}" class="hover:text-[color:var(--sq-primary)] transition shrink-0">{{ __('Home') }}</a>
             <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             @if ($slug)
                 <a href="{{ route('tenant.storefront.category') }}"
-                    class="hover:text-blue-700 transition shrink-0">{{ __('Categories') }}</a>
+                    class="hover:text-[color:var(--sq-primary)] transition shrink-0">{{ __('Categories') }}</a>
                 <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
                 @if ($parentCategory)
                     <a href="{{ route('tenant.storefront.category', $parentCategory->slug) }}"
-                        class="hover:text-blue-700 transition shrink-0">{{ $parentName }}</a>
+                        class="hover:text-[color:var(--sq-primary)] transition shrink-0">{{ $parentName }}</a>
                     <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 @endif
-                <span class="text-blue-700 font-medium shrink-0">{{ $catName }}</span>
+                <span class="text-[color:var(--sq-primary)] font-medium shrink-0">{{ $catName }}</span>
             @else
-                <span class="text-blue-700 font-medium shrink-0">{{ __('All Products') }}</span>
+                <span class="text-[color:var(--sq-primary)] font-medium shrink-0">{{ __('All Products') }}</span>
             @endif
         </div>
     </div>
@@ -53,7 +53,7 @@
                         <h3 class="text-zinc-900 text-lg font-medium">{{ __('Categories') }}</h3>
                         @if ($slug)
                             <a href="{{ route('tenant.storefront.category') }}"
-                                class="text-xs text-blue-700 hover:underline transition">{{ __('All') }}</a>
+                                class="text-xs text-[color:var(--sq-primary)] hover:underline transition">{{ __('All') }}</a>
                         @endif
                     </div>
                     <div class="flex flex-col gap-1">
@@ -64,11 +64,11 @@
                                             @endphp
                                             <a href="{{ route('tenant.storefront.category', $cat->slug) }}" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition
                                                                                                                                                             {{ $isCurrentCat
-                            ? 'bg-blue-50 text-blue-700 font-medium'
-                            : 'text-gray-700 hover:bg-neutral-50 hover:text-blue-700' }}">
+                            ? 'bg-[color:var(--sq-primary-soft)] text-[color:var(--sq-primary)] font-medium'
+                            : 'text-gray-700 hover:bg-neutral-50 hover:text-[color:var(--sq-primary)]' }}">
                                                 <span>{{ $catLabel }}</span>
                                                 @if ($isCurrentCat)
-                                                    <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor"
+                                                    <svg class="w-4 h-4 text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M5 13l4 4L19 7" />
@@ -84,7 +84,7 @@
                     <h3 class="text-zinc-900 text-lg font-medium">{{ __('Price') }}</h3>
                     <div class="relative pt-2 pb-1">
                         <div class="h-1 bg-slate-200 rounded-full relative">
-                            <div id="priceFill" class="absolute h-1 bg-blue-700 rounded-full"
+                            <div id="priceFill" class="absolute h-1 bg-[color:var(--sq-primary)] rounded-full"
                                 style="left: {{ $min ? round(($min / 500) * 100) : 0 }}%; right: {{ $max ? round((1 - ($max / 500)) * 100) : 0 }}%;">
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                 class="flex items-center gap-3 text-left hover:opacity-80 transition w-full">
                                 <span
                                     class="w-4 h-4 border-2 rounded shrink-0 flex items-center justify-center
-                                                            {{ $isActive ? 'border-blue-700 bg-blue-700' : 'border-gray-400' }}">
+                                                            {{ $isActive ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)]' : 'border-gray-400' }}">
                                     @if ($isActive)
                                         <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -125,7 +125,7 @@
                                     @endif
                                 </span>
                                 <span
-                                    class="text-sm {{ $isActive ? 'text-blue-700 font-medium' : 'text-gray-700' }}">{{ $opt['label'] }}</span>
+                                    class="text-sm {{ $isActive ? 'text-[color:var(--sq-primary)] font-medium' : 'text-gray-700' }}">{{ $opt['label'] }}</span>
                             </button>
                         @endforeach
                     </div>
@@ -148,7 +148,7 @@
                                         </svg>
                                     @endfor
                                 </div>
-                                <span class="text-sm {{ $isActive ? 'text-blue-700 font-bold' : 'text-gray-700' }}">
+                                <span class="text-sm {{ $isActive ? 'text-[color:var(--sq-primary)] font-bold' : 'text-gray-700' }}">
                                     &amp; {{ __('up') }}
                                 </span>
                             </button>
@@ -175,7 +175,7 @@
                     @if ($catDesc)
                         <p class="text-neutral-500 text-base mb-1">{{ $catDesc }}</p>
                     @endif
-                    <p class="text-blue-700 text-base">{{ number_format($totalItems) }} {{ __('items') }}</p>
+                    <p class="text-[color:var(--sq-primary)] text-base">{{ number_format($totalItems) }} {{ __('items') }}</p>
                 </div>
 
                 <!-- Toolbar: mobile filter trigger + sort tabs -->
@@ -211,8 +211,8 @@
                                                     <button wire:click="$set('sort', '{{ $sortKey }}')"
                                                         class="px-4 py-2 text-sm rounded-full whitespace-nowrap transition
                                                                                                                                                                                                                 {{ $sort === $sortKey
-                                ? 'bg-blue-700 text-white hover:bg-blue-800'
-                                : 'bg-white text-gray-700 border border-neutral-200 hover:border-blue-300 hover:text-blue-700' }}">{{ $sortLabel }}</button>
+                                ? 'bg-[color:var(--sq-primary)] text-white hover:bg-[color:var(--sq-primary-hover)]'
+                                : 'bg-white text-gray-700 border border-neutral-200 hover:border-[color:var(--sq-primary-muted)] hover:text-[color:var(--sq-primary)]' }}">{{ $sortLabel }}</button>
                             @endforeach
                         </div>
                     </div>
@@ -279,7 +279,7 @@
                                 <!-- Top-right: weight badge -->
                                 @if ($weight)
                                     <span
-                                        class="absolute top-0 right-0 bg-blue-700 text-white text-xs font-medium px-2 py-1 rounded-bl-lg flex items-center gap-1">
+                                        class="absolute top-0 right-0 bg-[color:var(--sq-primary)] text-white text-xs font-medium px-2 py-1 rounded-bl-lg flex items-center gap-1">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
@@ -302,7 +302,7 @@
 
                             <!-- Price -->
                             <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="text-blue-700 text-lg sm:text-xl font-medium">
+                                <span class="text-[color:var(--sq-primary)] text-lg sm:text-xl font-medium">
                                     {{ $symbol }}{{ $displaySell }}
                                 </span>
                                 @if ($displayReal)
@@ -318,7 +318,7 @@
                             <!-- Actions -->
                             <div class="flex items-center gap-2">
                                 <button wire:click="addToCart({{ $product->id }})"
-                                    class="flex-1 h-12 px-4 bg-blue-700 hover:bg-blue-800 text-white rounded-lg flex items-center justify-center gap-2 transition text-sm font-medium">
+                                    class="flex-1 h-12 px-4 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg flex items-center justify-center gap-2 transition text-sm font-medium">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -326,7 +326,7 @@
                                     {{ __('Add to cart') }}
                                 </button>
                                 <button
-                                    class="souqify-fav-btn w-12 h-12 border border-blue-700 hover:bg-blue-50 rounded-lg flex items-center justify-center text-blue-700 transition"
+                                    class="souqify-fav-btn w-12 h-12 border border-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)] rounded-lg flex items-center justify-center text-[color:var(--sq-primary)] transition"
                                     onclick="souqifyToggleFavorite(this)" data-slug="{{ $product->slug }}"
                                     data-fav='{{ $favData }}'>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -358,7 +358,7 @@
                     <div id="loadMoreSentinel" class="w-full h-4 mt-4"></div>
                 @endif
                 <div wire:loading.flex class="w-full justify-center py-8">
-                    <div class="w-8 h-8 border-4 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
+                    <div class="w-8 h-8 border-4 border-[color:var(--sq-primary)] border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </main>
         </div>
@@ -389,11 +389,11 @@
                             @endphp
                             <a href="{{ route('tenant.storefront.category', $cat->slug) }}" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition
                                 {{ $isCurrentCat
-                                    ? 'bg-blue-50 text-blue-700 font-medium'
-                                    : 'text-gray-700 hover:bg-neutral-50 hover:text-blue-700' }}">
+                                    ? 'bg-[color:var(--sq-primary-soft)] text-[color:var(--sq-primary)] font-medium'
+                                    : 'text-gray-700 hover:bg-neutral-50 hover:text-[color:var(--sq-primary)]' }}">
                                 <span>{{ $catLabel }}</span>
                                 @if ($isCurrentCat)
-                                    <svg class="w-4 h-4 text-blue-700 shrink-0" fill="none" stroke="currentColor"
+                                    <svg class="w-4 h-4 text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
@@ -409,7 +409,7 @@
                     <h3 class="text-zinc-900 text-lg font-medium">{{ __('Price') }}</h3>
                     <div class="relative pt-2 pb-1">
                         <div class="h-1 bg-slate-200 rounded-full relative">
-                            <div id="mobilePriceFill" class="absolute h-1 bg-blue-700 rounded-full"
+                            <div id="mobilePriceFill" class="absolute h-1 bg-[color:var(--sq-primary)] rounded-full"
                                 style="left: {{ $min ? round(($min / 500) * 100) : 0 }}%; right: {{ $max ? round((1 - ($max / 500)) * 100) : 0 }}%;">
                             </div>
                         </div>
@@ -436,7 +436,7 @@
                                 data-active="{{ $isActive ? '1' : '0' }}">
                                 <span
                                     class="mobile-filter-check w-4 h-4 border-2 rounded shrink-0 flex items-center justify-center
-                                        {{ $isActive ? 'border-blue-700 bg-blue-700' : 'border-gray-400' }}">
+                                        {{ $isActive ? 'border-[color:var(--sq-primary)] bg-[color:var(--sq-primary)]' : 'border-gray-400' }}">
                                     <svg class="mobile-filter-tick w-2.5 h-2.5 text-white {{ $isActive ? '' : 'hidden' }}"
                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
@@ -444,7 +444,7 @@
                                     </svg>
                                 </span>
                                 <span
-                                    class="mobile-filter-label text-sm {{ $isActive ? 'text-blue-700 font-medium' : 'text-gray-700' }}">{{ $opt['label'] }}</span>
+                                    class="mobile-filter-label text-sm {{ $isActive ? 'text-[color:var(--sq-primary)] font-medium' : 'text-gray-700' }}">{{ $opt['label'] }}</span>
                             </button>
                         @endforeach
                     </div>
@@ -469,7 +469,7 @@
                                     @endfor
                                 </div>
                                 <span
-                                    class="mobile-filter-label text-sm {{ $isActive ? 'text-blue-700 font-bold' : 'text-gray-700' }}">
+                                    class="mobile-filter-label text-sm {{ $isActive ? 'text-[color:var(--sq-primary)] font-bold' : 'text-gray-700' }}">
                                     &amp; {{ __('up') }}
                                 </span>
                             </button>
@@ -482,7 +482,7 @@
                 <button wire:click="clearFilters" onclick="closeFilters()"
                     class="flex-1 h-11 border border-neutral-300 hover:bg-neutral-50 text-neutral-700 text-sm font-medium rounded-lg transition">{{ __('Clear') }}</button>
                 <button id="applyFiltersBtn"
-                    class="flex-1 h-11 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium rounded-lg transition">{{ __('Apply') }}</button>
+                    class="flex-1 h-11 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white text-sm font-medium rounded-lg transition">{{ __('Apply') }}</button>
             </div>
         </aside>
     </div>
@@ -510,7 +510,7 @@
             height: 16px;
             border-radius: 9999px;
             background: #fff;
-            border: 2px solid #1d4ed8;
+            border: 2px solid var(--sq-primary);
             box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
             cursor: pointer;
         }
@@ -521,7 +521,7 @@
             height: 16px;
             border-radius: 9999px;
             background: #fff;
-            border: 2px solid #1d4ed8;
+            border: 2px solid var(--sq-primary);
             cursor: pointer;
         }
     </style>
@@ -603,13 +603,13 @@
                     const label = sibling.querySelector('.mobile-filter-label');
 
                     if (check) {
-                        check.classList.toggle('border-blue-700', isActive);
-                        check.classList.toggle('bg-blue-700', isActive);
+                        check.classList.toggle('border-[color:var(--sq-primary)]', isActive);
+                        check.classList.toggle('bg-[color:var(--sq-primary)]', isActive);
                         check.classList.toggle('border-gray-400', !isActive);
                     }
                     if (tick) tick.classList.toggle('hidden', !isActive);
                     if (label && prop === 'availability') {
-                        label.classList.toggle('text-blue-700', isActive);
+                        label.classList.toggle('text-[color:var(--sq-primary)]', isActive);
                         label.classList.toggle('font-medium', isActive);
                         label.classList.toggle('text-gray-700', !isActive);
                     }
@@ -617,7 +617,7 @@
                         sibling.classList.toggle('opacity-100', isActive);
                         sibling.classList.toggle('opacity-70', !isActive);
                         if (label) {
-                            label.classList.toggle('text-blue-700', isActive);
+                            label.classList.toggle('text-[color:var(--sq-primary)]', isActive);
                             label.classList.toggle('font-bold', isActive);
                             label.classList.toggle('text-gray-700', !isActive);
                         }

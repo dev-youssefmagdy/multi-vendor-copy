@@ -6,7 +6,7 @@ $tab 'login' | 'register'
 <div class="bg-zinc-100 min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-16">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
 
-        <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white px-8 py-6">
+        <div class="bg-gradient-to-r from-[color:var(--sq-primary)] to-[color:var(--sq-primary-hover)] text-white px-8 py-6">
             <h1 class="text-2xl font-bold leading-tight">
                 {{ $tab === 'login' ? __('Welcome back') : __('Create your account') }}
             </h1>
@@ -19,12 +19,12 @@ $tab 'login' | 'register'
             <div class="flex border-b border-neutral-200 mb-6">
                 <button wire:click="$set('tab', 'login')"
                     class="flex-1 py-3 text-sm font-semibold transition
-                           {{ $tab === 'login' ? 'border-b-2 border-blue-700 text-blue-700' : 'text-neutral-500 hover:text-blue-700' }}">
+                           {{ $tab === 'login' ? 'border-b-2 border-[color:var(--sq-primary)] text-[color:var(--sq-primary)]' : 'text-neutral-500 hover:text-[color:var(--sq-primary)]' }}">
                     {{ __('Sign In') }}
                 </button>
                 <button wire:click="$set('tab', 'register')"
                     class="flex-1 py-3 text-sm font-semibold transition
-                           {{ $tab === 'register' ? 'border-b-2 border-blue-700 text-blue-700' : 'text-neutral-500 hover:text-blue-700' }}">
+                           {{ $tab === 'register' ? 'border-b-2 border-[color:var(--sq-primary)] text-[color:var(--sq-primary)]' : 'text-neutral-500 hover:text-[color:var(--sq-primary)]' }}">
                     {{ __('Create Account') }}
                 </button>
             </div>
@@ -64,17 +64,17 @@ $tab 'login' | 'register'
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Email') }}</label>
                         <input type="email" wire:model.lazy="loginEmail"
-                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm {{ $errors->has('loginEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
+                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('loginEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
                         @error('loginEmail') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Password') }}</label>
                         <input type="password" wire:model.lazy="loginPassword"
-                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm {{ $errors->has('loginPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
+                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('loginPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
                         @error('loginPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <button type="submit" wire:loading.attr="disabled" wire:target="login"
-                        class="w-full bg-blue-700 hover:bg-blue-800 text-white rounded-lg py-3.5 text-sm font-semibold transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2">
+                        class="w-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg py-3.5 text-sm font-semibold transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="login">{{ __('Sign In') }}</span>
                         <span wire:loading wire:target="login">
                             <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -90,13 +90,13 @@ $tab 'login' | 'register'
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Full name') }}</label>
                         <input type="text" wire:model.lazy="regName"
-                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm {{ $errors->has('regName') ? 'border-red-500' : 'border-neutral-300' }}" />
+                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regName') ? 'border-red-500' : 'border-neutral-300' }}" />
                         @error('regName') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Email') }}</label>
                         <input type="email" wire:model.lazy="regEmail"
-                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm {{ $errors->has('regEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
+                            class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
                         @error('regEmail') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -104,23 +104,23 @@ $tab 'login' | 'register'
                                 class="text-neutral-400">({{ __('optional') }})</span></label>
                         <input type="tel" data-phone-input wire:model.lazy="regPhone"
                             placeholder="{{ __('Phone number') }}"
-                            class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm" />
+                            class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm" />
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Password') }}</label>
                             <input type="password" wire:model.lazy="regPassword"
-                                class="w-full border rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm {{ $errors->has('regPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
+                                class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
                             @error('regPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Confirm') }}</label>
                             <input type="password" wire:model.lazy="regConfirm"
-                                class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100 text-sm" />
+                                class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm" />
                         </div>
                     </div>
                     <button type="submit" wire:loading.attr="disabled" wire:target="register"
-                        class="w-full bg-blue-700 hover:bg-blue-800 text-white rounded-lg py-3.5 text-sm font-semibold transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2">
+                        class="w-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg py-3.5 text-sm font-semibold transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="register">{{ __('Create Account') }}</span>
                         <span wire:loading wire:target="register">
                             <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ $tab 'login' | 'register'
             @endif
 
             <p class="text-center mt-6 text-sm text-neutral-500">
-                <a href="{{ route('tenant.home') }}" class="hover:text-blue-700 transition">
+                <a href="{{ route('tenant.home') }}" class="hover:text-[color:var(--sq-primary)] transition">
                     ← {{ __('Back to store') }}
                 </a>
             </p>

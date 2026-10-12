@@ -134,14 +134,14 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
-                                        stroke="#0159ED" stroke-width="1.14706" stroke-linecap="round"
-                                        stroke-linejoin="round" />
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                                 </svg>
 
                             </button>
@@ -158,7 +158,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         </div>
                         @endif
 
-                        <div class="bg-[#0159ED] h-[17px] shadow flex items-center overflow-hidden px-2">
+                        <div class="bg-[color:var(--sq-primary)] h-[17px] shadow flex items-center overflow-hidden px-2">
                             <span class="text-white text-[8px] whitespace-nowrap">🔥 {{ __('Hot Deal') }} •
                                 {{ __('Best Price') }} • {{ __('Limited Stock') }}</span>
                         </div>
@@ -193,7 +193,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <span class="text-[#004AC6] text-xs font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-xs font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span
                                         class="text-[#8F8F8F] text-[9px] line-through">{{ $dOrig }}</span><span
@@ -274,14 +274,14 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
-                                        stroke="#0159ED" stroke-width="1.14706" stroke-linecap="round"
-                                        stroke-linejoin="round" />
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                                 </svg>
 
                             </button>
@@ -297,7 +297,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             </div>
                             @endif
                         </div>
-                        <div class="bg-[#0159ED] h-[17px] shadow flex items-center overflow-hidden px-2">
+                        <div class="bg-[color:var(--sq-primary)] h-[17px] shadow flex items-center overflow-hidden px-2">
                             <span class="text-white text-[8px] whitespace-nowrap">🌸 {{ __('Season Special') }} •
                                 {{ __('Fresh Arrivals') }}</span>
                         </div>
@@ -332,7 +332,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <span class="text-[#004AC6] text-xs font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-xs font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span
                                         class="text-[#8F8F8F] text-[9px] line-through">{{ $dOrig }}</span><span
@@ -354,7 +354,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                     class="w-full object-cover h-[132px]">
             @else
                 <div
-                    class="w-full bg-gradient-to-r from-[#712AE2] to-[#0159ED] h-[132px] flex items-center justify-center">
+                    class="w-full bg-gradient-to-r from-[#712AE2] to-[color:var(--sq-primary)] h-[132px] flex items-center justify-center">
                     <span
                         class="text-white text-lg font-semibold">{{ $seasonMaxDiscountPct > 0 ? __('Season Collection – Up to :pct% Off', ['pct' => $seasonMaxDiscountPct]) : __('Season Collection') }}</span>
                 </div>
@@ -415,14 +415,14 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
-                                        stroke="#0159ED" stroke-width="1.14706" stroke-linecap="round"
-                                        stroke-linejoin="round" />
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
                                 </svg>
 
                             </button>
@@ -438,7 +438,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             </div>
                             @endif
                         </div>
-                        <div class="bg-[#0159ED] h-[17px] shadow flex items-center overflow-hidden px-2">
+                        <div class="bg-[color:var(--sq-primary)] h-[17px] shadow flex items-center overflow-hidden px-2">
                             <span class="text-white text-[8px] whitespace-nowrap">💥 {{ __('Super Deal') }} •
                                 {{ __('Max Savings') }} • {{ __('Today Only') }}</span>
                         </div>
@@ -452,7 +452,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5"
-                                style="background: linear-gradient(91.49deg, #002460 14.29%, #003A9A 39.73%, #002E7B 58.01%, #004AC6 77.97%, #002460 91.14%);">
+                                style="background: linear-gradient(91.49deg, var(--sq-primary-deep) 14.29%, var(--sq-primary-hover) 39.73%, var(--sq-primary-deep) 58.01%, var(--sq-primary) 77.97%, var(--sq-primary-deep) 91.14%);">
                                 <span
                                     class="text-[#FFB00A] text-[8px] font-semibold uppercase">{{ __('Super Sale') }}</span>
                                 @if ($saleEndsAtIso)
@@ -474,7 +474,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <span class="text-[#004AC6] text-xs font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-xs font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span
                                         class="text-[#8F8F8F] text-[9px] line-through">{{ $dOrig }}</span><span
@@ -532,7 +532,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                     @endif
                 </div>
                 <a href="{{ route('tenant.storefront.new-in') }}"
-                    class="text-sm text-[#0159ED] font-medium hover:underline">{{ __('view all') }} →</a>
+                    class="text-sm text-[color:var(--sq-primary)] font-medium hover:underline">{{ __('view all') }} →</a>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 @forelse ($megaSaleProducts as $product)
@@ -578,10 +578,10 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-                                    stroke="#0159ED" xmlns="http://www.w3.org/2000/svg">
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
                                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
                                         stroke-linecap="round" stroke-linejoin="round" />
                                     <line x1="3" y1="6" x2="21" y2="6"
@@ -591,14 +591,14 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                         </div>
-                        <div class="bg-[#0159ED] h-[20px] flex items-center overflow-hidden px-3">
+                        <div class="bg-[color:var(--sq-primary)] h-[20px] flex items-center overflow-hidden px-3">
                             <span class="text-white text-[9px] whitespace-nowrap">🔥 {{ __('Hot Deal') }} •
                                 {{ __('Best Price') }} • {{ __('Limited Stock') }}</span>
                         </div>
                         <div class="bg-white px-3 pt-2 pb-3 flex-1 flex flex-col">
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
-                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[#0159ED] transition">{{ $pName }}</a>
+                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
                                         class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
@@ -626,7 +626,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1 mt-auto">
-                                <span class="text-[#004AC6] text-sm font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-sm font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span class="text-[#8F8F8F] text-xs line-through">{{ $dOrig }}</span><span
                                         class="{{ $discBg }} text-white text-[9px] font-semibold rounded px-1 py-0.5 ml-auto">{{ $discPct }}%</span>
@@ -666,7 +666,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                     @endif
                 </div>
                 <a href="{{ route('tenant.storefront.new-in') }}"
-                    class="text-sm text-[#0159ED] font-medium hover:underline">{{ __('view all') }} →</a>
+                    class="text-sm text-[color:var(--sq-primary)] font-medium hover:underline">{{ __('view all') }} →</a>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 @forelse ($seasonSaleProducts as $product)
@@ -712,10 +712,10 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-                                    stroke="#0159ED" xmlns="http://www.w3.org/2000/svg">
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
                                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
                                         stroke-linecap="round" stroke-linejoin="round" />
                                     <line x1="3" y1="6" x2="21" y2="6"
@@ -736,14 +736,14 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             </div>
                             @endif
                         </div>
-                        <div class="bg-[#0159ED] h-[20px] flex items-center overflow-hidden px-3">
+                        <div class="bg-[color:var(--sq-primary)] h-[20px] flex items-center overflow-hidden px-3">
                             <span class="text-white text-[9px] whitespace-nowrap">🌸 {{ __('Season Special') }} •
                                 {{ __('Fresh Arrivals') }}</span>
                         </div>
                         <div class="bg-white px-3 pt-2 pb-3 flex-1 flex flex-col">
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
-                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[#0159ED] transition">{{ $pName }}</a>
+                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
                                         class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
@@ -771,7 +771,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1 mt-auto">
-                                <span class="text-[#004AC6] text-sm font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-sm font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span class="text-[#8F8F8F] text-xs line-through">{{ $dOrig }}</span><span
                                         class="{{ $discBg }} text-white text-[9px] font-semibold rounded px-1 py-0.5 ml-auto">{{ $discPct }}%</span>
@@ -794,7 +794,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                     class="w-full object-cover h-[180px] rounded-2xl">
             @else
                 <div
-                    class="w-full bg-gradient-to-r from-[#712AE2] to-[#0159ED] h-[180px] rounded-2xl flex items-center justify-center">
+                    class="w-full bg-gradient-to-r from-[#712AE2] to-[color:var(--sq-primary)] h-[180px] rounded-2xl flex items-center justify-center">
                     <span
                         class="text-white text-2xl font-semibold">{{ $seasonMaxDiscountPct > 0 ? __('Season Collection – Up to :pct% Off', ['pct' => $seasonMaxDiscountPct]) : __('Season Collection') }}</span>
                 </div>
@@ -809,12 +809,12 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                     @if ($saleEndsAtIso)
                         <span
                             class="sq-offer-countdown inline-flex items-center gap-1 text-[#FFB00A] text-xs font-semibold px-3 py-1 rounded-full"
-                            style="background: linear-gradient(91.49deg, #002460 14.29%, #003A9A 39.73%, #002E7B 58.01%, #004AC6 77.97%, #002460 91.14%);"
+                            style="background: linear-gradient(91.49deg, var(--sq-primary-deep) 14.29%, var(--sq-primary-hover) 39.73%, var(--sq-primary-deep) 58.01%, var(--sq-primary) 77.97%, var(--sq-primary-deep) 91.14%);"
                             data-sq-countdown data-emoji="💥" data-end="{{ $saleEndsAtIso }}">💥 --:--:--</span>
                     @endif
                 </div>
                 <a href="{{ route('tenant.storefront.best-selling') }}"
-                    class="text-sm text-[#0159ED] font-medium hover:underline">{{ __('view all') }} →</a>
+                    class="text-sm text-[color:var(--sq-primary)] font-medium hover:underline">{{ __('view all') }} →</a>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 @forelse ($superSaleProducts as $product)
@@ -860,10 +860,10 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
                             </button>
                             <button wire:click="addToCart({{ $product->id }})"
-                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[#0159ED] flex items-center justify-center"
+                                class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-                                    stroke="#0159ED" xmlns="http://www.w3.org/2000/svg">
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
                                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
                                         stroke-linecap="round" stroke-linejoin="round" />
                                     <line x1="3" y1="6" x2="21" y2="6"
@@ -884,21 +884,21 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             </div>
                             @endif
                         </div>
-                        <div class="bg-[#0159ED] h-[20px] flex items-center overflow-hidden px-3">
+                        <div class="bg-[color:var(--sq-primary)] h-[20px] flex items-center overflow-hidden px-3">
                             <span class="text-white text-[9px] whitespace-nowrap">💥 {{ __('Super Deal') }} •
                                 {{ __('Max Savings') }} • {{ __('Today Only') }}</span>
                         </div>
                         <div class="bg-white px-3 pt-2 pb-3 flex-1 flex flex-col">
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
-                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[#0159ED] transition">{{ $pName }}</a>
+                                    class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
                                         class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2"
-                                style="background: linear-gradient(91.49deg, #002460 14.29%, #003A9A 39.73%, #002E7B 58.01%, #004AC6 77.97%, #002460 91.14%);">
+                                style="background: linear-gradient(91.49deg, var(--sq-primary-deep) 14.29%, var(--sq-primary-hover) 39.73%, var(--sq-primary-deep) 58.01%, var(--sq-primary) 77.97%, var(--sq-primary-deep) 91.14%);">
                                 <span
                                     class="text-[#FFB00A] text-[9px] font-semibold uppercase">{{ __('Super Sale') }}</span>
                                 @if ($saleEndsAtIso)
@@ -920,7 +920,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </span>
                             </div>
                             <div class="flex items-center gap-1 mt-auto">
-                                <span class="text-[#004AC6] text-sm font-bold">{{ $dSell }}</span>
+                                <span class="text-[color:var(--sq-primary-hover)] text-sm font-bold">{{ $dSell }}</span>
                                 @if ($dOrig)
                                     <span class="text-[#8F8F8F] text-xs line-through">{{ $dOrig }}</span><span
                                         class="{{ $discBg }} text-white text-[9px] font-semibold rounded px-1 py-0.5 ml-auto">{{ $discPct }}%</span>
