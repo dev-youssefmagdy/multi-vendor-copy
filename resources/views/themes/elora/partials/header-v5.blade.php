@@ -60,19 +60,17 @@
             </button>
           </div>
         </div>
-        <div class="flex items-center gap-[8px]">
+        <div class="flex items-center">
+          {{-- Magnifier at the start, camera at the end, in one white rounded field --}}
           <form action="{{ route('tenant.storefront.search') }}" method="GET"
             data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-            class="flex items-center gap-[8px] flex-1 h-[44px] rounded-[32px] px-[18px] border"
-            style="
-              background: var(--color-page-bg);
-              border-color: var(--color-stroke);
-            "
+            class="flex items-center gap-[8px] flex-1 h-[44px] rounded-[32px] px-[18px] border bg-white"
+            style="border-color: var(--color-stroke)"
           >
             <img
               src="{{ asset('elora-5/assets/icons/search.svg') }}"
               alt=""
-              class="size-[18px] opacity-70"
+              class="size-[18px] opacity-70 shrink-0"
             />
             <input
               type="text"
@@ -80,23 +78,24 @@
               value="{{ request('q') }}"
               autocomplete="off"
               placeholder="{{ __('Search...') }}"
-              class="bg-transparent outline-none text-[15px] w-full"
+              class="bg-transparent outline-none text-[15px] w-full min-w-0"
               style="color: var(--color-gray)"
             />
+            <button
+              type="button"
+              aria-label="{{ __('Search by Image') }}"
+              class="shrink-0 flex items-center"
+              data-image-search-trigger="storefront-image-search-modal-v5"
+            >
+              {{-- The SVG is 33x24 with preserveAspectRatio="none", so it needs its own
+                   ratio here - a square box squashes it. --}}
+              <img
+                src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
+                alt=""
+                class="h-[18px] w-[24.75px]"
+              />
+            </button>
           </form>
-          <button
-            type="button"
-            aria-label="Search by camera"
-            class="shrink-0 flex items-center justify-center size-[40px] rounded-full"
-            style="background: var(--color-page-bg)"
-            data-image-search-trigger="storefront-image-search-modal-v5"
-          >
-            <img
-              src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
-              alt=""
-              class="size-[18px]"
-            />
-          </button>
         </div>
       </div>
       <x-image-search-modal id="storefront-image-search-modal-v5" :action="route('tenant.storefront.search.image')" />
@@ -136,18 +135,6 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
-          <button
-            type="button"
-            aria-label="{{ __('Search by Image') }}"
-            class="shrink-0"
-            data-image-search-trigger="storefront-image-search-modal-v5"
-          >
-            <img
-              src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
-              alt=""
-              class="size-[20px]"
-            />
-          </button>
         </form>
         <div class="flex items-center gap-[38px] shrink-0">
           <button type="button" class="flex items-center gap-[6px]" onclick="Livewire.dispatch('open-locale-modal')">
