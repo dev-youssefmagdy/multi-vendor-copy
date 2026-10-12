@@ -18,7 +18,7 @@
       : 0;
 @endphp
 
-<aside id="sb">
+<aside id="sb" data-rail>
   <div class="logo-row">
     <div class="logo-icon">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
@@ -26,7 +26,7 @@
           stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </div>
-    <div>
+    <div class="sb-text">
       <div class="brand">NEXUS</div>
       <div class="brand-subtitle">ADMIN PANEL</div>
     </div>
@@ -45,12 +45,12 @@
     @foreach ($section['items'] as $item)
     @if (($item['type'] ?? 'link') === 'link')
       <a href="{{ AdminNavigation::href($item) }}"
-        class="ni {{ AdminNavigation::isActive($item, $currentRoute) ? 'act' : '' }}" data-action="set-active">
+        class="ni {{ AdminNavigation::isActive($item, $currentRoute) ? 'act' : '' }}" data-action="set-active" title="{{ $item['label'] }}">
         @if (AdminNavigation::isActive($item, $currentRoute))
           <div class="act-bar"></div>
         @endif
         @include('layouts.app.icon', ['name' => $item['icon']])
-        {{ $item['label'] }}
+        <span class="sb-text">{{ $item['label'] }}</span>
         @if (($item['route'] ?? null) === 'admin.support.index' && ($supportUnreadCount ?? 0) > 0)
           <span class="ni-badge">{{ $supportUnreadCount }}</span>
         @endif
@@ -58,9 +58,9 @@
     @else
     @php($groupOpen = AdminNavigation::groupIsActive($item, $currentRoute))
     <div class="ng">
-      <button type="button" class="ng-trigger {{ $groupOpen ? 'op' : '' }}" data-action="toggle-group">
+      <button type="button" class="ng-trigger {{ $groupOpen ? 'op' : '' }}" data-action="toggle-group" title="{{ $item['label'] }}">
         @include('layouts.app.icon', ['name' => $item['icon']])
-        {{ $item['label'] }}
+        <span class="sb-text">{{ $item['label'] }}</span>
         <svg class="ng-arrow" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
           stroke-width="2.5">
           <polyline points="6 9 12 15 18 9" />
@@ -71,7 +71,7 @@
           <a href="{{ AdminNavigation::href($child) }}" class="nk {{ $currentRoute === $child['route'] ? 'nk-act' : '' }}"
             data-action="set-sub-active">
             <span class="dot {{ $childDotClasses[$loop->index % count($childDotClasses)] }}"></span>
-            {{ $child['label'] }}
+            <span class="sb-text">{{ $child['label'] }}</span>
             @if (($child['route'] ?? null) === 'admin.products.edit-requests' && $pendingEditRequestsCount > 0)
               <span class="ni-badge">{{ $pendingEditRequestsCount }}</span>
             @endif

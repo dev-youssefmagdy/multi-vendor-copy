@@ -10,6 +10,12 @@
             display: none !important
         }
     </style>
+    {{-- Restore the collapsed (icon rail) sidebar before first paint, so it doesn't flash open --}}
+    <script>
+        try {
+            if (localStorage.getItem('nexus-sidebar-rail') === '1') document.documentElement.classList.add('sb-rail');
+        } catch (e) {}
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles

@@ -778,12 +778,37 @@ function closeMobileSidebar() {
     document.body.style.overflow = "";
 }
 
-function toggleDesktopSidebar() {
-    sbCollapsed = !sbCollapsed;
+// Sidebars marked [data-rail] collapse to an icon rail (see app.css) and remember
+// it across pages; any other sidebar keeps the old slide-away behaviour.
+const SIDEBAR_RAIL_KEY = "nexus-sidebar-rail";
+
+function hasRailSidebar() {
+    return byId("sb")?.hasAttribute("data-rail") ?? false;
+}
+
+function applyDesktopSidebar() {
+    if (hasRailSidebar()) {
+        document.documentElement.classList.toggle("sb-rail", sbCollapsed);
+        return;
+    }
+
     byId("sb")?.classList.toggle("sb-hide", sbCollapsed);
     byId("nav")?.classList.toggle("nav-full", sbCollapsed);
     byId("nav2")?.classList.toggle("nav-full", sbCollapsed);
     byId("mn")?.classList.toggle("mn-full", sbCollapsed);
+}
+
+function toggleDesktopSidebar() {
+    sbCollapsed = !sbCollapsed;
+    applyDesktopSidebar();
+
+    if (hasRailSidebar()) {
+        try {
+            window.localStorage.setItem(SIDEBAR_RAIL_KEY, sbCollapsed ? "1" : "0");
+        } catch {
+            // Storage unavailable (private mode) - the rail just won't persist.
+        }
+    }
 }
 
 function handleHamburger() {
@@ -809,10 +834,7 @@ function syncSidebarLayout() {
         return;
     }
 
-    sidebar.classList.toggle("sb-hide", sbCollapsed);
-    nav.classList.toggle("nav-full", sbCollapsed);
-    byId("nav2")?.classList.toggle("nav-full", sbCollapsed);
-    main.classList.toggle("mn-full", sbCollapsed);
+    applyDesktopSidebar();
 }
 
 function setActiveNav(target) {
@@ -1434,6 +1456,13 @@ function initDashboard() {
             : document.documentElement.dataset.theme || "dark",
     );
     setDateLabel();
+    if (hasRailSidebar()) {
+        try {
+            sbCollapsed = window.localStorage.getItem(SIDEBAR_RAIL_KEY) === "1";
+        } catch {
+            sbCollapsed = false;
+        }
+    }
     syncSidebarLayout();
     showFlashToast();
     initEnhancedFields();

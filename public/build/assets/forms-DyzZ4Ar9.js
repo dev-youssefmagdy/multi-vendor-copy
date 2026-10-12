@@ -1,0 +1,1 @@
+import{t as e}from"./forms-CuIR5Vql.js";export{e as TenantForm};

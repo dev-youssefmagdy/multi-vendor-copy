@@ -249,6 +249,64 @@ body:has(#nav2) #mn {
     }
 }
 
+/* ── Collapsible sidebar: icon rail (desktop only) ──────────────────────────
+   The hamburger toggles html.sb-rail (remembered in localStorage). The sidebar
+   shrinks to a 68px icon rail; hovering or tabbing into it expands it back to
+   full width as an overlay, so labels and sub-menus stay reachable without
+   shifting the page. Only sidebars marked [data-rail] use the rail. */
+@media (min-width: 1024px) {
+    #sb[data-rail] {
+        transition:
+            width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+            box-shadow 0.25s,
+            background 0.3s,
+            border-color 0.3s;
+    }
+
+    html.sb-rail #sb[data-rail] {
+        width: 68px;
+    }
+
+    html.sb-rail #sb[data-rail]:hover,
+    html.sb-rail #sb[data-rail]:focus-within {
+        width: 256px;
+        box-shadow: 12px 0 32px rgba(0, 0, 0, 0.28);
+    }
+
+    html.sb-rail:has(#sb[data-rail]) #nav,
+    html.sb-rail:has(#sb[data-rail]) #nav2 {
+        left: 68px;
+    }
+
+    html.sb-rail:has(#sb[data-rail]) #mn {
+        margin-left: 68px;
+    }
+
+    /* Collapsed (not hovered): icons only */
+    html.sb-rail #sb[data-rail]:not(:hover):not(:focus-within) :is(.sb-text, .sb-lbl, .ng-arrow, .ni-badge, .user-meta, .su-inner > svg) {
+        display: none;
+    }
+
+    html.sb-rail #sb[data-rail]:not(:hover):not(:focus-within) .ng-kids {
+        max-height: 0;
+    }
+
+    html.sb-rail #sb[data-rail]:not(:hover):not(:focus-within) :is(.ni, .ng-trigger) {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    html.sb-rail #sb[data-rail]:not(:hover):not(:focus-within) :is(.logo-row, .su-inner) {
+        justify-content: center;
+    }
+
+    html.sb-rail #sb[data-rail]:not(:hover):not(:focus-within) .sb-user {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+}
+
 .logo-row {
     display: flex;
     align-items: center;
