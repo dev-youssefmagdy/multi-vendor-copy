@@ -144,3 +144,16 @@ Route::prefix('vendor/{tenant}')
 Route::get('/preview', HomePage::class)
     ->middleware(['web', InitializeTenancyForPreview::class, 'preview.template', 'tenant.storefront.context'])
     ->name('preview');
+
+// Read-only JSON endpoints used by the storefront scripts (search autocomplete,
+// product lists, tabbed home sections). They live under /preview/* so they never
+// collide with the tenant routes of the same name; ForcePreviewTemplate points the
+// tenant.storefront.* route names at them while rendering the preview page.
+Route::prefix('preview')
+    ->middleware(['web', InitializeTenancyForPreview::class, 'tenant.storefront.context'])
+    ->group(function () {
+        Route::get('/search/autocomplete', [StorefrontSearchController::class, 'autocomplete'])->name('preview.search.autocomplete');
+        Route::get('/api/products', [StorefrontSearchController::class, 'products'])->name('preview.products.json');
+        Route::get('/api/home/tabbed-products', HomePageController::class)->name('preview.home.tabbed-products');
+        Route::get('/categories-products/{slug?}', [StorefrontSearchController::class, 'categoryProducts'])->name('preview.category.products.json');
+    });

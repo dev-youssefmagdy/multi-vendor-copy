@@ -89,6 +89,12 @@ class StorefrontRepository
      */
     protected function cacheRemember(string $key, array $tags, \Closure $callback, ?int $ttl = null)
     {
+        // Preview flips theme/variant rows with raw queries that never bump the cache
+        // versions, so cached theme/variant lookups would be stale (wrong styles/scripts).
+        if (PreviewOverrides::active()) {
+            return $callback();
+        }
+
         $ttl ??= (int) config('cache.storefront.default_ttl', 3600);
         $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
         $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
