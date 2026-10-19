@@ -111,11 +111,6 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(OrderTransaction::class);
-    }
-
     public function activities(): HasMany
     {
         return $this->hasMany(OrderActivity::class);
@@ -282,27 +277,23 @@ class Order extends Model
         return $this->collected_by === 'vendor';
     }
 
-    /** Σ vendor -> platform settlements recorded for this order. */
+    /**
+     * Σ vendor -> platform payments for this order, read from the central Settlement Payments
+     * (vendor_settlements) records. Tests may preload them with setRelation('settlementPayments', ...).
+     */
     public function getVendorSettlementsPaidAttribute(): float
     {
-        return $this->transactionsTotal(OrderTransaction::TYPE_VENDOR_SETTLEMENT);
-    }
-
-    /** Σ platform -> vendor payouts recorded for this order. */
-    public function getPlatformPayoutsPaidAttribute(): float
-    {
-        return $this->transactionsTotal(OrderTransaction::TYPE_PLATFORM_PAYOUT);
-    }
-
-    private function transactionsTotal(string $type): float
-    {
-        if (! $this->relationLoaded('transactions') && ! $this->exists) {
-            return 0.0;
+        if ($this->relationLoaded('settlementPayments')) {
+            return round((float) $this->settlementPayments->sum('product_cost'), 2);
         }
 
-        $rows = $this->relationLoaded('transactions') ? $this->transactions : $this->transactions()->get();
+        return $this->exists ? \App\Support\OrderPayoutLedger::vendorPaymentsForOrder((int) $this->id) : 0.0;
+    }
 
-        return round((float) $rows->where('type', $type)->sum('amount'), 2);
+    /** Σ platform -> vendor payouts for this order: the vendor share once the payout was released. */
+    public function getPlatformPayoutsPaidAttribute(): float
+    {
+        return $this->payout_released ? max(0.0, round((float) $this->vendor_profit, 2)) : 0.0;
     }
 
     /** Platform profit + the gateway fee the vendor pays when settling. */

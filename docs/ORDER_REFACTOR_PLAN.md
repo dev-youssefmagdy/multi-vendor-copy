@@ -10,7 +10,7 @@ Baseline data: `backup/dokan_v2_e57e205f-...sql` (tenant DB; orders 1-4, order #
 * `orders.owner_profit` / `vendor_cost` are used by ~35 files (calculator, ledger, wallets, invoices, reports, panels, docs views).
 * Order creation exists twice: `PlacesOrders` (service/API) and `CheckoutPage::placeOrder` (Livewire) - both must change.
 * Settlement: `VendorSettlement` (central; vendor->platform, per order) and `TenantPayout` + `orders.payout_released`
-  (central->vendor). New tenant `transactions` rows (model=Order) become the per-order ledger.
+  (central->vendor). Per-order ledger = existing `VendorSettlement` (Settlement Payments) + `payout_released` (no new table).
 
 ## Tasks (each = one commit)
 | # | Task | Owner |

@@ -7,7 +7,7 @@ namespace Tests\Unit\Refunds;
 use App\Enums\OrderStatus;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
-use App\Models\Tenant\OrderTransaction;
+use App\Models\VendorSettlement;
 use App\Support\OrderProfitCalculator;
 use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -67,16 +67,13 @@ class OrderProfitCalculatorRefundsTest extends TestCase
     public function settlements_and_payouts_reduce_the_running_balances(): void
     {
         $vendorCollected = $this->order(OrderStatus::Processing, 0, ['collected_by' => 'vendor', 'platform_profit' => 30]);
-        $vendorCollected->setRelation('transactions', new Collection([
-            new OrderTransaction(['type' => OrderTransaction::TYPE_VENDOR_SETTLEMENT, 'amount' => 10]),
+        $vendorCollected->setRelation('settlementPayments', new Collection([
+            new VendorSettlement(['product_cost' => 10, 'total' => 10, 'status' => 'paid']),
         ]));
         $this->assertSame(20.0, OrderProfitCalculator::vendorOwnPlatformForOrder($vendorCollected));
         $this->assertSame(0.0, OrderProfitCalculator::platformOwnVendorForOrder($vendorCollected));
 
-        $platformCollected = $this->order(OrderStatus::Processing, 0);
-        $platformCollected->setRelation('transactions', new Collection([
-            new OrderTransaction(['type' => OrderTransaction::TYPE_PLATFORM_PAYOUT, 'amount' => 70]),
-        ]));
+        $platformCollected = $this->order(OrderStatus::Processing, 0, ['payout_released' => true]);
         $this->assertSame(0.0, OrderProfitCalculator::platformOwnVendorForOrder($platformCollected));
     }
 

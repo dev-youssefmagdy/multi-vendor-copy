@@ -33,7 +33,6 @@ use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
-use App\Models\Tenant\OrderTransaction;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product;
@@ -2183,9 +2182,11 @@ class TenantPanelRepository
             ->where('collected_by', 'vendor')
             ->where('platform_profit', '>', 0)
             ->when(filled($filters['settled'] ?? null), function ($query) use ($filters) {
-                $paid = '(select coalesce(sum(amount), 0) from order_transactions where order_transactions.order_id = orders.id and order_transactions.type = ?)';
+                // Paid principal = central Settlement Payments (vendor_settlements) of this tenant's order.
+                $centralDb = config('database.connections.'.config('tenancy.database.central_connection').'.database');
+                $paid = "(select coalesce(sum(vs.product_cost), 0) from `{$centralDb}`.`vendor_settlements` vs where vs.tenant_id = ? and vs.order_id = orders.id and vs.status in ('paid', 'completed'))";
                 $operator = $filters['settled'] === 'settled' ? '>=' : '<';
-                $query->whereRaw("{$paid} {$operator} orders.platform_profit", [OrderTransaction::TYPE_VENDOR_SETTLEMENT]);
+                $query->whereRaw("{$paid} {$operator} orders.platform_profit", [(string) tenant('id')]);
             })
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);

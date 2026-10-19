@@ -57,14 +57,15 @@ Invariant: `platform_profit + vendor_profit = order_grand_total` (verified by un
 ## 3. Settlement (running balances)
 
 ```
-vendor_own_platform = platform_profit - SUM(transactions.amount where type = vendor_settlement)   -- only when collected_by = vendor
-platform_own_vendor = vendor_profit   - SUM(transactions.amount where type = platform_payout)     -- only when collected_by = platform
+vendor_own_platform = platform_profit - SUM(Settlement Payments paid for the order)   -- only when collected_by = vendor
+platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0)      -- only when collected_by = platform
 ```
 
-* Money paid *vendor -> platform* is recorded as a `vendor_settlement` row in the tenant `transactions` table
-  (`model_type = Order`, `model_id = order.id`); money paid *platform -> vendor* as `platform_payout`.
+* "Settlement Payments" = the existing central `vendor_settlements` records (`VendorSettlement`, shown in the vendor panel
+  at Finance > Settlement Payments). The paid principal is `product_cost` (gateway fee is separate). No extra transactions table.
+* Platform -> vendor money is tracked by `orders.payout_released` / `TenantPayout`.
 * Cancelled / rejected / fully-refunded orders produce 0 for all figures. A partial refund reduces the
-  vendor's share only (platform_profit unchanged) - same rule as before.
+  vendor's share only (platform_profit unchanged).
 * Vendor panel and central/admin panel show the **same** numbers; the vendor panel has a "Pay platform"
   action that reuses the existing order-details settlement flow.
 

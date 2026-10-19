@@ -14,7 +14,7 @@ use App\Support\OrderProfitCalculator;
  *   1. For a vendor-collected order the vendor owes the platform its platform_profit
  *      (OrderProfitCalculator::vendorOwnPlatformForOrder = platform_profit - settlements already paid).
  *   2. The vendor picks a central payment gateway; its fee is computed on the amount owed.
- *   3. On success an OrderTransaction(type=vendor_settlement) is recorded and the legacy
+ *   3. On success a Settlement Payments (vendor_settlements) record is created by the caller and the legacy
  *      vendor_settled_* columns are synced (vendor_settled_at only once nothing remains).
  */
 class VendorPurchaseService
@@ -44,7 +44,6 @@ class VendorPurchaseService
      */
     public function previewBreakdown(Order $order, ?CentralGateway $gateway): array
     {
-        $order->unsetRelation('transactions');
         $due = round($this->amountDue($order), 2);
         $gatewayFee = ($gateway && $due > 0) ? $this->gatewayFee($gateway, $due) : 0.0;
 
@@ -75,7 +74,7 @@ class VendorPurchaseService
     }
 
     /**
-     * Undo a settlement (admin correction use-case): deletes the vendor_settlement transactions.
+     * Undo a settlement (admin correction use-case): deletes the Settlement Payments records.
      */
     public function unsettle(Order $order): Order
     {

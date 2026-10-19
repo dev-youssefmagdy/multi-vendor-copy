@@ -3,7 +3,6 @@
 namespace App\Support;
 
 use App\Models\Tenant\Order as TenantOrder;
-use App\Models\Tenant\OrderTransaction;
 use App\Models\TenantPayout;
 use App\Models\VendorSettlement;
 use Illuminate\Support\Collection;
@@ -11,7 +10,8 @@ use Illuminate\Support\Collection;
 /**
  * DB-aware settlement helpers built on OrderProfitCalculator (docs/ORDER_FORMULAS.md section 3).
  *
- * Orders and order_transactions live in the TENANT database. Methods documented "tenant context"
+ * Orders live in the TENANT database; vendor -> platform payments are the central Settlement Payments
+ * (vendor_settlements) records; platform -> vendor payouts are tracked by orders.payout_released. Methods documented "tenant context"
  * must run with tenancy initialised; the *ForTenant methods switch context themselves, so they can be
  * called from central code (admin panel) or from the vendor panel.
  *
@@ -86,7 +86,6 @@ class OrderPayoutLedger
     public static function ordersOwingPlatform(): Collection
     {
         return TenantOrder::query()
-            ->with('transactions')
             ->where('collected_by', 'vendor')
             ->where('paid', true)
             ->get()
@@ -98,7 +97,6 @@ class OrderPayoutLedger
     public static function ordersOwedByPlatform(bool $onlyUnreleased = false): Collection
     {
         return TenantOrder::query()
-            ->with('transactions')
             ->where('collected_by', 'platform')
             ->where('paid', true)
             ->when($onlyUnreleased, fn ($q) => $q->where('payout_released', false))
@@ -128,9 +126,10 @@ class OrderPayoutLedger
     // ─────────────────────────────────────────────────────────────────────
 
     /**
-     * Record a vendor -> platform payment. $principal defaults to the full remaining amount.
-     * Idempotent per (order, reference). Keeps the legacy vendor_settled_* columns in sync.
-     * Returns the transaction, or null when nothing was owed.
+     * Sync the legacy vendor_settled_* columns after a vendor -> platform payment of $principal.
+     * The ledger entry itself is the central VendorSettlement (Settlement Payments) record that the
+     * caller creates; vendor_settled_at is set only when nothing remains owed.
+     * Returns the principal that is accounted for (capped at the remaining amount).
      */
     public static function recordVendorSettlement(
         TenantOrder $order,
@@ -138,106 +137,52 @@ class OrderPayoutLedger
         float $gatewayFee,
         ?string $reference,
         ?int $gatewayId = null,
-        ?string $note = null,
-    ): ?OrderTransaction {
-        $order->unsetRelation('transactions');
+    ): float {
         $remaining = OrderProfitCalculator::vendorOwnPlatformForOrder($order);
         $amount = round(min($principal ?? $remaining, $remaining), 2);
 
-        if ($reference !== null && $reference !== '') {
-            $existing = OrderTransaction::query()
-                ->where('order_id', $order->id)
-                ->where('type', OrderTransaction::TYPE_VENDOR_SETTLEMENT)
-                ->where('reference', $reference)
-                ->first();
-            if ($existing) {
-                return $existing;
-            }
-        }
-
         if ($amount <= 0) {
-            return null;
+            return 0.0;
         }
 
-        $tx = OrderTransaction::query()->create([
-            'order_id' => $order->id,
-            'type' => OrderTransaction::TYPE_VENDOR_SETTLEMENT,
-            'amount' => $amount,
-            'gateway_fee' => round($gatewayFee, 2),
-            'reference' => $reference,
-            'gateway_id' => $gatewayId,
-            'note' => $note,
-        ]);
-
-        self::syncVendorSettledColumns($order, $reference, $gatewayId, $gatewayFee);
-
-        return $tx;
-    }
-
-    /** Re-derive vendor_settled_at / ref / gateway columns from the transactions. */
-    public static function syncVendorSettledColumns(TenantOrder $order, ?string $reference = null, ?int $gatewayId = null, ?float $gatewayFee = null): void
-    {
-        $order->unsetRelation('transactions');
-        $hasAny = $order->transactions()->where('type', OrderTransaction::TYPE_VENDOR_SETTLEMENT)->exists();
-        $fullyPaid = $hasAny && OrderProfitCalculator::vendorOwnPlatformForOrder($order) <= 0;
-
-        if (! $hasAny) {
-            $order->forceFill([
-                'vendor_gateway_id' => null,
-                'vendor_gateway_fee' => 0,
-                'vendor_settled_at' => null,
-                'vendor_settlement_ref' => null,
-            ])->save();
-
-            return;
-        }
-
-        $fee = (float) $order->transactions()->where('type', OrderTransaction::TYPE_VENDOR_SETTLEMENT)->sum('gateway_fee');
         $attrs = [
-            'vendor_gateway_fee' => round($fee, 2),
-            'vendor_settled_at' => $fullyPaid ? ($order->vendor_settled_at ?? now()) : null,
+            'vendor_gateway_fee' => round((float) $order->vendor_gateway_fee + $gatewayFee, 2),
+            'vendor_settled_at' => round($remaining - $amount, 2) <= 0 ? now() : null,
         ];
-        if ($reference !== null) {
+        if ($reference !== null && $reference !== '') {
             $attrs['vendor_settlement_ref'] = $reference;
         }
         if ($gatewayId !== null) {
             $attrs['vendor_gateway_id'] = $gatewayId;
         }
         $order->forceFill($attrs)->save();
+
+        return $amount;
     }
 
-    /** Delete all vendor_settlement transactions of an order and clear the legacy columns. */
+    /** Admin correction: drop the order's Settlement Payments records and clear the legacy columns. */
     public static function clearVendorSettlements(TenantOrder $order): void
     {
-        OrderTransaction::query()
-            ->where('order_id', $order->id)
-            ->where('type', OrderTransaction::TYPE_VENDOR_SETTLEMENT)
-            ->delete();
-        self::syncVendorSettledColumns($order);
+        $tenantId = (string) tenant('id');
+        self::central(fn () => VendorSettlement::query()
+            ->where('tenant_id', $tenantId)->where('order_id', $order->id)->delete());
+
+        $order->forceFill([
+            'vendor_gateway_id' => null,
+            'vendor_gateway_fee' => 0,
+            'vendor_settled_at' => null,
+            'vendor_settlement_ref' => null,
+        ])->save();
     }
 
     /**
-     * Record a platform -> vendor payout of the order's remaining amount and flag payout_released.
-     * Returns the amount paid out (0 when nothing was owed).
+     * Flag the order's payout as released (platform -> vendor). Returns the amount paid out
+     * (0 when nothing was owed).
      */
     public static function recordPlatformPayout(TenantOrder $order, ?string $reference = null, ?string $note = null): float
     {
-        $order->unsetRelation('transactions');
         $amount = OrderProfitCalculator::platformOwnVendorForOrder($order);
-
-        if ($amount > 0) {
-            OrderTransaction::query()->create([
-                'order_id' => $order->id,
-                'type' => OrderTransaction::TYPE_PLATFORM_PAYOUT,
-                'amount' => $amount,
-                'gateway_fee' => 0,
-                'reference' => $reference,
-                'note' => $note,
-            ]);
-        }
-
         $order->forceFill(['payout_released' => true])->save();
-        $order->unsetRelation('transactions');
 
         return $amount;
     }
@@ -251,7 +196,6 @@ class OrderPayoutLedger
     {
         $released = [];
         $orders = TenantOrder::query()
-            ->with('transactions')
             ->where('collected_by', 'platform')
             ->where('paid', true)
             ->where('payout_released', false)
@@ -274,7 +218,7 @@ class OrderPayoutLedger
         return self::inTenant($tenantId, fn () => self::releasePayoutsForCurrentTenant($reference));
     }
 
-    /** Undo payouts: delete platform_payout transactions of the given order uuids and un-release them. */
+    /** Undo payouts: un-release the given orders. */
     public static function reversePayoutsForTenant(string $tenantId, array $orderUuids): void
     {
         if ($orderUuids === []) {
@@ -282,12 +226,7 @@ class OrderPayoutLedger
         }
 
         self::inTenant($tenantId, function () use ($orderUuids) {
-            $ids = TenantOrder::query()->whereIn('uuid', $orderUuids)->pluck('id');
-            OrderTransaction::query()
-                ->whereIn('order_id', $ids)
-                ->where('type', OrderTransaction::TYPE_PLATFORM_PAYOUT)
-                ->delete();
-            TenantOrder::query()->whereIn('id', $ids)->update(['payout_released' => false]);
+            TenantOrder::query()->whereIn('uuid', $orderUuids)->update(['payout_released' => false]);
         });
     }
 
@@ -295,12 +234,20 @@ class OrderPayoutLedger
     // Central invoice-record sums (VendorSettlement / TenantPayout rows)
     // ─────────────────────────────────────────────────────────────────────
 
+    /** Run a central-DB query from either central or tenant context. */
+    private static function central(callable $callback): mixed
+    {
+        return tenancy()->initialized ? tenancy()->central($callback) : $callback();
+    }
+
+    /** Σ principal (product_cost) of the paid Settlement Payments of one tenant order. */
     public static function vendorPaymentsForOrder(int $orderId): float
     {
-        return (float) VendorSettlement::query()
+        return (float) self::central(fn () => VendorSettlement::query()
+            ->where('tenant_id', (string) tenant('id'))
             ->where('order_id', $orderId)
             ->whereIn('status', ['paid', 'completed'])
-            ->sum('total');
+            ->sum('product_cost'));
     }
 
     public static function vendorPaymentsForTenant(string $tenantId): float
