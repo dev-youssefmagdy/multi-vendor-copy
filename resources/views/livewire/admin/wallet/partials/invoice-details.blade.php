@@ -71,7 +71,7 @@
                         {{ number_format((float) ($financials['shipping_charge'] ?? $financials['shipping_total'] ?? 0), 2) }}</span></div>
                 <div class="details-kv"><span class="details-label">Platform Profit</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) ($financials['platform_profit'] ?? $financials['owner_profit'] ?? 0), 2) }}</span></div>
+                        {{ number_format((float) ($financials['platform_profit'] ?? 0), 2) }}</span></div>
                 <div class="details-kv"><span class="details-label">Vendor Profit</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
                         {{ number_format((float) ($financials['vendor_profit'] ?? $financials['vendor_net_total'] ?? 0), 2) }}</span></div>

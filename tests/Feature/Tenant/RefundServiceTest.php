@@ -118,7 +118,7 @@ class RefundServiceTest extends TestCase
             $this->assertNotNull($order->refunded_at);
             $this->assertSame(OrderPaymentStatus::Refunded, $order->paymentState());
             $this->assertTrue(OrderProfitCalculator::isFinanciallyVoid($order));
-            $this->assertSame(0.0, OrderProfitCalculator::effectiveTenantProfitForOrder($order));
+            $this->assertSame(0.0, OrderProfitCalculator::vendorProfitForOrder($order));
             $this->assertActivity($order, 'Refund requested', $refund->reference);
             $this->assertActivity($order, 'Refund completed', $refund->reference);
 

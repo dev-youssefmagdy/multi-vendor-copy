@@ -87,7 +87,7 @@ class TenantPanelRepository
         if ($this->orders === null) {
             $from = now()->startOfMonth()->subMonths($this->periodMonths - 1);
             $this->orders = Order::query()
-                ->with(['items.product', 'transactions'])
+                ->with(['items.product'])
                 ->where('created_at', '>=', $from)
                 ->get();
         }
@@ -559,7 +559,7 @@ class TenantPanelRepository
     protected function buildOrdersQuery(array $filters): Builder
     {
         return Order::query()
-            ->with(['customer', 'items.product', 'items.variant.product', 'items.variant.centralVariant', 'paymentGateway', 'transactions'])
+            ->with(['customer', 'items.product', 'items.variant.product', 'items.variant.centralVariant', 'paymentGateway'])
             ->withCount('items')
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
@@ -1325,7 +1325,7 @@ class TenantPanelRepository
                 pv.margin_percentage,
                 SUM(oi.qty) as sold_qty,
                 COUNT(DISTINCT oi.order_id) as orders_count,
-                SUM(oi.sub_total - oi.discount + oi.tax + oi.shipping_fee) as revenue,
+                SUM(oi.grand_total) as revenue,
                 MAX(oi.created_at) as last_sale
             ')
             ->groupBy('pv.id', 'pv.product_id', 'pv.real_price', 'pv.default_sell_price', 'pv.active', 'pv.margin_percentage')
@@ -1339,7 +1339,7 @@ class TenantPanelRepository
                 oi.product_id,
                 SUM(oi.qty) as sold_qty,
                 COUNT(DISTINCT oi.order_id) as orders_count,
-                SUM(oi.sub_total - oi.discount + oi.tax + oi.shipping_fee) as revenue,
+                SUM(oi.grand_total) as revenue,
                 MAX(oi.created_at) as last_sale
             ')
             ->groupBy('oi.product_id')
@@ -1616,7 +1616,7 @@ class TenantPanelRepository
                 COALESCE(t.value, p.slug, CONCAT("Variant #", pv.id)) as name,
                 COALESCE(SUM(oi.qty), 0) as sold_qty,
                 COUNT(DISTINCT oi.order_id) as orders_count,
-                COALESCE(SUM(oi.sub_total - oi.discount + oi.tax + oi.shipping_fee), 0) as revenue,
+                COALESCE(SUM(oi.grand_total), 0) as revenue,
                 MAX(oi.created_at) as last_sale
             ')
             ->groupBy('pv.id', 'pv.product_id', 'pv.real_price', 'pv.default_sell_price', 'pv.margin_percentage', 'pv.active', 'name')
@@ -1639,7 +1639,7 @@ class TenantPanelRepository
                 COALESCE(t.value, p.slug, CONCAT("Product #", oi.product_id)) as name,
                 SUM(oi.qty) as sold_qty,
                 COUNT(DISTINCT oi.order_id) as orders_count,
-                SUM(oi.sub_total - oi.discount + oi.tax + oi.shipping_fee) as revenue,
+                SUM(oi.grand_total) as revenue,
                 MAX(oi.created_at) as last_sale
             ')
             ->groupBy('oi.product_id', 'p.active', 'name')
@@ -1872,7 +1872,7 @@ class TenantPanelRepository
 
     protected function orderFinancials(Order $order): array
     {
-        $order->loadMissing(['items', 'transactions']);
+        $order->loadMissing('items');
 
         return [
             'items_grand_total' => round($order->items_grand_total, 2),
@@ -1956,7 +1956,7 @@ class TenantPanelRepository
             ->where('oi.created_at', '>=', $start)
             ->selectRaw("
                 DATE_FORMAT(oi.created_at, '%Y-%m') as month_key,
-                SUM(oi.sub_total - oi.discount + oi.tax + oi.shipping_fee) as revenue,
+                SUM(oi.grand_total) as revenue,
                 SUM(COALESCE(pv.real_price, 0) * oi.qty) as cost
             ")
             ->groupBy('month_key')
@@ -2178,7 +2178,6 @@ class TenantPanelRepository
         return Order::query()
             ->with(['customer', 'items.product', 'items.variant'])
             ->withCount('items')
-            ->with('transactions')
             ->where('collected_by', 'vendor')
             ->where('platform_profit', '>', 0)
             ->when(filled($filters['settled'] ?? null), function ($query) use ($filters) {
@@ -2204,7 +2203,6 @@ class TenantPanelRepository
     public function vendorPurchaseStats(): array
     {
         $orders = Order::query()
-            ->with('transactions')
             ->where('collected_by', 'vendor')
             ->where('platform_profit', '>', 0)
             ->get()
