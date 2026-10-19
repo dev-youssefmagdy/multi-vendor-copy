@@ -123,6 +123,7 @@
                     <thead>
                         <tr>
                             <th>Item</th>
+                            <th>Payment</th>
                             <th>Qty</th>
                             <th>Cost</th>
                             <th>Profit</th>
@@ -145,6 +146,7 @@
                                         <div class="details-inline-copy">{{ $item['variant'] }}</div>
                                     @endif
                                 </td>
+                                <td><span class="badge badge-{{ $order['payment_status_color'] ?? 'gray' }}">{{ $order['payment_status_label'] ?? ($order['payment_status'] ?? '-') }}</span></td>
                                 <td>{{ $item['qty'] ?? 0 }}</td>
                                 <td>${{ number_format((float) ($item['cost'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['profit_amount'] ?? 0), 2) }}</td>
@@ -159,7 +161,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="12">
+                                <td colspan="13">
                                     <div class="json-empty">No line items were found for this marketplace order.</div>
                                 </td>
                             </tr>

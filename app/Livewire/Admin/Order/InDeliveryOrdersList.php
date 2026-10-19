@@ -35,7 +35,7 @@ class InDeliveryOrdersList extends ListPage
             'description' => 'Review delivery work aggregated from tenant orders, shipping labels, and zone-driven charges.',
             'actionLabel' => 'Dispatch Batch',
             'tableTitle' => 'Orders Pending Delivery',
-            'headers' => ['Order', 'Tenant', 'Customer', 'Amount', 'Status', 'Actions'],
+            'headers' => ['Order', 'Tenant', 'Customer', 'Amount', 'Payment', 'Status', 'Actions'],
         ];
     }
 
@@ -72,6 +72,7 @@ class InDeliveryOrdersList extends ListPage
                 '<div class="entity-title">' . e($order->store_name ?? 'Unknown tenant') . '</div><div class="entity-subtitle">' . e($order->tenant?->email ?? 'No email') . '</div>',
                 '<div class="entity-title">' . e($order->customer_name ?: 'Guest') . '</div><div class="entity-subtitle">' . e($order->customer_email ?: 'No email') . '</div>',
                 '<div class="entity-title">$' . number_format((float) $order->total_amount, 2) . '</div><div class="entity-subtitle">$' . number_format((float) $order->shipping_charge, 2) . ' shipping</div>',
+                '<span class="badge badge-' . $order->payment_status->color() . '">' . e($order->payment_status->queueLabel()) . '</span>',
                 '<div class="entity-title"></div><div class="entity-subtitle"><button type="button" class="link-btn" wire:click=\'openOrderStatusModal(' . json_encode((string) $order->tenant_id) . ', ' . json_encode((string) $order->order_number) . ')\'>' . e($order->status->label()) . '</button></div>',
                 '<a href="' . route('admin.shipping.in-delivery.show', [$order->tenant_id, $order->order_number]) . '" class="link-btn">View</a>',
             ])->all(),

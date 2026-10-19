@@ -174,6 +174,7 @@ class OrderRepository
             'status_color' => $order->status->color(),
             'payment_status_value' => $order->payment_status->value,
             'payment_status' => $order->payment_status->label(),
+            'payment_status_label' => $order->payment_status->queueLabel(),
             'payment_status_color' => $order->payment_status->color(),
             // Money was collected (a refund — full or partial — does not change that fact).
             'paid' => in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded, OrderPaymentStatus::Refunded], true),

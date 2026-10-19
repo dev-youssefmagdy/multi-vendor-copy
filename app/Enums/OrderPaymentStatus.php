@@ -17,6 +17,16 @@ enum OrderPaymentStatus: string
         return __(str($this->value)->headline()->toString());
     }
 
+    /** Short operational label for fulfilment screens (shipping queue, line items). */
+    public function queueLabel(): string
+    {
+        return match ($this) {
+            self::Paid => __('Paid'),
+            self::Pending, self::PendingPayment, self::Unpaid => __('Awaiting Payment'),
+            default => $this->label(),
+        };
+    }
+
     public function color(): string
     {
         return match ($this) {
