@@ -9,7 +9,7 @@
 | T1 Core (migrations, OrderPricing, calculator, models) | DONE | see git log | migrations 2026_10_19_000001/2 (tested on dump copy), `OrderPricing`, new `OrderProfitCalculator` API, `OrderTransaction`, Order/OrderItem models, Product/Variant `priceBreakdownForCountry` |
 | T2 Order creation | TODO | | |
 | T3 Settlement & ledger | TODO | | |
-| T4 Vendor panel | TODO | | |
+| T4 Vendor panel | DONE | see git log | Tenant panel repo `orderFinancials` rewritten on calculator (new keys); details page per-item table + totals/settlement block; orders list columns vendor_profit/platform_profit/vendor_own_platform/platform_own_vendor + Pay platform; vendor-purchases page = collected_by=vendor & platform_profit>0 (paid via order_transactions). Open: VendorPurchaseService::previewBreakdown + VendorSettlementPaymentController (T3) still use old API/vendor_cost; PlacesOrders (T2). |
 | T5 Central/admin panel | TODO | | |
 | T6 Storefront & themes | DONE | see git log | order-status (ecommet/elora/souqify/starter-kit) now show items subtotal, fixed shipping, flash-sale discount, tax, shipping, coupon, grand total + per-line fixed shipping/discount/line grand_total; invoice (+StorefrontInvoiceController payload), TemplateMailService items table, OrderController API (new fields), help docs. Profile lists/tracking already use grand_total/price (unchanged). Cart/checkout summaries are owned by T2 (not touched). |
 | T7 QA | TODO | | |

@@ -9,7 +9,7 @@
                 <button type="button" class="btn" style="background:var(--red);color:#fff" data-modal-open="cancel-order-modal">{{ __('Cancel order') }}</button>
             @endif
             @if(!empty($settlement))
-                <a class="btn btn-primary" href="#pay-central">Pay Central</a>
+                <a class="btn btn-primary" href="#pay-central">Pay platform</a>
             @endif
             <a class="btn btn-secondary" href="{{ route('tenant.orders.index') }}">← Orders</a>
         </x-slot:actions>

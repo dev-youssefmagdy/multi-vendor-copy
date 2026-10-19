@@ -63,7 +63,10 @@ final class OrdersController extends PanelController
                 TableColumn::make('uuid', 'Order'),
                 TableColumn::make('customer', 'Customer')->orderable(false),
                 TableColumn::make('value', 'Value')->name('grand_total'),
-                TableColumn::make('commission', 'Commission')->orderable(false),
+                TableColumn::make('vendor_profit', 'Vendor Profit')->orderable(false)->searchable(false),
+                TableColumn::make('platform_profit', 'Platform Profit')->orderable(false)->searchable(false),
+                TableColumn::make('vendor_own_platform', 'You Owe Platform')->orderable(false)->searchable(false),
+                TableColumn::make('platform_own_vendor', 'Platform Owes You')->orderable(false)->searchable(false),
                 TableColumn::make('status', 'Status')->orderable(false),
                 TableColumn::make('gateway', 'Gateway')->orderable(false)->searchable(false),
                 TableColumn::make('placed_at', 'Placed At')->name('created_at'),
@@ -81,14 +84,17 @@ final class OrdersController extends PanelController
             ->editColumn('uuid', fn (Order $order) => view('tenant.pages.sales.orders._cols.order', ['order' => $order])->render())
             ->editColumn('customer', fn (Order $order) => view('tenant.pages.sales.orders._cols.customer', ['order' => $order])->render())
             ->editColumn('value', fn (Order $order) => view('tenant.pages.sales.orders._cols.value', ['order' => $order])->render())
-            ->editColumn('commission', fn (Order $order) => view('tenant.pages.sales.orders._cols.commission', ['order' => $order])->render())
+            ->addColumn('vendor_profit', fn (Order $order) => '$'.number_format(OrderProfitCalculator::vendorProfitForOrder($order), 2))
+            ->addColumn('platform_profit', fn (Order $order) => '$'.number_format(OrderProfitCalculator::platformProfitForOrder($order), 2))
+            ->addColumn('vendor_own_platform', fn (Order $order) => view('tenant.pages.sales.orders._cols.vendor-own-platform', ['order' => $order])->render())
+            ->addColumn('platform_own_vendor', fn (Order $order) => '$'.number_format(OrderProfitCalculator::platformOwnVendorForOrder($order), 2))
             ->editColumn('status', fn (Order $order) => view('tenant::components.status-badge', ['status' => $order->status])->render())
             ->editColumn('gateway', fn (Order $order) => view('tenant.pages.sales.orders._cols.gateway', ['order' => $order])->render())
             ->editColumn('placed_at', fn (Order $order) => $order->created_at ? strtoupper($order->created_at->format('D')).$order->created_at->format(', d M,Y') : null)
             ->addColumn('actions', fn (Order $order) => view('tenant.pages.sales.orders._cols.actions', ['order' => $order])->render())
             ->orderColumn('value', 'grand_total $1')
             ->orderColumn('placed_at', 'created_at $1')
-            ->rawColumns(['uuid', 'customer', 'value', 'commission', 'status', 'gateway', 'actions'])
+            ->rawColumns(['uuid', 'customer', 'value', 'vendor_own_platform', 'status', 'gateway', 'actions'])
             ->toJson();
     }
 
@@ -96,7 +102,7 @@ final class OrdersController extends PanelController
     {
         $filters = $this->filters($request, ['search', 'status']);
 
-        $headers = ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Grand Total', 'Discount %', 'Shipping', 'Vendor Commission', 'Status', 'Payment Method', 'Paid', 'Placed At'];
+        $headers = ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Grand Total', 'Discount %', 'Shipping', 'Vendor Profit', 'Platform Profit', 'Vendor Owes Platform', 'Platform Owes Vendor', 'Status', 'Payment Method', 'Paid', 'Placed At'];
 
         $rows = $this->repo->exportOrders($filters)->map(fn (Order $order) => [
             $order->uuid,
@@ -106,7 +112,10 @@ final class OrdersController extends PanelController
             number_format((float) $order->grand_total, 2),
             number_format((float) $order->discount_percentage, 2),
             number_format((float) $order->resolved_shipping_charge, 2),
-            number_format(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2),
+            number_format(OrderProfitCalculator::vendorProfitForOrder($order), 2),
+            number_format(OrderProfitCalculator::platformProfitForOrder($order), 2),
+            number_format(OrderProfitCalculator::vendorOwnPlatformForOrder($order), 2),
+            number_format(OrderProfitCalculator::platformOwnVendorForOrder($order), 2),
             $order->status->label(),
             str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString(),
             $order->paid ? 'Paid' : 'Unpaid',
@@ -165,7 +174,7 @@ final class OrdersController extends PanelController
     }
 
     /**
-     * Pay-central context for the order detail page — mirrors Finance > Vendor Purchases > Pay Central.
+     * Pay-platform context for the order detail page — mirrors Finance > Vendor Purchases > Pay Central.
      * Null when the order owes nothing, is already settled, or the user cannot settle purchases.
      */
     private function settlementContext(Order $order): ?array
@@ -173,8 +182,7 @@ final class OrdersController extends PanelController
         $user = auth('tenant')->user();
 
         if (
-            (float) $order->vendor_cost <= 0
-            || $order->vendor_settled
+            OrderProfitCalculator::vendorOwnPlatformForOrder($order) <= 0
             || ! $user instanceof AdminUser
             || ! $user->hasPermission('finance.vendor-purchases.view')
         ) {

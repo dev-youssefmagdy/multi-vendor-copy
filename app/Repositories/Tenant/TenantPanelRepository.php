@@ -33,6 +33,7 @@ use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
+use App\Models\Tenant\OrderTransaction;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product;
@@ -87,7 +88,7 @@ class TenantPanelRepository
         if ($this->orders === null) {
             $from = now()->startOfMonth()->subMonths($this->periodMonths - 1);
             $this->orders = Order::query()
-                ->with('items.product')
+                ->with(['items.product', 'transactions'])
                 ->where('created_at', '>=', $from)
                 ->get();
         }
@@ -121,10 +122,10 @@ class TenantPanelRepository
         $paidOrders = $orders->filter(fn (Order $order) => $order->paid);
         $centralProductsProfit = $paidOrders
             ->filter(fn (Order $order) => $this->orderIsCentralType($order))
-            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_net_total']);
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_profit']);
         $ownProductsProfit = $paidOrders
             ->filter(fn (Order $order) => ! $this->orderIsCentralType($order))
-            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_net_total']);
+            ->sum(fn (Order $order) => $this->orderFinancials($order)['vendor_profit']);
 
         return [
             'revenue' => round($collectedSales, 2),
@@ -142,7 +143,7 @@ class TenantPanelRepository
             'subscribers' => Subscriber::query()->count(),
             'subscriptions' => $subscriptions->count(),
             'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
-            'shipping' => round($orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
+            'shipping' => round($orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_charge']), 2),
             'avg_order' => $orders->isNotEmpty() ? round($grossSales / $orders->count(), 2) : 0.0,
             'vendor_net' => round($centralProductsProfit + $ownProductsProfit, 2),
             'central_products_profit' => round($centralProductsProfit, 2),
@@ -170,7 +171,7 @@ class TenantPanelRepository
                 'orders' => $monthOrders->count(),
                 'paid_orders' => $monthPaidOrders->count(),
                 'fulfilled_orders' => $fulfilledOrders->count(),
-                'shipping' => round($monthOrders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']), 2),
+                'shipping' => round($monthOrders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_charge']), 2),
                 'customers' => $customers->filter(fn (Customer $customer) => $this->isSameMonth($customer->created_at, $date))->count(),
                 'repeat_buyers' => $monthCustomerIds->filter(fn ($customerId) => (int) ($customerOrderCounts[$customerId] ?? 0) > 1)->count(),
                 'subscriptions' => round($subscriptions->filter(fn (Subscription $subscription) => $this->isSameMonth($subscription->created_at, $date))->sum('price'), 2),
@@ -559,7 +560,7 @@ class TenantPanelRepository
     protected function buildOrdersQuery(array $filters): Builder
     {
         return Order::query()
-            ->with(['customer', 'items.product', 'items.variant.product', 'items.variant.centralVariant', 'paymentGateway'])
+            ->with(['customer', 'items.product', 'items.variant.product', 'items.variant.centralVariant', 'paymentGateway', 'transactions'])
             ->withCount('items')
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
@@ -1557,7 +1558,7 @@ class TenantPanelRepository
         $orders = $this->orders;
         $series = collect($this->dashboardSeries());
         $fulfilledOrders = $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
-        $shippingRevenue = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_total']);
+        $shippingRevenue = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_charge']);
         $weight = OrderItem::query()->get()->sum(fn (OrderItem $item) => (float) $item->weight * (int) $item->qty);
         $statusRows = $this->shippingStatusBreakdown($orders);
 
@@ -1773,6 +1774,7 @@ class TenantPanelRepository
         $shippingStatus = $this->deriveShippingStatus($order);
 
         return [
+            'id' => $order->id,
             'uuid' => $order->uuid,
             'status' => $order->status->label(),
             'status_value' => $order->status->value,
@@ -1797,12 +1799,11 @@ class TenantPanelRepository
             ],
             'financials' => $financials,
             'gateway_source' => ($order->paymentGateway?->use_own === false) ? 'central' : 'vendor',
+            'collected_by' => $order->collected_by,
             'carrier' => $order->shipping_address['carrier'] ?? null,
             'shipping_address' => $order->shipping_address ?? [],
             'payment_details' => $order->payment_details ?? [],
             'items' => $order->items->map(function (OrderItem $item) {
-                $lineTotal = round((float) $item->sub_total - (float) $item->discount + (float) $item->tax + (float) $item->shipping_fee, 2);
-
                 return [
                     'name' => $item->product?->translationValue('name')
                         ?? $item->product?->slug
@@ -1811,12 +1812,16 @@ class TenantPanelRepository
                         ?? ('Item #'.$item->id),
                     'variant' => $item->variant?->display_label ?? ($item->variant?->id ? 'Variant #'.$item->variant->id : null),
                     'qty' => (int) $item->qty,
+                    'cost' => (float) $item->cost,
+                    'profit_amount' => (float) $item->profit_amount,
                     'price' => (float) $item->price,
                     'sub_total' => (float) $item->sub_total,
+                    'fixed_shipping' => (float) $item->fixed_shipping,
                     'discount' => (float) $item->discount,
                     'tax' => (float) $item->tax,
-                    'shipping' => (float) $item->shipping_fee,
-                    'line_total' => $lineTotal,
+                    'shipping_fee' => (float) $item->shipping_fee,
+                    'weight' => (float) $item->weight,
+                    'grand_total' => (float) $item->grand_total,
                 ];
             })->all(),
             'activities' => $order->activities->map(fn ($activity) => [
@@ -1868,45 +1873,23 @@ class TenantPanelRepository
 
     protected function orderFinancials(Order $order): array
     {
-        $items = $order->relationLoaded('items') ? $order->items : $order->items()->get();
-        $subtotal = round((float) $items->sum('sub_total'), 2);
-        $itemsDiscount = round((float) $items->sum('discount'), 2);
-        $itemsTax = round((float) $items->sum('tax'), 2);
-        $itemsShipping = round((float) $items->sum('shipping_fee'), 2);
-        $orderDiscount = round($subtotal * ((float) ($order->discount_percentage ?? 0) / 100), 2);
-        $orderTax = round($subtotal * ((float) ($order->tax_percentage ?? 0) / 100), 2);
-        $shippingTotal = round((float) ($order->shipping_charge ?: $itemsShipping), 2);
-        $grandTotal = round($subtotal - $itemsDiscount - $orderDiscount + $itemsTax + $orderTax + $shippingTotal, 2);
-        $refundedAmount = round((float) ($order->refunded_amount ?? 0), 2);
-        // Revenue actually kept: cancelled / rejected / refunded orders count for nothing and
-        // completed refunds are subtracted (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
-        $netTotal = OrderProfitCalculator::isFinanciallyVoid($order)
-            ? 0.0
-            : max(0.0, round($grandTotal - $refundedAmount, 2));
-        $vendorNet = $netTotal > 0 ? round(OrderProfitCalculator::effectiveTenantProfit(
-            $order->vendor_gateway_id,
-            $order->vendor_cost,
-            $order->owner_profit,
-            $netTotal
-        ), 2) : 0.0;
+        $order->loadMissing(['items', 'transactions']);
 
         return [
-            'subtotal' => $subtotal,
-            'items_discount' => $itemsDiscount,
-            'discount' => $orderDiscount,
-            'items_tax' => $itemsTax,
-            'tax' => $orderTax,
-            'shipping_total' => $shippingTotal,
-            'grand_total' => $grandTotal,
-            'refunded_amount' => $refundedAmount,
-            'net_total' => $netTotal,
-            'owner_profit' => round(OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 2),
-            'vendor_cost' => round((float) ($order->vendor_cost ?? 0), 2),
-            'vendor_net_total' => $vendorNet,
-            'tenant_own_central' => round(OrderProfitCalculator::tenantOwnCentralForOrder($order), 2),
-            'central_own_tenant' => round(OrderProfitCalculator::centralOwnTenantForOrder($order), 2),
-            'remaining_owner_profit' => round(OrderProfitCalculator::remainingTenantOwnCentralForOrder($order), 2),
-            'remaining_tenant_profit' => round(OrderProfitCalculator::remainingCentralOwnTenantForOrder($order), 2),
+            'items_grand_total' => round($order->items_grand_total, 2),
+            'shipping_charge' => round($order->resolved_shipping_charge, 2),
+            'coupon_discount' => round($order->discount_amount, 2),
+            'grand_total' => round($order->grand_total, 2),
+            'refunded_amount' => round((float) ($order->refunded_amount ?? 0), 2),
+            // Revenue actually kept (void orders and completed refunds count for nothing).
+            'net_total' => OrderProfitCalculator::netOrderTotal($order),
+            'platform_profit' => OrderProfitCalculator::platformProfitForOrder($order),
+            'vendor_profit' => OrderProfitCalculator::vendorProfitForOrder($order),
+            'vendor_own_platform' => OrderProfitCalculator::vendorOwnPlatformForOrder($order),
+            'platform_own_vendor' => OrderProfitCalculator::platformOwnVendorForOrder($order),
+            'vendor_settlements_paid' => $order->vendor_settlements_paid,
+            'platform_payouts_paid' => $order->platform_payouts_paid,
+            'collected_by' => $order->collected_by,
         ];
     }
 
@@ -2196,13 +2179,13 @@ class TenantPanelRepository
         return Order::query()
             ->with(['customer', 'items.product', 'items.variant'])
             ->withCount('items')
-            ->where('vendor_cost', '>', 0)
+            ->with('transactions')
+            ->where('collected_by', 'vendor')
+            ->where('platform_profit', '>', 0)
             ->when(filled($filters['settled'] ?? null), function ($query) use ($filters) {
-                if ($filters['settled'] === 'settled') {
-                    $query->whereNotNull('vendor_settled_at');
-                } else {
-                    $query->whereNull('vendor_settled_at');
-                }
+                $paid = '(select coalesce(sum(amount), 0) from order_transactions where order_transactions.order_id = orders.id and order_transactions.type = ?)';
+                $operator = $filters['settled'] === 'settled' ? '>=' : '<';
+                $query->whereRaw("{$paid} {$operator} orders.platform_profit", [OrderTransaction::TYPE_VENDOR_SETTLEMENT]);
             })
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
@@ -2219,20 +2202,22 @@ class TenantPanelRepository
      */
     public function vendorPurchaseStats(): array
     {
-        $orders = Order::query()->where('vendor_cost', '>', 0)->get();
+        $orders = Order::query()
+            ->with('transactions')
+            ->where('collected_by', 'vendor')
+            ->where('platform_profit', '>', 0)
+            ->get()
+            ->reject(fn (Order $o) => OrderProfitCalculator::isFinanciallyVoid($o));
 
-        $unsettled = $orders->whereNull('vendor_settled_at');
-        $settled = $orders->whereNotNull('vendor_settled_at');
+        $unsettled = $orders->filter(fn (Order $o) => OrderProfitCalculator::vendorOwnPlatformForOrder($o) > 0);
+        $settled = $orders->reject(fn (Order $o) => OrderProfitCalculator::vendorOwnPlatformForOrder($o) > 0);
 
         return [
             'total' => $orders->count(),
             'unsettled_count' => $unsettled->count(),
             'settled_count' => $settled->count(),
-            // Cancelled / refunded orders owe central nothing.
-            'total_owed' => round($unsettled
-                ->reject(fn (Order $o) => OrderProfitCalculator::isFinanciallyVoid($o))
-                ->sum(fn (Order $o) => (float) $o->vendor_cost + (float) $o->shipping_charge), 2),
-            'total_settled' => round($settled->sum(fn (Order $o) => (float) $o->vendor_total_with_fee), 2),
+            'total_owed' => round($unsettled->sum(fn (Order $o) => OrderProfitCalculator::vendorOwnPlatformForOrder($o)), 2),
+            'total_settled' => round($orders->sum(fn (Order $o) => $o->vendor_settlements_paid), 2),
         ];
     }
 

@@ -1,8 +1,8 @@
-{{-- Pay-central panel on the order detail page — same breakdown and gateway flow as Finance > Vendor Purchases > Pay Central. --}}
+{{-- Pay-central panel on the order detail page — same breakdown and gateway flow as Finance > Vendor Purchases > Pay platform. --}}
 <section class="details-panel full" id="pay-central">
     <div class="details-header">
-        <h4 class="panel-title">Pay Central</h4>
-        <p class="panel-copy">You collected payment for this order. Select a payment gateway and settle the product and shipping cost with central.</p>
+        <h4 class="panel-title">Pay platform</h4>
+        <p class="panel-copy">You collected payment for this order. Select a payment gateway and pay the platform its profit share.</p>
     </div>
 
     <div class="vso-layout">
@@ -13,7 +13,7 @@
         <div data-vendor-settle data-breakdown-url="{{ route('tenant.finance.vendor-purchase-settle.breakdown', ['orderId' => $orderId]) }}">
             <x-tenant::payment.gateway-modal
                 id="vendor-settle-{{ $orderId }}"
-                title="Pay Central"
+                title="Pay platform"
                 :action="route('tenant.finance.vendor-purchase-settle.pay', ['orderId' => $orderId])"
                 :validate="route('tenant.finance.vendor-purchase-settle.pay.validate', ['orderId' => $orderId])"
                 :presented="$settlement['presented']"

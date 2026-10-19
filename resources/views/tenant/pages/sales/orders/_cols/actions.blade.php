@@ -3,4 +3,7 @@
 @endphp
 <x-tenant::dropdown align="end" :icon="$dots">
     <x-tenant::dropdown-item :href="route('tenant.orders.show', $order->id)">View order</x-tenant::dropdown-item>
+    @if(\App\Support\OrderProfitCalculator::vendorOwnPlatformForOrder($order) > 0)
+        <x-tenant::dropdown-item :href="route('tenant.finance.vendor-purchase-settle', $order->id)">Pay platform</x-tenant::dropdown-item>
+    @endif
 </x-tenant::dropdown>

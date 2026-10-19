@@ -112,10 +112,9 @@
                                 <section class="details-panel">
                                     <div class="details-header"><h4 class="panel-title">Financials</h4></div>
                                     <div class="details-list">
-                                        <div class="details-kv"><span class="details-label">Subtotal</span><span class="details-value">${{ number_format((float) ($fin['subtotal'] ?? 0), 2) }}</span></div>
-                                        <div class="details-kv"><span class="details-label">Discount</span><span class="details-value">−${{ number_format((float) (($fin['items_discount'] ?? 0) + ($fin['discount'] ?? 0)), 2) }}</span></div>
-                                        <div class="details-kv"><span class="details-label">Tax</span><span class="details-value">+${{ number_format((float) (($fin['items_tax'] ?? 0) + ($fin['tax'] ?? 0)), 2) }}</span></div>
-                                        <div class="details-kv"><span class="details-label">Shipping</span><span class="details-value">+${{ number_format((float) ($fin['shipping_total'] ?? 0), 2) }}</span></div>
+                                        <div class="details-kv"><span class="details-label">Items Grand Total</span><span class="details-value">${{ number_format((float) ($fin['items_grand_total'] ?? 0), 2) }}</span></div>
+                                        <div class="details-kv"><span class="details-label">Shipping</span><span class="details-value">+${{ number_format((float) ($fin['shipping_charge'] ?? 0), 2) }}</span></div>
+                                        <div class="details-kv"><span class="details-label">Coupon</span><span class="details-value">−${{ number_format((float) ($fin['coupon_discount'] ?? 0), 2) }}</span></div>
                                         <div class="details-kv"><span class="details-label">Grand Total</span><span class="details-value" style="font-weight:600;">${{ number_format((float) ($fin['grand_total'] ?? 0), 2) }}</span></div>
                                     </div>
                                 </section>
