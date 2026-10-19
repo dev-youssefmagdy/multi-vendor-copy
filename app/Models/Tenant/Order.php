@@ -39,9 +39,12 @@ class Order extends Model
         'tax_percentage',
         'shipping_zone_rate_id',
         'shipping_charge',
-        'owner_profit',
+        'coupon_discount',
+        'coupon_source',
+        'platform_profit',
+        'vendor_profit',
+        'collected_by',
         'payment_gateway_id',
-        'vendor_cost',
         'vendor_gateway_id',
         'vendor_gateway_fee',
         'vendor_settled_at',
@@ -70,8 +73,9 @@ class Order extends Model
             'discount_percentage' => 'decimal:2',
             'tax_percentage' => 'decimal:2',
             'shipping_charge' => 'decimal:2',
-            'owner_profit' => 'decimal:2',
-            'vendor_cost' => 'decimal:2',
+            'coupon_discount' => 'decimal:2',
+            'platform_profit' => 'decimal:2',
+            'vendor_profit' => 'decimal:2',
             'vendor_gateway_fee' => 'decimal:2',
             'vendor_settled_at' => 'datetime',
             'cancelled_at' => 'datetime',
@@ -105,6 +109,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(OrderTransaction::class);
     }
 
     public function activities(): HasMany
@@ -200,59 +209,56 @@ class Order extends Model
         return max(0.0, round($this->grand_total - (float) ($this->refunded_amount ?? 0), 2));
     }
 
-    // ─── Calculated Getters ─────────────────────────────────────────────────
+    // ─── Calculated Getters (docs/ORDER_FORMULAS.md) ────────────────────────
 
-    /**
-     * Sum of all order items' sub_total (qty × price before item-level discount).
-     */
+    /** Σ price × qty of all lines (before fixed shipping / discounts). */
     public function getSubtotalAttribute(): float
     {
         return (float) $this->items->sum('sub_total');
     }
 
-    /**
-     * Sum of all item-level discounts already applied per line.
-     */
+    /** Σ line fixed shipping ("fixed cost price"). */
+    public function getItemsFixedShippingAttribute(): float
+    {
+        return (float) $this->items->sum('fixed_shipping');
+    }
+
+    /** Σ line flash-sale discounts. */
     public function getItemsDiscountAttribute(): float
     {
         return (float) $this->items->sum('discount');
     }
 
-    /**
-     * Sum of all item-level taxes already applied per line.
-     */
+    /** Σ line taxes (= order tax). */
     public function getItemsTaxAttribute(): float
     {
         return (float) $this->items->sum('tax');
     }
 
-    /**
-     * Sum of all item-level shipping charges already stored per line.
-     */
+    /** Σ line shipping fees. */
     public function getItemsShippingAttribute(): float
     {
         return (float) $this->items->sum('shipping_fee');
     }
 
-    /**
-     * Order-level discount derived from discount_percentage applied on subtotal.
-     */
+    /** items_grand_total = Σ item grand_total. */
+    public function getItemsGrandTotalAttribute(): float
+    {
+        return round((float) $this->items->sum('grand_total'), 2);
+    }
+
+    /** Coupon discount applied on the order. */
     public function getDiscountAmountAttribute(): float
     {
-        return round($this->subtotal * ((float) $this->discount_percentage / 100), 2);
+        return round((float) ($this->coupon_discount ?? 0), 2);
     }
 
-    /**
-     * Order-level tax derived from tax_percentage applied on subtotal.
-     */
     public function getTaxAmountAttribute(): float
     {
-        return round($this->subtotal * ((float) $this->tax_percentage / 100), 2);
+        return round($this->items_tax, 2);
     }
 
-    /**
-     * Prefer the order-level shipping charge and fall back to summed item shipping.
-     */
+    /** Prefer the order-level shipping charge and fall back to summed item shipping. */
     public function getResolvedShippingChargeAttribute(): float
     {
         $shippingCharge = (float) ($this->shipping_charge ?? 0);
@@ -264,40 +270,48 @@ class Order extends Model
         return round($this->items_shipping, 2);
     }
 
-    /**
-     * Grand total: subtotal minus order discount, plus order tax, plus shipping charge.
-     * Item-level discounts / taxes are already reflected in sub_total values.
-     */
+    /** order_grand_total = items_grand_total + shipping - coupon discount. */
     public function getGrandTotalAttribute(): float
     {
-        return round(
-            $this->subtotal
-            - $this->discount_amount
-            + $this->tax_amount
-            + $this->resolved_shipping_charge,
-            2
-        );
+        return round($this->items_grand_total + $this->resolved_shipping_charge - $this->discount_amount, 2);
     }
 
-    /**
-     * Total the vendor owes central: product cost + shipping charge.
-     */
-    public function getVendorTotalDueAttribute(): float
+    /** True when the customer's money went to the vendor (own gateway / COD). */
+    public function getCollectedByVendorAttribute(): bool
     {
-        return round((float) ($this->vendor_cost ?? 0) + (float) ($this->shipping_charge ?? 0), 2);
+        return $this->collected_by === 'vendor';
     }
 
-    /**
-     * Total the vendor owes central including gateway fee.
-     */
+    /** Σ vendor -> platform settlements recorded for this order. */
+    public function getVendorSettlementsPaidAttribute(): float
+    {
+        return $this->transactionsTotal(OrderTransaction::TYPE_VENDOR_SETTLEMENT);
+    }
+
+    /** Σ platform -> vendor payouts recorded for this order. */
+    public function getPlatformPayoutsPaidAttribute(): float
+    {
+        return $this->transactionsTotal(OrderTransaction::TYPE_PLATFORM_PAYOUT);
+    }
+
+    private function transactionsTotal(string $type): float
+    {
+        if (! $this->relationLoaded('transactions') && ! $this->exists) {
+            return 0.0;
+        }
+
+        $rows = $this->relationLoaded('transactions') ? $this->transactions : $this->transactions()->get();
+
+        return round((float) $rows->where('type', $type)->sum('amount'), 2);
+    }
+
+    /** Platform profit + the gateway fee the vendor pays when settling. */
     public function getVendorTotalWithFeeAttribute(): float
     {
-        return round($this->vendor_total_due + (float) ($this->vendor_gateway_fee ?? 0), 2);
+        return round((float) ($this->platform_profit ?? 0) + (float) ($this->vendor_gateway_fee ?? 0), 2);
     }
 
-    /**
-     * Whether the vendor has settled payment for this order's product cost.
-     */
+    /** Whether the vendor has settled payment for this order's platform share. */
     public function getVendorSettledAttribute(): bool
     {
         return $this->vendor_settled_at !== null;

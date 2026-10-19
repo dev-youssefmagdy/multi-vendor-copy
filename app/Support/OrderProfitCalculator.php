@@ -6,15 +6,14 @@ use App\Enums\OrderStatus;
 use App\Models\Tenant\Order as TenantOrder;
 
 /**
- * Canonical "effective owner profit" / "effective tenant profit" calculation.
- * Mirrors TenantLedgerService / OrderRepository / TenantAdminAggregateService.
+ * Per-order platform / vendor figures (docs/ORDER_FORMULAS.md sections 2-3).
  *
- * Refunds & cancellations (RETURN_EXCHANGE_REFUND_PLAN.md B.4 "Financial impact"):
- * the *ForOrder() helpers treat a cancelled / rejected / refunded order as producing no
- * money for anybody (owner profit, tenant profit and both payout directions are 0), and
- * base the tenant's share on the net amount kept from the customer
- * (grand_total − refunded_amount). Partial refunds are borne by the tenant's share; the
- * owner profit (central's cut) is unchanged by them.
+ *   platform_profit / vendor_profit are stored on the order at checkout (see OrderPricing::order()).
+ *   vendor_own_platform = platform_profit - Σ vendor_settlement transactions   (collected_by = vendor)
+ *   platform_own_vendor = vendor_profit   - Σ platform_payout transactions     (collected_by = platform)
+ *
+ * Refunds & cancellations (RETURN_EXCHANGE_REFUND_PLAN.md B.4): a cancelled / rejected / refunded order
+ * produces no money for anybody; a partial refund is borne by the vendor's share only.
  */
 class OrderProfitCalculator
 {
@@ -46,101 +45,57 @@ class OrderProfitCalculator
         return max(0.0, round((float) $order->grand_total - (float) ($order->refunded_amount ?? 0), 2));
     }
 
-    public static function effectiveOwnerProfit(?int $vendorGatewayId, ?float $vendorCost, ?float $ownerProfit): float
+    /** The customer's money was received by the vendor (own gateway / COD) rather than the platform. */
+    public static function collectedByVendor(TenantOrder $order): bool
     {
-        return (float) ($vendorGatewayId !== null ? $vendorCost : ($ownerProfit ?? 0));
+        return $order->collected_by === 'vendor';
     }
 
-    public static function effectiveTenantProfit(?int $vendorGatewayId, ?float $vendorCost, ?float $ownerProfit, float $orderTotal): float
+    /** Platform's share of the order (0 when void). */
+    public static function platformProfitForOrder(TenantOrder $order): float
     {
-        return $orderTotal - self::effectiveOwnerProfit($vendorGatewayId, $vendorCost, $ownerProfit);
+        return self::isFinanciallyVoid($order) ? 0.0 : round((float) $order->platform_profit, 2);
     }
 
-    public static function effectiveOwnerProfitForOrder(TenantOrder $order): float
+    /** Vendor's share of the order, less partial refunds (0 when void). */
+    public static function vendorProfitForOrder(TenantOrder $order): float
     {
         if (self::isFinanciallyVoid($order)) {
             return 0.0;
         }
 
-        return self::effectiveOwnerProfit($order->vendor_gateway_id, $order->vendor_cost, $order->owner_profit);
+        return round((float) $order->vendor_profit - (float) ($order->refunded_amount ?? 0), 2);
     }
 
-    public static function effectiveTenantProfitForOrder(TenantOrder $order): float
+    /** vendor_own_platform: what the vendor still has to pay the platform for this order. */
+    public static function vendorOwnPlatformForOrder(TenantOrder $order): float
     {
-        if (self::isFinanciallyVoid($order)) {
+        if (! self::collectedByVendor($order)) {
             return 0.0;
         }
 
-        return self::effectiveTenantProfit(
-            $order->vendor_gateway_id,
-            $order->vendor_cost,
-            $order->owner_profit,
-            self::netOrderTotal($order)
-        );
+        return max(0.0, round(self::platformProfitForOrder($order) - $order->vendor_settlements_paid, 2));
     }
 
-    public static function orderPaidFromTenantGateway(?int $vendorGatewayId): bool
+    /** platform_own_vendor: what the platform still has to pay the vendor for this order. */
+    public static function platformOwnVendorForOrder(TenantOrder $order): float
     {
-        return $vendorGatewayId !== null;
-    }
-
-    public static function orderPaidFromTenantGatewayForOrder(TenantOrder $order): bool
-    {
-        return self::orderPaidFromTenantGateway($order->vendor_gateway_id);
-    }
-
-    public static function tenantOwnCentral(?int $vendorGatewayId, ?float $vendorCost, ?float $ownerProfit): float
-    {
-        return self::orderPaidFromTenantGateway($vendorGatewayId)
-            ? self::effectiveOwnerProfit($vendorGatewayId, $vendorCost, $ownerProfit)
-            : 0.0;
-    }
-
-    public static function tenantOwnCentralForOrder(TenantOrder $order): float
-    {
-        if (self::isFinanciallyVoid($order)) {
+        if (self::collectedByVendor($order)) {
             return 0.0;
         }
 
-        return self::tenantOwnCentral($order->vendor_gateway_id, $order->vendor_cost, $order->owner_profit);
+        return max(0.0, round(self::vendorProfitForOrder($order) - $order->platform_payouts_paid, 2));
     }
 
-    public static function centralOwnTenant(?int $vendorGatewayId, ?float $vendorCost, ?float $ownerProfit, float $orderTotal): float
+    /** Total vendor -> platform amount that is due for the order (before settlements), 0 unless vendor-collected. */
+    public static function platformShareDueFromVendor(TenantOrder $order): float
     {
-        return self::orderPaidFromTenantGateway($vendorGatewayId)
-            ? 0.0
-            : self::effectiveTenantProfit($vendorGatewayId, $vendorCost, $ownerProfit, $orderTotal);
+        return self::collectedByVendor($order) ? self::platformProfitForOrder($order) : 0.0;
     }
 
-    public static function centralOwnTenantForOrder(TenantOrder $order): float
+    /** Total platform -> vendor amount that is due for the order (before payouts), 0 unless platform-collected. */
+    public static function vendorShareDueFromPlatform(TenantOrder $order): float
     {
-        if (self::isFinanciallyVoid($order)) {
-            return 0.0;
-        }
-
-        return self::centralOwnTenant(
-            $order->vendor_gateway_id,
-            $order->vendor_cost,
-            $order->owner_profit,
-            self::netOrderTotal($order)
-        );
-    }
-
-    /**
-     * What the tenant still owes central right now: tenantOwnCentral, zeroed out
-     * once the vendor has settled payment for this order.
-     */
-    public static function remainingTenantOwnCentralForOrder(TenantOrder $order): float
-    {
-        return $order->vendor_settled ? 0.0 : self::tenantOwnCentralForOrder($order);
-    }
-
-    /**
-     * What central still owes the tenant right now: centralOwnTenant, zeroed out
-     * once the tenant's payout for this order has been released.
-     */
-    public static function remainingCentralOwnTenantForOrder(TenantOrder $order): float
-    {
-        return ($order->payout_released ?? false) ? 0.0 : self::centralOwnTenantForOrder($order);
+        return self::collectedByVendor($order) ? 0.0 : max(0.0, self::vendorProfitForOrder($order));
     }
 }

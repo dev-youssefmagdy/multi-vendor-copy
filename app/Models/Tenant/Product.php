@@ -260,11 +260,20 @@ class Product extends Model
      */
     public static function computeFinalPrice(float $basePrice, string $profitType, float $profitValue, float $shipping): float
     {
-        $profitAmount = $profitType === 'fixed'
-            ? round($profitValue, 2)
-            : round($basePrice * $profitValue / 100, 2);
+        $breakdown = static::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
 
-        return round($basePrice + $profitAmount + $shipping, 2);
+        return round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
+    }
+
+    /**
+     * price = cost + profit_amount (profit is a percentage of cost or a fixed amount);
+     * the fixed shipping cost is reported separately (docs/ORDER_FORMULAS.md).
+     *
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public static function priceBreakdown(float $cost, string $profitType, float $profitValue, float $shipping): array
+    {
+        return \App\Support\OrderPricing::unitPrice($cost, $profitType, $profitValue, $shipping);
     }
 
     /**
@@ -273,6 +282,16 @@ class Product extends Model
      * the central sale price.
      */
     public function finalPriceForCountry(?int $countryId): float
+    {
+        $breakdown = $this->priceBreakdownForCountry($countryId);
+
+        return round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
+    }
+
+    /**
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public function priceBreakdownForCountry(?int $countryId): array
     {
         $basePrice = (float) ($this->centralProduct?->sale_price ?? $this->centralProduct?->base_price ?? 0);
 
@@ -290,7 +309,7 @@ class Product extends Model
             $shipping = $shippingCost ? $shippingCost->costForWeight($weightGrams) : 0.0;
         }
 
-        return static::computeFinalPrice($basePrice, $profitType, $profitValue, $shipping);
+        return static::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
     }
 
     public function storefrontPricing(?ProductVariant $variant = null, ?int $countryId = null): array
