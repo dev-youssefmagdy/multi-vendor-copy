@@ -171,7 +171,8 @@ class ProductPage extends Component
         $customerCountryId = $shared['customerCountryId'] ?? $countryResolver->resolveId();
 
         $variant = $activeVariant ?? $variants->first();
-        $pricing = $product->storefrontPricing($variant, $customerCountryId);
+        // Same country source as home cards / variant thumbnails (session country)
+        $pricing = $product->storefrontPricing($variant);
         $sellPrice = (float) $pricing['current_price'];
         $realPrice = $pricing['original_price'] ?? null;
         $hasDiscount = (bool) ($pricing['has_discount'] ?? false);
@@ -353,7 +354,7 @@ class ProductPage extends Component
 
         // Pre-compute per-variant data for client-side selection (no server roundtrip needed)
         $variantData = $variants->mapWithKeys(function ($v) use ($product, $symbol, $rate, $manageStock, $customerCountryId, $variantImageIndex, $central) {
-            $vp = $product->storefrontPricing($v, $customerCountryId);
+            $vp = $product->storefrontPricing($v);
             $vSell = (float) $vp['current_price'];
             $vReal = $vp['original_price'] ?? null;
             $vHasDiscount = (bool) ($vp['has_discount'] ?? false);

@@ -121,7 +121,7 @@ class PlacesOrders
             $ownerCost = $this->resolveOwnerCost($product, $variant, $shippingCountryId) * $orderItem['qty'];
 
             if ($product instanceof TenantProduct) {
-                $pricing = $product->storefrontPricing($variant, $shippingCountryId);
+                $pricing = $product->storefrontPricing($variant);
                 $flashSale = $pricing['flash_sale'] ?? null;
 
                 if (($pricing['is_flash_sale'] ?? false) && $flashSale?->central_flash_sale_id !== null) {
@@ -531,7 +531,7 @@ class PlacesOrders
             $variant = null;
         }
 
-        $pricing = $product->storefrontPricing($variant, $shippingCountryId);
+        $pricing = $product->storefrontPricing($variant);
         $qty = max(1, (int) ($cartItem['qty'] ?? 1));
         $price = round((float) $pricing['current_price'], 2);
 

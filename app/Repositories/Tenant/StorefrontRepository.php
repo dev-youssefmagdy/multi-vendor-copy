@@ -1399,10 +1399,8 @@ class StorefrontRepository
             ->get()
             ->keyBy('id');
 
-        // Resolve the visitor's country for per-country pricing: selected/default
-        // customer address takes priority over the session-detected country.
-        $countryId = app(CustomerCountryResolver::class)->resolveId();
-
+        // Unit prices use the session country (same source as home cards and
+        // product-page variant prices) so every surface shows the same number.
         $items = [];
 
         foreach ($cart as $key => $entry) {
@@ -1415,7 +1413,7 @@ class StorefrontRepository
 
             $variant ??= $product->variants->firstWhere('active', true) ?? $product->variants->first();
 
-            $pricing = $product->storefrontPricing($variant, $countryId);
+            $pricing = $product->storefrontPricing($variant);
             $price = (float) $pricing['current_price'];
             $qty = max(1, (int) ($entry['qty'] ?? 1));
 
