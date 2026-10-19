@@ -106,8 +106,15 @@ class InDeliveryOrdersList extends ListPage
             return;
         }
 
-        $this->selectedOrderForStatus = app(OrderRepository::class)->orderDetail($order);
-        $this->selectedOrderStatus = (string) ($this->selectedOrderForStatus['status_value'] ?? OrderStatus::Pending->value);
+        // Keep the public (serialized every request) payload small: only what the modal shows.
+        $this->selectedOrderForStatus = [
+            'tenant_id' => $order->tenant_id,
+            'uuid' => $order->order_number,
+            'tenant' => ['name' => $order->store_name],
+            'status' => $order->status->label(),
+            'status_value' => $order->status->value,
+        ];
+        $this->selectedOrderStatus = $order->status->value;
         $this->showOrderStatusModal = true;
     }
 
@@ -135,15 +142,8 @@ class InDeliveryOrdersList extends ListPage
             return;
         }
 
-        $order = app(OrderRepository::class)->find(
-            (string) ($this->selectedOrderForStatus['tenant_id'] ?? ''),
-            (string) ($this->selectedOrderForStatus['uuid'] ?? ''),
-        );
-
-        if ($order) {
-            $this->selectedOrderForStatus = app(OrderRepository::class)->orderDetail($order);
-            $this->selectedOrderStatus = (string) ($this->selectedOrderForStatus['status_value'] ?? $orderStatus->value);
-        }
+        $this->selectedOrderForStatus['status'] = $orderStatus->label();
+        $this->selectedOrderForStatus['status_value'] = $orderStatus->value;
 
         $this->toast('Order status updated successfully.');
     }

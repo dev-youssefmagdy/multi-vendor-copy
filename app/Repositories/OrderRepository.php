@@ -153,8 +153,7 @@ class OrderRepository
 
     public function find(string $tenantId, string $orderNumber): ?object
     {
-        return $this->aggregateService->orders()
-            ->first(fn (object $order) => (string) $order->tenant_id === $tenantId && (string) $order->order_number === $orderNumber);
+        return $this->aggregateService->findOrder($tenantId, $orderNumber);
     }
 
     public function orderDetail(object $order): array

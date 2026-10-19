@@ -63,21 +63,59 @@ class TenantAdminAggregateService
         }
 
         return $this->ordersCache = $this->collectAcrossTenants(function (Tenant $tenant) {
-            return TenantOrder::query()
-                ->with([
-                    'customer',
-                    'items.product.translations.language',
-                    'items.product.files',
-                    'items.variant.product.translations.language',
-                    'items.variant.product.files',
-                    'items.variant.centralVariant.options.translations.language',
-                    'items.variant.centralVariant.files',
-                    'paymentGateway',
-                    'activities',
-                ])
+            return $this->orderQuery()
                 ->get()
                 ->map(fn (TenantOrder $order) => $this->mapOrder($tenant, $order));
         });
+    }
+
+    /**
+     * One order from one tenant. Avoids loading every order of every tenant just to open
+     * or update a single record (status modal, detail page).
+     */
+    public function findOrder(string $tenantId, string $orderNumber): ?object
+    {
+        if ($this->ordersCache !== null) {
+            return $this->ordersCache->first(
+                fn (object $order) => (string) $order->tenant_id === $tenantId && (string) $order->order_number === $orderNumber
+            );
+        }
+
+        $tenant = Tenant::query()->find($tenantId);
+
+        if (! $tenant) {
+            return null;
+        }
+
+        $initialized = false;
+
+        try {
+            tenancy()->initialize($tenant);
+            $initialized = true;
+
+            $order = $this->orderQuery()->where('uuid', $orderNumber)->first();
+
+            return $order ? $this->mapOrder($tenant, $order) : null;
+        } finally {
+            if ($initialized) {
+                tenancy()->end();
+            }
+        }
+    }
+
+    protected function orderQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return TenantOrder::query()->with([
+            'customer',
+            'items.product.translations.language',
+            'items.product.files',
+            'items.variant.product.translations.language',
+            'items.variant.product.files',
+            'items.variant.centralVariant.options.translations.language',
+            'items.variant.centralVariant.files',
+            'paymentGateway',
+            'activities',
+        ]);
     }
 
     public function paymentLogs(): Collection
