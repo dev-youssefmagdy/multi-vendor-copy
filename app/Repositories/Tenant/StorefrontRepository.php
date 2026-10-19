@@ -196,6 +196,40 @@ class StorefrontRepository
         return $relations;
     }
 
+    /**
+     * HomeProductService caches bare product rows (so prices, ratings and flash sales
+     * stay fresh); the product card needs variants, translations, images, rates and
+     * flash sales. Batch-load them once per list instead of lazy-loading per card (N+1).
+     */
+    protected function hydrateProductCards(Collection $products): Collection
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        // Several home lists overlap (new-in / featured / trending ...): reuse the
+        // relations already loaded for a product earlier in this request.
+        $pending = $products->filter(function (Product $product): bool {
+            $loaded = $this->memo['hydrated_products'][$product->getKey()] ?? null;
+            if ($loaded) {
+                $product->setRelations($loaded->getRelations());
+            }
+
+            return $loaded === null;
+        });
+
+        if ($pending->isNotEmpty()) {
+            $pending->loadMissing($this->productRelations());
+            foreach ($pending as $product) {
+                // Variants price themselves through $variant->product (shipping fallback).
+                $product->variants->each(fn($variant) => $variant->setRelation('product', $product));
+                $this->memo['hydrated_products'][$product->getKey()] ??= $product;
+            }
+        }
+
+        return $products;
+    }
+
     protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
     {
         $query = Product::query()
@@ -1014,7 +1048,9 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
-        return app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId());
+        return $this->hydrateProductCards(
+            app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId())
+        );
     }
 
     public function latestProducts(int $limit = 20): Collection
@@ -1213,8 +1249,9 @@ class StorefrontRepository
     {
         $key = 'trending_now_' . $limit;
 
-        return $this->memo[$key] ??= app(\App\Services\HomeProductService::class)
-            ->getTrendingNow($limit, $this->customerCountryId());
+        return $this->memo[$key] ??= $this->hydrateProductCards(
+            app(\App\Services\HomeProductService::class)->getTrendingNow($limit, $this->customerCountryId())
+        );
     }
 
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -1269,7 +1306,7 @@ class StorefrontRepository
     protected function paginateFromService(callable $fetcher, int $perPage, int $page): LengthAwarePaginator
     {
         $limit = $perPage * $page;
-        $items = $fetcher($limit);
+        $items = $this->hydrateProductCards($fetcher($limit));
         $total = $items->count() >= $limit ? $items->count() + 1 : $items->count();
 
         return new \Illuminate\Pagination\LengthAwarePaginator(
@@ -1294,7 +1331,7 @@ class StorefrontRepository
             $products = $service->getInteractionBased($limit, $this->customerCountryId());
         }
 
-        return $this->memo[$key] = $products;
+        return $this->memo[$key] = $this->hydrateProductCards($products);
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator

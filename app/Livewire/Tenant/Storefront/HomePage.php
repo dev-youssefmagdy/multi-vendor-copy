@@ -186,21 +186,28 @@ class HomePage extends Component
         $flashProducts = $allFlashProducts->take($flashLimit);
         $flashBanner = optional($flashSales->first())->banner_url ?? null;
 
-        $buyTogetherProducts = Product::with([
-            'variants',
-            'centralProduct',
-            'rates',
-            'flashSales' => fn($q) => $q->activeWindow()->orderByDesc('discount_percentage'),
-        ])
-            ->where('active', true)
-            ->inRandomOrder()
-            ->limit(2)
-            ->get();
+        [$activeTheme, $activeVariant] = $this->activeThemeAndVariant();
+        $homeSections = $this->resolvedHomeSections($activeTheme, $activeVariant);
 
+        // Only the "Shop by Category" section renders the buy-together pair; skip the
+        // random-order query (and its eager loads) when that section is not on the page.
+        $buyTogetherProducts = in_array('shop_by_category', $homeSections, true)
+            ? Product::with([
+                'variants',
+                'variants.centralVariant',
+                'centralProduct' => fn($q) => $q->with(['files', 'shippingZones.rates']),
+                'translations.language',
+                'files',
+                'rates',
+                'flashSales' => fn($q) => $q->activeWindow()->orderByDesc('discount_percentage'),
+            ])
+                ->where('active', true)
+                ->inRandomOrder()
+                ->limit(2)
+                ->get()
+            : collect();
 
         $paginatedProducts = $repo->paginatedProducts([], $this->perPage, 1);
-
-        [$activeTheme, $activeVariant] = $this->activeThemeAndVariant();
 
         $data = array_merge($this->sharedData(), [
             'banners' => $repo->activeBanners(),
@@ -221,7 +228,7 @@ class HomePage extends Component
             'recommendedProducts' => $recommendedProducts,
             'hasMoreRecommended' => $this->hasMoreRecommended,
             'paginatedProducts' => $paginatedProducts,
-            'homeSections' => $this->resolvedHomeSections($activeTheme, $activeVariant),
+            'homeSections' => $homeSections,
         ]);
 
         $storeName = $repo->storeName();
