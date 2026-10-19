@@ -11,7 +11,7 @@
 | T3 Settlement & ledger | TODO | | |
 | T4 Vendor panel | TODO | | |
 | T5 Central/admin panel | TODO | | |
-| T6 Storefront & themes | TODO | | |
+| T6 Storefront & themes | DONE | see git log | order-status (ecommet/elora/souqify/starter-kit) now show items subtotal, fixed shipping, flash-sale discount, tax, shipping, coupon, grand total + per-line fixed shipping/discount/line grand_total; invoice (+StorefrontInvoiceController payload), TemplateMailService items table, OrderController API (new fields), help docs. Profile lists/tracking already use grand_total/price (unchanged). Cart/checkout summaries are owned by T2 (not touched). |
 | T7 QA | TODO | | |
 | T8 Summary | TODO | | |
 

@@ -80,8 +80,10 @@ class StorefrontInvoiceController extends Controller
                 ?? data_get($paymentDetails, 'raw.id')
                 ?? '-',
             'subtotal'          => $fmt($order->subtotal),
-            'discount'          => $fmt($order->items_discount + $order->discount_amount),
-            'tax'               => $fmt($order->items_tax + $order->tax_amount),
+            'fixed_shipping'    => $fmt($order->items_fixed_shipping),
+            'discount'          => $fmt($order->items_discount),
+            'coupon_discount'   => $fmt($order->discount_amount),
+            'tax'               => $fmt($order->items_tax),
             'shipping'          => $fmt($order->resolved_shipping_charge),
             'grand_total'       => $fmt($order->grand_total),
             'currency'          => $currencyCode,
@@ -102,7 +104,10 @@ class StorefrontInvoiceController extends Controller
                     'variant' => $item->variant?->display_label ?? null,
                     'qty'     => (int) $item->qty,
                     'price'   => sprintf('%s %.2f', $currencyCode, (float) $item->price),
-                    'total'   => sprintf('%s %.2f', $currencyCode, (float) $item->sub_total),
+                    'sub_total' => sprintf('%s %.2f', $currencyCode, (float) $item->sub_total),
+                    'fixed_shipping' => (float) $item->fixed_shipping > 0 ? sprintf('%s %.2f', $currencyCode, (float) $item->fixed_shipping) : null,
+                    'discount' => (float) $item->discount > 0 ? sprintf('%s %.2f', $currencyCode, (float) $item->discount) : null,
+                    'total'   => sprintf('%s %.2f', $currencyCode, (float) $item->grand_total),
                 ];
             })->all(),
         ];

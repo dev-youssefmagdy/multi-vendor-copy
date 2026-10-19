@@ -135,9 +135,15 @@
                                     <span>×</span>
                                     <span class="font-medium text-[#242424]">{{ $fmt($item->price) }}</span>
                                 </div>
+                                @if ((float) $item->fixed_shipping > 0)
+                                    <p class="text-[11px] text-gray-medium mt-1">{{ __('Fixed shipping') }}: {{ $fmt($item->fixed_shipping) }}</p>
+                                @endif
+                                @if ((float) $item->discount > 0)
+                                    <p class="text-[11px] text-gray-medium mt-1">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
+                                @endif
                             </div>
                             <div class="text-[14px] font-bold text-[#242424] shrink-0">
-                                {{ $fmt($item->sub_total) }}
+                                {{ $fmt($item->grand_total) }}
                                 <div>@include('livewire.tenant.storefront.partials.return-item-action')</div>
                             </div>
                         </div>
@@ -170,25 +176,37 @@
                     <h3 class="text-[15px] font-bold text-[#242424] mb-4">{{ __('Order Summary') }}</h3>
                     <div class="flex flex-col gap-2 text-[13px]">
                         <div class="flex justify-between">
-                            <span class="text-gray-medium">{{ __('Subtotal') }}</span>
+                            <span class="text-gray-medium">{{ __('Items subtotal') }}</span>
                             <span class="font-medium">{{ $fmt($order->subtotal) }}</span>
                         </div>
-                        @if ($order->discount_percentage > 0)
-                            <div class="flex justify-between text-primary">
-                                <span>{{ __('Discount (:percent%)', ['percent' => $order->discount_percentage]) }}</span>
-                                <span>-{{ $fmt($order->discount_amount) }}</span>
+                        @if ($order->items_fixed_shipping > 0)
+                            <div class="flex justify-between">
+                                <span class="text-gray-medium">{{ __('Fixed shipping') }}</span>
+                                <span>{{ $fmt($order->items_fixed_shipping) }}</span>
                             </div>
                         @endif
-                        @if ($order->tax_percentage > 0)
+                        @if ($order->items_discount > 0)
+                            <div class="flex justify-between text-primary">
+                                <span>{{ __('Flash-sale discount') }}</span>
+                                <span>-{{ $fmt($order->items_discount) }}</span>
+                            </div>
+                        @endif
+                        @if ($order->items_tax > 0)
                             <div class="flex justify-between">
-                                <span class="text-gray-medium">{{ __('Tax (:percent%)', ['percent' => $order->tax_percentage]) }}</span>
-                                <span>{{ $fmt($order->tax_amount) }}</span>
+                                <span class="text-gray-medium">{{ __('Tax') }}</span>
+                                <span>{{ $fmt($order->items_tax) }}</span>
                             </div>
                         @endif
                         <div class="flex justify-between text-success">
                             <span>{{ __('Shipping') }}</span>
                             <span class="font-medium">{{ $order->resolved_shipping_charge > 0 ? $fmt($order->resolved_shipping_charge) : __('Free') }}</span>
                         </div>
+                        @if ($order->discount_amount > 0)
+                            <div class="flex justify-between text-primary">
+                                <span>{{ __('Coupon discount') }}</span>
+                                <span>-{{ $fmt($order->discount_amount) }}</span>
+                            </div>
+                        @endif
                         <div class="flex justify-between text-[15px] font-bold border-t border-[#eee] pt-3 mt-1">
                             <span>{{ __('Total') }}</span>
                             <span>{{ $fmt($order->grand_total) }}</span>
