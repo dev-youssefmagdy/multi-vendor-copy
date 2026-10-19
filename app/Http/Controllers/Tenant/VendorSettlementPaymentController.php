@@ -30,7 +30,7 @@ use Illuminate\View\View;
  * Handles the real-money payment flow when a tenant (vendor) settles what they
  * owe the central platform for product cost + shipping on a fulfilled order.
  *
- * Flow:
+ * Flow (platform_profit owed by the vendor, see OrderProfitCalculator::vendorOwnPlatformForOrder):
  *   1. VendorPurchasePage selects a gateway & redirects here (charge)
  *   2. Controller initiates charge via the CENTRAL gateway credentials
  *   3. Gateway redirects back to success / cancel
@@ -56,14 +56,13 @@ class VendorSettlementPaymentController extends Controller
 
         $order = Order::query()
             ->where('id', $orderId)
-            ->whereNotNull('vendor_cost')
-            ->whereNull('vendor_settled_at')
+            ->where('collected_by', 'vendor')
             ->firstOrFail();
 
-        // A cancelled / refunded order owes central nothing (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
-        if (OrderProfitCalculator::isFinanciallyVoid($order)) {
+        // Void or platform-collected orders, or fully settled ones, owe the platform nothing.
+        if (OrderProfitCalculator::isFinanciallyVoid($order) || OrderProfitCalculator::vendorOwnPlatformForOrder($order) <= 0) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => __('This order was cancelled or refunded, so nothing is owed for it.')]);
+                ->withErrors(['payment' => __('Nothing is owed to the platform for this order.')]);
         }
 
         // Resolve central gateway model for fee calculation
@@ -174,7 +173,7 @@ class VendorSettlementPaymentController extends Controller
 
         $order = Order::query()
             ->where('id', $orderId)
-            ->whereNotNull('vendor_cost')
+            ->where('collected_by', 'vendor')
             ->first();
 
         if (! $order) {
@@ -244,12 +243,15 @@ class VendorSettlementPaymentController extends Controller
         $gatewayFee = (float) ($breakdown['gateway_fee'] ?? 0);
         $reference = $transactionId ?? ('manual-'.now()->timestamp);
 
-        // Mark order as settled (writes to tenant DB – already in tenant context)
+        // Record the vendor_settlement transaction (tenant DB – already in tenant context).
+        // Principal = amount paid without the gateway fee, as quoted in the breakdown.
+        $principal = isset($breakdown['amount']) ? (float) $breakdown['amount'] : ((float) ($breakdown['subtotal'] ?? 0) ?: null);
         $this->purchaseService->settle(
             $order,
             $centralGatewayModel ?? new PaymentGateway,
             $gatewayFee,
             $reference,
+            $principal,
         );
 
         // Create central settlement invoice record
@@ -263,8 +265,8 @@ class VendorSettlementPaymentController extends Controller
                 'invoice_number' => $invoiceNumber,
                 'tenant_name' => $tenant->name ?? $adminName,
                 'tenant_email' => $tenant->email ?? $adminEmail,
-                'product_cost' => $breakdown['product_cost'] ?? 0,
-                'shipping_cost' => $breakdown['shipping_cost'] ?? 0,
+                'product_cost' => $breakdown['amount'] ?? $breakdown['product_cost'] ?? 0,
+                'shipping_cost' => 0,
                 'gateway_fee' => $breakdown['gateway_fee'] ?? 0,
                 'total' => $breakdown['total'] ?? 0,
                 'gateway_code' => $centralGatewayModel?->code,

@@ -7,7 +7,6 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Mail\TenantPayoutMail;
 use App\Models\Tenant;
 use App\Models\Tenant\AdminUser as TenantAdminUser;
-use App\Models\Tenant\Order as TenantOrder;
 use App\Models\TenantPayout;
 use App\Services\Admin\TenantLedgerService;
 use App\Support\OrderPayoutLedger;
@@ -68,7 +67,7 @@ class TenantPayoutPage extends AdminPage
         }
 
         $this->invoiceNumber = TenantPayout::nextInvoiceNumber($tenant);
-        $remaining = OrderPayoutLedger::remainingTenantProfitForTenant($tenant, (float) $this->ledgerEntry->vendor_profit_total);
+        $remaining = OrderPayoutLedger::platformOwnVendorForTenant($tenant);
         $this->amount = number_format(max(0.0, $remaining), 2, '.', '');
         $this->paidAt = now()->format('Y-m-d\TH:i');
     }
@@ -77,7 +76,7 @@ class TenantPayoutPage extends AdminPage
     {
         $this->authorizePermission('billing.payouts.manage');
 
-        $remaining = OrderPayoutLedger::remainingTenantProfitForTenant($this->tenantId, (float) ($this->ledgerEntry->vendor_profit_total ?? 0));
+        $remaining = OrderPayoutLedger::platformOwnVendorForTenant($this->tenantId);
 
         $rules = [
             'invoiceNumber' => ['required', 'string', 'max:128', 'unique:tenant_payouts,invoice_number'],
@@ -117,22 +116,11 @@ class TenantPayoutPage extends AdminPage
             'paid_at' => Carbon::parse($this->paidAt),
         ]);
 
-        // Mark all unreleased central-gateway paid orders for this tenant as paid out.
+        // Release all unreleased platform-collected paid orders: one platform_payout transaction per order.
         if ($this->status === 'paid') {
             try {
-                $tenant = Tenant::query()->find($this->tenantId);
-                if ($tenant) {
-                    tenancy()->initialize($tenant);
-                    try {
-                        TenantOrder::query()
-                            ->where('paid', true)
-                            ->where('payout_released', false)
-                            ->whereNull('vendor_gateway_id')
-                            ->update(['payout_released' => true]);
-                    } finally {
-                        tenancy()->end();
-                    }
-                }
+                $released = OrderPayoutLedger::releasePayoutsForTenant($this->tenantId, $payout->invoice_number);
+                $payout->update(['orders_snapshot' => $released]);
             } catch (Throwable) {
                 // Best-effort; payout already saved.
             }

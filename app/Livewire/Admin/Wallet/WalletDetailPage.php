@@ -5,7 +5,9 @@ namespace App\Livewire\Admin\Wallet;
 use App\Livewire\Admin\Base\AdminPage;
 use App\Models\Tenant;
 use App\Models\Tenant\Order as TenantOrder;
-use App\Models\TenantPayout;
+use App\Models\PaymentGateway;
+use App\Services\Tenant\VendorPurchaseService;
+use App\Support\OrderProfitCalculator;
 use App\Models\VendorSettlement;
 use App\Services\Admin\TenantLedgerService;
 use Throwable;
@@ -84,9 +86,10 @@ class WalletDetailPage extends AdminPage
                 return;
             }
 
-            if ($order->vendor_settled_at !== null) {
+            if (OrderProfitCalculator::isFinanciallyVoid($order)
+                || OrderProfitCalculator::vendorOwnPlatformForOrder($order) <= 0) {
                 tenancy()->end();
-                $this->markError = 'This order is already marked as settled.';
+                $this->markError = 'Nothing is owed to the platform for this order (already settled, void or platform-collected).';
                 return;
             }
 
@@ -94,12 +97,10 @@ class WalletDetailPage extends AdminPage
                 ? 'PAYOUT-OFFSET-' . strtoupper(substr($this->tenantId, 0, 8)) . '-' . $order->id
                 : trim($this->markReference);
 
-            $order->forceFill([
-                // 'vendor_gateway_id' => null,
-                // 'vendor_gateway_fee' => 0,
-                'vendor_settled_at' => now(),
-                'vendor_settlement_ref' => $reference,
-            ])->save();
+            // Same settle path as the vendor's own payment: records a vendor_settlement transaction
+            // for the remaining platform share and syncs vendor_settled_* columns.
+            $this->markAmount = OrderProfitCalculator::vendorOwnPlatformForOrder($order);
+            app(VendorPurchaseService::class)->settle($order, new PaymentGateway, 0.0, $reference);
 
             tenancy()->end();
 
@@ -124,26 +125,6 @@ class WalletDetailPage extends AdminPage
                     'admin' => auth()->user()?->name ?? 'admin',
                 ],
                 'settled_at' => now(),
-            ]);
-
-            TenantPayout::create([
-                'tenant_id' => $this->tenantId,
-                'invoice_number' => TenantPayout::nextInvoiceNumber($this->tenantId),
-                'tenant_name' => $this->row['tenant_name'] ?? '',
-                'tenant_email' => $this->row['tenant_email'] ?? '',
-                'amount' => $this->markAmount,
-                'status' => 'paid',
-                'currency' => 'USD',
-                'method' => $this->markMethod === 'payout_offset' ? 'payout_offset' : 'manual',
-                'transaction_reference' => $reference,
-                'note' => trim($this->markNote),
-                'admin_id' => auth()->id(),
-                'paid_at' => now(),
-                'orders_snapshot' => [
-                    'order_id' => $this->markOrderId,
-                    'order_uuid' => $this->markOrderUuid,
-                    'amount' => $this->markAmount,
-                ],
             ]);
 
             app(\App\Services\TenantNotificationService::class)->notifyById(
