@@ -41,8 +41,8 @@
                     </svg>
                 </div>
             </div>
-            <div class="stat-value" style="color:var(--amber);font-size:18px;margin-bottom:6px;">{{ $fmt($row['tenant_owes_central'] ?? 0) }}</div>
-            <div class="stat-sub">Unsettled vendor cost on vendor-gateway paid orders</div>
+            <div class="stat-value" style="color:var(--amber);font-size:18px;margin-bottom:6px;">{{ $fmt($row['vendor_own_platform_total'] ?? 0) }}</div>
+            <div class="stat-sub">Σ vendor_own_platform: platform profit not yet settled on vendor-collected orders</div>
         </div>
 
         {{-- Central Owes Tenant --}}
@@ -55,8 +55,8 @@
                     </svg>
                 </div>
             </div>
-            <div class="stat-value" style="color:var(--cyan);font-size:18px;margin-bottom:6px;">{{ $fmt($row['central_owes_tenant'] ?? 0) }}</div>
-            <div class="stat-sub">Vendor profit on central-gateway orders minus payouts</div>
+            <div class="stat-value" style="color:var(--cyan);font-size:18px;margin-bottom:6px;">{{ $fmt($row['platform_own_vendor_total'] ?? 0) }}</div>
+            <div class="stat-sub">Σ platform_own_vendor: vendor profit not yet paid out on platform-collected orders</div>
         </div>
 
     </div>
@@ -84,10 +84,10 @@
                     @php
                         $revenueRows = [
                             ['Subtotal (items)',    '+', $fmt($row['subtotal_total'] ?? 0),      'var(--t1)', true],
+                            ['Fixed shipping',      '+', $fmt($row['fixed_shipping_total'] ?? 0), 'var(--t2)', false],
                             ['Items discount',      '−', $fmt($row['items_discount_total'] ?? 0), 'var(--red)', false],
-                            ['Order discount',      '−', $fmt($row['discount_total'] ?? 0),       'var(--red)', false],
-                            ['Items tax',           '+', $fmt($row['items_tax_total'] ?? 0),      'var(--t2)', false],
-                            ['Order tax',           '+', $fmt($row['tax_total'] ?? 0),            'var(--t2)', false],
+                            ['Coupon discount',     '−', $fmt($row['discount_total'] ?? 0),       'var(--red)', false],
+                            ['Tax',                 '+', $fmt($row['tax_total'] ?? 0),            'var(--t2)', false],
                             ['Shipping',            '+', $fmt($row['shipping_total'] ?? 0),       'var(--t2)', false],
                         ];
                     @endphp
@@ -109,12 +109,12 @@
                 <div class="eyebrow" style="margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">Profit Allocation</div>
                 <div style="display:flex;flex-direction:column;gap:6px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;background:var(--elevated);">
-                        <span style="font-size:12px;color:var(--t2);">Owner profit (commission)</span>
-                        <span style="font-size:12px;font-weight:500;color:var(--t1);">{{ $fmt($row['owner_profit_total'] ?? 0) }}</span>
+                        <span style="font-size:12px;color:var(--t2);">Platform profit</span>
+                        <span style="font-size:12px;font-weight:500;color:var(--t1);">{{ $fmt($row['platform_profit_total'] ?? 0) }}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;background:var(--elevated);">
-                        <span style="font-size:12px;color:var(--t2);">Vendor cost (catalog → central)</span>
-                        <span style="font-size:12px;font-weight:500;color:var(--t1);">{{ $fmt($row['vendor_cost_total'] ?? 0) }}</span>
+                        <span style="font-size:12px;color:var(--t2);">Vendor profit</span>
+                        <span style="font-size:12px;font-weight:500;color:var(--t1);">{{ $fmt($row['vendor_profit_total'] ?? 0) }}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:7px;background:var(--elevated);">
                         <span style="font-size:12px;color:var(--t2);">Vendor gateway fee</span>
@@ -125,22 +125,22 @@
 
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:7px;background:rgba(0,229,155,.07);border:1px solid rgba(0,229,155,.15);">
                         <div>
-                            <div style="font-size:12px;font-weight:700;color:var(--t1);">Vendor Profit Total</div>
-                            <div style="font-size:10px;color:var(--t3);">central-gw: grand_total − owner_profit</div>
+                            <div style="font-size:12px;font-weight:700;color:var(--t1);">Platform Owes Vendor</div>
+                            <div style="font-size:10px;color:var(--t3);">Σ platform_own_vendor (platform-collected orders)</div>
                         </div>
-                        <span style="font-size:13px;font-weight:800;color:var(--green);">{{ $fmt($row['vendor_profit_total'] ?? 0) }}</span>
+                        <span style="font-size:13px;font-weight:800;color:var(--green);">{{ $fmt($row['platform_own_vendor_total'] ?? 0) }}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:7px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15);">
                         <div>
-                            <div style="font-size:12px;font-weight:700;color:var(--t1);">Central Profit Total</div>
-                            <div style="font-size:10px;color:var(--t3);">vendor-gw: vendor_cost</div>
+                            <div style="font-size:12px;font-weight:700;color:var(--t1);">Vendor Owes Platform</div>
+                            <div style="font-size:10px;color:var(--t3);">Σ vendor_own_platform (vendor-collected orders)</div>
                         </div>
-                        <span style="font-size:13px;font-weight:800;color:var(--amber);">{{ $fmt($row['central_profit_total'] ?? 0) }}</span>
+                        <span style="font-size:13px;font-weight:800;color:var(--amber);">{{ $fmt($row['vendor_own_platform_total'] ?? 0) }}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 8px;border-radius:7px;background:var(--elevated);border:1px solid var(--border);">
                         <div>
                             <div style="font-size:12px;font-weight:700;color:var(--t1);">Vendor Balance</div>
-                            <div style="font-size:10px;color:var(--t3);">vendor profit − central profit</div>
+                            <div style="font-size:10px;color:var(--t3);">platform_own_vendor − vendor_own_platform</div>
                         </div>
                         <span style="font-size:13px;font-weight:800;color:{{ $balanceColor }};">{{ $fmt($row['vendor_balance'] ?? 0) }}</span>
                     </div>
@@ -194,7 +194,7 @@
                         <tr style="border-bottom:1px solid var(--border);">
                             <th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px 0;">Order ID</th>
                             <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Grand Total</th>
-                            <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Vendor Cost</th>
+                            <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Vendor Owes Platform</th>
                             <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Gateway Fee</th>
                             <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 0 8px;">Action</th>
                         </tr>
@@ -208,11 +208,11 @@
                                     </span>
                                 </td>
                                 <td style="text-align:right;padding:9px 10px;font-size:13px;font-weight:600;color:var(--t1);">{{ $fmt($o['grand_total']) }}</td>
-                                <td style="text-align:right;padding:9px 10px;font-size:12px;color:var(--amber);">{{ $fmt($o['vendor_cost']) }}</td>
+                                <td style="text-align:right;padding:9px 10px;font-size:12px;color:var(--amber);">{{ $fmt($o['vendor_own_platform']) }}</td>
                                 <td style="text-align:right;padding:9px 10px;font-size:12px;color:var(--t2);">{{ $fmt($o['vendor_gateway_fee']) }}</td>
                                 <td style="text-align:right;padding:9px 0;">
                                     <button type="button"
-                                        wire:click="openMarkPaid({{ $o['id'] }}, '{{ $o['uuid'] }}', {{ $o['vendor_cost'] }})"
+                                        wire:click="openMarkPaid({{ $o['id'] }}, '{{ $o['uuid'] }}', {{ $o['vendor_own_platform'] }})"
                                         style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:rgba(0,229,155,.1);border:1px solid rgba(0,229,155,.25);color:var(--green);cursor:pointer;white-space:nowrap;">
                                         ✓ Mark Paid
                                     </button>
@@ -253,9 +253,9 @@
                         <tr style="border-bottom:1px solid var(--border);">
                             <th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px 0;">Order ID</th>
                             <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Grand Total</th>
-                            <th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Gateway</th>
+                            <th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Collected By</th>
                             <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 10px 8px;">Vendor Profit</th>
-                            <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 0 8px;">Central Profit</th>
+                            <th style="text-align:right;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);padding:0 0 8px;">Platform Profit</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -268,17 +268,17 @@
                                 </td>
                                 <td style="text-align:right;padding:9px 10px;font-size:13px;font-weight:600;color:var(--t1);">{{ $fmt($o['grand_total']) }}</td>
                                 <td style="text-align:center;padding:9px 10px;">
-                                    @if (($o['gateway_source'] ?? 'vendor') === 'central')
+                                    @if (($o['collected_by'] ?? 'vendor') === 'platform')
                                         <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(0,229,155,.12);color:var(--green);">Central</span>
                                     @else
                                         <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(245,158,11,.12);color:var(--amber);">Vendor</span>
                                     @endif
                                 </td>
                                 <td style="text-align:right;padding:9px 10px;font-size:12px;font-weight:600;color:var(--green);">
-                                    {!! $o['vendor_profit'] > 0 ? $fmt($o['vendor_profit']) : '<span style="color:var(--t3)">—</span>' !!}
+                                    {!! ($o['vendor_profit'] ?? 0) != 0 ? $fmt($o['vendor_profit']) : '<span style="color:var(--t3)">—</span>' !!}
                                 </td>
                                 <td style="text-align:right;padding:9px 0;font-size:12px;font-weight:600;color:var(--amber);">
-                                    {!! $o['central_profit'] > 0 ? $fmt($o['central_profit']) : '<span style="color:var(--t3)">—</span>' !!}
+                                    {!! ($o['platform_profit'] ?? 0) != 0 ? $fmt($o['platform_profit']) : '<span style="color:var(--t3)">—</span>' !!}
                                 </td>
                             </tr>
                         @endforeach

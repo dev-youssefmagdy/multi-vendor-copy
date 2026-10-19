@@ -85,6 +85,7 @@ class SimplePdfRenderer
             '',
             'Financial Summary',
             sprintf('Subtotal: %s', $payload['subtotal'] ?? '0.00'),
+            sprintf('Fixed Shipping: %s', $payload['fixed_shipping'] ?? '0.00'),
             sprintf('Discount: %s', $payload['discount'] ?? '0.00'),
             sprintf('Tax: %s', $payload['tax'] ?? '0.00'),
             sprintf('Shipping: %s', $payload['shipping'] ?? '0.00'),

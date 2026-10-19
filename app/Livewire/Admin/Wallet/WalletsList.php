@@ -13,7 +13,7 @@ use Livewire\WithPagination;
  * /admin/wallets — Tenants Ledger.
  *
  * Reads its values from each tenant's orders (subtotal, discount, shipping, tax,
- * owner profit, vendor cost, vendor gateway fee) and combines them with central
+ * platform profit, vendor profit, vendor gateway fee) and combines them with central
  * vendor_settlements (tenant -> central) and tenant_payouts (central -> tenant)
  * to compute the final outstanding balances in both directions.
  */
@@ -31,11 +31,11 @@ class WalletsList extends ListPage
         return [
             'title' => 'Tenants Ledger',
             'badge' => 'Order-Driven Wallets',
-            'description' => 'Per-tenant financial ledger computed from orders. Tracks gross sales, central commission, vendor cost, gateway fees, settlements received and payouts sent.',
+            'description' => 'Per-tenant financial ledger computed from orders. Tracks gross sales, platform profit, vendor profit, gateway fees, settlements received and payouts sent.',
             'actionLabel' => 'View Reports',
             'actionUrl' => route('admin.finance.reports'),
             'tableTitle' => 'Tenant Balances',
-            'headers' => ['Tenant', 'Gross / Collected', 'Vendor Profit', 'Central Profit', 'Tenant → Central', 'Central → Tenant', 'Actions'],
+            'headers' => ['Tenant', 'Gross / Collected', 'Vendor Profit', 'Platform Profit', 'Vendor Owes Platform', 'Platform Owes Vendor', 'Actions'],
         ];
     }
 
@@ -58,29 +58,29 @@ class WalletsList extends ListPage
                     'type' => 'select',
                     'options' => [
                         '' => 'All tenants',
-                        'tenant_owes_central' => 'Tenants who owe central',
-                        'central_owes_tenant' => 'Tenants central owes',
+                        'vendor_own_platform' => 'Vendors who owe the platform',
+                        'platform_own_vendor' => 'Vendors the platform owes',
                         'settled' => 'Fully settled',
                     ]
                 ],
             ],
             'statistics' => $this->presentMetricCards([
                 ['label' => 'Gross Sales', 'value' => $totals['gross_sales'], 'format' => 'currency', 'caption' => 'Σ grand_total of every order across tenants', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Vendor Profit Total', 'value' => $totals['vendor_profit_total'], 'format' => 'currency', 'caption' => 'Σ (grand_total − owner_profit) on central-gateway paid orders — central owes this to vendors', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Tenants Owe Central', 'value' => $totals['tenants_owe_central'], 'format' => 'currency', 'caption' => 'Unsettled vendor_cost on vendor-gateway paid orders', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Central Owes Tenants', 'value' => $totals['central_owes_tenants'], 'format' => 'currency', 'caption' => 'Vendor profit on central-gateway orders not yet paid out', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Vendor Profit Total', 'value' => $totals['vendor_profit_total'], 'format' => 'currency', 'caption' => 'Σ vendor_profit on paid orders', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Tenants Owe Central', 'value' => $totals['vendor_own_platform_total'], 'format' => 'currency', 'caption' => 'Σ vendor_own_platform: platform profit not yet settled on vendor-collected orders', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Central Owes Tenants', 'value' => $totals['platform_own_vendor_total'], 'format' => 'currency', 'caption' => 'Σ platform_own_vendor: vendor profit not yet paid out on platform-collected orders', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'statisticsGridClass' => 'g-stats4',
             'rows' => collect($paginator->items())->map(fn(object $r) => [
                 '<div class="entity-title">' . e($r->store_name) . '</div><div class="entity-subtitle">' . e($r->tenant_email ?? $r->tenant_id) . '</div>',
                 '<div class="entity-title">$' . number_format($r->gross_sales, 2) . '</div><div class="entity-subtitle">$' . number_format($r->collected_sales, 2) . ' collected · ' . $r->paid_orders_count . '/' . $r->orders_count . ' paid</div>',
-                '<div class="entity-title">$' . number_format($r->vendor_profit_total, 2) . '</div><div class="entity-subtitle">central-gw: grand_total − owner_profit</div>',
-                '<div class="entity-title">$' . number_format($r->central_profit_total, 2) . '</div><div class="entity-subtitle">vendor-gw: vendor_cost · $' . number_format($r->settlements_received, 2) . ' settled</div>',
-                $r->tenant_owes_central > 0
-                ? '<strong style="color:#f59e0b;">$' . number_format($r->tenant_owes_central, 2) . '</strong><div class="entity-subtitle">' . count($r->unsettled_orders) . ' unsettled orders</div>'
+                '<div class="entity-title">$' . number_format($r->vendor_profit_total, 2) . '</div><div class="entity-subtitle">Σ vendor_profit</div>',
+                '<div class="entity-title">$' . number_format($r->platform_profit_total, 2) . '</div><div class="entity-subtitle">Σ platform_profit · $' . number_format($r->settlements_received, 2) . ' settled</div>',
+                $r->vendor_own_platform_total > 0
+                ? '<strong style="color:#f59e0b;">$' . number_format($r->vendor_own_platform_total, 2) . '</strong><div class="entity-subtitle">' . count($r->unsettled_orders) . ' unsettled orders</div>'
                 : '<span class="entity-subtitle">$0.00</span>',
-                $r->central_owes_tenant > 0
-                ? '<strong style="color:#f59e0b;">$' . number_format($r->central_owes_tenant, 2) . '</strong><div class="entity-subtitle">$' . number_format($r->payouts_sent, 2) . ' paid out</div>'
+                $r->platform_own_vendor_total > 0
+                ? '<strong style="color:#f59e0b;">$' . number_format($r->platform_own_vendor_total, 2) . '</strong><div class="entity-subtitle">$' . number_format($r->payouts_sent, 2) . ' paid out</div>'
                 : '<span class="entity-subtitle">$0.00</span>',
                 $this->actionsCell($r),
             ])->all(),
@@ -120,13 +120,13 @@ class WalletsList extends ListPage
                 }
 
                 return match ($direction) {
-                    'tenant_owes_central' => $r->tenant_owes_central > 0,
-                    'central_owes_tenant' => $r->central_owes_tenant > 0,
-                    'settled' => $r->tenant_owes_central <= 0 && $r->central_owes_tenant <= 0,
+                    'vendor_own_platform' => $r->vendor_own_platform_total > 0,
+                    'platform_own_vendor' => $r->platform_own_vendor_total > 0,
+                    'settled' => $r->vendor_own_platform_total <= 0 && $r->platform_own_vendor_total <= 0,
                     default => true,
                 };
             })
-            ->sortByDesc(fn(object $r) => $r->central_owes_tenant + $r->tenant_owes_central)
+            ->sortByDesc(fn(object $r) => $r->platform_own_vendor_total + $r->vendor_own_platform_total)
             ->values();
     }
 
@@ -170,9 +170,9 @@ class WalletsList extends ListPage
             $r->orders_count,
             $r->paid_orders_count,
             number_format((float) $r->vendor_profit_total, 2),
-            number_format((float) $r->central_profit_total, 2),
-            number_format((float) $r->tenant_owes_central, 2),
-            number_format((float) $r->central_owes_tenant, 2),
+            number_format((float) $r->platform_profit_total, 2),
+            number_format((float) $r->vendor_own_platform_total, 2),
+            number_format((float) $r->platform_own_vendor_total, 2),
             number_format((float) $r->net_payable_to_tenant, 2),
         ])->all();
     }

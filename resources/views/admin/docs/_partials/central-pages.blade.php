@@ -93,9 +93,9 @@
 <h3>Calculations performed in admin pages</h3>
 <ul>
     <li><strong>Tenants Ledger</strong> (<code>/admin/wallets</code>): see <em>Finance & Calculations</em>.</li>
-    <li><strong>Orders Report</strong>: aggregates per-day grand_total and counts. Owner profit uses the
-        effective owner profit (vendor_cost when a vendor gateway was used, otherwise owner_profit), not the
-        raw owner_profit column. Source: <code>App\Livewire\Admin\Order\OrdersReportPage</code> via
+    <li><strong>Orders Report</strong>: aggregates per-day grand_total and counts. Platform profit and vendor profit come
+        from the order's <code>platform_profit</code> / <code>vendor_profit</code> via
+        <code>OrderProfitCalculator</code> (void orders count as 0). Source: <code>App\Livewire\Admin\Order\OrdersReportPage</code> via
         <code>App\Support\OrderProfitCalculator</code>.</li>
     <li><strong>Plans / Registered Users</strong>: subscription revenue = <code>Σ subscriptions.price</code> for active
         plans across tenants.</li>

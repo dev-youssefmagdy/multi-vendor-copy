@@ -73,6 +73,7 @@ class TenantAdminAggregateService
                     'items.variant.centralVariant.options.translations.language',
                     'items.variant.centralVariant.files',
                     'paymentGateway',
+                    'transactions',
                     'activities',
                 ])
                 ->get()
@@ -119,7 +120,7 @@ class TenantAdminAggregateService
 
         return $this->walletsCache = $this->collectAcrossTenants(function (Tenant $tenant) {
             $transactions = TenantTransaction::query()->with('model')->get();
-            $orders = TenantOrder::query()->with('items')->get();
+            $orders = TenantOrder::query()->with(['items', 'transactions'])->get();
             $subscriptions = Subscription::query()->with('transaction')->latest()->get();
 
             $credits = (float) $transactions->where('type', 'credit')->sum('amount');
@@ -129,12 +130,12 @@ class TenantAdminAggregateService
             $grossSales = (float) $orders->sum(fn (TenantOrder $order) => OrderProfitCalculator::netOrderTotal($order));
             $paidOrders = $orders->filter(fn (TenantOrder $order) => $order->paid && ! OrderProfitCalculator::isFinanciallyVoid($order));
             $collectedSales = (float) $paidOrders->sum(fn (TenantOrder $order) => OrderProfitCalculator::netOrderTotal($order));
-            $ownerProfit = (float) $paidOrders->sum(fn (TenantOrder $order) => OrderProfitCalculator::effectiveOwnerProfitForOrder($order));
-            $vendorNetBalance = (float) $paidOrders->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
+            $platformProfit = (float) $paidOrders->sum(fn (TenantOrder $order) => OrderProfitCalculator::platformProfitForOrder($order));
+            $vendorNetBalance = (float) $paidOrders->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::vendorProfitForOrder($order)));
             $pendingBalance = (float) $orders
                 ->where('paid', false)
                 ->reject(fn (TenantOrder $order) => OrderProfitCalculator::isFinanciallyVoid($order))
-                ->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::effectiveTenantProfitForOrder($order)));
+                ->sum(fn (TenantOrder $order) => max(0, OrderProfitCalculator::vendorProfitForOrder($order)));
 
             $currency = TenantCurrency::query()->where('is_default', true)->value('code')
                 ?? TenantCurrency::query()->orderByDesc('is_active')->value('code')
@@ -150,7 +151,7 @@ class TenantAdminAggregateService
                     'pending_balance' => round($pendingBalance, 2),
                     'gross_sales' => round($grossSales, 2),
                     'collected_sales' => round($collectedSales, 2),
-                    'owner_profit' => round($ownerProfit, 2),
+                    'platform_profit' => round($platformProfit, 2),
                     'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $this->humanizeEnum($subscription->status) === 'Active')->count(),
                     'subscription_revenue' => round((float) $subscriptions->sum('price'), 2),
                     'transactions_count' => $transactions->count(),
@@ -288,18 +289,21 @@ class TenantAdminAggregateService
             'subtotal' => $financials['subtotal'],
             'items_discount' => $financials['items_discount'],
             'discount_percentage' => (float) ($order->discount_percentage ?? 0),
-            'discount_amount' => $financials['discount'],
+            'discount_amount' => $financials['coupon_discount'],
             'items_tax' => $financials['items_tax'],
             'tax_percentage' => (float) ($order->tax_percentage ?? 0),
             'tax_amount' => $financials['tax'],
-            'shipping_charge' => $financials['shipping_total'],
-            'owner_profit' => $financials['owner_profit'],
-            'vendor_cost' => $order->vendor_cost,
-            'vendor_net_total' => $financials['vendor_net_total'],
-            'tenant_own_central' => $financials['tenant_own_central'],
-            'central_own_tenant' => $financials['central_own_tenant'],
-            'remaining_owner_profit' => $financials['remaining_owner_profit'],
-            'remaining_tenant_profit' => $financials['remaining_tenant_profit'],
+            'shipping_charge' => $financials['shipping_charge'],
+            'items_fixed_shipping' => $financials['items_fixed_shipping'],
+            'items_grand_total' => $financials['items_grand_total'],
+            'coupon_discount' => $financials['coupon_discount'],
+            'collected_by' => $order->collected_by,
+            'platform_profit' => $financials['platform_profit'],
+            'vendor_profit' => $financials['vendor_profit'],
+            'vendor_own_platform' => $financials['vendor_own_platform'],
+            'platform_own_vendor' => $financials['platform_own_vendor'],
+            'vendor_settlements_paid' => $financials['vendor_settlements_paid'],
+            'platform_payouts_paid' => $financials['platform_payouts_paid'],
             'total_amount' => $financials['grand_total'],
             'refunded_amount' => $financials['refunded_amount'],
             'net_amount' => $financials['net_amount'],
@@ -328,11 +332,17 @@ class TenantAdminAggregateService
                     'variant' => $item->variant?->title ?: $variantOptions,
                     'image_url' => $imageUrl,
                     'qty' => (int) $item->qty,
+                    'cost' => (float) $item->cost,
+                    'profit_amount' => (float) $item->profit_amount,
                     'price' => (float) $item->price,
+                    'sub_total' => (float) $item->sub_total,
+                    'fixed_shipping' => (float) $item->fixed_shipping,
                     'discount' => (float) $item->discount,
+                    'discount_source' => $item->discount_source,
                     'tax' => (float) $item->tax,
-                    'shipping' => (float) $item->shipping_fee,
-                    'line_total' => round((float) $item->sub_total - (float) $item->discount + (float) $item->tax + (float) $item->shipping_fee, 2),
+                    'shipping_fee' => (float) $item->shipping_fee,
+                    'weight' => (float) $item->weight,
+                    'grand_total' => (float) $item->grand_total,
                 ];
             })->values()->all(),
             'activities' => $order->activities->map(fn ($activity) => [
@@ -369,7 +379,7 @@ class TenantAdminAggregateService
 
         // For own-gateway orders (tenant collected payment directly), the tenant
         // owes central their product/shipping cost. Show Pending Payment until settled.
-        if (! $isCentralGateway && (float) ($order->vendor_cost ?? 0) > 0 && $order->vendor_settled_at === null) {
+        if (! $isCentralGateway && OrderProfitCalculator::platformShareDueFromVendor($order) > 0 && OrderProfitCalculator::vendorOwnPlatformForOrder($order) > 0) {
             return OrderPaymentStatus::PendingPayment;
         }
 
@@ -380,20 +390,22 @@ class TenantAdminAggregateService
     {
         return [
             'subtotal' => (float) $order->subtotal,
+            'items_fixed_shipping' => (float) $order->items_fixed_shipping,
             'items_discount' => (float) $order->items_discount,
-            'discount' => (float) $order->discount_amount,
             'items_tax' => (float) $order->items_tax,
+            'items_grand_total' => (float) $order->items_grand_total,
+            'shipping_charge' => (float) $order->resolved_shipping_charge,
+            'coupon_discount' => (float) $order->discount_amount,
             'tax' => (float) $order->tax_amount,
-            'shipping_total' => (float) $order->resolved_shipping_charge,
             'grand_total' => (float) $order->grand_total,
             'refunded_amount' => round((float) ($order->refunded_amount ?? 0), 2),
             'net_amount' => OrderProfitCalculator::netOrderTotal($order),
-            'owner_profit' => OrderProfitCalculator::effectiveOwnerProfitForOrder($order),
-            'vendor_net_total' => round(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2),
-            'tenant_own_central' => round(OrderProfitCalculator::tenantOwnCentralForOrder($order), 2),
-            'central_own_tenant' => round(OrderProfitCalculator::centralOwnTenantForOrder($order), 2),
-            'remaining_owner_profit' => round(OrderProfitCalculator::remainingTenantOwnCentralForOrder($order), 2),
-            'remaining_tenant_profit' => round(OrderProfitCalculator::remainingCentralOwnTenantForOrder($order), 2),
+            'platform_profit' => OrderProfitCalculator::platformProfitForOrder($order),
+            'vendor_profit' => OrderProfitCalculator::vendorProfitForOrder($order),
+            'vendor_own_platform' => OrderProfitCalculator::vendorOwnPlatformForOrder($order),
+            'platform_own_vendor' => OrderProfitCalculator::platformOwnVendorForOrder($order),
+            'vendor_settlements_paid' => (float) $order->vendor_settlements_paid,
+            'platform_payouts_paid' => (float) $order->platform_payouts_paid,
         ];
     }
 

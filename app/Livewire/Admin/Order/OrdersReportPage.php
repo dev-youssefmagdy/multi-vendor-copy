@@ -12,10 +12,10 @@ class OrdersReportPage extends ContentPage
         return [
             'title' => 'Orders Report',
             'badge' => 'Marketplace',
-            'description' => 'Cross-tenant sales reporting, gateway mix, and owner-profit visibility built directly from tenant orders.',
+            'description' => 'Cross-tenant sales reporting, gateway mix, and platform-profit visibility built directly from tenant orders.',
             'contentIntro' => 'This report summarizes tenant-store orders into a central marketplace view for sales, payment, and profitability tracking.',
             'bullets' => [
-                'Compare gross sales and owner profit over time.',
+                'Compare gross sales and platform profit over time.',
                 'See how order lifecycle and gateway distribution are shifting across tenants.',
                 'Use the top-tenant tables to spot the stores driving marketplace volume.',
             ],

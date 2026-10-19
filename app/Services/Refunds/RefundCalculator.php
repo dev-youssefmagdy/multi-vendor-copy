@@ -22,12 +22,12 @@ use InvalidArgumentException;
 class RefundCalculator
 {
     /**
-     * Full refund of what is left on a cancelled order: items = subtotal − order discount
-     * + order tax, shipping = shipping charge, no fee; amount = grand_total − refunded_amount.
+     * Full refund of what is left on a cancelled order: items = items_grand_total − coupon discount
+     * (tax and fixed shipping already inside), shipping = shipping charge, no fee; amount = grand_total − refunded_amount.
      */
     public function forCancellation(Order $order): RefundBreakdown
     {
-        $items = round($order->subtotal - $order->discount_amount + $order->tax_amount, 2);
+        $items = round($order->items_grand_total - $order->discount_amount, 2);
         $shipping = round($order->resolved_shipping_charge, 2);
         $remaining = $order->remainingRefundable();
         $amount = $remaining;

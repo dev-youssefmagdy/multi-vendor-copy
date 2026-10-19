@@ -77,46 +77,38 @@
         <section class="details-panel">
             <div class="details-header">
                 <h4 class="panel-title">Financial Breakdown</h4>
-                <p class="panel-copy">Item-level and order-level totals recalculated from tenant order data.</p>
+                <p class="panel-copy">Items grand total + shipping − coupon = order grand total, then the platform / vendor split.</p>
             </div>
             <div class="details-list">
-                <div class="details-kv"><span class="details-label">Subtotal</span><span
-                        class="details-value">${{ number_format((float) ($financials['subtotal'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Items Grand Total</span><span
+                        class="details-value">${{ number_format((float) ($financials['items_grand_total'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Item Discounts</span><span
-                        class="details-value">${{ number_format((float) ($financials['items_discount'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Shipping Charge</span><span
+                        class="details-value">${{ number_format((float) ($financials['shipping_charge'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Order Discount</span><span
-                        class="details-value">${{ number_format((float) ($financials['discount'] ?? 0), 2) }}</span>
-                </div>
-                <div class="details-kv"><span class="details-label">Tax</span><span
-                        class="details-value">${{ number_format((float) (($financials['items_tax'] ?? 0) + ($financials['tax'] ?? 0)), 2) }}</span>
-                </div>
-                <div class="details-kv"><span class="details-label">Shipping</span><span
-                        class="details-value">${{ number_format((float) ($financials['shipping_total'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Coupon Discount</span><span
+                        class="details-value">${{ number_format((float) ($financials['coupon_discount'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Grand Total</span><span
                         class="details-value">${{ number_format((float) ($financials['grand_total'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Owner Profit</span><span
-                        class="details-value">${{ number_format((float) ($financials['owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['platform_profit'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Tenant Net</span><span
-                        class="details-value">${{ number_format((float) ($financials['vendor_net_total'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Owes Platform</span><span
+                        class="details-value" style="color:#f59e0b;">${{ number_format((float) ($financials['vendor_own_platform'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">TenantOwnCentral</span><span
-                        class="details-value">${{ number_format((float) ($financials['tenant_own_central'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['vendor_profit'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">CentralOwnTenant</span><span
-                        class="details-value">${{ number_format((float) ($financials['central_own_tenant'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Owes Vendor</span><span
+                        class="details-value" style="color:#22c55e;">${{ number_format((float) ($financials['platform_own_vendor'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">RemainingOwnerProfit</span><span
-                        class="details-value"
-                        style="color:#f59e0b;">${{ number_format((float) ($financials['remaining_owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Settlements Paid</span><span
+                        class="details-value">${{ number_format((float) ($financials['vendor_settlements_paid'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">RemainingTenantProfit</span><span
-                        class="details-value"
-                        style="color:#22c55e;">${{ number_format((float) ($financials['remaining_tenant_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Payouts Paid</span><span
+                        class="details-value">${{ number_format((float) ($financials['platform_payouts_paid'] ?? 0), 2) }}</span>
                 </div>
             </div>
         </section>
@@ -132,11 +124,16 @@
                         <tr>
                             <th>Item</th>
                             <th>Qty</th>
+                            <th>Cost</th>
+                            <th>Profit</th>
                             <th>Price</th>
+                            <th>Sub Total</th>
+                            <th>Fixed Shipping</th>
                             <th>Discount</th>
                             <th>Tax</th>
-                            <th>Shipping</th>
-                            <th>Total</th>
+                            <th>Shipping Fee</th>
+                            <th>Weight</th>
+                            <th>Grand Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,15 +146,20 @@
                                     @endif
                                 </td>
                                 <td>{{ $item['qty'] ?? 0 }}</td>
+                                <td>${{ number_format((float) ($item['cost'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['profit_amount'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['price'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['sub_total'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['fixed_shipping'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['discount'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['tax'] ?? 0), 2) }}</td>
-                                <td>${{ number_format((float) ($item['shipping'] ?? 0), 2) }}</td>
-                                <td>${{ number_format((float) ($item['line_total'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['shipping_fee'] ?? 0), 2) }}</td>
+                                <td>{{ number_format((float) ($item['weight'] ?? 0), 3) }}</td>
+                                <td>${{ number_format((float) ($item['grand_total'] ?? 0), 2) }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7">
+                                <td colspan="12">
                                     <div class="json-empty">No line items were found for this marketplace order.</div>
                                 </td>
                             </tr>

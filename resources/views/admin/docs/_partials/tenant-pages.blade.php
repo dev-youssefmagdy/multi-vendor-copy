@@ -42,14 +42,17 @@
 <h3>Key tenant-side calculations</h3>
 <ul>
     <li><strong>Cart subtotal</strong> =
-        <code>Σ (item.price × qty − item.discount + item.tax + item.shipping_fee)</code></li>
+        <code>items_grand_total = Σ item.grand_total</code>, where
+        <code>item.grand_total = sub_total + fixed_shipping − discount + tax + shipping_fee</code> and
+        <code>sub_total = price × qty</code>, <code>price = cost + profit_amount</code></li>
     <li><strong>Order grand_total</strong> =
-        <code>subtotal − items_discount − discount_amount + items_tax + tax_amount + shipping_charge</code></li>
-    <li><strong>owner_profit</strong> = central commission, snapshotted on the order from product/plan rules</li>
-    <li><strong>vendor_cost</strong> = <code>Σ items.real_price × qty</code> at order time (price tenant owes central)
-    </li>
+        <code>items_grand_total + shipping_charge − coupon_discount</code></li>
+    <li><strong>platform_profit</strong> = Σ (cost × qty + fixed_shipping − central-owned flash discount) + shipping_charge + tax
+        − central-owned coupon discount, snapshotted on the order</li>
+    <li><strong>vendor_profit</strong> = Σ (profit_amount × qty − vendor-owned flash discount) − vendor-owned coupon
+        discount, snapshotted on the order (platform_profit + vendor_profit = grand_total)</li>
     <li><strong>vendor_gateway_fee</strong> = fixed + percentage of total due to the gateway, captured at settlement
         time</li>
     <li><strong>Vendor Purchase page</strong> (<code>/admin/finance/vendor-purchases</code>) lists all paid orders with
-        vendor_cost > 0 and links to the dedicated settle page.</li>
+        vendor_own_platform > 0 and links to the dedicated settle page.</li>
 </ul>
