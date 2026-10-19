@@ -243,8 +243,11 @@ class OrderPayoutLedger
     /** Σ principal (product_cost) of the paid Settlement Payments of one tenant order. */
     public static function vendorPaymentsForOrder(int $orderId): float
     {
+        // Resolve the tenant id BEFORE switching to the central context (tenant() is empty inside it).
+        $tenantId = (string) tenant('id');
+
         return (float) self::central(fn () => VendorSettlement::query()
-            ->where('tenant_id', (string) tenant('id'))
+            ->where('tenant_id', $tenantId)
             ->where('order_id', $orderId)
             ->whereIn('status', ['paid', 'completed'])
             ->sum('product_cost'));
