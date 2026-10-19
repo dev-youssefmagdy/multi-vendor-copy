@@ -315,7 +315,7 @@ class CheckoutPage extends Component
         }
 
         $repo = app(StorefrontRepository::class);
-        $cartTotal = $repo->cartTotal($this->resolveShippingCountryId());
+        $cartTotal = $repo->cartTotal();
 
         if ($coupon->minimum_spend !== null && $cartTotal < (float) $coupon->minimum_spend) {
             $currency = $repo->currentCurrency();
@@ -377,7 +377,7 @@ class CheckoutPage extends Component
         ]);
 
         $repo = app(StorefrontRepository::class);
-        $cartItems = $repo->cartItems($this->resolveShippingCountryId());
+        $cartItems = $repo->cartItems();
 
         if ($cartItems === []) {
             $this->toast(__('Your cart is empty.'), 'error');
@@ -487,8 +487,8 @@ class CheckoutPage extends Component
     {
         $repo = app(StorefrontRepository::class);
         $countryId = $this->resolveShippingCountryId();
-        $cartItems = $repo->cartItems($countryId);
-        $cartTotal = $repo->cartTotal($countryId);
+        $cartItems = $repo->cartItems();
+        $cartTotal = $repo->cartTotal();
         $sharedData = $this->sharedData();
 
         // ── Currency helpers ──────────────────────────────────────────────────

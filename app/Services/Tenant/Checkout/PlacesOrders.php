@@ -95,7 +95,7 @@ class PlacesOrders
         $shippingCountryId = $this->resolveShippingCountryId($shippingAddressId, $shippingCountryIdInline);
 
         // Re-price the cart for the shipping country so persisted lines match what the customer saw.
-        $cartItems = $repo->cartItems($shippingCountryId);
+        $cartItems = $repo->cartItems();
 
         $appliedCoupon = $couponCode
             ? Coupon::query()->where('code', $couponCode)->first()
