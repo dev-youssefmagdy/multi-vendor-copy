@@ -16,6 +16,7 @@ class TicketDetail extends AdminPage
     public array $ticket = [];
     public string $reply = '';
     public string $statusSelection = '';
+    public string $prioritySelection = '';
 
     public function mount(int $ticketId): void
     {
@@ -33,6 +34,7 @@ class TicketDetail extends AdminPage
 
         $this->ticket = $this->presentTicket($ticket);
         $this->statusSelection = $ticket->status;
+        $this->prioritySelection = $ticket->priority;
     }
 
     public function sendReply(TenantNotificationService $notificationService): void
@@ -65,14 +67,19 @@ class TicketDetail extends AdminPage
             ['ticket_id' => $ticket->id]
         );
 
-        event(new SupportTicketMessageSent(
-            ticketId: $ticket->id,
-            tenantId: $ticket->tenant_id,
-            senderType: 'admin',
-            senderName: $senderName,
-            body: $this->reply,
-            sentAt: now()->toIso8601String(),
-        ));
+        try {
+            event(new SupportTicketMessageSent(
+                ticketId: $ticket->id,
+                tenantId: $ticket->tenant_id,
+                senderType: 'admin',
+                senderName: $senderName,
+                body: $this->reply,
+                sentAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable $e) {
+            // Realtime push is best-effort: the message is already saved, so a down Reverb server must not fail the request.
+            report($e);
+        }
 
         $this->ticket = $this->presentTicket($ticket->fresh('messages'));
         $this->reply = '';
@@ -83,13 +90,18 @@ class TicketDetail extends AdminPage
     {
         $this->authorizePermission('support.tickets.manage');
 
-        $this->validate(['statusSelection' => ['required', 'string', 'in:' . implode(',', array_keys(SupportTicket::statusOptions()))]]);
+        $this->validate([
+            'statusSelection' => ['required', 'string', 'in:' . implode(',', array_keys(SupportTicket::statusOptions()))],
+            'prioritySelection' => ['required', 'string', 'in:' . implode(',', array_keys(SupportTicket::priorityOptions()))],
+        ]);
 
         $ticket = SupportTicket::find($this->ticketId);
         abort_if(!$ticket, 404);
 
-        $ticket->update(['status' => $this->statusSelection]);
+        $statusChanged = $ticket->status !== $this->statusSelection;
+        $ticket->update(['status' => $this->statusSelection, 'priority' => $this->prioritySelection]);
 
+        if ($statusChanged) {
         $notificationService->notifyById(
             $ticket->tenant_id,
             'support_ticket',
@@ -97,9 +109,10 @@ class TicketDetail extends AdminPage
             "Your ticket \"{$ticket->subject}\" is now " . (SupportTicket::statusOptions()[$this->statusSelection] ?? $this->statusSelection),
             ['ticket_id' => $ticket->id]
         );
+        }
 
         $this->ticket = $this->presentTicket($ticket->fresh('messages'));
-        $this->toast('Ticket status updated.');
+        $this->toast('Ticket updated.');
     }
 
     public function refreshTicket(): void

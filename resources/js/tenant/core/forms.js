@@ -47,7 +47,23 @@ export class TenantForm {
         this.initialData = new FormData(form);
         this.abortController = null;
 
+        // Opt-in (data-gate-submit): submit stays disabled until the validate endpoint answers 200.
+        this.gated = form.dataset.gateSubmit !== undefined && !!form.dataset.validateUrl;
+        this.valid = !this.gated;
+
         this.bind();
+
+        if (this.gated) {
+            this.setSubmitEnabled(false);
+            this.validate({ only: this.touched });
+        }
+    }
+
+    setSubmitEnabled(enabled) {
+        this.form.querySelectorAll('[type="submit"]').forEach((btn) => {
+            btn.disabled = !enabled;
+            btn.setAttribute('aria-disabled', String(!enabled));
+        });
     }
 
     static for(form) {
@@ -76,8 +92,20 @@ export class TenantForm {
             }
         });
 
+        if (this.gated) {
+            const gatedValidate = debounce(() => this.validate({ only: this.touched }), 300);
+            this.form.addEventListener('input', () => {
+                this.valid = false;
+                this.setSubmitEnabled(false);
+                gatedValidate();
+            });
+        }
+
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
+            if (this.gated && !this.valid) {
+                return;
+            }
             this.submit();
         });
     }
@@ -122,7 +150,17 @@ export class TenantForm {
 
             const keys = only ? Array.from(only) : [];
             keys.forEach((key) => this.clearFieldError(key));
+
+            if (this.gated) {
+                this.valid = true;
+                this.setSubmitEnabled(true);
+            }
         } catch (error) {
+            if (this.gated && error?.status) {
+                this.valid = false;
+                this.setSubmitEnabled(false);
+            }
+
             if (error?.status === 422) {
                 const errors = error.errors || {};
                 const keys = only ? Array.from(only) : Object.keys(errors);
@@ -203,7 +241,7 @@ export class TenantForm {
             emit('tenant:form:error', { form: this.form, error });
         } finally {
             submitButtons.forEach((btn) => {
-                btn.disabled = false;
+                btn.disabled = this.gated && !this.valid;
                 btn.classList.remove('is-loading');
             });
             this.form.classList.remove('is-loading');

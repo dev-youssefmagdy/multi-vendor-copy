@@ -25,6 +25,10 @@
     color: var(--red);
 }
 
+.field-error[hidden] {
+    display: none;
+}
+
 .sr-only-focusable:not(:focus):not(:focus-within) {
     position: absolute;
     width: 1px;
