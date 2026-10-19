@@ -6,7 +6,7 @@
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[3px_4px] lg:p-[5px_6.5px]">
       <div class="flex w-full justify-between items-start">
     
-        <button type="button" aria-label="{{ __('Add to favorites') }}" class="flex items-center justify-center w-[20px] h-[20px] lg:w-[35px] lg:h-[35px] p-[5px] bg-white rounded-full shadow">
+        <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}' type="button" aria-label="{{ __('Add to favorites') }}" class="flex items-center justify-center w-[20px] h-[20px] lg:w-[35px] lg:h-[35px] p-[5px] bg-white rounded-full shadow">
           <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[12px] lg:size-[21px]" alt="" />
         </button>
             <span

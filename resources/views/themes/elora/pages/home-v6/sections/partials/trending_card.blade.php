@@ -8,7 +8,7 @@
       style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
       >{{ $p['badge'] ?? '' }}</span
     >
-    <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[3.77px] lg:top-[6.358px] start-[3.77px] lg:start-[6.358px] flex items-center justify-center size-[20.11px] lg:size-[33.91px] bg-white rounded-full p-[5.03px] lg:p-[8.477px] shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow-[0px_4.238px_4.238px_rgba(0,0,0,0.15)]">
+    <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}' type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[3.77px] lg:top-[6.358px] start-[3.77px] lg:start-[6.358px] flex items-center justify-center size-[20.11px] lg:size-[33.91px] bg-white rounded-full p-[5.03px] lg:p-[8.477px] shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow-[0px_4.238px_4.238px_rgba(0,0,0,0.15)]">
       <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[12.57px] lg:size-[21.19px]" alt="" />
     </button>
     <div class="absolute bottom-[3.77px] lg:bottom-[5.298px] end-[3.77px] lg:end-[6.358px] flex items-center justify-center w-[35.83px] h-[28.29px] lg:w-[60.4px] lg:h-[47.68px] bg-[var(--color-bg-main)] rounded-[10.057px] lg:rounded-[16.954px] px-[7.543px] lg:px-[12.715px] py-[2.514px] lg:py-[4.238px] shadow">

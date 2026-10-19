@@ -2,7 +2,7 @@
 <a href="{{ $p['url'] ?? '#' }}" class="flex gap-[3px] lg:gap-[5px] rounded-[6px] lg:rounded-[10px] overflow-hidden h-full lg:h-[148px] no-underline" style="background:var(--color-bg-main)">
   <div class="relative w-[43%] lg:w-[204px] lg:h-[148px] shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
-    <button
+    <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
       type="button"
       aria-label="{{ __('Add to favorites') }}"
       class="flex absolute top-[3.77px] lg:top-1.5 start-[3.77px] lg:start-1.5 items-center justify-center w-[20.11px] h-[20.11px] lg:w-8.75 lg:h-8.75 p-[5.03px] lg:p-1.25 bg-white rounded-full shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow"

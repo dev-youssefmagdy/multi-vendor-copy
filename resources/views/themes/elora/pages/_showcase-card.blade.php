@@ -83,7 +83,8 @@ $badge optional ribbon arrow label (top-left of image)
             <span class="badge badge-new">{{ __($ribbonBadge) }}</span>
         @endif
 
-        <button type="button" onclick="event.preventDefault()"
+        <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"
+            data-fav='{{ $product->storefrontFavData($currentCurrency ?? null) }}' aria-label="{{ __('Add to favorites') }}"
             class="heart-btn absolute top-2 left-2 bg-white rounded-full w-7 h-7 flex items-center justify-center shadow-md">
             <svg class="w-3.5 h-3.5" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
                 <path

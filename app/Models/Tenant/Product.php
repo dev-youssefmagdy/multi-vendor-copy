@@ -344,6 +344,29 @@ class Product extends Model
     }
 
     /**
+     * JSON payload stored in a storefront heart button's `data-fav` attribute
+     * (HTML-safe, consumed by the favorites toggle scripts).
+     */
+    public function storefrontFavData($currentCurrency = null): string
+    {
+        $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
+        $pricing = $this->storefrontPricing();
+        $hasDiscount = (bool) $pricing['has_discount'];
+
+        return json_encode([
+            'slug' => $this->slug,
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'price' => round((float) $pricing['current_price'] * $rate, 2),
+            'old_price' => $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null,
+            'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+            'rating' => (float) ($this->average_rating ?? 0),
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? null,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'added' => time(),
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
      * Maps this product into the plain array shape expected by the elora-v4
      * ("Bold Edition") home page product card partials.
      */

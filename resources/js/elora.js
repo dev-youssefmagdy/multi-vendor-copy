@@ -341,8 +341,16 @@ tailwind.config = {
 })();
 
 // ── Favorites: heart toggle ──────────────────────────────────────────────────
+// Shared by every elora home variant / card. Any `button[data-fav]` heart is
+// toggled by eloraHeartToggle(); the product page has its own (#elora-fav-btn).
 (function () {
     const FAV_KEY = 'elora_favorites';
+    const ACTIVE_COLOR = '#FF4D00';
+    const FILLED_HEART = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="' + ACTIVE_COLOR + '" stroke="' + ACTIVE_COLOR + '" stroke-width="1.5" stroke-linejoin="round">' +
+        '<path d="M12.62 20.81c-.34.12-.9.12-1.24 0C8.48 19.82 2 15.69 2 8.69 2 5.6 4.49 3.1 7.56 3.1c1.82 0 3.43.88 4.44 2.24 1.01-1.36 2.63-2.24 4.44-2.24C19.51 3.1 22 5.6 22 8.69c0 7-6.48 11.13-9.38 12.12Z"/></svg>'
+    );
+    const HEART_SELECTOR = 'button[data-fav]:not(#elora-fav-btn):not(.souqify-fav-btn)';
 
     function getFavs() {
         try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }
@@ -350,19 +358,39 @@ tailwind.config = {
     function saveFavs(favs) {
         localStorage.setItem(FAV_KEY, JSON.stringify(favs));
     }
+    function slugOf(btn) {
+        try { return JSON.parse(btn.dataset.fav || '{}').slug || null; } catch { return null; }
+    }
 
     function applyHeartState(btn, active) {
+        btn.classList.toggle('active', active);
+        btn.classList.toggle('is-favorited', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+
         var svg = btn.querySelector('svg');
         var path = svg && svg.querySelector('path');
-        if (active) {
-            btn.classList.add('active');
-            if (svg) { svg.setAttribute('fill', '#FF4D00'); svg.setAttribute('stroke', '#FF4D00'); }
-            if (path) path.setAttribute('fill', '#FF4D00');
-        } else {
-            btn.classList.remove('active');
-            if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', '#171717'); }
-            if (path) path.setAttribute('fill', 'none');
+        if (svg) {
+            svg.setAttribute('fill', active ? ACTIVE_COLOR : 'none');
+            svg.setAttribute('stroke', active ? ACTIVE_COLOR : '#171717');
+            if (path) path.setAttribute('fill', active ? ACTIVE_COLOR : 'none');
         }
+
+        var img = btn.querySelector('img');
+        if (img) {
+            if (active) {
+                if (img.dataset.origSrc === undefined) img.dataset.origSrc = img.getAttribute('src') || '';
+                img.style.filter = '';
+                img.setAttribute('src', FILLED_HEART);
+            } else if (img.dataset.origSrc !== undefined) {
+                img.setAttribute('src', img.dataset.origSrc);
+            }
+        }
+    }
+
+    function toast(message, type) {
+        if (typeof window.showStorefrontToast !== 'function') return;
+        var t = typeof window.trans === 'function' ? window.trans : function (x) { return x; };
+        window.showStorefrontToast(t(message), type);
     }
 
     window.eloraHeartToggle = function (btn) {
@@ -375,30 +403,27 @@ tailwind.config = {
         var adding = idx < 0;
 
         if (adding) {
-            data.added = Date.now();
-            favs.push(data);
+            data.added = Math.floor(Date.now() / 1000);
+            favs.unshift(data);
         } else {
             favs.splice(idx, 1);
         }
         saveFavs(favs);
 
         // Sync all buttons for this product on the page
-        document.querySelectorAll('.heart-btn[data-fav]').forEach(function (b) {
-            try {
-                var d = JSON.parse(b.dataset.fav || '{}');
-                if (d.slug === data.slug) applyHeartState(b, adding);
-            } catch { }
+        document.querySelectorAll(HEART_SELECTOR).forEach(function (b) {
+            if (slugOf(b) === data.slug) applyHeartState(b, adding);
         });
+
+        toast(adding ? 'Added to favorites!' : 'Removed from favorites.', adding ? 'success' : 'info');
     };
+    // v4 markup historically called this name
+    window.eloraV4ToggleFavorite = window.eloraHeartToggle;
 
     function markFavoritedProducts() {
-        var favs = getFavs();
-        var slugs = new Set(favs.map(function (f) { return f.slug; }));
-        document.querySelectorAll('.heart-btn[data-fav]').forEach(function (btn) {
-            try {
-                var d = JSON.parse(btn.dataset.fav || '{}');
-                applyHeartState(btn, slugs.has(d.slug));
-            } catch { }
+        var slugs = new Set(getFavs().map(function (f) { return f.slug; }));
+        document.querySelectorAll(HEART_SELECTOR).forEach(function (btn) {
+            applyHeartState(btn, slugs.has(slugOf(btn)));
         });
     }
 
