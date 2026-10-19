@@ -30,3 +30,20 @@ Top offenders (warm): 66x translations + 66x `languages where ?=?`, 33x variants
 
 ## Not done / follow-ups
 Profile elora/ecommet/souqify variants and category/product pages; large-catalog test; HomePage still fetches data for sections that may be disabled (only buy-together gated); memoise `tenancy()->central()` lookups; consider `Cache::driver('file')` -> redis only if measured file-cache IO matters.
+
+## Index review (backup dump `dokan_v2_e57e205f-...sql`, loaded into a throw-away scratch DB, since dropped)
+The dump itself is small (151 products, 4 orders), so it was scaled to 154,624 products / 65,536 orders (random `created_at`/`orders_count`) in the scratch DB only, then `EXPLAIN ANALYZE` before/after.
+
+| Query | Before | After | Index |
+|---|---|---|---|
+| `products where active=1 order by created_at desc limit 10` (full scan + filesort) | 124 ms | 0.06 ms | `products(active, created_at)` |
+| `... order by orders_count desc, created_at desc limit 10` | 123 ms | 0.06 ms | `products(active, orders_count, created_at)` |
+| same + out-of-stock `NOT EXISTS` filter | 286 ms | 4 ms | `products(active, created_at)` |
+| `orders where created_at >= now()-3d / 30d` (trending, best-selling) | 43 ms | 0.05 / 0.35 ms | `orders(created_at)` |
+
+Migration: `database/migrations/tenant/2026_10_19_000003_add_storefront_listing_indexes.php` (idempotent, reversible; tested up/up/down/up on the scratch DB; NOT yet run on any real tenant DB - run `php artisan tenants:migrate`).
+
+Reviewed and intentionally not indexed: `categories`, `banners`, `flash_sales` (tens of rows); `translations`, `files`, `product_variants`, `product_rates`, `product_badge_product`, `category_product`, `flash_sale_product`, `order_items` (lookups already use FK / composite indexes, filesort only on tiny sets). `orders(customer_id, created_at)` would drop a per-customer filesort - negligible. `pbp_badge_id_index` is redundant with the `pbp_unique` prefix (harmless, left). Keyword search (`translations.value LIKE '%kw%'`) cannot use a B-tree; a FULLTEXT index would need a query change - out of scope.
+
+## Index review - central DB (`backup/dokan_v2.sql`, loaded into a scratch DB, since dropped)
+Storefront requests touch the central DB for: tenant/domain resolution, `maintenance_windows` (latest row, every request), `blade_themes` (by tenant), `home_variants` (theme_slug/key/is_default), `countries`/`currencies`/`languages`, `fixed_shipping_costs`, and the central `products`/`product_variants`/`files`/`translations` behind each tenant product. All are already indexed for those predicates (`domains.domain` unique, `home_variants(theme_slug,key)` unique, `products.slug/sku` unique, `product_variants.product_id`, `files(model_type,model_id)`, `translations(translatable_type,translatable_id)`, `countries.iso2` unique, `fixed_shipping_costs(country_id,is_active)`). Largest tables are 14.8k files / 9.2k translations; `maintenance_windows` has 1 row, `blade_themes` 2. **No central index recommended** - no query showed a scan on a table that can grow. Per-request central queries are better addressed by caching/memoising (e.g. the latest maintenance window) than by indexes.
