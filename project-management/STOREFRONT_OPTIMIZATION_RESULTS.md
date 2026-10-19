@@ -26,3 +26,24 @@ Cold run: 480 -> 103 queries, 307 -> ~243 ms. Timings are from a local, single m
 
 ## Remaining bottlenecks
 ~89 queries still: 3 batches of eager loads (distinct lists), repeated tenancy init via `central()`, currency/language lookups, per-request theme/variant/colour lookups. Other themes and pages unprofiled.
+
+## All themes x variants (preview tenant, `/preview?theme=&homepage_variant=`, 615 products, 50 categories)
+Each combo in a fresh PHP process, 2nd (warm) request, before = commit 9f128ef5 versions of the 3 files, after = current. Preview mode bypasses `cacheRemember`, so these are cache-cold for the version-tagged caches.
+
+| theme variant | queries | ms | HTML bytes |
+|---|---|---|---|
+| ecommet v1 | 683 -> 143 | 323 -> 223 | identical |
+| elora v1 | 1561 -> 296 | 530 -> 339 | +252 (random buy-together picks) |
+| elora v2 | 1267 -> 238 | 441 -> 267 | identical |
+| elora v3 | 594 -> 137 | 329 -> 230 | identical |
+| elora v4 | 594 -> 139 | 330 -> 224 | identical |
+| elora v5 | 1382 -> 198 | 461 -> 249 | identical |
+| elora v6 | 765 -> 140 | 319 -> 245 | identical |
+| souqify v1 | 297 -> 132 | 252 -> 239 | identical |
+| souqify v2 | 519 -> 129 | 293 -> 239 | identical |
+| souqify v3 | 517 -> 129 | 263 -> 217 | identical |
+| souqify v4 | HTTP 500 both | - | pre-existing: `translationValue()` on null in `themes/souqify/pages/home-v4/sections/hero.blade.php` (preview data) |
+| souqify v5 | 532 -> 125 | 287 -> 212 | identical |
+| souqify v6 | 554 -> 125 | 282 -> 226 | identical |
+
+Not covered: the two uploaded `custom` blade themes (served via `StorefrontHomeController`, a different code path), and the real `vendor` tenant on themes other than elora.
