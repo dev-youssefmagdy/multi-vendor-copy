@@ -76,3 +76,18 @@ platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0
 
 `order_items` (column order): `id, order_id, product_id, product_variant_id, qty, cost, profit_amount, price,
 sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight, grand_total, timestamps`.
+
+## 5. Where the formulas live in code (keep in sync with this file)
+
+| Concern | Code |
+|---|---|
+| All price / total / profit-split maths | `App\Support\OrderPricing` (`unitPrice`, `item`, `order`, `couponDiscount`) |
+| Per-order platform/vendor figures, void/refund rules | `App\Support\OrderProfitCalculator` |
+| Paid / remaining ledger helpers | `App\Support\OrderPayoutLedger` (reads central `vendor_settlements` = Settlement Payments, and `orders.payout_released`) |
+| Cost / profit / fixed-shipping split of a unit price | `Product` / `ProductVariant::priceBreakdownForCountry()` |
+| Building lines + persisting orders (checkout, API) | `App\Services\Tenant\Checkout\OrderComposer` (used by `PlacesOrders` and `CheckoutPage`) |
+| Cart / checkout totals | `StorefrontRepository::cartItems()/cartTotal()` - priced with the **storefront (session) country**, identical in cart and checkout; the delivery-address country only selects the shipping zone fee |
+| Vendor -> platform payment | `VendorPurchaseService` + `VendorSettlementPaymentController` (creates a `VendorSettlement` record) |
+
+Rules: never re-implement these formulas in controllers/views/SQL (SQL revenue sums use the stored `order_items.grand_total`);
+never use the removed `owner_profit` / `vendor_cost` columns; any change to a formula MUST update this file in the same commit.
