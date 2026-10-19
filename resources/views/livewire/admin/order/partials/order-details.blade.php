@@ -184,9 +184,51 @@
         <x-json-tree :data="$shippingAddr" :start-open="true" :show-types="false" />
     </x-card-collapse>
 
-    <x-card-collapse title="Payment Details" subtitle="Gateway response payload with nested JSON nodes kept expandable."
+    @php
+        $rawPayment = $order['payment_details'] ?? [];
+        if (is_string($rawPayment)) {
+            $rawPayment = json_decode($rawPayment, true) ?: [];
+        }
+        $payment = app(\App\Support\Tenant\Payments\PaymentDetailsPresenter::class)
+            ->present(is_array($rawPayment) ? $rawPayment : [], $order['payment_gateway'] ?? $order['payment_method'] ?? null);
+    @endphp
+    <x-card-collapse title="Payment Details" subtitle="Key payment information reported by the payment gateway."
         :start-open="true">
-        <x-json-tree :data="$order['payment_details'] ?? []" :start-open="true" />
+        @if (!$payment['has_data'])
+            <div class="json-empty">No payment details were recorded for this order.</div>
+        @else
+            <div class="details-list">
+                <div class="details-kv"><span class="details-label">Gateway</span><span
+                        class="details-value">{{ $payment['gateway_label'] }}</span></div>
+                @if ($payment['status'])
+                    <div class="details-kv"><span class="details-label">Gateway status</span><span
+                            class="pay-status pay-status-{{ $payment['status']['tone'] }}">{{ $payment['status']['label'] }}</span></div>
+                @endif
+                @foreach ($payment['headline'] as $row)
+                    <div class="details-kv">
+                        <span class="details-label">{{ $row['label'] }}</span>
+                        @if (!empty($row['href']))
+                            <a class="details-value" href="{{ $row['href'] }}" target="_blank"
+                                rel="noopener noreferrer">{{ $row['value'] }}</a>
+                        @else
+                            <span class="details-value {{ !empty($row['mono']) ? 'pay-mono' : '' }}">{{ $row['value'] }}</span>
+                        @endif
+                    </div>
+                @endforeach
+                @if ($payment['note'])
+                    <div class="details-kv"><span class="details-label">Note</span><span
+                            class="details-value">{{ $payment['note'] }}</span></div>
+                @endif
+            </div>
+
+            @if (!empty($payment['raw']))
+                <div style="margin-top:14px">
+                    <x-json-collapse title="Full gateway response"
+                        summary="Technical payload for support and reconciliation (sensitive values masked)."
+                        :data="$payment['raw']" :show-types="false" />
+                </div>
+            @endif
+        @endif
     </x-card-collapse>
 
     @if ($showAttachments)

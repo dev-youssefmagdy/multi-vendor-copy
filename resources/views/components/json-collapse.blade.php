@@ -1,4 +1,4 @@
-@props(['title' => 'JSON Payload', 'summary' => null, 'data' => null, 'startOpen' => false])
+@props(['title' => 'JSON Payload', 'summary' => null, 'data' => null, 'startOpen' => false, 'showTypes' => true])
 
 @php
     $hasData = is_array($data) || is_object($data) || (is_string($data) && trim($data) !== '') || is_numeric($data) || is_bool($data);
@@ -19,7 +19,7 @@
         </summary>
 
         <div class="json-collapse-body">
-            <x-json-tree :data="$data" :startOpen="true" />
+            <x-json-tree :data="$data" :startOpen="true" :show-types="$showTypes" />
         </div>
     </details>
 @endif

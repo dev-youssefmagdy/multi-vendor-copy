@@ -18,7 +18,7 @@ if ($data !== null && empty($nodes)) {
             is_null($value) => 'null',
             default => 'string',
         };
-        return ['key' => $key, 'type' => $type, 'desc' => is_null($value) ? 'null' : (string)$value];
+        return ['key' => $key, 'type' => $type, 'desc' => is_null($value) ? 'null' : (is_array($value) ? '[]' : (string)$value)];
     };
     $nodes = collect((array)$data)->map(fn($v, $k) => $toNodes($v, (string)$k, 0))->values()->all();
 }
