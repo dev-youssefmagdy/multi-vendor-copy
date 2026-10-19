@@ -121,13 +121,13 @@
             @if (!empty($banner?->image_path))
             <img
               src="{{ $banner->image_path }}" onerror="this.remove()"
-              alt="{{ $banner->title ?? ($storeName ?? '') }}"
+              alt="{{ $banner->translationValue('title') ?? ($storeName ?? '') }}"
               class="sqv4-hero__media" />
             @endif
             <div class="sqv4-hero__content">
               <h1 class="sqv4-hero__title">
-                {!! $banner && $banner->title
-                    ? nl2br(e($banner->title))
+                {!! $banner && $banner->translationValue('title')
+                    ? nl2br(e($banner->translationValue('title')))
                     : '<span class="sqv4-hero__accent">' . __('Explore') . '</span> ' . __('New Products') !!}
               </h1>
 @if ($__sub = $banner->translationValue('subtitle'))

@@ -42,7 +42,7 @@
                   <h1
                     class="font-bold text-[24px] lg:text-[64px] leading-[1.05] text-white tracking-[0.5px]"
                   >
-                    @if ($banner->title)
+                    @if ($banner->translationValue('title'))
                       {{ $bannerTitle }}
                     @else
                       <span style="color: var(--color-primary)">{{ $heroLead[$loop->index % 3] }}</span>{{ $heroRest[$loop->index % 3] }}

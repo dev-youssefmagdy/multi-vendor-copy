@@ -126,8 +126,8 @@
         <div class="swiper-slide">
           <div class="sqv6-hero__slide">
             @php
-              $__t = $banner->title
-                  ? $__splitTitle($banner->title)
+              $__t = $banner->translationValue('title')
+                  ? $__splitTitle($banner->translationValue('title'))
                   : ['lead' => __('Explore'), 'rest' => __('New Products')];
             @endphp
             <div class="sqv6-hero__copy">
@@ -146,7 +146,7 @@
               </a>
             </div>
             @if (!empty($banner?->image_path))
-            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="sqv6-hero__photo" />
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->translationValue('title') ?? $storeName }}" class="sqv6-hero__photo" />
             @endif
           </div>
         </div>

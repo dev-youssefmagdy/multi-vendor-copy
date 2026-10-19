@@ -6,7 +6,7 @@
                 @if ($img)
                     @php $url = filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/')); @endphp
                     <div class="w-full h-[279px]" style="background: url('{{ $url }}') center center / cover no-repeat;" role="img"
-                        aria-label="{{ $banner->title ?? $storeName }}">
+                        aria-label="{{ $banner->translationValue('title') ?? $storeName }}">
                     </div>
                 @endif
             @endforeach

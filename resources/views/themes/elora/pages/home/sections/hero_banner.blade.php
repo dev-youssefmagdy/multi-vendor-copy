@@ -11,7 +11,7 @@
                 @endphp
                 @if ($url)
                 <div class="swiper-slide relative">
-                    <img loading="lazy" src="{{ $url }}" alt="{{ $banner->title ?? $storeName }}" class="hero-img" draggable="false" />
+                    <img loading="lazy" src="{{ $url }}" alt="{{ $banner->translationValue('title') ?? $storeName }}" class="hero-img" draggable="false" />
                     @php
                     $bTitle = $banner->translationValue('title');
                     $bSubtitle = $banner->translationValue('subtitle');

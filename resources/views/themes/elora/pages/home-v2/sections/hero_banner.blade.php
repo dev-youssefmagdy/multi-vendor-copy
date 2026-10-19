@@ -15,13 +15,13 @@
               >
                 <img
                   src="{{ $imgUrl }}"
-                  alt="{{ $banner->title ?? $storeName ?? '' }}"
+                  alt="{{ $banner->translationValue('title') ?? $storeName ?? '' }}"
                   class="lg:hidden absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"
                 />
                 <img
                   src="{{ $imgUrl }}"
-                  alt="{{ $banner->title ?? $storeName ?? '' }}"
+                  alt="{{ $banner->translationValue('title') ?? $storeName ?? '' }}"
                   class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"
                 />
@@ -41,7 +41,7 @@
                   <h1
                     class="font-semibold lg:font-bold text-[24px] lg:text-[64px] text-white tracking-[0.69px] leading-[1.05]"
                   >
-                    {{ $banner->title ?? $storeName ?? __('Explore New Products') }}
+                    {{ $banner->translationValue('title') ?? $storeName ?? __('Explore New Products') }}
                   </h1>
                   @if ($bannerSubtitle = $banner->translationValue('subtitle'))
                     <p class="text-[12px] lg:text-[22px] leading-tight text-white/90">{{ $bannerSubtitle }}</p>
