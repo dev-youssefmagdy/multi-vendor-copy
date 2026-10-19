@@ -1,4 +1,4 @@
-@props(['nodes' => [], 'data' => null, 'root' => true])
+@props(['nodes' => [], 'data' => null, 'root' => true, 'showTypes' => true])
 
 @php
 if ($data !== null && empty($nodes)) {
@@ -49,17 +49,17 @@ if ($data !== null && empty($nodes)) {
                         <span class="jt-caret" aria-hidden="true"></span>
                         <span class="jt-key">{{ $node['key'] }}</span>
                         <span class="jt-colon">:</span>
-                        <span class="jt-type-badge {{ $badgeClass }} {{ $nullable ? 'jt-nullable' : '' }}">{{ $type }}</span>
+                        @if($showTypes)<span class="jt-type-badge {{ $badgeClass }} {{ $nullable ? 'jt-nullable' : '' }}">{{ $type }}</span>@endif
                         @if(!empty($node['desc']))<span class="jt-desc">{{ $node['desc'] }}</span>@endif
                     </summary>
-                    <x-json-tree :nodes="$node['children']" :root="false" />
+                    <x-json-tree :nodes="$node['children']" :root="false" :show-types="$showTypes" />
                 </details>
             @else
                 <div class="jt-leaf">
                     <span class="jt-dot" aria-hidden="true"></span>
                     <span class="jt-key">{{ $node['key'] }}</span>
                     <span class="jt-colon">:</span>
-                    <span class="jt-type-badge {{ $badgeClass }} {{ $nullable ? 'jt-nullable' : '' }}">{{ $type }}</span>
+                    @if($showTypes)<span class="jt-type-badge {{ $badgeClass }} {{ $nullable ? 'jt-nullable' : '' }}">{{ $type }}</span>@endif
                     @if(!empty($node['desc']))<span class="jt-desc">{{ $node['desc'] }}</span>@endif
                 </div>
             @endif

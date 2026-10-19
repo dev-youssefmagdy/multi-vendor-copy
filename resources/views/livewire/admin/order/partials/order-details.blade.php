@@ -170,7 +170,16 @@
 
     <x-card-collapse title="Shipping Address" subtitle="Structured shipping payload captured on the tenant storefront."
         :start-open="true">
-        <x-json-tree :data="$order['shipping_address'] ?? []" :start-open="true" />
+        @php
+            $shippingAddr = $order['shipping_address'] ?? [];
+            if (isset($shippingAddr['country_id'])) {
+                $countryName = \App\Models\Country::find((int) $shippingAddr['country_id'])?->name;
+                $shippingAddr = collect($shippingAddr)
+                    ->mapWithKeys(fn ($v, $k) => $k === 'country_id' ? ['country' => $countryName ?? $v] : [$k => $v])
+                    ->all();
+            }
+        @endphp
+        <x-json-tree :data="$shippingAddr" :start-open="true" :show-types="false" />
     </x-card-collapse>
 
     <x-card-collapse title="Payment Details" subtitle="Gateway response payload with nested JSON nodes kept expandable."
