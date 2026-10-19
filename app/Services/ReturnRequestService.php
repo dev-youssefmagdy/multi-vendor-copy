@@ -1189,13 +1189,7 @@ class ReturnRequestService
             $errors[] = __('At least one photo is required as evidence.');
         }
 
-        if ($reason) {
-            $policy = $this->returnPolicyService->resolveProductPolicy($tenantId, $item?->product_id ? (int) $item->product_id : null);
-
-            if ($this->reasonRequiresVideo($reason, $policy) && $videoCount < 1) {
-                $errors[] = __('A video is required as evidence for this return reason.');
-            }
-        }
+        // Video evidence is always optional.
 
         return $errors;
     }

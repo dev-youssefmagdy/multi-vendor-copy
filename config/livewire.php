@@ -131,8 +131,8 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => 'local', // Example: 'local', 's3'             | Default: 'default'
-        'rules' => ['required', 'file', 'max:51200'],          // Example: ['file', 'mimes:png,jpg'] | Default: ['required', 'file', 'max:12288'] (12MB)
+        'disk' => 'livewire_tmp', // Example: 'local', 's3'             | Default: 'default'
+        'rules' => ['required', 'file', 'max:'.max((int) env('RETURN_PHOTO_MAX_KB', 10240), (int) env('RETURN_VIDEO_MAX_KB', 102400))],          // Example: ['file', 'mimes:png,jpg'] | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,                                  // Example: 'tmp'                     | Default: 'livewire-tmp'
         'middleware' => ['throttle:60,1', 'universal'],                                 // Example: 'throttle:5,1'            | Default: 'throttle:60,1'
         'preview_mimes' => [                                  // Supported file types for temporary pre-signed file URLs...

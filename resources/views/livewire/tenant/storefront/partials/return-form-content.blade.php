@@ -194,8 +194,12 @@
                     <div class="flex gap-2 mt-1 flex-wrap">
                         @foreach ($photos as $__i => $photo)
                             <div class="relative" wire:key="return-photo-{{ $__i }}">
+                                @if (method_exists($photo, 'isPreviewable') && $photo->isPreviewable())
                                 <img src="{{ $photo->temporaryUrl() }}" alt="{{ __('Photo :n', ['n' => $__i + 1]) }}"
                                     class="w-16 h-16 object-cover" style="border:1px solid #E5E7EB;border-radius:10px">
+                                @else
+                                    <div class="w-16 h-16 flex items-center justify-center text-[10px] text-center px-1 overflow-hidden" style="border:1px solid #E5E7EB;border-radius:10px">{{ $photo->getClientOriginalName() }}</div>
+                                @endif
                                 <button type="button" wire:click="removePhoto({{ $__i }})"
                                     class="absolute w-5 h-5 rounded-full bg-white flex items-center justify-center text-xs shadow"
                                     style="top:-8px;inset-inline-end:-8px"
