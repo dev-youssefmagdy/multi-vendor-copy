@@ -15,6 +15,12 @@ use Illuminate\View\View;
 
 class StorefrontInvoiceController extends Controller
 {
+    /** Path-based tenant route (/vendor/{tenant}/orders/{uuid}/invoice): the {tenant} segment is passed first. */
+    public function download(string $tenant, string $uuid, Request $request): View
+    {
+        return $this->show($uuid, $request);
+    }
+
     public function show(string $uuid, Request $request): View
     {
         $customer = Auth::guard('storefront')->user();
