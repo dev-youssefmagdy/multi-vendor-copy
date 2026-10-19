@@ -26,7 +26,7 @@
                             </h3>
                             <a href="{{ $pb1?->url ?? route('tenant.storefront.category') }}"
                                 class="inline-flex h-9 sm:h-14 px-6 bg-white text-blue-700 hover:bg-blue-50 transition rounded-lg items-center font-medium">
-                                {{ __('Shop Now') }}
+                                {{ $pb1?->translationValue('button_text') ?: __('Shop Now') }}
                             </a>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                             </h3>
                             <a href="{{ $pb2?->url ?? route('tenant.storefront.category') }}"
                                 class="inline-flex h-9 sm:h-14 px-6 bg-white text-purple-600 hover:bg-purple-50 transition rounded-lg items-center font-medium">
-                                {{ __('Shop Now') }}
+                                {{ $pb2?->translationValue('button_text') ?: __('Shop Now') }}
                             </a>
                         </div>
                     </div>

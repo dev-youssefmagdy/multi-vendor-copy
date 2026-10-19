@@ -10,8 +10,24 @@
                 : null;
                 @endphp
                 @if ($url)
-                <div class="swiper-slide">
+                <div class="swiper-slide relative">
                     <img loading="lazy" src="{{ $url }}" alt="{{ $banner->title ?? $storeName }}" class="hero-img" draggable="false" />
+                    @php
+                    $bTitle = $banner->translationValue('title');
+                    $bSubtitle = $banner->translationValue('subtitle');
+                    $bButton = $banner->translationValue('button_text');
+                    @endphp
+                    @if ($bTitle || $bSubtitle || $bButton)
+                    <div class="absolute inset-0 flex items-center pointer-events-none" style="background: linear-gradient(90deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 60%)">
+                        <div class="flex flex-col items-start gap-2 lg:gap-4 px-6 lg:px-14 max-w-[70%] lg:max-w-[45%]">
+                            @if ($bTitle)<h2 class="text-white font-bold text-xl lg:text-5xl leading-tight">{{ $bTitle }}</h2>@endif
+                            @if ($bSubtitle)<p class="text-white/90 text-xs lg:text-xl leading-snug">{{ $bSubtitle }}</p>@endif
+                            @if ($bButton)
+                            <a href="{{ $banner->url ?? '#' }}" class="pointer-events-auto inline-flex items-center rounded-full bg-white text-black font-medium px-4 py-1.5 lg:px-8 lg:py-3 text-xs lg:text-lg">{{ $bButton }}</a>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 @endif
                 @endforeach

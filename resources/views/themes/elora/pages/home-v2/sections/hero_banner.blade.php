@@ -43,6 +43,9 @@
                   >
                     {{ $banner->title ?? $storeName ?? __('Explore New Products') }}
                   </h1>
+                  @if ($bannerSubtitle = $banner->translationValue('subtitle'))
+                    <p class="text-[12px] lg:text-[22px] leading-tight text-white/90">{{ $bannerSubtitle }}</p>
+                  @endif
                   <button
                     type="button"
                     class="flex h-[38px] lg:h-[68px] items-center justify-center rounded-[34px] w-full px-[8px] cursor-pointer"
@@ -50,7 +53,7 @@
                   >
                     <span
                       class="font-medium text-[14px] lg:text-[24px] text-black tracking-[0.5px]"
-                      >{{ $banner->button_text ?? __('Shop Now') }}</span
+                      >{{ $banner->translationValue('button_text') ?: __('Shop Now') }}</span
                     >
                   </button>
                 </div>

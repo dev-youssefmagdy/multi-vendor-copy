@@ -1,1 +1,0 @@
-import{t as e}from"./mobile-kpi-carousel-CpIQPdXr.js";function t(t){e(t)}export{t as init};

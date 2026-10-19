@@ -29,9 +29,9 @@
                         {{ __('Experience the future of performance with our exclusive curated collection.') }}
                     </p>
                     @endif
-                    <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
+                    <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
                         class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
-                        {{ __('Explore Collection') }}
+                        {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
                     </a>
                 </div>
             </div>
@@ -115,9 +115,9 @@
                                 {{ __('Experience the future of performance with our exclusive curated collection.') }}
                             </p>
                             @endif
-                            <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
+                            <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
                                 class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
-                                {{ __('Explore Collection') }}
+                                {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
                             </a>
                         </div>
                     </div>
