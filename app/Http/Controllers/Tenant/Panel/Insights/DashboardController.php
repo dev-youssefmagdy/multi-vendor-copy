@@ -8,11 +8,18 @@ use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 final class DashboardController extends PanelController
 {
-    public function index(TenantPanelRepository $repository): View
+    public function index(Request $request, TenantPanelRepository $repository): View
     {
+        $allowedPeriods = [1, 3, 6, 12];
+        $periodMonths = in_array((int) $request->query('period'), $allowedPeriods, true)
+            ? (int) $request->query('period')
+            : 12;
+
+        $repository->setPeriodMonths($periodMonths);
         $overview = $repository->dashboardOverview();
 
         $opportunities       = $repository->opportunityProductCards(6);
@@ -97,6 +104,7 @@ final class DashboardController extends PanelController
         ])->all();
 
         return view('tenant.pages.dashboard.index', [
+            'periodMonths' => $periodMonths,
             'cards' => Metric::cards($overview['cards']),
             'statusRows' => $overview['status_rows'],
             'chartPayload' => $overview['chart_payload'],

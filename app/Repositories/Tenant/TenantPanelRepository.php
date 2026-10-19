@@ -69,9 +69,29 @@ class TenantPanelRepository
 
     private ?array $profitabilityRowsCache = null;
 
+    private int $periodMonths = 12;
+
+    public function setPeriodMonths(int $months): static
+    {
+        $this->periodMonths = max(1, $months);
+        return $this;
+    }
+
+    public function getPeriodMonths(): int
+    {
+        return $this->periodMonths;
+    }
+
     protected function orders(): Collection
     {
-        return $this->orders ??= Order::query()->with('items.product')->get();
+        if ($this->orders === null) {
+            $from = now()->startOfMonth()->subMonths($this->periodMonths - 1);
+            $this->orders = Order::query()
+                ->with('items.product')
+                ->where('created_at', '>=', $from)
+                ->get();
+        }
+        return $this->orders;
     }
 
     protected function customers(): Collection
@@ -137,7 +157,7 @@ class TenantPanelRepository
         $subscriptions = $this->subscriptions();
         $customerOrderCounts = $customers->keyBy('id')->map(fn (Customer $customer) => (int) $customer->orders_count);
 
-        return $this->rollingMonths()->map(function (Carbon $date) use ($orders, $customers, $subscriptions, $customerOrderCounts) {
+        return $this->rollingMonths($this->periodMonths)->map(function (Carbon $date) use ($orders, $customers, $subscriptions, $customerOrderCounts) {
             $monthOrders = $orders->filter(fn (Order $order) => $this->isSameMonth($order->created_at, $date));
             $monthPaidOrders = $monthOrders->filter(fn (Order $order) => $order->paid);
             $fulfilledOrders = $monthOrders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
@@ -1400,7 +1420,7 @@ class TenantPanelRepository
     {
         $stats = $this->dashboardStats();
         $series = collect($this->dashboardSeries());
-        $statusRows = $this->orderStatusBreakdown();
+        $statusRows = $this->orderStatusBreakdown($this->orders());
         $topCustomers = collect($this->customerLifetimeRows())->take(6)->values()->all();
         $topProducts = $this->topProductsForDashboard(6);
 
