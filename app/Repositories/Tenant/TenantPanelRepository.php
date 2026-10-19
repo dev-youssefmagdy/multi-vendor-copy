@@ -1554,7 +1554,7 @@ class TenantPanelRepository
 
     public function shippingAnalyticsOverview(): array
     {
-        $orders = $this->orders;
+        $orders = $this->orders();
         $series = collect($this->dashboardSeries());
         $fulfilledOrders = $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Shipped, OrderStatus::Delivered, OrderStatus::Completed], true));
         $shippingRevenue = $orders->sum(fn (Order $order) => $this->orderFinancials($order)['shipping_charge']);
