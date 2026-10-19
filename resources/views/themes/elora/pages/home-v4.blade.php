@@ -21,20 +21,3 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
     @endforeach
 
 </div>
-
-@push('scripts')
-@once
-<script>
-    (function () {
-        document.addEventListener('livewire:init', function () {
-            Livewire.on('storefront-cart-added', function () {
-                document.querySelectorAll('#elora-v4-cart-badge, #elora-v4-cart-badge-mobile').forEach(function (badge) {
-                    badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
-                    badge.classList.remove('hidden');
-                });
-            });
-        });
-    })();
-</script>
-@endonce
-@endpush

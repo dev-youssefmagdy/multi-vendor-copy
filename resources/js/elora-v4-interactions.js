@@ -100,7 +100,6 @@ function initFlashSlider() {
       dragStartY = e.clientY;
       dragStartTranslate = currentTranslateX();
       track.style.transition = 'none';
-      try { wrapper.setPointerCapture(dragPointerId); } catch (err) {}
     }
 
     function onPointerMove(e) {
@@ -116,6 +115,12 @@ function initFlashSlider() {
           track.style.transition = '';
           return;
         }
+      }
+      if (!wrapper.hasPointerCapture(dragPointerId)) {
+        // Capture only once a real horizontal drag starts — capturing on
+        // pointerdown retargets the click to the wrapper and kills the
+        // card's favorite / add-to-cart buttons.
+        try { wrapper.setPointerCapture(dragPointerId); } catch (err) {}
       }
       e.preventDefault();
       track.style.transform = 'translateX(' + (dragStartTranslate + dx) + 'px)';
