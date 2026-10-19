@@ -13,7 +13,7 @@
 | T5 Central/admin panel | DONE | see git log | financials keys: subtotal, items_fixed_shipping, items_discount, items_tax, items_grand_total, shipping_charge, coupon_discount, tax, grand_total, net_amount, platform_profit, vendor_profit, vendor_own_platform, platform_own_vendor, vendor_settlements_paid, platform_payouts_paid. Ledger entry/totals: platform_profit_total, vendor_profit_total, vendor_own_platform_total, platform_own_vendor_total, platform/vendor_share_due_*_total, fixed_shipping_total; legacy aliases tenant_owes_central/central_owes_tenant/net_payable_to_tenant kept for T3 pages; central_profit_total removed. Settlements read from VendorSettlement / payout_released (no order_transactions). Unsettled/recent ledger order rows renamed. VendorSettlementsPage header 'Remaining Owner Profit' left for T3 |
 | T6 Storefront & themes | DONE | see git log | order-status (ecommet/elora/souqify/starter-kit) now show items subtotal, fixed shipping, flash-sale discount, tax, shipping, coupon, grand total + per-line fixed shipping/discount/line grand_total; invoice (+StorefrontInvoiceController payload), TemplateMailService items table, OrderController API (new fields), help docs. Profile lists/tracking already use grand_total/price (unchanged). Cart/checkout summaries are owned by T2 (not touched). |
 | T7 QA | DONE | see git log (Order refactor T7) | in-process smoke tests of tenant, central and storefront pages; 2 fixes; see "QA results" |
-| T8 Summary | TODO | | |
+| T8 Summary | DONE | see git log | final summary delivered in chat; full PHPUnit run result pending (see below) |
 
 ## Decisions / assumptions
 * Item `grand_total` = sub_total + fixed_shipping - discount + tax + shipping_fee; per-item `shipping_fee` stays 0 (shipping is order-level, as today).
@@ -67,3 +67,10 @@ Not tested / notes:
 * Other tenants (joe, sss, preview) DBs are not migrated/seeded with orders; central aggregates only covered the one tenant with data.
 * Storefront starter-kit theme and the API endpoints through real token auth (controller invoked directly with the customer set).
 * Observation: ledger `settlements_received` sums VendorSettlement `total` (incl. shipping 1.20) while the ledger principal is `product_cost`.
+
+## Remaining / follow-ups
+* Run `php artisan tenants:migrate` for every tenant DB (only e57e205f has been migrated).
+* Not exercised end-to-end: confirmMarkPaid, payout release, gateway charge/callback, mixed carts, coupon checkout, central-gateway (collected_by=platform) checkout, starter-kit theme render.
+* Ledger `settlements_received` sums settlement `total` (incl. fee) while the principal is `product_cost` - review.
+* CouponController / CartPage::applyCoupon still use inline coupon preview maths (should call OrderPricing::couponDiscount).
+* Orders report page shows only the Platform Profit card (no Vendor Profit chart).
