@@ -318,11 +318,8 @@ class Product extends Model
 
         $resolvedCountryId = $countryId ?? ((int) session('storefront_country_id') ?: null);
 
-        if ($variant) {
-            $_basePrice = $variant->finalPriceForCountry($resolvedCountryId);
-        } else {
-            $_basePrice = $this->finalPriceForCountry($resolvedCountryId);
-        }
+        $breakdown = ($variant ?? $this)->priceBreakdownForCountry($resolvedCountryId);
+        $_basePrice = round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
 
         $basePrice = $_basePrice;
         // Only treat real_price as an original (strikethrough) price if the vendor
@@ -359,6 +356,9 @@ class Product extends Model
             'is_flash_sale' => $flashDiscountPercentage > 0,
             'flash_sale_percentage' => round($flashDiscountPercentage, 2),
             'flash_sale' => $flashSale,
+            'cost' => $breakdown['cost'],
+            'profit_amount' => $breakdown['profit_amount'],
+            'fixed_shipping' => $breakdown['fixed_shipping'],
         ];
     }
 

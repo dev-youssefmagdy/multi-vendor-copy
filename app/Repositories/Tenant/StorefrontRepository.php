@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Tenant;
 
+use App\Services\Tenant\Checkout\OrderComposer;
+use App\Support\OrderPricing;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Currency;
@@ -1373,7 +1375,7 @@ class StorefrontRepository
         return Session::get('storefront_cart', []);
     }
 
-    public function cartItems(): array
+    public function cartItems(?int $countryId = null): array
     {
         $cart = $this->cart();
 
@@ -1413,9 +1415,11 @@ class StorefrontRepository
 
             $variant ??= $product->variants->firstWhere('active', true) ?? $product->variants->first();
 
-            $pricing = $product->storefrontPricing($variant);
+            $pricing = $product->storefrontPricing($variant, $countryId);
             $price = (float) $pricing['current_price'];
             $qty = max(1, (int) ($entry['qty'] ?? 1));
+            // Priced order line (docs/ORDER_FORMULAS.md): its grand_total is what the order will persist.
+            $line = OrderComposer::line($product, $variant, $qty, $countryId);
 
             $items[] = [
                 'key' => $key,
@@ -1431,7 +1435,8 @@ class StorefrontRepository
                 'discount_percentage' => $pricing['discount_percentage'],
                 'is_flash_sale' => $pricing['is_flash_sale'],
                 'flash_sale_percentage' => $pricing['flash_sale_percentage'],
-                'subtotal' => $price * $qty,
+                'line' => $line,
+                'subtotal' => (float) $line['grand_total'],
                 'is_out_of_stock' => $this->isCartItemOutOfStock($product, $variant),
             ];
         }
@@ -1466,9 +1471,9 @@ class StorefrontRepository
         return (int) collect($this->cart())->sum('qty');
     }
 
-    public function cartTotal(): float
+    public function cartTotal(?int $countryId = null): float
     {
-        return (float) collect($this->cartItems())->sum('subtotal');
+        return OrderPricing::money((float) collect($this->cartItems($countryId))->sum('subtotal'));
     }
 
     // ─── Orders ──────────────────────────────────────────────────────────────

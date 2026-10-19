@@ -13,6 +13,7 @@ use App\Models\Tenant\Coupon;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\Tenant\CustomerCountryResolver;
+use App\Support\OrderPricing;
 use Livewire\Component;
 
 class CartPage extends Component
@@ -249,10 +250,7 @@ class CartPage extends Component
         // Compute discount
         $cartDiscount = 0.0;
         if ($appliedCoupon) {
-            $cartDiscount = match ($appliedCoupon->type) {
-                CouponType::Percentage => $cartTotal * (float) $appliedCoupon->value / 100,
-                CouponType::Fixed => min((float) $appliedCoupon->value, $cartTotal),
-            };
+            $cartDiscount = OrderPricing::couponDiscount($appliedCoupon->type->value, (float) $appliedCoupon->value, $cartTotal);
         }
 
         $cartFinalTotal = max(0.0, $cartTotal - $cartDiscount);
