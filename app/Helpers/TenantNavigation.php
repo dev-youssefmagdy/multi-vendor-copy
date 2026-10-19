@@ -110,7 +110,7 @@ class TenantNavigation
                         'label' => 'Finance',
                         'icon' => 'wallet',
                         'children' => [
-                            ['label' => 'Wallet', 'route' => 'tenant.finance.wallet', 'permission' => 'finance.wallet.view'],
+                            ['label' => 'Subscriptions & Balance', 'route' => 'tenant.finance.wallet', 'permission' => 'finance.wallet.view'],
                             ['label' => 'Billing', 'route' => 'tenant.finance.billing', 'permission' => 'finance.billing.view'],
                             ['label' => 'Vendor Purchases', 'route' => 'tenant.finance.vendor-purchases', 'permission' => 'finance.vendor-purchases.view'],
                             ['label' => 'Settlement Payments', 'route' => 'tenant.finance.settlement-payments', 'permission' => 'finance.vendor-purchases.view'],
