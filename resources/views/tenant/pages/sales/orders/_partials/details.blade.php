@@ -126,7 +126,16 @@
         <h4 class="panel-title">Shipping Address</h4>
         <p class="panel-copy">Expandable structured address payload captured at checkout.</p>
     </div>
-    <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($order['shipping_address'] ?? [])" />
+    @php
+        $shippingAddr = $order['shipping_address'] ?? [];
+        if (isset($shippingAddr['country_id'])) {
+            $countryName = \App\Models\Country::find((int) $shippingAddr['country_id'])?->name;
+            $shippingAddr = collect($shippingAddr)
+                ->mapWithKeys(fn ($v, $k) => $k === 'country_id' ? ['country' => $countryName ?? $v] : [$k => $v])
+                ->all();
+        }
+    @endphp
+    <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($shippingAddr)" :show-types="false" />
 </section>
 
 @php
