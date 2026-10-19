@@ -24,7 +24,7 @@
     <li>Order goes to gateway flow. On success, payment_status is flipped to Paid, paid_at is set on the order.</li>
     <li>Tenant ships the order. Status transitions through Processing → Shipped → Delivered.</li>
     <li>If the vendor collected the money (<code>collected_by = vendor</code>) and <code>vendor_own_platform &gt; 0</code>, the tenant later settles the platform's share via the vendor settlement
-        flow. A <code>vendor_settlement</code> row is added to the order's <code>order_transactions</code>, and a <code>VendorSettlement</code> record is written
+        flow. A paid <code>VendorSettlement</code> record is written
         centrally.</li>
     <li>If the order was paid into a central-owned gateway, central later issues a <code>TenantPayout</code> for the
         tenant's net share.</li>

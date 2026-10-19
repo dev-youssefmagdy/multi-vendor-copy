@@ -20,8 +20,8 @@ use Throwable;
  *   vendor_own_platform_total  = Σ vendor_own_platform  (vendor-collected orders: tenants owe central)
  *   platform_own_vendor_total  = Σ platform_own_vendor  (platform-collected orders: central owes tenants)
  *
- * Settlements / payouts already paid are recorded per order (order_transactions) and are therefore
- * already subtracted from the *_own_* totals. Legacy aliases tenant_owes_central / central_owes_tenant
+ * Settlements / payouts already paid are recorded per order (paid central VendorSettlement rows for vendor->platform; orders.payout_released for
+ * platform->vendor) and are therefore already subtracted from the *_own_* totals. Legacy aliases tenant_owes_central / central_owes_tenant
  * / net_payable_to_tenant mirror vendor_own_platform_total / platform_own_vendor_total for T3 pages.
  */
 class TenantLedgerService
@@ -142,7 +142,7 @@ class TenantLedgerService
 
     protected function buildEntry(Tenant $tenant, Collection $tenantPayouts, Collection $tenantSettlements): object
     {
-        $orders = TenantOrder::query()->with(['items', 'transactions'])->get();
+        $orders = TenantOrder::query()->with('items')->get();
         // Paid orders that still produce money: cancelled / rejected / refunded orders are excluded
         // from every payout, profit and revenue total (RETURN_EXCHANGE_REFUND_PLAN.md B.4).
         $allPaid = $orders->filter(fn (TenantOrder $o) => $o->paid);

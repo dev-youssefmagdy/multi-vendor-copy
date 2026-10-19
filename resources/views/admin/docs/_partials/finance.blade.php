@@ -112,10 +112,10 @@ vendor_gateway_fee_total = Σ orders.vendor_gateway_fee</pre>
 
 <h3>Direction balances</h3>
 <pre>vendor_own_platform_total = Σ vendor_own_platform
-   per order: platform_profit − Σ order_transactions(vendor_settlement)    [collected_by = vendor]
+   per order: platform_profit − Σ paid VendorSettlement.product_cost  [collected_by = vendor]
 
 platform_own_vendor_total = Σ platform_own_vendor
-   per order: vendor_profit − Σ order_transactions(platform_payout)        [collected_by = platform]</pre>
+   per order: vendor_profit − vendor_profit when payout_released        [collected_by = platform]</pre>
 <p>These are the same numbers the vendor panel shows. The legacy keys <code>tenant_owes_central</code> /
     <code>central_owes_tenant</code> are aliases of the two totals above.</p>
 

@@ -73,7 +73,6 @@ class TenantAdminAggregateService
                     'items.variant.centralVariant.options.translations.language',
                     'items.variant.centralVariant.files',
                     'paymentGateway',
-                    'transactions',
                     'activities',
                 ])
                 ->get()
@@ -120,7 +119,7 @@ class TenantAdminAggregateService
 
         return $this->walletsCache = $this->collectAcrossTenants(function (Tenant $tenant) {
             $transactions = TenantTransaction::query()->with('model')->get();
-            $orders = TenantOrder::query()->with(['items', 'transactions'])->get();
+            $orders = TenantOrder::query()->with('items')->get();
             $subscriptions = Subscription::query()->with('transaction')->latest()->get();
 
             $credits = (float) $transactions->where('type', 'credit')->sum('amount');
