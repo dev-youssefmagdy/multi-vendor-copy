@@ -87,6 +87,7 @@ use App\Http\Controllers\Tenant\Panel\UiKitController;
 use App\Http\Controllers\Tenant\SubscriptionPaymentController;
 use App\Http\Controllers\Tenant\TenantImpersonateController;
 use App\Http\Controllers\Tenant\VendorSettlementPaymentController;
+use App\Http\Controllers\Tenant\Panel\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LoginController::class, 'redirectToStart']);
@@ -99,6 +100,15 @@ Route::middleware('guest:tenant')->group(function () {
     Route::post('/login/validate', [LoginController::class, 'validateLogin'])
         ->middleware('throttle:tenant-validate')
         ->name('tenant.login.validate');
+
+    Route::get('/forgot-password', [PasswordResetController::class, 'showForgot'])->name('tenant.password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendLink'])
+        ->middleware('throttle:5,1')
+        ->name('tenant.password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showReset'])->name('tenant.password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+        ->middleware('throttle:5,1')
+        ->name('tenant.password.update');
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])

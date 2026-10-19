@@ -3,13 +3,16 @@
 namespace App\Models\Tenant;
 
 use App\Enums\ActivationStatus;
+use App\Notifications\Tenant\ResetAdminPasswordNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminUser extends Authenticatable
 {
     use HasFactory;
+    use Notifiable;
 
     protected $table = 'admins';
 
@@ -56,6 +59,11 @@ class AdminUser extends Authenticatable
     public function markEmailAsVerified(): bool
     {
         return $this->forceFill(['email_verified_at' => now()])->save();
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetAdminPasswordNotification((string) $token));
     }
 
     public function hasPermission(string $permission): bool

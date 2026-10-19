@@ -3550,12 +3550,12 @@
     ]
   },
   "resources/js/tenant/pages/auth/login.js": {
-    "file": "assets/login-C-r_CXol.js",
+    "file": "assets/login-CbIU7Qy7.js",
     "name": "login",
     "src": "resources/js/tenant/pages/auth/login.js",
     "isEntry": true,
     "css": [
-      "assets/login-C4ELPcrL.css"
+      "assets/login-Cpop4dnR.css"
     ]
   },
   "resources/js/tenant/pages/catalog/badge-show.js": {
