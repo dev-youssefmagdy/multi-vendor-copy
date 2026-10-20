@@ -1,7 +1,4 @@
 <div>
-    <div class="page-actions compact-actions justify-end" style="margin-bottom:12px;">
-        <x-btn type="button" variant="secondary" wire:click="openSettingsModal">Program Settings</x-btn>
-    </div>
 
     @include('livewire.admin.pages.list-page')
 

@@ -37,7 +37,7 @@ class AffiliateService
             self::COOKIE_NAME,
             $referral->id,
             AffiliateSettings::cookieDays() * 24 * 60,
-            '/', null, true, true, false, 'Lax'
+            '/', null, $request->isSecure(), true, false, 'Lax'
         );
 
         return $referral;
