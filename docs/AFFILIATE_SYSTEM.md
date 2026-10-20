@@ -28,3 +28,10 @@ Central-panel only. Affiliates earn commission when a referred tenant buys a **p
 
 ## Tests
 `tests/Feature/Affiliate/AffiliateServiceTest.php`.
+
+## Tenant affiliates (vendor stores as partners)
+- `affiliates.type` = `external` (default) | `tenant`; `tenant_id` is unique. Tenant rows are **non-login**: synthetic email `tenant-{id}@affiliates.invalid`, random password, status `active`; `Affiliate\Auth\LoginPage` rejects them.
+- Created lazily by `App\Services\TenantAffiliateService::forTenant()` (race-safe on unique `tenant_id`). `referralUrl()` points at the **central** domain (`?ref=CODE`); `stats()` feeds the vendor dashboard banner and wallet Partner tab.
+- All `Affiliate*` models use `CentralConnection`, and `AffiliateService` transactions run on the central connection, so they work from tenant context.
+- Self-referral also applies when the affiliate's `tenant_id` equals the new tenant, or the owning tenant's email equals the new tenant's email.
+- Partner balance (`affiliates.balance`) is separate from vendor order money; payouts are handled by central admin (Affiliates list shows a Type badge/filter; tenant email is not editable).

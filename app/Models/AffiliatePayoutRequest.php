@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AffiliatePayoutRequest extends Model
 {
+    use CentralConnection;
+
     protected $fillable = [
         'affiliate_id', 'amount', 'status', 'note', 'admin_note',
         'affiliate_payout_id', 'processed_at',

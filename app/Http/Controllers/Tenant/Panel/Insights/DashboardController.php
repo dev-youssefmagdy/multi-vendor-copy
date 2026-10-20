@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Tenant\Panel\Insights;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
+use App\Services\TenantAffiliateService;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
 use Illuminate\Contracts\View\View;
@@ -27,15 +28,7 @@ final class DashboardController extends PanelController
         $pendingPurchases    = $repository->pendingVendorPurchaseCount();
         $activeProductsCount = \App\Models\Tenant\Product::query()->where('active', true)->count();
 
-        $partnerData = [
-            'invite_link'     => url('/ref/' . (tenant('id') ?? 'store')),
-            'visits'          => '—',
-            'visits_trend'    => '—',
-            'traders'         => '—',
-            'active_traders'  => '—',
-            'reward'          => '—',
-            'reward_status'   => '—',
-        ];
+        $partnerData = $this->partnerData();
 
         $adsData = \App\Models\Tenant\Product::query()
             ->whereNotNull('social_posts')
@@ -121,5 +114,28 @@ final class DashboardController extends PanelController
             'partnerData'         => $partnerData,
             'ads'                 => $adsData,
         ]);
+    }
+
+    /** @return array<string,string> */
+    private function partnerData(): array
+    {
+        $service = app(TenantAffiliateService::class);
+        $affiliate = $service->forTenant((string) tenant('id'));
+        $stats = $service->stats($affiliate);
+
+        $trend = fn (int $n): string => $n > 0 ? '+' . number_format($n) . ' this month' : '—';
+        $pending = (float) $stats['pending_requested'];
+
+        return [
+            'invite_link'    => $service->referralUrl($affiliate),
+            'visits'         => number_format((int) $stats['visits']),
+            'visits_trend'   => $trend((int) $stats['visits_30d']),
+            'traders'        => number_format((int) $stats['registered']),
+            'active_traders' => number_format((int) $stats['paying']) . ' paying',
+            'reward'         => '$' . number_format((float) $stats['balance'], 2),
+            'reward_status'  => $pending > 0
+                ? '$' . number_format($pending, 2) . ' pending requested'
+                : 'Ready to withdraw',
+        ];
     }
 }

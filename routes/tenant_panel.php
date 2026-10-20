@@ -29,6 +29,7 @@ use App\Http\Controllers\Tenant\Panel\Finance\PayoutsController;
 use App\Http\Controllers\Tenant\Panel\Finance\SettlementPaymentsController;
 use App\Http\Controllers\Tenant\Panel\Finance\VendorPurchaseController;
 use App\Http\Controllers\Tenant\Panel\Finance\VendorSettleOrderController;
+use App\Http\Controllers\Tenant\Panel\Finance\PartnerWalletController;
 use App\Http\Controllers\Tenant\Panel\Finance\WalletController;
 use App\Http\Controllers\Tenant\Panel\Insights\AnalyticsController;
 use App\Http\Controllers\Tenant\Panel\Insights\CustomerLifetimeValueController;
@@ -155,7 +156,7 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     Route::get('/todays-chances', [TodayChancesController::class, 'index'])
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.todays-chances');
-    Route::view('/partner-program', 'tenant.pages.placeholder', ['title' => 'Partner Program'])
+    Route::get('/partner-program', fn () => redirect()->route('tenant.finance.wallet', ['tab' => 'partner']))
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.partner-program');
 
@@ -473,6 +474,15 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         Route::get('/wallet/transactions/data', [WalletController::class, 'transactionsData'])
             ->middleware('tenant.permission:finance.wallet.view')
             ->name('wallet.transactions.data');
+        Route::get('/wallet/partner/conversions/data', [PartnerWalletController::class, 'conversionsData'])
+            ->middleware('tenant.permission:finance.wallet.view')
+            ->name('wallet.partner.conversions.data');
+        Route::get('/wallet/partner/payouts/data', [PartnerWalletController::class, 'payoutsData'])
+            ->middleware('tenant.permission:finance.wallet.view')
+            ->name('wallet.partner.payouts.data');
+        Route::post('/wallet/partner/withdraw', [PartnerWalletController::class, 'withdraw'])
+            ->middleware('tenant.permission:finance.wallet.view')
+            ->name('wallet.partner.withdraw');
         Route::post('/wallet/subscription', [WalletController::class, 'subscribe'])
             ->middleware('tenant.permission:finance.wallet.view')
             ->name('wallet.subscribe');

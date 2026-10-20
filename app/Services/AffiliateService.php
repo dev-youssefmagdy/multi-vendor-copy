@@ -70,7 +70,7 @@ class AffiliateService
      */
     public function markReferralConverted(AffiliateReferral $referral, string $tenantId): void
     {
-        DB::transaction(function () use ($referral, $tenantId) {
+        DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($referral, $tenantId) {
             $locked = AffiliateReferral::query()->lockForUpdate()->find($referral->id);
 
             if (!$locked || $locked->converted_at) {
@@ -112,7 +112,7 @@ class AffiliateService
             return null;
         }
 
-        $conversion = DB::transaction(function () use ($tenantId, $paymentLog) {
+        $conversion = DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($tenantId, $paymentLog) {
             if (AffiliateConversion::query()->where('payment_log_id', $paymentLog->id)->exists()) {
                 return null;
             }
@@ -176,7 +176,7 @@ class AffiliateService
      */
     public function approveCouponConversion(string $tenantId, PaymentLog $paymentLog, AffiliateCoupon $coupon): ?AffiliateConversion
     {
-        return DB::transaction(function () use ($tenantId, $paymentLog, $coupon) {
+        return DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($tenantId, $paymentLog, $coupon) {
             if (AffiliateConversion::query()->where('payment_log_id', $paymentLog->id)->exists()) {
                 return null;
             }
@@ -250,7 +250,7 @@ class AffiliateService
      */
     public function reverseConversion(AffiliateConversion $conversion): bool
     {
-        return DB::transaction(function () use ($conversion) {
+        return DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($conversion) {
             $locked = AffiliateConversion::query()->lockForUpdate()->find($conversion->id);
 
             if (!$locked || !in_array($locked->status, ['approved', 'paid'], true)) {
@@ -315,7 +315,7 @@ class AffiliateService
      */
     public function issuePayout(Affiliate $affiliate, array $payoutData): AffiliatePayout
     {
-        return DB::transaction(function () use ($affiliate, $payoutData) {
+        return DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($affiliate, $payoutData) {
             $amount    = round((float) $payoutData['amount'], 2);
             $affiliate = Affiliate::query()->lockForUpdate()->findOrFail($affiliate->id);
 
@@ -389,7 +389,7 @@ class AffiliateService
 
     public function requestPayout(Affiliate $affiliate, float $amount, ?string $note = null): AffiliatePayoutRequest
     {
-        return DB::transaction(function () use ($affiliate, $amount, $note) {
+        return DB::connection(config('tenancy.database.central_connection'))->transaction(function () use ($affiliate, $amount, $note) {
             $affiliate = Affiliate::query()->lockForUpdate()->findOrFail($affiliate->id);
             $amount    = round($amount, 2);
             $min       = AffiliateSettings::minPayout();
@@ -433,8 +433,25 @@ class AffiliateService
     private function isSelfReferral(Affiliate $affiliate, string $tenantId): bool
     {
         // `email` is a virtual (JSON data) attribute on Tenant, so load the model.
-        $email = Tenant::query()->find($tenantId)?->email;
+        if ($affiliate->tenant_id !== null && (string) $affiliate->tenant_id === $tenantId) {
+            return true;
+        }
 
-        return $email && strcasecmp(trim((string) $email), $affiliate->email) === 0;
+        $email = Tenant::query()->find($tenantId)?->email;
+        if (! $email) {
+            return false;
+        }
+
+        $email = trim((string) $email);
+        if (strcasecmp($email, $affiliate->email) === 0) {
+            return true;
+        }
+
+        if ($affiliate->tenant_id) {
+            $owner = Tenant::query()->find($affiliate->tenant_id)?->email;
+            return $owner && strcasecmp(trim((string) $owner), $email) === 0;
+        }
+
+        return false;
     }
 }

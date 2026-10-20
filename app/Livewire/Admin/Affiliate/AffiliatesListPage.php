@@ -34,6 +34,8 @@ class AffiliatesListPage extends ListPage
     public string $commissionType  = 'percentage';
     public string $commissionValue = '10.00';
     public string $status          = 'pending';
+    public string $typeFilter      = '';
+    public bool   $editingTenant  = false;
 
     // Payout fields
     public ?int   $payoutAffiliateId = null;
@@ -66,6 +68,7 @@ class AffiliatesListPage extends ListPage
         $this->authorizePermission('affiliates.manage');
 
         $records = Affiliate::query()
+            ->when(in_array($this->typeFilter, ['tenant', 'external'], true), fn ($q) => $q->where('type', $this->typeFilter))
             ->withCount(['referrals', 'conversions'])
             ->withSum(['payoutRequests as pending_request_sum' => fn ($q) => $q->where('status', 'pending')], 'amount')
             ->orderByDesc('id')
@@ -78,7 +81,7 @@ class AffiliatesListPage extends ListPage
         ];
 
         $rows = collect($records->items())->map(fn (Affiliate $a) => [
-            '<div class="entity-title">' . e($a->name) . '</div><div class="entity-subtitle">' . e($a->email) . '</div>',
+            '<div class="entity-title">' . e($a->name) . '</div><div class="entity-subtitle">' . e($a->isTenant() ? 'Tenant: ' . $a->tenant_id : $a->email) . '</div>' . ' <span class="badge ' . ($a->isTenant() ? 'badge-cyan' : 'badge-secondary') . '">' . ($a->isTenant() ? 'Tenant' : 'External') . '</span>',
             '<span class="badge badge-cyan">' . e($a->commission_type === 'percentage' ? $a->commission_value . '%' : '$' . number_format((float) $a->commission_value, 2)) . '</span>',
             '<strong>$' . number_format((float) $a->balance, 2) . '</strong>',
             $a->pending_request_sum ? '<span class="badge badge-amber">$' . number_format((float) $a->pending_request_sum, 2) . '</span>' : '—',
@@ -101,6 +104,9 @@ class AffiliatesListPage extends ListPage
                 ['label' => 'Active', 'value' => number_format($stats['active']), 'dot' => 'dot-green', 'caption' => 'Approved and active'],
                 ['label' => 'Pending Approval', 'value' => number_format($stats['pending']), 'dot' => 'dot-amber', 'caption' => 'Awaiting review'],
             ],
+            'filterFields' => [
+                ['label' => 'Type', 'model' => 'typeFilter', 'type' => 'select', 'options' => ['' => 'All Types', 'external' => 'External', 'tenant' => 'Tenant']],
+            ],
             'modalModel'        => 'showFormModal',
             'modalTitle'        => 'Edit Affiliate',
             'modalCloseAction'  => 'closeModal',
@@ -111,7 +117,7 @@ class AffiliatesListPage extends ListPage
                     'gridClass' => 'form-grid-2',
                     'fields'    => [
                         ['label' => 'Name', 'model' => 'name', 'type' => 'text'],
-                        ['label' => 'Email', 'model' => 'email', 'type' => 'email'],
+                        ...($this->editingTenant ? [] : [['label' => 'Email', 'model' => 'email', 'type' => 'email'],]),
                         ['label' => 'Commission Type', 'model' => 'commissionType', 'type' => 'select', 'options' => ['percentage' => 'Percentage (%)', 'fixed' => 'Fixed Amount ($)']],
                         ['label' => 'Commission Value', 'model' => 'commissionValue', 'type' => 'number'],
                         ['label' => 'Status', 'model' => 'status', 'type' => 'select', 'options' => ['pending' => 'Pending', 'active' => 'Active', 'suspended' => 'Suspended']],
@@ -121,12 +127,18 @@ class AffiliatesListPage extends ListPage
         ]);
     }
 
+    public function updatedTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function editAffiliate(int $id): void
     {
         $a = Affiliate::query()->findOrFail($id);
         $this->affiliateId     = $a->id;
         $this->name            = $a->name;
         $this->email           = $a->email;
+        $this->editingTenant  = $a->isTenant();
         $this->commissionType  = $a->commission_type;
         $this->commissionValue = (string) $a->commission_value;
         $this->status          = $a->status;
@@ -264,6 +276,7 @@ class AffiliatesListPage extends ListPage
         $this->showFormModal   = false;
         $this->showPayoutModal = false;
         $this->affiliateId     = null;
+        $this->editingTenant  = false;
         $this->resetErrorBag();
     }
 

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class Affiliate extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, CentralConnection;
 
     protected $fillable = [
         'name', 'email', 'password', 'code',
@@ -17,7 +18,7 @@ class Affiliate extends Authenticatable
         'balance', 'total_earned', 'total_paid',
         'status', 'paypal_email',
         'bank_name', 'bank_account', 'bank_iban',
-        'notes', 'approved_at',
+        'notes', 'approved_at', 'type', 'tenant_id',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -59,6 +60,16 @@ class Affiliate extends Authenticatable
     public function referralUrl(): string
     {
         return route('website.home') . '?ref=' . $this->code;
+    }
+
+    public function isTenant(): bool
+    {
+        return $this->type === 'tenant';
+    }
+
+    public function scopeExternal($query)
+    {
+        return $query->where('type', 'external');
     }
 
     public function isActive(): bool

@@ -38,6 +38,11 @@ class LoginPage extends Component
             return;
         }
 
+        if ($affiliate->isTenant()) {
+            $this->addError('email', __('Invalid email or password.'));
+            return;
+        }
+
         if (!$affiliate->isActive()) {
             $this->addError('email', __('Your affiliate account is pending approval.'));
             return;
