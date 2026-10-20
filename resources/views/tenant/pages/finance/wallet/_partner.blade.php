@@ -17,6 +17,10 @@
     <div class="db-partner-link">
         <span class="db-partner-url"><span>{{ $partnerLink }}</span></span>
         <x-tenant::copy :value="$partnerLink" />
+        <form method="POST" action="{{ route('tenant.finance.wallet.partner.sso') }}" target="_blank" style="display:inline">
+            @csrf
+            <button type="submit" class="btn btn-secondary btn-sm">Open affiliate dashboard</button>
+        </form>
         <button type="button" class="btn btn-primary btn-sm" data-modal-open="partner-withdraw"
             @disabled((float) $partnerStats['requestable'] <= 0)>Withdraw</button>
     </div>

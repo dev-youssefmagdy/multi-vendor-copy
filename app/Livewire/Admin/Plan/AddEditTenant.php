@@ -37,6 +37,10 @@ class AddEditTenant extends Component
 
     public float $profitPercentage = 0;
 
+    // Partner (affiliate) commission for this tenant's own affiliate account
+    public string $affiliateCommissionType = 'percentage';
+    public float $affiliateCommissionValue = 10;
+
     // Security tab
     public string $password = '';
     public string $passwordConfirmation = '';
@@ -73,6 +77,10 @@ class AddEditTenant extends Component
         $this->trialEndsAt = $loaded->trial_ends_at?->format('Y-m-d\TH:i');
         $this->domain = $loaded->domains->first()?->domain;
         $this->profitPercentage = (float) ($loaded->profit_percentage ?? 0);
+
+        $affiliate = app(\App\Services\TenantAffiliateService::class)->forTenant($loaded);
+        $this->affiliateCommissionType  = $affiliate->commission_type;
+        $this->affiliateCommissionValue = (float) $affiliate->commission_value;
     }
 
     public function setTab(string $tab): void
@@ -205,6 +213,8 @@ class AddEditTenant extends Component
                 Rule::unique('domain_requests', 'domain'),
             ],
             'profitPercentage' => ['nullable', 'numeric', 'min:0', 'max:1000'],
+            'affiliateCommissionType' => ['required', 'in:percentage,fixed'],
+            'affiliateCommissionValue' => ['required', 'numeric', 'min:0', $this->affiliateCommissionType === 'percentage' ? 'max:100' : 'max:100000'],
             'password' => [$this->tenantId ? 'nullable' : 'required', 'string', 'min:8'],
             'logoUpload' => ['nullable', 'image', 'max:2048'],
         ]);
@@ -224,6 +234,13 @@ class AddEditTenant extends Component
             'profit_percentage' => $validated['profitPercentage'] ?? 0,
             'password' => $validated['password'] ?? null,
         ], $this->tenantId ? Tenant::query()->findOrFail($this->tenantId) : null);
+
+        if ($this->tenantId) {
+            app(\App\Services\TenantAffiliateService::class)->forTenant($tenant)->update([
+                'commission_type'  => $validated['affiliateCommissionType'],
+                'commission_value' => $validated['affiliateCommissionValue'],
+            ]);
+        }
 
         // Handle logo upload (edit only – tenant DB must exist before writing settings)
         if ($this->tenantId && $this->logoUpload) {

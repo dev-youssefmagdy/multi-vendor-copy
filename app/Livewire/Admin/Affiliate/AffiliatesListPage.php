@@ -81,7 +81,7 @@ class AffiliatesListPage extends ListPage
         ];
 
         $rows = collect($records->items())->map(fn (Affiliate $a) => [
-            '<div class="entity-title">' . e($a->name) . '</div><div class="entity-subtitle">' . e($a->isTenant() ? 'Tenant: ' . $a->tenant_id : $a->email) . '</div>' . ' <span class="badge ' . ($a->isTenant() ? 'badge-cyan' : 'badge-secondary') . '">' . ($a->isTenant() ? 'Tenant' : 'External') . '</span>',
+            '<div class="entity-title">' . e($a->name) . '</div><div class="entity-subtitle">' . e($a->email . ($a->isTenant() ? ' · store: ' . $a->tenant_id : '')) . '</div>' . ' <span class="badge ' . ($a->isTenant() ? 'badge-cyan' : 'badge-secondary') . '">' . ($a->isTenant() ? 'Tenant' : 'External') . '</span>',
             '<span class="badge badge-cyan">' . e($a->commission_type === 'percentage' ? $a->commission_value . '%' : '$' . number_format((float) $a->commission_value, 2)) . '</span>',
             '<strong>$' . number_format((float) $a->balance, 2) . '</strong>',
             $a->pending_request_sum ? '<span class="badge badge-amber">$' . number_format((float) $a->pending_request_sum, 2) . '</span>' : '—',
@@ -151,7 +151,7 @@ class AffiliatesListPage extends ListPage
         $this->validate([
             'name'            => 'required|string|max:100',
             'commissionType'  => 'required|in:percentage,fixed',
-            'commissionValue' => 'required|numeric|min:0',
+            'commissionValue' => 'required|numeric|min:0' . ($this->commissionType === 'percentage' ? '|max:100' : ''),
             'status'          => 'required|in:pending,active,suspended',
         ]);
 

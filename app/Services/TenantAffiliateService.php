@@ -3,14 +3,17 @@
 namespace App\Services;
 
 use App\Models\Affiliate;
+use App\Models\AffiliateLoginToken;
 use App\Models\Tenant;
 use App\Support\AffiliateSettings;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
 
 /**
- * Lets a tenant (vendor store) act as an affiliate. Tenant affiliates are non-login rows
- * in the central `affiliates` table; the partner balance is separate from vendor order money.
+ * Lets a tenant (vendor store) act as an affiliate. Each tenant gets one row in the central
+ * `affiliates` table, created at registration with the store owner's email and registration
+ * password (so it can also log in to the affiliate panel). The partner balance is separate
+ * from vendor order money.
  */
 class TenantAffiliateService
 {
@@ -18,7 +21,7 @@ class TenantAffiliateService
     {
     }
 
-    public function forTenant(string|Tenant $tenant): Affiliate
+    public function forTenant(string|Tenant $tenant, ?string $plainPassword = null): Affiliate
     {
         $tenantId = $tenant instanceof Tenant ? (string) $tenant->getTenantKey() : $tenant;
 
@@ -34,8 +37,8 @@ class TenantAffiliateService
                 'type'             => 'tenant',
                 'tenant_id'        => $tenantId,
                 'name'             => (string) ($model?->shop_name ?: $model?->name ?: $tenantId),
-                'email'            => "tenant-{$tenantId}@affiliates.invalid",
-                'password'         => Str::random(48),
+                'email'            => $this->availableEmail((string) $model?->email, $tenantId),
+                'password'         => $plainPassword ?: Str::random(48),
                 'code'             => Affiliate::generateUniqueCode(),
                 'commission_type'  => AffiliateSettings::defaultCommissionType(),
                 'commission_value' => AffiliateSettings::defaultCommissionValue(),
@@ -50,6 +53,52 @@ class TenantAffiliateService
             }
             throw $e;
         }
+    }
+
+    /**
+     * The tenant's own email when no affiliate uses it yet; otherwise a unique variant
+     * (`name+<tenant>@domain`, then `name+<tenant>-N@domain`) that still reaches the same inbox.
+     */
+    private function availableEmail(string $email, string $tenantId): string
+    {
+        $email = strtolower(trim($email));
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return "tenant-{$tenantId}@affiliates.invalid";
+        }
+
+        if (!Affiliate::query()->where('email', $email)->exists()) {
+            return $email;
+        }
+
+        [$local, $domain] = explode('@', $email, 2);
+        $local = explode('+', $local, 2)[0];
+        $tag   = Str::slug($tenantId) ?: 'store';
+
+        for ($i = 0; ; $i++) {
+            $candidate = "{$local}+{$tag}" . ($i ? "-{$i}" : '') . "@{$domain}";
+            if (!Affiliate::query()->where('email', $candidate)->exists()) {
+                return $candidate;
+            }
+        }
+    }
+
+    /** One-time (60s) URL on the central domain that signs the owner into this affiliate account. */
+    public function loginUrl(Affiliate $a): string
+    {
+        $token = Str::random(64);
+
+        AffiliateLoginToken::query()->where('expires_at', '<', now()->subDay())->delete();
+        AffiliateLoginToken::query()->create([
+            'affiliate_id' => $a->id,
+            'token_hash'   => hash('sha256', $token),
+            'expires_at'   => now()->addSeconds(60),
+        ]);
+
+        $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME) ?: 'https';
+        $port   = parse_url((string) config('app.url'), PHP_URL_PORT);
+
+        return $scheme . '://' . config('tenancy.central_domains.0') . ($port ? ':' . $port : '') . '/affiliate/sso/' . $token;
     }
 
     public function referralUrl(Affiliate $a): string

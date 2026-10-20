@@ -178,6 +178,10 @@ Route::prefix('affiliate')->name('affiliate.')->group(function () {
         Route::get('/register', \App\Livewire\Affiliate\Auth\RegisterPage::class)->name('register');
     });
 
+    // One-time sign-in from the vendor panel (tenant owners' affiliate account)
+    Route::get('/sso/{token}', \App\Http\Controllers\Affiliate\SsoController::class)
+        ->middleware('throttle:20,1')->name('sso');
+
     // Authenticated affiliate panel
     Route::middleware('auth:affiliate')->group(function () {
         Route::get('/dashboard',     \App\Livewire\Affiliate\DashboardPage::class)->name('dashboard');

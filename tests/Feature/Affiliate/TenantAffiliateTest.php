@@ -81,7 +81,6 @@ class TenantAffiliateTest extends TestCase
         $this->assertSame(2, Affiliate::where('type', 'tenant')->count());
         $this->assertTrue($a->isTenant());
         $this->assertSame('active', $a->status);
-        $this->assertSame('tenant-shopa@affiliates.invalid', $a->email);
         $this->assertSame('shopa', $a->tenant_id);
     }
 
@@ -105,20 +104,38 @@ class TenantAffiliateTest extends TestCase
         $this->assertStringStartsWith(parse_url(config('app.url'), PHP_URL_SCHEME) . '://', $url);
     }
 
-    public function test_tenant_affiliate_cannot_log_in_to_affiliate_panel(): void
+    public function test_registration_creates_affiliate_with_owner_email_and_password_that_can_log_in(): void
     {
-        $this->tenantRow('shopa');
-        $a = $this->tenants->forTenant('shopa');
-        $a->password = 'known-pass-123';
-        $a->save();
+        $this->tenantRow('shopa'); // tenantRow() stores the owner email
+        $email = Tenant::find('shopa')->email;
 
-        Livewire::test(LoginPage::class)
-            ->set('email', $a->email)
-            ->set('password', 'known-pass-123')
-            ->call('login')
-            ->assertHasErrors('email');
+        $a = $this->tenants->forTenant('shopa', 'my-register-pass');
 
-        $this->assertGuest('affiliate');
+        $this->assertSame(strtolower($email), $a->email);
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('my-register-pass', $a->password));
+
+        // Same credential check the affiliate login page performs.
+        $this->assertTrue(\Illuminate\Support\Facades\Auth::guard('affiliate')
+            ->attempt(['email' => $a->email, 'password' => 'my-register-pass']));
+        $this->assertFalse(\Illuminate\Support\Facades\Auth::guard('affiliate')
+            ->attempt(['email' => $a->email, 'password' => 'wrong']));
+    }
+
+    public function test_existing_affiliate_email_gets_a_new_unique_variant_with_same_password(): void
+    {
+        $email = 'dup@example.com';
+        $this->tenantRow('shopa', $email);
+        $this->tenantRow('shopb', $email);
+        $this->external(['email' => $email]);
+
+        $a = $this->tenants->forTenant('shopa', 'pw-123456');
+        $b = $this->tenants->forTenant('shopb', 'pw-123456');
+
+        [$local, $domain] = explode('@', $email);
+        $this->assertSame("{$local}+shopa@{$domain}", $a->email);
+        $this->assertSame("{$local}+shopb@{$domain}", $b->email);
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('pw-123456', $b->password));
+        $this->assertSame(3, Affiliate::query()->count());
     }
 
     public function test_full_flow_credits_tenant_affiliate_balance_and_stats(): void
@@ -302,5 +319,56 @@ class TenantAffiliateTest extends TestCase
         $this->assertNotContains('csrf_exempt', $route->gatherMiddleware());
         $this->assertNotNull(app('router')->getRoutes()->getByName('tenant.finance.wallet.partner.conversions.data'));
         $this->assertNotNull(app('router')->getRoutes()->getByName('tenant.finance.wallet.partner.payouts.data'));
+    }
+
+    public function test_sso_token_logs_in_once_and_expires(): void
+    {
+        $this->tenantRow('shopa');
+        $a = $this->tenants->forTenant('shopa', 'pw-123456');
+
+        $url   = $this->tenants->loginUrl($a);
+        $token = basename($url);
+        $this->assertStringContainsString((string) config('tenancy.central_domains.0'), $url);
+        $this->assertStringContainsString('/affiliate/sso/', $url);
+
+        $this->get('/affiliate/sso/' . $token)->assertRedirect(route('affiliate.dashboard'));
+        $this->assertAuthenticatedAs($a, 'affiliate');
+
+        // Token is single-use.
+        auth('affiliate')->logout();
+        $this->get('/affiliate/sso/' . $token)->assertRedirect(route('affiliate.login'));
+        $this->assertGuest('affiliate');
+
+        // Expired token.
+        $old = basename($this->tenants->loginUrl($a));
+        \App\Models\AffiliateLoginToken::query()->where('token_hash', hash('sha256', $old))->update(['expires_at' => now()->subSecond()]);
+        $this->get('/affiliate/sso/' . $old)->assertRedirect(route('affiliate.login'));
+        $this->assertGuest('affiliate');
+    }
+
+    public function test_sso_rejects_suspended_affiliate_and_unknown_token(): void
+    {
+        $this->tenantRow('shopa');
+        $a = $this->tenants->forTenant('shopa');
+        $token = basename($this->tenants->loginUrl($a));
+        $a->update(['status' => 'suspended']);
+
+        $this->get('/affiliate/sso/' . $token)->assertRedirect(route('affiliate.login'));
+        $this->get('/affiliate/sso/' . str_repeat('x', 64))->assertRedirect(route('affiliate.login'));
+        $this->assertGuest('affiliate');
+    }
+
+    public function test_commission_can_be_updated_per_tenant_affiliate_and_applies_to_new_conversions(): void
+    {
+        $this->tenantRow('shopa');
+        $a = $this->tenants->forTenant('shopa');
+        $a->update(['commission_type' => 'percentage', 'commission_value' => 25]);
+
+        $referral = AffiliateReferral::query()->create(['affiliate_id' => $a->id]);
+        $this->tenantRow('newshop', 'someone@example.com');
+        app(AffiliateService::class)->markReferralConverted($referral, 'newshop');
+        $c = app(AffiliateService::class)->approveConversion('newshop', $this->payment('newshop', 200));
+
+        $this->assertEquals(50.00, (float) $c->commission_amount);
     }
 }

@@ -480,6 +480,9 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         Route::get('/wallet/partner/payouts/data', [PartnerWalletController::class, 'payoutsData'])
             ->middleware('tenant.permission:finance.wallet.view')
             ->name('wallet.partner.payouts.data');
+        Route::post('/wallet/partner/sso', [PartnerWalletController::class, 'sso'])
+            ->middleware(['tenant.permission:finance.wallet.view', 'throttle:10,1'])
+            ->name('wallet.partner.sso');
         Route::post('/wallet/partner/withdraw', [PartnerWalletController::class, 'withdraw'])
             ->middleware('tenant.permission:finance.wallet.view')
             ->name('wallet.partner.withdraw');

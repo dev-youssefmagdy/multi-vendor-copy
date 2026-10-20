@@ -25,6 +25,10 @@
       "_reverbConfig-CZCHXwWW.js"
     ]
   },
+  "_clipboard-DO2GcrsM.js": {
+    "file": "assets/clipboard-DO2GcrsM.js",
+    "name": "clipboard"
+  },
   "_confirm-DDMLLyXD.js": {
     "file": "assets/confirm-DDMLLyXD.js",
     "name": "confirm",
@@ -36,8 +40,8 @@
       "_vendor-swal-Dvy87gJ2.js"
     ]
   },
-  "_core-DXhe-55Y.js": {
-    "file": "assets/core-DXhe-55Y.js",
+  "_core-BoUDxDXS.js": {
+    "file": "assets/core-BoUDxDXS.js",
     "name": "core",
     "imports": [
       "_events-Cyr27uQe.js",
@@ -2556,7 +2560,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Bk6_yTgn.css",
+    "file": "assets/app-CAOA0v0e.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2607,7 +2611,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-CFfGZnxl.css",
+    "file": "assets/ecommet-CEcCtKSN.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2890,7 +2894,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CLrOFn1G.css",
+    "file": "assets/souqify-BVBJMdTu.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2899,7 +2903,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DgngEUoY.css",
+    "file": "assets/app-D2tJ5pAr.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3231,13 +3235,13 @@
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-Dm9ysiVT.js",
+    "file": "assets/app-0lnwkB_q.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
-      "_core-DXhe-55Y.js"
+      "_core-BoUDxDXS.js"
     ]
   },
   "resources/js/tenant/components/ajax-list.js": {
@@ -3295,12 +3299,13 @@
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/copy.js": {
-    "file": "assets/copy-DJmYm-B-.js",
+    "file": "assets/copy-DXlesU9o.js",
     "name": "copy",
     "src": "resources/js/tenant/components/copy.js",
     "isDynamicEntry": true,
     "imports": [
-      "_toast-CtLD40BN.js"
+      "_toast-CtLD40BN.js",
+      "_clipboard-DO2GcrsM.js"
     ]
   },
   "resources/js/tenant/components/country-picker.js": {
@@ -3674,7 +3679,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-CtuP_ltk.js",
+    "file": "assets/index-D-FzUXKi.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3683,9 +3688,10 @@
       "_events-Cyr27uQe.js",
       "_toast-CtLD40BN.js",
       "_registry-CuhCklDv.js",
-      "_core-DXhe-55Y.js",
+      "_core-BoUDxDXS.js",
       "_swiper-DA204xBc.js",
       "_opportunities-D5kNNkyC.js",
+      "_clipboard-DO2GcrsM.js",
       "_product-modals-Dku9dYmL.js"
     ],
     "css": [
@@ -3932,7 +3938,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-CRQQR5RZ.js",
+    "file": "assets/order-show-nhm4bhWU.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
@@ -3940,7 +3946,7 @@
       "_events-Cyr27uQe.js",
       "_forms-Ce9H6Uy-.js",
       "_registry-CuhCklDv.js",
-      "_core-DXhe-55Y.js"
+      "_core-BoUDxDXS.js"
     ],
     "css": [
       "assets/order-show-DF9i_jxp.css"

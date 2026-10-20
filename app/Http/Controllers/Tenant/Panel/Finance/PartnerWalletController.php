@@ -31,6 +31,12 @@ final class PartnerWalletController extends PanelController
         return $this->partners->forTenant((string) tenant('id'));
     }
 
+    /** Opens the owner's affiliate account on the central domain (the form targets a new tab). */
+    public function sso(): \Illuminate\Http\RedirectResponse
+    {
+        return redirect()->away($this->partners->loginUrl($this->affiliate()));
+    }
+
     public function conversionsData(Request $request): JsonResponse
     {
         $query = $this->affiliate()->conversions()->with('package')->latest('id');

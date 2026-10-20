@@ -135,7 +135,7 @@ final class DashboardController extends PanelController
             'reward'         => '$' . number_format((float) $stats['balance'], 2),
             'reward_status'  => $pending > 0
                 ? '$' . number_format($pending, 2) . ' pending requested'
-                : 'Ready to withdraw',
+                : ((float) $stats['requestable'] > 0 ? 'Ready to withdraw' : 'No reward yet'),
         ];
     }
 }
