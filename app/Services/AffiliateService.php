@@ -5,16 +5,18 @@ namespace App\Services;
 use App\Models\Affiliate;
 use App\Models\AffiliateConversion;
 use App\Models\AffiliateCoupon;
-use App\Models\AffiliateReferral;
 use App\Models\AffiliatePayout;
+use App\Models\AffiliatePayoutRequest;
+use App\Models\AffiliateReferral;
 use App\Models\PaymentLog;
+use App\Models\Tenant;
+use App\Support\AffiliateSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AffiliateService
 {
-    public const COOKIE_NAME  = 'neo_aff';
-    public const COOKIE_DAYS  = 90; // attribution window
+    public const COOKIE_NAME = 'neo_aff';
 
     // ── Referral tracking ──────────────────────────────────────────
 
@@ -34,7 +36,7 @@ class AffiliateService
         cookie()->queue(
             self::COOKIE_NAME,
             $referral->id,
-            self::COOKIE_DAYS * 24 * 60,
+            AffiliateSettings::cookieDays() * 24 * 60,
             '/', null, true, true, false, 'Lax'
         );
 
@@ -53,7 +55,7 @@ class AffiliateService
         }
 
         return AffiliateReferral::query()
-            ->whereNull('converted_at')  // not yet converted
+            ->whereNull('converted_at')
             ->where('id', (int) $referralId)
             ->whereHas('affiliate', fn($q) => $q->where('status', 'active'))
             ->first();
@@ -63,196 +65,296 @@ class AffiliateService
 
     /**
      * Mark a referral as "signed up" (tenant created, possibly on free plan).
-     * The conversion status will remain "pending" until a paid package is bought.
+     * The conversion stays "pending" until a paid package is bought.
+     * Safe against double calls: only the first caller converts the referral.
      */
     public function markReferralConverted(AffiliateReferral $referral, string $tenantId): void
     {
-        $referral->update([
-            'tenant_id'    => $tenantId,
-            'converted_at' => now(),
-        ]);
+        DB::transaction(function () use ($referral, $tenantId) {
+            $locked = AffiliateReferral::query()->lockForUpdate()->find($referral->id);
 
-        // Create a pending conversion (no commission yet — waiting for paid package)
-        AffiliateConversion::query()->updateOrCreate(
-            ['affiliate_id' => $referral->affiliate_id, 'tenant_id' => $tenantId],
-            [
-                'affiliate_referral_id' => $referral->id,
-                'package_id'            => null,
-                'payment_log_id'        => null,
-                'sale_amount'           => 0.00,
-                'commission_amount'     => 0.00,
-                'commission_type'       => $referral->affiliate->commission_type,
-                'commission_value'      => $referral->affiliate->commission_value,
-                'status'                => 'pending',
-            ]
-        );
+            if (!$locked || $locked->converted_at) {
+                return;
+            }
+
+            $locked->update([
+                'tenant_id'    => $tenantId,
+                'converted_at' => now(),
+            ]);
+
+            $affiliate = $locked->affiliate;
+
+            AffiliateConversion::query()->updateOrCreate(
+                ['affiliate_id' => $locked->affiliate_id, 'tenant_id' => $tenantId],
+                [
+                    'affiliate_referral_id' => $locked->id,
+                    'package_id'            => null,
+                    'payment_log_id'        => null,
+                    'sale_amount'           => 0.00,
+                    'commission_amount'     => 0.00,
+                    'commission_type'       => $affiliate->commission_type,
+                    'commission_value'      => $affiliate->commission_value,
+                    'status'                => 'pending',
+                ]
+            );
+        });
     }
 
     /**
      * Called when a tenant completes a PAID package payment.
-     * Finds any pending conversion for this tenant and approves it.
+     * Approves the tenant's pending referral conversion (first paid payment only;
+     * renewals never earn commission). Idempotent per payment log.
      */
     public function approveConversion(string $tenantId, PaymentLog $paymentLog, ?int $couponAffiliateId = null): ?AffiliateConversion
     {
-        // If an affiliated coupon was used, the coupon commission takes priority —
-        // skip the URL-referral commission to avoid double-attribution.
-        if ($couponAffiliateId !== null) {
+        // An affiliated coupon takes priority — avoids double-attribution.
+        if ($couponAffiliateId !== null || (float) $paymentLog->amount <= 0) {
             return null;
         }
 
-        $conversion = AffiliateConversion::query()
-            ->where('tenant_id', $tenantId)
-            ->where('status', 'pending')
-            ->with('affiliate')
-            ->first();
+        $conversion = DB::transaction(function () use ($tenantId, $paymentLog) {
+            if (AffiliateConversion::query()->where('payment_log_id', $paymentLog->id)->exists()) {
+                return null;
+            }
 
-        if (!$conversion) {
-            return null; // no pending conversion — tenant didn't come from affiliate
-        }
+            $conversion = AffiliateConversion::query()
+                ->where('tenant_id', $tenantId)
+                ->where('status', 'pending')
+                ->lockForUpdate()
+                ->first();
 
-        $affiliate       = $conversion->affiliate;
-        $commissionAmount = $affiliate->calculateCommission((float) $paymentLog->amount);
+            if (!$conversion) {
+                return null;
+            }
 
-        $conversion = DB::transaction(function () use ($conversion, $paymentLog, $commissionAmount) {
+            $affiliate = Affiliate::query()->lockForUpdate()->find($conversion->affiliate_id);
+
+            // Suspended / unapproved affiliates earn nothing; the conversion stays pending.
+            if (!$affiliate || !$affiliate->isActive()) {
+                return null;
+            }
+
+            if ($this->isSelfReferral($affiliate, $tenantId)) {
+                $conversion->update(['status' => 'rejected']);
+                return null;
+            }
+
+            // Use the rate snapshotted at signup time, not the affiliate's current one.
+            $commission = Affiliate::commissionFor(
+                $conversion->commission_type,
+                (float) $conversion->commission_value,
+                (float) $paymentLog->amount
+            );
+
             $conversion->update([
                 'payment_log_id'    => $paymentLog->id,
                 'package_id'        => $paymentLog->package_id,
                 'sale_amount'       => $paymentLog->amount,
-                'commission_amount' => $commissionAmount,
+                'commission_amount' => $commission,
                 'status'            => 'approved',
                 'approved_at'       => now(),
             ]);
 
-            // Credit the affiliate's balance
-            $conversion->affiliate->increment('balance', $commissionAmount);
-            $conversion->affiliate->increment('total_earned', $commissionAmount);
+            $this->credit($affiliate, $commission);
 
             return $conversion;
         });
 
-        // Prevent double-attribution on future purchases from this browser.
-        cookie()->queue(cookie()->forget(self::COOKIE_NAME));
+        if ($conversion) {
+            // Prevent double-attribution on future purchases from this browser.
+            cookie()->queue(cookie()->forget(self::COOKIE_NAME));
+        }
 
         return $conversion;
     }
 
     /**
      * Called when a tenant pays for a package using an affiliate-linked coupon code.
-     * Independent of the URL-referral cookie flow: fires even if the tenant was not
-     * referred via the affiliate's link. If a pending/approved referral conversion
-     * already exists for the same affiliate+tenant, it is upgraded rather than
-     * duplicated (whichever commission is higher wins — no double-crediting).
+     * Independent of the URL-referral cookie. If a pending/approved conversion already
+     * exists for the same affiliate+tenant it is upgraded (higher commission wins,
+     * only the difference is credited). Idempotent per payment log.
      */
     public function approveCouponConversion(string $tenantId, PaymentLog $paymentLog, AffiliateCoupon $coupon): ?AffiliateConversion
     {
-        $coupon->loadMissing('affiliate');
-        $affiliate = $coupon->affiliate;
+        return DB::transaction(function () use ($tenantId, $paymentLog, $coupon) {
+            if (AffiliateConversion::query()->where('payment_log_id', $paymentLog->id)->exists()) {
+                return null;
+            }
 
-        if (!$affiliate) {
-            return null;
-        }
+            $affiliate = Affiliate::query()->lockForUpdate()->find($coupon->affiliate_id);
 
-        $commissionAmount = $coupon->calculateCommission((float) $paymentLog->amount);
+            if (!$affiliate || !$affiliate->isActive() || $this->isSelfReferral($affiliate, $tenantId)) {
+                return null;
+            }
 
-        if ($commissionAmount <= 0) {
-            return null;
-        }
+            $commissionAmount = $coupon->calculateCommission((float) $paymentLog->amount);
 
-        return DB::transaction(function () use ($affiliate, $coupon, $tenantId, $paymentLog, $commissionAmount) {
+            if ($commissionAmount <= 0) {
+                return null;
+            }
+
+            $commissionValue = $coupon->commission_value ?? $affiliate->commission_value;
+
             $existing = AffiliateConversion::query()
                 ->where('affiliate_id', $affiliate->id)
                 ->where('tenant_id', $tenantId)
                 ->whereIn('status', ['pending', 'approved'])
+                ->lockForUpdate()
                 ->first();
 
-            $commissionValue = $coupon->commission_value ?? $affiliate->commission_value;
+            $attributes = [
+                'affiliate_coupon_id' => $coupon->id,
+                'source'              => 'coupon',
+                'payment_log_id'      => $paymentLog->id,
+                'package_id'          => $paymentLog->package_id,
+                'sale_amount'         => $paymentLog->amount,
+                'status'              => 'approved',
+                'approved_at'         => now(),
+            ];
 
             if ($existing) {
-                $previousCommission = (float) $existing->commission_amount;
-                $finalCommission = max($commissionAmount, $previousCommission);
-                $wasApproved = $existing->status === 'approved';
+                $previous    = $existing->status === 'approved' ? (float) $existing->commission_amount : 0.0;
+                $final       = max($commissionAmount, $previous);
+                $isPercent   = $coupon->commission_value !== null || $affiliate->commission_type === 'percentage';
 
-                $existing->update([
-                    'affiliate_coupon_id' => $coupon->id,
-                    'source'            => 'coupon',
-                    'payment_log_id'    => $paymentLog->id,
-                    'package_id'        => $paymentLog->package_id,
-                    'sale_amount'       => $paymentLog->amount,
-                    'commission_amount' => $finalCommission,
-                    'commission_type'   => 'percentage',
+                $existing->update($attributes + [
+                    'commission_amount' => $final,
+                    'commission_type'   => $isPercent ? 'percentage' : 'fixed',
                     'commission_value'  => $commissionValue,
-                    'status'            => 'approved',
-                    'approved_at'       => now(),
                 ]);
 
-                $credit = $wasApproved ? max(0, $finalCommission - $previousCommission) : $finalCommission;
-
-                if ($credit > 0) {
-                    $affiliate->increment('balance', $credit);
-                    $affiliate->increment('total_earned', $credit);
-                }
+                $this->credit($affiliate, max(0.0, $final - $previous));
 
                 return $existing->fresh();
             }
 
-            $conversion = AffiliateConversion::query()->create([
+            $conversion = AffiliateConversion::query()->create($attributes + [
                 'affiliate_id'          => $affiliate->id,
                 'affiliate_referral_id' => null,
-                'affiliate_coupon_id'   => $coupon->id,
-                'source'                => 'coupon',
                 'tenant_id'             => $tenantId,
-                'payment_log_id'        => $paymentLog->id,
-                'package_id'            => $paymentLog->package_id,
-                'sale_amount'           => $paymentLog->amount,
                 'commission_amount'     => $commissionAmount,
-                'commission_type'       => 'percentage',
+                'commission_type'       => ($coupon->commission_value !== null || $affiliate->commission_type === 'percentage') ? 'percentage' : 'fixed',
                 'commission_value'      => $commissionValue,
-                'status'                => 'approved',
-                'approved_at'           => now(),
             ]);
 
-            $affiliate->increment('balance', $commissionAmount);
-            $affiliate->increment('total_earned', $commissionAmount);
+            $this->credit($affiliate, $commissionAmount);
 
             return $conversion;
         });
     }
 
+    /**
+     * Reverse an approved/paid commission (refund or admin action).
+     * Balance may go negative when part of the commission was already paid out;
+     * that debt is netted against future earnings and blocks new payouts.
+     */
+    public function reverseConversion(AffiliateConversion $conversion): bool
+    {
+        return DB::transaction(function () use ($conversion) {
+            $locked = AffiliateConversion::query()->lockForUpdate()->find($conversion->id);
+
+            if (!$locked || !in_array($locked->status, ['approved', 'paid'], true)) {
+                return false;
+            }
+
+            $affiliate  = Affiliate::query()->lockForUpdate()->find($locked->affiliate_id);
+            $commission = (float) $locked->commission_amount;
+
+            $locked->update(['status' => 'refunded', 'refunded_at' => now()]);
+
+            $affiliate?->decrement('balance', $commission);
+            $affiliate?->decrement('total_earned', $commission);
+
+            return true;
+        });
+    }
+
+    /** Reverse the commission tied to a refunded payment, if any. */
+    public function reverseForPaymentLog(PaymentLog $paymentLog): bool
+    {
+        $conversion = AffiliateConversion::query()->where('payment_log_id', $paymentLog->id)->first();
+
+        return $conversion ? $this->reverseConversion($conversion) : false;
+    }
+
+    // ── Coupons ────────────────────────────────────────────────────
+
+    /**
+     * Validate an affiliate coupon for a package price.
+     *
+     * @return array{0: ?AffiliateCoupon, 1: ?string} [coupon, errorMessage]
+     */
+    public function validateCoupon(string $code, float $price, ?string $email = null): array
+    {
+        $coupon = AffiliateCoupon::query()
+            ->with('affiliate')
+            ->where('code', strtoupper(trim($code)))
+            ->active()
+            ->first();
+
+        if (!$coupon || !$coupon->affiliate?->isActive()) {
+            return [null, __('Invalid or expired coupon code.')];
+        }
+
+        if ($price < (float) $coupon->minimum_spend) {
+            return [null, __('This coupon requires a minimum spend of $:amount.', ['amount' => number_format((float) $coupon->minimum_spend, 2)])];
+        }
+
+        if ($email && strcasecmp(trim($email), $coupon->affiliate->email) === 0) {
+            return [null, __('You cannot use your own affiliate coupon.')];
+        }
+
+        return [$coupon, null];
+    }
+
     // ── Payouts ────────────────────────────────────────────────────
 
     /**
-     * Admin issues a payout to an affiliate.
-     * Marks all approved conversions as paid and records the payout.
+     * Admin issues a payout. The amount is allocated to approved conversions oldest-first,
+     * partially if needed, so `paid_amount` always reconciles with payouts issued.
      */
     public function issuePayout(Affiliate $affiliate, array $payoutData): AffiliatePayout
     {
         return DB::transaction(function () use ($affiliate, $payoutData) {
-            $amount = (float) $payoutData['amount'];
+            $amount    = round((float) $payoutData['amount'], 2);
+            $affiliate = Affiliate::query()->lockForUpdate()->findOrFail($affiliate->id);
 
             if ($amount <= 0 || $amount > (float) $affiliate->balance) {
                 throw new \InvalidArgumentException('Invalid payout amount.');
             }
 
-            // Deduct from balance
+            $min = AffiliateSettings::minPayout();
+            if ($amount < $min && $amount < (float) $affiliate->balance) {
+                throw new \InvalidArgumentException('Payout is below the minimum of $' . number_format($min, 2) . '.');
+            }
+
             $affiliate->decrement('balance', $amount);
             $affiliate->increment('total_paid', $amount);
 
-            // Mark approved conversions as paid (oldest first, up to payout amount)
             $remaining = $amount;
             AffiliateConversion::query()
                 ->where('affiliate_id', $affiliate->id)
                 ->where('status', 'approved')
                 ->orderBy('approved_at')
+                ->orderBy('id')
+                ->lockForUpdate()
                 ->get()
                 ->each(function (AffiliateConversion $c) use (&$remaining) {
-                    if ($remaining <= 0) return false;
-                    if ((float) $c->commission_amount <= $remaining) {
-                        $remaining -= (float) $c->commission_amount;
-                        $c->update(['status' => 'paid', 'paid_at' => now()]);
+                    if ($remaining <= 0) {
+                        return false;
                     }
+
+                    $due  = round((float) $c->commission_amount - (float) $c->paid_amount, 2);
+                    $take = min($due, $remaining);
+                    $remaining = round($remaining - $take, 2);
+
+                    $paid = round((float) $c->paid_amount + $take, 2);
+                    $c->update($paid >= (float) $c->commission_amount
+                        ? ['paid_amount' => $paid, 'status' => 'paid', 'paid_at' => now()]
+                        : ['paid_amount' => $paid]);
                 });
 
-            return AffiliatePayout::query()->create([
+            $payout = AffiliatePayout::query()->create([
                 'affiliate_id'    => $affiliate->id,
                 'amount'          => $amount,
                 'method'          => $payoutData['method'] ?? 'manual',
@@ -261,6 +363,78 @@ class AffiliateService
                 'attachment_path' => $payoutData['attachment_path'] ?? null,
                 'paid_at'         => now(),
             ]);
+
+            // Close the matching pending request(s) so they are not paid twice.
+            AffiliatePayoutRequest::query()
+                ->where('affiliate_id', $affiliate->id)
+                ->where('status', 'pending')
+                ->when(
+                    !empty($payoutData['request_id']),
+                    fn ($q) => $q->where('id', $payoutData['request_id']),
+                    fn ($q) => $q->where('amount', '<=', $amount)
+                )
+                ->update(['status' => 'fulfilled', 'affiliate_payout_id' => $payout->id, 'processed_at' => now()]);
+
+            return $payout;
         });
+    }
+
+    /** Amount the affiliate may still request (balance minus requests already pending). */
+    public function requestableAmount(Affiliate $affiliate): float
+    {
+        $pending = (float) $affiliate->payoutRequests()->where('status', 'pending')->sum('amount');
+
+        return max(0.0, round((float) $affiliate->balance - $pending, 2));
+    }
+
+    public function requestPayout(Affiliate $affiliate, float $amount, ?string $note = null): AffiliatePayoutRequest
+    {
+        return DB::transaction(function () use ($affiliate, $amount, $note) {
+            $affiliate = Affiliate::query()->lockForUpdate()->findOrFail($affiliate->id);
+            $amount    = round($amount, 2);
+            $min       = AffiliateSettings::minPayout();
+
+            if (!$affiliate->isActive()) {
+                throw new \InvalidArgumentException(__('Your account is not active.'));
+            }
+            if ($amount <= 0 || $amount < $min) {
+                throw new \InvalidArgumentException(__('The minimum payout is $:amount.', ['amount' => number_format($min, 2)]));
+            }
+            if ($amount > $this->requestableAmount($affiliate)) {
+                throw new \InvalidArgumentException(__('Amount exceeds your available balance.'));
+            }
+
+            return $affiliate->payoutRequests()->create([
+                'amount' => $amount,
+                'note'   => $note,
+                'status' => 'pending',
+            ]);
+        });
+    }
+
+    public function rejectPayoutRequest(AffiliatePayoutRequest $request, ?string $adminNote = null): void
+    {
+        if ($request->status === 'pending') {
+            $request->update(['status' => 'rejected', 'admin_note' => $adminNote, 'processed_at' => now()]);
+        }
+    }
+
+    // ── Internals ──────────────────────────────────────────────────
+
+    private function credit(Affiliate $affiliate, float $amount): void
+    {
+        if ($amount > 0) {
+            $affiliate->increment('balance', $amount);
+            $affiliate->increment('total_earned', $amount);
+        }
+    }
+
+    /** An affiliate must not earn commission on their own signup. */
+    private function isSelfReferral(Affiliate $affiliate, string $tenantId): bool
+    {
+        // `email` is a virtual (JSON data) attribute on Tenant, so load the model.
+        $email = Tenant::query()->find($tenantId)?->email;
+
+        return $email && strcasecmp(trim((string) $email), $affiliate->email) === 0;
     }
 }

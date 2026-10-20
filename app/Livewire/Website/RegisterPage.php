@@ -225,13 +225,11 @@ class RegisterPage extends Component
             return;
         }
 
-        $coupon = \App\Models\AffiliateCoupon::query()
-            ->where('code', $code)
-            ->active()
-            ->first();
+        [$coupon, $error] = app(\App\Services\AffiliateService::class)
+            ->validateCoupon($code, (float) $package->price, $this->email);
 
         if (!$coupon) {
-            $this->couponError = __('Invalid or expired coupon code.');
+            $this->couponError = $error;
             return;
         }
 
@@ -245,6 +243,16 @@ class RegisterPage extends Component
     protected function startPayment(): void
     {
         $package = Package::query()->findOrFail((int) $this->packageId);
+
+        // Re-validate the coupon server-side: it may have expired, been disabled, or
+        // the affiliate suspended since it was applied.
+        if ($this->appliedCouponId) {
+            $this->applyCoupon();
+
+            if (!$this->appliedCouponId) {
+                return;
+            }
+        }
 
         $registrationId = (string) Str::uuid();
         $this->stashInlineTokens($this->gatewayCode);

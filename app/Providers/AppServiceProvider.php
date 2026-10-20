@@ -40,6 +40,8 @@ use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Variation;
 use App\Observers\CacheVersionObserver;
 use App\Observers\CentralCatalogSyncObserver;
+use App\Observers\PaymentLogAffiliateObserver;
+use App\Models\PaymentLog;
 use App\Observers\CentralCouponObserver;
 use App\Observers\CentralFlashSaleObserver;
 use App\Observers\CentralSharedTenantSyncObserver;
@@ -142,6 +144,7 @@ class AppServiceProvider extends ServiceProvider
 
         Category::observe(CentralCatalogSyncObserver::class);
         CentralCoupon::observe(CentralCouponObserver::class);
+        PaymentLog::observe(PaymentLogAffiliateObserver::class);
         CentralFlashSale::observe(CentralFlashSaleObserver::class);
         Currency::observe(CentralSharedTenantSyncObserver::class);
         EmailTemplate::observe(CentralSharedTenantSyncObserver::class);

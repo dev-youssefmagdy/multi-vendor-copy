@@ -5,7 +5,9 @@ namespace App\Livewire\Admin\Affiliate;
 use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\Affiliate;
+use App\Models\AffiliatePayoutRequest;
 use App\Services\AffiliateService;
+use App\Support\AffiliateSettings;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -16,6 +18,14 @@ class AffiliatesListPage extends ListPage
 
     public bool $showFormModal   = false;
     public bool $showPayoutModal = false;
+    public bool $showSettingsModal = false;
+    public ?int $payoutRequestId = null;
+
+    // Program settings
+    public string $settingCookieDays = '90';
+    public string $settingCommissionType = 'percentage';
+    public string $settingCommissionValue = '10';
+    public string $settingMinPayout = '0';
     public ?int $affiliateId     = null;
 
     // Edit fields
@@ -47,7 +57,7 @@ class AffiliatesListPage extends ListPage
             'description' => 'Manage affiliate partners, commission rates, balances, and payouts.',
             'actionLabel' => null,
             'tableTitle'  => 'Affiliates',
-            'headers'     => ['Affiliate', 'Commission', 'Balance', 'Earned', 'Referrals', 'Conversions', 'Status', 'Actions'],
+            'headers'     => ['Affiliate', 'Commission', 'Balance', 'Requested', 'Earned', 'Referrals', 'Conversions', 'Status', 'Actions'],
         ];
     }
 
@@ -57,6 +67,7 @@ class AffiliatesListPage extends ListPage
 
         $records = Affiliate::query()
             ->withCount(['referrals', 'conversions'])
+            ->withSum(['payoutRequests as pending_request_sum' => fn ($q) => $q->where('status', 'pending')], 'amount')
             ->orderByDesc('id')
             ->paginate(20);
 
@@ -70,6 +81,7 @@ class AffiliatesListPage extends ListPage
             '<div class="entity-title">' . e($a->name) . '</div><div class="entity-subtitle">' . e($a->email) . '</div>',
             '<span class="badge badge-cyan">' . e($a->commission_type === 'percentage' ? $a->commission_value . '%' : '$' . number_format((float) $a->commission_value, 2)) . '</span>',
             '<strong>$' . number_format((float) $a->balance, 2) . '</strong>',
+            $a->pending_request_sum ? '<span class="badge badge-amber">$' . number_format((float) $a->pending_request_sum, 2) . '</span>' : '—',
             '$' . number_format((float) $a->total_earned, 2),
             number_format($a->referrals_count),
             number_format($a->conversions_count),
@@ -77,6 +89,7 @@ class AffiliatesListPage extends ListPage
             '<div class="flex gap-2">
                 <button type="button" class="btn btn-secondary btn-sm" wire:click="editAffiliate(' . $a->id . ')">Edit</button>
                 ' . ($a->balance > 0 ? '<button type="button" class="btn btn-primary btn-sm" wire:click="openPayoutModal(' . $a->id . ')">Pay Out</button>' : '') . '
+                ' . ($a->pending_request_sum ? '<button type="button" class="btn btn-secondary btn-sm" wire:click="rejectRequests(' . $a->id . ')" wire:confirm="Reject this affiliate\'s pending payout requests?">Reject Request</button>' : '') . '
             </div>',
         ])->all();
 
@@ -152,7 +165,9 @@ class AffiliatesListPage extends ListPage
         $this->payoutAffiliateId      = $a->id;
         $this->payoutAffiliateName    = $a->name;
         $this->payoutAffiliateBalance = (string) $a->balance;
-        $this->payoutAmount           = '';
+        $request                      = $a->payoutRequests()->where('status', 'pending')->oldest()->first();
+        $this->payoutRequestId        = $request?->id;
+        $this->payoutAmount           = $request ? (string) $request->amount : '';
         $this->payoutReference        = '';
         $this->payoutNotes            = '';
         $this->payoutAttachment       = null;
@@ -180,19 +195,72 @@ class AffiliatesListPage extends ListPage
             ? Storage::disk('public')->url($this->payoutAttachment->store('affiliate-payouts', 'public'))
             : null;
 
-        $service->issuePayout($affiliate, [
+        try {
+            $service->issuePayout($affiliate, [
+            'request_id'      => $this->payoutRequestId,
             'amount'          => $this->payoutAmount,
             'reference'       => $this->payoutReference,
             'notes'           => $this->payoutNotes,
             'attachment_path' => $attachmentPath,
-        ]);
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            $this->addError('payoutAmount', $e->getMessage());
+            return;
+        }
 
         $this->showPayoutModal = false;
         $this->toast('Payout of $' . number_format((float) $this->payoutAmount, 2) . ' recorded.');
     }
 
+    public function rejectRequests(int $affiliateId, AffiliateService $service): void
+    {
+        $this->authorizePermission('affiliates.manage');
+
+        AffiliatePayoutRequest::query()
+            ->where('affiliate_id', $affiliateId)
+            ->where('status', 'pending')
+            ->get()
+            ->each(fn (AffiliatePayoutRequest $r) => $service->rejectPayoutRequest($r));
+
+        $this->toast('Payout requests rejected.');
+    }
+
+    public function openSettingsModal(): void
+    {
+        $this->authorizePermission('affiliates.manage');
+
+        $settings = AffiliateSettings::all();
+        $this->settingCookieDays      = (string) $settings['cookie_days'];
+        $this->settingCommissionType  = $settings['default_commission_type'];
+        $this->settingCommissionValue = (string) $settings['default_commission_value'];
+        $this->settingMinPayout       = (string) $settings['min_payout'];
+        $this->showSettingsModal      = true;
+    }
+
+    public function saveSettings(): void
+    {
+        $this->authorizePermission('affiliates.manage');
+        $this->validate([
+            'settingCookieDays'      => 'required|integer|min:1|max:730',
+            'settingCommissionType'  => 'required|in:percentage,fixed',
+            'settingCommissionValue' => 'required|numeric|min:0' . ($this->settingCommissionType === 'percentage' ? '|max:100' : ''),
+            'settingMinPayout'       => 'required|numeric|min:0',
+        ]);
+
+        AffiliateSettings::save([
+            'cookie_days'              => $this->settingCookieDays,
+            'default_commission_type'  => $this->settingCommissionType,
+            'default_commission_value' => $this->settingCommissionValue,
+            'min_payout'               => $this->settingMinPayout,
+        ]);
+
+        $this->showSettingsModal = false;
+        $this->toast('Program settings saved.');
+    }
+
     public function closeModal(): void
     {
+        $this->showSettingsModal = false;
         $this->showFormModal   = false;
         $this->showPayoutModal = false;
         $this->affiliateId     = null;

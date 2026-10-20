@@ -45,6 +45,11 @@ class Affiliate extends Authenticatable
         return $this->hasMany(AffiliateConversion::class);
     }
 
+    public function payoutRequests(): HasMany
+    {
+        return $this->hasMany(AffiliatePayoutRequest::class);
+    }
+
     public function payouts(): HasMany
     {
         return $this->hasMany(AffiliatePayout::class);
@@ -66,9 +71,17 @@ class Affiliate extends Authenticatable
      */
     public function calculateCommission(float $saleAmount): float
     {
-        return match ($this->commission_type) {
-            'percentage' => round($saleAmount * (float) $this->commission_value / 100, 2),
-            'fixed'      => (float) $this->commission_value,
+        return static::commissionFor($this->commission_type, (float) $this->commission_value, $saleAmount);
+    }
+
+    /**
+     * Commission for a type/value pair. A fixed commission never exceeds the sale amount.
+     */
+    public static function commissionFor(?string $type, float $value, float $saleAmount): float
+    {
+        return match ($type) {
+            'percentage' => round($saleAmount * $value / 100, 2),
+            'fixed'      => round(min($value, max(0.0, $saleAmount)), 2),
             default      => 0.0,
         };
     }

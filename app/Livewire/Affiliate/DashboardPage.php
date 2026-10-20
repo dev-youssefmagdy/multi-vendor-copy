@@ -16,7 +16,7 @@ class DashboardPage extends Component
             'total_earned' => number_format((float) $affiliate->total_earned, 2),
             'total_paid' => number_format((float) $affiliate->total_paid, 2),
             'total_referrals' => $affiliate->referrals()->count(),
-            'conversions' => $affiliate->conversions()->where('status', '!=', 'pending')->count(),
+            'conversions' => $affiliate->conversions()->whereIn('status', ['approved', 'paid'])->count(),
             'pending' => $affiliate->conversions()->where('status', 'pending')->count(),
         ];
 

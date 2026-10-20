@@ -6,6 +6,47 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="card section-gap"><p class="section-copy">{{ session('success') }}</p></div>
+    @endif
+
+    <div class="card section-gap">
+        <h2 class="D section-title">{{ __('Request a payout') }}</h2>
+        <p class="section-copy">
+            {{ __('Available to request') }}: <strong>${{ number_format($requestable, 2) }}</strong>
+            @if ($minPayout > 0) · {{ __('Minimum') }}: ${{ number_format($minPayout, 2) }} @endif
+        </p>
+        <form wire:submit="requestPayout" class="form-grid-2">
+            <div>
+                <input type="number" step="0.01" min="0.01" wire:model="requestAmount" class="field-control" placeholder="0.00">
+                @error('requestAmount') <span class="field-error">{{ $message }}</span> @enderror
+            </div>
+            <div>
+                <input type="text" wire:model="requestNote" class="field-control" placeholder="{{ __('Note (optional)') }}">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">{{ __('Request payout') }}</button>
+            </div>
+        </form>
+
+        @if ($requests->isNotEmpty())
+            <div class="tw" style="margin-top:16px;">
+                <table class="tb">
+                    <thead><tr><th>{{ __('Amount') }}</th><th>{{ __('Status') }}</th><th>{{ __('Requested') }}</th></tr></thead>
+                    <tbody>
+                        @foreach ($requests as $request)
+                            <tr>
+                                <td>${{ number_format((float) $request->amount, 2) }}</td>
+                                <td>{{ ucfirst($request->status) }}</td>
+                                <td>{{ $request->created_at->format('M d, Y') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
     <div class="card section-gap">
         <div class="tw">
             <table class="tb">

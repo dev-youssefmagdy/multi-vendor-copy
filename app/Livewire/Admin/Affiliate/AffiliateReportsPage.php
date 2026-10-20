@@ -33,7 +33,7 @@ class AffiliateReportsPage extends ContentPage
             ->get(['id', 'name', 'email', 'commission_type', 'commission_value', 'total_earned', 'total_paid', 'balance']);
 
         $monthlyCommissions = AffiliateConversion::query()
-            ->where('status', '!=', 'pending')
+            ->whereIn('status', ['approved', 'paid'])
             ->where('approved_at', '>=', now()->subMonths(12))
             ->select(
                 DB::raw("DATE_FORMAT(approved_at, '%Y-%m') as month"),
@@ -47,8 +47,8 @@ class AffiliateReportsPage extends ContentPage
         $summary = [
             'total_affiliates'  => Affiliate::query()->count(),
             'active_affiliates' => Affiliate::query()->where('status', 'active')->count(),
-            'total_conversions' => AffiliateConversion::query()->where('status', '!=', 'pending')->count(),
-            'total_commissions' => AffiliateConversion::query()->where('status', '!=', 'pending')->sum('commission_amount'),
+            'total_conversions' => AffiliateConversion::query()->whereIn('status', ['approved', 'paid'])->count(),
+            'total_commissions' => AffiliateConversion::query()->whereIn('status', ['approved', 'paid'])->sum('commission_amount'),
             'total_paid_out'    => AffiliatePayout::query()->sum('amount'),
             'pending_balance'   => Affiliate::query()->sum('balance'),
         ];
