@@ -156,6 +156,16 @@ body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-h
 
 .t-scope .hd-bell .notif-badge { border-color: var(--ds-surface); }
 
+/* Notification dropdown (markup built by resources/js/notifications/bell.js) */
+.t-scope .t-notif-bell {
+    --nb-bg: var(--ds-surface);
+    --nb-fg: var(--ds-text);
+    --nb-muted: var(--ds-text-muted);
+    --nb-border: var(--ds-border);
+    --nb-accent: var(--ds-brand-500);
+    position: relative;
+}
+
 /* Theme: black tile with a moon; flips to a sun in dark mode */
 .t-scope .hd-theme {
     background: var(--ds-black);

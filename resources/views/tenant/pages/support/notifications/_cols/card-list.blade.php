@@ -20,6 +20,9 @@
 
         <div class="notification-card-side">
             <time class="notification-card-time" datetime="{{ $notification->created_at->toIso8601String() }}" title="{{ $notification->created_at->format('M d, Y H:i') }}">{{ $notification->created_at->diffForHumans() }}</time>
+            @if ($notification->targetUrl())
+                <a href="{{ route('tenant.notifications.open', $notification->id) }}" class="notification-mark-read-btn">{{ __('Open') }}</a>
+            @endif
             <button type="button" data-mark-read="{{ route('tenant.notifications.mark-read', $notification->id) }}" class="notification-mark-read-btn">
                 Mark as read
             </button>

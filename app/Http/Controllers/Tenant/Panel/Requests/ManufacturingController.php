@@ -117,7 +117,7 @@ final class ManufacturingController extends PanelController
     {
         $validated = $request->validated();
 
-        ManufacturingRequest::create([
+        $manufacturingRequest = ManufacturingRequest::create([
             'tenant_id' => tenant('id'),
             'product_id' => $validated['linked_product_id'] ?? null,
             'product_name' => $validated['product_name'],
@@ -125,6 +125,13 @@ final class ManufacturingController extends PanelController
             'quantity' => $validated['quantity'],
             'status' => ManufacturingRequestStatus::Pending->value,
         ]);
+
+        app(\App\Services\AdminNotificationService::class)->notify(
+            'manufacturing',
+            'New Manufacturing Request',
+            sprintf('Tenant "%s" submitted a manufacturing request: %s (qty %s)', tenant('id'), $validated['product_name'], $validated['quantity']),
+            ['request_id' => $manufacturingRequest->id, 'tenant_id' => tenant('id')],
+        );
 
         return $this->success(
             'Manufacturing request submitted successfully. We will update you when the status changes.',

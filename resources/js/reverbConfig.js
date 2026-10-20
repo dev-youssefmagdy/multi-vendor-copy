@@ -13,7 +13,7 @@ const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0', ''];
 export function reverbConfig() {
     const env = import.meta.env;
     const page = window.location;
-    const pageIsLocal = LOCAL_HOSTS.includes(page.hostname) || /^(10|192\.168|172\.(1[6-9]|2\d|3[01]))\./.test(page.hostname);
+    const pageIsLocal = LOCAL_HOSTS.includes(page.hostname) || /\.(loc|local|test|localhost)$/.test(page.hostname) || /^(10|192\.168|172\.(1[6-9]|2\d|3[01]))\./.test(page.hostname);
 
     const envHost = (env.VITE_REVERB_HOST || '').trim();
     const envHostIsLocal = LOCAL_HOSTS.includes(envHost);

@@ -10,15 +10,19 @@
       "_rolldown-runtime-hePW80VL.js"
     ]
   },
-  "_bootstrap-JlIoxoKx.js": {
-    "file": "assets/bootstrap-JlIoxoKx.js",
+  "_bell-BpghfVGr.js": {
+    "file": "assets/bell-BpghfVGr.js",
+    "name": "bell"
+  },
+  "_bootstrap-Bc5iKSfG.js": {
+    "file": "assets/bootstrap-Bc5iKSfG.js",
     "name": "bootstrap",
     "imports": [
       "_rolldown-runtime-hePW80VL.js",
       "_axios-Cwt1K6go.js",
       "_echo-VCv_ApS7.js",
       "_pusher-Blmp2ykg.js",
-      "_reverbConfig-FJNSR-Mc.js"
+      "_reverbConfig-CZCHXwWW.js"
     ]
   },
   "_confirm-DDMLLyXD.js": {
@@ -32,8 +36,8 @@
       "_vendor-swal-Dvy87gJ2.js"
     ]
   },
-  "_core-DXelAAIy.js": {
-    "file": "assets/core-DXelAAIy.js",
+  "_core-DXhe-55Y.js": {
+    "file": "assets/core-DXhe-55Y.js",
     "name": "core",
     "imports": [
       "_events-Cyr27uQe.js",
@@ -45,7 +49,7 @@
       "_forms-Ce9H6Uy-.js",
       "_registry-CuhCklDv.js",
       "_modals-Gi5893SZ.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ],
     "dynamicImports": [
       "_modals-Gi5893SZ.js",
@@ -94,24 +98,24 @@
     "file": "assets/dom-B2MjGz4i.js",
     "name": "dom"
   },
-  "_echo-CKT0NIu6.js": {
-    "file": "assets/echo-CKT0NIu6.js",
-    "name": "echo",
-    "imports": [
-      "_rolldown-runtime-hePW80VL.js",
-      "_reverbConfig-FJNSR-Mc.js",
-      "_preload-helper-CwIXHf_L.js"
-    ],
-    "dynamicImports": [
-      "_echo-VCv_ApS7.js",
-      "_pusher-Blmp2ykg.js"
-    ]
-  },
   "_echo-VCv_ApS7.js": {
     "file": "assets/echo-VCv_ApS7.js",
     "name": "echo",
     "imports": [
       "_rolldown-runtime-hePW80VL.js"
+    ]
+  },
+  "_echo-VLIU6Xo8.js": {
+    "file": "assets/echo-VLIU6Xo8.js",
+    "name": "echo",
+    "imports": [
+      "_rolldown-runtime-hePW80VL.js",
+      "_reverbConfig-CZCHXwWW.js",
+      "_preload-helper-CwIXHf_L.js"
+    ],
+    "dynamicImports": [
+      "_echo-VCv_ApS7.js",
+      "_pusher-Blmp2ykg.js"
     ]
   },
   "_events-Cyr27uQe.js": {
@@ -598,8 +602,8 @@
     "file": "assets/requests-CJpz01p_.css",
     "src": "_requests-CJpz01p_.css"
   },
-  "_reverbConfig-FJNSR-Mc.js": {
-    "file": "assets/reverbConfig-FJNSR-Mc.js",
+  "_reverbConfig-CZCHXwWW.js": {
+    "file": "assets/reverbConfig-CZCHXwWW.js",
     "name": "reverbConfig"
   },
   "_rolldown-runtime-hePW80VL.js": {
@@ -2552,7 +2556,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-B9eoMiNt.css",
+    "file": "assets/app-Bk6_yTgn.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2603,7 +2607,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Dh7ctt6X.css",
+    "file": "assets/ecommet-CFfGZnxl.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2886,7 +2890,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-WbPpeJbi.css",
+    "file": "assets/souqify-CLrOFn1G.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2895,7 +2899,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-EQPLPFIF.css",
+    "file": "assets/app-DgngEUoY.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2987,7 +2991,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-6R1rExMI.js",
+    "file": "assets/app-C9zrX36K.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -2997,7 +3001,8 @@
       "_vendor-swal-Dvy87gJ2.js",
       "_vendor-sortable-BIeRFbNj.js",
       "_phone-input-Ck002kPM.js",
-      "_bootstrap-JlIoxoKx.js"
+      "_bootstrap-Bc5iKSfG.js",
+      "_bell-BpghfVGr.js"
     ]
   },
   "resources/js/ecommet.js": {
@@ -3226,13 +3231,13 @@
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-BL-T1zoa.js",
+    "file": "assets/app-Dm9ysiVT.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
-      "_core-DXelAAIy.js"
+      "_core-DXhe-55Y.js"
     ]
   },
   "resources/js/tenant/components/ajax-list.js": {
@@ -3456,14 +3461,15 @@
     ]
   },
   "resources/js/tenant/components/notification-bell.js": {
-    "file": "assets/notification-bell-BEKUFvET.js",
+    "file": "assets/notification-bell-DqQfTGW9.js",
     "name": "notification-bell",
     "src": "resources/js/tenant/components/notification-bell.js",
     "isDynamicEntry": true,
     "imports": [
+      "_bell-BpghfVGr.js",
       "_events-Cyr27uQe.js",
       "_toast-CtLD40BN.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ]
   },
   "resources/js/tenant/components/password-toggle.js": {
@@ -3668,7 +3674,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-DeBRkNw7.js",
+    "file": "assets/index-CtuP_ltk.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3677,7 +3683,7 @@
       "_events-Cyr27uQe.js",
       "_toast-CtLD40BN.js",
       "_registry-CuhCklDv.js",
-      "_core-DXelAAIy.js",
+      "_core-DXhe-55Y.js",
       "_swiper-DA204xBc.js",
       "_opportunities-D5kNNkyC.js",
       "_product-modals-Dku9dYmL.js"
@@ -3811,14 +3817,14 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-show.js": {
-    "file": "assets/brand-show-DsVv_nAY.js",
+    "file": "assets/brand-show-Chn2H5xh.js",
     "name": "brand-show",
     "src": "resources/js/tenant/pages/requests/brand-show.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
       "_modals-Gi5893SZ.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
@@ -3850,14 +3856,14 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-show.js": {
-    "file": "assets/manufacturing-show-C91yq4Dx.js",
+    "file": "assets/manufacturing-show-CaTgPG0u.js",
     "name": "manufacturing-show",
     "src": "resources/js/tenant/pages/requests/manufacturing-show.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
       "_modals-Gi5893SZ.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
@@ -3872,13 +3878,13 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-show.js": {
-    "file": "assets/product-request-show-Bvauyfj-.js",
+    "file": "assets/product-request-show-D_zn5B_2.js",
     "name": "product-request-show",
     "src": "resources/js/tenant/pages/requests/product-request-show.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ],
     "css": [
       "assets/requests-CJpz01p_.css"
@@ -3926,7 +3932,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-BVbCePDW.js",
+    "file": "assets/order-show-CRQQR5RZ.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
@@ -3934,7 +3940,7 @@
       "_events-Cyr27uQe.js",
       "_forms-Ce9H6Uy-.js",
       "_registry-CuhCklDv.js",
-      "_core-DXelAAIy.js"
+      "_core-DXhe-55Y.js"
     ],
     "css": [
       "assets/order-show-DF9i_jxp.css"
@@ -4241,7 +4247,7 @@
     ]
   },
   "resources/js/tenant/pages/support/ticket-show.js": {
-    "file": "assets/ticket-show-CuhHEMfZ.js",
+    "file": "assets/ticket-show-B7yJ79zZ.js",
     "name": "ticket-show",
     "src": "resources/js/tenant/pages/support/ticket-show.js",
     "isEntry": true,
@@ -4250,7 +4256,7 @@
       "_http-L2P8Ej2b.js",
       "_forms-Ce9H6Uy-.js",
       "_registry-CuhCklDv.js",
-      "_echo-CKT0NIu6.js"
+      "_echo-VLIU6Xo8.js"
     ],
     "css": [
       "assets/support-DPusLhcR.css"
@@ -4321,13 +4327,13 @@
     ]
   },
   "resources/js/website.js": {
-    "file": "assets/website-CTcHYXip.js",
+    "file": "assets/website-Dj1b1mG0.js",
     "name": "website",
     "src": "resources/js/website.js",
     "isEntry": true,
     "imports": [
       "_phone-input-Ck002kPM.js",
-      "_bootstrap-JlIoxoKx.js"
+      "_bootstrap-Bc5iKSfG.js"
     ]
   }
 }

@@ -470,6 +470,12 @@ Route::group([
     });
 
     Route::get('/notifications', NotificationsPage::class)->name('notifications.index');
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/latest', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'latest'])->name('latest');
+        Route::post('/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'readAll'])->name('read-all');
+        Route::get('/{id}/open', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'open'])->whereNumber('id')->name('open');
+        Route::post('/{id}/read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'read'])->whereNumber('id')->name('read');
+    });
 
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', AdminTicketsList::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('index');

@@ -2,10 +2,14 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Concerns\FormatsNotificationFeed;
+use App\Support\NotificationLinks;
 use Illuminate\Database\Eloquent\Model;
 
 class TenantNotification extends Model
 {
+    use FormatsNotificationFeed;
+
     protected $table = 'tenant_notifications';
 
     protected $fillable = [
@@ -32,5 +36,10 @@ class TenantNotification extends Model
     public function scopeUnread($query)
     {
         return $query->where('is_read', false);
+    }
+
+    public function targetUrl(): ?string
+    {
+        return NotificationLinks::tenant((string) $this->type, $this->data);
     }
 }

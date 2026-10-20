@@ -8,6 +8,7 @@ use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\Tenant\TenantNotification;
 use App\Repositories\Tenant\TenantPanelRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class NotificationsController extends PanelController
@@ -33,6 +34,26 @@ class NotificationsController extends PanelController
             ['notifications' => $notifications],
             $notifications
         );
+    }
+
+    public function latest(): JsonResponse
+    {
+        $items = TenantNotification::query()->latest()->limit(10)->get()
+            ->map(fn (TenantNotification $n) => $n->toFeedItem(route('tenant.notifications.open', $n->id)))
+            ->all();
+
+        return response()->json([
+            'unread' => TenantNotification::unread()->count(),
+            'items' => $items,
+        ]);
+    }
+
+    public function open(int $id): RedirectResponse
+    {
+        $notification = TenantNotification::findOrFail($id);
+        $notification->markAsRead();
+
+        return redirect()->to($notification->targetUrl() ?? route('tenant.notifications.index'));
     }
 
     public function markAllRead(): JsonResponse

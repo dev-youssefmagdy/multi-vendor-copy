@@ -260,6 +260,8 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
     Route::prefix('notifications')->name('tenant.notifications.')->group(function () {
         Route::get('/', [NotificationsController::class, 'index'])->name('index');
         Route::get('/feed', [NotificationsController::class, 'feed'])->name('feed');
+        Route::get('/latest', [NotificationsController::class, 'latest'])->name('latest');
+        Route::get('/{id}/open', [NotificationsController::class, 'open'])->whereNumber('id')->name('open');
         Route::post('/read-all', [NotificationsController::class, 'markAllRead'])->name('read-all');
         Route::patch('/{id}/read', [NotificationsController::class, 'markRead'])->whereNumber('id')->name('mark-read');
     });

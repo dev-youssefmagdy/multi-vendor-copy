@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\FormatsNotificationFeed;
+use App\Support\NotificationLinks;
 use Illuminate\Database\Eloquent\Model;
 
 class AdminNotification extends Model
 {
+    use FormatsNotificationFeed;
+
     protected $table = 'admin_notifications';
 
     protected $fillable = [
@@ -32,5 +36,10 @@ class AdminNotification extends Model
     public function scopeUnread($query)
     {
         return $query->where('is_read', false);
+    }
+
+    public function targetUrl(): ?string
+    {
+        return NotificationLinks::admin((string) $this->type, $this->data);
     }
 }
