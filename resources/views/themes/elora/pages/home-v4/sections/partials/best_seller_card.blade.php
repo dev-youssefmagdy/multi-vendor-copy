@@ -1,12 +1,12 @@
 {{-- Expects $p: image, name, weight, price, oldPrice, discount, rating, url --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto !w-[192.65px]">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col items-start rounded-[8.73px] shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main); text-decoration:none">
+  <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col items-start rounded-[8.73px] shadow-[var(--shadow-card-lg)] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="background:var(--color-bg-main); text-decoration:none">
     <div class="flex flex-col gap-[7.31px] h-[167.33px] items-end justify-end px-[5.49px] py-[4.57px] relative shrink-0 w-full">
       <div class="absolute flex gap-[7.31px] h-[167.33px] items-start left-0 p-[5.49px] top-0 w-full">
         <div class="absolute flex flex-col gap-[7.31px] h-[167.33px] items-end left-0 top-0 w-full">
           <div class="absolute left-1/2 -translate-x-1/2 h-[167.33px] rounded-t-[7.31px] top-0 w-full overflow-hidden">
-            <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+            <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
           </div>
           <div class="flex h-[22.44px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">
             <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</p>

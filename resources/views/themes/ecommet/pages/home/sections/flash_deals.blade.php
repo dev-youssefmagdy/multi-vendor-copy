@@ -27,12 +27,12 @@
                                 $disc = (int) round((float) $salePricing['discount_percentage']);
                             @endphp
                             <a href="{{ route('tenant.storefront.product', $product->slug) }}"
-                                class="shrink-0 w-[160px] md:w-auto cursor-pointer bg-white rounded-xl overflow-hidden shadow-sm flex flex-col hover:shadow-md transition">
+                                class="group shrink-0 w-[160px] md:w-auto cursor-pointer bg-white rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
 
-                                <div class="bg-[#f8f8f8] flex items-center justify-center min-h-[180px]">
+                                <div class="bg-[#f8f8f8] flex items-center justify-center min-h-[180px] overflow-hidden">
                                     @if ($saleImg)
                                         <img loading="lazy" src="{{ $saleImg }}" alt="{{ $product->translationValue('name') }}"
-                                            class="max-h-full max-w-full mix-blend-multiply object-contain">
+                                            class="max-h-full max-w-full mix-blend-multiply object-contain transition-transform duration-300 group-hover:scale-105">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-gray-300">
                                             <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

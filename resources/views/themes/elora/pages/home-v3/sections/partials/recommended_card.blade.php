@@ -1,7 +1,7 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/sold optional --}}
-<a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[8px] lg:rounded-[11px] shadow-[0_0_19px_rgba(0,0,0,0.16)] lg:shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
+<a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[8px] lg:rounded-[11px] shadow-[0_0_19px_rgba(0,0,0,0.16)] lg:shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="relative w-full h-[140px] lg:h-[213px] shrink-0">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
       data-fav="{{ $p['favData'] ?? '' }}"
       data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"

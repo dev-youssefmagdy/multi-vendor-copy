@@ -219,6 +219,14 @@ body {
 .swiper-nav-next {
   right: -8px;
 }
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
+}
 
 /* Flash-sale / best-seller nav buttons need a light variant over the pink section bg */
 .swiper-nav-btn-light {

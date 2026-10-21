@@ -36,7 +36,7 @@
 
           <a
             href="{{ $url }}"
-            class="swiper-slide max-lg:!w-[66px] lg:w-full flex flex-col items-center gap-[2px] lg:gap-[3.9px]"
+            class="group swiper-slide max-lg:!w-[66px] lg:w-full flex flex-col items-center gap-[2px] lg:gap-[3.9px] transition-transform duration-300 ease-out hover:scale-105"
             style="text-decoration:none"
           >
 
@@ -61,7 +61,7 @@
                     loading="lazy"
                     src="{{ $img }}"
                     alt="{{ $name }}"
-                    class="w-[52px] h-[52px] lg:w-[100px] lg:h-[100px] object-contain drop-shadow-sm"
+                    class="w-[52px] h-[52px] lg:w-[100px] lg:h-[100px] object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-110"
                     style="margin-bottom: 4px"
                   />
                 @else

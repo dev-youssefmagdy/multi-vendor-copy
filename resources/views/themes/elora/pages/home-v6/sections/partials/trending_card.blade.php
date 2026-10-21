@@ -1,8 +1,8 @@
 {{-- Expects $p: name, weight, desc, badge, badgeBg, badgeColor, progress, ordered, rating, price, oldPrice, discount, image, url --}}
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="flex h-auto bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.1143px] shadow-sm overflow-hidden no-underline">
+<a href="{{ $p['url'] ?? '#' }}" class="group flex h-auto bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.1143px] shadow-sm overflow-hidden no-underline transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
   <div class="relative w-[41.77%] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <span
       class="absolute top-0 end-0 flex items-center justify-center whitespace-nowrap text-[7.71px] lg:text-[13.0037px] leading-[10px] lg:leading-[16px] tracking-[0.2755px] lg:tracking-[0.464px] font-normal p-[3.31px] lg:p-[5.573px] rounded-tr-[4.41px] lg:rounded-tr-[7.43px] rounded-bl-[4.41px] lg:rounded-bl-[7.43px]"
       style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"

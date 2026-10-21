@@ -1,8 +1,8 @@
 {{-- Expects $p: name, weight, price, oldPrice, discount, rating, stock, ordered (optional), progress (optional) --}}
-<a href="{{ $p['url'] ?? '#' }}" class="flex gap-[3px] lg:gap-[5px] h-full items-stretch rounded-[6px] lg:rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="group flex gap-[3px] lg:gap-[5px] h-full items-stretch rounded-[6px] lg:rounded-[10px] shadow-[var(--shadow-card-lg)] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-[43.35%]">
     <div class="absolute inset-0 overflow-hidden">
-      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     </div>
     @if (!empty($p['favData']))
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"

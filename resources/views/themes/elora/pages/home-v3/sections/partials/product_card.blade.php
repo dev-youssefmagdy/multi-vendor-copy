@@ -1,11 +1,11 @@
 {{-- Expects $p: image, badge, badgeBg, badgeText, name, weight, desc, rating, price, oldPrice, discount, urgency, progress, progressLabel. Optional $wide: bool --}}
 @php $imgHeight = !empty($wide) ? 'h-[213px] lg:h-[269px]' : 'h-[183px] lg:h-[227px]'; @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full shadow-sm">
+<a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[8px] h-full shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
   <div class="flex flex-col gap-[8px] {{ $imgHeight }} items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] {{ $imgHeight }} items-start start-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] {{ $imgHeight }} items-end start-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 {{ $imgHeight }} rounded-t-[8px] top-0 w-full overflow-hidden bg-[var(--color-page-bg)]">
-          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
         <div class="content-stretch flex h-[28px] items-center justify-center p-[6px] relative rounded-es-[8px] rounded-se-[8px] shrink-0" style="background:{{ $p['badgeBg'] }}">
           <p class="font-normal text-[14px] tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</p>

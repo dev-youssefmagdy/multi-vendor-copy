@@ -13,6 +13,11 @@
         background: #FDFDFD;
         border-radius: 10.4358px;
         overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv3-trend-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     .sqv3-trend-card__media {
         position: relative;
@@ -31,6 +36,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv3-trend-card:hover .sqv3-trend-card__img {
+        transform: scale(1.06);
     }
     .sqv3-trend-card__sale {
         position: absolute;

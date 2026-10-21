@@ -2,9 +2,9 @@
 {{-- No w-full! here: Tailwind puts that important utility in a layer, which
      beats even an id rule, so the phone width is left to the section CSS. --}}
 <div class="swiper-slide h-auto lg:w-[309px]!">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
+  <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-full h-[142px] lg:h-[269px] shrink-0">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"

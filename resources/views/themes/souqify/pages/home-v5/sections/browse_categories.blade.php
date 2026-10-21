@@ -75,6 +75,16 @@
         height: auto;
         min-width: 0;
         text-decoration: none;
+        transition: transform 0.25s ease;
+    }
+    .sqv5-cats__tile:hover {
+        transform: translateY(-2px);
+    }
+    .sqv5-cats__img {
+        transition: transform 0.3s ease;
+    }
+    .sqv5-cats__tile:hover .sqv5-cats__img {
+        transform: scale(1.08);
     }
     /* Art block: the blob plus the product image overhanging its top. */
     .sqv5-cats__art {

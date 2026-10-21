@@ -31,7 +31,7 @@
       >
         <a
           href="{{ $circleCatData[0]['url'] ?? '#' }}"
-          class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden flex-1 h-full"
+          class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden flex-1 h-full transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
         >
           <p
             class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0"
@@ -48,7 +48,7 @@
         <div class="flex flex-col gap-[12px] lg:gap-[23.69px] w-[132px] lg:w-[260.56px] h-[114px] lg:h-[225.03px]">
           <a
             href="{{ $circleCatData[1]['url'] ?? '#' }}"
-            class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px]"
+            class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[58px] lg:h-[114.49px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg"
           >
             <p
               class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0"
@@ -64,7 +64,7 @@
           </a>
           <a
             href="{{ $circleCatData[2]['url'] ?? '#' }}"
-            class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px]"
+            class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-center gap-[8px] lg:gap-[15.79px] pl-[8px] lg:pl-[15.7913px] pr-[42px] lg:pr-[82.9044px] pt-[9px] lg:pt-[17.7652px] pb-[7px] lg:pb-[13.8174px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg"
           >
             <p
               class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0"
@@ -81,7 +81,7 @@
         </div>
         <a
           href="{{ $circleCatData[3]['url'] ?? '#' }}"
-          class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden flex-1 h-full"
+          class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-col items-center py-[12px] lg:py-[23.687px] gap-[8px] lg:gap-[15.79px] relative overflow-hidden flex-1 h-full transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
         >
           <p
             class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0"

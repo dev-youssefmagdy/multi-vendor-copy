@@ -7,7 +7,7 @@
 @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="flex flex-col items-start w-full h-full rounded-[6px] lg:rounded-[8px] shadow-[var(--shadow-card-lg)] no-underline box-border"
+  class="group flex flex-col items-start w-full h-full rounded-[6px] lg:rounded-[8px] shadow-[var(--shadow-card-lg)] no-underline box-border transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
   style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
 >
   {{-- Media --}}
@@ -15,7 +15,7 @@
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
-      class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[6px] lg:rounded-t-[8px]"
+      class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[6px] lg:rounded-t-[8px] transition-transform duration-300 group-hover:scale-105"
     />
 
     @if (!empty($p['badgeLabel']))

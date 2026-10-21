@@ -3,7 +3,7 @@
      (delivered and stockLeft are mutually exclusive — stockLeft takes priority when both are set) --}}
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-full h-full overflow-hidden"
+  class="group relative flex flex-col items-start w-full h-full overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
   style="background: var(--color-bg-main); font-family: var(--font-family-base)"
 >
   {{-- Media --}}
@@ -11,7 +11,7 @@
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
-      class="absolute inset-0 w-full h-full object-cover rounded-t-[6.02px] lg:rounded-t-[12.44px]"
+      class="absolute inset-0 w-full h-full object-cover rounded-t-[6.02px] lg:rounded-t-[12.44px] transition-transform duration-300 group-hover:scale-105"
     />
 
     @if (!empty($p['badge']))

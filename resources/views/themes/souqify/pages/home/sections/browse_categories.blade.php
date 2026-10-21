@@ -28,9 +28,9 @@
                 <div class="swiper-slide w-fit">
                     <a href="{{ $catUrl }}" class="flex flex-col items-center gap-2 shrink-0 group">
                         <div
-                            class="w-20 h-20 lg:w-32 lg:h-32 rounded-lg overflow-hidden border-transparent flex items-center justify-center">
+                            class="w-20 h-20 lg:w-32 lg:h-32 rounded-lg overflow-hidden border-transparent flex items-center justify-center transition-shadow duration-300 group-hover:shadow-md">
                             @if ($catImg)
-                            <img loading="lazy" src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover" />
+                            <img loading="lazy" src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             @else
                             <span class="text-2xl">🏷️</span>
                             @endif

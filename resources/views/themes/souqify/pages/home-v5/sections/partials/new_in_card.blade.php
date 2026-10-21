@@ -21,6 +21,11 @@
         overflow: hidden;
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv5-new:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     /* Frame 1984079719: the photo, with the sale badge and heart over it. */
     .sqv5-new__media {
@@ -37,6 +42,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv5-new:hover .sqv5-new__img {
+        transform: scale(1.06);
     }
     /* sale: 63.68 x 24.92, square against the card edge. */
     .sqv5-new__sale {

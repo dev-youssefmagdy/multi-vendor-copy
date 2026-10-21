@@ -1,9 +1,9 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; ordered/progress optional --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto w-full lg:w-auto">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden" style="text-decoration:none">
+  <a href="{{ $p['url'] ?? '#' }}" class="group flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-[123.69px] lg:w-[222.51px] shrink-0 h-full lg:h-[236px] lg:px-[6.36px] lg:py-[5.3px]">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</span>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'

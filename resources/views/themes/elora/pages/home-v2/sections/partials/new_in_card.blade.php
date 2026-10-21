@@ -8,7 +8,7 @@
 <div class="swiper-slide new-in-slide">
   <a
     href="{{ $p['url'] ?? '#' }}"
-    class="flex flex-col items-start w-full h-full overflow-hidden"
+    class="group flex flex-col items-start w-full h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]"
     style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
   >
     {{-- Media --}}
@@ -16,7 +16,7 @@
       <img
         src="{{ $p['image'] }}"
         alt="{{ $p['name'] }}"
-        class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[5.03px] md:rounded-t-[8px]"
+        class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[5.03px] md:rounded-t-[8px] transition-transform duration-300 group-hover:scale-105"
       />
 
       @if (!empty($p['badgeLabel']))

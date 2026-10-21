@@ -1,11 +1,11 @@
 {{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.71px] lg:rounded-[12.25px] h-full lg:h-[408.48px] lg:w-[270.45px] shadow-[0px_13.52px_45.02px_rgba(0,0,0,0.16)] lg:shadow-[0px_29px_96.56px_rgba(0,0,0,0.16)]" style="text-decoration:none">
+<a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.71px] lg:rounded-[12.25px] h-full lg:h-[408.48px] lg:w-[270.45px] shadow-[0px_13.52px_45.02px_rgba(0,0,0,0.16)] lg:shadow-[0px_29px_96.56px_rgba(0,0,0,0.16)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="flex flex-col gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-end justify-end px-[3.59px] lg:px-[7.7px] py-[2.99px] lg:py-[6.42px] relative shrink-0 w-full">
     <div class="absolute flex gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-start left-0 p-[3.59px] lg:p-[7.7px] top-0 w-full">
       <div class="absolute flex flex-col gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[109.51px] lg:h-[234.9px] rounded-t-[4.79px] lg:rounded-t-[10.27px] top-0 w-full overflow-hidden">
-          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
         <div class="flex h-[14.69px] lg:h-[31.51px] items-center justify-center p-[3.15px] lg:p-[6.75px] relative rounded-bl-[4.2px] lg:rounded-bl-[9px] rounded-tr-[4.2px] lg:rounded-tr-[9px] shrink-0 w-[37.29px] lg:w-[80.5px]" style="background:var(--color-accent-yellow)">
           <p class="font-normal text-[7.34px] leading-[9px] lg:text-[15.75px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? '' }}</p>

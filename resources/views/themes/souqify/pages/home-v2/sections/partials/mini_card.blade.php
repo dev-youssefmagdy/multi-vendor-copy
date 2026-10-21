@@ -1,9 +1,9 @@
 {{-- Mini card, ported from public/souqify-1/carousels.js renderMiniCard(). $p keys:
      url, image, name (Str::limit'd), desc, rating, price, oldPrice, discount --}}
-<div class="flex gap-[4px] rounded-[8px] overflow-hidden h-[110px] lg:h-[127px] w-full" style="background:var(--color-bg-main)">
-  <a href="{{ $p['url'] }}" class="relative w-[152px] lg:w-[174px] shrink-0 rounded-tl-[7px] overflow-hidden block" style="background:var(--color-page-bg)">
+<div class="flex gap-[4px] rounded-[8px] overflow-hidden h-[110px] lg:h-[127px] w-full transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md" style="background:var(--color-bg-main)">
+  <a href="{{ $p['url'] }}" class="group relative w-[152px] lg:w-[174px] shrink-0 rounded-tl-[7px] overflow-hidden block" style="background:var(--color-page-bg)">
     @if ($p['image'])
-      <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover" />
+      <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
     @endif
     @if (!empty($p['badge']))
       <span class="absolute top-0 left-0 rtl:left-auto rtl:right-0 text-[9px] lg:text-[11px] px-[6px] py-[3px] rounded-br-[6px] rounded-tl-[7px] tracking-[0.3px]" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>

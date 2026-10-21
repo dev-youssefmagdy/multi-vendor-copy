@@ -1,8 +1,8 @@
 {{-- Best Seller composite slide's bottom wide card. Expects $p: image, badge, badgeBg, badgeColor, name, weight, desc, rating, price, oldPrice, discount, url --}}
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="relative flex-1 flex gap-[3px] lg:gap-[5px] bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10px] overflow-hidden shadow-[var(--shadow-card)] no-underline">
+<a href="{{ $p['url'] ?? '#' }}" class="group relative flex-1 flex gap-[3px] lg:gap-[5px] bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10px] overflow-hidden shadow-[var(--shadow-card)] no-underline transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
   <div class="relative w-[40%] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[3px_4px] lg:p-[5px_6.5px]">
       <div class="flex w-full justify-between items-start">
     

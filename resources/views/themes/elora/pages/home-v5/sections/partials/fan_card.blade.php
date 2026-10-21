@@ -24,10 +24,10 @@
     $deliveredColor = 'var(--color-success)';
     $stockColor = 'var(--color-error)';
 @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="fan-card flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)]" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="fan-card group flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)] transition-shadow duration-300 ease-out hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)]" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-full" style="height:57.5%">
     <div class="fan-image rounded-t-[7.86px] lg:rounded-t-[9.77px] absolute inset-0 overflow-hidden">
-      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     </div>
     @if (!empty($p['favData']))
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"

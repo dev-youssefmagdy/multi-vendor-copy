@@ -96,7 +96,8 @@
     $isOutOfStock = $product->stockStatus() === 'out_of_stock';
 @endphp
 
-<a href="{{ $favUrl }}" class="product-card bg-fill rounded-lg card-w block w-full max-w-[210px]"
+<a href="{{ $favUrl }}"
+    class="product-card group bg-fill rounded-lg card-w block w-full max-w-[210px] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
     style="text-decoration:none">
 
     {{-- ── Image area ─────────────────────────────────────────────────────── --}}
@@ -104,7 +105,7 @@
 
         @if ($img)
             <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"
-                class="w-full h-full object-cover" @if($sliderJson) data-slider='{{ $sliderJson }}' @endif />
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" @if($sliderJson) data-slider='{{ $sliderJson }}' @endif />
         @else
             <div class="w-full h-full flex items-center justify-center bg-gray-100 text-5xl">🛍️</div>
         @endif

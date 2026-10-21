@@ -1,8 +1,8 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, optionally url --}}
 <div class="swiper-slide h-auto w-full lg:w-auto">
-  <a href="{{ $p['url'] ?? '#' }}" class="bg-white flex flex-col items-start h-full overflow-hidden">
+  <a href="{{ $p['url'] ?? '#' }}" class="group bg-white flex flex-col items-start h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
     <div class="relative w-full shrink-0">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[228px] lg:h-[363px] w-full object-cover bg-[var(--color-page-bg)]" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[228px] lg:h-[363px] w-full object-cover bg-[var(--color-page-bg)] transition-transform duration-300 group-hover:scale-105" />
       @if (!empty($p['discount']))
         <span class="absolute top-[5px] start-[5px] lg:top-[8px] lg:start-[8px] font-extrabold text-[9px] lg:text-[14px] text-white px-[4px] lg:px-[7px] py-[1px] rounded-[2px] lg:rounded-[3px]" style="background:var(--color-brand-pink)">{{ $p['discount'] }}</span>
       @endif

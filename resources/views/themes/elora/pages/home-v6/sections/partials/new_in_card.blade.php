@@ -2,10 +2,10 @@
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-[192.01px] h-[290px] lg:w-[282.43px] lg:h-[426.58px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow] duration-200 ease-in-out"
+  class="group relative flex flex-col items-start w-[192.01px] h-[290px] lg:w-[282.43px] lg:h-[426.58px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow,transform] duration-300 ease-out hover:scale-[1.02]"
 >
   <div class="relative w-full h-[166.77px] lg:h-[245.31px] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[5.47px] lg:p-[8.04px] gap-[7.29px] lg:gap-[10.72px]">
       <div class="flex w-full justify-between items-start">
         <button

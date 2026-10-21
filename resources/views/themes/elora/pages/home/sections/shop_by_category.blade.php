@@ -27,7 +27,7 @@
                          class="elora-cat-card">
                         {{-- Full-cover image --}}
                         @if ($cat->thumb_url ?? null)
-                            <img loading="lazy" src="{{ $cat->thumb_url }}" alt="{{ $cat->translationValue('name') ?? $cat->name }}"
+                            <img loading="lazy" src="{{ $cat->thumb_url }}" alt="{{ $cat->translationValue('name') ?? $cat->name }}" class="elora-cat-img"
                                 style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;" />
                         @else
                             <div style="position:absolute; inset:0; background:linear-gradient(135deg,#f0f0f0,#ddd); display:flex; align-items:center; justify-content:center;">
@@ -73,11 +73,11 @@
                 $btUrl = route('tenant.storefront.product', $btProduct->slug);
             @endphp
             <!-- product card -->
-            <a href="{{ $btUrl }}"  class="flex bg-white rounded-lg overflow-hidden flex-1 h-[60px]" style="text-decoration:none">
+            <a href="{{ $btUrl }}"  class="group flex bg-white rounded-lg overflow-hidden flex-1 h-[60px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md" style="text-decoration:none">
                 <!-- image -->
                 <div class="relative w-2/5">
                     @if ($btImg)
-                    <img loading="lazy" src="{{ $btImg }}" alt="{{ $btName }}" class="w-full h-full object-cover rounded">
+                    <img loading="lazy" src="{{ $btImg }}" alt="{{ $btName }}" class="w-full h-full object-cover rounded transition-transform duration-300 group-hover:scale-105">
                     @else
                     <div class="w-full h-full flex items-center justify-center bg-gray-100 text-2xl rounded">🛍️</div>
                     @endif

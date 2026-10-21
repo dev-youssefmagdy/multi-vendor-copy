@@ -19,6 +19,11 @@
         box-shadow: var(--shadow-card);
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv5-deal:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-card-lg, 0 12px 28px rgba(0, 0, 0, 0.14));
     }
     .sqv5-deal__media {
         position: relative;
@@ -35,6 +40,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv5-deal:hover .sqv5-deal__img {
+        transform: scale(1.06);
     }
     /* heart: 45.21 square at left 174.51 / top 6.69 of the 226.03 card. */
     .sqv5-deal__fav {

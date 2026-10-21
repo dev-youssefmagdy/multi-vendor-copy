@@ -57,13 +57,13 @@ Vars: $product (Product model), $badgeText (optional)
 @endphp
 
 {{-- compactProductCard design --}}
-<div class="bg-white rounded-xl p-4 hover:shadow-md transition flex flex-col cursor-pointer"
+<div class="bg-white rounded-xl p-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg flex flex-col cursor-pointer"
     onclick="sqNavigateToProduct(event, '{{ $productUrl }}')">
     {{-- Image --}}
-    <div class="relative product-img-bg rounded-lg aspect-square overflow-hidden mb-4">
+    <div class="group relative product-img-bg rounded-lg aspect-square overflow-hidden mb-4">
         <a href="{{ $productUrl }}">
             @if ($img)
-                <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}" class="w-full h-full object-cover" @if($sliderJson)
+                <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" @if($sliderJson)
                 data-slider='{{ $sliderJson }}' @endif />
             @else
                 <div class="w-full h-full flex items-center justify-center text-4xl text-neutral-300">🛍️</div>

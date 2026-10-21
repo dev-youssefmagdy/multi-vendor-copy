@@ -2540,11 +2540,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C3gTNiHM.css",
+    "file": "assets/app-CaPdBs8Z.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-UL8a8jYk.css",
+    "file": "assets/ecommet-MM5eJAmX.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2553,7 +2553,7 @@
     "isEntry": true
   },
   "resources/css/elora-v2.css": {
-    "file": "assets/elora-v2-CaTwTm_u.css",
+    "file": "assets/elora-v2-Cxe3Y2qL.css",
     "name": "elora-v2",
     "names": [
       "elora-v2.css"
@@ -2562,7 +2562,7 @@
     "isEntry": true
   },
   "resources/css/elora-v3.css": {
-    "file": "assets/elora-v3-CF4v2xSo.css",
+    "file": "assets/elora-v3-CGa4GKw5.css",
     "name": "elora-v3",
     "names": [
       "elora-v3.css"
@@ -2571,7 +2571,7 @@
     "isEntry": true
   },
   "resources/css/elora-v4.css": {
-    "file": "assets/elora-v4-YFyWdH83.css",
+    "file": "assets/elora-v4-D6Kjnt57.css",
     "name": "elora-v4",
     "names": [
       "elora-v4.css"
@@ -2580,7 +2580,7 @@
     "isEntry": true
   },
   "resources/css/elora-v5.css": {
-    "file": "assets/elora-v5-DkknmQGH.css",
+    "file": "assets/elora-v5-BQBplvp2.css",
     "name": "elora-v5",
     "names": [
       "elora-v5.css"
@@ -2791,7 +2791,7 @@
     "isEntry": true
   },
   "resources/css/elora/home-v5.css": {
-    "file": "assets/home-v5-DcI969Y-.css",
+    "file": "assets/home-v5-C7tQXN9_.css",
     "name": "home-v5",
     "names": [
       "home-v5.css"
@@ -2809,7 +2809,7 @@
     "isEntry": true
   },
   "resources/css/elora/home.css": {
-    "file": "assets/home-C3vL_iQ6.css",
+    "file": "assets/home-C9tRoOIr.css",
     "name": "home",
     "names": [
       "home.css"
@@ -2827,7 +2827,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CvNaUH8W.css",
+    "file": "assets/souqify-D_eMzP2F.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2836,7 +2836,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-C-V5AkII.css",
+    "file": "assets/app-D8na8Q9d.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2844,7 +2844,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-C3gTNiHM.css"
+      "assets/app-CaPdBs8Z.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",

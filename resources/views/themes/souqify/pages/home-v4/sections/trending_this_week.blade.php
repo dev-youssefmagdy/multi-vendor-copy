@@ -107,6 +107,11 @@
         background: #FDFDFD;
         border-radius: 8.80556px;
         overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv4-trend-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     .sqv4-trend-card__media {
         position: relative;
@@ -125,6 +130,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv4-trend-card:hover .sqv4-trend-card__img {
+        transform: scale(1.06);
     }
     .sqv4-trend-card__sale {
         position: absolute;

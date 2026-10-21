@@ -24,12 +24,12 @@
             @php $__shopCatName = $__shopFirstCategory->translationValue('name') ?? $__shopFirstCategory->slug; @endphp
             <a
               href="{{ route('tenant.storefront.category', $__shopFirstCategory->slug) }}"
-              class="relative shrink-0 lg:shrink w-[130.33px] lg:w-auto h-[237px] lg:h-auto rounded-[8px] lg:rounded-[12.7036px] overflow-hidden flex justify-center items-end no-underline py-4 px-0 lg:py-[25.4072px] lg:px-0 lg:row-span-2"
+              class="group relative shrink-0 lg:shrink w-[130.33px] lg:w-auto h-[237px] lg:h-auto rounded-[8px] lg:rounded-[12.7036px] overflow-hidden flex justify-center items-end no-underline py-4 px-0 lg:py-[25.4072px] lg:px-0 lg:row-span-2 transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1"
             >
               <img
                 src="{{ $__shopFirstCategory->thumb_url ?? asset('elora-2/assets/images/' . $__shopFallbackImgs[0]) }}"
                 alt="{{ $__shopCatName }}"
-                class="absolute inset-0 h-full w-full object-cover"
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div
                 class="absolute inset-0"
@@ -44,12 +44,12 @@
                 @php $__shopCatName = $category->translationValue('name') ?? $category->slug; @endphp
                 <a
                   href="{{ route('tenant.storefront.category', $category->slug) }}"
-                  class="relative flex-1 lg:aspect-[405.3/177.85] rounded-[8px] lg:rounded-[12.7036px] overflow-hidden flex justify-center items-end no-underline pb-4 lg:pb-4"
+                  class="group relative flex-1 lg:aspect-[405.3/177.85] rounded-[8px] lg:rounded-[12.7036px] overflow-hidden flex justify-center items-end no-underline pb-4 lg:pb-4 transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1"
                 >
                   <img
                     src="{{ $category->thumb_url ?? asset('elora-2/assets/images/' . $__shopFallbackImgs[(1 + $loop->parent->index * 2 + $loop->index) % 3]) }}"
                     alt="{{ $__shopCatName }}"
-                    class="absolute inset-0 h-full w-full object-cover"
+                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div
                     class="absolute inset-0"

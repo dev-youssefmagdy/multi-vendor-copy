@@ -27,7 +27,7 @@
             $catNameDisplay = \Illuminate\Support\Str::limit($catName, 15);
           @endphp
           <a href="{{ route('tenant.storefront.category', $cat->slug) }}"
-            class="relative isolate shrink-0 flex items-center h-[62px] lg:h-[93px] w-[140px] lg:w-[215px] rounded-e-[18px] lg:rounded-e-[28px] bg-white overflow-hidden p-[5px] lg:p-[7px] gap-[2px] lg:gap-[3.5px]"
+            class="group relative isolate shrink-0 flex items-center h-[62px] lg:h-[93px] w-[140px] lg:w-[215px] rounded-e-[18px] lg:rounded-e-[28px] bg-white overflow-hidden p-[5px] lg:p-[7px] gap-[2px] lg:gap-[3.5px] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
           >
             {{-- Diagonal mirrors in RTL so the pink panel always sits on the text (start) side --}}
             <span
@@ -43,7 +43,7 @@
               <img
                 src="{{ $cat->thumb_url }}"
                 alt="{{ $catName }}"
-                class="relative z-[2] shrink-0 w-[44px] h-[44px] lg:w-[67px] lg:h-[67px] object-contain"
+                class="relative z-[2] shrink-0 w-[44px] h-[44px] lg:w-[67px] lg:h-[67px] object-contain transition-transform duration-300 group-hover:scale-110"
               />
             @endif
           </a>

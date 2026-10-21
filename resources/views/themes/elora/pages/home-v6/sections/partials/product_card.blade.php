@@ -5,10 +5,10 @@
 @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-[177.51px] h-[269px] lg:w-[304.54px] lg:h-[461.49px] bg-[var(--color-bg-main)] overflow-hidden no-underline transition-[width,height,border-radius,box-shadow] duration-200 ease-in-out {{ $p['cardClass'] ?? 'rounded-[6px] shadow-[var(--shadow-card-lg)]' }}"
+  class="group relative flex flex-col items-start w-[177.51px] h-[269px] lg:w-[304.54px] lg:h-[461.49px] bg-[var(--color-bg-main)] overflow-hidden no-underline transition-[width,height,border-radius,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl {{ $p['cardClass'] ?? 'rounded-[6px] shadow-[var(--shadow-card-lg)]' }}"
 >
   <div class="relative w-full h-[154.69px] lg:h-[265.39px] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[5.07185px] lg:p-[8.70123px] gap-[6.76px] lg:gap-[11.6px]">
       <div class="flex w-full justify-between items-start">
             <button

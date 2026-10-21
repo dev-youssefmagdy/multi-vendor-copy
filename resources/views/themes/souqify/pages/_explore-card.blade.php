@@ -64,12 +64,12 @@
     $soldCount = 0;
     $progressPct = ($stockLeft === 0) ? 100 : ($hasTimer ? 60 : 0);
 @endphp
-<div class="w-[342px] lg:w-[472px] bg-white rounded-[10px] p-2.5 lg:p-3 flex items-start gap-2.5 lg:gap-3">
+<div class="w-[342px] lg:w-[472px] bg-white rounded-[10px] p-2.5 lg:p-3 flex items-start gap-2.5 lg:gap-3 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md">
     <!-- thumbnail -->
     <a href="{{ $productUrl }}"
-        class="w-[118px] lg:w-44 aspect-square rounded-[7px] overflow-hidden relative flex-shrink-0">
+        class="group w-[118px] lg:w-44 aspect-square rounded-[7px] overflow-hidden relative flex-shrink-0">
         <!-- image -->
-        <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}" class="w-full h-full object-cover"
+        <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             @if($sliderJson) data-slider='{{ $sliderJson }}' @endif>
         @if($sliderJson)
             <button type="button"

@@ -20,12 +20,12 @@
               <div class="swiper-slide !w-[145px] lg:!w-[240.37px]">
                 <a
                   href="{{ route('tenant.storefront.category', $cat->slug) }}"
-                  class="relative block rounded-[16px] lg:rounded-[25.47px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19.1px] h-[220px] lg:h-[382.04px] w-[145px] lg:w-[240.37px]"
+                  class="group relative block rounded-[16px] lg:rounded-[25.47px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19.1px] h-[220px] lg:h-[382.04px] w-[145px] lg:w-[240.37px] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
                 >
                   <img
                     src="{{ $cat->thumb_url ?? asset('elora-3/assets/images/' . $shopByCatFallbackImgs[$loop->index % 3]) }}"
                     alt="{{ $catName }}"
-                    class="absolute inset-0 h-full w-full object-cover"
+                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div
                     class="absolute inset-0"

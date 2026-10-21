@@ -73,6 +73,16 @@
         height: auto;
         min-width: 0;
         text-decoration: none;
+        transition: transform 0.25s ease;
+    }
+    .sqv6-cats__tile:hover {
+        transform: translateY(-2px);
+    }
+    .sqv6-cats__img {
+        transition: transform 0.3s ease;
+    }
+    .sqv6-cats__tile:hover .sqv6-cats__img {
+        transform: scale(1.08);
     }
     .sqv6-cats__art {
         position: relative;

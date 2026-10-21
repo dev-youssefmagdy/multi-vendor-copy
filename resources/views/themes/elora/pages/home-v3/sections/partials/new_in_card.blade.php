@@ -1,8 +1,8 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/sold/stockLeft optional --}}
 <div class="swiper-slide">
-  <a href="{{ $p['url'] ?? '#' }}" class="bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden">
+  <a href="{{ $p['url'] ?? '#' }}" class="group bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
     <div class="relative shrink-0 w-[124px] lg:w-[178px]">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover bg-[var(--color-page-bg)]" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover bg-[var(--color-page-bg)] transition-transform duration-300 group-hover:scale-105" />
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"

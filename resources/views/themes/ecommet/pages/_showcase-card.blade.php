@@ -52,7 +52,7 @@
 @endphp
 
 <a href="{{ $productUrl }}"
-    class="group flex flex-col items-center bg-white rounded-[8px] overflow-hidden hover:shadow-md transition"
+    class="group flex flex-col items-center bg-white rounded-[8px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
     style="border: 0.4px solid #E8E8E8;">
 
     {{-- Image area --}}

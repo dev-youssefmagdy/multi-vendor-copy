@@ -19,6 +19,11 @@
         overflow: hidden;
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv2-mob:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
     /* Frame 1984079719: the photo, with the sale badge, heart and cart over it. */
     .sqv2-mob__media {
@@ -35,6 +40,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv2-mob:hover .sqv2-mob__img {
+        transform: scale(1.06);
     }
     /* sale: 46.94 x 18.53, top-right of the photo - the heart holds the
        top-left corner, so the two cannot share it. */

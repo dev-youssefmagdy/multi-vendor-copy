@@ -227,6 +227,14 @@ body {
 .swiper-nav-next {
   right: -8px;
 }
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
+}
 
 /* Hero carousel */
 .hero-swiper {
@@ -295,6 +303,11 @@ body {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+.shop-cat-tile:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 .shop-cat-tile img {
   position: absolute;
@@ -302,6 +315,10 @@ body {
   height: 100%;
   width: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease-out;
+}
+.shop-cat-tile:hover img {
+  transform: scale(1.08);
 }
 .shop-cat-tile .shop-cat-label {
   position: absolute;

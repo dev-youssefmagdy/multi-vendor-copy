@@ -207,6 +207,12 @@ body {
   overflow: hidden;
   background: var(--color-bg-main);
   box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.flash-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-lg, 0 8px 24px rgba(0, 0, 0, 0.13));
 }
 
 /* ── Image section ── */
@@ -224,6 +230,11 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease-out;
+}
+
+.flash-card:hover .flash-card-img {
+  transform: scale(1.08);
 }
 
 .flash-card-badge {
@@ -503,6 +514,14 @@ body {
 }
 .swiper-nav-next {
   right: -8px;
+}
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
 }
 
 /* Hero carousel */

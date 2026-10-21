@@ -20,6 +20,11 @@
         box-shadow: 0px 0px 22px rgba(0, 0, 0, 0.12);
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv6-deal:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
     }
     .sqv6-deal__media {
         position: relative;
@@ -36,6 +41,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv6-deal:hover .sqv6-deal__img {
+        transform: scale(1.06);
     }
     /* Group 22 / Rectangle 5956: the pink tag across the top-left of the media. */
     .sqv6-deal__tag {
