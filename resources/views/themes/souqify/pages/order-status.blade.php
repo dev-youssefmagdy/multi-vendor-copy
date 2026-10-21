@@ -171,7 +171,14 @@
                                     @if ($subInfo)
                                         <p class="text-xs text-zinc-500 font-['Outfit'] tracking-wide">{{ $subInfo }}</p>
                                     @endif
-                                    <p class="text-base text-neutral-800 font-['Outfit']">{{ $fmt($item->sub_total) }}</p>
+                                    <p class="text-xs text-zinc-500 font-['Outfit']">{{ $fmt($item->price) }} &times; {{ $item->qty }} = {{ $fmt($item->sub_total) }}</p>
+                                    @if ((float) $item->fixed_shipping > 0)
+                                        <p class="text-xs text-zinc-500 font-['Outfit']">{{ __('Fixed shipping') }}: {{ $fmt($item->fixed_shipping) }}</p>
+                                    @endif
+                                    @if ((float) $item->discount > 0)
+                                        <p class="text-xs text-red-600 font-['Outfit']">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
+                                    @endif
+                                    <p class="text-base text-neutral-800 font-['Outfit']">{{ $fmt($item->grand_total) }}</p>
                                     @include('livewire.tenant.storefront.partials.return-item-action')
                                 </div>
                             </div>
@@ -260,19 +267,25 @@
 
                         <div class="flex flex-col gap-2 pb-3">
                             <div class="flex items-start justify-between gap-3">
-                                <span class="text-sm text-zinc-500 font-['Arial'] leading-5">{{ __('Subtotal') }}</span>
+                                <span class="text-sm text-zinc-500 font-['Arial'] leading-5">{{ __('Items subtotal') }}</span>
                                 <span class="text-sm text-neutral-800 font-['Arial'] leading-5">{{ $fmt($order->subtotal) }}</span>
                             </div>
-                            @if ($order->discount_percentage > 0)
-                                <div class="flex items-start justify-between gap-3 text-red-600">
-                                    <span class="text-sm font-['Arial'] leading-5">{{ __('Discount (:p%)', ['p' => $order->discount_percentage]) }}</span>
-                                    <span class="text-sm font-['Arial'] leading-5">-{{ $fmt($order->discount_amount) }}</span>
+                            @if ($order->items_fixed_shipping > 0)
+                                <div class="flex items-start justify-between gap-3">
+                                    <span class="text-sm text-zinc-500 font-['Arial'] leading-5">{{ __('Fixed shipping') }}</span>
+                                    <span class="text-sm text-neutral-800 font-['Arial'] leading-5">{{ $fmt($order->items_fixed_shipping) }}</span>
                                 </div>
                             @endif
-                            @if ($order->tax_percentage > 0)
+                            @if ($order->items_discount > 0)
+                                <div class="flex items-start justify-between gap-3 text-red-600">
+                                    <span class="text-sm font-['Arial'] leading-5">{{ __('Flash-sale discount') }}</span>
+                                    <span class="text-sm font-['Arial'] leading-5">-{{ $fmt($order->items_discount) }}</span>
+                                </div>
+                            @endif
+                            @if ($order->items_tax > 0)
                                 <div class="flex items-start justify-between gap-3">
                                     <span class="text-sm text-zinc-500 font-['Arial'] leading-5">{{ __('Tax') }}</span>
-                                    <span class="text-sm text-neutral-800 font-['Arial'] leading-5">{{ $fmt($order->tax_amount) }}</span>
+                                    <span class="text-sm text-neutral-800 font-['Arial'] leading-5">{{ $fmt($order->items_tax) }}</span>
                                 </div>
                             @endif
                             <div class="flex items-start justify-between gap-3">
@@ -281,6 +294,12 @@
                                     {{ $order->resolved_shipping_charge > 0 ? $fmt($order->resolved_shipping_charge) : __('Free') }}
                                 </span>
                             </div>
+                            @if ($order->discount_amount > 0)
+                                <div class="flex items-start justify-between gap-3 text-red-600">
+                                    <span class="text-sm font-['Arial'] leading-5">{{ __('Coupon discount') }}</span>
+                                    <span class="text-sm font-['Arial'] leading-5">-{{ $fmt($order->discount_amount) }}</span>
+                                </div>
+                            @endif
                             <div class="flex items-start justify-between gap-3 pt-2 border-t border-gray-200">
                                 <span class="text-base text-neutral-800 font-['Arial'] leading-6">{{ __('Total') }}</span>
                                 <span class="text-base text-neutral-800 font-['Arial'] leading-6">{{ $fmt($order->grand_total) }}</span>

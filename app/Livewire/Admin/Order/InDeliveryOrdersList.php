@@ -35,7 +35,7 @@ class InDeliveryOrdersList extends ListPage
             'description' => 'Review delivery work aggregated from tenant orders, shipping labels, and zone-driven charges.',
             'actionLabel' => 'Dispatch Batch',
             'tableTitle' => 'Orders Pending Delivery',
-            'headers' => ['Order', 'Tenant', 'Customer', 'Amount', 'Status', 'Actions'],
+            'headers' => ['Order', 'Tenant', 'Customer', 'Amount', 'Payment', 'Status', 'Actions'],
         ];
     }
 
@@ -72,6 +72,7 @@ class InDeliveryOrdersList extends ListPage
                 '<div class="entity-title">' . e($order->store_name ?? 'Unknown tenant') . '</div><div class="entity-subtitle">' . e($order->tenant?->email ?? 'No email') . '</div>',
                 '<div class="entity-title">' . e($order->customer_name ?: 'Guest') . '</div><div class="entity-subtitle">' . e($order->customer_email ?: 'No email') . '</div>',
                 '<div class="entity-title">$' . number_format((float) $order->total_amount, 2) . '</div><div class="entity-subtitle">$' . number_format((float) $order->shipping_charge, 2) . ' shipping</div>',
+                '<span class="badge badge-' . $order->payment_status->color() . '">' . e($order->payment_status->queueLabel()) . '</span>',
                 '<div class="entity-title"></div><div class="entity-subtitle"><button type="button" class="link-btn" wire:click=\'openOrderStatusModal(' . json_encode((string) $order->tenant_id) . ', ' . json_encode((string) $order->order_number) . ')\'>' . e($order->status->label()) . '</button></div>',
                 '<a href="' . route('admin.shipping.in-delivery.show', [$order->tenant_id, $order->order_number]) . '" class="link-btn">View</a>',
             ])->all(),
@@ -105,8 +106,15 @@ class InDeliveryOrdersList extends ListPage
             return;
         }
 
-        $this->selectedOrderForStatus = app(OrderRepository::class)->orderDetail($order);
-        $this->selectedOrderStatus = (string) ($this->selectedOrderForStatus['status_value'] ?? OrderStatus::Pending->value);
+        // Keep the public (serialized every request) payload small: only what the modal shows.
+        $this->selectedOrderForStatus = [
+            'tenant_id' => $order->tenant_id,
+            'uuid' => $order->order_number,
+            'tenant' => ['name' => $order->store_name],
+            'status' => $order->status->label(),
+            'status_value' => $order->status->value,
+        ];
+        $this->selectedOrderStatus = $order->status->value;
         $this->showOrderStatusModal = true;
     }
 
@@ -134,15 +142,8 @@ class InDeliveryOrdersList extends ListPage
             return;
         }
 
-        $order = app(OrderRepository::class)->find(
-            (string) ($this->selectedOrderForStatus['tenant_id'] ?? ''),
-            (string) ($this->selectedOrderForStatus['uuid'] ?? ''),
-        );
-
-        if ($order) {
-            $this->selectedOrderForStatus = app(OrderRepository::class)->orderDetail($order);
-            $this->selectedOrderStatus = (string) ($this->selectedOrderForStatus['status_value'] ?? $orderStatus->value);
-        }
+        $this->selectedOrderForStatus['status'] = $orderStatus->label();
+        $this->selectedOrderForStatus['status_value'] = $orderStatus->value;
 
         $this->toast('Order status updated successfully.');
     }

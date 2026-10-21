@@ -26,11 +26,23 @@ class ForcePreviewTemplate
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $this->apply($request);
+
+        return $next($request);
+    }
+
+    /**
+     * Apply the preview overrides carried by $request's query string. Also used
+     * for Livewire updates, which replay the query of the page that issued them.
+     */
+    public function apply(Request $request): void
+    {
         if (!$this->isPreviewTenant()) {
-            return $next($request);
+            return;
         }
 
         PreviewOverrides::activate();
+        $this->aliasStorefrontEndpoints();
 
         $slug = (string) ($request->query('theme') ?: $request->query('_tpl', ''));
 
@@ -53,8 +65,6 @@ class ForcePreviewTemplate
                 PreviewOverrides::setSections($keys);
             }
         }
-
-        return $next($request);
     }
 
     private function isPreviewTenant(): bool
@@ -65,5 +75,30 @@ class ForcePreviewTemplate
         } catch (\Throwable) {
             return false;
         }
+    }
+
+    /**
+     * The storefront markup builds script endpoints from tenant.storefront.* route
+     * names, which only resolve to tenant-host URLs. Point those names at the
+     * /preview/* equivalents for this request.
+     */
+    private function aliasStorefrontEndpoints(): void
+    {
+        $routes = app('router')->getRoutes();
+
+        foreach ([
+            'preview.search.autocomplete' => 'tenant.storefront.search.autocomplete',
+            'preview.products.json' => 'tenant.storefront.products.json',
+            'preview.home.tabbed-products' => 'tenant.storefront.home.tabbed-products',
+            'preview.category.products.json' => 'tenant.storefront.category.products.json',
+        ] as $previewName => $tenantName) {
+            $tenantRoute = $routes->getByName($tenantName);
+            $tenantRoute?->setAction(array_merge($tenantRoute->getAction(), ['as' => $tenantName.'.shadowed']));
+
+            $route = $routes->getByName($previewName);
+            $route?->setAction(array_merge($route->getAction(), ['as' => $tenantName]));
+        }
+
+        $routes->refreshNameLookups();
     }
 }

@@ -48,7 +48,7 @@ class WalletRepository
             'total' => $wallets->count(),
             'balance' => (float) $wallets->sum('balance'),
             'pending' => (float) $wallets->sum('pending_balance'),
-            'owner_profit' => (float) $wallets->sum('owner_profit'),
+            'platform_profit' => (float) $wallets->sum('platform_profit'),
         ];
     }
 

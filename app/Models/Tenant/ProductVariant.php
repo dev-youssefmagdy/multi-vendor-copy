@@ -198,13 +198,25 @@ class ProductVariant extends Model
      */
     public function finalPriceForCountry(?int $countryId): float
     {
+        $breakdown = $this->priceBreakdownForCountry($countryId);
+
+        return round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
+    }
+
+    /**
+     * Cost / profit / fixed-shipping split of the customer price (docs/ORDER_FORMULAS.md):
+     * price = cost + profit_amount; the fixed shipping cost is charged per order line on top.
+     *
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public function priceBreakdownForCountry(?int $countryId): array
+    {
         $basePrice = (float) ($this->real_price ?? 0);
 
         $profitRows = $this->profit ?? [];
         $profitRow = $profitRows[(string) $countryId] ?? $profitRows['default'] ?? [];
         $profitType = $profitRow['profit_type'] ?? 'percentage';
         $profitValue = (float) ($profitRow['profit_value'] ?? 0);
-        // dd($basePrice,$profitRow);
         $shipping = $this->fixedShippingCostForCountry((int) $countryId);
 
         if ($shipping === null) {
@@ -215,6 +227,6 @@ class ProductVariant extends Model
             $shipping = $shippingCost ? $shippingCost->costForWeight($weightGrams) : 0.0;
         }
 
-        return Product::computeFinalPrice($basePrice, $profitType, $profitValue, $shipping);
+        return Product::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
     }
 }

@@ -46,11 +46,45 @@
             <p class="db-welcome-sub">The numbers that really matter to you, in a clear size and without clutter.</p>
         </div>
 
-        {{-- Period filter — UI only; the data below is always the last 12 months until the backend supports other ranges. --}}
-        <button type="button" class="db-period" aria-label="Period">
-            12 Months
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
-        </button>
+        {{-- Period filter --}}
+        @php
+            $periodLabels = [1 => '1 Month', 3 => '3 Months', 6 => '6 Months', 12 => '12 Months'];
+            $activePeriod = $periodMonths ?? 12;
+        @endphp
+        <div class="db-period-wrap" style="position:relative">
+            <button type="button" class="db-period" id="dbPeriodBtn" aria-haspopup="listbox" aria-expanded="false">
+                {{ $periodLabels[$activePeriod] ?? '12 Months' }}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
+            </button>
+            <ul id="dbPeriodMenu" role="listbox" aria-label="Select period"
+                style="display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:140px;z-index:50;border-radius:10px;overflow:hidden;border:1px solid var(--color-stroke, #2a2a2a);background:var(--color-surface, #1a1a1a);box-shadow:0 8px 24px rgba(0,0,0,.35)">
+                @foreach($periodLabels as $months => $label)
+                    <li role="option" aria-selected="{{ $activePeriod === $months ? 'true' : 'false' }}"
+                        style="padding:10px 16px;cursor:pointer;font-size:13px;white-space:nowrap;{{ $activePeriod === $months ? 'font-weight:600;color:var(--color-primary,#3B82F6)' : 'color:var(--color-text-primary,#e5e5e5)' }}"
+                        onclick="window.location.href='?period={{ $months }}'">
+                        {{ $label }}
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        <script>
+        (function(){
+            var btn = document.getElementById('dbPeriodBtn');
+            var menu = document.getElementById('dbPeriodMenu');
+            if (!btn || !menu) return;
+            btn.addEventListener('click', function(e){
+                e.stopPropagation();
+                var open = menu.style.display !== 'none';
+                menu.style.display = open ? 'none' : 'block';
+                btn.setAttribute('aria-expanded', String(!open));
+            });
+            document.addEventListener('click', function(){ menu.style.display = 'none'; btn.setAttribute('aria-expanded','false'); });
+            menu.querySelectorAll('li').forEach(function(li){
+                li.addEventListener('mouseenter', function(){ li.style.background = 'var(--color-surface-hover, rgba(255,255,255,.06))'; });
+                li.addEventListener('mouseleave', function(){ li.style.background = ''; });
+            });
+        })();
+        </script>
     </div>
 
     {{-- KPI cards: grid on desktop, Swiper carousel (1.25 per view) on mobile — performance.js --}}

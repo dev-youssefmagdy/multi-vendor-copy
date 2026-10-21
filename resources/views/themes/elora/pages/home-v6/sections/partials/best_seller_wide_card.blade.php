@@ -6,8 +6,13 @@
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[3px_4px] lg:p-[5px_6.5px]">
       <div class="flex w-full justify-between items-start">
     
+<<<<<<< HEAD
         <button type="button" aria-label="{{ __('Add to favorites') }}" class="flex items-center justify-center w-[20px] h-[20px] lg:w-[35px] lg:h-[35px] p-[5px] bg-white rounded-full shadow">
           <svg class="size-[12px] lg:size-[21px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
+=======
+        <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}' type="button" aria-label="{{ __('Add to favorites') }}" class="flex items-center justify-center w-[20px] h-[20px] lg:w-[35px] lg:h-[35px] p-[5px] bg-white rounded-full shadow">
+          <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" class="size-[12px] lg:size-[21px]" alt="" />
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
         </button>
             <span
           class="flex items-center h-[15px] px-[3px] lg:h-[26px] lg:px-[6px] text-[8px] lg:text-[13px] font-normal tracking-[0.28px] lg:tracking-normal rounded-br-[4px] lg:rounded-br-[8px]"

@@ -9,7 +9,7 @@
     <div class="absolute inset-0 flex justify-between items-start p-[3.18571px] lg:p-[5.46539px]">
  
     
-           <button
+           <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
         type="button"
         aria-label="{{ __('Add to favorites') }}"
         class="flex items-center justify-center w-[16.99px] h-[16.99px] lg:w-[29.15px] lg:h-[29.15px] p-[4.25px] lg:p-[7.29px] bg-white rounded-[26.5476px] lg:rounded-[45.5449px] shadow-[0px_2.12381px_2.12381px_rgba(0,0,0,0.15)] lg:shadow-[0px_3.64359px_3.64359px_rgba(0,0,0,0.15)] transition-transform duration-150 ease active:scale-95"

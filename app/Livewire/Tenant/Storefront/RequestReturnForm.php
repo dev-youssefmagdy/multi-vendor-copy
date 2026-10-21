@@ -129,8 +129,8 @@ class RequestReturnForm extends Component
             'replacementVariantId' => ['nullable', 'integer', 'required_if:type,'.ReturnType::Exchange->value],
             // Photos are required only for seller-fault reasons — enforced by the shared return rules.
             'photos' => ['nullable', 'array'],
-            'photos.*' => ['image', 'max:5120'],
-            'video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm', 'max:51200'],
+            'photos.*' => ['image', 'max:'.config('returns.photo_max_kb')],
+            'video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm', 'max:'.config('returns.video_max_kb')],
         ], [
             'reason.required' => __('Please select a return reason.'),
             'returnMethod.required' => __('Please choose how you will return the item.'),

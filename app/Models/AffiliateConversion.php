@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AffiliateConversion extends Model
 {
+    use CentralConnection;
+
     protected $fillable = [
         'affiliate_id', 'affiliate_referral_id', 'tenant_id',
         'affiliate_coupon_id', 'source',
         'payment_log_id', 'package_id',
-        'sale_amount', 'commission_amount',
+        'sale_amount', 'commission_amount', 'paid_amount',
         'commission_type', 'commission_value',
-        'status', 'approved_at', 'paid_at',
+        'status', 'approved_at', 'paid_at', 'refunded_at',
     ];
 
     protected function casts(): array
@@ -23,7 +26,9 @@ class AffiliateConversion extends Model
             'sale_amount'       => 'decimal:2',
             'commission_amount' => 'decimal:2',
             'commission_value'  => 'decimal:2',
+            'paid_amount'       => 'decimal:2',
             'approved_at'       => 'datetime',
+            'refunded_at'       => 'datetime',
             'paid_at'           => 'datetime',
         ];
     }

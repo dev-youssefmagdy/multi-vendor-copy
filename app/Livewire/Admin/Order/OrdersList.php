@@ -28,10 +28,10 @@ class OrdersList extends ListPage
             'actionLabel' => 'Export Orders',
             'filtersDescription' => 'Filter by tenant, order status, payment state, and gateway across all storefront databases.',
             'tableTitle' => 'Marketplace Orders',
-            'headers' => ['Order', 'Tenant', 'Customer', 'Financials', 'Payment', 'Status', 'Actions'],
+            'headers' => ['Order', 'Tenant', 'Customer', 'Financials', 'Platform Profit', 'Vendor Profit', 'Payment', 'Status', 'Actions'],
             'statistics' => [
                 ['label' => 'Total Orders', 'value' => '0', 'caption' => 'Across all tenant databases', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Paid Orders', 'value' => '0', 'caption' => 'Paid through owner or tenant gateways', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => 'Paid Orders', 'value' => '0', 'caption' => 'Paid through platform or vendor gateways', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
                 ['label' => 'Needs Shipping', 'value' => '0', 'caption' => 'Ready for delivery workflows', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
         ];
@@ -75,9 +75,12 @@ class OrdersList extends ListPage
                 '<div class="entity-title">$' . number_format((float) $order->total_amount, 2) . '</div>'
                 . '<div class="entity-subtitle">'
                 . ($order->discount_percentage > 0 ? e(number_format($order->discount_percentage, 1)) . '% off · ' : '')
-                . '$' . e(number_format((float) $order->owner_profit, 2)) . ' owner profit'
                 . ((float) $order->refunded_amount > 0 ? ' · $' . e(number_format((float) $order->refunded_amount, 2)) . ' refunded' : '')
                 . '</div>',
+                '<div class="entity-title">$' . number_format((float) $order->platform_profit, 2) . '</div>'
+                . ((float) $order->vendor_own_platform > 0 ? '<div class="entity-subtitle">$' . e(number_format((float) $order->vendor_own_platform, 2)) . ' due from vendor</div>' : ''),
+                '<div class="entity-title">$' . number_format((float) $order->vendor_profit, 2) . '</div>'
+                . ((float) $order->platform_own_vendor > 0 ? '<div class="entity-subtitle">$' . e(number_format((float) $order->platform_own_vendor, 2)) . ' due from platform</div>' : ''),
                 '<div class="entity-title"><span class="badge ' . match ($order->payment_status) { OrderPaymentStatus::Paid => 'badge-green', OrderPaymentStatus::PendingPayment => 'badge-yellow', OrderPaymentStatus::Refunded, OrderPaymentStatus::PartiallyRefunded => 'badge-violet', OrderPaymentStatus::Failed => 'badge-red', default => 'badge-amber'} . '">' . e($order->payment_status->label()) . '</span></div><div class="entity-subtitle">' . e($order->payment_method ?: $order->payment_gateway ?: 'Unknown gateway') . '</div>',
                 '<div class="entity-title"><span class="badge ' . match ($order->status) { OrderStatus::Cancelled, OrderStatus::Rejected => 'badge-red', OrderStatus::Refunded => 'badge-violet', OrderStatus::Delivered, OrderStatus::Completed => 'badge-green', default => 'badge-cyan'} . '">' . e($order->status->label()) . '</span></div><div class="entity-subtitle">' . e($order->shipping_status->label()) . '</div>',
                 '<a href="' . route('admin.orders.show', [$order->tenant_id, $order->order_number]) . '" class="link-btn">View</a>',
@@ -114,7 +117,7 @@ class OrdersList extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['Order #', 'Placed At', 'Store', 'Store Email', 'Customer', 'Customer Email', 'Total', 'Owner Profit', 'Discount %', 'Payment Status', 'Payment Gateway', 'Order Status', 'Shipping Status', 'Tracking #'];
+        return ['Order #', 'Placed At', 'Store', 'Store Email', 'Customer', 'Customer Email', 'Total', 'Platform Profit', 'Vendor Profit', 'Discount %', 'Payment Status', 'Payment Gateway', 'Order Status', 'Shipping Status', 'Tracking #'];
     }
 
     protected function exportRows(): array
@@ -133,7 +136,8 @@ class OrdersList extends ListPage
                 $order->customer_name ?: 'Guest',
                 $order->customer_email ?: '',
                 number_format((float) $order->total_amount, 2),
-                number_format((float) $order->owner_profit, 2),
+                number_format((float) $order->platform_profit, 2),
+                number_format((float) $order->vendor_profit, 2),
                 number_format((float) $order->discount_percentage, 2),
                 $order->payment_status->label(),
                 $order->payment_gateway ?: $order->payment_method ?: '',

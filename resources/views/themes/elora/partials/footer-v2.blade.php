@@ -156,7 +156,7 @@
       </a>
     </div>
 
-    <a href="{{ route('tenant.storefront.cart') }}" class="absolute left-1/2 -top-[28px] -translate-x-1/2 flex flex-col items-center justify-center size-[81px] rounded-full border-4 box-border" style="background: var(--color-badge-purple, #9D00FF); border-color: var(--color-bg-main, #FDFDFD); color: var(--color-bg-main, #FDFDFD)" aria-label="{{ __('My Cart') }}" {{ $mobileNavActiveTab === 'cart' ? 'aria-current=page' : '' }}>
+    <a href="{{ route('tenant.storefront.cart') }}" class="absolute inset-x-0 mx-auto -top-[28px] flex flex-col items-center justify-center size-[81px] rounded-full border-4 box-border" style="background: var(--color-badge-purple, #9D00FF); border-color: var(--color-bg-main, #FDFDFD); color: var(--color-bg-main, #FDFDFD)" aria-label="{{ __('My Cart') }}" {{ $mobileNavActiveTab === 'cart' ? 'aria-current=page' : '' }}>
       <span class="relative flex">
         <svg class="size-[33px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6c-.255.86-1.069 1.452-1.995 1.452H8.112c-.927 0-1.741-.592-1.996-1.452L3.71 5.4ZM3.71 5.4 3 3M16.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
         <span id="elora-v2-footer-cart-badge" class="elora-cart-badge absolute -top-[2px] left-[14px] min-w-[23px] h-[13px] px-[4px] flex items-center justify-center rounded-full text-[11px] leading-none tracking-[0.5px]" style="background: var(--color-bg-main, #FDFDFD); color: var(--color-text-primary, #121212); box-shadow: 0px 2px 1.1px rgba(0, 0, 0, 0.15)">{{ $cartCount ?? 0 }}</span>

@@ -579,6 +579,12 @@
                             @if(!empty($item['variant']))
                                 <div class="item-variant">{{ $item['variant'] }}</div>
                             @endif
+                            @if(!empty($item['fixed_shipping']))
+                                <div class="item-variant">{{ __('Fixed shipping') }}: {{ $item['fixed_shipping'] }}</div>
+                            @endif
+                            @if(!empty($item['discount']))
+                                <div class="item-variant">{{ __('Flash-sale discount') }}: - {{ $item['discount'] }}</div>
+                            @endif
                         </td>
                         <td class="td-center">{{ $item['qty'] }}</td>
                         <td class="td-center">{{ $item['price'] }}</td>
@@ -592,12 +598,18 @@
             <div class="totals-wrap">
                 <div class="totals-table">
                     <div class="totals-row">
-                        <span class="t-label">{{ __('Subtotal') }}</span>
+                        <span class="t-label">{{ __('Items subtotal') }}</span>
                         <span class="t-value">{{ $payload['subtotal'] }}</span>
                     </div>
+                    @if($payload['fixed_shipping'] && !str_ends_with(trim($payload['fixed_shipping']), '0.00'))
+                    <div class="totals-row">
+                        <span class="t-label">{{ __('Fixed shipping') }}</span>
+                        <span class="t-value">{{ $payload['fixed_shipping'] }}</span>
+                    </div>
+                    @endif
                     @if($payload['discount'] && !str_ends_with(trim($payload['discount']), '0.00'))
                     <div class="totals-row">
-                        <span class="t-label">{{ __('Discount') }}</span>
+                        <span class="t-label">{{ __('Flash-sale discount') }}</span>
                         <span class="t-value" style="color:#dc2626;">- {{ $payload['discount'] }}</span>
                     </div>
                     @endif
@@ -611,6 +623,12 @@
                     <div class="totals-row">
                         <span class="t-label">{{ __('Shipping') }}</span>
                         <span class="t-value">{{ $payload['shipping'] }}</span>
+                    </div>
+                    @endif
+                    @if($payload['coupon_discount'] && !str_ends_with(trim($payload['coupon_discount']), '0.00'))
+                    <div class="totals-row">
+                        <span class="t-label">{{ __('Coupon discount') }}</span>
+                        <span class="t-value" style="color:#dc2626;">- {{ $payload['coupon_discount'] }}</span>
                     </div>
                     @endif
                     <div class="totals-row grand">

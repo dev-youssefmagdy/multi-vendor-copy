@@ -260,11 +260,20 @@ class Product extends Model
      */
     public static function computeFinalPrice(float $basePrice, string $profitType, float $profitValue, float $shipping): float
     {
-        $profitAmount = $profitType === 'fixed'
-            ? round($profitValue, 2)
-            : round($basePrice * $profitValue / 100, 2);
+        $breakdown = static::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
 
-        return round($basePrice + $profitAmount + $shipping, 2);
+        return round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
+    }
+
+    /**
+     * price = cost + profit_amount (profit is a percentage of cost or a fixed amount);
+     * the fixed shipping cost is reported separately (docs/ORDER_FORMULAS.md).
+     *
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public static function priceBreakdown(float $cost, string $profitType, float $profitValue, float $shipping): array
+    {
+        return \App\Support\OrderPricing::unitPrice($cost, $profitType, $profitValue, $shipping);
     }
 
     /**
@@ -273,6 +282,16 @@ class Product extends Model
      * the central sale price.
      */
     public function finalPriceForCountry(?int $countryId): float
+    {
+        $breakdown = $this->priceBreakdownForCountry($countryId);
+
+        return round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
+    }
+
+    /**
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public function priceBreakdownForCountry(?int $countryId): array
     {
         $basePrice = (float) ($this->centralProduct?->sale_price ?? $this->centralProduct?->base_price ?? 0);
 
@@ -290,7 +309,7 @@ class Product extends Model
             $shipping = $shippingCost ? $shippingCost->costForWeight($weightGrams) : 0.0;
         }
 
-        return static::computeFinalPrice($basePrice, $profitType, $profitValue, $shipping);
+        return static::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
     }
 
     public function storefrontPricing(?ProductVariant $variant = null, ?int $countryId = null): array
@@ -299,11 +318,8 @@ class Product extends Model
 
         $resolvedCountryId = $countryId ?? ((int) session('storefront_country_id') ?: null);
 
-        if ($variant) {
-            $_basePrice = $variant->finalPriceForCountry($resolvedCountryId);
-        } else {
-            $_basePrice = $this->finalPriceForCountry($resolvedCountryId);
-        }
+        $breakdown = ($variant ?? $this)->priceBreakdownForCountry($resolvedCountryId);
+        $_basePrice = round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
 
         $basePrice = $_basePrice;
         // Only treat real_price as an original (strikethrough) price if the vendor
@@ -340,7 +356,33 @@ class Product extends Model
             'is_flash_sale' => $flashDiscountPercentage > 0,
             'flash_sale_percentage' => round($flashDiscountPercentage, 2),
             'flash_sale' => $flashSale,
+            'cost' => $breakdown['cost'],
+            'profit_amount' => $breakdown['profit_amount'],
+            'fixed_shipping' => $breakdown['fixed_shipping'],
         ];
+    }
+
+    /**
+     * JSON payload stored in a storefront heart button's `data-fav` attribute
+     * (HTML-safe, consumed by the favorites toggle scripts).
+     */
+    public function storefrontFavData($currentCurrency = null): string
+    {
+        $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
+        $pricing = $this->storefrontPricing();
+        $hasDiscount = (bool) $pricing['has_discount'];
+
+        return json_encode([
+            'slug' => $this->slug,
+            'name' => $this->translationValue('name') ?? $this->slug,
+            'price' => round((float) $pricing['current_price'] * $rate, 2),
+            'old_price' => $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null,
+            'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
+            'rating' => (float) ($this->average_rating ?? 0),
+            'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? null,
+            'url' => route('tenant.storefront.product', $this->slug),
+            'added' => time(),
+        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
     }
 
     /**

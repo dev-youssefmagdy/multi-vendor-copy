@@ -7,6 +7,7 @@
     'confirmDanger' => false,
     'files' => false,
     'id' => null,
+    'gateSubmit' => false,
 ])
 
 @php
@@ -24,6 +25,7 @@
     data-success="{{ $success }}"
     @if($confirm) data-confirm="{{ $confirm }}" @endif
     @if($confirmDanger) data-confirm-danger @endif
+    @if($gateSubmit) data-gate-submit @endif
     novalidate
     @if($files) enctype="multipart/form-data" @endif
     {{ $attributes }}

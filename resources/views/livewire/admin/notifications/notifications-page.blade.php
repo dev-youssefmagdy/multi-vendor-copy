@@ -69,6 +69,9 @@
                     @endif
                 </div>
                 <div style="display:flex;gap:8px;flex-shrink:0;margin-top:2px">
+                    @if ($notification->targetUrl())
+                        <a href="{{ route('admin.notifications.open', $notification->id) }}" class="btn btn-primary btn-sm">Open</a>
+                    @endif
                     @if (!$notification->is_read)
                         <button type="button" wire:click="markRead({{ $notification->id }})"
                             class="btn btn-secondary btn-sm">Mark Read</button>
@@ -101,6 +104,11 @@
                 .listen('.notification.created', () => {
                     Livewire.dispatch('$refresh');
                 });
+        });
+        document.addEventListener('livewire:init', function () {
+            Livewire.on('notifications-changed', () => {
+                document.getElementById('admin-notif-bell')?.dispatchEvent(new Event('notif:refresh'));
+            });
         });
     </script>
 </main>

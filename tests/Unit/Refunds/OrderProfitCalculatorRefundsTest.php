@@ -7,6 +7,7 @@ namespace Tests\Unit\Refunds;
 use App\Enums\OrderStatus;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
+use App\Models\VendorSettlement;
 use App\Support\OrderProfitCalculator;
 use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -31,36 +32,49 @@ class OrderProfitCalculatorRefundsTest extends TestCase
     #[DataProvider('voidCases')]
     public function void_orders_produce_no_money(OrderStatus $status, float $refunded, bool $void): void
     {
-        // Central-gateway order: grand 100, owner profit 30.
+        // Platform-collected order: grand 100, platform_profit 30, vendor_profit 70.
         $order = $this->order($status, $refunded);
 
         $this->assertSame($void, OrderProfitCalculator::isFinanciallyVoid($order));
 
         if ($void) {
             $this->assertSame(0.0, OrderProfitCalculator::netOrderTotal($order));
-            $this->assertSame(0.0, OrderProfitCalculator::effectiveOwnerProfitForOrder($order));
-            $this->assertSame(0.0, OrderProfitCalculator::effectiveTenantProfitForOrder($order));
-            $this->assertSame(0.0, OrderProfitCalculator::centralOwnTenantForOrder($order));
-            $this->assertSame(0.0, OrderProfitCalculator::tenantOwnCentralForOrder($order));
+            $this->assertSame(0.0, OrderProfitCalculator::platformProfitForOrder($order));
+            $this->assertSame(0.0, OrderProfitCalculator::vendorProfitForOrder($order));
+            $this->assertSame(0.0, OrderProfitCalculator::platformOwnVendorForOrder($order));
+            $this->assertSame(0.0, OrderProfitCalculator::vendorOwnPlatformForOrder($order));
 
             return;
         }
 
         $this->assertSame(100.0 - $refunded, OrderProfitCalculator::netOrderTotal($order));
-        $this->assertSame(30.0, OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 'owner profit is not reduced by partial refunds');
-        $this->assertSame(70.0 - $refunded, OrderProfitCalculator::effectiveTenantProfitForOrder($order));
-        $this->assertSame(70.0 - $refunded, OrderProfitCalculator::centralOwnTenantForOrder($order));
+        $this->assertSame(30.0, OrderProfitCalculator::platformProfitForOrder($order), 'platform profit is not reduced by partial refunds');
+        $this->assertSame(70.0 - $refunded, OrderProfitCalculator::vendorProfitForOrder($order));
+        $this->assertSame(70.0 - $refunded, OrderProfitCalculator::platformOwnVendorForOrder($order));
     }
 
     #[Test]
-    public function vendor_gateway_order_owes_central_nothing_once_cancelled(): void
+    public function vendor_collected_order_owes_platform_nothing_once_cancelled(): void
     {
-        $order = $this->order(OrderStatus::Processing, 0, ['vendor_gateway_id' => 3, 'vendor_cost' => 25]);
-        $this->assertSame(25.0, OrderProfitCalculator::tenantOwnCentralForOrder($order));
+        $order = $this->order(OrderStatus::Processing, 0, ['collected_by' => 'vendor', 'platform_profit' => 25]);
+        $this->assertSame(25.0, OrderProfitCalculator::vendorOwnPlatformForOrder($order));
 
         $order->status = OrderStatus::Cancelled;
-        $this->assertSame(0.0, OrderProfitCalculator::tenantOwnCentralForOrder($order));
-        $this->assertSame(0.0, OrderProfitCalculator::remainingTenantOwnCentralForOrder($order));
+        $this->assertSame(0.0, OrderProfitCalculator::vendorOwnPlatformForOrder($order));
+    }
+
+    #[Test]
+    public function settlements_and_payouts_reduce_the_running_balances(): void
+    {
+        $vendorCollected = $this->order(OrderStatus::Processing, 0, ['collected_by' => 'vendor', 'platform_profit' => 30]);
+        $vendorCollected->setRelation('settlementPayments', new Collection([
+            new VendorSettlement(['product_cost' => 10, 'total' => 10, 'status' => 'paid']),
+        ]));
+        $this->assertSame(20.0, OrderProfitCalculator::vendorOwnPlatformForOrder($vendorCollected));
+        $this->assertSame(0.0, OrderProfitCalculator::platformOwnVendorForOrder($vendorCollected));
+
+        $platformCollected = $this->order(OrderStatus::Processing, 0, ['payout_released' => true]);
+        $this->assertSame(0.0, OrderProfitCalculator::platformOwnVendorForOrder($platformCollected));
     }
 
     private function order(OrderStatus $status, float $refunded, array $attributes = []): Order
@@ -68,7 +82,10 @@ class OrderProfitCalculatorRefundsTest extends TestCase
         $order = new Order(array_merge([
             'status' => $status,
             'paid' => true,
-            'owner_profit' => 30,
+            'platform_profit' => 30,
+            'vendor_profit' => 70,
+            'collected_by' => 'platform',
+            'coupon_discount' => 0,
             'refunded_amount' => $refunded,
             'discount_percentage' => 0,
             'tax_percentage' => 0,
@@ -76,7 +93,7 @@ class OrderProfitCalculatorRefundsTest extends TestCase
         ], $attributes));
 
         return $order->setRelation('items', new Collection([
-            new OrderItem(['qty' => 1, 'price' => 100, 'sub_total' => 100, 'discount' => 0, 'tax' => 0, 'shipping_fee' => 0]),
+            new OrderItem(['qty' => 1, 'price' => 100, 'sub_total' => 100, 'discount' => 0, 'tax' => 0, 'shipping_fee' => 0, 'grand_total' => 100]),
         ]));
     }
 }

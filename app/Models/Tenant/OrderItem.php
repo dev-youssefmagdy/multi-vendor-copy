@@ -15,24 +15,33 @@ class OrderItem extends Model
         'product_id',
         'product_variant_id',
         'qty',
+        'cost',
+        'profit_amount',
         'price',
         'sub_total',
+        'fixed_shipping',
         'discount',
+        'discount_source',
         'tax',
-        'weight',
         'shipping_fee',
+        'weight',
+        'grand_total',
     ];
 
     protected function casts(): array
     {
         return [
             'qty' => 'integer',
+            'cost' => 'decimal:2',
+            'profit_amount' => 'decimal:2',
             'price' => 'decimal:2',
             'sub_total' => 'decimal:2',
+            'fixed_shipping' => 'decimal:2',
             'discount' => 'decimal:2',
             'tax' => 'decimal:2',
-            'weight' => 'decimal:3',
             'shipping_fee' => 'decimal:2',
+            'weight' => 'decimal:3',
+            'grand_total' => 'decimal:2',
         ];
     }
 

@@ -7,6 +7,7 @@ namespace App\Services\Tenant;
 use App\Events\ManufacturingMessageSent;
 use App\Models\ManufacturingRequest;
 use App\Models\ManufacturingRequestMessage;
+use App\Services\AdminNotificationService;
 
 final class ManufacturingRequestService
 {
@@ -28,6 +29,13 @@ final class ManufacturingRequestService
             'sender_name' => $senderName,
             'message' => $body,
         ]);
+
+        app(AdminNotificationService::class)->notify(
+            'manufacturing',
+            'New manufacturing request message',
+            sprintf('%s replied on manufacturing request #%d.', $senderName, $request->id),
+            ['request_id' => $request->id, 'tenant_id' => (string) tenant('id')],
+        );
 
         try {
             event(new ManufacturingMessageSent(

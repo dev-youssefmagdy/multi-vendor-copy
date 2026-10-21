@@ -13,6 +13,7 @@ use App\Models\Tenant\Subscription;
 use App\Models\Tenant\Transaction;
 use App\PaymentGateway\PaymentManager;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\TenantAffiliateService;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\Payments\InlineGatewayPresenter;
 use App\Support\Tenant\TableColumn;
@@ -44,7 +45,29 @@ final class WalletController extends PanelController
 
         $gateways = app(PaymentManager::class)->vendorPaymentGateways();
 
+        $partner = app(TenantAffiliateService::class);
+        $affiliate = $partner->forTenant((string) tenant('id'));
+
         return view('tenant.pages.finance.wallet.index', [
+            'activeTab' => $request->query('tab') === 'partner' ? 'partner' : 'subscriptions',
+            'partnerStats' => $partner->stats($affiliate),
+            'partnerLink' => $partner->referralUrl($affiliate),
+            'partnerConversionColumns' => [
+                TableColumn::make('merchant', 'Merchant')->orderable(false),
+                TableColumn::make('package', 'Package')->orderable(false),
+                TableColumn::make('sale', 'Sale')->orderable(false),
+                TableColumn::make('commission', 'Commission')->orderable(false),
+                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('date', 'Date')->orderable(false),
+            ],
+            'partnerPayoutColumns' => [
+                TableColumn::make('type', 'Type')->orderable(false),
+                TableColumn::make('amount', 'Amount')->orderable(false),
+                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('reference', 'Reference')->orderable(false),
+                TableColumn::make('attachment', 'Attachment')->orderable(false),
+                TableColumn::make('date', 'Date')->orderable(false),
+            ],
             'cards' => Metric::cards($overview['cards']),
             'currentPackage' => $currentPackage,
             'packages' => $packages,

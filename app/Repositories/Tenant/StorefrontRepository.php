@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Tenant;
 
+use App\Services\Tenant\Checkout\OrderComposer;
+use App\Support\OrderPricing;
 use App\Models\Tenant\Banner;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Currency;
@@ -89,6 +91,12 @@ class StorefrontRepository
      */
     protected function cacheRemember(string $key, array $tags, \Closure $callback, ?int $ttl = null)
     {
+        // Preview flips theme/variant rows with raw queries that never bump the cache
+        // versions, so cached theme/variant lookups would be stale (wrong styles/scripts).
+        if (PreviewOverrides::active()) {
+            return $callback();
+        }
+
         $ttl ??= (int) config('cache.storefront.default_ttl', 3600);
         $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
         $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
@@ -186,6 +194,40 @@ class StorefrontRepository
         }
 
         return $relations;
+    }
+
+    /**
+     * HomeProductService caches bare product rows (so prices, ratings and flash sales
+     * stay fresh); the product card needs variants, translations, images, rates and
+     * flash sales. Batch-load them once per list instead of lazy-loading per card (N+1).
+     */
+    protected function hydrateProductCards(Collection $products): Collection
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        // Several home lists overlap (new-in / featured / trending ...): reuse the
+        // relations already loaded for a product earlier in this request.
+        $pending = $products->filter(function (Product $product): bool {
+            $loaded = $this->memo['hydrated_products'][$product->getKey()] ?? null;
+            if ($loaded) {
+                $product->setRelations($loaded->getRelations());
+            }
+
+            return $loaded === null;
+        });
+
+        if ($pending->isNotEmpty()) {
+            $pending->loadMissing($this->productRelations());
+            foreach ($pending as $product) {
+                // Variants price themselves through $variant->product (shipping fallback).
+                $product->variants->each(fn($variant) => $variant->setRelation('product', $product));
+                $this->memo['hydrated_products'][$product->getKey()] ??= $product;
+            }
+        }
+
+        return $products;
     }
 
     protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
@@ -1006,7 +1048,9 @@ class StorefrontRepository
 
     public function featuredProducts(int $limit = 10): Collection
     {
-        return app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId());
+        return $this->hydrateProductCards(
+            app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId())
+        );
     }
 
     public function latestProducts(int $limit = 20): Collection
@@ -1205,8 +1249,9 @@ class StorefrontRepository
     {
         $key = 'trending_now_' . $limit;
 
-        return $this->memo[$key] ??= app(\App\Services\HomeProductService::class)
-            ->getTrendingNow($limit, $this->customerCountryId());
+        return $this->memo[$key] ??= $this->hydrateProductCards(
+            app(\App\Services\HomeProductService::class)->getTrendingNow($limit, $this->customerCountryId())
+        );
     }
 
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -1261,7 +1306,7 @@ class StorefrontRepository
     protected function paginateFromService(callable $fetcher, int $perPage, int $page): LengthAwarePaginator
     {
         $limit = $perPage * $page;
-        $items = $fetcher($limit);
+        $items = $this->hydrateProductCards($fetcher($limit));
         $total = $items->count() >= $limit ? $items->count() + 1 : $items->count();
 
         return new \Illuminate\Pagination\LengthAwarePaginator(
@@ -1286,7 +1331,7 @@ class StorefrontRepository
             $products = $service->getInteractionBased($limit, $this->customerCountryId());
         }
 
-        return $this->memo[$key] = $products;
+        return $this->memo[$key] = $this->hydrateProductCards($products);
     }
 
     public function paginatedProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator
@@ -1367,7 +1412,7 @@ class StorefrontRepository
         return Session::get('storefront_cart', []);
     }
 
-    public function cartItems(): array
+    public function cartItems(?int $countryId = null): array
     {
         $cart = $this->cart();
 
@@ -1393,10 +1438,8 @@ class StorefrontRepository
             ->get()
             ->keyBy('id');
 
-        // Resolve the visitor's country for per-country pricing: selected/default
-        // customer address takes priority over the session-detected country.
-        $countryId = app(CustomerCountryResolver::class)->resolveId();
-
+        // Unit prices use the session country (same source as home cards and
+        // product-page variant prices) so every surface shows the same number.
         $items = [];
 
         foreach ($cart as $key => $entry) {
@@ -1412,6 +1455,8 @@ class StorefrontRepository
             $pricing = $product->storefrontPricing($variant, $countryId);
             $price = (float) $pricing['current_price'];
             $qty = max(1, (int) ($entry['qty'] ?? 1));
+            // Priced order line (docs/ORDER_FORMULAS.md): its grand_total is what the order will persist.
+            $line = OrderComposer::line($product, $variant, $qty, $countryId);
 
             $items[] = [
                 'key' => $key,
@@ -1427,7 +1472,8 @@ class StorefrontRepository
                 'discount_percentage' => $pricing['discount_percentage'],
                 'is_flash_sale' => $pricing['is_flash_sale'],
                 'flash_sale_percentage' => $pricing['flash_sale_percentage'],
-                'subtotal' => $price * $qty,
+                'line' => $line,
+                'subtotal' => (float) $line['grand_total'],
                 'is_out_of_stock' => $this->isCartItemOutOfStock($product, $variant),
             ];
         }
@@ -1462,9 +1508,9 @@ class StorefrontRepository
         return (int) collect($this->cart())->sum('qty');
     }
 
-    public function cartTotal(): float
+    public function cartTotal(?int $countryId = null): float
     {
-        return (float) collect($this->cartItems())->sum('subtotal');
+        return OrderPricing::money((float) collect($this->cartItems($countryId))->sum('subtotal'));
     }
 
     // ─── Orders ──────────────────────────────────────────────────────────────

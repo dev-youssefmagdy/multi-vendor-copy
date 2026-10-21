@@ -551,7 +551,7 @@ class TemplateMailService
         foreach ($order->items as $item) {
             $productName = $item->product?->name ?? "Product #{$item->product_id}";
             $unitPrice = number_format((float) $item->price, 2);
-            $subtotal = number_format((float) $item->sub_total, 2);
+            $subtotal = number_format((float) $item->grand_total, 2);
             $discount = (float) $item->discount > 0 ? '-'.number_format((float) $item->discount, 2) : '-';
             $tax = (float) $item->tax > 0 ? number_format((float) $item->tax, 2) : '-';
 
@@ -565,25 +565,28 @@ class TemplateMailService
         }
 
         $subtotal = number_format($order->subtotal, 2);
+        $fixedShipping = $order->items_fixed_shipping > 0 ? number_format($order->items_fixed_shipping, 2) : null;
         $itemsDiscount = $order->items_discount > 0 ? number_format($order->items_discount, 2) : null;
         $orderDiscount = $order->discount_amount > 0 ? number_format($order->discount_amount, 2) : null;
-        $tax = ($order->items_tax + $order->tax_amount) > 0
-            ? number_format($order->items_tax + $order->tax_amount, 2) : null;
+        $tax = $order->items_tax > 0 ? number_format($order->items_tax, 2) : null;
         $shipping = $order->resolved_shipping_charge > 0 ? number_format($order->resolved_shipping_charge, 2) : null;
         $grandTotal = number_format($order->grand_total, 2);
 
-        $summaryRows = '<tr><td colspan="4" style="padding:8px 10px;font-size:13px;color:#6b7280;text-align:right;">Subtotal</td><td style="padding:8px 10px;font-size:13px;color:#111827;text-align:right;">'.$currency.' '.$subtotal.'</td></tr>';
-        if ($itemsDiscount) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Item Discounts</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$itemsDiscount.'</td></tr>';
+        $summaryRows = '<tr><td colspan="4" style="padding:8px 10px;font-size:13px;color:#6b7280;text-align:right;">Items Subtotal</td><td style="padding:8px 10px;font-size:13px;color:#111827;text-align:right;">'.$currency.' '.$subtotal.'</td></tr>';
+        if ($fixedShipping) {
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Fixed Shipping</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$fixedShipping.'</td></tr>';
         }
-        if ($orderDiscount) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Order Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$orderDiscount.'</td></tr>';
+        if ($itemsDiscount) {
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Flash-sale Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$itemsDiscount.'</td></tr>';
         }
         if ($tax) {
             $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Tax</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$tax.'</td></tr>';
         }
         if ($shipping) {
             $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Shipping</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$shipping.'</td></tr>';
+        }
+        if ($orderDiscount) {
+            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Coupon Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$orderDiscount.'</td></tr>';
         }
         $summaryRows .= '<tr style="border-top:2px solid #e5e7eb;"><td colspan="4" style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#111827;text-align:right;">Grand Total</td><td style="padding:10px 10px 6px;font-size:14px;font-weight:700;color:#1d4ed8;text-align:right;">'.$currency.' '.$grandTotal.'</td></tr>';
 
@@ -593,7 +596,7 @@ class TemplateMailService
             .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Unit Price</th>'
             .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Discount</th>'
             .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Tax</th>'
-            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Subtotal</th>'
+            .'<th style="padding:8px 10px;font-size:12px;color:#6b7280;font-weight:600;text-align:right;">Line Total</th>'
             .'</tr></thead>'
             .'<tbody>'.$rows.'</tbody>'
             .'<tfoot>'.$summaryRows.'</tfoot>'

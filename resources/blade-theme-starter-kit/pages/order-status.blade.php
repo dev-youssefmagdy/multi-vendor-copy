@@ -25,12 +25,32 @@
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
             <span>
                 {{ $item->product?->translationValue('name') ?? 'Product' }} × {{ $item->qty }}
+                ({{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->price, 2) }} each{{ (float) $item->fixed_shipping > 0 ? ', fixed shipping ' . number_format($item->fixed_shipping, 2) : '' }}{{ (float) $item->discount > 0 ? ', discount -' . number_format($item->discount, 2) : '' }})
                 {{-- Optional: "Request Return" / return status / "Return after delivery" --}}
                 @include('livewire.tenant.storefront.partials.return-item-action')
             </span>
-            <span>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->sub_total, 2) }}</span>
+            <span>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->grand_total, 2) }}</span>
         </div>
     @endforeach
+
+    @php $sym = $currentCurrency?->symbol ?? '$'; @endphp
+    <div style="max-width:360px;margin-top:12px">
+        <div style="display:flex;justify-content:space-between"><span>Items subtotal</span><span>{{ $sym }}{{ number_format($order->subtotal, 2) }}</span></div>
+        @if ($order->items_fixed_shipping > 0)
+            <div style="display:flex;justify-content:space-between"><span>Fixed shipping</span><span>{{ $sym }}{{ number_format($order->items_fixed_shipping, 2) }}</span></div>
+        @endif
+        @if ($order->items_discount > 0)
+            <div style="display:flex;justify-content:space-between"><span>Flash-sale discount</span><span>-{{ $sym }}{{ number_format($order->items_discount, 2) }}</span></div>
+        @endif
+        @if ($order->items_tax > 0)
+            <div style="display:flex;justify-content:space-between"><span>Tax</span><span>{{ $sym }}{{ number_format($order->items_tax, 2) }}</span></div>
+        @endif
+        <div style="display:flex;justify-content:space-between"><span>Shipping</span><span>{{ $sym }}{{ number_format($order->resolved_shipping_charge, 2) }}</span></div>
+        @if ($order->discount_amount > 0)
+            <div style="display:flex;justify-content:space-between"><span>Coupon discount</span><span>-{{ $sym }}{{ number_format($order->discount_amount, 2) }}</span></div>
+        @endif
+        <div style="display:flex;justify-content:space-between;font-weight:bold"><span>Grand total</span><span>{{ $sym }}{{ number_format($order->grand_total, 2) }}</span></div>
+    </div>
 
     <a href="{{ route('tenant.storefront.order-tracking', $order->uuid) }}" style="display:inline-block;margin-top:20px">Track this order →</a>
 

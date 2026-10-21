@@ -47,6 +47,9 @@
                   >
                     {{ $__heroTitle }}
                   </h1>
+                  @if ($__heroSubtitle = $banner->translationValue('subtitle'))
+                    <p class="text-[12px] lg:text-[22px] leading-tight text-white/90">{{ $__heroSubtitle }}</p>
+                  @endif
                   <button
                     type="button"
                     class="flex h-[38px] lg:h-[68px] items-center justify-center rounded-[34px] w-full px-[8px] cursor-pointer bg-white"

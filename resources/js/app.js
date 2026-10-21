@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import Sortable from "sortablejs";
 import { initPhoneInputs } from "./phone-input";
 import "./bootstrap";
+import { mountNotificationBell } from "./notifications/bell";
 
 window.Sortable = Sortable;
 
@@ -1496,3 +1497,17 @@ document.addEventListener("livewire:navigated", () => {
         });
     });
 });
+
+
+// ── Admin notification bell (realtime via Reverb + alert sound) ──────────
+function mountAdminNotificationBells() {
+    document.querySelectorAll("[data-notif-bell]").forEach((root) => {
+        mountNotificationBell(root, {
+            getEcho: () => window.Echo,
+            onToast: (e) => showToast(e.title ? `${e.title}: ${e.message}` : e.message, "info"),
+        });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", mountAdminNotificationBells);
+document.addEventListener("livewire:navigated", mountAdminNotificationBells);

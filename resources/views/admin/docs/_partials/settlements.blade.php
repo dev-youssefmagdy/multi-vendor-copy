@@ -9,7 +9,7 @@
     </tr>
     <tr>
         <td>Trigger</td>
-        <td>Tenant clicks "Pay Central" on a paid order with <code>vendor_cost &gt; 0</code></td>
+        <td>Tenant clicks "Pay Central" on a paid order with <code>vendor_own_platform &gt; 0</code></td>
         <td>Central admin records a payout</td>
     </tr>
     <tr>

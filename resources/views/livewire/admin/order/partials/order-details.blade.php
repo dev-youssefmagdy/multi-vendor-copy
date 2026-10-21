@@ -77,46 +77,38 @@
         <section class="details-panel">
             <div class="details-header">
                 <h4 class="panel-title">Financial Breakdown</h4>
-                <p class="panel-copy">Item-level and order-level totals recalculated from tenant order data.</p>
+                <p class="panel-copy">Items grand total + shipping − coupon = order grand total, then the platform / vendor split.</p>
             </div>
             <div class="details-list">
-                <div class="details-kv"><span class="details-label">Subtotal</span><span
-                        class="details-value">${{ number_format((float) ($financials['subtotal'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Items Grand Total</span><span
+                        class="details-value">${{ number_format((float) ($financials['items_grand_total'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Item Discounts</span><span
-                        class="details-value">${{ number_format((float) ($financials['items_discount'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Shipping Charge</span><span
+                        class="details-value">${{ number_format((float) ($financials['shipping_charge'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Order Discount</span><span
-                        class="details-value">${{ number_format((float) ($financials['discount'] ?? 0), 2) }}</span>
-                </div>
-                <div class="details-kv"><span class="details-label">Tax</span><span
-                        class="details-value">${{ number_format((float) (($financials['items_tax'] ?? 0) + ($financials['tax'] ?? 0)), 2) }}</span>
-                </div>
-                <div class="details-kv"><span class="details-label">Shipping</span><span
-                        class="details-value">${{ number_format((float) ($financials['shipping_total'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Coupon Discount</span><span
+                        class="details-value">${{ number_format((float) ($financials['coupon_discount'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Grand Total</span><span
                         class="details-value">${{ number_format((float) ($financials['grand_total'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Owner Profit</span><span
-                        class="details-value">${{ number_format((float) ($financials['owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['platform_profit'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Tenant Net</span><span
-                        class="details-value">${{ number_format((float) ($financials['vendor_net_total'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Owes Platform</span><span
+                        class="details-value" style="color:#f59e0b;">${{ number_format((float) ($financials['vendor_own_platform'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">TenantOwnCentral</span><span
-                        class="details-value">${{ number_format((float) ($financials['tenant_own_central'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['vendor_profit'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">CentralOwnTenant</span><span
-                        class="details-value">${{ number_format((float) ($financials['central_own_tenant'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Owes Vendor</span><span
+                        class="details-value" style="color:#22c55e;">${{ number_format((float) ($financials['platform_own_vendor'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">RemainingOwnerProfit</span><span
-                        class="details-value"
-                        style="color:#f59e0b;">${{ number_format((float) ($financials['remaining_owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Vendor Settlements Paid</span><span
+                        class="details-value">${{ number_format((float) ($financials['vendor_settlements_paid'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">RemainingTenantProfit</span><span
-                        class="details-value"
-                        style="color:#22c55e;">${{ number_format((float) ($financials['remaining_tenant_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Payouts Paid</span><span
+                        class="details-value">${{ number_format((float) ($financials['platform_payouts_paid'] ?? 0), 2) }}</span>
                 </div>
             </div>
         </section>
@@ -131,12 +123,18 @@
                     <thead>
                         <tr>
                             <th>Item</th>
+                            <th>Payment</th>
                             <th>Qty</th>
+                            <th>Cost</th>
+                            <th>Profit</th>
                             <th>Price</th>
+                            <th>Sub Total</th>
+                            <th>Fixed Shipping</th>
                             <th>Discount</th>
                             <th>Tax</th>
-                            <th>Shipping</th>
-                            <th>Total</th>
+                            <th>Shipping Fee</th>
+                            <th>Weight</th>
+                            <th>Grand Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -148,16 +146,22 @@
                                         <div class="details-inline-copy">{{ $item['variant'] }}</div>
                                     @endif
                                 </td>
+                                <td><span class="badge badge-{{ $order['payment_status_color'] ?? 'gray' }}">{{ $order['payment_status_label'] ?? ($order['payment_status'] ?? '-') }}</span></td>
                                 <td>{{ $item['qty'] ?? 0 }}</td>
+                                <td>${{ number_format((float) ($item['cost'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['profit_amount'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['price'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['sub_total'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['fixed_shipping'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['discount'] ?? 0), 2) }}</td>
                                 <td>${{ number_format((float) ($item['tax'] ?? 0), 2) }}</td>
-                                <td>${{ number_format((float) ($item['shipping'] ?? 0), 2) }}</td>
-                                <td>${{ number_format((float) ($item['line_total'] ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($item['shipping_fee'] ?? 0), 2) }}</td>
+                                <td>{{ number_format((float) ($item['weight'] ?? 0), 3) }}</td>
+                                <td>${{ number_format((float) ($item['grand_total'] ?? 0), 2) }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7">
+                                <td colspan="13">
                                     <div class="json-empty">No line items were found for this marketplace order.</div>
                                 </td>
                             </tr>
@@ -170,12 +174,63 @@
 
     <x-card-collapse title="Shipping Address" subtitle="Structured shipping payload captured on the tenant storefront."
         :start-open="true">
-        <x-json-tree :data="$order['shipping_address'] ?? []" :start-open="true" />
+        @php
+            $shippingAddr = $order['shipping_address'] ?? [];
+            if (isset($shippingAddr['country_id'])) {
+                $countryName = \App\Models\Country::find((int) $shippingAddr['country_id'])?->name;
+                $shippingAddr = collect($shippingAddr)
+                    ->mapWithKeys(fn ($v, $k) => $k === 'country_id' ? ['country' => $countryName ?? $v] : [$k => $v])
+                    ->all();
+            }
+        @endphp
+        <x-json-tree :data="$shippingAddr" :start-open="true" :show-types="false" />
     </x-card-collapse>
 
-    <x-card-collapse title="Payment Details" subtitle="Gateway response payload with nested JSON nodes kept expandable."
+    @php
+        $rawPayment = $order['payment_details'] ?? [];
+        if (is_string($rawPayment)) {
+            $rawPayment = json_decode($rawPayment, true) ?: [];
+        }
+        $payment = app(\App\Support\Tenant\Payments\PaymentDetailsPresenter::class)
+            ->present(is_array($rawPayment) ? $rawPayment : [], $order['payment_gateway'] ?? $order['payment_method'] ?? null);
+    @endphp
+    <x-card-collapse title="Payment Details" subtitle="Key payment information reported by the payment gateway."
         :start-open="true">
-        <x-json-tree :data="$order['payment_details'] ?? []" :start-open="true" />
+        @if (!$payment['has_data'])
+            <div class="json-empty">No payment details were recorded for this order.</div>
+        @else
+            <div class="details-list">
+                <div class="details-kv"><span class="details-label">Gateway</span><span
+                        class="details-value">{{ $payment['gateway_label'] }}</span></div>
+                @if ($payment['status'])
+                    <div class="details-kv"><span class="details-label">Gateway status</span><span
+                            class="pay-status pay-status-{{ $payment['status']['tone'] }}">{{ $payment['status']['label'] }}</span></div>
+                @endif
+                @foreach ($payment['headline'] as $row)
+                    <div class="details-kv">
+                        <span class="details-label">{{ $row['label'] }}</span>
+                        @if (!empty($row['href']))
+                            <a class="details-value" href="{{ $row['href'] }}" target="_blank"
+                                rel="noopener noreferrer">{{ $row['value'] }}</a>
+                        @else
+                            <span class="details-value {{ !empty($row['mono']) ? 'pay-mono' : '' }}">{{ $row['value'] }}</span>
+                        @endif
+                    </div>
+                @endforeach
+                @if ($payment['note'])
+                    <div class="details-kv"><span class="details-label">Note</span><span
+                            class="details-value">{{ $payment['note'] }}</span></div>
+                @endif
+            </div>
+
+            @if (!empty($payment['raw']))
+                <div style="margin-top:14px">
+                    <x-json-collapse title="Full gateway response"
+                        summary="Technical payload for support and reconciliation (sensitive values masked)."
+                        :data="$payment['raw']" :show-types="false" />
+                </div>
+            @endif
+        @endif
     </x-card-collapse>
 
     @if ($showAttachments)

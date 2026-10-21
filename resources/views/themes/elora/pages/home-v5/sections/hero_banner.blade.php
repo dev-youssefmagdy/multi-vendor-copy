@@ -42,12 +42,15 @@
                   <h1
                     class="font-bold text-[24px] lg:text-[64px] leading-[1.05] text-white tracking-[0.5px]"
                   >
-                    @if ($banner->title)
+                    @if ($banner->translationValue('title'))
                       {{ $bannerTitle }}
                     @else
                       <span style="color: var(--color-primary)">{{ $heroLead[$loop->index % 3] }}</span>{{ $heroRest[$loop->index % 3] }}
                     @endif
                   </h1>
+                  @if ($bannerSubtitle = $banner->translationValue('subtitle'))
+                    <p class="text-[12px] lg:text-[22px] leading-tight text-white/90">{{ $bannerSubtitle }}</p>
+                  @endif
                   <button
                     type="button"
                     class="bg-white flex h-[38px] lg:h-[68px] items-center justify-center rounded-full px-[24px] lg:px-[44px] cursor-pointer w-full lg:w-auto"

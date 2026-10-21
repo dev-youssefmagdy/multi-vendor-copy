@@ -26,15 +26,15 @@ final class SupportTicketService
         string $senderName,
         string $subject,
         string $category,
-        string $priority,
         string $body,
     ): SupportTicket {
-        $ticket = tenancy()->central(function () use ($tenantId, $senderName, $subject, $category, $priority, $body) {
+        $ticket = tenancy()->central(function () use ($tenantId, $senderName, $subject, $category, $body) {
             $ticket = SupportTicket::create([
                 'tenant_id' => $tenantId,
                 'subject' => $subject,
                 'category' => $category,
-                'priority' => $priority,
+                // Priority is set by the admin team (central panel); new tickets start as normal.
+                'priority' => 'normal',
                 'status' => 'open',
                 'admin_has_unread' => true,
                 'last_reply_at' => now(),
@@ -56,14 +56,19 @@ final class SupportTicketService
             ['ticket_id' => $ticket->id, 'tenant_id' => $tenantId],
         );
 
-        event(new SupportTicketMessageSent(
-            ticketId: $ticket->id,
-            tenantId: $tenantId,
-            senderType: 'tenant',
-            senderName: $senderName,
-            body: $body,
-            sentAt: now()->toIso8601String(),
-        ));
+        try {
+            event(new SupportTicketMessageSent(
+                ticketId: $ticket->id,
+                tenantId: $tenantId,
+                senderType: 'tenant',
+                senderName: $senderName,
+                body: $body,
+                sentAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable $e) {
+            // Realtime push is best-effort: the message is already saved, so a down Reverb server must not fail the request.
+            report($e);
+        }
 
         return $ticket;
     }
@@ -117,14 +122,19 @@ final class SupportTicketService
                 ['ticket_id' => $result->id, 'tenant_id' => $tenantId],
             );
 
-            event(new SupportTicketMessageSent(
-                ticketId: $result->id,
-                tenantId: $tenantId,
-                senderType: 'tenant',
-                senderName: $senderName,
-                body: $body,
-                sentAt: now()->toIso8601String(),
-            ));
+            try {
+                event(new SupportTicketMessageSent(
+                    ticketId: $result->id,
+                    tenantId: $tenantId,
+                    senderType: 'tenant',
+                    senderName: $senderName,
+                    body: $body,
+                    sentAt: now()->toIso8601String(),
+                ));
+            } catch (\Throwable $e) {
+                // Realtime push is best-effort: the message is already saved, so a down Reverb server must not fail the request.
+                report($e);
+            }
         }
 
         return $result;

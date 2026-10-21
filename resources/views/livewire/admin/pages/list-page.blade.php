@@ -1,4 +1,8 @@
 <main id="mn">
+    <div class="page-actions compact-actions" style="margin-bottom:12px; justify-content:flex-end;">
+        <x-btn type="button" wire:click="openSettingsModal">Program Settings</x-btn>
+    </div>
+
     @php
         $filterFields = $filterFields ?? [];
         $rows = $rows ?? [];

@@ -21,6 +21,7 @@
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
+              'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
               'image' => $img,
               'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Best-Selling'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',

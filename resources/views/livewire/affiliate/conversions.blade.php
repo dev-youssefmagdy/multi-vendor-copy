@@ -14,6 +14,7 @@
                 <option value="approved">{{ __('Approved') }}</option>
                 <option value="paid">{{ __('Paid') }}</option>
                 <option value="rejected">{{ __('Rejected') }}</option>
+                <option value="refunded">{{ __('Refunded') }}</option>
             </select>
         </div>
 
@@ -47,7 +48,7 @@
                             <td>${{ number_format((float) $conversion->sale_amount, 2) }}</td>
                             <td>${{ number_format((float) $conversion->commission_amount, 2) }}</td>
                             <td>
-                                <span class="chip {{ $conversion->status === 'paid' ? 'c-g' : ($conversion->status === 'rejected' ? 'c-r' : 'c-a') }}">
+                                <span class="chip {{ $conversion->status === 'paid' ? 'c-g' : (in_array($conversion->status, ['rejected', 'refunded'], true) ? 'c-r' : 'c-a') }}">
                                     {{ ucfirst($conversion->status) }}
                                 </span>
                             </td>

@@ -305,9 +305,14 @@
                                 {{ __('Please add a shipping address before placing your order.') }}
                             </p>
                         @endif
+<<<<<<< HEAD
                         <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses) wire:loading.attr="disabled"
                             wire:loading.class="opacity-60 cursor-not-allowed"
                             class="w-full bg-[var(--color-primary)] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+=======
+                        <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses)
+                            class="w-full bg-main text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                             <span wire:loading.remove>{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
                             <span wire:loading class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -490,8 +495,12 @@
                         </p>
                     @endif
                     <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses)
+<<<<<<< HEAD
                         wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed"
                         class="hidden sm:flex w-full bg-[var(--color-primary)] text-white items-center justify-center rounded-[32px] h-16 px-8 py-2 gap-2 text-3xl font-medium font-['Outfit'] hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+=======
+                        class="hidden sm:flex w-full bg-[#FF4D00] text-white items-center justify-center rounded-[32px] h-16 px-8 py-2 gap-2 text-3xl font-medium font-['Outfit'] hover:bg-orange-700 transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                         <span wire:loading.remove>{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
                         <span wire:loading class="flex items-center justify-center gap-2 text-base">
                             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -724,7 +733,24 @@
     });
 
     // Intercept form submit when an inline-card gateway is active
-    document.addEventListener('submit', async (e) => {
+    // ── Pay button lock: stays disabled from submit until placeOrder fails (or finishes without redirect) ──
+        let _payLocked = false;
+        const lockPay = (on) => {
+            _payLocked = on;
+            document.querySelectorAll('[id="pay-btn"]').forEach(b => {
+                if (on) { b.disabled = true; b.classList.add('opacity-60', 'cursor-not-allowed'); }
+                else    { b.disabled = false; b.classList.remove('opacity-60', 'cursor-not-allowed'); }
+            });
+        };
+        Livewire.hook('commit', ({ commit, succeed, fail }) => {
+            if (!(commit.calls || []).some(c => c.method === 'placeOrder')) return;
+            lockPay(true);
+            succeed(({ effects }) => { if (!effects?.redirect) lockPay(false); });
+            fail(() => lockPay(false));
+        });
+        Livewire.hook('morphed', () => { if (_payLocked) lockPay(true); });
+
+        document.addEventListener('submit', async (e) => {
         if (e.target.id !== 'checkout-form') return;
 
         // ── Validate payment selection ──────────────────────────────────────
@@ -738,20 +764,20 @@
         }
 
         const inlineForm = document.getElementById('inline-card-form');
-        if (!inlineForm) return; // No inline-card gateway → Livewire handles normally
+        if (!inlineForm) { lockPay(true); return; } // No inline-card gateway → Livewire handles normally
 
         e.preventDefault();
         e.stopImmediatePropagation();
 
         const btn = document.getElementById('pay-btn');
         const gateway = inlineForm.dataset.gateway;
-        if (btn) btn.disabled = true;
+        lockPay(true);
 
         // ── Stripe ───────────────────────────────────────────────
         if (gateway === 'stripe') {
             if (!_stripe || !_stripeCard) {
                 alert('{{ __('Stripe.js is still loading. Please try again in a moment.') }}');
-                if (btn) btn.disabled = false;
+                lockPay(false);
                 return;
             }
             const {
@@ -764,7 +790,7 @@
                     errEl.textContent = error.message;
                     errEl.classList.remove('hidden');
                 }
-                if (btn) btn.disabled = false;
+                lockPay(false);
                 return;
             }
             await $wire.set('data.payment.stripe_token', token.id);
@@ -775,7 +801,7 @@
         else if (gateway === 'authorize_net') {
             if (typeof Accept === 'undefined') {
                 alert('{{ __('Accept.js is still loading. Please try again.') }}');
-                if (btn) btn.disabled = false;
+                lockPay(false);
                 return;
             }
             const rawExp = document.getElementById('card-expiry')?.value.replace(/\s/g, '') ?? '';
@@ -800,7 +826,7 @@
                             '{{ __('Card error') }}';
                         errEl.classList.remove('hidden');
                     }
-                    if (btn) btn.disabled = false;
+                    lockPay(false);
                     return;
                 }
                 await $wire.set('data.payment.authnet_desc', response.opaqueData
@@ -814,7 +840,7 @@
         else if (gateway === '2checkout') {
             if (typeof TCO === 'undefined') {
                 alert('{{ __('2Pay.js is still loading. Please try again.') }}');
-                if (btn) btn.disabled = false;
+                lockPay(false);
                 return;
             }
             const rawExp = document.getElementById('card-expiry')?.value.replace(/\s/g, '') ?? '';
@@ -833,7 +859,7 @@
                         errEl.textContent = data.errorMsg ?? '{{ __('Card error') }}';
                         errEl.classList.remove('hidden');
                     }
-                    if (btn) btn.disabled = false;
+                    lockPay(false);
                     return;
                 }
                 await $wire.set('data.payment.twoco_token', data.token.token);

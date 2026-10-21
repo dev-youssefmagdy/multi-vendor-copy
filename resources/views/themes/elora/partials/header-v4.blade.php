@@ -17,19 +17,32 @@
           >
             <img src="{{ asset('elora-4/assets/icons/menu.svg') }}" alt="" class="size-[16px]" />
           </button>
+          @auth('storefront')
           <img
-            src="{{ asset('elora-4/assets/images/avatar-user.png') }}"
+            src="{{ auth('storefront')->user()->avatar_url ?? asset('elora-4/assets/images/avatar-user.png') }}"
             alt=""
             class="size-[44px] rounded-full object-cover shrink-0"
           />
+          @else
+          <div class="size-[44px] rounded-full shrink-0 flex items-center justify-center" style="background: var(--color-surface)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-[26px] opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="color: var(--color-text-primary)">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0" />
+            </svg>
+          </div>
+          @endauth
           <div class="flex flex-col gap-[3px] min-w-0">
             <p
               class="font-medium text-[18px] truncate"
               style="color: var(--color-text-primary)"
             >
-              Hi, {{ auth('storefront')->user()->name ?? __('there') }} &#128075;
+              @auth('storefront')
+                Hi, {{ auth('storefront')->user()->name }} &#128075;
+              @else
+                Hi, {{ __('Guest') }} &#128075;
+              @endauth
             </p>
             <div class="flex items-center gap-[4px]">
+              @auth('storefront')
               <span
                 class="font-medium text-[12px] tracking-[0.5px] whitespace-nowrap"
                 style="color: var(--color-greeting-muted)"
@@ -40,6 +53,12 @@
                 class="size-[16px]"
                 alt=""
               />
+              @else
+              <a href="{{ route('tenant.storefront.login') }}"
+                class="font-medium text-[12px] tracking-[0.5px] whitespace-nowrap underline"
+                style="color: var(--color-greeting-muted)"
+              >{{ __('Login / Register') }}</a>
+              @endauth
             </div>
           </div>
         </div>

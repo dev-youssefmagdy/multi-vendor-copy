@@ -35,9 +35,10 @@
                 </div>
             </div>
 
-            <x-tenant::locale-tabs :languages="$languages">
+            @php $activeLocale = ($languages->firstWhere('is_default', true) ?? $languages->first())?->code; @endphp
+            <x-tenant::locale-tabs :languages="$languages" :active="$activeLocale">
                 @foreach($languages as $language)
-                    <x-tenant::locale-pane :code="$language->code" :active="$loop->first">
+                    <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
                         <div class="form-grid form-grid-2">
                             <x-tenant::input name="translations.{{ $language->code }}.title" label="Title" maxlength="255" />
                             <x-tenant::input name="translations.{{ $language->code }}.button_text" label="Button Text" maxlength="100" />

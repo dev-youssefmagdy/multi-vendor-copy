@@ -1,0 +1,1 @@
+import{n as e}from"./toast-CtLD40BN.js";import{t}from"./clipboard-DO2GcrsM.js";function n(n){n.addEventListener(`click`,async()=>{let r=n.dataset.copyValue||``;await t(r)?e.success(`Copied`):e.error(`Could not copy to clipboard.`)})}export{n as init};

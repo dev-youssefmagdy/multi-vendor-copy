@@ -73,7 +73,6 @@ final class TicketController extends PanelController
     {
         return view('tenant.pages.support.tickets.create', [
             'categoryOptions' => SupportTicket::categoryOptions(),
-            'priorityOptions' => SupportTicket::priorityOptions(),
         ]);
     }
 
@@ -92,7 +91,6 @@ final class TicketController extends PanelController
             senderName: $senderName,
             subject: $validated['subject'],
             category: $validated['category'],
-            priority: $validated['priority'],
             body: $validated['body'],
         );
 

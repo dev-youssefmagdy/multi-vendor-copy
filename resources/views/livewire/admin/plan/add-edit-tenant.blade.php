@@ -165,6 +165,23 @@
                                 product prices when syncing the catalog to this tenant.</p>
                             @error('profitPercentage') <div class="field-error">{{ $message }}</div> @enderror
                         </div>
+                        @if ($tenantId)
+                            <div>
+                                <label class="field-label">Partner Commission Type</label>
+                                <x-select wire:model.defer="affiliateCommissionType">
+                                    <option value="percentage">Percentage (%)</option>
+                                    <option value="fixed">Fixed Amount ($)</option>
+                                </x-select>
+                            </div>
+                            <div>
+                                <label class="field-label">Partner Commission Value</label>
+                                <x-input type="number" step="0.01" min="0"
+                                    class="{{ $errors->has('affiliateCommissionValue') ? 'is-invalid' : '' }}"
+                                    wire:model.defer="affiliateCommissionValue" />
+                                <p class="field-hint" style="font-size:11px;color:var(--t3);margin-top:4px">Earned when merchants this store refers buy a paid plan. Applies to new referrals only.</p>
+                                @error('affiliateCommissionValue') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                        @endif
                         <div>
                             <label class="field-label">Primary Domain</label>
                             <x-input type="text" class="{{ $errors->has('domain') ? 'is-invalid' : '' }}"

@@ -37,9 +37,10 @@
         </x-tenant::card-collapse>
 
         <x-tenant::card-collapse title="Translations" subtitle="Localized subject and body per storefront language.">
-            <x-tenant::locale-tabs :languages="$languages">
+            @php $activeLocale = ($languages->firstWhere('is_default', true) ?? $languages->first())?->code; @endphp
+            <x-tenant::locale-tabs :languages="$languages" :active="$activeLocale">
                 @foreach($languages as $language)
-                    <x-tenant::locale-pane :code="$language->code" :active="$loop->first">
+                    <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
                         <div class="form-grid">
                             <x-tenant::input :name="'translations.'.$language->code.'.subject'" label="Subject" maxlength="255"
                                 :value="$translations[$language->code]['subject'] ?? ''" />

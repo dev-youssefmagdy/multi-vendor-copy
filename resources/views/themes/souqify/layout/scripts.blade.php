@@ -190,51 +190,76 @@
     };
 
     // ── Favorites (localStorage) ─────────────────────────────────────────────────
+    // Any element carrying data-slug + data-fav is a heart (button, span, ...).
     (function initFavorites() {
         const FAV_KEY = 'souqify_favorites';
+        const ACTIVE_COLOR = '#EF4444';
+        const FILLED_HEART = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="' + ACTIVE_COLOR + '" stroke="' + ACTIVE_COLOR + '" stroke-width="1.5" stroke-linejoin="round">' +
+            '<path d="M12.62 20.81c-.34.12-.9.12-1.24 0C8.48 19.82 2 15.69 2 8.69 2 5.6 4.49 3.1 7.56 3.1c1.82 0 3.43.88 4.44 2.24 1.01-1.36 2.63-2.24 4.44-2.24C19.51 3.1 22 5.6 22 8.69c0 7-6.48 11.13-9.38 12.12Z"/></svg>'
+        );
+        const HEART_SELECTOR = '[data-fav][data-slug]';
 
         function getFavs() {
             try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }
         }
         function saveFavs(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
 
-        function isFavored(slug) { return getFavs().some(f => f.slug === slug); }
+        function paintHeart(btn, active) {
+            btn.classList.toggle('is-favorited', active);
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+
+            const svg = btn.querySelector('svg.fav-icon, svg');
+            if (svg) {
+                svg.setAttribute('fill', active ? ACTIVE_COLOR : 'none');
+                svg.setAttribute('stroke', active ? ACTIVE_COLOR : '#475569');
+            }
+            const img = btn.querySelector('img');
+            if (img) {
+                if (active) {
+                    if (img.dataset.origSrc === undefined) img.dataset.origSrc = img.getAttribute('src') || '';
+                    img.style.filter = '';
+                    img.setAttribute('src', FILLED_HEART);
+                } else if (img.dataset.origSrc !== undefined) {
+                    img.setAttribute('src', img.dataset.origSrc);
+                }
+            }
+        }
 
         function paintHearts() {
-            document.querySelectorAll('.souqify-fav-btn').forEach(btn => {
-                const slug = btn.getAttribute('data-slug');
-                const icon = btn.querySelector('.fav-icon');
-                if (!icon) return;
-                if (isFavored(slug)) {
-                    icon.setAttribute('fill', '#0159ED');
-                    icon.setAttribute('stroke', '#0159ED');
-                } else {
-                    icon.setAttribute('fill', 'none');
-                    icon.setAttribute('stroke', '#475569');
-                }
+            const slugs = new Set(getFavs().map(f => f.slug));
+            document.querySelectorAll(HEART_SELECTOR).forEach(btn => {
+                paintHeart(btn, slugs.has(btn.getAttribute('data-slug')));
             });
         }
 
         window.souqifyToggleFavorite = function (btn) {
+            // Hearts sit inside product links - never let the click navigate.
+            const ev = window.event;
+            if (ev && ev.preventDefault) { ev.preventDefault(); ev.stopPropagation(); }
+
             const slug = btn.getAttribute('data-slug');
+            if (!slug) return;
             let item = null;
             try { item = JSON.parse(btn.getAttribute('data-fav') || '{}'); } catch { item = { slug }; }
             const favs = getFavs();
             const idx = favs.findIndex(f => f.slug === slug);
-            if (idx >= 0) {
-                favs.splice(idx, 1);
-                window.dispatchEvent(new CustomEvent('storefront-toast', { detail: { type: 'info', message: '{{ __('Removed from favorites') }}' } }));
+            const adding = idx < 0;
+            if (adding) {
+                favs.push(Object.assign({}, item, { slug: slug, added: Date.now() }));
             } else {
-                favs.push(Object.assign({}, item, { added: Date.now() }));
-                window.dispatchEvent(new CustomEvent('storefront-toast', { detail: { type: 'success', message: '{{ __('Added to favorites') }}' } }));
+                favs.splice(idx, 1);
             }
             saveFavs(favs);
             paintHearts();
+            window.showStorefrontToast(adding ? '{{ __('Added to favorites') }}' : '{{ __('Removed from favorites') }}', adding ? 'success' : 'info');
             window.dispatchEvent(new CustomEvent('souqify-favorites-changed'));
         };
 
+        window.souqifyPaintHearts = paintHearts;
         document.addEventListener('DOMContentLoaded', paintHearts);
         document.addEventListener('livewire:navigated', paintHearts);
+        document.addEventListener('livewire:updated', paintHearts);
     })();
 
     // ── Search Autocomplete + History ────────────────────────────────────────────

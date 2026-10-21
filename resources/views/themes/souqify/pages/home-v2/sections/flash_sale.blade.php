@@ -16,6 +16,8 @@
         return [
             'id' => $product->id,
             'url' => route('tenant.storefront.product', $product->slug),
+            'slug' => $product->slug,
+            'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
             'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
             'tag' => '🔥 ' . __('Trending Now'),
             'stock' => __('Only 5 left - Hurry up'),

@@ -20,7 +20,9 @@ use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductVariant as TenantProductVariant;
 use App\PaymentGateway\PaymentManager;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\Tenant\Checkout\OrderComposer;
 use App\Services\Tenant\OrderLifecycleService;
+use App\Support\OrderPricing;
 use App\Services\Tenant\ShippingEstimateService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -407,72 +409,11 @@ class CheckoutPage extends Component
             return;
         }
 
-        // ── Partition cart items into own-product vs central-product groups ──────
-        $ownItems = [];
-        $centralItems = [];
-        $ownProductCost = 0.0;
-        $centralProductCost = 0.0;
-
-        foreach ($cartItems as $item) {
-            $orderItem = $this->buildOrderItemPayload(
-                $item,
-                (float) ($shippingCalculation['line_fees'][$item['key']] ?? 0),
-                (float) ($shippingCalculation['line_weights'][$item['key']] ?? 0),
-            );
-
-            if (!$orderItem) {
-                continue;
-            }
-
-            $product = $item['product'] ?? null;
-            $variant = $item['variant'] ?? null;
-            $ownerCost = $this->resolveOwnerCost($product, $variant) * $orderItem['qty'];
-
-            if ($product instanceof TenantProduct) {
-                $pricing = $product->storefrontPricing($variant, $this->resolveShippingCountryId());
-                $flashSale = $pricing['flash_sale'] ?? null;
-
-                if (($pricing['is_flash_sale'] ?? false) && $flashSale?->central_flash_sale_id !== null) {
-                    $perUnitDiscount = (float) ($pricing['base_price'] ?? 0) - (float) ($pricing['current_price'] ?? 0);
-                    $ownerCost = max(0.0, $ownerCost - ($perUnitDiscount * $orderItem['qty']));
-                }
-            }
-
-            if ($product && ($product->is_own_product || $product->is_tenant_owned)) {
-                $ownItems[] = $orderItem;
-                $ownProductCost += $ownerCost;
-            } else {
-                $centralItems[] = $orderItem;
-                $centralProductCost += $ownerCost;
-            }
-        }
-
-
-        $allItems = array_merge($ownItems, $centralItems);
-
-        if ($allItems === []) {
-            $this->toast(__('Your cart contains invalid items.'), 'error');
-            return;
-        }
-
-        $cartTotal = $repo->cartTotal();
         $appliedCoupon = null;
-        $discountAmount = 0.0;
-        $discountPercent = 0.0;
-
         if ($couponCode = session('storefront_coupon')) {
             $appliedCoupon = Coupon::query()->where('code', $couponCode)->first();
         }
 
-        if ($appliedCoupon) {
-            $discountAmount = match ($appliedCoupon->type) {
-                CouponType::Percentage => $cartTotal * (float) $appliedCoupon->value / 100,
-                CouponType::Fixed => min((float) $appliedCoupon->value, $cartTotal),
-            };
-            $discountPercent = $cartTotal > 0 ? round($discountAmount / $cartTotal * 100, 4) : 0.0;
-        }
-
-        $cartFinalTotal = max(0.0, $cartTotal - $discountAmount);
         $gatewayId = $this->data['payment']['gateway_id'];
         $gateways = app(PaymentManager::class)->storefrontGateways();
 
@@ -483,33 +424,8 @@ class CheckoutPage extends Component
             return;
         }
 
-        $usingOwnGateway = $selectedGateway !== null && ($selectedGateway['source'] ?? '') === 'tenant';
-        $usingCentralGateway = $selectedGateway !== null && !$usingOwnGateway && $gatewayId;
-
-        $shippingAmount = (float) ($shippingCalculation['amount'] ?? 0);
-        $centralCostAndShippingCost = round($centralProductCost + $shippingAmount, 2);
-        $ownerProfit = !$usingOwnGateway
-            ? round($centralCostAndShippingCost, 2)
-            : round(max(0.0, $cartFinalTotal - $centralCostAndShippingCost), 2);
-
         /** @var \App\Models\Tenant\Customer $customer */
         $customer = Auth::guard('storefront')->user();
-
-        $vendorGatewayId = null;
-        $vendorGatewayFee = null;
-        $vendorOwes = !$usingCentralGateway;
-
-        if ($vendorOwes && $usingOwnGateway && $gatewayId) {
-            $tenantGateway = PaymentGateway::find($gatewayId);
-            if ($tenantGateway?->central_payment_gateway_id) {
-                $centralGateway = \App\Models\PaymentGateway::find($tenantGateway->central_payment_gateway_id);
-                if ($centralGateway) {
-                    $vendorGatewayId = $centralGateway->id;
-                    $vendorTotalDue = round($centralCostAndShippingCost, 2);
-                    $vendorGatewayFee = $centralGateway->calculateFee($vendorTotalDue);
-                }
-            }
-        }
 
         $shippingAddress = [
             'name' => $this->data['shipping']['name'],
@@ -520,101 +436,28 @@ class CheckoutPage extends Component
             'country_id' => $this->resolveShippingCountryId(),
         ];
 
-        $isMixedCart = $ownItems !== [] && $centralItems !== [];
-        $orderGroupUuid = $isMixedCart ? (string) Str::uuid() : null;
+        $created = app(OrderComposer::class)->create(
+            $cartItems,
+            $shippingCalculation['line_weights'],
+            [
+                'customer' => $customer,
+                'coupon' => $appliedCoupon,
+                'gateway' => $selectedGateway,
+                'gateway_id' => $gatewayId,
+                'shipping_amount' => (float) ($shippingCalculation['amount'] ?? 0),
+                'zone_rate_id' => $shippingCalculation['zone_rate_id'],
+                'shipping_address' => $shippingAddress,
+            ],
+        );
 
-        // ── Shipping is charged on the admin/central order only ────────────────
-        $allSubtotal = array_sum(array_column($allItems, 'sub_total'));
-        $ownSubtotal = array_sum(array_column($ownItems, 'sub_total'));
-        $centralSubtotal = array_sum(array_column($centralItems, 'sub_total'));
-
-        if ($isMixedCart) {
-            $ownShipping = 0.0;
-            $centralShipping = $shippingAmount;
-        } else {
-            $ownShipping = $shippingAmount;
-            $centralShipping = $shippingAmount;
+        if ($created === null) {
+            $this->toast(__('Your cart contains invalid items.'), 'error');
+            return;
         }
 
         $lifecycle = app(OrderLifecycleService::class);
-
-        // ── Helper to build and persist one order ─────────────────────────────
-        $createOrder = function (array $orderItems, float $shipping, float $ownerProfitForOrder, float $vendorCostForOrder, ) use ($customer, $selectedGateway, $gatewayId, $appliedCoupon, $discountPercent, $shippingCalculation, $vendorOwes, $vendorGatewayId, $vendorGatewayFee, $shippingAddress, $orderGroupUuid, ): Order {
-            $order = Order::create([
-                'uuid' => (string) Str::uuid(),
-                'order_group_uuid' => $orderGroupUuid,
-                'customer_id' => $customer->id,
-                'status' => OrderStatus::Pending,
-                'paid' => false,
-                'payment_method' => $selectedGateway['code'] ?? 'cod',
-                'payment_gateway_id' => $gatewayId ?: null,
-                'discount_id' => $appliedCoupon?->id,
-                'discount_percentage' => $discountPercent,
-                'tax_percentage' => 0,
-                'shipping_zone_rate_id' => $shippingCalculation['zone_rate_id'],
-                'shipping_charge' => $shipping,
-                'owner_profit' => $ownerProfitForOrder,
-                'vendor_cost' => $vendorOwes ? round($vendorCostForOrder, 2) : 0,
-                'vendor_gateway_id' => $vendorOwes ? $vendorGatewayId : null,
-                'vendor_gateway_fee' => $vendorOwes ? $vendorGatewayFee : 0,
-                'shipping_address' => $shippingAddress,
-            ]);
-
-            foreach ($orderItems as $item) {
-                OrderItem::create(array_merge($item, ['order_id' => $order->id]));
-            }
-
-            return $order;
-        };
-
-        if ($isMixedCart) {
-            // Central-products order: owner_profit = centralCost + centralShipping
-            $centralOwnerProfit = !$usingOwnGateway
-                ? round($centralProductCost + $centralShipping, 2)
-                : round(max(0.0, $centralSubtotal - ($centralProductCost + $centralShipping)), 2);
-
-            // Own-products order: owner_profit = ownShipping only (no central cost)
-            $ownOwnerProfit = !$usingOwnGateway
-                ? round($ownShipping, 2)
-                : round(max(0.0, $ownSubtotal - $ownShipping), 2);
-
-            $centralOrder = $createOrder(
-                $centralItems,
-                $centralShipping,
-                $centralOwnerProfit,
-                $centralProductCost + $centralShipping,
-            );
-
-            $ownOrder = $createOrder(
-                $ownItems,
-                $ownShipping,
-                $ownOwnerProfit,
-                $ownShipping,
-            );
-
-            $lifecycle->recordPlaced($centralOrder->fresh(['items', 'customer', 'paymentGateway']));
-            $lifecycle->recordPlaced($ownOrder->fresh(['items', 'customer', 'paymentGateway']));
-
-            if ($appliedCoupon) {
-                $lifecycle->recordCouponApplied($centralOrder->fresh(), $appliedCoupon->code, round($discountAmount * ($centralSubtotal / $allSubtotal), 2));
-                $lifecycle->recordCouponApplied($ownOrder->fresh(), $appliedCoupon->code, round($discountAmount * ($ownSubtotal / $allSubtotal), 2));
-            }
-
-            // Payment redirects to the central-products order; companion (own) is paid together
-            $primaryOrder = $centralOrder;
-            $companionOrder = $ownOrder;
-        } else {
-            $order = $createOrder($allItems, $shippingAmount, $ownerProfit, $centralCostAndShippingCost);
-
-            $lifecycle->recordPlaced($order->fresh(['items', 'customer', 'paymentGateway']));
-
-            if ($appliedCoupon) {
-                $lifecycle->recordCouponApplied($order->fresh(), $appliedCoupon->code, round($discountAmount, 2));
-            }
-
-            $primaryOrder = $order;
-            $companionOrder = null;
-        }
+        $primaryOrder = $created['primary'];
+        $companionOrder = $created['companion'];
 
         if ($gatewayId) {
             if ($companionOrder) {
@@ -643,6 +486,7 @@ class CheckoutPage extends Component
     public function render()
     {
         $repo = app(StorefrontRepository::class);
+        $countryId = $this->resolveShippingCountryId();
         $cartItems = $repo->cartItems();
         $cartTotal = $repo->cartTotal();
         $sharedData = $this->sharedData();
@@ -669,10 +513,7 @@ class CheckoutPage extends Component
 
         $cartDiscount = 0.0;
         if ($appliedCoupon) {
-            $cartDiscount = match ($appliedCoupon->type) {
-                CouponType::Percentage => $cartTotal * (float) $appliedCoupon->value / 100,
-                CouponType::Fixed => min((float) $appliedCoupon->value, $cartTotal),
-            };
+            $cartDiscount = OrderPricing::couponDiscount($appliedCoupon->type->value, (float) $appliedCoupon->value, $cartTotal);
         }
 
         $cartFinalTotal = max(0.0, $cartTotal - $cartDiscount);
@@ -1084,75 +925,5 @@ class CheckoutPage extends Component
         }
 
         return round(($weightGrams / 1000) * $qty, 3);
-    }
-
-    private function buildOrderItemPayload(array $cartItem, float $shippingFee = 0.0, ?float $weight = null): ?array
-    {
-        $product = $cartItem['product'] ?? null;
-
-        if (!$product instanceof TenantProduct) {
-            return null;
-        }
-
-        $variant = $cartItem['variant'] ?? null;
-        if (!$variant instanceof TenantProductVariant || (int) $variant->product_id !== (int) $product->id) {
-            $variant = null;
-        }
-
-        $pricing = $product->storefrontPricing($variant, $this->resolveShippingCountryId());
-        $qty = max(1, (int) ($cartItem['qty'] ?? 1));
-        $price = round((float) $pricing['current_price'], 2);
-
-        $flashDiscount = $pricing['is_flash_sale']
-            ? round(((float) $pricing['base_price'] - $price) * $qty, 2)
-            : 0.0;
-
-        return [
-            'product_id' => $product->id,
-            'product_variant_id' => $variant?->id,
-            'qty' => $qty,
-            'price' => $price,
-            'sub_total' => round($price * $qty, 2),
-            'discount' => $flashDiscount,
-            'tax' => 0,
-            'weight' => round((float) ($weight ?? $this->resolveCartItemWeight($cartItem)), 3),
-            'shipping_fee' => 0,
-        ];
-    }
-
-    private function resolveOwnerCost(?TenantProduct $product, ?TenantProductVariant $variant): float
-    {
-        if (!$product) {
-            return 0.0;
-        }
-
-        $fixedShippingCost = $product->fixedShippingCostForCountry($this->resolveShippingCountryId() ?? 0) ?? 0.0;
-
-
-        // Own products (created by the tenant, not from the central catalog):
-        // the vendor owns the product and its full revenue — central collects
-        // only the shipping fee, so there is no central product cost to recover.
-        if ($product->is_own_product) {
-            return 0.0;
-        }
-
-        // Tenant-owned products assigned from central to this tenant specifically:
-        // central's profit is shipping fees only (zone-based + fixed), not the
-        // product price.  The shipping amount is already folded into
-        // $shippingCalculation['amount'] so returning 0 here means
-        // centralCostAndShippingCost = shippingAmount, which flows correctly into
-        // owner_profit (central gateway) or vendor_cost (tenant gateway).
-        if ($product->is_tenant_owned) {
-            return 0.0;
-        }
-
-        if ($variant && (int) $variant->product_id === (int) $product->id) {
-            return (float) (($variant->real_price ?? 0) + $fixedShippingCost);
-        }
-
-        $centralProduct = $product->centralProduct;
-        $centralPrice = $centralProduct?->sale_price ?: $centralProduct?->base_price;
-
-        return (float) (($centralPrice ?? $product->default_price ?? 0) + $fixedShippingCost);
     }
 }

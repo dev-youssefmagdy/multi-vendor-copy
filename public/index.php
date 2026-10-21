@@ -7,6 +7,9 @@ define('LARAVEL_START', microtime(true));
 
 ini_set('memory_limit', -1);
 
+// Web (www-data) and CLI users share storage/: create group-writable files.
+umask(0002);
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;

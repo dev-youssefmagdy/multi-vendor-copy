@@ -117,6 +117,14 @@ class WebsiteRegistrationService
 
         $tenant = $this->tenantService->save($tenantAttributes);
 
+        // Every new store gets its own affiliate account (owner email + registration password).
+        try {
+            app(\App\Services\TenantAffiliateService::class)
+                ->forTenant($tenant, (string) ($registrationData['password'] ?? ''));
+        } catch (\Throwable $e) {
+            report($e); // never block store registration on the partner account
+        }
+
         if (filled($registrationData['affiliate_referral_id'] ?? null)) {
             $referral = \App\Models\AffiliateReferral::query()->find((int) $registrationData['affiliate_referral_id']);
 

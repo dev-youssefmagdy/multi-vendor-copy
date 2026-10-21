@@ -197,9 +197,15 @@ class OrderController extends Controller
                 'processed_at' => $refund->processed_at?->toIso8601String(),
             ])->values(),
             'subtotal' => $order->subtotal,
+            'items_subtotal' => $order->subtotal,
+            'fixed_shipping' => $order->items_fixed_shipping,
+            'items_discount' => $order->items_discount,
+            'items_tax' => $order->items_tax,
+            'items_grand_total' => $order->items_grand_total,
+            'shipping_charge' => $order->resolved_shipping_charge,
+            'coupon_discount' => $order->discount_amount,
             'discount_amount' => $order->discount_amount,
-            'tax_amount' => $order->tax_amount,
-            'shipping_charge' => $order->shipping_charge,
+            'tax_amount' => $order->items_tax,
             'shipping_address' => $order->shipping_address,
             'coupon_code' => $order->coupon?->code,
             'items' => $order->items->map(fn ($item) => [
@@ -209,6 +215,10 @@ class OrderController extends Controller
                 'qty' => $item->qty,
                 'price' => $item->price,
                 'sub_total' => $item->sub_total,
+                'fixed_shipping' => $item->fixed_shipping,
+                'discount' => $item->discount,
+                'tax' => $item->tax,
+                'grand_total' => $item->grand_total,
             ])->values(),
         ]);
     }

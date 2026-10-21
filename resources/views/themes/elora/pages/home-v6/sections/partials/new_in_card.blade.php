@@ -8,7 +8,7 @@
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[5.47px] lg:p-[8.04px] gap-[7.29px] lg:gap-[10.72px]">
       <div class="flex w-full justify-between items-start">
-        <button
+        <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
           type="button"
           aria-label="{{ __('Add to favorites') }}"
           class="flex items-center justify-center w-[29.16px] h-[29.16px] lg:w-[42.9px] lg:h-[42.9px] p-[7.29px] lg:p-[10.72px] bg-white rounded-full shadow-[0px_3.64519px_3.64519px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.36193px_5.36193px_rgba(0,0,0,0.15)] transition-transform duration-150 ease active:scale-95"

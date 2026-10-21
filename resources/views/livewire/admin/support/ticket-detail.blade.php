@@ -73,9 +73,15 @@
                             <option value="{{ $value }}">{{ $label }}</option>
                         @endforeach
                     </x-select>
+                    <label class="field-label">Priority</label>
+                    <x-select wire:model.defer="prioritySelection">
+                        @foreach ($priorityOptions as $value => $label)
+                            <option value="{{ $value }}">{{ $label }}</option>
+                        @endforeach
+                    </x-select>
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="submit" variant="secondary" wire:loading.attr="disabled" wire:target="updateStatus">
-                            Update Status
+                            Update Ticket
                         </x-btn>
                     </div>
                 </form>

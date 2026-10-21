@@ -61,14 +61,14 @@
         <td>2026_03_26</td>
     </tr>
     <tr>
-        <td><code>owner_profit</code></td>
-        <td>Central commission for this order</td>
-        <td>2026_04_06</td>
+        <td><code>platform_profit</code></td>
+        <td>Platform's share of the order (cost + fixed shipping + shipping + tax, less central-owned discounts)</td>
+        <td>2026_10_19</td>
     </tr>
     <tr>
-        <td><code>vendor_cost</code></td>
-        <td>Σ items.real_price × qty (tenant COGS to central)</td>
-        <td>2026_04_25 add_vendor_purchase_to_orders</td>
+        <td><code>vendor_profit</code></td>
+        <td>Vendor's share of the order (Σ profit_amount × qty, less vendor-owned discounts)</td>
+        <td>2026_10_19</td>
     </tr>
     <tr>
         <td><code>vendor_gateway_id</code></td>
@@ -106,20 +106,18 @@ discount_total           = Σ orders.discount_amount
 items_tax_total          = Σ orders.items_tax
 tax_total                = Σ orders.tax_amount
 shipping_total           = Σ orders.resolved_shipping_charge
-owner_profit_total       = Σ orders.owner_profit
-vendor_cost_total        = Σ orders.vendor_cost
-vendor_gateway_fee_total = Σ orders.vendor_gateway_fee
-vendor_net_total         = Σ (grand_total − owner_profit − vendor_cost)</pre>
+platform_profit_total    = Σ platform_profit   (via OrderProfitCalculator, void orders = 0)
+vendor_profit_total      = Σ vendor_profit     (net of partial refunds)
+vendor_gateway_fee_total = Σ orders.vendor_gateway_fee</pre>
 
 <h3>Direction balances</h3>
-<pre>tenant_owes_central = Σ (vendor_cost + vendor_gateway_fee)
-                      WHERE order is paid
-                        AND vendor_settled_at IS NULL
+<pre>vendor_own_platform_total = Σ vendor_own_platform
+   per order: platform_profit − Σ paid VendorSettlement.product_cost  [collected_by = vendor]
 
-central_owes_tenant = max(0,
-                          vendor_net_total
-                        − Σ tenant_payouts.amount
-                      )</pre>
+platform_own_vendor_total = Σ platform_own_vendor
+   per order: vendor_profit − vendor_profit when payout_released        [collected_by = platform]</pre>
+<p>These are the same numbers the vendor panel shows. The legacy keys <code>tenant_owes_central</code> /
+    <code>central_owes_tenant</code> are aliases of the two totals above.</p>
 
 <h3>Platform totals</h3>
 <p>The four big numbers on the <strong>Tenants Ledger</strong> page (<code>/admin/wallets</code>) are summed across
@@ -129,7 +127,7 @@ central_owes_tenant = max(0,
 <h3>Settlement (Tenant → Central)</h3>
 <ul>
     <li>Trigger: tenant goes to <em>Vendor Purchases</em> → <em>Pay Central</em> on a paid order with
-        <code>vendor_cost &gt; 0</code>.</li>
+        <code>vendor_own_platform &gt; 0</code>.</li>
     <li>Tenant chooses a gateway, captures token, redirects to <code>VendorSettlementPaymentController::charge()</code>.
     </li>
     <li>On gateway success, controller writes a row in central <code>vendor_settlements</code> and sets
@@ -147,15 +145,15 @@ central_owes_tenant = max(0,
         reference, amount, paid_at.</li>
     <li>On submit a row is written to central <code>tenant_payouts</code>; <code>TenantPayoutMail</code> is sent to
         active tenant admins.</li>
-    <li>Reduces <code>central_owes_tenant</code> on the ledger immediately.</li>
+    <li>Reduces <code>platform_own_vendor_total</code> on the ledger immediately.</li>
 </ul>
 
 <h3>Resetting a tenant's balance</h3>
 <ol>
     <li>Open <strong>Tenants Ledger</strong> → click <em>Pay Out</em> on the row.</li>
     <li>Enter amount equal to <em>Outstanding to Tenant</em>; submit.</li>
-    <li>The tenant's <code>central_owes_tenant</code> drops to 0 because the new payout offsets
-        <code>vendor_net_total</code>.</li>
+    <li>The tenant's <code>platform_own_vendor_total</code> drops to 0 because the new payout offsets
+        <code>vendor_profit</code>.</li>
 </ol>
 <p>For a forced one-click recompute (no DB writes) — refresh the page; the ledger service computes everything fresh from
     orders on each request.</p>

@@ -38,6 +38,16 @@ return [
             'report' => false,
         ],
 
+        // Livewire temporary uploads. Deliberately NOT listed in tenancy.filesystem.disks: the upload
+        // request and the following /livewire/update request must read/write the same folder
+        // regardless of tenant context (the tenant-suffixed 'local' disk made the file vanish).
+        'livewire_tmp' => [
+            'driver' => 'local',
+            'root' => storage_path('app/livewire-tmp-store'),
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

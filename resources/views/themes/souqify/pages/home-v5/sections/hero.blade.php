@@ -128,8 +128,8 @@
         <div class="swiper-slide">
           <div class="sqv5-hero__slide">
             @php
-              $__t = $banner->title
-                  ? $__splitTitle($banner->title)
+              $__t = $banner->translationValue('title')
+                  ? $__splitTitle($banner->translationValue('title'))
                   : ['lead' => __('Explore'), 'rest' => __('New Products')];
             @endphp
             <div class="sqv5-hero__copy">
@@ -139,12 +139,16 @@
                   <span class="sqv5-hero__title-rest">{!! nl2br(e($__t['rest'])) !!}</span>
                 @endif
               </h1>
-              <a href="{{ $banner->link ?? route('tenant.storefront.best-selling') }}" class="sqv5-hero__cta">
-                <span class="sqv5-hero__cta-label">{{ __('Shop Now') }}</span>
+@if ($__sub = $banner->translationValue('subtitle'))
+<p style="margin:0;font-size:clamp(14px,1.4vw,22px);line-height:1.4;color:var(--color-text-primary,#121212)">{{ $__sub }}</p>
+@endif
+
+              <a href="{{ $banner->url ?? route('tenant.storefront.best-selling') }}" class="sqv5-hero__cta">
+                <span class="sqv5-hero__cta-label">{{ $banner->translationValue('button_text') ?: __('Shop Now') }}</span>
               </a>
             </div>
             @if (!empty($banner?->image_path))
-            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="sqv5-hero__photo" />
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->translationValue('title') ?? $storeName }}" class="sqv5-hero__photo" />
             @endif
           </div>
         </div>

@@ -42,19 +42,22 @@
                         class="details-value">${{ number_format((float) ($financials['subtotal'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Discount</span><span
-                        class="details-value">${{ number_format((float) (($financials['items_discount'] ?? 0) + ($financials['discount'] ?? 0)), 2) }}</span>
+                        class="details-value">${{ number_format((float) (($financials['items_discount'] ?? 0) + ($financials['coupon_discount'] ?? 0)), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Tax</span><span
-                        class="details-value">${{ number_format((float) (($financials['items_tax'] ?? 0) + ($financials['tax'] ?? 0)), 2) }}</span>
+                        class="details-value">${{ number_format((float) ($financials['tax'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Shipping</span><span
-                        class="details-value">${{ number_format((float) ($financials['shipping_total'] ?? 0), 2) }}</span>
+                        class="details-value">${{ number_format((float) ($financials['shipping_charge'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Grand Total</span><span
                         class="details-value">${{ number_format((float) ($financials['grand_total'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Owner Profit</span><span
-                        class="details-value">${{ number_format((float) ($financials['owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['platform_profit'] ?? 0), 2) }}</span>
+                </div>
+                <div class="details-kv"><span class="details-label">Vendor Profit</span><span
+                        class="details-value">${{ number_format((float) ($financials['vendor_profit'] ?? 0), 2) }}</span>
                 </div>
             </div>
         </section>

@@ -34,8 +34,8 @@ class RegisterPage extends Component
             'email' => strtolower(trim($validated['email'])),
             'password' => $validated['password'],
             'code' => Affiliate::generateUniqueCode(),
-            'commission_type' => 'percentage',
-            'commission_value' => 10.00,
+            'commission_type' => \App\Support\AffiliateSettings::defaultCommissionType(),
+            'commission_value' => \App\Support\AffiliateSettings::defaultCommissionValue(),
             'status' => 'pending',
         ]);
 

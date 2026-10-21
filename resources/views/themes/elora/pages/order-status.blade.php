@@ -146,8 +146,15 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                                         @if ($orderedVariantTitle)
                                         <p class="text-sm text-[#808080] leading-5">{{ $orderedVariantTitle }}</p>
                                         @endif
-                                        <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }}</p>
-                                        <p class="text-base text-[#242424] leading-6">{{ $fmt($item->sub_total) }}</p>
+                                        <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }} &times; {{ $fmt($item->price) }}</p>
+                                        <p class="text-sm text-[#808080] leading-5">{{ __('Subtotal') }}: {{ $fmt($item->sub_total) }}</p>
+                                        @if ((float) $item->fixed_shipping > 0)
+                                        <p class="text-sm text-[#808080] leading-5">{{ __('Fixed shipping') }}: {{ $fmt($item->fixed_shipping) }}</p>
+                                        @endif
+                                        @if ((float) $item->discount > 0)
+                                        <p class="text-sm text-red-500 leading-5">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
+                                        @endif
+                                        <p class="text-base text-[#242424] leading-6">{{ $fmt($item->grand_total) }}</p>
                                         @include('livewire.tenant.storefront.partials.return-item-action')
                                     </div>
                                 </div>
@@ -221,21 +228,25 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                             <div class="flex flex-col gap-2">
                                 {{-- Subtotal --}}
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-[#808080] leading-5">{{ __('Subtotal') }}</span>
+                                    <span class="text-[#808080] leading-5">{{ __('Items subtotal') }}</span>
                                     <span class="text-[#242424] text-right leading-5">{{ $fmt($order->subtotal) }}</span>
                                 </div>
-                                {{-- Discount --}}
-                                @if ($order->discount_percentage > 0)
-                                <div class="flex items-center justify-between text-sm text-red-500">
-                                    <span>{{ __('Discount (:percent%)', ['percent' => $order->discount_percentage]) }}</span>
-                                    <span>-{{ $fmt($order->discount_amount) }}</span>
+                                @if ($order->items_fixed_shipping > 0)
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-[#808080]">{{ __('Fixed shipping') }}</span>
+                                    <span class="text-[#242424]">{{ $fmt($order->items_fixed_shipping) }}</span>
                                 </div>
                                 @endif
-                                {{-- Tax --}}
-                                @if ($order->tax_percentage > 0)
+                                @if ($order->items_discount > 0)
+                                <div class="flex items-center justify-between text-sm text-red-500">
+                                    <span>{{ __('Flash-sale discount') }}</span>
+                                    <span>-{{ $fmt($order->items_discount) }}</span>
+                                </div>
+                                @endif
+                                @if ($order->items_tax > 0)
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-[#808080]">{{ __('Tax') }}</span>
-                                    <span class="text-[#242424]">{{ $fmt($order->tax_amount) }}</span>
+                                    <span class="text-[#242424]">{{ $fmt($order->items_tax) }}</span>
                                 </div>
                                 @endif
                                 {{-- Shipping Fee --}}
@@ -245,6 +256,12 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                                         {{ $order->resolved_shipping_charge > 0 ? $fmt($order->resolved_shipping_charge) : __('Free') }}
                                     </span>
                                 </div>
+                                @if ($order->discount_amount > 0)
+                                <div class="flex items-center justify-between text-sm text-red-500">
+                                    <span>{{ __('Coupon discount') }}</span>
+                                    <span>-{{ $fmt($order->discount_amount) }}</span>
+                                </div>
+                                @endif
                                 {{-- Total --}}
                                 <div class="flex items-center justify-between border-t border-gray-200 pt-2 mt-1">
                                     <span class="text-base text-[#242424] leading-6">{{ __('Total') }}</span>

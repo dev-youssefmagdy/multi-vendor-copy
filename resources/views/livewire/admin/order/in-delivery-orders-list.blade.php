@@ -28,7 +28,10 @@
             </div>
             <div class="page-actions compact-actions justify-end">
                 <x-btn type="button" variant="secondary" wire:click="closeOrderStatusModal">Cancel</x-btn>
-                <x-btn type="button" wire:click="updateSelectedOrderStatus">Update Status</x-btn>
+                <x-btn type="button" wire:click="updateSelectedOrderStatus" wire:loading.attr="disabled" wire:target="updateSelectedOrderStatus">
+                    <span wire:loading.remove wire:target="updateSelectedOrderStatus">Update Status</span>
+                    <span wire:loading wire:target="updateSelectedOrderStatus">Updating…</span>
+                </x-btn>
             </div>
         </div>
     </x-modal>

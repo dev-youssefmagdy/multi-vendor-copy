@@ -87,7 +87,7 @@
     </tr>
     <tr>
         <td><code>/admin/finance/vendor-purchases</code></td>
-        <td>Tenant lists paid orders with vendor_cost &gt; 0.</td>
+        <td>Tenant lists vendor-collected paid orders with vendor_own_platform &gt; 0.</td>
     </tr>
     <tr>
         <td><code>/admin/finance/vendor-purchases/&lbrace;order&rbrace;/settle</code></td>

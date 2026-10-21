@@ -23,8 +23,8 @@
     <li>Customer places the order (cart → checkout). Order is created in tenant DB with computed totals.</li>
     <li>Order goes to gateway flow. On success, payment_status is flipped to Paid, paid_at is set on the order.</li>
     <li>Tenant ships the order. Status transitions through Processing → Shipped → Delivered.</li>
-    <li>If <code>vendor_cost &gt; 0</code>, the tenant later settles the cost with central via the vendor settlement
-        flow. <code>vendor_settled_at</code> is set on the order, and a <code>VendorSettlement</code> record is written
+    <li>If the vendor collected the money (<code>collected_by = vendor</code>) and <code>vendor_own_platform &gt; 0</code>, the tenant later settles the platform's share via the vendor settlement
+        flow. A paid <code>VendorSettlement</code> record is written
         centrally.</li>
     <li>If the order was paid into a central-owned gateway, central later issues a <code>TenantPayout</code> for the
         tenant's net share.</li>

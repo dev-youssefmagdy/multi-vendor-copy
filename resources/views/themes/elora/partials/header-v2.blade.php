@@ -1,7 +1,7 @@
 <header>
     <!-- Mobile -->
     <div
-    class="lg:hidden relative flex items-center justify-between px-[18px] pt-[12px] pb-[27px]"
+    class="lg:hidden relative flex items-center justify-between px-[18px] pt-[12px] pb-[27px] {{ request()->routeIs('tenant.storefront.cart', 'tenant.storefront.profile') ? 'mb-[43px]' : '' }}"
     style="background: var(--color-text-primary)"
     >
     <div class="flex items-center gap-[12px]">

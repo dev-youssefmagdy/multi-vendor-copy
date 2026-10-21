@@ -24,7 +24,7 @@ class VendorSettlementsPage extends ListPage
             'badge' => 'Finance',
             'description' => 'All settlement payments received from vendors for product cost and shipping.',
             'tableTitle' => 'Settlement Records',
-            'headers' => ['Invoice', 'Vendor', 'Order', 'Gateway', 'Transaction', 'Amount', 'Remaining Owner Profit', 'Settled At'],
+            'headers' => ['Invoice', 'Vendor', 'Order', 'Gateway', 'Transaction', 'Amount', 'Remaining Owed to Platform', 'Settled At'],
         ];
     }
 

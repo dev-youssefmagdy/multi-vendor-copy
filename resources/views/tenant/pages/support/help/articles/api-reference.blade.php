@@ -216,10 +216,13 @@ GET /orders/{uuid}
     "payment_state": "unpaid",
     "refunded_amount": 0,
     "refunds": [],
-    "subtotal": 58.48, "discount_amount": 6.5, "tax_amount": 0, "shipping_charge": 5,
+    "subtotal": 58.48, "items_subtotal": 58.48, "fixed_shipping": 0, "items_discount": 0,
+    "items_tax": 0, "items_grand_total": 58.48, "shipping_charge": 5, "coupon_discount": 6.5,
+    "discount_amount": 6.5, "tax_amount": 0,
     "shipping_address": { ... }, "coupon_code": "SAVE10",
     "items": [ { "product_id": 501, "product_name": "Blue T-Shirt",
-      "variant_id": 12, "qty": 2, "price": 29.24, "sub_total": 58.48 } ] } }
+      "variant_id": 12, "qty": 2, "price": 29.24, "sub_total": 58.48,
+      "fixed_shipping": 0, "discount": 0, "tax": 0, "grand_total": 58.48 } ] } }
 
   A cancelled order carries:
     "cancellation": { "reason": "changed_mind", "reason_label": "Changed my mind",

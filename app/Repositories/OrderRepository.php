@@ -117,7 +117,8 @@ class OrderRepository
             'paid' => $orders->where('payment_status', OrderPaymentStatus::Paid)->count(),
             'shipping' => $orders->filter(fn (object $order) => in_array($order->shipping_status, [OrderShippingStatus::Pending, OrderShippingStatus::InDelivery], true))->count(),
             'gross_revenue' => (float) $orders->sum('net_amount'),
-            'owner_profit' => (float) $orders->sum('owner_profit'),
+            'platform_profit' => (float) $orders->sum('platform_profit'),
+            'vendor_profit' => (float) $orders->sum('vendor_profit'),
         ];
     }
 
@@ -130,7 +131,8 @@ class OrderRepository
         return [
             'gross_revenue' => (float) $orders->sum('net_amount'),
             'collected_revenue' => (float) $collected->sum('net_amount'),
-            'owner_profit' => (float) $collected->sum('owner_profit'),
+            'platform_profit' => (float) $collected->sum('platform_profit'),
+            'vendor_profit' => (float) $collected->sum('vendor_profit'),
             'paid_orders' => $collected->count(),
             'cancelled_orders' => $orders->where('status', OrderStatus::Cancelled)->count(),
             'refunded_amount' => round((float) $orders->sum('refunded_amount'), 2),
@@ -151,8 +153,7 @@ class OrderRepository
 
     public function find(string $tenantId, string $orderNumber): ?object
     {
-        return $this->aggregateService->orders()
-            ->first(fn (object $order) => (string) $order->tenant_id === $tenantId && (string) $order->order_number === $orderNumber);
+        return $this->aggregateService->findOrder($tenantId, $orderNumber);
     }
 
     public function orderDetail(object $order): array
@@ -172,6 +173,7 @@ class OrderRepository
             'status_color' => $order->status->color(),
             'payment_status_value' => $order->payment_status->value,
             'payment_status' => $order->payment_status->label(),
+            'payment_status_label' => $order->payment_status->queueLabel(),
             'payment_status_color' => $order->payment_status->color(),
             // Money was collected (a refund — full or partial — does not change that fact).
             'paid' => in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded, OrderPaymentStatus::Refunded], true),
@@ -183,28 +185,30 @@ class OrderRepository
             'payment_gateway' => $order->payment_gateway,
             'payment_method' => $order->payment_method,
             'payment_reference' => $order->payment_reference,
-            'vendor_cost' => $order->vendor_cost,
+            'collected_by' => $order->collected_by,
             'tracking_number' => $order->tracking_number ?? null,
             'created_at' => $order->created_at,
             'shipping_address' => $order->shipping_address,
             'payment_details' => $order->payment_details,
             'financials' => [
                 'subtotal' => $order->subtotal,
+                'items_fixed_shipping' => $order->items_fixed_shipping,
                 'items_discount' => $order->items_discount ?? collect($order->items)->sum('discount'),
-                'discount' => $order->discount_amount,
                 'items_tax' => $order->items_tax ?? collect($order->items)->sum('tax'),
+                'items_grand_total' => $order->items_grand_total,
+                'shipping_charge' => $order->shipping_charge,
+                'coupon_discount' => $order->coupon_discount,
                 'tax' => $order->tax_amount,
-                'shipping_total' => $order->shipping_charge,
                 'grand_total' => $order->total_amount,
-                // Already the refund/cancellation-aware value from TenantAdminAggregateService.
-                'owner_profit' => $order->owner_profit,
                 'refunded_amount' => $order->refunded_amount ?? 0.0,
                 'net_total' => $order->net_amount ?? $order->total_amount,
-                'vendor_net_total' => $order->vendor_net_total,
-                'tenant_own_central' => $order->tenant_own_central,
-                'central_own_tenant' => $order->central_own_tenant,
-                'remaining_owner_profit' => $order->remaining_owner_profit,
-                'remaining_tenant_profit' => $order->remaining_tenant_profit,
+                // Already the refund/cancellation-aware values from OrderProfitCalculator.
+                'platform_profit' => $order->platform_profit,
+                'vendor_profit' => $order->vendor_profit,
+                'vendor_own_platform' => $order->vendor_own_platform,
+                'platform_own_vendor' => $order->platform_own_vendor,
+                'vendor_settlements_paid' => $order->vendor_settlements_paid,
+                'platform_payouts_paid' => $order->platform_payouts_paid,
             ],
             'items' => $order->items,
             'activities' => $order->activities,
@@ -227,7 +231,8 @@ class OrderRepository
             return [
                 'label' => $month->format('M'),
                 'gross' => round((float) $monthlyOrders->sum('net_amount'), 2),
-                'owner_profit' => round((float) $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->sum('owner_profit'), 2),
+                'platform_profit' => round((float) $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->sum('platform_profit'), 2),
+                'vendor_profit' => round((float) $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->sum('vendor_profit'), 2),
                 'paid_orders' => $monthlyOrders->filter(fn (object $order) => $this->isCollected($order))->count(),
                 'unpaid_orders' => $monthlyOrders->reject(fn (object $order) => $this->isCollected($order))->count(),
             ];
@@ -250,7 +255,8 @@ class OrderRepository
                     'tenant' => $first?->store_name ?? 'Unknown store',
                     'orders' => $tenantOrders->count(),
                     'gross' => round((float) $tenantOrders->sum('net_amount'), 2),
-                    'owner_profit' => round((float) $tenantOrders->filter(fn (object $order) => $this->isCollected($order))->sum('owner_profit'), 2),
+                    'platform_profit' => round((float) $tenantOrders->filter(fn (object $order) => $this->isCollected($order))->sum('platform_profit'), 2),
+                    'vendor_profit' => round((float) $tenantOrders->filter(fn (object $order) => $this->isCollected($order))->sum('vendor_profit'), 2),
                 ];
             })
             ->sortByDesc('gross')
@@ -277,21 +283,21 @@ class OrderRepository
             'cards' => [
                 ['label' => 'Gross Revenue', 'value' => $summary['gross_revenue'], 'format' => 'currency', 'caption' => 'All tenant marketplace orders', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Collected', 'value' => $summary['collected_revenue'], 'format' => 'currency', 'caption' => 'Paid orders only', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Owner Profit', 'value' => $summary['owner_profit'], 'format' => 'currency', 'caption' => 'From paid tenant orders', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Platform Profit', 'value' => $summary['platform_profit'], 'format' => 'currency', 'caption' => 'From paid tenant orders', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
                 ['label' => 'Paid Orders', 'value' => $summary['paid_orders'], 'format' => 'number', 'caption' => 'Confirmed marketplace orders', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
             ],
             'chartPayload' => [
                 'revenueLabels' => $series->pluck('label')->all(),
                 'revenueDatasets' => [
                     ['label' => 'Gross Sales', 'data' => $series->pluck('gross')->all(), 'color' => 'cyan', 'fill' => true, 'format' => 'currency'],
-                    ['label' => 'Owner Profit', 'data' => $series->pluck('owner_profit')->all(), 'color' => 'green', 'fill' => true, 'format' => 'currency'],
+                    ['label' => 'Platform Profit', 'data' => $series->pluck('platform_profit')->all(), 'color' => 'green', 'fill' => true, 'format' => 'currency'],
                 ],
                 'donutLabels' => $statusBreakdown->pluck('label')->all(),
                 'donutData' => $statusBreakdown->pluck('value')->all(),
                 'barLabels' => $topTenants->pluck('tenant')->all(),
                 'barDatasets' => [
                     ['label' => 'Sales', 'data' => $topTenants->pluck('gross')->all(), 'color' => 'amber', 'format' => 'currency'],
-                    ['label' => 'Owner Profit', 'data' => $topTenants->pluck('owner_profit')->all(), 'color' => 'green', 'format' => 'currency'],
+                    ['label' => 'Platform Profit', 'data' => $topTenants->pluck('platform_profit')->all(), 'color' => 'green', 'format' => 'currency'],
                 ],
                 'lineLabels' => $series->pluck('label')->all(),
                 'lineDatasets' => [
@@ -307,7 +313,7 @@ class OrderRepository
                 [
                     'layoutClass' => 'g-r2',
                     'cards' => [
-                        ['title' => 'Revenue vs Owner Profit', 'description' => 'Rolling six-month marketplace sales and owner take.', 'canvas' => 'revenueChart'],
+                        ['title' => 'Revenue vs Platform Profit', 'description' => 'Rolling six-month marketplace sales and platform share.', 'canvas' => 'revenueChart'],
                         ['title' => 'Order Status Mix', 'description' => 'How tenant orders are distributed by lifecycle state.', 'canvas' => 'donutChart', 'legend' => $statusBreakdown->map(fn (array $row) => ['label' => $row['label'], 'value' => number_format((int) $row['value'])])->all()],
                     ],
                 ],
@@ -329,12 +335,13 @@ class OrderRepository
                 [
                     'title' => 'Top Tenants',
                     'description' => 'Highest-contributing stores by gross marketplace sales.',
-                    'headers' => ['Tenant', 'Orders', 'Gross', 'Owner Profit'],
+                    'headers' => ['Tenant', 'Orders', 'Gross', 'Platform Profit', 'Vendor Profit'],
                     'rows' => $topTenants->map(fn (array $row) => [
                         e($row['tenant']),
                         number_format((int) $row['orders']),
                         '$'.number_format((float) $row['gross'], 2),
-                        '$'.number_format((float) $row['owner_profit'], 2),
+                        '$'.number_format((float) $row['platform_profit'], 2),
+                        '$'.number_format((float) $row['vendor_profit'], 2),
                     ])->all(),
                 ],
                 [
@@ -363,7 +370,7 @@ class OrderRepository
         ];
     }
 
-    /** Paid and kept (fully or partly): counts towards collected revenue / owner profit. */
+    /** Paid and kept (fully or partly): counts towards collected revenue / platform profit. */
     protected function isCollected(object $order): bool
     {
         return in_array($order->payment_status, [OrderPaymentStatus::Paid, OrderPaymentStatus::PartiallyRefunded], true);

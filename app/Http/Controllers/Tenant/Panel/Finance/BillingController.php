@@ -29,12 +29,13 @@ final class BillingController extends PanelController
 
         return view('tenant.pages.finance.billing.index', [
             'stats' => Metric::cards([
-                ['label' => 'Orders', 'value' => $stats['orders'], 'format' => 'number', 'caption' => 'Order billing rows stored for this tenant.', 'dot' => 'dot-cyan'],
+                ['label' => 'Total billed', 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => 'Net value of all valid orders.', 'dot' => 'dot-cyan'],
                 ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value with confirmed collection.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid order value still awaiting settlement.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Gateways', 'value' => $stats['gateways'], 'format' => 'number', 'caption' => 'Distinct payment methods seen in tenant orders.', 'dot' => 'dot-violet'],
-                ...$this->planUsageCards(),
+                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid order value still awaiting payment.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => 'Orders', 'value' => $stats['orders'], 'format' => 'number', 'caption' => $stats['paid'].' paid · '.$stats['unpaid'].' unpaid', 'dot' => 'dot-cyan'],
+                ['label' => 'Payment methods', 'value' => $stats['gateways'], 'format' => 'number', 'caption' => 'Distinct payment methods used in orders.', 'dot' => 'dot-violet'],
             ]),
+            'planUsage' => $this->planUsage(),
             'gatewayOptions' => $this->repo->paymentMethodOptions(),
             'columns' => [
                 TableColumn::index(),
@@ -82,36 +83,35 @@ final class BillingController extends PanelController
     }
 
     /**
-     * Plan usage-vs-limit cards ("Products: 45 / 100", "Languages: Unlimited", ...).
-     * Ported verbatim from App\Livewire\Tenant\Finance\BillingPage::planUsageCards().
+     * Plan usage-vs-limit rows for the "Plan usage" section (limit null = unlimited).
+     *
+     * @return list<array{label:string, used:int, limit:int|null, percent:int|null}>
      */
-    private function planUsageCards(): array
+    private function planUsage(): array
     {
         $limitService = app(PlanLimitService::class);
         $tenant = tenant();
 
         $features = [
-            PlanLimitService::FEATURE_PRODUCTS => ['label' => 'Products', 'dot' => 'dot-cyan'],
-            PlanLimitService::FEATURE_CATEGORIES => ['label' => 'Categories', 'dot' => 'dot-green'],
-            PlanLimitService::FEATURE_BANNERS => ['label' => 'Banners', 'dot' => 'dot-amber'],
-            PlanLimitService::FEATURE_LANGUAGES => ['label' => 'Languages', 'dot' => 'dot-violet'],
-            PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => 'Orders this month', 'dot' => 'dot-cyan'],
-            PlanLimitService::FEATURE_AI_CALLS => ['label' => 'AI calls', 'dot' => 'dot-violet'],
-            PlanLimitService::FEATURE_IMAGE_SEARCHES => ['label' => 'Image searches', 'dot' => 'dot-amber'],
+            PlanLimitService::FEATURE_PRODUCTS => 'Products',
+            PlanLimitService::FEATURE_CATEGORIES => 'Categories',
+            PlanLimitService::FEATURE_BANNERS => 'Banners',
+            PlanLimitService::FEATURE_LANGUAGES => 'Languages',
+            PlanLimitService::FEATURE_ORDERS_PER_MONTH => 'Orders this month',
+            PlanLimitService::FEATURE_AI_CALLS => 'AI calls',
+            PlanLimitService::FEATURE_IMAGE_SEARCHES => 'Image searches',
         ];
 
-        return Metric::cards(collect($features)->map(function (array $meta, string $feature) use ($limitService, $tenant) {
+        return collect($features)->map(function (string $label, string $feature) use ($limitService, $tenant): array {
             $usage = $limitService->usage($tenant, $feature);
-            $value = $usage['limit'] === null
-                ? number_format($usage['used']).' / Unlimited'
-                : number_format($usage['used']).' / '.number_format($usage['limit']);
+            $limit = $usage['limit'];
 
             return [
-                'label' => $meta['label'],
-                'value' => $value,
-                'caption' => 'Plan usage for '.strtolower($meta['label']).'.',
-                'dot' => $meta['dot'],
+                'label' => $label,
+                'used' => (int) $usage['used'],
+                'limit' => $limit === null ? null : (int) $limit,
+                'percent' => $limit ? (int) min(100, round($usage['used'] / $limit * 100)) : null,
             ];
-        })->values()->all());
+        })->values()->all();
     }
 }

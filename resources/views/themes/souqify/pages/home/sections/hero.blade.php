@@ -5,7 +5,7 @@
             <!-- Main hero -->
             <div class="lg:col-span-8 relative rounded-2xl overflow-hidden h-[400px] sm:h-[500px] lg:h-[600px]">
                 @if ($heroBanner && $heroBanner->image_path)
-                <img loading="lazy" src="{{ $heroBanner->image_path }}" alt="{{ $heroBanner->title ?? $storeName }}"
+                <img loading="lazy" src="{{ $heroBanner->image_path }}" alt="{{ $heroBanner->translationValue('title') ?? $storeName }}"
                     class="absolute inset-0 w-full h-full object-cover" />
                 @else
                 <img loading="lazy" src="https://images.unsplash.com/photo-1593344484962-796055d4a3a4?auto=format&fit=crop&w=1400&q=80"
@@ -18,7 +18,7 @@
                         {{ $heroBanner?->translationValue('subtitle') ?? __('Limited Edition') }}
                     </span>
                     <h1 class="text-white text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] mb-4">
-                        {!! $heroBanner?->title ? nl2br(e($heroBanner?->title)) : __('Unleash the<br />Next Gen.') !!}
+                        {!! $heroBanner?->translationValue('title') ? nl2br(e($heroBanner?->translationValue('title'))) : __('Unleash the<br />Next Gen.') !!}
                     </h1>
                     @if ($heroBanner->description ?? null)
                     <p class="text-white/90 text-base sm:text-lg leading-7 mb-8 max-w-md">
@@ -29,9 +29,15 @@
                         {{ __('Experience the future of performance with our exclusive curated collection.') }}
                     </p>
                     @endif
+<<<<<<< HEAD
                     <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
                         class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
                         {{ __('Explore Collection') }}
+=======
+                    <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
+                        class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
+                        {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                     </a>
                 </div>
             </div>
@@ -90,7 +96,7 @@
                 <div class="swiper-slide">
                     <div class="relative rounded-2xl h-full">
                         @if ($heroBanner && $heroBanner->image_path)
-                        <img loading="lazy" src="{{ $heroBanner->image_path }}" alt="{{ $heroBanner->title ?? $storeName }}"
+                        <img loading="lazy" src="{{ $heroBanner->image_path }}" alt="{{ $heroBanner->translationValue('title') ?? $storeName }}"
                             class="absolute inset-0 w-full h-full object-cover" />
                         @else
                         <img loading="lazy" src="https://images.unsplash.com/photo-1593344484962-796055d4a3a4?auto=format&fit=crop&w=1400&q=80"
@@ -103,7 +109,7 @@
                                 {{ $heroBanner?->translationValue('subtitle') ?? __('Limited Edition') }}
                             </span>
                             <h1 class="text-white text-2xl font-extrabold leading-[1.05] mb-2">
-                                {!! $heroBanner?->title ? nl2br(e($heroBanner?->title)) : __('Unleash the Next
+                                {!! $heroBanner?->translationValue('title') ? nl2br(e($heroBanner?->translationValue('title'))) : __('Unleash the Next
                                 Gen.') !!}
                             </h1>
                             @if ($heroBanner->description ?? null)
@@ -115,9 +121,15 @@
                                 {{ __('Experience the future of performance with our exclusive curated collection.') }}
                             </p>
                             @endif
+<<<<<<< HEAD
                             <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
                                 class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
                                 {{ __('Explore Collection') }}
+=======
+                            <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
+                                class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
+                                {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                             </a>
                         </div>
                     </div>

@@ -4,10 +4,7 @@ namespace App\Livewire\Admin\Finance;
 
 use App\Livewire\Admin\Base\AdminPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
-use App\Models\Tenant;
-use App\Models\Tenant\Order as TenantOrder;
 use App\Models\TenantPayout;
-use App\Services\Admin\TenantLedgerService;
 use App\Support\OrderPayoutLedger;
 use Illuminate\Support\Carbon;
 use Throwable;
@@ -83,12 +80,7 @@ class TenantPayoutEditPage extends AdminPage
 
     protected function remainingCap(): float
     {
-        $entry = app(TenantLedgerService::class)->find($this->tenantId);
-
-        return OrderPayoutLedger::remainingTenantProfitForTenant(
-            $this->tenantId,
-            (float) ($entry->vendor_profit_total ?? 0)
-        );
+        return OrderPayoutLedger::platformOwnVendorForTenant($this->tenantId);
     }
 
     public function save(): void
@@ -142,7 +134,7 @@ class TenantPayoutEditPage extends AdminPage
         ])->save();
 
         if ($transitioningToPaid) {
-            $this->releaseOrdersForTenant();
+            $this->releaseOrdersForTenant($record);
 
             app(\App\Services\TenantNotificationService::class)->notifyById(
                 tenantId: $record->tenant_id,
@@ -182,52 +174,23 @@ class TenantPayoutEditPage extends AdminPage
         $this->redirect(route('admin.finance.payouts.index'));
     }
 
-    protected function releaseOrdersForTenant(): void
+    protected function releaseOrdersForTenant(TenantPayout $record): void
     {
         try {
-            $tenant = Tenant::query()->find($this->tenantId);
-            if (!$tenant) {
-                return;
-            }
-
-            tenancy()->initialize($tenant);
-            try {
-                TenantOrder::query()
-                    ->where('paid', true)
-                    ->where('payout_released', false)
-                    ->whereNull('vendor_gateway_id')
-                    ->update(['payout_released' => true]);
-            } finally {
-                tenancy()->end();
-            }
+            $released = OrderPayoutLedger::releasePayoutsForTenant($this->tenantId, $record->invoice_number);
+            $record->update(['orders_snapshot' => $released]);
         } catch (Throwable) {
             // Best-effort; payout already saved.
         }
     }
 
+    /** Un-release: delete the platform_payout transactions of this payout's orders and clear payout_released. */
     protected function reverseReleaseForOrders(TenantPayout $record): void
     {
         $uuids = collect($record->orders_snapshot ?? [])->pluck('uuid')->filter()->values()->all();
 
-        if ($uuids === []) {
-            return;
-        }
-
         try {
-            $tenant = Tenant::query()->find($record->tenant_id);
-            if (!$tenant) {
-                return;
-            }
-
-            tenancy()->initialize($tenant);
-            try {
-                TenantOrder::query()
-                    ->whereIn('uuid', $uuids)
-                    ->where('payout_released', true)
-                    ->update(['payout_released' => false]);
-            } finally {
-                tenancy()->end();
-            }
+            OrderPayoutLedger::reversePayoutsForTenant($record->tenant_id, $uuids);
         } catch (Throwable) {
             // Best-effort; cancellation still proceeds.
         }

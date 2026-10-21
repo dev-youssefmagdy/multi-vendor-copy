@@ -10,6 +10,8 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
+    <x-tenant::tabs :tabs="['subscriptions' => 'Subscriptions & Balance', 'partner' => 'Partner Program']" :active="$activeTab" mode="local">
+        <x-tenant::tab-panel key="subscriptions" :active="$activeTab === 'subscriptions'">
     <x-tenant::stats-grid :stats="$cards" />
 
     <x-tenant::datatable id="subscriptions-table" :url="route('tenant.finance.wallet.subscriptions.data')" :columns="$subscriptionColumns"
@@ -19,6 +21,12 @@
     <x-tenant::datatable id="transactions-table" :url="route('tenant.finance.wallet.transactions.data')" :columns="$transactionColumns"
         title="Tenant Transactions" description="Transaction records linked to tenant subscription activity and balance movements."
         :order="[[1, 'asc']]" />
+        </x-tenant::tab-panel>
+
+        <x-tenant::tab-panel key="partner" :active="$activeTab === 'partner'">
+            @include('tenant.pages.finance.wallet._partner')
+        </x-tenant::tab-panel>
+    </x-tenant::tabs>
 
     <x-tenant::payment.gateway-modal
         id="subscription-payment"

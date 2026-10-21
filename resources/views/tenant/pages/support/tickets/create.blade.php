@@ -21,16 +21,15 @@
             action="{{ route('tenant.support.store') }}"
             validate="{{ route('tenant.support.validate') }}"
             success="redirect"
+            gate-submit
         >
             <div class="form-grid">
-                <x-tenant::input name="subject" label="Subject" required placeholder="Short summary of your issue" />
+                <x-tenant::input name="subject" label="Subject" required maxlength="255" placeholder="Short summary of your issue" />
 
-                <x-tenant::select name="category" label="Category" :options="$categoryOptions" value="general" />
-
-                <x-tenant::select name="priority" label="Priority" :options="$priorityOptions" value="normal" />
+                <x-tenant::select name="category" label="Category" required :options="$categoryOptions" value="general" />
 
                 <div class="form-grid-full">
-                    <x-tenant::textarea name="body" label="Message" rows="6" required placeholder="Describe your issue in detail" />
+                    <x-tenant::textarea name="body" label="Message" rows="6" required maxlength="5000" counter help="At least 10 characters." placeholder="Describe your issue in detail" />
                 </div>
             </div>
 

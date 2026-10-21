@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class Affiliate extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, CentralConnection;
 
     protected $fillable = [
         'name', 'email', 'password', 'code',
@@ -17,7 +18,7 @@ class Affiliate extends Authenticatable
         'balance', 'total_earned', 'total_paid',
         'status', 'paypal_email',
         'bank_name', 'bank_account', 'bank_iban',
-        'notes', 'approved_at',
+        'notes', 'approved_at', 'type', 'tenant_id',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -45,6 +46,11 @@ class Affiliate extends Authenticatable
         return $this->hasMany(AffiliateConversion::class);
     }
 
+    public function payoutRequests(): HasMany
+    {
+        return $this->hasMany(AffiliatePayoutRequest::class);
+    }
+
     public function payouts(): HasMany
     {
         return $this->hasMany(AffiliatePayout::class);
@@ -54,6 +60,16 @@ class Affiliate extends Authenticatable
     public function referralUrl(): string
     {
         return route('website.home') . '?ref=' . $this->code;
+    }
+
+    public function isTenant(): bool
+    {
+        return $this->type === 'tenant';
+    }
+
+    public function scopeExternal($query)
+    {
+        return $query->where('type', 'external');
     }
 
     public function isActive(): bool
@@ -66,9 +82,17 @@ class Affiliate extends Authenticatable
      */
     public function calculateCommission(float $saleAmount): float
     {
-        return match ($this->commission_type) {
-            'percentage' => round($saleAmount * (float) $this->commission_value / 100, 2),
-            'fixed'      => (float) $this->commission_value,
+        return static::commissionFor($this->commission_type, (float) $this->commission_value, $saleAmount);
+    }
+
+    /**
+     * Commission for a type/value pair. A fixed commission never exceeds the sale amount.
+     */
+    public static function commissionFor(?string $type, float $value, float $saleAmount): float
+    {
+        return match ($type) {
+            'percentage' => round($saleAmount * $value / 100, 2),
+            'fixed'      => round(min($value, max(0.0, $saleAmount)), 2),
             default      => 0.0,
         };
     }

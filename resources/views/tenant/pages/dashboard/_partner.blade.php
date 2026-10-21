@@ -69,7 +69,7 @@
             <strong>{{ $partner['reward'] }}</strong>
             <div class="db-partner-card-foot">
                 <span class="t-trend t-trend-up">{!! $trend !!} {{ $partner['reward_status'] }}</span>
-                <a href="{{ route('tenant.finance.wallet') }}" class="db-partner-withdraw">
+                <a href="{{ route('tenant.finance.wallet', ['tab' => 'partner']) }}" class="db-partner-withdraw">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.94 13c.04-.43.06-.9.06-1.4 0-4.5 0-6.74-1.4-8.14C18.2 2.06 15.94 2.06 11.45 2.06c-4.5 0-6.75 0-8.15 1.4C1.9 4.86 1.9 7.1 1.9 11.6c0 4.5 0 6.75 1.4 8.15 1.4 1.4 3.65 1.4 8.15 1.4.52 0 1-.01 1.44-.04"/><path d="M14.13 7.5c-.5-.63-1.46-1-2.68-1-1.63 0-2.95.95-2.95 2.13 0 1.17 1.32 2.12 2.95 2.12 1.63 0 2.95.95 2.95 2.12 0 1.18-1.32 2.13-2.95 2.13-1.22 0-2.18-.37-2.68-1M11.45 5v1.5m0 10V18"/><path d="M22 16l-5 5m0-4v4h4"/></svg>
                     Withdraw
                 </a>

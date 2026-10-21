@@ -60,21 +60,21 @@
                         {{ number_format((float) ($financials['subtotal'] ?? 0), 2) }}</span></div>
                 <div class="details-kv"><span class="details-label">Discount</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) (($financials['items_discount'] ?? 0) + ($financials['discount'] ?? 0)), 2) }}</span>
+                        {{ number_format((float) (($financials['items_discount'] ?? 0) + ($financials['coupon_discount'] ?? $financials['discount'] ?? 0)), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Tax</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) (($financials['items_tax'] ?? 0) + ($financials['tax'] ?? 0)), 2) }}</span>
+                        {{ number_format((float) ($financials['tax'] ?? $financials['items_tax'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Shipping</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) ($financials['shipping_total'] ?? 0), 2) }}</span></div>
-                <div class="details-kv"><span class="details-label">Owner Profit</span><span
+                        {{ number_format((float) ($financials['shipping_charge'] ?? $financials['shipping_total'] ?? 0), 2) }}</span></div>
+                <div class="details-kv"><span class="details-label">Platform Profit</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) ($financials['owner_profit'] ?? 0), 2) }}</span></div>
-                <div class="details-kv"><span class="details-label">Tenant Net</span><span
+                        {{ number_format((float) ($financials['platform_profit'] ?? 0), 2) }}</span></div>
+                <div class="details-kv"><span class="details-label">Vendor Profit</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
-                        {{ number_format((float) ($financials['vendor_net_total'] ?? 0), 2) }}</span></div>
+                        {{ number_format((float) ($financials['vendor_profit'] ?? $financials['vendor_net_total'] ?? 0), 2) }}</span></div>
                 <div class="details-kv"><span class="details-label">Grand Total</span><span
                         class="details-value">{{ $invoice['currency'] ?? 'USD' }}
                         {{ number_format((float) ($invoice['amount'] ?? 0), 2) }}</span></div>

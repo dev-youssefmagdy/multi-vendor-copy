@@ -37,7 +37,7 @@ class NotificationsPage extends AdminPage
         return array_merge(parent::pageData(), [
             'notifications' => $notifications,
             'unreadCount'   => $unreadCount,
-            'typeOptions'   => ['order', 'payment', 'return', 'tenant', 'system'],
+            'typeOptions'   => AdminNotification::query()->distinct()->orderBy('type')->pluck('type')->all(),
         ]);
     }
 
@@ -49,18 +49,21 @@ class NotificationsPage extends AdminPage
     public function markRead(int $id): void
     {
         AdminNotification::find($id)?->update(['is_read' => true]);
+        $this->dispatch('notifications-changed');
     }
 
     public function markAllRead(): void
     {
         AdminNotification::unread()->update(['is_read' => true]);
         $this->toast('All notifications marked as read.');
+        $this->dispatch('notifications-changed');
     }
 
     public function deleteNotification(int $id): void
     {
         AdminNotification::find($id)?->delete();
         $this->toast('Notification deleted.');
+        $this->dispatch('notifications-changed');
     }
 
     public function updatedTypeFilter(): void

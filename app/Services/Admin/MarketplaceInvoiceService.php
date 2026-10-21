@@ -182,14 +182,20 @@ class MarketplaceInvoiceService
         $currency = $this->tenantCurrency();
         $financials = [
             'subtotal' => $order->subtotal,
+            'items_fixed_shipping' => $order->items_fixed_shipping,
             'items_discount' => $order->items_discount,
-            'discount' => $order->discount_amount,
             'items_tax' => $order->items_tax,
+            'items_grand_total' => $order->items_grand_total,
+            'shipping_charge' => $order->resolved_shipping_charge,
+            'coupon_discount' => $order->discount_amount,
             'tax' => $order->tax_amount,
-            'shipping_total' => $order->resolved_shipping_charge,
             'grand_total' => $order->grand_total,
-            'owner_profit' => OrderProfitCalculator::effectiveOwnerProfitForOrder($order),
-            'vendor_net_total' => round(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2),
+            'platform_profit' => OrderProfitCalculator::platformProfitForOrder($order),
+            'vendor_profit' => OrderProfitCalculator::vendorProfitForOrder($order),
+            'vendor_own_platform' => OrderProfitCalculator::vendorOwnPlatformForOrder($order),
+            'platform_own_vendor' => OrderProfitCalculator::platformOwnVendorForOrder($order),
+            'vendor_settlements_paid' => $order->vendor_settlements_paid,
+            'platform_payouts_paid' => $order->platform_payouts_paid,
         ];
 
         return [
@@ -217,11 +223,16 @@ class MarketplaceInvoiceService
                     'name' => $productName ?: 'Item #' . $item->id,
                     'variant' => $variantTitle,
                     'qty' => (int) $item->qty,
+                    'cost' => sprintf('%0.2f', (float) $item->cost),
+                    'profit_amount' => sprintf('%0.2f', (float) $item->profit_amount),
                     'price' => sprintf('%0.2f', (float) $item->price),
+                    'sub_total' => sprintf('%0.2f', (float) $item->sub_total),
+                    'fixed_shipping' => sprintf('%0.2f', (float) $item->fixed_shipping),
                     'discount' => sprintf('%0.2f', (float) $item->discount),
                     'tax' => sprintf('%0.2f', (float) $item->tax),
                     'shipping' => sprintf('%0.2f', (float) $item->shipping_fee),
-                    'total' => sprintf('%0.2f', (float) $item->sub_total - (float) $item->discount + (float) $item->tax + (float) $item->shipping_fee),
+                    'weight' => sprintf('%0.3f', (float) $item->weight),
+                    'total' => sprintf('%0.2f', (float) $item->grand_total),
                 ];
             })->all(),
             'activities' => $order->activities->map(fn($activity) => [
@@ -247,9 +258,10 @@ class MarketplaceInvoiceService
             'payment_method' => $invoice->payment_method,
             'payment_reference' => $invoice->payment_reference,
             'subtotal' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'subtotal', 0)),
-            'discount' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'items_discount', 0) + (float) data_get($financials, 'discount', 0)),
-            'tax' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'items_tax', 0) + (float) data_get($financials, 'tax', 0)),
-            'shipping' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'shipping_total', 0)),
+            'fixed_shipping' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'items_fixed_shipping', 0)),
+            'discount' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'items_discount', 0) + (float) data_get($financials, 'coupon_discount', data_get($financials, 'discount', 0))),
+            'tax' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'tax', data_get($financials, 'items_tax', 0))),
+            'shipping' => sprintf('%s %0.2f', $invoice->currency, (float) data_get($financials, 'shipping_charge', data_get($financials, 'shipping_total', 0))),
             'grand_total' => sprintf('%s %0.2f', $invoice->currency, (float) $invoice->amount),
             'shipping_lines' => array_values(array_filter([
                 $shippingAddress['address'] ?? null,

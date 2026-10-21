@@ -1,6 +1,7 @@
 // Dashboard partner banner: "Invite a merchant" opens the native share sheet
 // where available, otherwise copies the invite link.
 import { toast } from '@tenant/core/toast.js';
+import { copyText } from '@tenant/core/clipboard.js';
 
 export function mountPartnerInvite(root = document) {
     root.querySelectorAll('[data-partner-invite]').forEach((button) => {
@@ -17,10 +18,9 @@ export function mountPartnerInvite(root = document) {
                 }
             }
 
-            try {
-                await navigator.clipboard.writeText(url);
+            if (await copyText(url)) {
                 toast.success('Invite link copied');
-            } catch {
+            } else {
                 toast.error('Could not copy the invite link.');
             }
         });

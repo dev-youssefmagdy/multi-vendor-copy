@@ -4,8 +4,9 @@
     $address = $order['shipping_address'] ?? [];
     $createdAt = $order['created_at'] ?? null;
 
-    $taxTotal = (float) (($financials['items_tax'] ?? 0) + ($financials['tax'] ?? 0));
-    $discountTotal = (float) (($financials['items_discount'] ?? 0) + ($financials['discount'] ?? 0));
+    $taxTotal = (float) ($financials['tax'] ?? 0);
+    $fixedShippingTotal = (float) ($financials['items_fixed_shipping'] ?? 0);
+    $discountTotal = (float) (($financials['items_discount'] ?? 0) + ($financials['coupon_discount'] ?? 0));
 
     $addressParts = array_filter([
         $address['full_name'] ?? $address['name'] ?? null,
@@ -732,7 +733,7 @@
                                 $qty = (int) ($item['qty'] ?? 0);
                                 $price = (float) ($item['price'] ?? 0);
                                 $disc = (float) ($item['discount'] ?? 0);
-                                $lineTotal = (float) ($item['line_total'] ?? ($qty * $price - $disc));
+                                $lineTotal = (float) ($item['grand_total'] ?? 0);
                             @endphp
                             <tr>
                                 <td>
@@ -783,6 +784,12 @@
                             <span class="lbl">Subtotal</span>
                             <span class="val">${{ number_format((float) ($financials['subtotal'] ?? 0), 2) }}</span>
                         </div>
+                        @if ($fixedShippingTotal > 0)
+                            <div class="tot-row">
+                                <span class="lbl">Fixed Shipping</span>
+                                <span class="val">${{ number_format($fixedShippingTotal, 2) }}</span>
+                            </div>
+                        @endif
                         @if ($discountTotal > 0)
                             <div class="tot-row">
                                 <span class="lbl">Discount</span>
@@ -792,7 +799,7 @@
                         <div class="tot-row">
                             <span class="lbl">Shipping</span>
                             <span
-                                class="val">${{ number_format((float) ($financials['shipping_total'] ?? 0), 2) }}</span>
+                                class="val">${{ number_format((float) ($financials['shipping_charge'] ?? 0), 2) }}</span>
                         </div>
                         @if ($taxTotal > 0)
                             <div class="tot-row">

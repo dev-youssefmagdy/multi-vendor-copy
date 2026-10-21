@@ -28,8 +28,8 @@
                 <div class="details-kv"><span class="details-label">Collected Sales</span><span
                         class="details-value">${{ number_format((float) ($wallet['collected_sales'] ?? 0), 2) }}</span>
                 </div>
-                <div class="details-kv"><span class="details-label">Owner Profit</span><span
-                        class="details-value">${{ number_format((float) ($wallet['owner_profit'] ?? 0), 2) }}</span>
+                <div class="details-kv"><span class="details-label">Platform Profit</span><span
+                        class="details-value">${{ number_format((float) ($wallet['platform_profit'] ?? 0), 2) }}</span>
                 </div>
                 <div class="details-kv"><span class="details-label">Subscriptions</span><span
                         class="details-value">{{ number_format((int) ($wallet['active_subscriptions'] ?? 0)) }}

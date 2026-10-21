@@ -24,18 +24,22 @@
         <div class="swiper-slide">
           <div class="{{ $__slideCls }}">
             @if (!empty($banner?->image_path))
-            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="lg:hidden absolute inset-0 h-full w-full object-cover" />
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->translationValue('title') ?? $storeName }}" class="lg:hidden absolute inset-0 h-full w-full object-cover" />
             @endif
             @if (!empty($banner?->image_path))
-            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->title ?? $storeName }}" class="hidden lg:block absolute inset-0 h-full w-full object-cover" />
+            <img src="{{ $banner->image_path }}" onerror="this.remove()" alt="{{ $banner->translationValue('title') ?? $storeName }}" class="hidden lg:block absolute inset-0 h-full w-full object-cover" />
             @endif
             <div class="{{ $__overlayCls }}" style="{{ $__overlayBg }}"></div>
             <div class="{{ $__contentCls }}">
               <h1 class="{{ $__titleCls }}">
-                {!! $banner->title ? nl2br(e($banner->title)) : '<span style="color: var(--color-souqify-teal)">' . __('Explore') . '</span> ' . __('New Products') !!}
+                {!! $banner->translationValue('title') ? nl2br(e($banner->translationValue('title'))) : '<span style="color: var(--color-souqify-teal)">' . __('Explore') . '</span> ' . __('New Products') !!}
               </h1>
-              <a href="{{ $banner->link ?? route('tenant.storefront.best-selling') }}" class="{{ $__ctaCls }}" style="background: var(--color-souqify-teal)">
-                <span class="{{ $__ctaTextCls }}">{{ __('Shop Now') }}</span>
+@if ($__sub = $banner->translationValue('subtitle'))
+<p style="margin:0;font-size:clamp(14px,1.4vw,22px);line-height:1.4;color:#fff">{{ $__sub }}</p>
+@endif
+
+              <a href="{{ $banner->url ?? route('tenant.storefront.best-selling') }}" class="{{ $__ctaCls }}" style="background: var(--color-souqify-teal)">
+                <span class="{{ $__ctaTextCls }}">{{ $banner->translationValue('button_text') ?: __('Shop Now') }}</span>
               </a>
             </div>
           </div>

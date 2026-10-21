@@ -36,7 +36,7 @@ class TransactionsList extends ListPage
             'settlements' => [
                 'title' => 'Transactions',
                 'badge' => 'Settlements',
-                'description' => 'Payments received from vendors (Vendor → Central). Each row represents a vendor settling their vendor_cost with the platform.',
+                'description' => 'Payments received from vendors (Vendor → Central). Each row represents a vendor settling the platform profit (vendor_own_platform) of their orders.',
                 'actionLabel' => '',
                 'tableTitle' => 'Settlements Received',
                 'headers' => ['Invoice', 'Tenant', 'Amount', 'Gateway', 'Settled At'],

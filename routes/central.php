@@ -178,6 +178,10 @@ Route::prefix('affiliate')->name('affiliate.')->group(function () {
         Route::get('/register', \App\Livewire\Affiliate\Auth\RegisterPage::class)->name('register');
     });
 
+    // One-time sign-in from the vendor panel (tenant owners' affiliate account)
+    Route::get('/sso/{token}', \App\Http\Controllers\Affiliate\SsoController::class)
+        ->middleware('throttle:20,1')->name('sso');
+
     // Authenticated affiliate panel
     Route::middleware('auth:affiliate')->group(function () {
         Route::get('/dashboard',     \App\Livewire\Affiliate\DashboardPage::class)->name('dashboard');
@@ -208,7 +212,7 @@ Route::get('/my-account/select-tenant', OwnerSelectTenantPage::class)->middlewar
 // ── Tenant Owner Panel ────────────────────────────────────────────────────────
 Route::group([
     'prefix' => 'my-account',
-    'as' => 'owner .',
+    'as' => 'owner.',
     'middleware' => TenantOwnerAuth::class,
 ], function () {
     Route::redirect('/', '/my-account/domains')->name('dashboard');
@@ -470,6 +474,12 @@ Route::group([
     });
 
     Route::get('/notifications', NotificationsPage::class)->name('notifications.index');
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/latest', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'latest'])->name('latest');
+        Route::post('/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'readAll'])->name('read-all');
+        Route::get('/{id}/open', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'open'])->whereNumber('id')->name('open');
+        Route::post('/{id}/read', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'read'])->whereNumber('id')->name('read');
+    });
 
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', AdminTicketsList::class)->middleware('admin.permission:support.tickets.view,support.tickets.manage')->name('index');

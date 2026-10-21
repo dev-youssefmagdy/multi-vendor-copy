@@ -49,6 +49,13 @@ final class DomainsController extends PanelController
             'requested_at' => now(),
         ]);
 
+        app(\App\Services\AdminNotificationService::class)->notify(
+            'domain',
+            'New Domain Request',
+            sprintf('Tenant "%s" requested the domain %s.', tenant()->id, $validated['domain']),
+            ['tenant_id' => tenant()->id, 'domain' => $validated['domain']],
+        );
+
         return $this->success(__('Domain request submitted. Our team will review it.'));
     }
 

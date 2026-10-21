@@ -225,7 +225,13 @@
     $orderShape = [
         ['key' => 'uuid', 'type' => 'string'],
         ['key' => 'items', 'type' => 'Collection<OrderItem>'],
-        ['key' => 'grand_total', 'type' => 'float'],
+        ['key' => 'subtotal', 'type' => 'float', 'desc' => 'sum of item price x qty'],
+        ['key' => 'items_fixed_shipping', 'type' => 'float'],
+        ['key' => 'items_discount', 'type' => 'float', 'desc' => 'flash-sale discounts'],
+        ['key' => 'items_tax', 'type' => 'float'],
+        ['key' => 'resolved_shipping_charge', 'type' => 'float'],
+        ['key' => 'discount_amount', 'type' => 'float', 'desc' => 'coupon discount'],
+        ['key' => 'grand_total', 'type' => 'float', 'desc' => 'items total + shipping - coupon'],
         ['key' => 'status', 'type' => 'string'],
         ['key' => 'shipping_address', 'type' => 'string'],
     ];
