@@ -530,7 +530,7 @@ body {
 }
 .hero-pagination {
   position: static !important;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -551,6 +551,9 @@ body {
   background: var(--color-brand-orange-bright);
 }
 @media (min-width: 1024px) {
+  .hero-pagination {
+    display: flex;
+  }
   .hero-dot {
     height: 13px;
     width: 13px;
@@ -611,24 +614,28 @@ body {
 
 /* Best Seller mobile: 2-col x 2-row grid-swiper (Swiper's grid module).
    The swiper needs an explicit height so Swiper's per-row math
-   (slide height = (100% - gap) / rows) has something real to divide. */
+   (slide height = (100% - gap) / rows) has something real to divide.
+   The right column is nudged down (translateY) on top of its own rotation
+   so the 2x2 grid reads as a scattered/staggered pile rather than a neat
+   grid — the extra 32px is added to the swiper's own height below so the
+   nudged-down cards don't get clipped by the swiper's overflow:hidden. */
 .best-seller-mobile-swiper {
-  height: 561.42px !important; /* 2 * 268.71px card + 24px row gap */
+  height: 585.42px !important; /* 2 * 268.71px card + 16px row gap + 32px stagger offset */
 }
 #bestSellerMobileWrapper .swiper-slide {
   transition: transform 0.2s ease;
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 1) {
-  transform: rotate(4.68deg);
+  transform: rotate(-5deg);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 2) {
-  transform: rotate(-4.68deg);
+  transform: rotate(5deg) translateY(32px);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 3) {
-  transform: rotate(-4.68deg);
+  transform: rotate(4deg);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 4) {
-  transform: rotate(4.68deg);
+  transform: rotate(-4deg) translateY(32px);
 }
 #bestSellerMobileWrapper .swiper-slide:active {
   transform: rotate(0deg);

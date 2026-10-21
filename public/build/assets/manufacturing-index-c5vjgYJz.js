@@ -1,0 +1,1 @@
+/* empty css                  *//* empty css                  *//* empty css               */import{t as e}from"./mobile-kpi-carousel-B7u1HfXb.js";e(document.querySelector(`.od-kpis`));
