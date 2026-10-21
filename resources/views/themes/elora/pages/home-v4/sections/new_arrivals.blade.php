@@ -18,8 +18,7 @@
         </h2>
         <a
           href="{{ route('tenant.storefront.new-in') }}"
-          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
-          style="color: var(--color-brand-orange-bright)"
+          class="text-[14px] lg:text-[20px] tracking-[0.5px] text-black"
           >{{ __('see all') }}</a
         >
       </div>

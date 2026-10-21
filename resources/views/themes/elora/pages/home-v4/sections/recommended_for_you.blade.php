@@ -59,9 +59,13 @@
         </div>
       @endif
 
-      {{-- Right-edge fade hinting the grid continues / scrolls --}}
+      {{-- End-edge fade hinting the grid continues / scrolls. Solid color
+           must stay on the true outer edge and fade inward toward the
+           cards in both directions, so the gradient angle is mirrored for
+           RTL in elora-v4.css (.recommended-edge-fade) rather than being a
+           fixed physical direction here that would land its solid stop on
+           the wrong side (over the cards) under RTL's flipped end-0. --}}
       <div
-        class="hidden lg:block absolute top-0 end-0 h-full w-[120px] pointer-events-none"
-        style="background: linear-gradient(91.97deg, rgba(255, 255, 255, 0) 1.85%, #F3F3F3 95.21%);"
+        class="recommended-edge-fade hidden lg:block absolute top-0 end-0 h-full w-[200px] pointer-events-none"
       ></div>
     </section>

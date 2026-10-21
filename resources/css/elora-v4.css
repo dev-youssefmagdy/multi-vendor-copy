@@ -524,6 +524,19 @@ body {
   left: -8px;
 }
 
+/* Recommended For You: end-edge fade. The solid color stop must stay on the
+   true outer edge and fade inward toward the cards — a fixed physical angle
+   would keep its solid stop on the right in both directions, which lands it
+   over the cards (not fading outward) once end-0 flips the box to the left
+   under RTL. Mirroring the angle (360 - 91.97) keeps the solid stop on the
+   outer edge in both directions. */
+.recommended-edge-fade {
+  background: linear-gradient(91.97deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
+}
+[dir="rtl"] .recommended-edge-fade {
+  background: linear-gradient(268.03deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
+}
+
 /* Hero carousel */
 .hero-swiper {
   overflow: hidden;
