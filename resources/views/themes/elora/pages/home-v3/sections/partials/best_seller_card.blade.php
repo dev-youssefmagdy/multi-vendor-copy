@@ -10,7 +10,7 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="absolute top-[4.66px] start-[4.66px] lg:top-[9px] lg:start-[9px] flex items-center justify-center size-[24.83px] lg:size-[47px] bg-white rounded-full shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]">
-        <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[15.52px] lg:size-[29px]" alt="" />
+        <svg class="size-[15.52px] lg:size-[29px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
       @if (!empty($p['sold']))
       <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[9.52px] lg:text-[18px] leading-[12px] tracking-[0.34px] lg:tracking-[0.64px] px-[4.08px] lg:px-[8px] py-[4.08px] lg:py-[6px] rounded-es-[5.44px] lg:rounded-es-[10px]" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>

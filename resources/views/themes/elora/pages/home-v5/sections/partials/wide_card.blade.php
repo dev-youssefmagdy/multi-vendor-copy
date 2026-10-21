@@ -10,11 +10,11 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="absolute top-[6px] start-[6px] lg:top-[6.17px] lg:start-[6.17px] bg-white cursor-pointer shadow lg:shadow-[0_4.11px_4.11px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[8.23px] rounded-full shrink-0 size-[26px] lg:size-[32.92px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[15px] lg:size-[20.57px]" />
+        <svg class="size-[15px] lg:size-[20.57px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @else
       <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[6px] start-[6px] lg:top-[6.17px] lg:start-[6.17px] bg-white cursor-pointer shadow lg:shadow-[0_4.11px_4.11px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[8.23px] rounded-full shrink-0 size-[26px] lg:size-[32.92px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[15px] lg:size-[20.57px]" />
+        <svg class="size-[15px] lg:size-[20.57px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
     <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[5.41px] rounded-tl-[6px] rounded-br-[6px] shrink-0" style="background:var(--color-yellow)">

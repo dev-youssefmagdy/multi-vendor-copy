@@ -10,11 +10,11 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="absolute top-[3.77px] start-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[22px]" />
+        <svg class="size-[12.57px] lg:size-[22px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @else
       <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[3.77px] start-[3.77px] bg-white cursor-pointer shadow-[0_2.51px_2.51px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] rounded-full shrink-0 size-[20.11px] lg:size-[34px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[22px]" />
+        <svg class="size-[12.57px] lg:size-[22px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
     <div class="absolute top-0 end-0 flex items-center justify-center p-[3.31px] rounded-tl-[4.41px] rounded-br-[4.41px] shrink-0" style="background:var(--color-yellow)">

@@ -13,7 +13,7 @@
           aria-label="{{ __('Add to favorites') }}"
           class="flex items-center justify-center w-[29.16px] h-[29.16px] lg:w-[42.9px] lg:h-[42.9px] p-[7.29px] lg:p-[10.72px] bg-white rounded-full shadow-[0px_3.64519px_3.64519px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.36193px_5.36193px_rgba(0,0,0,0.15)] transition-transform duration-150 ease active:scale-95"
         >
-          <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[18.23px] lg:size-[26.81px]" />
+          <svg class="size-[18.23px] lg:size-[26.81px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
         </button>
         <span
           class="flex items-center justify-center h-[22.37px] px-[4.79px] lg:h-[32.9px] lg:px-[7.05px] text-[11.1838px] lg:text-[16.4509px] font-normal leading-[14px] lg:leading-[21px] tracking-[0.399421px] lg:tracking-[0.587531px] rounded-tr-[6.39px] rounded-bl-[6.39px] lg:rounded-tr-[9.4px] lg:rounded-bl-[9.4px]"

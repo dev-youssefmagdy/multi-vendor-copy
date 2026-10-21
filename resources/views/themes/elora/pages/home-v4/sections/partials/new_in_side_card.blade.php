@@ -6,7 +6,7 @@
     <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
       data-fav='{{ $p['favData'] ?? '{}' }}'
       aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[8px] lg:start-[8px] bg-white cursor-pointer shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.39px_5.39px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] lg:p-[10.79px] rounded-full size-[20.11px] lg:size-[43.15px]">
-      <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-[26.97px]" />
+      <svg class="size-[12.57px] lg:size-[26.97px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
     <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] w-[39.61px] lg:w-[84.18px] whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</span>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
