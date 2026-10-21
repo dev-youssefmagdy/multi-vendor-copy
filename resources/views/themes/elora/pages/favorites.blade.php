@@ -6,7 +6,7 @@
         <div
             class="max-w-[1390px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
             <a href="{{ route('tenant.home') }}"
-                class="hover:text-main transition-colors tracking-[0.5px]">{{ __('Home') }}</a>
+                class="hover:text-[var(--color-primary)] transition-colors tracking-[0.5px]">{{ __('Home') }}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="m9 18 6-6-6-6" />
             </svg>
@@ -40,19 +40,19 @@
         {{-- Sort / filter bar --}}
         <div class="flex items-center gap-1 gap-y-3 sm:gap-3 mb-6 flex-wrap">
             <button onclick="sortFavorites('recent')" id="sort-recent"
-                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-main text-xs sm:text-sm text-white bg-main font-medium">
+                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[var(--color-primary)] text-xs sm:text-sm text-white bg-[var(--color-primary)] font-medium">
                 {{ __('Recently added') }}
             </button>
             <button onclick="sortFavorites('price-asc')" id="sort-price-asc"
-                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-xs sm:text-sm text-[#555] hover:border-main hover:text-main transition-colors bg-white">
+                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-xs sm:text-sm text-[#555] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors bg-white">
                 {{ __('Price: Low to High') }}
             </button>
             <button onclick="sortFavorites('price-desc')" id="sort-price-desc"
-                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-sm text-[#555] hover:border-main hover:text-main transition-colors bg-white">
+                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-sm text-[#555] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors bg-white">
                 {{ __('Price: High to Low') }}
             </button>
             <button onclick="sortFavorites('name')" id="sort-name"
-                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-xs sm:text-sm text-[#555] hover:border-main hover:text-main transition-colors bg-white">
+                class="sort-btn px-2 sm:px-4 py-2 rounded-full border border-[#E0E0E0] text-xs sm:text-sm text-[#555] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors bg-white">
                 {{ __('Name A–Z') }}
             </button>
             <button onclick="addAllToCart()"
@@ -106,7 +106,7 @@
             // ── build card HTML ───────────────────────────────────
             function buildCard(item, idx) {
                 const badge = item.badge ?
-                    `<span class="absolute top-0 right-0 text-xs px-2 py-1.5 font-normal tracking-wide" style="background:#FF4D00;color:#fff;border-radius:0 8px 0 8px">${item.badge}</span>` :
+                    `<span class="absolute top-0 right-0 text-xs px-2 py-1.5 font-normal tracking-wide" style="background:var(--color-primary);color:#fff;border-radius:0 8px 0 8px">${item.badge}</span>` :
                     '';
                 const img = item.image ?
                     `<img loading="lazy" src="${item.image}" alt="" class="w-full h-full object-cover"/>` :
@@ -124,16 +124,16 @@
                 ${img}
                 ${badge}
                 <button class="fav-btn absolute top-2.5 left-2.5 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10" onclick="removeFavoriteByIndex(${idx})" title="{{ __('Remove from favorites') }}">
-                  <svg class="w-4 h-4" fill="#FF4D00" stroke="#FF4D00" stroke-width="1" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  <svg class="w-4 h-4" fill="var(--color-primary)" stroke="var(--color-primary)" stroke-width="1" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </button>
-                <button class="add-cart-btn absolute bottom-3 right-3 w-10 h-10 bg-[#FDFDFD] rounded-2xl flex items-center justify-center shadow-md hover:bg-main transition-colors z-10" onclick="addToCartItem(${idx})">
+                <button class="add-cart-btn absolute bottom-3 right-3 w-10 h-10 bg-[#FDFDFD] rounded-2xl flex items-center justify-center shadow-md hover:bg-[var(--color-primary)] transition-colors z-10" onclick="addToCartItem(${idx})">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 </button>
               </div>
               <div class="p-3 flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
                   <span class="text-base font-medium text-[#171717] tracking-[0.5px] truncate max-w-[140px]">${item.name || ''}</span>
-                  ${item.weight ? `<span class="text-sm text-main font-normal tracking-[0.5px] flex-shrink-0 ml-1">${item.weight}</span>` : ''}
+                  ${item.weight ? `<span class="text-sm text-[var(--color-primary)] font-normal tracking-[0.5px] flex-shrink-0 ml-1">${item.weight}</span>` : ''}
                 </div>
                 ${item.description ? `<p class="text-sm text-[#ADADAD] tracking-[0.5px] truncate">${item.description}</p>` : ''}
                 <div class="flex items-center gap-1">${stars}<span class="text-xs text-[#ADADAD] ml-1 tracking-[0.5px]">${item.rating || ''} ${item.reviews ? '(+' + item.reviews + ')' : ''}</span></div>
@@ -210,7 +210,7 @@
                 // Show brief feedback on button
                 const btn = document.querySelectorAll('.add-cart-btn')[idx];
                 if (btn) {
-                    btn.style.background = '#FF4D00';
+                    btn.style.background = "var(--color-primary)";
                     setTimeout(() => {
                         btn.style.background = '';
                     }, 600);
@@ -232,12 +232,12 @@
             window.sortFavorites = function (type) {
                 currentSort = type;
                 document.querySelectorAll('.sort-btn').forEach(btn => {
-                    btn.classList.remove('bg-main', 'text-white', 'border-main', 'font-medium');
+                    btn.classList.remove('bg-[var(--color-primary)]', 'text-white', 'border-[var(--color-primary)]', 'font-medium');
                     btn.classList.add('text-[#555]', 'bg-white', 'border-[#E0E0E0]');
                 });
                 const active = document.getElementById('sort-' + type);
                 if (active) {
-                    active.classList.add('bg-main', 'text-white', 'border-main', 'font-medium');
+                    active.classList.add('bg-[var(--color-primary)]', 'text-white', 'border-[var(--color-primary)]', 'font-medium');
                     active.classList.remove('text-[#555]', 'bg-white', 'border-[#E0E0E0]');
                 }
                 render();

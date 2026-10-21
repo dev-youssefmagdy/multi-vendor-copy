@@ -49,14 +49,14 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
             @endphp
             <div class="mb-4 lg:mb-10 block p-1 lg:p-0">
                 <div
-                    class="bg-[#F7F7F7] sm:bg-[rgba(255,77,0,0.04)] w-full rounded-md px-[18px] py-3 sm:border border-[#FF4D00] shipping-modal-trigger cursor-pointer">
+                    class="bg-[#F7F7F7] sm:bg-[var(--color-primary)]/[0.04] w-full rounded-md px-[18px] py-3 sm:border border-[var(--color-primary)] shipping-modal-trigger cursor-pointer">
 
                     {{-- Desktop layout --}}
                     <div class="sm:flex items-center gap-4">
                         {{-- Truck icon badge --}}
-                        <div class="shrink-0 w-11 h-11 rounded-full bg-[#FF4D00]/10 flex items-center justify-center">
+                        <div class="shrink-0 w-11 h-11 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center">
                             <svg width="22" height="16" viewBox="0 0 31 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.375 12.8219C0.985421 12.8219 0.659088 12.6903 0.396005 12.4272C0.132921 12.1642 0.000921408 11.8374 4.74138e-06 11.4469C-0.000911925 11.0564 0.131088 10.73 0.396005 10.4679C0.660921 10.2057 0.987255 10.0737 1.375 10.0719H6.1875C6.57709 10.0719 6.90388 10.2039 7.16788 10.4679C7.43188 10.7319 7.56342 11.0582 7.5625 11.4469C7.56159 11.8355 7.42959 12.1623 7.1665 12.4272C6.90342 12.6922 6.57709 12.8237 6.1875 12.8219H1.375ZM5.67188 20.7969C4.8698 19.9948 4.46875 19.0208 4.46875 17.875H2.75C2.29167 17.875 1.925 17.7031 1.65 17.3594C1.375 17.0156 1.2948 16.626 1.40938 16.1906L1.71875 14.8844H6.01563C6.97813 14.8844 7.79167 14.5521 8.45625 13.8875C9.12084 13.2229 9.45313 12.4094 9.45313 11.4469C9.45313 11.149 9.41875 10.874 9.35001 10.6219C9.28125 10.3698 9.18959 10.1177 9.075 9.86563H10.3813C11.3438 9.86563 12.1573 9.53333 12.8219 8.86875C13.4865 8.20417 13.8188 7.39063 13.8188 6.42813C13.8188 5.46563 13.4865 4.65208 12.8219 3.9875C12.1573 3.32292 11.3438 2.99063 10.3813 2.99063H5.15625L5.3625 2.16562C5.5 1.52396 5.81534 1.00283 6.3085 0.60225C6.80167 0.201667 7.38009 0.000916667 8.04375 0H22C22.4583 0 22.825 0.171875 23.1 0.515625C23.375 0.859375 23.4552 1.24896 23.3406 1.68437L22.4469 5.5H25.0938C25.5292 5.5 25.9417 5.59763 26.3313 5.79288C26.7208 5.98813 27.0417 6.25717 27.2938 6.6L29.8719 10.0031C30.124 10.324 30.2844 10.6737 30.3531 11.0522C30.4219 11.4308 30.4219 11.8145 30.3531 12.2031L29.425 16.775C29.3563 17.0958 29.1958 17.3594 28.9438 17.5656C28.6917 17.7719 28.4052 17.875 28.0844 17.875H26.4688C26.4688 19.0208 26.0677 19.9948 25.2656 20.7969C24.4635 21.599 23.4896 22 22.3438 22C21.1979 22 20.224 21.599 19.4219 20.7969C18.6198 19.9948 18.2188 19.0208 18.2188 17.875H12.7188C12.7188 19.0208 12.3177 19.9948 11.5156 20.7969C10.7135 21.599 9.73959 22 8.59375 22C7.44792 22 6.47396 21.599 5.67188 20.7969ZM4.125 7.80313C3.73542 7.80313 3.40909 7.67112 3.146 7.40712C2.88292 7.14313 2.75092 6.81679 2.75 6.42813C2.74909 6.03946 2.88109 5.71312 3.146 5.44912C3.41092 5.18512 3.73725 5.05313 4.125 5.05313H10.3125C10.7021 5.05313 11.0289 5.18512 11.2929 5.44912C11.5569 5.71312 11.6884 6.03946 11.6875 6.42813C11.6866 6.81679 11.5546 7.14358 11.2915 7.4085C11.0284 7.67342 10.7021 7.80496 10.3125 7.80313H4.125ZM8.59375 19.25C8.98334 19.25 9.31013 19.118 9.57413 18.854C9.83813 18.59 9.96967 18.2637 9.96875 17.875C9.96784 17.4863 9.83584 17.16 9.57275 16.896C9.30967 16.632 8.98334 16.5 8.59375 16.5C8.20417 16.5 7.87784 16.632 7.61475 16.896C7.35167 17.16 7.21967 17.4863 7.21875 17.875C7.21784 18.2637 7.34984 18.5905 7.61475 18.8554C7.87967 19.1203 8.206 19.2518 8.59375 19.25ZM22.3438 19.25C22.7333 19.25 23.0601 19.118 23.3241 18.854C23.5881 18.59 23.7197 18.2637 23.7188 17.875C23.7178 17.4863 23.5858 17.16 23.3228 16.896C23.0597 16.632 22.7333 16.5 22.3438 16.5C21.9542 16.5 21.6278 16.632 21.3648 16.896C21.1017 17.16 20.9697 17.4863 20.9688 17.875C20.9678 18.2637 21.0998 18.5905 21.3648 18.8554C21.6297 19.1203 21.956 19.2518 22.3438 19.25ZM20.8656 12.375H27.5L27.6375 11.6531L25.0938 8.25H21.8281L20.8656 12.375Z" fill="#FF4D00"/>
+                                <path d="M1.375 12.8219C0.985421 12.8219 0.659088 12.6903 0.396005 12.4272C0.132921 12.1642 0.000921408 11.8374 4.74138e-06 11.4469C-0.000911925 11.0564 0.131088 10.73 0.396005 10.4679C0.660921 10.2057 0.987255 10.0737 1.375 10.0719H6.1875C6.57709 10.0719 6.90388 10.2039 7.16788 10.4679C7.43188 10.7319 7.56342 11.0582 7.5625 11.4469C7.56159 11.8355 7.42959 12.1623 7.1665 12.4272C6.90342 12.6922 6.57709 12.8237 6.1875 12.8219H1.375ZM5.67188 20.7969C4.8698 19.9948 4.46875 19.0208 4.46875 17.875H2.75C2.29167 17.875 1.925 17.7031 1.65 17.3594C1.375 17.0156 1.2948 16.626 1.40938 16.1906L1.71875 14.8844H6.01563C6.97813 14.8844 7.79167 14.5521 8.45625 13.8875C9.12084 13.2229 9.45313 12.4094 9.45313 11.4469C9.45313 11.149 9.41875 10.874 9.35001 10.6219C9.28125 10.3698 9.18959 10.1177 9.075 9.86563H10.3813C11.3438 9.86563 12.1573 9.53333 12.8219 8.86875C13.4865 8.20417 13.8188 7.39063 13.8188 6.42813C13.8188 5.46563 13.4865 4.65208 12.8219 3.9875C12.1573 3.32292 11.3438 2.99063 10.3813 2.99063H5.15625L5.3625 2.16562C5.5 1.52396 5.81534 1.00283 6.3085 0.60225C6.80167 0.201667 7.38009 0.000916667 8.04375 0H22C22.4583 0 22.825 0.171875 23.1 0.515625C23.375 0.859375 23.4552 1.24896 23.3406 1.68437L22.4469 5.5H25.0938C25.5292 5.5 25.9417 5.59763 26.3313 5.79288C26.7208 5.98813 27.0417 6.25717 27.2938 6.6L29.8719 10.0031C30.124 10.324 30.2844 10.6737 30.3531 11.0522C30.4219 11.4308 30.4219 11.8145 30.3531 12.2031L29.425 16.775C29.3563 17.0958 29.1958 17.3594 28.9438 17.5656C28.6917 17.7719 28.4052 17.875 28.0844 17.875H26.4688C26.4688 19.0208 26.0677 19.9948 25.2656 20.7969C24.4635 21.599 23.4896 22 22.3438 22C21.1979 22 20.224 21.599 19.4219 20.7969C18.6198 19.9948 18.2188 19.0208 18.2188 17.875H12.7188C12.7188 19.0208 12.3177 19.9948 11.5156 20.7969C10.7135 21.599 9.73959 22 8.59375 22C7.44792 22 6.47396 21.599 5.67188 20.7969ZM4.125 7.80313C3.73542 7.80313 3.40909 7.67112 3.146 7.40712C2.88292 7.14313 2.75092 6.81679 2.75 6.42813C2.74909 6.03946 2.88109 5.71312 3.146 5.44912C3.41092 5.18512 3.73725 5.05313 4.125 5.05313H10.3125C10.7021 5.05313 11.0289 5.18512 11.2929 5.44912C11.5569 5.71312 11.6884 6.03946 11.6875 6.42813C11.6866 6.81679 11.5546 7.14358 11.2915 7.4085C11.0284 7.67342 10.7021 7.80496 10.3125 7.80313H4.125ZM8.59375 19.25C8.98334 19.25 9.31013 19.118 9.57413 18.854C9.83813 18.59 9.96967 18.2637 9.96875 17.875C9.96784 17.4863 9.83584 17.16 9.57275 16.896C9.30967 16.632 8.98334 16.5 8.59375 16.5C8.20417 16.5 7.87784 16.632 7.61475 16.896C7.35167 17.16 7.21967 17.4863 7.21875 17.875C7.21784 18.2637 7.34984 18.5905 7.61475 18.8554C7.87967 19.1203 8.206 19.2518 8.59375 19.25ZM22.3438 19.25C22.7333 19.25 23.0601 19.118 23.3241 18.854C23.5881 18.59 23.7197 18.2637 23.7188 17.875C23.7178 17.4863 23.5858 17.16 23.3228 16.896C23.0597 16.632 22.7333 16.5 22.3438 16.5C21.9542 16.5 21.6278 16.632 21.3648 16.896C21.1017 17.16 20.9697 17.4863 20.9688 17.875C20.9678 18.2637 21.0998 18.5905 21.3648 18.8554C21.6297 19.1203 21.956 19.2518 22.3438 19.25ZM20.8656 12.375H27.5L27.6375 11.6531L25.0938 8.25H21.8281L20.8656 12.375Z" fill="var(--color-primary)"/>
                             </svg>
                         </div>
                         {{-- Text + progress bar --}}
@@ -64,9 +64,9 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                             <div class="flex items-center justify-between mb-2.5">
                                 <div class="text-[15px] leading-snug">
                                     @if ($cartWeight >= $shippingThreshold)
-                                        <span class="text-[#FF4D00] font-semibold text-[17px]">{{ __("You've reached free shipping!") }}</span>
+                                        <span class="text-[var(--color-primary)] font-semibold text-[17px]">{{ __("You've reached free shipping!") }}</span>
                                     @else
-                                        <span class="font-semibold text-[17px] text-[#FF4D00]">{{ __('Free Shipping!') }}</span>
+                                        <span class="font-semibold text-[17px] text-[var(--color-primary)]">{{ __('Free Shipping!') }}</span>
                                         <span class="text-[#555] ms-2">{{ __("You're") }}
                                             <span class="font-semibold text-[#242424]">{{ number_format($cartWeight) }}{{ __('g') }}</span>
                                             {{ __('away — add') }}
@@ -75,10 +75,10 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                         </span>
                                     @endif
                                 </div>
-                                <span class="ms-4 shrink-0 text-[12px] font-semibold text-[#FF4D00] bg-[#FF4D00]/10 px-3 py-0.5 rounded-full tabular-nums">{{ $eloraPct }}%</span>
+                                <span class="ms-4 shrink-0 text-[12px] font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-3 py-0.5 rounded-full tabular-nums">{{ $eloraPct }}%</span>
                             </div>
                             <div class="h-2 bg-[#D9D9D9] rounded-full overflow-hidden">
-                                <div class="h-full bg-[#FF4D00] rounded-full transition-all duration-500" style="width: {{ $eloraPct }}%"></div>
+                                <div class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $eloraPct }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -86,16 +86,16 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                     {{-- Mobile layout --}}
                     {{-- <p class="sm:hidden text-black text-base text-[10px] flex items-center">
                         @if ($cartWeight >= $shippingThreshold && $shippingThreshold > 0)
-                        <span class="text-[#FF4D00] font-medium text-[14px] ms-auto">{{ __('Free shipping!') }}</span>
+                        <span class="text-[var(--color-primary)] font-medium text-[14px] ms-auto">{{ __('Free shipping!') }}</span>
                         @elseif ($shippingThreshold > 0)
                         {{ __("You're") }}
-                        <span class="font-medium text-[14px] text-[#FF4D00]">{{ number_format($cartWeight) }}{{ __('g') }} </span>
+                        <span class="font-medium text-[14px] text-[var(--color-primary)]">{{ number_format($cartWeight) }}{{ __('g') }} </span>
                         {{ __('away from') }}
-                        <span class="text-[#FF4D00] font-medium text-[14px] ms-auto">{{ __('Free shipping!') }}</span>
+                        <span class="text-[var(--color-primary)] font-medium text-[14px] ms-auto">{{ __('Free shipping!') }}</span>
                         @endif
                     </p>
                     <div class="sm:hidden h-5 bg-[#D9D9D9] rounded-3xl mt-2">
-                        <div class="h-full bg-[#FF4D00] rounded-3xl relative" style="width: {{ $eloraPct }}%">
+                        <div class="h-full bg-[var(--color-primary)] rounded-3xl relative" style="width: {{ $eloraPct }}%">
                             <svg width="27" height="11" viewBox="0 0 27 11" fill="none"
                                 class="absolute right-1 top-1/2 -translate-y-1/2"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -210,7 +210,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                     <div class="flex justify-between items-center gap-2">
                                                         <a href="{{ $productUrl }}" class="text-[#171717] text-xs sm:text-base font-normal font-['Outfit'] line-clamp-1 flex-1 min-w-0">{{ $productName }}</a>
                                                         @if($weightGrams > 0)
-                                                        <span class="text-[#FF4D00] text-xs sm:text-base font-normal font-['Outfit'] whitespace-nowrap shrink-0">{{ $weightGrams }}g</span>
+                                                        <span class="text-[var(--color-primary)] text-xs sm:text-base font-normal font-['Outfit'] whitespace-nowrap shrink-0">{{ $weightGrams }}g</span>
                                                         @endif
                                                     </div>
                                                     @if($variantTitle)
@@ -238,7 +238,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                             </div>
                                             @endif
                                             {{-- Delivery --}}
-                                            <p class="text-[#FF4D00] text-sm font-normal font-['Outfit'] tracking-[0.5px]">
+                                            <p class="text-[var(--color-primary)] text-sm font-normal font-['Outfit'] tracking-[0.5px]">
                                                 {{ __('Estimated delivery') }}: {{ $deliveryFrom }} - {{ $deliveryTo }}
                                             </p>
                                         </div>
@@ -263,15 +263,15 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                     </svg>
                                                 </button>
                                                 <div class="w-[18px] h-[18px] bg-[#FFD3C0] rounded-full flex items-center justify-center">
-                                                    <span x-text="qty" class="text-[#FF4D00] text-xs font-medium font-['Outfit'] tracking-[0.5px] leading-none"></span>
+                                                    <span x-text="qty" class="text-[var(--color-primary)] text-xs font-medium font-['Outfit'] tracking-[0.5px] leading-none"></span>
                                                 </div>
                                                 <button type="button"
                                                     @click="qty++; $wire.updateQty('{{ $key }}', qty)"
                                                     class="w-[18px] h-[18px] flex items-center justify-center hover:opacity-70 transition"
                                                     aria-label="{{ __('Increase quantity') }}">
                                                     <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
-                                                        <line x1="9" y1="3.75" x2="9" y2="14.25" stroke="#FF4D00" stroke-width="1.5" stroke-linecap="round"/>
-                                                        <line x1="3.75" y1="9" x2="14.25" y2="9" stroke="#FF4D00" stroke-width="1.5" stroke-linecap="round"/>
+                                                        <line x1="9" y1="3.75" x2="9" y2="14.25" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round"/>
+                                                        <line x1="3.75" y1="9" x2="14.25" y2="9" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round"/>
                                                     </svg>
                                                 </button>
                                             </div>
@@ -294,7 +294,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                             </p>
                         </div>
                         <a href="{{ route('tenant.storefront.checkout') }}"
-                            class="w-full bg-main text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center">
+                            class="w-full bg-[var(--color-primary)] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center">
                             {{ __('Checkout') }}
                         </a>
                         @if ($cartDiscount > 0)
@@ -307,7 +307,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 
                     {{-- Mobile Trust Badges --}}
                     @if ($relatedProducts->isNotEmpty())
-                    <div class="sm:hidden bg-[#f562233d] p-2 rounded-lg border border-main mt-8">
+                    <div class="sm:hidden bg-[#f562233d] p-2 rounded-lg border border-[var(--color-primary)] mt-8">
                         <h3 class="font-bold">{{ __('People buy with') }} :</h3>
                         <div class="flex items-center justify-between mt-3">
                             @foreach ($relatedProducts->take(2) as $relatedProduct)

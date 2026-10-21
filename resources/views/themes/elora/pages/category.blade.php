@@ -84,21 +84,21 @@ $pageBase = $category
                             <input type="checkbox"
                                 {{ $sale === 'on_sale' ? 'checked' : '' }}
                                 wire:click="toggleSale('on_sale')"
-                                class="w-4 h-4 accent-[#FF4D00] rounded-[4px]">
+                                class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('On sale') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $sale === 'flash_sale' ? 'checked' : '' }}
                                 wire:click="toggleSale('flash_sale')"
-                                class="w-4 h-4 accent-[#FF4D00] rounded-[4px]">
+                                class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Flash Sale') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $productFlag === 'featured' ? 'checked' : '' }}
                                 wire:click="toggleProductFlag('featured')"
-                                class="w-4 h-4 accent-[#FF4D00] rounded-[4px]">
+                                class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Featured') }}</span>
                         </label>
                     </div>
@@ -139,7 +139,7 @@ $pageBase = $category
                             <input type="radio" name="ratings_sidebar" value="{{ $star }}"
                                 {{ $ratings == $star ? 'checked' : '' }}
                                 wire:click="toggleRatings('{{ $star }}')"
-                                class="w-4 h-4 accent-[#FF4D00]">
+                                class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="flex items-center gap-0.5">
                                 @for($i = 1; $i <= 5; $i++) <svg class="w-[10px] h-[10px]"
                                     fill="{{ $i <= $star ? '#FFE100' : '#D5D5D5' }}" viewBox="0 0 20 20">
@@ -155,7 +155,7 @@ $pageBase = $category
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="ratings_sidebar" value="" checked
                                 wire:click="$set('ratings', '')"
-                                class="w-4 h-4 accent-[#FF4D00]">
+                                class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[13px] text-[#ADADAD]">{{ __('Any rating') }}</span>
                         </label>
                         @endif
@@ -177,21 +177,21 @@ $pageBase = $category
                             <input type="radio" name="availability_sidebar" value="in_stock"
                                 {{ $availability === 'in_stock' ? 'checked' : '' }}
                                 wire:click="$set('availability', 'in_stock')"
-                                class="w-4 h-4 accent-[#FF4D00]">
+                                class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('In Stock') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="out_of_stock"
                                 {{ $availability === 'out_of_stock' ? 'checked' : '' }}
                                 wire:click="$set('availability', 'out_of_stock')"
-                                class="w-4 h-4 accent-[#FF4D00]">
+                                class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Out of Stock') }}</span>
                         </label>
                         @if($availability)
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="" checked
                                 wire:click="$set('availability', '')"
-                                class="w-4 h-4 accent-[#FF4D00]">
+                                class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[13px] text-[#ADADAD]">{{ __('All') }}</span>
                         </label>
                         @endif
@@ -201,7 +201,7 @@ $pageBase = $category
                 {{-- Apply (close drawer on mobile) + Reset --}}
                 <div class="pt-4 pb-2 flex flex-col gap-2">
                     <button type="button" onclick="toggleMobileFilters()"
-                        class="w-full h-10 rounded-full bg-[#FF4D00] text-white text-[14px] font-medium hover:opacity-90 transition lg:hidden">
+                        class="w-full h-10 rounded-full bg-[var(--color-primary)] text-white text-[14px] font-medium hover:opacity-90 transition lg:hidden">
                         {{ __('Apply filters') }}
                     </button>
                     <button type="button" wire:click="clearFilters"
@@ -290,7 +290,7 @@ $pageBase = $category
                         <option value="rating">{{ __('Top rated') }}</option>
                     </select>
                     <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF4D00"
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)"
                             stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
@@ -321,7 +321,7 @@ $pageBase = $category
                     <a href="{{ route('tenant.storefront.category', $parent?->slug ?? null) }}"
                         class="flex flex-col items-center gap-2 shrink-0 group" style="width:80px; padding-bottom:15px">
                         <div class="flex items-center justify-center overflow-hidden rounded-full transition p-[1px]
-                                        {{ $isCatActive ? 'bg-[#fff0e8] border-2 border-[#FF4D00]' : 'bg-[#F3F4F6] border border-[#E5E7EB] group-hover:border-[#FF4D00]' }}"
+                                        {{ $isCatActive ? 'bg-[#fff0e8] border-2 border-[var(--color-primary)]' : 'bg-[#F3F4F6] border border-[#E5E7EB] group-hover:border-[var(--color-primary)]' }}"
                             style="width:64px; height:64px;">
                                 <svg class="w-7 h-7 text-[#888]" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                     stroke-width="1.8">
@@ -339,7 +339,7 @@ $pageBase = $category
                     <a href="{{ route('tenant.storefront.category', $rc->slug) }}"
                         class="flex flex-col items-center gap-2 shrink-0 group" style="width:80px; padding-bottom:15px">
                         <div class="flex items-center justify-center overflow-hidden rounded-full transition p-[1px]
-                                        {{ $isCatActive ? 'bg-[#fff0e8] border-2 border-[#FF4D00]' : 'bg-[#F3F4F6] border border-[#E5E7EB] group-hover:border-[#FF4D00]' }}"
+                                        {{ $isCatActive ? 'bg-[#fff0e8] border-2 border-[var(--color-primary)]' : 'bg-[#F3F4F6] border border-[#E5E7EB] group-hover:border-[var(--color-primary)]' }}"
                             style="width:64px; height:64px;">
                             @if ($rc->thumb_url)
                             <img loading="lazy" src="{{ $rc->thumb_url }}" alt="{{ $rc->name }}"
@@ -369,7 +369,7 @@ $pageBase = $category
                         {{ __('Try widening the price range, clearing a filter, or browsing another category.') }}
                     </p>
                     <button type="button" wire:click="clearFilters"
-                        class="inline-flex items-center px-5 py-2.5 rounded-full bg-[#242424] text-white text-[13px] font-semibold hover:bg-main transition-colors">
+                        class="inline-flex items-center px-5 py-2.5 rounded-full bg-[#242424] text-white text-[13px] font-semibold hover:bg-[var(--color-primary)] transition-colors">
                         {{ __('Clear filters') }}
                     </button>
                 </div>
@@ -395,7 +395,7 @@ $pageBase = $category
                     data-max="{{ $max }}"
                     class="w-full flex justify-center py-8">
                     <span id="elora-loading-spinner" class="{{ $products->hasMorePages() ? '' : 'hidden' }} flex items-center gap-2 text-sm text-[#888]">
-                        <svg class="animate-spin w-4 h-4 text-[#FF4D00]" fill="none" viewBox="0 0 24 24">
+                        <svg class="animate-spin w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                         </svg>
