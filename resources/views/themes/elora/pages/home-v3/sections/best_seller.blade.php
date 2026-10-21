@@ -153,6 +153,18 @@
     }
     @media (min-width: 1024px) {
         .elora-v3-best__fade { display: none; }
+        /* Same Swiper .swiper-pagination-horizontal bleed-through as the
+           mobile #bestSellerDotsV3 block above (bottom: 10px; left: 0;
+           width: 100%) - reset every inset so only top/end survive. */
+        #bestSellerDotsV3 {
+            position: absolute !important;
+            inset: auto !important;
+            top: 30px !important;
+            inset-inline-end: 45px !important;
+            width: auto !important;
+            height: auto !important;
+            flex-direction: column;
+        }
     }
 </style>
 
@@ -182,8 +194,13 @@
       if (current) return;
 
       if (!isMobile) {
-        // Desktop keeps the comp's auto-width row.
-        var wide = new Swiper(el, { slidesPerView: 'auto', spaceBetween: 32 });
+        // Desktop keeps the comp's auto-width row, with its own bullet
+        // navigation (top-right of the section, see #bestSellerDotsV3 CSS).
+        var wide = new Swiper(el, {
+          slidesPerView: 'auto',
+          spaceBetween: 32,
+          pagination: { el: '#bestSellerDotsV3', clickable: true },
+        });
         wide.__eloraV3BestGrid = false;
         return;
       }
@@ -244,8 +261,11 @@
         <h2 class="font-medium text-[18px] leading-[23px] lg:text-[32px] text-white">
           {{ __('Best Seller') }}
         </h2>
-        {{-- Swiper fills this with one bullet per page of four cards. --}}
-        <div class="flex lg:hidden items-end gap-[3px]" id="bestSellerDotsV3"></div>
+        {{-- Swiper fills this with one bullet per page. Mobile: vertical
+             pill stack at the header's end edge (see the media-query rules
+             above). Desktop: horizontal row pinned to the section's
+             top-right corner (see #bestSellerDotsV3 in elora-v3.css). --}}
+        <div class="flex items-center gap-[3px] lg:absolute lg:top-0 lg:end-0 lg:gap-[5px]" id="bestSellerDotsV3"></div>
       </div>
       @if ($bestSellerProducts->isEmpty())
         <p class="text-sm text-white/70 py-6 w-full">{{ __('No best sellers yet.') }}</p>

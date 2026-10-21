@@ -89,11 +89,16 @@ function initCarousels() {
   }
 
   // Shop by Category: real Swiper carousel so it can hold many records.
+  // Mobile shows 2.25 cards per view (a peek of the next card); desktop
+  // keeps the comp's auto (intrinsic-width) cards.
   const shopByCategorySwiper = document.getElementById("shopByCategorySwiper");
   if (shopByCategorySwiper) {
     new Swiper(shopByCategorySwiper, {
-      slidesPerView: "auto",
+      slidesPerView: 2.25,
       spaceBetween: 13,
+      breakpoints: {
+        1024: { slidesPerView: "auto" },
+      },
       navigation: {
         prevEl: "#shopByCategoryPrev",
         nextEl: "#shopByCategoryNext",

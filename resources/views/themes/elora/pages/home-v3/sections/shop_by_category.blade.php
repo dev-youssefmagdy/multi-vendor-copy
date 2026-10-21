@@ -17,10 +17,10 @@
                 $catName = $cat->translationValue('name') ?? $cat->name;
                 $catNameDisplay = \Illuminate\Support\Str::limit($catName, 20);
               @endphp
-              <div class="swiper-slide !w-[145px] lg:!w-[240.37px]">
+              <div class="swiper-slide lg:!w-[240.37px]">
                 <a
                   href="{{ route('tenant.storefront.category', $cat->slug) }}"
-                  class="group relative block rounded-[16px] lg:rounded-[25.47px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19.1px] h-[220px] lg:h-[382.04px] w-[145px] lg:w-[240.37px] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
+                  class="group relative block rounded-[16px] lg:rounded-[25.47px] overflow-hidden flex items-end justify-start p-[16px] lg:p-[19.1px] h-[220px] lg:h-[382.04px] w-full lg:w-[240.37px] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
                 >
                   <img
                     src="{{ $cat->thumb_url ?? asset('elora-3/assets/images/' . $shopByCatFallbackImgs[$loop->index % 3]) }}"
@@ -57,7 +57,30 @@
             @endforeach
           </div>
         </div>
-
+        <button
+          id="shopByCategoryPrev"
+          type="button"
+          aria-label="{{ __('Previous') }}"
+          class="swiper-nav-btn swiper-nav-prev"
+        >
+          <img
+            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
+            class="size-[14px] rotate-90 rtl:-rotate-90"
+            alt=""
+          />
+        </button>
+        <button
+          id="shopByCategoryNext"
+          type="button"
+          aria-label="{{ __('Next') }}"
+          class="swiper-nav-btn swiper-nav-next"
+        >
+          <img
+            src="{{ asset('elora-3/assets/icons/arrow-down.svg') }}"
+            class="size-[14px] -rotate-90 rtl:rotate-90"
+            alt=""
+          />
+        </button>
       </div>
       <a
         href="{{ route('tenant.storefront.category') }}"
