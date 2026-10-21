@@ -100,7 +100,7 @@
                 </svg>
 
                 <span class="text-white">{{ __('Free shipping worldwide.') }}</span>
-                <span class="text-gray-300">{{ __('Orders over') }} <span class="text-blue-500">{{ $freeShippingThreshold ?? '$200' }}</span></span>
+                <span class="text-gray-300">{{ __('Orders over') }} <span class="text-[var(--sq-primary)]">{{ $freeShippingThreshold ?? '$200' }}</span></span>
             </p>
             @endif
             {{-- Locale / Currency switcher Livewire component handles trigger + modal --}}
@@ -122,7 +122,7 @@
         <!-- Search bar -->
         <div class="hidden lg:flex flex-1 items-center gap-2">
             <button type="button" onclick="event.stopPropagation(); document.getElementById('souqifyDeptMenu')?.classList.toggle('hidden')"
-                class="h-12 px-4 bg-blue-700 hover:bg-blue-800 transition rounded text-white flex items-center gap-2 text-sm shrink-0 relative">
+                class="h-12 px-4 bg-[var(--sq-primary)] hover:bg-[var(--sq-primary-hover)] transition rounded text-white flex items-center gap-2 text-sm shrink-0 relative">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
@@ -137,7 +137,7 @@
                     <div class="max-h-96 overflow-y-auto py-2">
                         @forelse ($categories as $category)
                             <a href="{{ route('tenant.storefront.category', $category->slug) }}"
-                                class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-900 hover:bg-blue-50 hover:text-blue-700 transition">
+                                class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-900 hover:bg-[var(--sq-primary-soft)] hover:text-[var(--sq-primary)] transition">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                                 <span class="flex-1 truncate">{{ $category->translationValue('name') }}</span>
                             </a>
@@ -166,7 +166,7 @@
                             <div class="max-h-96 overflow-y-auto py-2">
                                 @forelse ($categories as $category)
                                     <a href="{{ route('tenant.storefront.category', $category->slug) }}"
-                                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-900 hover:bg-blue-50 hover:text-blue-700 transition">
+                                        class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-900 hover:bg-[var(--sq-primary-soft)] hover:text-[var(--sq-primary)] transition">
                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                                         <span class="flex-1 truncate">{{ $category->translationValue('name') }}</span>
                                     </a>
@@ -176,7 +176,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="p-2 text-neutral-700 hover:text-blue-700 transition">
+                    <button type="submit" class="p-2 text-neutral-700 hover:text-[var(--sq-primary)] transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -187,7 +187,7 @@
                         class="flex-1 bg-transparent outline-none text-sm text-neutral-700 placeholder:text-neutral-500" />
                     {{-- Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.). --}}
                     <button type="button" data-image-search-trigger="storefront-image-search-modal"
-                        class="p-2 text-neutral-700 hover:text-blue-700 transition" aria-label="{{ __('Search by Image') }}">
+                        class="p-2 text-neutral-700 hover:text-[var(--sq-primary)] transition" aria-label="{{ __('Search by Image') }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
                             <circle cx="12" cy="13" r="3.2" />
@@ -201,7 +201,7 @@
         <!-- Right icons -->
         <div class="flex items-center gap-4 sm:gap-6 lg:gap-8 ml-auto lg:ml-4">
             <!-- <a href="{{ route('tenant.storefront.favorites') }}"
-                class="hidden sm:flex items-center gap-2 hover:text-blue-700 transition">
+                class="hidden sm:flex items-center gap-2 hover:text-[var(--sq-primary)] transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -210,7 +210,7 @@
             </a> -->
             <!-- cart icon -->
             <a href="{{ route('tenant.storefront.cart') }}"
-                class="flex items-center justify-center gap-2 hover:text-blue-700 transition relative w-[38px] h-[38px] lg:w-auto lg:h-auto rounded-full bg-white text-black">
+                class="flex items-center justify-center gap-2 hover:text-[var(--sq-primary)] transition relative w-[38px] h-[38px] lg:w-auto lg:h-auto rounded-full bg-white text-black">
                 <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none">
                     <path
                         d="M3.71 5.4H18.924C20.302 5.4 21.297 6.67 20.919 7.948L19.265 13.548C19.01 14.408 18.196 15 17.27 15H8.112C7.185 15 6.37 14.407 6.116 13.548L3.71 5.4ZM3.71 5.4L3 3M16.5 21C16.8978 21 17.2794 20.842 17.5607 20.5607C17.842 20.2794 18 19.8978 18 19.5C18 19.1022 17.842 18.7206 17.5607 18.4393C17.2794 18.158 16.8978 18 16.5 18C16.1022 18 15.7206 18.158 15.4393 18.4393C15.158 18.7206 15 19.1022 15 19.5C15 19.8978 15.158 20.2794 15.4393 20.5607C15.7206 20.842 16.1022 21 16.5 21ZM8.5 21C8.89782 21 9.27936 20.842 9.56066 20.5607C9.84196 20.2794 10 19.8978 10 19.5C10 19.1022 9.84196 18.7206 9.56066 18.4393C9.27936 18.158 8.89782 18 8.5 18C8.10218 18 7.72064 18.158 7.43934 18.4393C7.15804 18.7206 7 19.1022 7 19.5C7 19.8978 7.15804 20.2794 7.43934 20.5607C7.72064 20.842 8.10218 21 8.5 21Z"
@@ -218,14 +218,14 @@
                 </svg>
                 <div class="{{ $cartCount > 0 ? '' : 'hidden lg:block' }}">
                     <span id="souqify-cart-badge"
-                        class="souqify-cart-badge bg-blue-700 text-white text-[10px] rounded-full w-full h-[18px] flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
+                        class="souqify-cart-badge bg-[var(--sq-primary)] text-white text-[10px] rounded-full w-full h-[18px] flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
                     <span class="text-xs hidden lg:block">{{ __('Cart') }}</span>
                 </div>
             </a>
             <!-- user profile icon -->
             @auth('storefront')
                 <a href="{{ route('tenant.storefront.profile') }}"
-                    class="hidden md:flex items-center gap-1 hover:text-blue-700  text-charcoal transition-colors relative">
+                    class="hidden md:flex items-center gap-1 hover:text-[var(--sq-primary)]  text-charcoal transition-colors relative">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -235,7 +235,7 @@
                 </a>
             @else
                 <a href="{{ route('tenant.storefront.login') }}"
-                    class="hidden md:flex items-center gap-2 hover:text-blue-700 transition">
+                    class="hidden md:flex items-center gap-2 hover:text-[var(--sq-primary)] transition">
                     <svg class="w-5 h-5 lg:w-6 lg:h-6" viewBox="0 0 24 24" fill="none">
                         <path
                             d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
@@ -307,7 +307,7 @@
 <nav class="lg:hidden fixed bottom-0 z-40 items-center shadow-2xl flex-1 flex justify-around gap-1 py-2.5 px-3 bg-white w-screen"
     id="mobileBottomNav">
     <a href="{{ route('tenant.home') }}"
-        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.home') ? 'bg-blue-700 text-white' : '' }}">
+        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.home') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
         <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <path
@@ -319,7 +319,7 @@
         <span>{{ __('Home') }}</span>
     </a>
     <a href="{{ route('tenant.storefront.favorites') }}"
-        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.favorites') ? 'bg-blue-700 text-white' : '' }}">
+        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.favorites') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
         <svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="currentColor"
             xmlns="http://www.w3.org/2000/svg">
             <path
@@ -330,7 +330,7 @@
         <span>{{ __('Favorites') }}</span>
     </a>
     <a href="{{ route('tenant.storefront.offers') }}"
-        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.storefront.offers') ? 'bg-blue-700 text-white' : '' }}">
+        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.storefront.offers') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
         <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
                 d="M7.05006 0.290359C7.15511 0.171185 7.29121 0.0835505 7.44317 0.0372357C7.59513 -0.00907918 7.75697 -0.0122514 7.91063 0.0280731C9.81178 0.523502 12.7329 1.81093 15.1946 4.10293C17.6752 6.4155 19.7049 9.77036 19.7049 14.3458C19.7049 16.1578 19.2986 18.3744 17.8912 20.2104C16.4615 22.0789 14.0906 23.4332 10.4118 23.6612H10.4015C5.49863 23.9081 2.05635 21.3606 0.672918 17.8515C-0.698511 14.3732 -0.0110824 10.0464 3.07977 6.7635C3.16154 6.6764 3.2606 6.60735 3.37062 6.56079C3.48063 6.51423 3.59916 6.49117 3.71861 6.49311C3.83806 6.49505 3.95578 6.52193 4.06423 6.57204C4.17268 6.62214 4.26945 6.69437 4.34835 6.78407L6.51692 9.24579C7.31063 7.82979 7.69635 6.5955 7.75463 5.3595C7.81463 4.10293 7.53692 2.77607 6.89749 1.17664C6.83855 1.02913 6.82177 0.868135 6.84901 0.711634C6.87626 0.555133 6.94646 0.409282 7.05177 0.290359M6.96606 13.3275C6.96606 12.9865 7.10152 12.6595 7.34264 12.4184C7.58376 12.1772 7.91078 12.0418 8.25177 12.0418C8.59277 12.0418 8.91979 12.1772 9.16091 12.4184C9.40203 12.6595 9.53749 12.9865 9.53749 13.3275C9.53749 13.6685 9.40203 13.9955 9.16091 14.2366C8.91979 14.4778 8.59277 14.6132 8.25177 14.6132C7.91078 14.6132 7.58376 14.4778 7.34264 14.2366C7.10152 13.9955 6.96606 13.6685 6.96606 13.3275ZM13.8061 13.5435C13.9668 13.3826 14.057 13.1644 14.0568 12.9369C14.0567 12.7094 13.9662 12.4914 13.8052 12.3306C13.6443 12.1699 13.4261 12.0797 13.1986 12.0799C12.9711 12.08 12.7531 12.1706 12.5923 12.3315L6.96263 17.9595C6.88077 18.0386 6.81547 18.1332 6.77054 18.2377C6.72562 18.3423 6.70198 18.4548 6.70099 18.5686C6.7 18.6824 6.72169 18.7953 6.76478 18.9006C6.80788 19.0059 6.87153 19.1016 6.95201 19.1821C7.03249 19.2626 7.12819 19.3263 7.23353 19.3694C7.33887 19.4124 7.45174 19.4341 7.56555 19.4331C7.67936 19.4322 7.79183 19.4085 7.89641 19.3636C8.00098 19.3187 8.09556 19.2534 8.17463 19.1715L13.8061 13.5435ZM11.5261 18.1772C11.5261 17.8362 11.6615 17.5092 11.9026 17.2681C12.1438 17.027 12.4708 16.8915 12.8118 16.8915C13.1528 16.8915 13.4798 17.027 13.7209 17.2681C13.962 17.5092 14.0975 17.8362 14.0975 18.1772C14.0975 18.5182 13.962 18.8452 13.7209 19.0864C13.4798 19.3275 13.1528 19.4629 12.8118 19.4629C12.4708 19.4629 12.1438 19.3275 11.9026 19.0864C11.6615 18.8452 11.5261 18.5182 11.5261 18.1772Z"
@@ -348,7 +348,7 @@
         <span>{{ __('Offers') }}</span>
     </a>
     <a href="{{ route('tenant.storefront.profile') }}"
-        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.orders') ? 'bg-blue-700 text-white' : '' }}">
+        class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.orders') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor"
             xmlns="http://www.w3.org/2000/svg">
             <path
@@ -361,7 +361,7 @@
     </a>
     @auth('storefront')
         <a href="{{ route('tenant.storefront.profile') }}"
-            class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.profile') ? 'bg-blue-700 text-white' : '' }}">
+            class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.profile') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
@@ -370,7 +370,7 @@
         </a>
     @else
         <a href="{{ route('tenant.storefront.login') }}"
-            class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.profile') ? 'bg-blue-700 text-white' : '' }}">
+            class="flex flex-col items-center justify-center w-16 h-[60px] rounded-xl text-[#8F8F8F] text-xs {{ request()->routeIs('tenant.profile') ? 'bg-[var(--sq-primary)] text-white' : '' }}">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />

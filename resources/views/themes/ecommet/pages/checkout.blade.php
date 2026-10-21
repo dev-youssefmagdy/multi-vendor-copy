@@ -313,7 +313,7 @@
                             @disabled(!$shippingAvailable || !$hasAddresses)
                             wire:loading.attr="disabled"
                             wire:loading.class="opacity-60 cursor-not-allowed"
-                            class="w-full bg-[#1b1b1b] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:bg-black transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+                            class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
                             <span wire:loading.remove>Pay {{ $formattedFinalTotal }}</span>
                             <span wire:loading class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -348,7 +348,7 @@
                             @endif
                         </p>
                         <div class="h-2 bg-[#f5e6c4] rounded-full overflow-hidden">
-                            <div class="h-full bg-[#242424] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
+                            <div class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
                         </div>
                     </div>
                     @endif
@@ -494,132 +494,27 @@
         </form>
 
     </div>
-    @if ($data['modal']['show'])
-    {{-- Backdrop --}}
-    <div class="fixed inset-0 bg-black/50 z-[1040]" wire:click="closeAddressModal"></div>
-
-    {{-- Dialog --}}
-    <div class="fixed inset-0 z-[1050] flex items-center justify-center px-4 py-8 overflow-y-auto">
-        <div class="relative w-full max-w-[600px] bg-white rounded-[16px] shadow-2xl ring-1 ring-black/5"
-             wire:click.stop>
-
-            {{-- Header --}}
-            <div class="flex items-start gap-3.5 px-6 sm:px-7 py-5 border-b border-[#ececec]">
-                <div class="shrink-0 w-10 h-10 rounded-full bg-[#1b1b1b]/5 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-[#1b1b1b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0 pt-0.5">
-                    <h5 class="text-[17px] font-[600] text-[#101828] leading-tight">
-                        @if ($data['modal']['address_id'])
-                            {{ $data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address') }}
-                        @else
-                            {{ $data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address') }}
-                        @endif
-                    </h5>
-                    <p class="text-[12.5px] text-[#8a8a8a] mt-0.5">{{ __('Fill in the details below to save this address.') }}</p>
-                </div>
-                <button type="button" wire:click="closeAddressModal"
-                    class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#999] hover:text-[#242424] hover:bg-[#f5f5f5] transition">
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Body --}}
-            <div class="px-6 sm:px-7 py-5 space-y-6 max-h-[70vh] overflow-y-auto">
-
-                {{-- Contact section --}}
-                <div class="space-y-4">
-                    <p class="text-[11px] font-semibold tracking-wide uppercase text-[#9a9a9a]">{{ __('Contact') }}</p>
-                    <div>
-                        <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Full name') }} <span class="text-[#dc2626]">*</span></label>
-                        <input wire:model="data.modal.full_name" type="text" placeholder="{{ __('Full name') }}"
-                            class="w-full border @error('data.modal.full_name') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                        @error('data.modal.full_name')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div wire:ignore>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Phone') }}</label>
-                            <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
-                                class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                            @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Email address') }}</label>
-                            <input wire:model="data.modal.email" type="email" placeholder="{{ __('Email address') }}"
-                                class="w-full border @error('data.modal.email') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                            @error('data.modal.email')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="h-px bg-[#f0f0f0]"></div>
-
-                {{-- Address section --}}
-                <div class="space-y-4">
-                    <p class="text-[11px] font-semibold tracking-wide uppercase text-[#9a9a9a]">{{ __('Address') }}</p>
-                    <div>
-                        <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Street Address') }} <span class="text-[#dc2626]">*</span></label>
-                        <input wire:model="data.modal.line1" type="text" placeholder="{{ __('Street, building, apartment') }}"
-                            class="w-full border @error('data.modal.line1') border-[#dc2626] @else border-[#dcdcdc] @enderror rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                        @error('data.modal.line1')<p class="text-[11px] text-[#dc2626] mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('City') }}</label>
-                            <input wire:model="data.modal.city" type="text" placeholder="{{ __('City') }}"
-                                class="w-full border border-[#dcdcdc] rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('State / Region') }}</label>
-                            <input wire:model="data.modal.state" type="text" placeholder="{{ __('State') }}"
-                                class="w-full border border-[#dcdcdc] rounded-[10px] px-4 py-2.5 text-[13px] outline-none focus:border-[#1b1b1b] focus:ring-4 focus:ring-[#1b1b1b]/5 transition bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12px] font-medium text-[#555] mb-1.5">{{ __('Country') }} *</label>
-                            @include('themes.ecommet.sections.country-select', [
-                                'wireModel' => 'data.modal.country_id',
-                                'countries' => $countries,
-                                'currentId' => $data['modal']['country_id'],
-                            ])
-                            @error('data.modal.country_id') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <label class="flex items-center justify-between gap-3 cursor-pointer rounded-[10px] border border-[#ececec] px-4 py-3 hover:border-[#dcdcdc] transition">
-                    <span class="text-[12.5px] text-[#333] font-medium">{{ __('Set as default address') }}</span>
-                    <span class="relative inline-flex shrink-0">
-                        <input wire:model="data.modal.is_default" type="checkbox" class="peer sr-only">
-                        <span class="w-9 h-5 rounded-full bg-[#dcdcdc] peer-checked:bg-[#1b1b1b] transition-colors"></span>
-                        <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></span>
-                    </span>
-                </label>
-
-            </div>
-
-            {{-- Footer --}}
-            <div class="px-6 sm:px-7 py-4 border-t border-[#ececec] flex flex-col-reverse sm:flex-row justify-end gap-3 bg-[#fdfdfd] rounded-b-[16px]">
-                <button type="button" wire:click="closeAddressModal"
-                    class="px-5 py-2.5 bg-[#f5f5f5] text-[#555] rounded-[10px] text-[13px] font-[500] hover:bg-[#e8e8e8] transition">
-                    {{ __('Cancel') }}
-                </button>
-                <button type="button" wire:click="saveNewAddress"
-                    wire:loading.attr="disabled" wire:target="saveNewAddress"
-                    class="px-5 py-2.5 bg-[#1b1b1b] text-white rounded-[10px] text-[13px] font-[500] hover:bg-black transition disabled:opacity-60">
-                    <span wire:loading.remove wire:target="saveNewAddress">{{ $data['modal']['address_id'] ? __('Update Address') : __('Save Address') }}</span>
-                    <span wire:loading wire:target="saveNewAddress">{{ __('Saving...') }}</span>
-                </button>
-            </div>
-
-        </div>
-    </div>
-@endif
+    <x-storefront.address-modal
+        theme="ecommet"
+        :show="$data['modal']['show']"
+        :title="$data['modal']['address_id']
+            ? ($data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address'))
+            : ($data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address'))"
+        close-method="closeAddressModal"
+        save-method="saveNewAddress"
+        :saving-label="$data['modal']['address_id'] ? __('Update Address') : __('Save Address')"
+        full-name-model="data.modal.full_name"
+        :full-name-value="$data['modal']['full_name']"
+        phone-event-model="data.modal.phone"
+        :phone-value="$data['modal']['phone'] ?? ''"
+        line1-model="data.modal.line1"
+        city-model="data.modal.city"
+        :city-value="$data['modal']['city'] ?? ''"
+        country-id-model="data.modal.country_id"
+        :country-id-value="$data['modal']['country_id']"
+        :countries="$countries"
+        is-default-model="data.modal.is_default"
+    />
 
     {{-- ── External payment SDK scripts (loaded only when relevant gateways are active) ── --}}
     @if ($hasStripe)

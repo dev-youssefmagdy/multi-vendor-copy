@@ -163,7 +163,7 @@
         font-weight: 600;
         font-size: 7.5cqw;              /* 23.9975 */
         line-height: 1.2501;            /* 30 / 23.9975 */
-        color: #FF4D00;
+        color: var(--color-souqify-teal, #199387);
         flex: none;
     }
     .sqv3-deal__rating {

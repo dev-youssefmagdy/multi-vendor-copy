@@ -30,7 +30,7 @@
                     </p>
                     @endif
                     <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
-                        class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
+                        class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
                         {{ __('Explore Collection') }}
                     </a>
                 </div>
@@ -116,7 +116,7 @@
                             </p>
                             @endif
                             <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
-                                class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
+                                class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
                                 {{ __('Explore Collection') }}
                             </a>
                         </div>

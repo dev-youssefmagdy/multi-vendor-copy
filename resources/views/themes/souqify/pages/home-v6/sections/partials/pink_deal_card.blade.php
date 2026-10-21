@@ -163,7 +163,7 @@
         font-weight: 600;
         font-size: 7.65cqw;             /* 22.1585 / 289.73 */
         line-height: 1.2636;
-        color: var(--color-primary, #FF4D00);
+        color: var(--color-brand-pink, #FF1A90);
         white-space: nowrap;
     }
     .sqv6-deal__rating {

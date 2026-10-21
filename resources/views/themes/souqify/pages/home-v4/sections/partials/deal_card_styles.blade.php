@@ -156,7 +156,7 @@
         font-weight: 600;
         font-size: 7.5cqw;
         line-height: 1.2823;            /* 22 / 17.1567 */
-        color: #FF4D00;
+        color: var(--color-brand-green, #5A9B00);
         flex: none;
     }
     .sqv4-deal__rating {

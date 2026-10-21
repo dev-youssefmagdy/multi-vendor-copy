@@ -4,7 +4,7 @@
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white">{{ __('Special Offers') }}</h2>
                 <a href="{{ route('tenant.storefront.category') }}?section=special_offers"
-                    class="flex items-center gap-1 text-white hover:text-blue-200 transition text-sm sm:text-base">{{ __('View all products') }}
+                    class="flex items-center gap-1 text-white hover:text-[var(--sq-primary-muted)] transition text-sm sm:text-base">{{ __('View all products') }}
                     <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 8l4 4m0 0l-4 4m4-4H3" />

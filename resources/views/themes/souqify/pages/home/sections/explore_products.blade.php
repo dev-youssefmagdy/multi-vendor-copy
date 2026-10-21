@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900">{{ __('Explore Products') }}</h2>
             <a href="{{ route('tenant.storefront.category') }}?section=explore"
-                class="flex items-center gap-1 text-slate-900 hover:text-blue-700 transition text-sm sm:text-base">{{ __('View all products') }}
+                class="flex items-center gap-1 text-slate-900 hover:text-[var(--sq-primary)] transition text-sm sm:text-base">{{ __('View all products') }}
                 <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 8l4 4m0 0l-4 4m4-4H3" />
