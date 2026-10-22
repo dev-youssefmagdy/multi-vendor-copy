@@ -1,14 +1,14 @@
 {{-- Recommended For You grid card — shorter image band than product_card, no badge/delivery rows. Expects $p: image, name, weight, weightColor, rating, price, priceColor, oldPrice, discount, url --}}
-<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] shadow-[var(--shadow-card)] overflow-hidden">
+<a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] shadow-[var(--shadow-card)] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
   <div class="flex flex-col gap-[8px] h-[160px] lg:h-[227px] items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] h-[160px] lg:h-[227px] items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] h-[160px] lg:h-[227px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[160px] lg:h-[227px] rounded-t-[6px] top-0 w-full overflow-hidden">
-          <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
       </div>
       <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}' type="button" aria-label="{{ __('Add to favorites') }}" class="bg-white cursor-pointer drop-shadow-[0px_4px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[8px] relative rounded-full shrink-0 size-[32px] ms-auto">
-        <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[20px]" />
+        <svg class="size-[20px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     </div>
     <div class="bg-[var(--color-bg-main)] flex h-[40px] items-center justify-center px-[10px] py-[4px] relative rounded-[16px] shrink-0 w-[50px]">

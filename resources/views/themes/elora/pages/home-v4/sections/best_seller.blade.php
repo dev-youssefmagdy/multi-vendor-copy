@@ -8,7 +8,7 @@
     @if ($bestSellerProducts->isNotEmpty())
     <!-- ============ BEST SELLER ============ -->
     <section
-      class="texture-bg px-[16px] lg:px-[56px] py-[24px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
+      class="texture-bg px-[16px] lg:px-[56px] py-[18px] lg:py-[32px] flex flex-col items-center gap-[16px] lg:gap-[24px]"
       wire:ignore
     >
       <img
@@ -16,7 +16,7 @@
         alt=""
         class="texture-overlay"
       />
-      <h2 class="relative font-bold text-[24px] lg:text-[36px] text-white">
+      <h2 class="relative font-normal lg:font-bold text-[18px] lg:text-[36px] text-white">
         {{ __('Best Seller') }}
       </h2>
       {{-- Mobile: swipeable 2-col x 2-row grid carousel (Swiper's grid

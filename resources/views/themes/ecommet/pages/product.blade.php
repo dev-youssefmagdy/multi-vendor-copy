@@ -261,7 +261,7 @@
                         id="ecommet-add-to-cart-btn"
                         onclick="ecommetAddToCart()"
                         @if (!$isInStock) disabled @endif
-                        class="bg-[#242424] text-white py-3.5 rounded-full text-[15px] font-bold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-black active:scale-[0.98] transition-all w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="bg-[var(--color-primary)] text-white py-3.5 rounded-full text-[15px] font-bold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:opacity-90 active:scale-[0.98] transition-all w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                         </svg>
@@ -283,7 +283,7 @@
                         @endif
                     </p>
                     <div class="h-2 bg-[#f5e6c4] rounded-full overflow-hidden">
-                        <div id="ecommet-shipping-bar" class="h-full bg-[#242424] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
+                        <div id="ecommet-shipping-bar" class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
                     </div>
                 </div>
                 @endif

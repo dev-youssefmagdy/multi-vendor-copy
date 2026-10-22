@@ -31,13 +31,13 @@
             @endphp
             <a
               href="{{ route('tenant.storefront.category', $category->slug) }}"
-              class="swiper-slide {{ $__catFilled ? '' : 'border-2 lg:border-[1.86px]' }} flex flex-col items-center justify-between gap-[4px] lg:gap-[5.59px] px-[12px] py-[8px] lg:px-[22.35px] lg:py-[14.9px] rounded-[12px] lg:rounded-[22.35px]"
+              class="group swiper-slide {{ $__catFilled ? '' : 'border-2 lg:border-[1.86px]' }} flex flex-col items-center justify-between gap-[4px] lg:gap-[5.59px] px-[12px] py-[8px] lg:px-[22.35px] lg:py-[14.9px] rounded-[12px] lg:rounded-[22.35px] transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.05]"
               style="{{ $__catFilled ? 'background: var(--color-accent-green)' : 'border-color: var(--color-accent-green)' }}"
             >
               <img
                 src="{{ $category->thumb_url ?? asset('elora-2/assets/icons/' . $__catIcon) }}"
                 alt="{{ $__catName }}"
-                class="mx-auto w-[39px] h-[39px] lg:w-[73px] lg:h-[73px] object-contain {{ $__catRotate }}"
+                class="mx-auto w-[39px] h-[39px] lg:w-[73px] lg:h-[73px] object-contain {{ $__catRotate }} transition-transform duration-300 group-hover:scale-110"
               />
               <p
                 class="w-full min-w-0 truncate text-center font-semibold text-[12px] lg:text-[22.35px] lg:leading-[150%] tracking-[0.5px] lg:tracking-[0.93px] {{ $__catFilled ? 'text-white' : '' }}"

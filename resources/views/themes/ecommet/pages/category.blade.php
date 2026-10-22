@@ -50,7 +50,7 @@
                     <a href="{{ route('tenant.storefront.category', $relatedCategory->slug) }}"
                         class="flex flex-col items-center gap-2 w-full group hover:-translate-y-1 transition duration-300">
                         <div
-                            class="w-[68px] h-[68px] rounded-full flex items-center justify-center overflow-hidden border transition shadow-sm {{ $isActiveCategory ? 'bg-[#e5f0ff] border-[#2272e2]' : 'bg-[#f5f5f5] border-transparent group-hover:border-[#242424]' }}">
+                            class="w-[68px] h-[68px] rounded-full flex items-center justify-center overflow-hidden border transition shadow-sm {{ $isActiveCategory ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]' : 'bg-[#f5f5f5] border-transparent group-hover:border-[#242424]' }}">
                             @if ($relatedCategory->thumb_url)
                                 <img loading="lazy" src="{{ $relatedCategory->thumb_url }}" alt="{{ $relatedCategory->name }}"
                                     class="object-contain w-full h-full rounded-full">
@@ -94,8 +94,8 @@
                         <div class="relative group">
                             <input type="text" name="keyword" id="keyword" value="{{ $keyword }}"
                                 placeholder="{{ __('Search products, SKU or title') }}"
-                                class="w-full ps-10 pe-4 py-3 rounded-full border border-[#e5e5e5] text-[13px] font-medium text-[#242424] bg-white focus:outline-none focus:border-[#ff4e00] transition-all placeholder-[#999]">
-                            <svg class="w-4 h-4 text-[#aaa] absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-[#ff4e00] transition-colors"
+                                class="w-full ps-10 pe-4 py-3 rounded-full border border-[#e5e5e5] text-[13px] font-medium text-[#242424] bg-white focus:outline-none focus:border-[var(--color-primary)] transition-all placeholder-[#999]">
+                            <svg class="w-4 h-4 text-[#aaa] absolute left-3.5 top-1/2 -translate-y-1/2 group-focus-within:text-[var(--color-primary)] transition-colors"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -181,7 +181,7 @@
 
                 <div class="flex items-center gap-3 flex-wrap">
                     <button type="submit"
-                        class="h-10 px-5 rounded-full bg-[#242424] text-white text-[13px] font-semibold hover:bg-[#ff4e00] transition-colors whitespace-nowrap">
+                        class="h-10 px-5 rounded-full bg-[var(--color-primary)] text-white text-[13px] font-semibold hover:opacity-90 transition-colors whitespace-nowrap">
                         {{ __('Apply filters') }}
                     </button>
                     <a href="{{ $category ? route('tenant.storefront.category', $category->slug) : route('tenant.storefront.category') }}"
@@ -199,7 +199,7 @@
                     {{ __('Try widening the price range, clearing a filter, or browsing another category.') }}
                 </p>
                 <a href="{{ $category ? route('tenant.storefront.category', $category->slug) : route('tenant.storefront.category') }}"
-                    class="inline-flex items-center px-5 py-2.5 rounded-full bg-[#242424] text-white text-[13px] font-semibold hover:bg-[#ff4e00] transition-colors">
+                    class="inline-flex items-center px-5 py-2.5 rounded-full bg-[var(--color-primary)] text-white text-[13px] font-semibold hover:opacity-90 transition-colors">
                     {{ __('Clear filters') }}
                 </a>
             </div>

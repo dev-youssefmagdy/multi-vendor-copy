@@ -55,7 +55,9 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        padding-block: 24px;
+        padding-inline-start: 16px;
+        padding-inline-end: 0;
         gap: 16px;
         background: var(--color-souqify-teal);
         overflow: hidden;
@@ -118,6 +120,12 @@
         letter-spacing: 1.3758px;
         color: var(--color-accent-yellow, #FFD428);
         white-space: nowrap;
+        /* Vertical, reading bottom-to-top - same writing-mode + rotate(180deg)
+           combo as .sqv3-flash__title above and .vertical-heading in
+           home-v6.css, rather than a rotate()-only transform (which leaves the
+           text horizontal, just tilted). */
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
     }
     .sqv3-flash__box {
         box-sizing: border-box;
@@ -204,7 +212,9 @@
     @media (min-width: 1024px) {
         .sqv3-flash {
             /* 24px 56px padding, 16px gap */
-            padding: 24px clamp(24px, 3.889vw, 56px);
+            padding-block: 24px;
+            padding-inline-start: clamp(24px, 3.889vw, 56px);
+            padding-inline-end: 0;
             gap: 16px;
         }
         /* Frame 1984080447: title/timer column to the left of the carousel. */
@@ -239,6 +249,11 @@
             /* 33.0192px */
             font-size: clamp(16px, 2.293vw, 33.0192px);
             text-align: center;
+            /* Desktop keeps this as flipped horizontal text (reset the mobile
+               vertical writing-mode) - it sits centered under the vertically
+               stacked digit boxes, not beside them, so it doesn't need to be
+               vertical itself. */
+            writing-mode: horizontal-tb;
             transform: rotate(180deg);
         }
         .sqv3-flash__box {

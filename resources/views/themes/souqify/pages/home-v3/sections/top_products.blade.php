@@ -48,7 +48,9 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 24px 16px;
+        padding-block: 24px;
+        padding-inline-start: 16px;
+        padding-inline-end: 0;
         gap: 16px;
         background: var(--color-souqify-teal);
         overflow: hidden;
@@ -69,7 +71,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 16px;
+        gap: 0;
         width: 100%;
         min-width: 0;
     }
@@ -88,8 +90,12 @@
     .sqv3-best__swiper {
         width: 100%;
         min-width: 0;
-        /* Room for the cards' drop shadow, which overflow:hidden would clip */
-        padding: 12px 0 24px;
+        /* 12px each side is exactly the drop-shadow's blur radius below, which
+           overflow:hidden would otherwise clip. The extra 12px this used to
+           carry on the bottom was headroom for the pagination dots (removed),
+           which just left a bigger gap above the CTA button than above the
+           carousel - back to matching the top now. */
+        padding: 12px 0;
     }
     .sqv3-best__swiper .swiper-wrapper {
         align-items: stretch;
@@ -101,35 +107,6 @@
         filter: drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.18));
     }
 
-    /* ---------- Pagination ---------- */
-    .sqv3-best__dots {
-        display: block;
-        text-align: center;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        height: 8px;
-        font-size: 0;
-        line-height: 0;
-    }
-    .sqv3-best__dots .best-seller-dot {
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 1.5px;
-        width: 8px;
-        height: 8px;
-        background: rgba(255, 255, 255, 0.4);
-        border: 0;
-        border-radius: 29px;
-        padding: 0;
-        opacity: 1;
-        transition: width 0.2s ease, background-color 0.2s ease;
-        cursor: pointer;
-    }
-    .sqv3-best__dots .best-seller-dot.is-active {
-        width: 24px;
-        background: #FFFFFF;
-    }
     .sqv3-best__empty {
         font-family: 'Outfit', sans-serif;
         font-size: 14px;
@@ -166,11 +143,13 @@
             /* The comp's content column is 1328px inside a 1440 canvas. Capping it
                keeps slidesPerView from inflating the cards on wider displays;
                max() still leaves the Figma 56px gutter at exactly 1440. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-block: 24px;
+            padding-inline-start: max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-inline-end: 0;
             gap: clamp(16px, 1.667vw, 24px);
         }
         .sqv3-best__inner {
-            gap: clamp(16px, 1.667vw, 24px);
+            gap: 0;
         }
         .sqv3-best__title {
             /* 40px / 50px line-height, weight 800 */
@@ -207,7 +186,6 @@
           @endforeach
         </div>
       </div>
-      <div class="sqv3-best__dots" id="bestSellerDots"></div>
 
       <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv3-best__cta">
         <span class="sqv3-best__cta-label">{{ __('Explore all') }}</span>

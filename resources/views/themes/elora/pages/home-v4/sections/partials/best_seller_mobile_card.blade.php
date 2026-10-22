@@ -6,11 +6,11 @@
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-full h-full rounded-[7.41px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)]"
+  class="group relative flex flex-col items-start w-full h-full rounded-[7.41px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
   style="background: var(--color-bg-main); text-decoration:none"
 >
   <div class="relative w-full h-[142.03px] shrink-0 overflow-hidden rounded-t-[6.21px]">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
 
     <span
       class="absolute top-0 end-0 flex items-center justify-center px-[4.08px] h-[19.05px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
@@ -26,7 +26,7 @@
       aria-label="{{ __('Add to favorites') }}"
       class="elora-v4-heart-btn absolute top-[5px] start-[5px] flex items-center justify-center size-[24.83px] rounded-full bg-white shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]"
     >
-      <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[15.52px]" />
+      <svg class="size-[15.52px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
 
     <button

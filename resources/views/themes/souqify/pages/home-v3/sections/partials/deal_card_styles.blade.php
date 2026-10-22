@@ -18,6 +18,11 @@
         text-decoration: none;
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv3-deal:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
     }
     .sqv3-deal__media {
         position: relative;
@@ -33,6 +38,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv3-deal:hover .sqv3-deal__img {
+        transform: scale(1.06);
     }
     /* Group 22: 200.79 x 34.66 chip pinned to the card's top-left. Rectangle 5956 is
        the bottom ribbon flipped vertically (matrix(1,0,0,-1,0,0)), so its rounded
@@ -163,7 +172,7 @@
         font-weight: 600;
         font-size: 7.5cqw;              /* 23.9975 */
         line-height: 1.2501;            /* 30 / 23.9975 */
-        color: #FF4D00;
+        color: var(--color-souqify-teal, #199387);
         flex: none;
     }
     .sqv3-deal__rating {

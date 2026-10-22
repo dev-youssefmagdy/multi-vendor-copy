@@ -1,1 +1,0 @@
-/* empty css                  */import{n as e,t}from"./opportunities-D5kNNkyC.js";import{t as n}from"./product-modals-Dku9dYmL.js";/* empty css                       */t(document.querySelector(`.tc-grid`)||document),e(),n();

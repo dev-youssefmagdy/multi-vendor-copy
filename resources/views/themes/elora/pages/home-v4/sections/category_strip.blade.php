@@ -36,7 +36,7 @@
 
           <a
             href="{{ $url }}"
-            class="swiper-slide max-lg:!w-[66px] lg:w-full flex flex-col items-center gap-[2px] lg:gap-[3.9px]"
+            class="group swiper-slide w-full flex flex-col items-center gap-[2px] lg:gap-[3.9px] transition-transform duration-300 ease-out hover:scale-105"
             style="text-decoration:none"
           >
 
@@ -46,7 +46,7 @@
 
               {{-- Orange leaf pill --}}
               <div
-                class="w-[66px] h-[37px] lg:w-full lg:h-[71.86px]
+                class="w-full h-[37px] lg:h-[71.86px]
                        rounded-bl-[32px] rounded-tr-[32px]
                        lg:rounded-bl-[62.14px] lg:rounded-tr-[62.14px]
                        overflow-visible"
@@ -61,7 +61,7 @@
                     loading="lazy"
                     src="{{ $img }}"
                     alt="{{ $name }}"
-                    class="w-[52px] h-[52px] lg:w-[100px] lg:h-[100px] object-contain drop-shadow-sm"
+                    class="w-[52px] h-[52px] lg:w-[100px] lg:h-[100px] object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-110"
                     style="margin-bottom: 4px"
                   />
                 @else
@@ -76,7 +76,7 @@
             <p class="font-semibold text-[12px] lg:text-[23.3px]
                       leading-[1.5] tracking-[0.5px] lg:tracking-[0.97px]
                       text-black text-center truncate
-                      w-[66px] lg:w-full mt-0">
+                      w-full mt-0">
               {{ $name }}
             </p>
 

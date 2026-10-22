@@ -41,20 +41,17 @@
     <!-- ============ BEST SELLER ============ -->
     <section
     wire:ignore
-      class=" py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
-      style="background: var(--color-accent-yellow)"
+      class="best-seller-section py-[24px] lg:py-[32px] flex flex-col gap-[16px] lg:gap-[24px]"
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2
-          class="font-medium text-[22px] lg:text-[32px]"
-          style="color: var(--color-text-primary)"
+          class="best-seller-title font-medium text-[22px] lg:text-[32px]"
         >
           {{ __('Best Seller') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.best-selling') }}"
-          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
-          style="color: var(--color-text-secondary-dark)"
+          class="best-seller-see-all text-[14px] lg:text-[20px] tracking-[0.5px]"
           >{{ __('see all') }}</a
         >
       </div>
@@ -81,4 +78,5 @@
           </div>
         </div>
       </div>
+      <div class="best-seller-pagination lg:hidden"></div>
     </section>

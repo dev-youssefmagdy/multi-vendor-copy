@@ -77,11 +77,12 @@ body {
   overflow: hidden;
 }
 
-/* Numeric slidesPerView makes these flex items that need this min-width/max-width/margin
-   reset (see the detailed comment on the same pattern in elora-v3.css) to stop them
-   collapsing or overflowing as a child of their section's flex-col layout — without it,
-   a flex item's default min-width:auto lets Swiper mis-measure its own container width,
-   which is exactly what broke Trending Now's layout when slidesPerView went below 1. */
+/* Numeric slidesPerView (Categories: 4 mobile / 7.5 desktop) makes this a flex item that
+   needs this min-width/max-width/margin reset (see the detailed comment on the same
+   pattern in elora-v3.css) to stop it collapsing or overflowing as a child of its
+   section's flex-col layout — without it, a flex item's default min-width:auto lets
+   Swiper mis-measure its own container width (observed computing a ~4.8 million px slide
+   width), which also broke Trending Now's layout when slidesPerView went below 1. */
 .newin-swiper,
 .trending-swiper,
 .categories-swiper {
@@ -89,6 +90,18 @@ body {
   max-width: 100%;
   margin-left: 0;
   margin-right: 0;
+}
+
+/* Recommended For You: end-edge fade hinting the grid continues / scrolls (matches the
+   Fresh edition / elora-v3.css treatment). Solid color must stay on the true outer edge
+   and fade inward toward the cards in both directions, so the gradient angle is mirrored
+   for RTL rather than being a fixed physical direction that would land its solid stop
+   over the cards once `end-0` flips the box under RTL. */
+.recommended-edge-fade {
+  background: linear-gradient(91.97deg, rgba(253, 253, 253, 0) 0%, rgba(253, 253, 253, 0.3) 45%, rgba(253, 253, 253, 0.65) 70%, var(--color-bg-main) 100%);
+}
+[dir="rtl"] .recommended-edge-fade {
+  background: linear-gradient(268.03deg, rgba(253, 253, 253, 0) 0%, rgba(253, 253, 253, 0.3) 45%, rgba(253, 253, 253, 0.65) 70%, var(--color-bg-main) 100%);
 }
 
 /* Trending: Swiper's Grid module (2 rows) needs an explicit wrapper height
@@ -227,6 +240,14 @@ body {
 .swiper-nav-next {
   right: -8px;
 }
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
+}
 
 /* Hero carousel */
 .hero-swiper {
@@ -295,6 +316,11 @@ body {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+.shop-cat-tile:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 .shop-cat-tile img {
   position: absolute;
@@ -302,6 +328,10 @@ body {
   height: 100%;
   width: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease-out;
+}
+.shop-cat-tile:hover img {
+  transform: scale(1.08);
 }
 .shop-cat-tile .shop-cat-label {
   position: absolute;

@@ -20,6 +20,11 @@
         border-radius: 7.19362px;
         container-type: inline-size;
         isolation: isolate;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .sqv2-deal:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
     }
     .sqv2-deal__media {
         position: relative;
@@ -36,6 +41,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv2-deal:hover .sqv2-deal__img {
+        transform: scale(1.06);
     }
     /* Group 22 / Rectangle 5956: the purple tag across the top-left of the
        media - 148.22 x 25.59 of the 236.19 card. */
@@ -164,7 +173,7 @@
         font-weight: 600;
         font-size: 7.5cqw;              /* 17.7143 / 236.19 */
         line-height: 1.2419;
-        color: var(--color-primary, #FF4D00);
+        color: var(--color-brand-purple, #8B03BD);
         white-space: nowrap;
     }
     .sqv2-deal__rating {

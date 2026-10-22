@@ -44,10 +44,10 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
     {{-- Breadcrumb --}}
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
-            <a href="{{ route('tenant.home') }}" class="hover:text-main transition-colors">{{ __('Home') }}</a>
+            <a href="{{ route('tenant.home') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Home') }}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
             @auth('storefront')
-            <a href="{{ route('tenant.storefront.profile') }}" class="hover:text-main transition-colors">{{ __('Orders') }}</a>
+            <a href="{{ route('tenant.storefront.profile') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Orders') }}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
             @endauth
             <span class="text-[#1B1B1B] font-semibold">{{ __('Order #:uuid', ['uuid' => $order->uuid]) }}</span>
@@ -70,7 +70,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     <div class="flex items-center gap-3 flex-wrap">
                         @auth('storefront')
                         <a href="{{ route('tenant.storefront.profile') }}"
-                            class="w-9 h-9 flex items-center justify-center rounded-[10px] border border-[#E0E0E0] bg-white hover:border-main transition-colors">
+                            class="w-9 h-9 flex items-center justify-center rounded-[10px] border border-[#E0E0E0] bg-white hover:border-[var(--color-primary)] transition-colors">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.0013 15.8337L4.16797 10.0003L10.0013 4.16699" stroke="#0A0A0A" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M15.8346 10H4.16797" stroke="#0A0A0A" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -99,7 +99,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     </div>
                     {{-- Download Invoice button --}}
                     <a href="{{ route('tenant.storefront.order-invoice', $order->uuid) }}"
-                        class="flex items-center gap-2 bg-[#FF4D00] text-white font-normal text-base px-12 py-4 rounded-[32px] hover:bg-orange-600 transition-colors whitespace-nowrap">
+                        class="flex items-center gap-2 bg-[var(--color-primary)] text-white font-normal text-base px-12 py-4 rounded-[32px] hover:bg-orange-600 transition-colors whitespace-nowrap">
                         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="white" stroke-width="1.67" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v13M5 16l7 5 7-5M3 20h18"/>
                         </svg>
@@ -312,8 +312,8 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                             {{-- Leave a Review (delivered/completed) --}}
                             @if ($isCompleted)
                             <button wire:click="openReviewModal"
-                                class="w-full flex items-center justify-center gap-2 bg-[#FFF3EE] text-[#FF4D00] font-normal text-base px-12 py-4 rounded-[32px] border border-[#FF4D00] hover:bg-orange-100 transition-colors">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#FF4D00" stroke-width="1.67" viewBox="0 0 24 24">
+                                class="w-full flex items-center justify-center gap-2 bg-[#FFF3EE] text-[var(--color-primary)] font-normal text-base px-12 py-4 rounded-[32px] border border-[var(--color-primary)] hover:bg-orange-100 transition-colors">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="var(--color-primary)" stroke-width="1.67" viewBox="0 0 24 24">
                                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                                 </svg>
                                 {{ __('Leave a Review') }}
@@ -375,13 +375,13 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
         {{-- Header --}}
         <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#F0F0F0]">
             <div class="flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#FF4D00]" fill="none" stroke="currentColor" stroke-width="1.67" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.67" viewBox="0 0 24 24">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
                 <h2 class="text-lg font-semibold text-[#0A0A0A] font-['Inter']">{{ __('Leave a Review') }}</h2>
             </div>
             <button wire:click="closeReviewModal"
-                class="w-8 h-8 flex items-center justify-center rounded-full border border-[#E0E0E0] hover:border-[#FF4D00] hover:text-[#FF4D00] transition-colors text-[#808080]">
+                class="w-8 h-8 flex items-center justify-center rounded-full border border-[#E0E0E0] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors text-[#808080]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/>
                 </svg>
@@ -396,7 +396,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
             <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-[#364153] font-['Inter']">{{ __('Product') }}</label>
                 <select wire:model="reviewProductId"
-                    class="w-full border border-[#D1D5DC] rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] focus:outline-none focus:border-[#FF4D00] transition-colors bg-white">
+                    class="w-full border border-[#D1D5DC] rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] focus:outline-none focus:border-[var(--color-primary)] transition-colors bg-white">
                     @foreach ($reviewableItems as $rItem)
                     @php $rProduct = $rItem->product ?? $rItem->variant?->product; @endphp
                     <option value="{{ $rItem->product_id }}">
@@ -452,7 +452,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                 <textarea wire:model="reviewComment" rows="4"
                     placeholder="{{ __('Share your experience with this product...') }}"
                     maxlength="1000"
-                    class="w-full border border-[#D1D5DC] rounded-xl px-4 py-3 text-sm text-[#0A0A0A] font-['Inter'] resize-none focus:outline-none focus:border-[#FF4D00] transition-colors placeholder:text-[#ADADAD]"></textarea>
+                    class="w-full border border-[#D1D5DC] rounded-xl px-4 py-3 text-sm text-[#0A0A0A] font-['Inter'] resize-none focus:outline-none focus:border-[var(--color-primary)] transition-colors placeholder:text-[#ADADAD]"></textarea>
                 @error('reviewComment') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
             </div>
 
@@ -463,7 +463,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     {{ __('Cancel') }}
                 </button>
                 <button wire:click="submitReview" type="button"
-                    class="flex-1 py-3 rounded-[32px] bg-[#FF4D00] text-white text-sm font-medium hover:bg-orange-600 transition-colors font-['Inter']"
+                    class="flex-1 py-3 rounded-[32px] bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-orange-600 transition-colors font-['Inter']"
                     wire:loading.attr="disabled" wire:loading.class="opacity-70 cursor-not-allowed"
                     wire:target="submitReview">
                     <span wire:loading.remove wire:target="submitReview">{{ __('Submit Review') }}</span>

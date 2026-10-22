@@ -2,15 +2,15 @@
 {{-- No w-full! here: Tailwind puts that important utility in a layer, which
      beats even an id rule, so the phone width is left to the section CSS. --}}
 <div class="swiper-slide h-auto lg:w-[309px]!">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden" style="text-decoration:none">
+  <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-full h-[142px] lg:h-[269px] shrink-0">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="absolute top-[4.66px] start-[4.66px] lg:top-[9px] lg:start-[9px] flex items-center justify-center size-[24.83px] lg:size-[47px] bg-white rounded-full shadow-[0_3.1px_3.1px_rgba(0,0,0,0.15)]">
-        <img src="{{ asset('elora-3/assets/icons/heart.svg') }}" class="size-[15.52px] lg:size-[29px]" alt="" />
+        <svg class="size-[15.52px] lg:size-[29px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
       @if (!empty($p['sold']))
       <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[9.52px] lg:text-[18px] leading-[12px] tracking-[0.34px] lg:tracking-[0.64px] px-[4.08px] lg:px-[8px] py-[4.08px] lg:py-[6px] rounded-es-[5.44px] lg:rounded-es-[10px]" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>

@@ -6,7 +6,7 @@
         $hasDiscount = (bool) $pricing['has_discount'];
         $rating = (float) ($product->average_rating ?? 0);
         $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
-        // Figma cycles three discount-chip palettes across the fanned cards.
+        // Figma cycles three discount-chip palettes across the card row.
         $chip = [
             ['bg' => '#DE1709', 'color' => '#FDFDFD'],
             ['bg' => '#FFB00A', 'color' => '#121212'],
@@ -47,14 +47,13 @@
             'fav' => $__fav,
         ];
     });
-
     $__flashMobile = $__flashCards->take(3);
 @endphp
 
 {{-- Figma: Frame 1984080396 (1440x730). A 704x108 pink header pill (radius
      0/67.4118/67.4118/0) carrying the title and the "Ends in" counter, then the
-     white 622px panel (radius 0/67.4118/0/0) holding the fanned card row and the
-     outlined Shop now button.
+     white 622px panel (radius 0/67.4118/0/0) holding the draggable card row and
+     the outlined Shop now button.
      Values are clamp(min, <value>/1440*100vw, max) off the 1440 canvas. --}}
 <style>
     .sqv6-flash {
@@ -76,10 +75,25 @@
         background: var(--color-brand-pink, #FF1A90);
         border-radius: 0px 34px 34px 0px;
     }
+    /* RTL: the pill still sits flush against the section's leading edge
+       (flex-start flips it to the right), so the rounded corner has to move
+       with it - to the left - instead of staying pinned to the physical
+       right where it would land right against that same edge. */
+    [dir="rtl"] .sqv6-flash__head {
+        border-radius: 34px 0px 0px 34px;
+    }
+    @media (max-width: 1023.98px) {
+        /* The title reads short on phones, so centering it against the
+           countdown's own height (rather than bottom-aligning it) keeps the
+           two balanced instead of the title looking like it's sinking. */
+        .sqv6-flash__head {
+            align-items: center;
+        }
+    }
     .sqv6-flash__title {
         font-family: 'Outfit', sans-serif;
         font-weight: 800;
-        font-size: 26px;
+        font-size: 22px;
         line-height: 1.25;              /* 60 / 48 */
         text-align: right;
         color: #FFFFFF;
@@ -132,71 +146,58 @@
         align-items: center;
         gap: 16px;
         width: 100%;
-        padding: 24px 16px;
+        padding: 12px 16px;
         background: #FFFFFF;
         border-radius: 0px 34px 0px 0px;
         /* Nothing leaves the panel: the swiper clips its own track, and this
            catches anything the track's rounding pushes past it. */
         overflow: hidden;
     }
-    /* ---------- Draggable fan cascade ----------
-       Same technique as Green Edition's Best Seller carousel (see
-       mountFanCascadeCarousel() in carousels-v6.js): every slide is
-       absolutely positioned from a fixed geometry table indexed by distance
-       from the active slide, so dragging shifts which product sits in the
-       biggest/frontmost slot while the rest cascade down in size behind it -
-       the front card cycles to the back as you page through. */
-    .sqv6-flash__group {
-        /* Flash Sale accent: keep the card's own pink. */
-        --sqv6-deal-accent: #FD1A8F;
-        position: relative;
-        width: 100%;
+    [dir="rtl"] .sqv6-flash__panel {
+        border-radius: 34px 0px 0px 0px;
     }
+    /* Draggable fan cascade - same technique as Elora Minimal Edition's Best
+       Seller carousel (see mountFlashCascade() in carousels-v6.js): a real
+       Swiper drives drag/loop, but every slide's size and position comes
+       from a fixed geometry table applied via transform, not from Swiper's
+       own layout. */
     .sqv6-flash__row {
-        /* overflow:visible lets the fan's cards bleed past the swiper's own
-           (much smaller) auto-width box - the panel's own overflow:hidden
-           still clips it at the edges. */
         overflow: visible;
-        padding: 0 0 24px;
+        padding-bottom: 24px;
         cursor: grab;
         width: 100% !important;
     }
-    @media (max-width: 1023.98px) {
-        /* The mobile cascade table (SQV6_FLASH_POSITIONS_MOBILE) spans
-           ~375.75px, but the panel's 16px side padding only leaves 343px
-           inside .sqv6-flash__row - without this the last card's peek slice
-           gets clipped mid-card (through its tag/cart badges) instead of at a
-           clean edge. Bleeding the row out past the padding gives the
-           cascade back the width it was sized for. */
-        .sqv6-flash__row {
-            width: calc(100% + 32px) !important;
-            margin-left: -16px;
-            margin-right: -16px;
-        }
+    .sqv6-flash__row .swiper-wrapper {
+        width: 100%;
     }
-    /* Every slide is this ONE fixed base size (matching the biggest/active
-       Figma card exactly); mountFanCascadeCarousel applies
-       `transform: translate(left, top) scale(ratio)` per slide to produce
-       every other cascade depth from it, so content never gets crammed into
-       a shrunk box - the whole card scales as one unit. */
-    .sqv6-flash__deal-base {
+    .sqv6-flash__slide {
         position: absolute;
         top: 0;
         left: 0;
-        width: 154.5px;
-        height: 223.1px;
+        /* Positions move via `transform` (see applyPositions() in
+           carousels-v6.js), not left/top/width/height - transitioning those
+           instead was a no-op, so a drag just snapped the cascade with no
+           visible motion. */
+        transition-property: transform;
+        transition-timing-function: ease;
         transform-origin: top left;
     }
+    .sqv6-flash__slide .sqv6-deal {
+        /* Flash Sale accent: keep the card's own pink. */
+        --sqv6-deal-accent: #FD1A8F;
+    }
+    /* Base size each slide is scaled from (matches SQV6_FLASH_POSITIONS_*'s
+       baseWidth in carousels-v6.js); the geometry table's transform does the
+       rest, including the lg: resize. */
+    .sqv6-flash__slide {
+        width: 154.5px;
+        height: 223.1px;
+    }
     @media (min-width: 1024px) {
-        .sqv6-flash__deal-base {
+        .sqv6-flash__slide {
             width: 295.45px;
             height: 472.89px;
         }
-    }
-    .sqv6-flash__deal-base .sqv6-deal {
-        position: static;
-        width: 100%;
-        height: 100%;
     }
     /* Frame 1984080196: 320.21 x 67.41, a 1.53209px pink stroke, radius 85.7968. */
     .sqv6-flash__cta {
@@ -236,6 +237,9 @@
             gap: clamp(24px, 4.788vw, 68.94px);
             border-radius: 0px clamp(34px, 4.681vw, 67.4118px) clamp(34px, 4.681vw, 67.4118px) 0px;
         }
+        [dir="rtl"] .sqv6-flash__head {
+            border-radius: clamp(34px, 4.681vw, 67.4118px) 0px 0px clamp(34px, 4.681vw, 67.4118px);
+        }
         .sqv6-flash__title { font-size: clamp(32px, 3.333vw, 48px); }
         .sqv6-flash__ends-label { font-size: clamp(12px, 1.1298vw, 16.2687px); }
         .sqv6-flash__digit {
@@ -250,6 +254,9 @@
             padding: clamp(24px, 2.222vw, 32px) max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
             gap: clamp(16px, 1.667vw, 24px);
             border-radius: 0px clamp(34px, 4.681vw, 67.4118px) 0px 0px;
+        }
+        [dir="rtl"] .sqv6-flash__panel {
+            border-radius: clamp(34px, 4.681vw, 67.4118px) 0px 0px 0px;
         }
         .sqv6-flash__cta {
             /* 320.21 x 67.41 */
@@ -274,22 +281,21 @@
 
   <div class="sqv6-flash__panel">
     @if ($__flashCards->isNotEmpty())
-      {{-- Same draggable fan-cascade carousel as Green Edition's Best Seller
-           (see mountFanCascadeCarousel() in carousels-v6.js). --}}
-      <div class="swiper flash-swiper sqv6-flash__row lg:!hidden w-full">
-        <div class="swiper-wrapper sqv6-flash__group" id="flashMobileWrapper">
+      {{-- Mobile: 3-card cascade, drag + dots pagination. --}}
+      <div class="swiper flash-swiper sqv6-flash__row w-full lg:!hidden">
+        <div class="swiper-wrapper" id="flashMobileWrapper">
           @foreach ($__flashMobile as $p)
-            <div class="swiper-slide sqv6-flash__deal-base" style="position:absolute; top:0; left:0;" wire:key="flash-mobile-v6-{{ $p['id'] }}">
+            <div class="swiper-slide sqv6-flash__slide" wire:key="flash-v6-mobile-{{ $p['id'] }}">
               @include('themes.souqify.pages.home-v6.sections.partials.pink_deal_card', ['p' => $p])
             </div>
           @endforeach
         </div>
       </div>
-
-      <div class="swiper flash-swiper sqv6-flash__row !hidden lg:!block w-full">
-        <div class="swiper-wrapper sqv6-flash__group" id="flashDesktopWrapper">
+      {{-- Desktop: full card set, drag only. --}}
+      <div class="swiper flash-swiper sqv6-flash__row w-full !hidden lg:!block">
+        <div class="swiper-wrapper" id="flashDesktopWrapper">
           @foreach ($__flashCards as $p)
-            <div class="swiper-slide sqv6-flash__deal-base" style="position:absolute; top:0; left:0;" wire:key="flash-desktop-v6-{{ $p['id'] }}">
+            <div class="swiper-slide sqv6-flash__slide" wire:key="flash-v6-desktop-{{ $p['id'] }}">
               @include('themes.souqify.pages.home-v6.sections.partials.pink_deal_card', ['p' => $p])
             </div>
           @endforeach

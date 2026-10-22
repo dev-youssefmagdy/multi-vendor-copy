@@ -9,22 +9,21 @@
     @if (!empty($newInCards))
     <!-- ============ NEW IN ============ -->
     <section
-      class="pattern-newin mt-[64px] px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class="pattern-newin mt-[64px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
       wire:ignore
     >
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
           {{ __('New In') }}
         </h2>
         <a
           href="{{ route('tenant.storefront.new-in') }}"
-          class="text-[14px] lg:text-[20px] tracking-[0.5px]"
-          style="color: var(--color-brand-orange-bright)"
+          class="text-[14px] lg:text-[20px] tracking-[0.5px] text-black"
           >{{ __('see all') }}</a
         >
       </div>
       <div class="relative min-w-0">
-        <div class="swiper card-swiper newin-swiper min-w-0">
+        <div class="swiper card-swiper newin-swiper min-w-0 ps-[16px] lg:ps-[56px]">
           <div class="swiper-wrapper" id="newInWrapper">
             @foreach ($newInGroups as $group)
               @php [$left, $top, $bottom] = array_pad($group, 3, null); @endphp

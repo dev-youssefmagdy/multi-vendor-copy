@@ -48,11 +48,13 @@ $badge optional ribbon arrow label (top-left of image)
     $ribbonBadge = $badgeText ?? $badge ?? null;
 @endphp
 
-<a href="{{ route('tenant.storefront.product', $product->slug) }}" class="product-card bg-fill rounded-lg card-w block">
+<a href="{{ route('tenant.storefront.product', $product->slug) }}"
+    class="product-card group bg-fill rounded-lg card-w block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
 
     <div class="relative card-img-h rounded-t-lg overflow-hidden">
         @if ($img)
-            <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}" class="w-full h-full object-cover"
+            <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 @if($sliderJson) data-slider='{{ $sliderJson }}' @endif />
         @else
             <div class="w-full h-full flex items-center justify-center bg-gray-100 text-5xl">🛍️</div>

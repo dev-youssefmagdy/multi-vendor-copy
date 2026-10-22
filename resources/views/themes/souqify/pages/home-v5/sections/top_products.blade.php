@@ -27,6 +27,7 @@
             'cartIcon' => 'trending-cart-purple.svg',
             'stock' => __('Only 5 left - Hurry up'),
             'name' => $__name,
+            'weight' => $variant?->weight_grams ? $variant->weight_grams . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
@@ -57,6 +58,16 @@
      overlapped, rotations cycling -11.98deg / 0 / 8.97deg.
      Values are clamp(min, <value>/1440*100vw, max) off the 1440 canvas. --}}
 <style>
+    /* A light-gray strip above the orange scallop, separating it from Shop by
+       Category - the scallop itself is full-bleed, so this lives on the
+       wrapper rather than on .sqv5-best. */
+    .sqv5-best-wrap {
+        background: var(--color-page-bg);
+        padding-top: 16px;
+    }
+    @media (min-width: 1024px) {
+        .sqv5-best-wrap { padding-top: 24px; }
+    }
     .sqv5-best {
         /* The comp keeps the card's price and tag purple inside this panel. */
         --sqv5-deal-accent: #8B03BD;
@@ -241,6 +252,7 @@
 </style>
 
 <!-- ============ BEST SELLER ============ -->
+<div class="sqv5-best-wrap">
 <section class="sqv5-best mx-[8px] lg:mx-[16px]" wire:ignore>
   <span class="sqv5-best__bg" aria-hidden="true">
     {{-- 95.64 / 1440 = 6.642% step; 16 columns cover the full 1440 width. --}}
@@ -288,3 +300,4 @@
     <p class="relative text-white/80 text-sm py-6">{{ __('No best sellers yet.') }}</p>
   @endif
 </section>
+</div>

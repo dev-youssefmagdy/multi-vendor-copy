@@ -5,13 +5,13 @@
                 <h3 class="text-lg font-bold text-gray-900">{{ __('Browse by Categories') }}</h3>
                 <div class="flex items-center gap-2">
                     <button
-                        class="swiper-navigation-prev w-8 h-8 rounded-full border border-gray-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition">
+                        class="swiper-navigation-prev w-8 h-8 rounded-full border border-gray-300 hover:border-[var(--sq-primary)] hover:text-[var(--sq-primary)] flex items-center justify-center transition">
                         <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button
-                        class="swiper-navigation-next w-8 h-8 rounded-full border border-gray-300 hover:border-blue-700 hover:text-blue-700 flex items-center justify-center transition">
+                        class="swiper-navigation-next w-8 h-8 rounded-full border border-gray-300 hover:border-[var(--sq-primary)] hover:text-[var(--sq-primary)] flex items-center justify-center transition">
                         <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
@@ -28,15 +28,15 @@
                 <div class="swiper-slide w-fit">
                     <a href="{{ $catUrl }}" class="flex flex-col items-center gap-2 shrink-0 group">
                         <div
-                            class="w-20 h-20 lg:w-32 lg:h-32 rounded-lg overflow-hidden border-transparent flex items-center justify-center">
+                            class="w-20 h-20 lg:w-32 lg:h-32 rounded-lg overflow-hidden border-transparent flex items-center justify-center transition-shadow duration-300 group-hover:shadow-md">
                             @if ($catImg)
-                            <img loading="lazy" src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover" />
+                            <img loading="lazy" src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             @else
                             <span class="text-2xl">🏷️</span>
                             @endif
                         </div>
                         <span
-                            class="text-xs font-medium text-gray-700 group-hover:text-blue-700 transition text-center whitespace-nowrap max-w-[80px] truncate">{{ $catName }}</span>
+                            class="text-xs font-medium text-gray-700 group-hover:text-[var(--sq-primary)] transition text-center whitespace-nowrap max-w-[80px] truncate">{{ $catName }}</span>
                     </a>
                 </div>
                 @empty

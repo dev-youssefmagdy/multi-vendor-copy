@@ -32,6 +32,14 @@ function initFlashSlider() {
     if (!track) return;
 
     var isDesktop  = window.matchMedia('(min-width: 1024px)').matches;
+    // In RTL, flex-direction:column + flex-wrap stacks each new column to
+    // the LEFT of the previous one (the cross-axis start is the right edge),
+    // the mirror image of LTR's left-to-right columns — so paging has to
+    // translate the track the opposite way, and a drag's dx has to be read
+    // with the opposite sign, or the carousel pages backwards/snaps to the
+    // wrong column (or doesn't visibly move at all) under RTL.
+    var isRTL      = document.documentElement.dir === 'rtl' || getComputedStyle(wrapper).direction === 'rtl';
+    var dirSign    = isRTL ? 1 : -1;
     var current    = 0;
     var slides     = Array.from(track.children);
     var total      = slides.length;
@@ -45,7 +53,9 @@ function initFlashSlider() {
      *   Desktop: rows = 3, cols = ceil(total / 3)
      *
      *   One "page" = one column width + gap.
-     *   translateX moves the track left by (page × colWidth).
+     *   translateX moves the track by (page × colWidth), signed so it moves
+     *   toward wherever the next column actually sits (left in LTR, right
+     *   in RTL — see dirSign above).
      */
     function rows()     { return isDesktop ? 3 : 2; }
     function gap()      { return isDesktop ? 12 : 8; }
@@ -68,7 +78,7 @@ function initFlashSlider() {
       var cols = totalCols();
       current  = Math.max(0, Math.min(page, cols - 1));
       var step = colWidth() + gap();
-      track.style.transform = 'translateX(-' + (current * step) + 'px)';
+      track.style.transform = 'translateX(' + (dirSign * current * step) + 'px)';
       updateArrows();
     }
 
@@ -88,7 +98,7 @@ function initFlashSlider() {
     var suppressNextClick = false;
 
     function currentTranslateX() {
-      return -(current * (colWidth() + gap()));
+      return dirSign * (current * (colWidth() + gap()));
     }
 
     function onPointerDown(e) {
@@ -134,7 +144,9 @@ function initFlashSlider() {
       if (dragAxis === 'x') {
         if (Math.abs(dx) > 5) suppressNextClick = true;
         if (Math.abs(dx) > 40) {
-          goTo(current + (dx < 0 ? 1 : -1));
+          // Which way "next" page lies (dx<0 vs dx>0) flips with dirSign —
+          // the drag itself always just follows the finger 1:1 above.
+          goTo(current + (dx < 0 ? -dirSign : dirSign));
         } else {
           goTo(current); // snap back to the current page
         }

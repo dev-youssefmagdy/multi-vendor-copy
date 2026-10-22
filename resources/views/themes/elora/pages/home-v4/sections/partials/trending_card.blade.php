@@ -1,13 +1,13 @@
 {{-- Expects $p: image, name, price, oldPrice, discount, rating, url; ordered/progress optional --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto w-full lg:w-auto">
-  <a href="{{ $p['url'] ?? '#' }}" class="flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden" style="text-decoration:none">
+  <a href="{{ $p['url'] ?? '#' }}" class="group flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-[123.69px] lg:w-[222.51px] shrink-0 h-full lg:h-[236px] lg:px-[6.36px] lg:py-[5.3px]">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover" />
+      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</span>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'
-        aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[6px] lg:start-[6px] bg-white rounded-full p-[5.03px] lg:p-[5px] shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow"><img src="{{ asset('elora-4/assets/icons/heart.svg') }}" class="size-[12.57px] lg:size-[22px]" alt="" /></button>
+        aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[6px] lg:start-[6px] bg-white rounded-full p-[5.03px] lg:p-[5px] shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow"><svg class="size-[12.57px] lg:size-[22px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg></button>
       <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
         aria-label="{{ __('Add to cart') }}"
         class="absolute bottom-[5px] end-[5px] lg:bottom-[8px] lg:end-[8px] flex items-center justify-center bg-white rounded-[10.06px] lg:rounded-[14px] w-[35.83px] h-[28.29px] lg:size-[44px] shadow cursor-pointer"><img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" class="size-[15.09px] lg:size-[20px]" alt="" /></button>

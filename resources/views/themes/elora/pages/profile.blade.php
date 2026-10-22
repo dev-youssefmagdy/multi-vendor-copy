@@ -77,7 +77,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
             <p class="text-base font-semibold text-[#171717] mb-0.5">{{ $customer->full_name }}</p>
             <p class="text-sm text-[#ADADAD] mb-3 break-all">{{ $customer->email }}</p>
             <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')" onclick="eloraProfileDrawerClose()"
-                class="inline-block text-xs font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors cursor-pointer">
+                class="inline-block text-xs font-medium text-[var(--color-primary)] border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-1.5 hover:bg-orange-100 transition-colors cursor-pointer">
                 {{ __('Edit') }}
             </a>
         </div>
@@ -126,14 +126,14 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
             class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center justify-between gap-1 text-sm text-[#808080] flex-wrap">
             <div class="flex items-center gap-1 flex-wrap">
                 <a href="{{ route('tenant.home') }}"
-                    class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Home') }}</a>
+                    class="hover:text-[var(--color-primary)] text-[#ADADAD] transition-colors">{{ __('Home') }}</a>
                 <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="m9 18 6-6-6-6" />
                 </svg>
                 @if ($activeTab === 'orders')
                     @if ($statusFilter)
                         <a href="{{ $profileUrl() }}" wire:click.prevent="filterStatus(null)"
-                            class="hover:text-main text-[#ADADAD] transition-colors">{{ __('Orders') }}</a>
+                            class="hover:text-[var(--color-primary)] text-[#ADADAD] transition-colors">{{ __('Orders') }}</a>
                         <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="m9 18 6-6-6-6" />
                         </svg>
@@ -190,7 +190,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                 <div class="max-w-[700px]">
                     <div class="flex items-center gap-3 mb-6">
                         <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')" aria-label="{{ __('Back to orders') }}"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors cursor-pointer">
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-[var(--color-primary)] transition-colors cursor-pointer">
                             <svg class="w-4 h-4 text-[#555] rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path d="m15 18-6-6 6-6" stroke-linecap="round" />
@@ -244,7 +244,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                                         {{ __('View Order') }}
                                     </a>
                                     <a href="{{ route('tenant.storefront.return-detail', $ret->id) }}"
-                                        class="text-xs font-medium underline text-main hover:opacity-75">
+                                        class="text-xs font-medium underline text-[var(--color-primary)] hover:opacity-75">
                                         {{ __('View Details') }}
                                     </a>
                                 </div>
@@ -260,7 +260,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                 <div class="max-w-[500px]">
                     <div class="flex items-center gap-3 mb-6">
                         <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')" aria-label="{{ __('Back to orders') }}"
-                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors cursor-pointer">
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-[var(--color-primary)] transition-colors cursor-pointer">
                             <svg class="w-4 h-4 text-[#555] rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path d="m15 18-6-6 6-6" stroke-linecap="round" />
@@ -313,7 +313,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                                             <span class="px-2 py-0.5 bg-[#F5F5F5] rounded text-xs text-[#888]">{{ $addr->label }}</span>
                                             @endif
                                             @if ($addr->is_default)
-                                            <span class="px-2 py-0.5 bg-main/10 text-main rounded text-xs font-semibold">{{ __('Default') }}</span>
+                                            <span class="px-2 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded text-xs font-semibold">{{ __('Default') }}</span>
                                             @endif
                                         </div>
                                         @if ($addr->phone)

@@ -207,6 +207,12 @@ body {
   overflow: hidden;
   background: var(--color-bg-main);
   box-shadow: var(--shadow-card);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.flash-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-lg, 0 8px 24px rgba(0, 0, 0, 0.13));
 }
 
 /* ── Image section ── */
@@ -224,6 +230,11 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease-out;
+}
+
+.flash-card:hover .flash-card-img {
+  transform: scale(1.08);
 }
 
 .flash-card-badge {
@@ -504,6 +515,27 @@ body {
 .swiper-nav-next {
   right: -8px;
 }
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
+}
+
+/* Recommended For You: end-edge fade. The solid color stop must stay on the
+   true outer edge and fade inward toward the cards — a fixed physical angle
+   would keep its solid stop on the right in both directions, which lands it
+   over the cards (not fading outward) once end-0 flips the box to the left
+   under RTL. Mirroring the angle (360 - 91.97) keeps the solid stop on the
+   outer edge in both directions. */
+.recommended-edge-fade {
+  background: linear-gradient(91.97deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
+}
+[dir="rtl"] .recommended-edge-fade {
+  background: linear-gradient(268.03deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
+}
 
 /* Hero carousel */
 .hero-swiper {
@@ -511,7 +543,7 @@ body {
 }
 .hero-pagination {
   position: static !important;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -532,6 +564,9 @@ body {
   background: var(--color-brand-orange-bright);
 }
 @media (min-width: 1024px) {
+  .hero-pagination {
+    display: flex;
+  }
   .hero-dot {
     height: 13px;
     width: 13px;
@@ -592,24 +627,28 @@ body {
 
 /* Best Seller mobile: 2-col x 2-row grid-swiper (Swiper's grid module).
    The swiper needs an explicit height so Swiper's per-row math
-   (slide height = (100% - gap) / rows) has something real to divide. */
+   (slide height = (100% - gap) / rows) has something real to divide.
+   The right column is nudged down (translateY) on top of its own rotation
+   so the 2x2 grid reads as a scattered/staggered pile rather than a neat
+   grid — the extra 32px is added to the swiper's own height below so the
+   nudged-down cards don't get clipped by the swiper's overflow:hidden. */
 .best-seller-mobile-swiper {
-  height: 561.42px !important; /* 2 * 268.71px card + 24px row gap */
+  height: 585.42px !important; /* 2 * 268.71px card + 16px row gap + 32px stagger offset */
 }
 #bestSellerMobileWrapper .swiper-slide {
   transition: transform 0.2s ease;
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 1) {
-  transform: rotate(4.68deg);
+  transform: rotate(-5deg);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 2) {
-  transform: rotate(-4.68deg);
+  transform: rotate(5deg) translateY(32px);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 3) {
-  transform: rotate(-4.68deg);
+  transform: rotate(4deg);
 }
 #bestSellerMobileWrapper .swiper-slide:nth-child(4n + 4) {
-  transform: rotate(4.68deg);
+  transform: rotate(-4deg) translateY(32px);
 }
 #bestSellerMobileWrapper .swiper-slide:active {
   transform: rotate(0deg);

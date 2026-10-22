@@ -146,6 +146,11 @@ body {
   pointer-events: auto;
 }
 
+/* Mobile header teal band behind the wordmark/cart (Souqify Modern Edition v3) */
+.sqv3-header-hero {
+  background: var(--color-souqify-teal);
+}
+
 /* Hero carousel */
 .hero-swiper {
   overflow: hidden;

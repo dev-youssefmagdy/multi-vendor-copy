@@ -33,20 +33,20 @@
               <div class="swiper-slide">
                 <a
                   href="{{ route('tenant.storefront.category', $cat->slug) }}"
-                  class="relative flex flex-col justify-between p-[12px] w-full h-[128px] rounded-[20px] overflow-hidden"
+                  class="group relative flex flex-col justify-between p-[12px] w-full h-[128px] rounded-[20px] overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
                   style="background: {{ $__tile['color'] }}"
                 >
                   @if ($cat->thumb_url ?? null)
                     <img
                       src="{{ $cat->thumb_url }}"
                       alt=""
-                      class="absolute inset-0 h-full w-full object-cover opacity-90"
+                      class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
                     />
                   @else
                     <img
                       src="{{ asset('elora-4/assets/images/' . $__tile['image']) }}"
                       alt=""
-                      class="absolute inset-0 h-full w-full object-cover opacity-90"
+                      class="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-105"
                     />
                   @endif
                   <div

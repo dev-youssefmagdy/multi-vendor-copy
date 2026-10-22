@@ -1,11 +1,11 @@
 {{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.71px] lg:rounded-[12.25px] h-full lg:h-[408.48px] lg:w-[270.45px] shadow-[0px_13.52px_45.02px_rgba(0,0,0,0.16)] lg:shadow-[0px_29px_96.56px_rgba(0,0,0,0.16)]" style="text-decoration:none">
+<a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[5.71px] lg:rounded-[12.25px] h-full lg:h-[408.48px] lg:w-[270.45px] shadow-[0px_13.52px_45.02px_rgba(0,0,0,0.16)] lg:shadow-[0px_29px_96.56px_rgba(0,0,0,0.16)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="flex flex-col gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-end justify-end px-[3.59px] lg:px-[7.7px] py-[2.99px] lg:py-[6.42px] relative shrink-0 w-full">
     <div class="absolute flex gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-start left-0 p-[3.59px] lg:p-[7.7px] top-0 w-full">
       <div class="absolute flex flex-col gap-[4.79px] lg:gap-[10.27px] h-[109.51px] lg:h-[234.9px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[109.51px] lg:h-[234.9px] rounded-t-[4.79px] lg:rounded-t-[10.27px] top-0 w-full overflow-hidden">
-          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
         <div class="flex h-[14.69px] lg:h-[31.51px] items-center justify-center p-[3.15px] lg:p-[6.75px] relative rounded-bl-[4.2px] lg:rounded-bl-[9px] rounded-tr-[4.2px] lg:rounded-tr-[9px] shrink-0 w-[37.29px] lg:w-[80.5px]" style="background:var(--color-accent-yellow)">
           <p class="font-normal text-[7.34px] leading-[9px] lg:text-[15.75px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? '' }}</p>
@@ -14,7 +14,7 @@
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'
         aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn bg-white cursor-pointer shadow-[0px_2.39px_2.39px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.13px_5.13px_rgba(0,0,0,0.15)] flex items-center justify-center p-[4.79px] lg:p-[10.27px] relative rounded-full shrink-0 size-[19.15px] lg:size-[41.08px]">
-        <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[11.97px] lg:size-[25.67px]" />
+        <svg class="size-[11.97px] lg:size-[25.67px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     </div>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"

@@ -104,12 +104,6 @@ function mountBestSeller() {
     // so the row reads as swipeable.
     slidesPerView: 2.15,
     spaceBetween: 12,
-    pagination: {
-      el: "#bestSellerDots",
-      clickable: true,
-      bulletClass: "best-seller-dot",
-      bulletActiveClass: "is-active",
-    },
     breakpoints: {
       640: { slidesPerView: 3.15, spaceBetween: 16 },
       // 20.18px is the Figma gap between Best Seller cards (Frame 1984079779).

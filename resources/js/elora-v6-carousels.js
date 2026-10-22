@@ -36,13 +36,13 @@ function mountTrending() {
     });
 }
 
-// Categories: fixed-width pill carousel, spacing matches the Figma 12px
-// (mobile) / 22px (desktop, lg breakpoint) gap.
+// Categories: 3.5 slides per view on mobile, 7 on desktop (lg breakpoint),
+// spacing matches the Figma 12px (mobile) / 22px (desktop) gap.
 function mountCategories() {
     const wrapper = document.getElementById("categoriesWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: "auto",
+        slidesPerView: 3.5,
         spaceBetween: 12,
         breakpoints: {
             1024: { slidesPerView: 7, spaceBetween: 22 },
@@ -82,6 +82,26 @@ function mountBestSeller() {
     return new Swiper(wrapper.closest(".swiper"), {
         slidesPerView: "auto",
         spaceBetween: 16,
+        pagination: {
+            el: ".best-seller-pagination",
+            clickable: true,
+            bulletClass: "best-seller-dot",
+            bulletActiveClass: "is-active",
+        },
+    });
+}
+
+// Features (Free Shipping / Customer Support): mobile-only, 2.25 slides
+// per view so the two items size/space themselves against the viewport
+// instead of a centered flex row (desktop keeps the original centered strip).
+function mountFeatures() {
+    const wrapper = document.getElementById("featuresWrapper");
+    if (!wrapper) return;
+    return new Swiper(wrapper.closest(".swiper"), {
+        slidesPerView: 2.25,
+        spaceBetween: 32,
+        slidesOffsetBefore: 16,
+        slidesOffsetAfter: 16,
     });
 }
 
@@ -91,6 +111,7 @@ function initCarousels() {
     mountBestSeller();
     mountTrending();
     mountFlashGrid();
+    mountFeatures();
 
     // Flash-sale countdown (starts from the design's captured 03:06:25 and ticks down)
     let remaining = 3 * 3600 + 6 * 60 + 25;

@@ -67,7 +67,7 @@
     @endphp
     <!-- ============ RECOMMENDED FOR YOU ============ -->
     <section
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[16px] lg:gap-[28px]"
+      class="relative px-[16px] lg:px-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[16px] lg:gap-[28px]"
     >
       <div class="flex items-center justify-between">
         <h2
@@ -105,4 +105,10 @@
           </div>
         </div>
       @endif
+
+      {{-- End-edge fade hinting the grid continues / scrolls, matching the
+           Fresh edition (see .recommended-edge-fade in elora-v5.css). --}}
+      <div
+        class="recommended-edge-fade hidden lg:block absolute top-0 end-0 h-full w-[200px] pointer-events-none"
+      ></div>
     </section>

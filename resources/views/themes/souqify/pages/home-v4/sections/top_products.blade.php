@@ -64,7 +64,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 32px var(--sqv4-flash-pad);
+        padding: 18px var(--sqv4-flash-pad);
         gap: 16px;
         background: #5A9B00;
         overflow: hidden;

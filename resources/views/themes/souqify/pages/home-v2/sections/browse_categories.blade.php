@@ -19,7 +19,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: 16px;
+        padding: 12px 16px;
         gap: 16px;
         background: var(--color-page-bg, #FFFFFF);
     }
@@ -69,6 +69,16 @@
         height: auto;
         min-width: 0;
         text-decoration: none;
+        transition: transform 0.25s ease;
+    }
+    .sqv2-cats__tile:hover {
+        transform: translateY(-2px);
+    }
+    .sqv2-cats__img {
+        transition: transform 0.3s ease;
+    }
+    .sqv2-cats__tile:hover .sqv2-cats__img {
+        transform: scale(1.08);
     }
     /* Group 39: the purple arch with the cut-out overhanging it. */
     .sqv2-cats__art {

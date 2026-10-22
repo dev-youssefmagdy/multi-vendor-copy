@@ -45,7 +45,7 @@
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
-      class="flash-sale-stripes py-[24px] lg:py-[32px] flex flex-col gap-[24px]" wire:ignore
+      class="flash-sale-stripes py-[24px] flex flex-col gap-[24px]" wire:ignore
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <div class="flex items-center gap-2 lg:gap-3.25">
@@ -82,14 +82,11 @@
       >
         <div class="flex items-center gap-[3px] lg:gap-[5px]">
           <span
-            class="font-semibold text-[12px] lg:text-[20px] max-lg:leading-[18px] tracking-[0.5px] lg:tracking-[0.8px] whitespace-nowrap"
-            style="
-              color: var(--color-accent-yellow);
-              transform: rotate(-90deg) translateY(20px);
-            "
+            class="flash-ends-label font-semibold text-[12px] lg:text-[20px] max-lg:leading-[18px] tracking-[0.5px] lg:tracking-[0.8px] whitespace-nowrap"
+            style="color: var(--color-accent-yellow)"
             >{{ __('Ends in') }}</span
           >
-          <div class="flex items-center gap-[3px] lg:gap-[5px] ms-1 lg:ms-2">
+          <div class="flex items-center gap-[3px] lg:gap-[5px]">
             <div
               class="border lg:border-2 border-white flex flex-col h-[44px] w-[46px] lg:h-[73px] lg:w-[76px] items-center justify-center rounded-[7px] lg:rounded-[12px] max-lg:p-2"
               style="background: var(--color-accent-green)"

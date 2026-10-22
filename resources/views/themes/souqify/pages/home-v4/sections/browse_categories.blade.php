@@ -76,6 +76,16 @@
         min-width: 0;
         scroll-snap-align: start;
         text-decoration: none;
+        transition: transform 0.25s ease;
+    }
+    .sqv4-cats__tile:hover {
+        transform: translateY(-2px);
+    }
+    .sqv4-cats__img {
+        transition: transform 0.3s ease;
+    }
+    .sqv4-cats__tile:hover .sqv4-cats__img {
+        transform: scale(1.08);
     }
     /* Art block: the green shape plus the product image that overhangs it. */
     .sqv4-cats__art {

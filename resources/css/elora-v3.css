@@ -135,6 +135,27 @@ body {
   margin-right: 0;
 }
 
+/* Flash Sale carousel: keep the section's own start gutter (px-[16px]
+   lg:px-[56px]) as the only inset, and bleed to the true edge at the end so
+   the last (or half-cut) card isn't boxed in by a matching end gutter.
+   Logical properties so this mirrors correctly in RTL.
+   The shared rule above sets max-width: 100%, which caps this flex item's
+   stretch-computed width at the container's available space — a negative
+   margin alone has no room to grow into and is otherwise inert, so width/
+   max-width must be widened here by the same amount the margin claws back. */
+.flashsale-swiper {
+  width: calc(100% + 16px);
+  max-width: calc(100% + 16px);
+  margin-inline-end: -16px;
+}
+@media (min-width: 1024px) {
+  .flashsale-swiper {
+    width: calc(100% + 56px);
+    max-width: calc(100% + 56px);
+    margin-inline-end: -56px;
+  }
+}
+
 /* Flash Sale: mobile renders as a static 2-column grid of the first 4
    products (Swiper is destroyed below 1024px — see
    elora-v3-carousels.js), desktop is a real 4.5-per-view Swiper. Scoped to
@@ -170,6 +191,30 @@ body {
   .bestseller-swiper .swiper-slide:nth-child(even) {
     transform: translateY(34px);
   }
+}
+/* Best Seller bullet navigation, top-right of the section on desktop (the
+   mobile vertical-pill variant is styled inline in best_seller.blade.php,
+   which loads after this stylesheet and wins at the same specificity). */
+#bestSellerDotsV3 .swiper-pagination-bullet {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+  margin: 0 !important;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    background 0.2s ease;
+}
+#bestSellerDotsV3 .swiper-pagination-bullet-active {
+  /* Stacked vertically in the section's top-right corner (see the
+     #bestSellerDotsV3 desktop reset below), so the active bullet grows as a
+     tall pill instead of a wide one - matching the hero pagination. */
+  height: 24px;
+  background: #ffdb4c;
 }
 @media (max-width: 1023.98px) {
   .bestseller-swiper {
@@ -219,6 +264,14 @@ body {
 .swiper-nav-next {
   right: -8px;
 }
+[dir="rtl"] .swiper-nav-prev {
+  left: auto;
+  right: -8px;
+}
+[dir="rtl"] .swiper-nav-next {
+  right: auto;
+  left: -8px;
+}
 
 /* Flash-sale / best-seller nav buttons need a light variant over the pink section bg */
 .swiper-nav-btn-light {
@@ -230,6 +283,7 @@ body {
 
 /* Hero carousel */
 .hero-swiper {
+  position: relative;
   overflow: hidden;
 }
 .hero-pagination {
@@ -242,7 +296,20 @@ body {
 }
 @media (min-width: 1024px) {
   .hero-pagination {
+    /* Swiper stamps its own .swiper-pagination-horizontal rules on this
+       element (bottom: 10px; left: 0; width: 100%) once it mounts, which
+       fight our top/end placement at equal specificity since those sides
+       are never otherwise touched here - reset every inset first so only
+       top/inset-inline-end survive. */
+    position: absolute !important;
+    inset: auto !important;
+    top: 32px !important;
+    inset-inline-end: 56px !important;
+    width: auto !important;
+    padding: 0;
+    flex-direction: column;
     gap: 5px;
+    z-index: 10;
   }
 }
 .hero-dot {
@@ -254,6 +321,7 @@ body {
   cursor: pointer;
   transition:
     width 0.2s ease,
+    height 0.2s ease,
     background 0.2s ease;
 }
 .hero-dot.is-active {
@@ -266,7 +334,10 @@ body {
     width: 10px;
   }
   .hero-dot.is-active {
-    width: 32px;
+    /* Desktop stacks the dots vertically (top-right corner), so the active
+       bullet grows as a tall pill instead of a wide one. */
+    width: 10px;
+    height: 32px;
   }
 }
 
@@ -284,14 +355,14 @@ body {
 }
 
 /* Decorative section background patterns (from Figma) */
+/* Flash Sale bg: the exported "Nebula" texture (pink/magenta sparkle field)
+   over the brand-pink fallback, used while the image loads. */
 .pattern-flash-sale {
   background-color: var(--color-brand-pink);
-  background-image: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.4) 1px,
-    transparent 1.5px
-  );
-  background-size: 26px 26px;
+  background-image: url("/elora-3/assets/images/pattern-flash-sale.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .pattern-newin {
   background-color: var(--color-bg-main);
@@ -351,4 +422,17 @@ body {
 
 .desc-readmore-btn:hover {
     text-decoration: underline;
+}
+
+/* Recommended For You: end-edge fade hinting the grid continues / scrolls
+   (matches the Bold edition / elora-v4.css treatment). Solid color must stay
+   on the true outer edge and fade inward toward the cards in both
+   directions, so the gradient angle is mirrored for RTL rather than being a
+   fixed physical direction that would land its solid stop over the cards
+   once `end-0` flips the box under RTL. */
+.recommended-edge-fade {
+  background: linear-gradient(91.97deg, rgba(253, 253, 253, 0) 0%, rgba(253, 253, 253, 0.3) 45%, rgba(253, 253, 253, 0.65) 70%, var(--color-bg-main) 100%);
+}
+[dir="rtl"] .recommended-edge-fade {
+  background: linear-gradient(268.03deg, rgba(253, 253, 253, 0) 0%, rgba(253, 253, 253, 0.3) 45%, rgba(253, 253, 253, 0.65) 70%, var(--color-bg-main) 100%);
 }

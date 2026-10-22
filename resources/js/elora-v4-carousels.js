@@ -23,7 +23,10 @@ function mountCategories() {
   const wrapper = document.getElementById("categoriesWrapper");
   if (!wrapper) return;
   return new Swiper(wrapper.closest(".swiper"), {
-    slidesPerView: "auto",
+    // Numeric slidesPerView on mobile too: exactly 4 categories visible per
+    // view, each slide's width Swiper's own computed 1/4 share of the
+    // container (see w-full on the slide/pill/name in category_strip.blade.php).
+    slidesPerView: 4,
     spaceBetween: 16,
     breakpoints: {
       // Exactly 8 categories are rendered server-side (categories.take(8)),
@@ -92,7 +95,7 @@ function mountBestSellerMobile() {
   return new Swiper(wrapper.closest(".swiper"), {
     slidesPerView: 2,
     slidesPerGroup: 2,
-    spaceBetween: 24,
+    spaceBetween: 16,
     grid: { rows: 2, fill: "row" },
   });
 }

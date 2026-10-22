@@ -68,7 +68,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        /* Horizontal padding lives on the head and on the carousel's own start
+           offset instead of here, so the carousel can bleed flush to the
+           section's trailing edge while the title stays inset. */
+        padding: 12px 0;
         gap: 16px;
     }
     /* Frame 1984080017 */
@@ -79,6 +82,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        padding: 0 16px;
     }
     .sqv2-newin__title {
         font-family: 'Outfit', sans-serif;
@@ -133,9 +137,12 @@
 
     @media (min-width: 1024px) {
         .sqv2-newin {
-            /* The comp's content column is 1328px inside the 1440 canvas. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding: 24px 0;
             gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv2-newin__head {
+            /* The comp's content column is 1328px inside the 1440 canvas. */
+            padding: 0 max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
         }
         .sqv2-newin__title { font-size: clamp(32px, 2.778vw, 40px); }
         .sqv2-newin__seeall { font-size: clamp(15px, 1.389vw, 20px); }
@@ -193,6 +200,28 @@
       },
     });
     sw.__sqv2NewIn = true;
+
+    // The section's own horizontal padding was removed so the carousel can
+    // bleed flush to the trailing edge; slidesOffsetBefore recreates the
+    // gutter at the start only. The head's padding is a fluid clamp()/calc(),
+    // not a static breakpoint value, so it's read live from the rendered
+    // head instead of approximated, keeping the two exactly equal at every
+    // width. Swiper mirrors the offset to the visual start automatically
+    // under RTL.
+    var head = document.querySelector('.sqv2-newin__head');
+    var syncOffset = function () {
+      if (!head) return;
+      var gutter = parseFloat(getComputedStyle(head).paddingInlineStart) || 0;
+      if (sw.params.slidesOffsetBefore !== gutter) {
+        sw.params.slidesOffsetBefore = gutter;
+        sw.update();
+      }
+    };
+    syncOffset();
+    if (head && 'ResizeObserver' in window) {
+      new ResizeObserver(syncOffset).observe(head);
+    }
+    window.addEventListener('resize', syncOffset);
   }
 
   if (document.readyState === 'loading') {

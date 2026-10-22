@@ -107,7 +107,7 @@
 @endphp
 
 {{-- bigProductCard design --}}
-<div class="bg-white overflow-hidden shadow-sm hover:shadow-md transition group max-w-[394px] w-full">
+<div class="bg-white overflow-hidden shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg group max-w-[394px] w-full">
     {{-- Image area --}}
     <div class="relative product-img-bg aspect-square overflow-hidden">
         <a href="{{ $productUrl }}">

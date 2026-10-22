@@ -29,7 +29,7 @@
 
 @if ($flashSaleProducts->isNotEmpty())
 <section
-  class="texture-bg texture-hard ps-[16px] lg:ps-[56px] py-[24px] lg:py-[40px] flex flex-col gap-[24px] lg:gap-[28px]"
+  class="texture-bg texture-hard ps-[16px] lg:ps-[56px] py-[12px] lg:py-[40px] flex flex-col gap-[24px] lg:gap-[28px]"
   aria-label="{{ __('Flash Sale') }}"
   data-flash-countdown="{{ $flashEndsAtIso }}"
 >
@@ -39,7 +39,7 @@
   <div class="relative hidden lg:flex lg:flex-row items-center gap-[32px] w-full">
 
     {{-- LEFT: illustration + badge + countdown ──────────────── --}}
-    <div class="relative flex flex-col items-start gap-[20px] shrink-0">
+    <div class="relative flex flex-col items-start gap-0 shrink-0">
 
       {{-- Illustration + badge --}}
       <div class="relative">
@@ -102,7 +102,7 @@
 
       {{-- "Only $X.XX" price pill --}}
       @if ($flashSaleMinPriceLabel)
-        <div class="absolute bottom-[-20px] left-0 z-10 bg-white border-black rounded-full h-[47.54px] flex items-center justify-center px-[24px]" style="border-width: 1.49px; border-style: solid;">
+        <div class="absolute bottom-[-20px] left-0 -translate-x-[75%] z-10 bg-white border-black rounded-full h-[47.54px] flex items-center justify-center px-[24px]" style="border-width: 1.49px; border-style: solid;">
           <p class="font-bold text-[20px] whitespace-nowrap" style="color: var(--color-brand-orange)">
             {{ __('Only :price', ['price' => $flashSaleMinPriceLabel]) }}
           </p>

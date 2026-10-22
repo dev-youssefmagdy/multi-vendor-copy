@@ -1,9 +1,9 @@
 {{-- Card markup ported from public/souqify-5/carousels.js renderTrendingCard(). $p keys:
      id, url, image, name (Str::limit'd), weight, desc, rating, price, oldPrice, discount --}}
-<div class="flex h-full rounded-[10px] overflow-hidden" style="background:var(--color-bg-main); box-shadow:var(--shadow-card)">
-    <a href="{{ $p['url'] }}" class="relative w-[124px] shrink-0 block" style="background:var(--color-surface)">
+<div class="flex h-full rounded-[10px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg" style="background:var(--color-bg-main); box-shadow:var(--shadow-card)">
+    <a href="{{ $p['url'] }}" class="group relative w-[124px] shrink-0 block" style="background:var(--color-surface)">
         @if ($p['image'])
-            <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+            <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
         @endif
         <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[6px] left-[6px] rtl:left-auto rtl:right-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[14px]" alt="" /></button>
         @if (empty($p['outOfStock']))

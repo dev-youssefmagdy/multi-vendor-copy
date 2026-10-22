@@ -21,7 +21,7 @@ $shopCategories = ($categories ?? collect())->take(6);
                     @foreach ($socialLinks as $link)
                     <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer"
                         aria-label="{{ $link->icon?->name ? ucfirst($link->icon->name) : __('social') }}"
-                        class="w-9 h-9 rounded-full bg-white/10 hover:bg-blue-700 transition flex items-center justify-center">
+                        class="w-9 h-9 rounded-full bg-white/10 hover:bg-[var(--sq-primary)] transition flex items-center justify-center">
                         @switch($link->icon?->name)
                         @case('facebook')
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -147,7 +147,7 @@ $shopCategories = ($categories ?? collect())->take(6);
     @endif
 
     <!-- Sub footer -->
-    <div class="bg-blue-700">
+    <div class="bg-[var(--sq-primary)]">
         <div
             class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-12">
             <a href="{{ route('tenant.storefront.page', 'terms-of-use') }}"

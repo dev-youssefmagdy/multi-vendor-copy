@@ -76,7 +76,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        padding: 12px 16px;
         gap: 16px;
         /* One flat pastel sweep, tilted so pink/magenta holds the top-left and
            the light blue lands as an even band along the whole bottom edge

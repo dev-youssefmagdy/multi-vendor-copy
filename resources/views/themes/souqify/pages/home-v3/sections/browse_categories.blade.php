@@ -70,6 +70,16 @@
         height: auto;
         min-width: 0;
         text-decoration: none;
+        transition: transform 0.25s ease;
+    }
+    .sqv3-cats__tile:hover {
+        transform: translateY(-2px);
+    }
+    .sqv3-cats__img {
+        transition: transform 0.3s ease;
+    }
+    .sqv3-cats__tile:hover .sqv3-cats__img {
+        transform: scale(1.08);
     }
     /* Art block: the teal petal cluster plus the product image overhanging it. */
     .sqv3-cats__art {

@@ -24,10 +24,10 @@
     $deliveredColor = 'var(--color-success)';
     $stockColor = 'var(--color-error)';
 @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="fan-card flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)]" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="fan-card group flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)] transition-shadow duration-300 ease-out hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)]" style="background:var(--color-bg-main)">
   <div class="relative shrink-0 w-full" style="height:57.5%">
     <div class="fan-image rounded-t-[7.86px] lg:rounded-t-[9.77px] absolute inset-0 overflow-hidden">
-      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     </div>
     @if (!empty($p['favData']))
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"
@@ -35,11 +35,11 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="fan-heart-btn absolute top-[4.91px] start-[5.89px] lg:top-[7.32px] lg:start-[7.32px] bg-white cursor-pointer shadow-[0_3.93px_3.93px_rgba(0,0,0,0.15)] lg:shadow-[0_4.88px_4.88px_rgba(0,0,0,0.15)] flex items-center justify-center p-[7.86px] lg:p-[9.77px] rounded-full shrink-0 size-[31.43px] lg:size-[39.07px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" />
+        <svg class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @else
       <button type="button" aria-label="{{ __('Add to favorites') }}" class="fan-heart-btn absolute top-[4.91px] start-[5.89px] lg:top-[7.32px] lg:start-[7.32px] bg-white cursor-pointer shadow-[0_3.93px_3.93px_rgba(0,0,0,0.15)] lg:shadow-[0_4.88px_4.88px_rgba(0,0,0,0.15)] flex items-center justify-center p-[7.86px] lg:p-[9.77px] rounded-full shrink-0 size-[31.43px] lg:size-[39.07px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" />
+        <svg class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
     <div class="fan-badge absolute top-0 end-0 flex items-center justify-center px-[5.17px] py-[5.17px] lg:px-[6.42px] lg:py-[6.42px] rounded-tl-[6.89px] rounded-br-[6.89px] lg:rounded-tl-[8.56px] lg:rounded-br-[8.56px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">

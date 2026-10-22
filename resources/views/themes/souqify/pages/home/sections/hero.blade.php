@@ -29,9 +29,15 @@
                         {{ __('Experience the future of performance with our exclusive curated collection.') }}
                     </p>
                     @endif
+<<<<<<< HEAD
+                    <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
+                        class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
+                        {{ __('Explore Collection') }}
+=======
                     <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
                         class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
                         {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                     </a>
                 </div>
             </div>
@@ -115,9 +121,15 @@
                                 {{ __('Experience the future of performance with our exclusive curated collection.') }}
                             </p>
                             @endif
+<<<<<<< HEAD
+                            <a href="{{ $heroBanner->link ?? route('tenant.storefront.best-selling') }}"
+                                class="inline-flex w-fit h-14 px-7 bg-white hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center text-[var(--sq-primary)] font-medium">
+                                {{ __('Explore Collection') }}
+=======
                             <a href="{{ $heroBanner->url ?? route('tenant.storefront.best-selling') }}"
                                 class="inline-flex w-fit h-14 px-7 bg-white hover:bg-blue-50 transition rounded-lg items-center text-blue-700 font-medium">
                                 {{ $heroBanner?->translationValue('button_text') ?: __('Explore Collection') }}
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                             </a>
                         </div>
                     </div>

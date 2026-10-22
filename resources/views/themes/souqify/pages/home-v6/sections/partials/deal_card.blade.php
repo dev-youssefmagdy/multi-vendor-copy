@@ -1,9 +1,9 @@
 {{-- Card markup ported from public/souqify-5/carousels.js renderDealCard(). $p keys:
      id, url, image, name (Str::limit'd), weight, rating, price, oldPrice, discount, badge, delivery --}}
-<div class="flex flex-col items-start rounded-[8px] h-full overflow-hidden" style="background:var(--color-bg-main)">
-    <a href="{{ $p['url'] }}" class="relative w-full h-[183px] lg:h-[227px] shrink-0 block" style="background:var(--color-surface)">
+<div class="flex flex-col items-start rounded-[8px] h-full overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg" style="background:var(--color-bg-main)">
+    <a href="{{ $p['url'] }}" class="group relative w-full h-[183px] lg:h-[227px] shrink-0 block" style="background:var(--color-surface)">
         @if ($p['image'])
-            <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover rounded-t-[8px]" />
+            <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover rounded-t-[8px] group-hover:scale-105 transition-transform duration-300" />
         @endif
         @if (!empty($p['delivery']))
             <span class="delivery-ribbon absolute left-0 bottom-0 rtl:left-auto rtl:right-0 flex items-center gap-[6px] px-[6px] py-[3px] rounded-tr-[10px]">

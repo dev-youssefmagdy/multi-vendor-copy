@@ -1,5 +1,5 @@
     <!-- ============ HERO ============ -->
-    <section class="relative" wire:ignore>
+    <section class="relative mb-[16px] lg:mb-[48px]" wire:ignore>
       <div class="swiper hero-swiper">
         <div class="swiper-wrapper">
           @php $heroBadges = [__('NEW USER'), __('FLASH SALE'), __('NEW SEASON')]; @endphp

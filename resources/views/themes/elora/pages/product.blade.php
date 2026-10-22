@@ -86,7 +86,7 @@
                                placeholder="{{ __('Search for products, brands...') }}" autocomplete="off"
                                class="bg-transparent flex-1 text-xs sm:text-sm text-gray-600 placeholder-gray-400 min-w-0 outline-none"/>
                         <!-- <button type="submit"
-                            class="bg-main text-white text-xs font-medium px-1 sm:px-3 py-0.5 rounded-full flex-shrink-0">{{ __('Search') }}</button> -->
+                            class="bg-[var(--color-primary)] text-white text-xs font-medium px-1 sm:px-3 py-0.5 rounded-full flex-shrink-0">{{ __('Search') }}</button> -->
                     </div>
                 </form>
             </div> --}}
@@ -160,7 +160,7 @@
                     <!-- top left badge -->
                     @if($badgeLabel)
                         <span
-                            class="absolute top-0 left-0 z-10 bg-main text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-ee-xl rounded-ss-xl flex items-center gap-1 shrink-0 uppercase tracking-wide">
+                            class="absolute top-0 left-0 z-10 bg-[var(--color-primary)] text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-ee-xl rounded-ss-xl flex items-center gap-1 shrink-0 uppercase tracking-wide">
                         {{ __($badgeLabel) }}
                     </span>
                     @endif
@@ -312,9 +312,9 @@
                     </p>
                     <p class="text-[#8F8F8F] text-base">(+{{ $reviewCount }})</p>
 
-                    <p id="elora-weight-display" class="text-main text-base">{{ $weightDisplay }}</p>
+                    <p id="elora-weight-display" class="text-[var(--color-primary)] text-base">{{ $weightDisplay }}</p>
                     @if ($pricing['is_flash_sale'] && ($pricing['flash_sale']?->end_date ?? null))
-                        <p class="text-sm bg-main rounded-3xl p-1 flex items-center gap-1 text-white">
+                        <p class="text-sm bg-[var(--color-primary)] rounded-3xl p-1 flex items-center gap-1 text-white">
                             <svg width="16"
                                  height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -430,7 +430,7 @@
                         </li>
                         <li>
                             <button type="button"
-                                class="px-2 py-1 text-center bg-main border border-main text-white rounded-sm text-sm min-w-12">white</button>
+                                class="px-2 py-1 text-center bg-[var(--color-primary)] border border-[var(--color-primary)] text-white rounded-sm text-sm min-w-12">white</button>
                         </li>
                         <li>
                             <button type="button"
@@ -452,7 +452,7 @@
                         </li>
                         <li>
                             <button type="button"
-                                class="px-2 py-1 text-center bg-main border border-main text-white rounded-sm text-sm min-w-12">M</button>
+                                class="px-2 py-1 text-center bg-[var(--color-primary)] border border-[var(--color-primary)] text-white rounded-sm text-sm min-w-12">M</button>
                         </li>
                         <li>
                             <button type="button"
@@ -597,7 +597,7 @@
                                 stroke-linejoin="round"/>
                         </svg>
                         {{-- filled heart (when favorited) --}}
-                        <svg id="elora-fav-icon-filled" class="w-3 h-3 sm:w-5 sm:h-5 hidden" viewBox="0 0 24 24" fill="#FF4D00">
+                        <svg id="elora-fav-icon-filled" class="w-3 h-3 sm:w-5 sm:h-5 hidden" viewBox="0 0 24 24" fill="var(--color-primary)">
                             <path
                                 d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"/>
                         </svg>
@@ -649,7 +649,7 @@
 
                     <button id="elora-mobile-add-to-cart-btn" type="button" onclick="eloraAddToCart()"
                             @if (!$isInStock) disabled @endif
-                            class="bg-main text-white py-3.5 flex-1 rounded-full text-[15px] font-bold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-black active:scale-[0.98] transition-all w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="bg-[var(--color-primary)] text-white py-3.5 flex-1 rounded-full text-[15px] font-bold shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-black active:scale-[0.98] transition-all w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M8.25 7.75H12.25M10.25 5.75V9.75M1.46 3.15H16.674C18.052 3.15 19.047 4.42 18.669 5.698L17.015 11.298C16.76 12.158 15.946 12.75 15.02 12.75H5.862C4.935 12.75 4.12 12.157 3.866 11.298L1.46 3.15ZM1.46 3.15L0.75 0.75M14.25 18.75C14.6478 18.75 15.0294 18.592 15.3107 18.3107C15.592 18.0294 15.75 17.6478 15.75 17.25C15.75 16.8522 15.592 16.4706 15.3107 16.1893C15.0294 15.908 14.6478 15.75 14.25 15.75C13.8522 15.75 13.4706 15.908 13.1893 16.1893C12.908 16.4706 12.75 16.8522 12.75 17.25C12.75 17.6478 12.908 18.0294 13.1893 18.3107C13.4706 18.592 13.8522 18.75 14.25 18.75ZM6.25 18.75C6.64782 18.75 7.02936 18.592 7.31066 18.3107C7.59196 18.0294 7.75 17.6478 7.75 17.25C7.75 16.8522 7.59196 16.4706 7.31066 16.1893C7.02936 15.908 6.64782 15.75 6.25 15.75C5.85218 15.75 5.47064 15.908 5.18934 16.1893C4.90804 16.4706 4.75 16.8522 4.75 17.25C4.75 17.6478 4.90804 18.0294 5.18934 18.3107C5.47064 18.592 5.85218 18.75 6.25 18.75Z"
@@ -882,7 +882,7 @@
                     <li class="border-b border-[#e5e5e5] py-4 flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <div
-                                class="w-6 h-6 rounded-full bg-main text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                class="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-xs font-bold shrink-0">
                                 {{ strtoupper(substr($review->customer?->full_name ?? __('?'), 0, 1)) }}
                             </div>
                             <span
@@ -948,7 +948,7 @@
 
         .product-preview-thumbs .swiper-slide-thumb-active,
         .fs-product-preview-thumbs .swiper-slide-thumb-active {
-            border-color: #FF4D00 !important;
+            border-color: var(--color-primary) !important;
         }
 
         .product-preview-thumbs .swiper-slide-thumb-active img,
@@ -972,7 +972,7 @@
         <div class="relative select-none mb-8 w-full max-w-4xl h-[95%] mx-auto">
             @if($badgeLabel)
                 <span
-                    class="absolute top-0 left-0 z-10 bg-main text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-ee-xl rounded-ss-xl flex items-center gap-1 shrink-0 uppercase tracking-wide">
+                    class="absolute top-0 left-0 z-10 bg-[var(--color-primary)] text-white text-[10px] lg:text-[11px] font-bold px-2.5 py-1 rounded-ee-xl rounded-ss-xl flex items-center gap-1 shrink-0 uppercase tracking-wide">
                 {{ __($badgeLabel) }}
             </span>
             @endif
@@ -1122,7 +1122,7 @@
                             class="text-[10px] lg:text-sm"
                             >
                                 {{ __('The above applies only to products not shipped from local warehouses.If delivery is made after April 20, you will receive a ') }}
-                                <span class="text-main">
+                                <span class="text-[var(--color-primary)]">
                                 {{ __('15$ credit') }}
                                 </span>
                                 {{ __('... within 48 hour.') }}
@@ -1134,7 +1134,7 @@
                     <div
                         style="display:flex;flex-direction:column;align-items:flex-start;padding:0;gap:16px;width:100%;flex:none;order:1;align-self:stretch;flex-grow:0;">
 
-                        <p style="font-family:'Outfit',sans-serif;font-weight:500;font-size:14px;line-height:18px;letter-spacing:.5px;color:#FF4D00;margin:0;width:100%;flex:none;order:0;align-self:stretch;flex-grow:0;">
+                        <p style="font-family:'Outfit',sans-serif;font-weight:500;font-size:14px;line-height:18px;letter-spacing:.5px;color:var(--color-primary);margin:0;width:100%;flex:none;order:0;align-self:stretch;flex-grow:0;">
                             {{ __('Fastest delivery in :n Days', ['n' => $minDay]) }}
                         </p>
 
@@ -1275,10 +1275,10 @@
   <!-- ////////////// -->
       <div class="flex items-center gap-2 text-sm mb-[9px]"><span class="w-5 h-5 rounded-full flex items-center justify-center bg-[#2AAF2F]">2</span><p>{{ __('We keep your personal data private and secure')}}</p></div>
 <p class="text-[10px]"><span class="text-[#2AAF2F]">{{ __('The security of your personal information is important to us.')}}</span><span>{{ __('we
-We are committed to maintaining transparency and reducing permission requests within Application. You can view our ')}}</span><span class="text-main">{{ __('privacy policy')}}</span><span>{{ __('and')}}</span>
-<span class="text-main">{{ __('similar kisses')}}</span><span>{{ __('to obtain the details.')}}</span></p>
+We are committed to maintaining transparency and reducing permission requests within Application. You can view our ')}}</span><span class="text-[var(--color-primary)]">{{ __('privacy policy')}}</span><span>{{ __('and')}}</span>
+<span class="text-[var(--color-primary)]">{{ __('similar kisses')}}</span><span>{{ __('to obtain the details.')}}</span></p>
 <p class="text-[10px]"><span>{{ __('In March 2026, we officially partnered with the security agency Cyber ​​HackerOne to create a bug bounty program that Offers rewards to the cybersecurity community for discovering vulnerabilities Possible security and successfully completed it. We are committed to preserving Seamless shopping experience on Temu. To learn more, visit')}}</span>
-<span class="text-main mt-2">{{ __('https://hackerone.com/Elora')}}</span>
+<span class="text-[var(--color-primary)] mt-2">{{ __('https://hackerone.com/Elora')}}</span>
 </p>
             </div>
         </div>

@@ -5,29 +5,58 @@
 
 <!-- ============ NAVBAR ============ -->
 <header>
-  <!-- Mobile: greeting header + search -->
-  <div class="lg:hidden flex flex-col gap-[12px] px-[16px] pt-[14px] pb-[14px]" style="background:var(--color-bg-main)">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-[10px]">
-        <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer" class="flex items-center justify-center size-[36px] rounded-full cursor-pointer shrink-0" style="background:var(--color-brand-green-tint)">
-          <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-brand-green)" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  <!-- Mobile: greeting header (avatar / hi / location) + search -->
+  <div class="lg:hidden flex flex-col gap-[12px] px-[16px] pt-[14px]" style="background:var(--color-bg-main)">
+    <div class="flex items-center justify-between gap-[8px]">
+      <div class="flex items-center gap-[10px] flex-1 min-w-0">
+        <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer" class="flex items-center justify-center size-[32px] rounded-full cursor-pointer shrink-0" style="background:var(--color-brand-green-tint)">
+          <svg viewBox="0 0 24 24" class="size-[16px]" fill="none" stroke="var(--color-brand-green)" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
-        <a href="{{ route('tenant.home') }}" class="shrink-0">
-          <x-storefront-logo :storeName="$storeName" class="h-[36px] w-auto rounded-full object-cover" />
-        </a>
         @auth('storefront')
-          <div class="flex flex-col gap-[2px]">
-            <p class="font-medium text-[16px]" style="color:var(--color-text-primary)">{{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋</p>
+          @php $__sqv4DefaultAddress = auth('storefront')->user()->addresses->first(); @endphp
+          <img
+            src="{{ auth('storefront')->user()->avatar ?: asset('souqify-3/assets/icons/icon-user.svg') }}"
+            alt=""
+            class="size-[44px] rounded-full object-cover shrink-0"
+            style="background:var(--color-brand-green-tint)"
+          />
+        @else
+          <div class="size-[44px] rounded-full shrink-0 flex items-center justify-center" style="background:var(--color-brand-green-tint)">
+            <img src="{{ asset('souqify-3/assets/icons/icon-user.svg') }}" alt="" class="size-[20px] opacity-60" />
           </div>
         @endauth
+        <div class="flex flex-col gap-[2px] min-w-0">
+          <p class="font-medium text-[16px] truncate" style="color:var(--color-text-primary)">
+            @auth('storefront')
+              {{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋
+            @else
+              {{ __('Hi, :name', ['name' => __('Guest')]) }} 👋
+            @endauth
+          </p>
+          @auth('storefront')
+            @if ($__sqv4DefaultAddress)
+              <div class="flex items-center gap-[4px] min-w-0">
+                <span class="text-[12px] tracking-[0.3px] truncate" style="color:var(--color-text-muted)">{{ $__sqv4DefaultAddress->oneliner }}</span>
+                <img src="{{ asset('souqify-3/assets/icons/icon-chevron-down-small.svg') }}" class="size-[12px] shrink-0 opacity-60" alt="" />
+              </div>
+            @endif
+          @else
+            <a href="{{ route('tenant.storefront.login') }}" class="text-[12px] tracking-[0.3px] underline truncate" style="color:var(--color-text-muted)">{{ __('Login / Register') }}</a>
+          @endauth
+        </div>
       </div>
       <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="flex items-center justify-center rounded-full size-[36px] shrink-0" style="background:var(--color-brand-green-tint)">
         <img src="{{ asset('souqify-3/assets/icons/icon-cart-round.svg') }}" alt="" class="size-[18px]" />
       </a>
     </div>
+    {{-- Half the bar's own height (h-[48px]) sits on the white header strip,
+         the other half lays over the hero section that follows: translate-y-1/2
+         shifts it down visually without pushing the hero down (removed the
+         container's own pb- so the hero starts flush with the bar's
+         untransformed bottom edge, i.e. exactly its midpoint once shifted). --}}
     <form action="{{ route('tenant.storefront.search') }}" method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-        class="flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke)">
+        class="relative z-30 translate-y-1/2 flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke); background:var(--color-bg-main)">
       <button type="submit"><img src="{{ asset('souqify-3/assets/icons/icon-search-mobile.svg') }}" class="size-[18px] opacity-70" alt="" /></button>
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color:var(--color-text-placeholder)" />
       <button type="button" data-image-search-trigger="storefront-image-search-modal-v4-mobile" aria-label="{{ __('Search by Image') }}">

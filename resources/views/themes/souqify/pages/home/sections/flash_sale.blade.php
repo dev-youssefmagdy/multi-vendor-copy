@@ -91,7 +91,7 @@
                             @endif
                             <a href="{{ route('tenant.storefront.product', $prod->slug) }}">
                                 <h4
-                                    class="text-slate-800 text-sm font-semibold line-clamp-2 leading-tight mb-2 hover:text-blue-700 transition">
+                                    class="text-slate-800 text-sm font-semibold line-clamp-2 leading-tight mb-2 hover:text-[var(--sq-primary)] transition">
                                     {{ $fName }}
                                 </h4>
                             </a>
@@ -179,7 +179,7 @@
                     @endif
                     <a href="{{ route('tenant.storefront.product', $flashHero->slug) }}">
                         <h3
-                            class="text-slate-800 text-xl sm:text-2xl font-semibold leading-tight mt-1 mb-3 hover:text-blue-700 transition line-clamp-2">
+                            class="text-slate-800 text-xl sm:text-2xl font-semibold leading-tight mt-1 mb-3 hover:text-[var(--sq-primary)] transition line-clamp-2">
                             {{ $hName }}
                         </h3>
                     </a>
@@ -302,7 +302,7 @@
                             @endif
                             <a href="{{ route('tenant.storefront.product', $prod->slug) }}">
                                 <h4
-                                    class="text-slate-800 text-sm font-semibold line-clamp-2 leading-tight mb-2 hover:text-blue-700 transition">
+                                    class="text-slate-800 text-sm font-semibold line-clamp-2 leading-tight mb-2 hover:text-[var(--sq-primary)] transition">
                                     {{ $fName }}
                                 </h4>
                             </a>

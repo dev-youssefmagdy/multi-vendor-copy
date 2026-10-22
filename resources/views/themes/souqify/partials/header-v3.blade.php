@@ -6,50 +6,52 @@
 <!-- ============ NAVBAR ============ -->
 <header>
   <!-- Mobile top bar -->
-  <div class="lg:hidden flex flex-col" style="background: var(--color-bg-main)">
-    <div class="flex items-center justify-between px-[16px] py-[14px]">
-      <div class="flex items-center gap-[12px]">
-        <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer"
-            class="flex items-center justify-center size-[40px] rounded-full cursor-pointer" style="background: var(--color-page-bg)">
-          <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-black)" stroke-width="2" stroke-linecap="round">
-            <path d="M3 6h18M3 12h18M3 18h18" />
-          </svg>
-        </button>
-        <a href="{{ route('tenant.home') }}">
-          <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
-        </a>
-      </div>
-      <button type="button" aria-label="{{ __('Notifications') }}" class="flex items-center justify-center size-[40px] rounded-full" style="background: var(--color-page-bg)">
-        <img src="{{ asset('souqify-2/assets/icons/icon-bell.svg') }}" alt="" class="size-[18px]" />
-      </button>
-    </div>
-    <form action="{{ route('tenant.storefront.search') }}" method="GET"
-        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-        class="flex items-center gap-[8px] mx-[16px] mb-[16px] h-[48px] rounded-full px-[16px]" style="background: var(--color-surface)">
-      <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
-      <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color: var(--color-text-placeholder)" />
-      <button type="button" data-image-search-trigger="storefront-image-search-modal-v3-mobile" aria-label="{{ __('Search by Image') }}">
-        {{-- icon-camera.svg already draws its own divider line at the left edge
-             of its 33x24 viewBox, and it's preserveAspectRatio="none" - a
-             square size-[] box stretches it unevenly and thickens that line
-             on top of it looking doubled. Sizing to the icon's own 33:24
-             ratio keeps that single built-in line correct. --}}
-        <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="w-[25px] h-[18px] opacity-70" />
-      </button>
-    </form>
-    <x-image-search-modal id="storefront-image-search-modal-v3-mobile" :action="route('tenant.storefront.search.image')" />
-    <!-- Category filter pills -->
-    <div class="category-pill-row flex items-center gap-[24px] px-[16px] pb-[12px] overflow-x-auto no-scrollbar">
-      <a href="{{ route('tenant.home') }}" data-category-pill
-          class="category-pill {{ request()->routeIs('tenant.home') ? 'is-active-pill' : '' }} shrink-0 ms-[8px] pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
-        {{ __('All') }}
+  <div class="lg:hidden flex flex-col">
+    {{-- Figma: Souqify Modern Edition mobile header - teal textured band behind the
+         wordmark/cart, with the search pill pulled up on top of it so it straddles
+         the teal/white boundary. Texture reuses flash-sale-texture-mobile.png (the
+         same teal brand texture already blended soft-light elsewhere in this theme)
+         rather than a new asset. --}}
+    <div class="sqv3-header-hero relative flex items-center justify-between px-[16px] pt-[16px] pb-[36px] overflow-hidden">
+      <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.png') }}" alt="" class="absolute inset-0 h-full w-full object-cover" style="mix-blend-mode: soft-light" />
+      <a href="{{ route('tenant.home') }}" class="relative">
+        <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
       </a>
-      @foreach ($rootCategories as $category)
-        <a href="{{ route('tenant.storefront.category', $category->slug) }}" data-category-pill
-            class="category-pill shrink-0 pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
-          {{ \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 20) }}
+      <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="relative flex items-center justify-center size-[40px] rounded-full bg-white">
+        <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-souqify-teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3.71 5.4H18.924C20.302 5.4 21.297 6.67 20.919 7.948L19.265 13.548C19.01 14.408 18.196 15 17.27 15H8.112C7.185 15 6.37 14.407 6.116 13.548L3.71 5.4ZM3.71 5.4L3 3M16.5 21C16.8978 21 17.2794 20.842 17.5607 20.5607C17.842 20.2794 18 19.8978 18 19.5C18 19.1022 17.842 18.7206 17.5607 18.4393C17.2794 18.158 16.8978 18 16.5 18C16.1022 18 15.7206 18.158 15.4393 18.4393C15.158 18.7206 15 19.1022 15 19.5C15 19.8978 15.158 20.2794 15.4393 20.5607C15.7206 20.842 16.1022 21 16.5 21ZM8.5 21C8.89782 21 9.27936 20.842 9.56066 20.5607C9.84196 20.2794 10 19.8978 10 19.5C10 19.1022 9.84196 18.7206 9.56066 18.4393C9.27936 18.158 8.89782 18 8.5 18C8.10218 18 7.72064 18.158 7.43934 18.4393C7.15804 18.7206 7 19.1022 7 19.5C7 19.8978 7.15804 20.2794 7.43934 20.5607C7.72064 20.842 8.10218 21 8.5 21Z" />
+        </svg>
+      </a>
+    </div>
+    <div style="background: var(--color-bg-main)">
+      <form action="{{ route('tenant.storefront.search') }}" method="GET"
+          data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+          class="flex items-center gap-[8px] mx-[16px] -mt-[24px] mb-[16px] h-[48px] rounded-full px-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.15)]" style="background: var(--color-surface)">
+        <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
+        <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color: var(--color-text-placeholder)" />
+        <button type="button" data-image-search-trigger="storefront-image-search-modal-v3-mobile" aria-label="{{ __('Search by Image') }}">
+          {{-- icon-camera.svg already draws its own divider line at the left edge
+               of its 33x24 viewBox, and it's preserveAspectRatio="none" - a
+               square size-[] box stretches it unevenly and thickens that line
+               on top of it looking doubled. Sizing to the icon's own 33:24
+               ratio keeps that single built-in line correct. --}}
+          <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="w-[25px] h-[18px] opacity-70" />
+        </button>
+      </form>
+      <x-image-search-modal id="storefront-image-search-modal-v3-mobile" :action="route('tenant.storefront.search.image')" />
+      <!-- Category filter pills -->
+      <div class="category-pill-row flex items-center gap-[24px] px-[16px] pb-[12px] overflow-x-auto no-scrollbar">
+        <a href="{{ route('tenant.home') }}" data-category-pill
+            class="category-pill {{ request()->routeIs('tenant.home') ? 'is-active-pill' : '' }} shrink-0 ms-[8px] pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
+          {{ __('All') }}
         </a>
-      @endforeach
+        @foreach ($rootCategories as $category)
+          <a href="{{ route('tenant.storefront.category', $category->slug) }}" data-category-pill
+              class="category-pill shrink-0 pb-[6px] text-[15px] font-medium whitespace-nowrap cursor-pointer">
+            {{ \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 20) }}
+          </a>
+        @endforeach
+      </div>
     </div>
   </div>
 

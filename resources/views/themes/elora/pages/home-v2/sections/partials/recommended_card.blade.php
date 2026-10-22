@@ -7,7 +7,7 @@
 @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="flex flex-col items-start w-full h-full rounded-[6px] lg:rounded-[8px] shadow-[var(--shadow-card-lg)] no-underline box-border"
+  class="group flex flex-col items-start w-full h-full rounded-[6px] lg:rounded-[8px] shadow-[var(--shadow-card-lg)] no-underline box-border transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
   style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
 >
   {{-- Media --}}
@@ -15,7 +15,7 @@
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
-      class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[6px] lg:rounded-t-[8px]"
+      class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[6px] lg:rounded-t-[8px] transition-transform duration-300 group-hover:scale-105"
     />
 
     @if (!empty($p['badgeLabel']))
@@ -37,7 +37,7 @@
       class="absolute top-[4px] start-[4px] lg:top-[6px] lg:start-[6px] z-[1] flex items-center justify-center p-[5px] lg:p-[8px] size-[20px] lg:size-[32px] rounded-full border-0"
       style="background: var(--color-white); box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15)"
     >
-      <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[20px]" />
+      <svg class="size-[13px] lg:size-[20px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
 
     @if (!empty($p['isOutOfStock']))

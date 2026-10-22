@@ -1,13 +1,13 @@
 {{-- Expects $p: name, price, oldPrice, discount, image, badge, badgeBg, badgeColor, weight, rating, url --}}
-<a href="{{ $p['url'] ?? '#' }}" class="flex gap-[3px] lg:gap-[5px] rounded-[6px] lg:rounded-[10px] overflow-hidden h-full lg:h-[148px] no-underline" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="group flex gap-[3px] lg:gap-[5px] rounded-[6px] lg:rounded-[10px] overflow-hidden h-full lg:h-[148px] no-underline transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="background:var(--color-bg-main)">
   <div class="relative w-[43%] lg:w-[204px] lg:h-[148px] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
       type="button"
       aria-label="{{ __('Add to favorites') }}"
       class="flex absolute top-[3.77px] lg:top-1.5 start-[3.77px] lg:start-1.5 items-center justify-center w-[20.11px] h-[20.11px] lg:w-8.75 lg:h-8.75 p-[5.03px] lg:p-1.25 bg-white rounded-full shadow-[0px_2.51429px_2.51429px_rgba(0,0,0,0.15)] lg:shadow"
     >
-      <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[12.57px] lg:size-5.25" />
+      <svg class="size-[12.57px] lg:size-5.25" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
     <span
       class="absolute flex items-center justify-center top-0 end-0 h-[15.43px] lg:h-auto px-[3.31px] lg:px-[6px] lg:py-[4px] text-[7.71px] lg:text-[12px] font-normal max-lg:leading-[10px] max-lg:tracking-[0.2755px] rounded-tr-none rounded-bl-[4.41px] lg:rounded-tr-[8px] lg:rounded-bl-[8px]"

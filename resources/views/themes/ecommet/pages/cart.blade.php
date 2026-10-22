@@ -57,7 +57,7 @@
                                 @endif
                             </div>
                             <div class="h-2 bg-white/70 rounded-full overflow-hidden">
-                                <div class="h-full bg-[#242424] rounded-full transition-all duration-500" style="width: {{ min(100, (int) round($cartWeight / $shippingThreshold * 100)) }}%"></div>
+                                <div class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ min(100, (int) round($cartWeight / $shippingThreshold * 100)) }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -208,7 +208,7 @@
                         {{-- Mobile CTA --}}
                         <div class="lg:hidden mt-8 mb-4">
                             <a href="{{ route('tenant.storefront.checkout') }}"
-                                class="w-full bg-[#232323] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center">
+                                class="w-full bg-[var(--color-primary)] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center">
                                 {{ __('Checkout') }}
                             </a>
                         </div>
@@ -357,7 +357,7 @@
 
                             {{-- Checkout Button --}}
                             <a href="{{ route('tenant.storefront.checkout') }}"
-                                class="w-full bg-[#242424] text-white py-4 rounded-full text-[16px] font-bold hover:bg-black transition mb-8 tracking-wide flex items-center justify-center">
+                                class="w-full bg-[var(--color-primary)] text-white py-4 rounded-full text-[16px] font-bold hover:opacity-90 transition mb-8 tracking-wide flex items-center justify-center">
                                 {{ __('Checkout') }}
                             </a>
 

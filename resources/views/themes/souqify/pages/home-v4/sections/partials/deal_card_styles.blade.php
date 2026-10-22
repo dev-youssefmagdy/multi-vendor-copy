@@ -14,6 +14,11 @@
         container-type: inline-size;
         isolation: isolate;
         filter: drop-shadow(0px 0px 50.0403px rgba(0, 0, 0, 0.12));
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .sqv4-deal:hover {
+        transform: translateY(-4px);
+        filter: drop-shadow(0px 6px 24px rgba(0, 0, 0, 0.2));
     }
     .sqv4-deal__media {
         position: relative;
@@ -29,6 +34,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .sqv4-deal:hover .sqv4-deal__img {
+        transform: scale(1.06);
     }
     /* Group 22: 143.55 x 24.78 chip pinned to the card's top-left. */
     .sqv4-deal__badge {
@@ -156,7 +165,7 @@
         font-weight: 600;
         font-size: 7.5cqw;
         line-height: 1.2823;            /* 22 / 17.1567 */
-        color: #FF4D00;
+        color: var(--color-brand-green, #5A9B00);
         flex: none;
     }
     .sqv4-deal__rating {

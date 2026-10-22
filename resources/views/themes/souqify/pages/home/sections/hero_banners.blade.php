@@ -25,8 +25,13 @@
                                 !!}
                             </h3>
                             <a href="{{ $pb1?->url ?? route('tenant.storefront.category') }}"
+<<<<<<< HEAD
+                                class="inline-flex h-9 sm:h-14 px-6 bg-white text-[var(--sq-primary)] hover:bg-[var(--sq-primary-soft)] transition rounded-lg items-center font-medium">
+                                {{ __('Shop Now') }}
+=======
                                 class="inline-flex h-9 sm:h-14 px-6 bg-white text-blue-700 hover:bg-blue-50 transition rounded-lg items-center font-medium">
                                 {{ $pb1?->translationValue('button_text') ?: __('Shop Now') }}
+>>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                             </a>
                         </div>
                     </div>

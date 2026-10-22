@@ -55,7 +55,9 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: 24px 16px;
+        padding-block: 12px;
+        padding-inline-start: 16px;
+        padding-inline-end: 0;
         gap: 16px;
         background: var(--color-page-bg, #FFFFFF);
     }
@@ -67,6 +69,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        padding-inline-end: 16px;
     }
     .sqv6-trend__title {
         font-family: 'Outfit', sans-serif;
@@ -111,8 +114,13 @@
     @media (min-width: 1024px) {
         .sqv6-trend {
             /* The comp's content column is 1328px inside the 1440 canvas. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-block: 24px;
+            padding-inline-start: max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-inline-end: 0;
             gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv6-trend__head {
+            padding-inline-end: max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
         }
         .sqv6-trend__title { font-size: clamp(28px, 2.778vw, 40px); }
         .sqv6-trend__seeall { font-size: clamp(15px, 1.389vw, 20px); }

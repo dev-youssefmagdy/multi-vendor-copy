@@ -1,10 +1,10 @@
 {{-- Deal card, ported from public/souqify-1/carousels.js renderDealCardInner(). $p keys:
      url, image, name (Str::limit'd), weight, rating, price, oldPrice, discount, discountBg, discountColor --}}
-<div class="flex flex-col items-start rounded-[8px] h-full overflow-hidden" style="background:var(--color-bg-main)">
+<div class="flex flex-col items-start rounded-[8px] h-full overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg" style="background:var(--color-bg-main)">
   <div class="relative w-full shrink-0">
-    <a href="{{ $p['url'] }}" class="block w-full h-[183px] lg:h-[277px] overflow-hidden" style="background:var(--color-card-bg-soft)">
+    <a href="{{ $p['url'] }}" class="group block w-full h-[183px] lg:h-[277px] overflow-hidden" style="background:var(--color-card-bg-soft)">
       @if ($p['image'])
-        <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover" />
+        <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
       @endif
     </a>
     @if (!empty($p['slug']) && !empty($p['favData']))

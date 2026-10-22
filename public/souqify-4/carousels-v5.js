@@ -61,9 +61,14 @@ function mountFlash() {
     slidesPerView: 1,
     slidesPerGroup: 1,
     spaceBetween: 16,
+    // Without a trailing offset the last column sits flush against the
+    // panel's own edge instead of matching the leading gutter - Swiper
+    // mirrors this automatically under RTL (direction read from the
+    // container's computed style), so no separate RTL handling is needed.
+    slidesOffsetAfter: 16,
     breakpoints: {
       640: { slidesPerView: 2.15, spaceBetween: 24 },
-      1024: { slidesPerView: 3.35, spaceBetween: 30.4 },
+      1024: { slidesPerView: 3.35, spaceBetween: 30.4, slidesOffsetAfter: 24 },
     },
   });
 }
@@ -92,8 +97,18 @@ function mountTrending() {
   if (!wrapper) return;
   const swiperEl = wrapper.closest(".swiper");
   if (!swiperEl) return;
+  const head = document.querySelector(".sqv5-trend__head");
 
-  new Swiper(swiperEl, {
+  // The section's own horizontal padding was removed so the carousel can
+  // bleed flush to the trailing edge; slidesOffsetBefore recreates the
+  // gutter at the start only. The head's padding is a fluid clamp()/calc(),
+  // not a static breakpoint value, so it's read live from the rendered head
+  // instead of approximated, keeping the two exactly equal at every width.
+  // Swiper mirrors the offset to the visual start automatically under RTL.
+  // A ResizeObserver on the head (rather than Swiper's own resize event,
+  // which watches the swiper container and doesn't fire reliably here)
+  // keeps it in sync as the fluid padding changes.
+  const sw = new Swiper(swiperEl, {
     // Figma runs 5.5 cards per view: the sixth is half-cut so the row reads as
     // swipeable. Card width follows from slidesPerView, not a fixed px width.
     slidesPerView: 2.3,
@@ -103,6 +118,19 @@ function mountTrending() {
       1024: { slidesPerView: 5.5, spaceBetween: 12 },
     },
   });
+  const syncOffset = () => {
+    if (!head) return;
+    const gutter = parseFloat(getComputedStyle(head).paddingInlineStart) || 0;
+    if (sw.params.slidesOffsetBefore !== gutter) {
+      sw.params.slidesOffsetBefore = gutter;
+      sw.update();
+    }
+  };
+  syncOffset();
+  if (head && "ResizeObserver" in window) {
+    new ResizeObserver(syncOffset).observe(head);
+  }
+  window.addEventListener("resize", syncOffset);
 }
 
 function mountShopCategory() {
@@ -116,11 +144,7 @@ function mountShopCategory() {
     spaceBetween: 12,
     breakpoints: {
       640: { slidesPerView: 5, spaceBetween: 16 },
-      // The comp's 1328px row fits 7 whole tiles, but showing EXACTLY 7 left
-      // nothing to drag whenever a store has 7 or fewer categories (the row
-      // always fit perfectly). The .5 guarantees a sliver of the next tile
-      // peeks in, so the row always reads as swipeable on desktop too.
-      1024: { slidesPerView: 6.5, spaceBetween: 25.96 },
+      1024: { slidesPerView: 7, spaceBetween: 25.96 },
     },
   });
 }
@@ -130,8 +154,18 @@ function mountNewIn() {
   if (!wrapper) return;
   const swiperEl = wrapper.closest(".swiper");
   if (!swiperEl) return;
+  const head = document.querySelector(".sqv5-newin__head");
 
-  new Swiper(swiperEl, {
+  // The section's own horizontal padding was removed so the carousel can
+  // bleed flush to the trailing edge; slidesOffsetBefore recreates the
+  // gutter at the start only. The head's padding is a fluid clamp()/calc(),
+  // not a static breakpoint value, so it's read live from the rendered head
+  // instead of approximated, keeping the two exactly equal at every width.
+  // Swiper mirrors the offset to the visual start automatically under RTL.
+  // A ResizeObserver on the head (rather than Swiper's own resize event,
+  // which watches the swiper container and doesn't fire reliably here)
+  // keeps it in sync as the fluid padding changes.
+  const sw = new Swiper(swiperEl, {
     // One whole column (three cards) per phone screen, and a swipe brings the
     // next three - no peek, so no card is cut.
     slidesPerView: 1,
@@ -143,6 +177,19 @@ function mountNewIn() {
       1024: { slidesPerView: 2.5, spaceBetween: 12 },
     },
   });
+  const syncOffset = () => {
+    if (!head) return;
+    const gutter = parseFloat(getComputedStyle(head).paddingInlineStart) || 0;
+    if (sw.params.slidesOffsetBefore !== gutter) {
+      sw.params.slidesOffsetBefore = gutter;
+      sw.update();
+    }
+  };
+  syncOffset();
+  if (head && "ResizeObserver" in window) {
+    new ResizeObserver(syncOffset).observe(head);
+  }
+  window.addEventListener("resize", syncOffset);
 }
 
 // Best Seller (desktop) uses a draggable ROTATED fan cascade - same
@@ -169,11 +216,19 @@ const SQV5_CASCADE_POSITIONS_DESKTOP = [
 const SQV5_CASCADE_BASE_WIDTH_DESKTOP = 295.45;
 const SQV5_CASCADE_BASE_HEIGHT_DESKTOP = 472.89;
 
-function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null } = {}) {
+function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null, padStart = 0, padEnd = 0 } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.style.position = "relative";
-  container.style.height = `${Math.max(...positions.map((p) => p.top + (p.height ?? baseHeight)))}px`;
+
+  // The geometry table is tuned for a canvas exactly as wide as its own
+  // rightmost edge (last slot's left + width) - the section it actually
+  // renders in is rarely that exact width, so every layout pass rescales
+  // the whole table uniformly to fit (container width - padStart - padEnd)
+  // instead of placing it at literal pixel values and letting the section's
+  // overflow:hidden clip whatever doesn't fit (which left no start gutter
+  // and clipped the end with no gutter at all, even at the 1440 canvas).
+  const span = Math.max(...positions.map((p) => p.left + (p.width ?? baseWidth)));
 
   // Only the ORIGINAL slides (captured before Swiper's loop mode injects its
   // own clone slides) get positioned here - clones are neutralized separately
@@ -201,6 +256,14 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   };
 
   const applyPositions = (sw) => {
+    // Re-measured on every call (not just once at mount) so a viewport
+    // resize, or the section's own padding changing at a CSS breakpoint, is
+    // picked up immediately - the existing resize hook below already calls
+    // this on every resize.
+    const available = container.closest(".swiper").clientWidth - padStart - padEnd;
+    const fit = Math.min(1, available / span);
+    container.style.height = `${Math.max(...positions.map((p) => (p.top + (p.height ?? baseHeight)) * fit))}px`;
+
     slideEls.forEach((slideEl, i) => {
       const distance = (((i - sw.realIndex) % count) + count) % count;
       const box = positions[distance];
@@ -214,9 +277,11 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
       }
       slideEl.style.opacity = "1";
       slideEl.style.pointerEvents = "";
-      const scale = box.width != null ? box.width / baseWidth : 1;
+      const scale = (box.width != null ? box.width / baseWidth : 1) * fit;
       const rotate = box.rot ? ` rotate(${box.rot}deg)` : "";
-      slideEl.style.transform = `translate(${box.left}px, ${box.top}px)${rotate} scale(${scale})`;
+      const left = padStart + box.left * fit;
+      const top = box.top * fit;
+      slideEl.style.transform = `translate(${left}px, ${top}px)${rotate} scale(${scale})`;
       slideEl.style.zIndex = String(positions.length - distance);
     });
     container.querySelectorAll(".swiper-slide-duplicate").forEach((clone) => {
@@ -380,6 +445,11 @@ function mountBestSeller() {
       baseWidth: SQV5_CASCADE_BASE_WIDTH_DESKTOP,
       baseHeight: SQV5_CASCADE_BASE_HEIGHT_DESKTOP,
       dotsContainerId: "bestSellerDesktopDots",
+      // Matches the leading/trailing gutter used by New In, Trending Now and
+      // Flash Sale at this breakpoint - without it the fan's literal pixel
+      // geometry sits flush against (or past) the panel's own edges.
+      padStart: 24,
+      padEnd: 24,
     });
   } catch (e) {
     console.error("mountBestSeller (desktop) failed", e);

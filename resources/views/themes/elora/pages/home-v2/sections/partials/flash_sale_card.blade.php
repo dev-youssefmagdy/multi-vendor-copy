@@ -3,7 +3,7 @@
      (delivered and stockLeft are mutually exclusive — stockLeft takes priority when both are set) --}}
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-full h-full overflow-hidden"
+  class="group relative flex flex-col items-start w-full h-full overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
   style="background: var(--color-bg-main); font-family: var(--font-family-base)"
 >
   {{-- Media --}}
@@ -11,7 +11,7 @@
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
-      class="absolute inset-0 w-full h-full object-cover rounded-t-[6.02px] lg:rounded-t-[12.44px]"
+      class="absolute inset-0 w-full h-full object-cover rounded-t-[6.02px] lg:rounded-t-[12.44px] transition-transform duration-300 group-hover:scale-105"
     />
 
     @if (!empty($p['badge']))
@@ -33,7 +33,7 @@
       class="absolute top-[3.76px] lg:top-[7.78px] start-[4.51px] lg:start-[9.33px] z-[1] flex items-center justify-center rounded-full p-[6.02px] lg:p-[12.44px]"
       style="background: var(--color-white); box-shadow: var(--shadow-heart-mobile)"
     >
-      <img src="{{ asset('elora-1/assets/icons/heart.svg') }}" alt="" class="size-[15.05px] lg:size-[31.1px]" />
+      <svg class="size-[15.05px] lg:size-[31.1px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
 
     @if (!empty($p['isOutOfStock']))

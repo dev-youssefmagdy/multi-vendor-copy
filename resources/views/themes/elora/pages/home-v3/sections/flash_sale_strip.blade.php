@@ -197,7 +197,7 @@
             <img
               src="{{ asset('elora-3/assets/icons/arrow-outlined.svg') }}"
               alt=""
-              class="h-[57px] w-auto"
+              class="h-[57px] w-auto rtl:-scale-x-100"
             />
           </button>
         </div>

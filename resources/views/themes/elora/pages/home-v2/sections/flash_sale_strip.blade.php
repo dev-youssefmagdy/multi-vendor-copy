@@ -68,7 +68,7 @@
     @endphp
     <section
     wire:ignore
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
+      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
       style="
         background: linear-gradient(
           180deg,
@@ -79,7 +79,7 @@
       "
     >
       <div
-        class="flex flex-col lg:flex-row items-center lg:justify-between gap-[24px] lg:gap-[12px]"
+        class="flex flex-col lg:flex-row items-center lg:justify-start gap-0 lg:gap-[12px]"
       >
         <div
           class="flex flex-col items-center lg:items-start gap-[16px] lg:gap-[24px] lg:w-fit lg:shrink-0"

@@ -85,13 +85,13 @@
 {{-- Breadcrumb --}}
 <div class="bg-white border-b border-gray-100">
     <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
-        <a href="{{ route('tenant.home') }}" class="hover:text-main transition-colors">{{ __('Home') }}</a>
+        <a href="{{ route('tenant.home') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Home') }}</a>
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
         @auth('storefront')
-            <a href="{{ route('tenant.storefront.profile') }}" class="hover:text-main transition-colors">{{ __('Orders') }}</a>
+            <a href="{{ route('tenant.storefront.profile') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Orders') }}</a>
             <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
         @endauth
-        <a href="{{ route('tenant.storefront.order-status', $order->uuid) }}" class="hover:text-main transition-colors truncate max-w-[120px] sm:max-w-none">
+        <a href="{{ route('tenant.storefront.order-status', $order->uuid) }}" class="hover:text-[var(--color-primary)] transition-colors truncate max-w-[120px] sm:max-w-none">
             {{ __('Order #:uuid', ['uuid' => $order->uuid]) }}
         </a>
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
@@ -117,7 +117,7 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-3 mb-1">
                             <a href="{{ route('tenant.storefront.order-status', $order->uuid) }}"
-                                class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-main transition-colors flex-shrink-0">
+                                class="w-9 h-9 flex items-center justify-center rounded-full border border-[#E0E0E0] bg-white hover:border-[var(--color-primary)] transition-colors flex-shrink-0">
                                 <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path d="m15 18-6-6 6-6" stroke-linecap="round"/>
                                 </svg>
@@ -127,14 +127,14 @@
                         <p class="text-sm sm:text-base text-[#4A5565] font-['Inter'] leading-6 ml-12 truncate">{{ __('Order #:uuid', ['uuid' => $order->uuid]) }}</p>
                     </div>
                     {{-- Status badge --}}
-                    <div class="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-[#FF4D00]/10 rounded-full flex-shrink-0">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="#FF4D00" stroke-width="1.67" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-[var(--color-primary)]/10 rounded-full flex-shrink-0">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="var(--color-primary)" stroke-width="1.67" viewBox="0 0 24 24">
                             <rect x="1" y="3" width="15" height="13" rx="1"/>
                             <path d="M16 8h4l3 4v4h-7V8z"/>
                             <circle cx="5.5" cy="18.5" r="2.5"/>
                             <circle cx="18.5" cy="18.5" r="2.5"/>
                         </svg>
-                        <span class="text-xs sm:text-sm font-medium text-[#FF4D00] font-['Inter'] leading-5 whitespace-nowrap">{{ $order->status->label() }}</span>
+                        <span class="text-xs sm:text-sm font-medium text-[var(--color-primary)] font-['Inter'] leading-5 whitespace-nowrap">{{ $order->status->label() }}</span>
                     </div>
                 </div>
                 {{-- Three info columns --}}
@@ -145,7 +145,7 @@
                     </div>
                     <div class="flex flex-col gap-1">
                         <span class="text-xs sm:text-sm text-[#6A7282] font-['Inter'] leading-5">{{ __('Expected Delivery') }}</span>
-                        <span class="text-sm font-medium text-[#FF4D00] font-['Inter'] leading-5">{{ $expectedDelivery?->format('M j, Y') ?? __('N/A') }}</span>
+                        <span class="text-sm font-medium text-[var(--color-primary)] font-['Inter'] leading-5">{{ $expectedDelivery?->format('M j, Y') ?? __('N/A') }}</span>
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@
                             <div class="flex flex-col items-center flex-shrink-0 w-8">
 
                                 @if ($isDone || $isCurrent)
-                                <div class="w-8 h-8 rounded-full bg-[#FF4D00] border-2 border-[#FF4D00] flex items-center justify-center flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-[var(--color-primary)] border-2 border-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <g clip-path="url(#clip0_3_5550)">
                                             <path d="M18.1669 8.33357C18.5474 10.2013 18.2762 12.1431 17.3984 13.8351C16.5206 15.527 15.0893 16.8669 13.3431 17.6313C11.597 18.3957 9.64154 18.5384 7.80293 18.0355C5.96433 17.5327 4.35368 16.4147 3.23958 14.8681C2.12548 13.3214 1.57529 11.4396 1.68074 9.53639C1.78619 7.63318 2.54092 5.82364 3.81906 4.40954C5.0972 2.99545 6.8215 2.06226 8.7044 1.76561C10.5873 1.46897 12.515 1.82679 14.166 2.7794" stroke="white" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -207,7 +207,7 @@
 
                                 @unless ($isLast)
                                 <div class="w-0.5 flex-1 min-h-[24px]"
-                                    style="background-color: {{ $connectorOrange ? '#FF4D00' : '#D4D4D4' }}"></div>
+                                    style="background-color: {{  ? "var(--color-primary)" : "#D4D4D4" }}"></div>
                                 @endunless
                             </div>
 
@@ -239,15 +239,15 @@
                                     <div class="mb-3"></div>
                                     @endif
                                     {{-- Current Status info box --}}
-                                    <div class="bg-[#FF4D00]/10 border border-[#FF4D00] rounded-[10px] px-3 py-3 flex gap-3">
-                                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#FF4D00" stroke-width="1.67" viewBox="0 0 24 24">
+                                    <div class="bg-[var(--color-primary)]/10 border border-[var(--color-primary)] rounded-[10px] px-3 py-3 flex gap-3">
+                                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="var(--color-primary)" stroke-width="1.67" viewBox="0 0 24 24">
                                             <rect x="1" y="3" width="15" height="13" rx="1"/>
                                             <path d="M16 8h4l3 4v4h-7V8z"/>
                                             <circle cx="5.5" cy="18.5" r="2.5"/>
                                             <circle cx="18.5" cy="18.5" r="2.5"/>
                                         </svg>
                                         <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-[#FF4D00] font-['Inter'] leading-5 mb-1">{{ __('Current Status') }}</p>
+                                            <p class="text-sm font-medium text-[var(--color-primary)] font-['Inter'] leading-5 mb-1">{{ __('Current Status') }}</p>
                                             <p class="text-xs text-[#364153] font-['Inter'] leading-4">
                                                 @if ($order->activities->isNotEmpty())
                                                     {{ $order->activities->last()->description }}
@@ -359,7 +359,7 @@
                         style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD4 100%); border: 1px solid #FFD6A8; box-shadow: 0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1)">
                         <h3 class="text-base sm:text-lg font-semibold text-[#0A0A0A] font-['Inter'] leading-7">{{ __('Need Help?') }}</h3>
                         <p class="text-sm text-[#364153] font-['Inter'] leading-5">{{ __('If you have any questions about your order, please contact our support team.') }}</p>
-                        <a href="{{ route('tenant.storefront.page', 'contact-us') }}" class="self-start text-sm font-medium text-main border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-2 hover:bg-orange-100 transition-colors">
+                        <a href="{{ route('tenant.storefront.page', 'contact-us') }}" class="self-start text-sm font-medium text-[var(--color-primary)] border border-[#FFAC88] bg-[#FFF5F2] rounded-full px-4 py-2 hover:bg-orange-100 transition-colors">
                             {{ __('Contact Support') }}
                         </a>
                     </div>

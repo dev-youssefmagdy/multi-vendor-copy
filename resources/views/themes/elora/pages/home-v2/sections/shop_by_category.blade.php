@@ -18,7 +18,7 @@
       // the second), not a plain repeating grid.
       $overlayGradient = 'linear-gradient(0deg, rgba(0, 0, 0, 0.79) 0%, rgba(138, 56, 245, 0.09) 100%)';
     @endphp
-    <section wire:ignore class="flex flex-col items-center px-[16px] lg:px-0 py-[32px] gap-[16px] lg:gap-[24px] w-full max-w-[375px] lg:max-w-[1328px] mx-auto bg-white box-border" style="font-family: 'Outfit', sans-serif">
+    <section wire:ignore class="mt-[16px] lg:mt-0 flex flex-col items-center px-[16px] lg:px-0 py-[16px] lg:py-[32px] gap-[16px] lg:gap-[24px] w-full max-w-[375px] lg:max-w-[1328px] mx-auto bg-white box-border" style="font-family: 'Outfit', sans-serif">
       <div class="flex flex-col justify-center items-center w-[265px] lg:w-auto h-[48px]">
         <h2 class="m-0 font-semibold text-[32px] leading-[150%] tracking-[0.5px] lg:whitespace-nowrap" style="color: var(--color-text-primary)">
           {{ __('Shop by Category') }}
@@ -30,7 +30,7 @@
         <div class="flex flex-row items-center gap-[12px] w-[343px] lg:w-[658px] h-[237px] lg:h-[330px] lg:flex-1">
           <a
             href="{{ $shopByCatData[0]['url'] }}"
-            class="flex flex-row justify-center items-end py-[16px] lg:py-[16px] gap-[8px] w-[165.5px] lg:w-[323px] h-[237px] lg:h-[326px] rounded-[8px] bg-cover bg-center flex-1 no-underline box-border"
+            class="flex flex-row justify-center items-end py-[16px] lg:py-[16px] gap-[8px] w-[165.5px] lg:w-[323px] h-[237px] lg:h-[326px] rounded-[8px] bg-cover bg-center flex-1 no-underline box-border transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
             style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[0]['image'] }}')"
           >
             <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[0]['name'] }}</span>
@@ -39,7 +39,7 @@
             @foreach ([1, 2] as $i)
               <a
                 href="{{ $shopByCatData[$i]['url'] }}"
-                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
+                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
                 style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[$i]['image'] }}')"
               >
                 <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[$i]['name'] }}</span>
@@ -54,7 +54,7 @@
             @foreach ([3, 4] as $i)
               <a
                 href="{{ $shopByCatData[$i]['url'] }}"
-                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1"
+                class="flex flex-row justify-center items-center pt-[85px] lg:pt-[85px] pe-[44px] lg:pe-[44px] pb-[3px] lg:pb-[3px] ps-[43px] lg:ps-[43px] gap-[8px] w-full h-[112px] lg:h-[157px] rounded-[8px] bg-cover bg-center self-stretch no-underline box-border shrink-0 lg:flex-1 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
                 style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[$i]['image'] }}')"
               >
                 <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[$i]['name'] }}</span>
@@ -63,7 +63,7 @@
           </div>
           <a
             href="{{ $shopByCatData[5]['url'] }}"
-            class="flex flex-row justify-center items-end py-[16px] gap-[8px] w-[165.5px] lg:w-[323px] h-[237px] lg:h-[326px] rounded-[8px] bg-cover bg-center flex-1 no-underline box-border"
+            class="flex flex-row justify-center items-end py-[16px] gap-[8px] w-[165.5px] lg:w-[323px] h-[237px] lg:h-[326px] rounded-[8px] bg-cover bg-center flex-1 no-underline box-border transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
             style="background-image: {{ $overlayGradient }}, url('{{ $shopByCatData[5]['image'] }}')"
           >
             <span class="font-medium text-[16px] lg:text-[24px] leading-[150%] tracking-[0.5px] text-white capitalize">{{ $shopByCatData[5]['name'] }}</span>

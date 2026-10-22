@@ -1,11 +1,11 @@
 {{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] lg:rounded-[8px] h-full shadow-[var(--shadow-card-lg)]" style="text-decoration:none">
+<a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] lg:rounded-[8px] h-full shadow-[var(--shadow-card-lg)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="flex flex-col gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-end justify-end px-[4px] lg:px-[6px] py-[3px] lg:py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-start left-0 p-[4px] lg:p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[5px] lg:gap-[8px] h-[115px] lg:h-[183px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[115px] lg:h-[183px] rounded-t-[5px] lg:rounded-t-[8px] top-0 w-full overflow-hidden">
-          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+          <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
         <div class="flex h-[15px] lg:h-[28px] items-center justify-center p-[3px] lg:p-[6px] relative rounded-bl-[4px] lg:rounded-bl-[8px] rounded-tr-[4px] lg:rounded-tr-[8px] shrink-0 lg:w-[71px]" style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}">
           <p class="font-normal text-[8px] lg:text-[14px] lg:leading-[18px] tracking-[0.3px] lg:tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badgeText'] ?? ($p['sold'] ?? '') }}</p>
@@ -14,7 +14,7 @@
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'
         aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn bg-white cursor-pointer shadow lg:shadow-[0px_4px_4px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5px] lg:p-[8px] relative rounded-full shrink-0 size-[20px] lg:size-[32px]">
-        <img src="{{ asset('elora-4/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[20px]" />
+        <svg class="size-[13px] lg:size-[20px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     </div>
     <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"

@@ -168,7 +168,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 text-[#FF4D00] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5 bg-[#712AE2]">
@@ -307,7 +307,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 text-[#FF4D00] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5 bg-[#FFB00A]">
@@ -448,7 +448,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 text-[#FF4D00] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5"
@@ -601,7 +601,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2 bg-[#712AE2]">
@@ -746,7 +746,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2 bg-[#FFB00A]">
@@ -894,7 +894,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
                                 @if ($wLabel)
                                     <span
-                                        class="shrink-0 bg-[#FF4D00] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
+                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
                                 @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2"

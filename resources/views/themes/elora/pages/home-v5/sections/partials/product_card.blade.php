@@ -3,10 +3,10 @@
     $priceColor = !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-price-blue)';
     $deliveredColor = !empty($p['alt']) ? 'var(--color-error)' : 'var(--color-success)';
 @endphp
-<a href="{{ $p['url'] ?? '#' }}" class="flex flex-col items-start rounded-[8px] h-full shadow-[var(--shadow-card-lg)]" style="background:var(--color-bg-main)">
+<a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col items-start rounded-[8px] h-full shadow-[var(--shadow-card-lg)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="background:var(--color-bg-main)">
   <div class="relative flex flex-col gap-[4px] lg:gap-[6px] h-[130px] lg:h-[190px] items-end justify-end px-[5px] lg:px-[7px] py-[4px] lg:py-[5px] shrink-0 w-full">
     <div class="absolute start-0 top-0 h-full w-full rounded-t-[6px] lg:rounded-t-[8px] overflow-hidden">
-      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+      <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     </div>
     <div class="absolute top-0 start-0 flex items-center justify-center px-[10px] py-[5px] rounded-bl-[8px] rounded-tr-[6px] lg:rounded-tr-[8px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
       <p class="font-normal text-[11px] lg:text-[14px] tracking-[0.3px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : ($p['sold'] ?? __('Sold'))) }}</p>
@@ -17,11 +17,11 @@
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
         class="absolute top-[5px] end-[5px] bg-white cursor-pointer shadow flex items-center justify-center p-[5px] lg:p-[8px] rounded-full shrink-0 size-[22px] lg:size-[32px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[19px]" />
+        <svg class="size-[13px] lg:size-[19px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @else
       <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[5px] end-[5px] bg-white cursor-pointer shadow flex items-center justify-center p-[5px] lg:p-[8px] rounded-full shrink-0 size-[22px] lg:size-[32px]">
-        <img src="{{ asset('elora-5/assets/icons/heart.svg') }}" alt="" class="size-[13px] lg:size-[19px]" />
+        <svg class="size-[13px] lg:size-[19px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
     @if (!empty($p['isOutOfStock']))

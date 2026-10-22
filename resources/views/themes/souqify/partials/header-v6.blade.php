@@ -62,7 +62,6 @@
               @forelse ($rootCategories as $category)
                 <a href="{{ route('tenant.storefront.category', $category->slug) }}"
                     class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-900 hover:bg-pink-50 hover:text-[color:var(--color-brand-pink)] transition">
-                  <span class="w-1.5 h-1.5 rounded-full" style="background:var(--color-accent-yellow)"></span>
                   <span class="flex-1 truncate">{{ \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 30) }}</span>
                 </a>
               @empty

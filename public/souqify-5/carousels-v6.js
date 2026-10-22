@@ -60,7 +60,7 @@ function mountCategories() {
   if (!swiperEl) return;
 
   new Swiper(swiperEl, {
-    // Phones show exactly four tiles; a swipe replaces them with the next four.
+    // Phones show exactly four tiles, one view per swipe.
     slidesPerView: 4,
     slidesPerGroup: 4,
     spaceBetween: 12,
@@ -76,14 +76,16 @@ function mountCategories() {
   });
 }
 
-// Flash Sale uses a draggable fan cascade - same technique as Green
-// Edition's Best Seller carousel (souqify-3/carousels-v4.js's
-// mountFanCascadeCarousel). Geometry is indexed by DISTANCE from the
-// swiper's activeIndex (0 = the "front" slot ... down to the last), not by
-// a fixed product index. Every slide is absolutely positioned from a table
-// each time activeIndex changes, so dragging shifts which product lands in
-// the distance-0 slot while the rest cascade down in size behind it - the
-// front card cycles to the back as you page through.
+// Flash Sale: draggable fan cascade — ported mechanism-for-mechanism from
+// Elora Minimal Edition's Best Seller carousel (resources/js/elora-v5-carousels.js,
+// mountBestSellerCarousel): a real Swiper instance drives touch/drag with
+// explicit `loop: true` + `loopedSlides` (so loop mode never falls back to
+// the broken clone-count guess it makes for a short slide set — that guess
+// is what caused the old fan cascade here to get stuck after one swipe),
+// while every slide is absolutely positioned from a fixed geometry table
+// indexed by DISTANCE from the swiper's activeIndex (0 = biggest/frontmost
+// ... down to smallest), so dragging shifts which product lands in the
+// front slot while the rest cascade down in size behind it.
 const SQV6_FLASH_POSITIONS_DESKTOP = [
   { left: 0, top: 0, width: 295.45, height: 472.89 },
   { left: 273, top: 9, width: 283.96, height: 454.2 },
@@ -98,16 +100,22 @@ const SQV6_FLASH_POSITIONS_MOBILE = [
   { left: 248.25, top: 26.77, width: 127.5, height: 182.94 },
 ];
 
-function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null } = {}) {
+// RTL: the geometry table is captured left-to-right (distance 0 pinned off
+// the start edge). Under RTL the biggest/active card keeps that same gap but
+// from the right edge instead, so every box's `left` is mirrored around the
+// container's actual rendered width (matches Elora's mirrorPositionsRtl()).
+function sqv6MirrorPositionsRtl(positions, containerWidth) {
+  return positions.map((p) => ({ ...p, left: containerWidth - p.left - p.width }));
+}
+
+function mountFlashCascade(containerId, positions, { baseWidth, dotsContainerId = null } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  const isRtl = document.documentElement.getAttribute("dir") === "rtl";
+  const boxes = isRtl ? sqv6MirrorPositionsRtl(positions, container.clientWidth) : positions;
   container.style.position = "relative";
-  container.style.height = `${Math.max(...positions.map((p) => p.top + (p.height ?? baseHeight)))}px`;
+  container.style.height = `${boxes[0].top + boxes[0].height}px`;
 
-  // Only the ORIGINAL slides (captured before Swiper's loop mode injects its
-  // own clone slides) get positioned here - clones are neutralized separately
-  // below, since our own modulo wrap already makes the cascade infinite
-  // without needing Swiper's duplicated DOM nodes to be visually meaningful.
   const slideEls = [...container.children];
   const count = slideEls.length;
 
@@ -117,14 +125,14 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
     for (let i = 0; i < count; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = "best-seller-dot" + (i === 0 ? " is-active" : "");
+      dot.className = "sqv6-flash-dot" + (i === 0 ? " is-active" : "");
       dot.setAttribute("aria-label", `Product ${i + 1}`);
       dotsEl.appendChild(dot);
     }
   }
   const updateDots = (sw) => {
     if (!dotsEl) return;
-    dotsEl.querySelectorAll(".best-seller-dot").forEach((dot, i) => {
+    dotsEl.querySelectorAll(".sqv6-flash-dot").forEach((dot, i) => {
       dot.classList.toggle("is-active", i === sw.realIndex);
     });
   };
@@ -132,10 +140,8 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   const applyPositions = (sw) => {
     slideEls.forEach((slideEl, i) => {
       const distance = (((i - sw.realIndex) % count) + count) % count;
-      const box = positions[distance];
+      const box = boxes[distance];
       if (!box) {
-        // more products than fan slots: park the rest off-screen rather
-        // than stacking them at position 0 on top of the active card.
         slideEl.style.opacity = "0";
         slideEl.style.pointerEvents = "none";
         slideEl.style.zIndex = "0";
@@ -143,10 +149,9 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
       }
       slideEl.style.opacity = "1";
       slideEl.style.pointerEvents = "";
-      const scale = box.width != null ? box.width / baseWidth : 1;
-      const rotate = box.rot ? ` rotate(${box.rot}deg)` : "";
-      slideEl.style.transform = `translate(${box.left}px, ${box.top}px)${rotate} scale(${scale})`;
-      slideEl.style.zIndex = String(positions.length - distance);
+      const scale = box.width / baseWidth;
+      slideEl.style.transform = `translate(${box.left}px, ${box.top}px) scale(${scale})`;
+      slideEl.style.zIndex = String(boxes.length - distance);
     });
     container.querySelectorAll(".swiper-slide-duplicate").forEach((clone) => {
       clone.style.opacity = "0";
@@ -158,15 +163,7 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
     slidesPerView: "auto",
     virtualTranslate: true,
     loop: true,
-    // Swiper's own loop mode needs enough duplicated slides to cover
-    // slidesPerView on both sides of the real ones; with slidesPerView:"auto"
-    // and as few as 3 real slides (mobile), count alone isn't enough - Swiper
-    // warns "not enough slides for loop mode" and the first paint can render
-    // slides outside their cascade position until a swipe forces a relayout.
-    // Our own applyPositions() already hides every .swiper-slide-duplicate,
-    // so asking for extra loop clones here is free - it just satisfies
-    // Swiper's internal loop bookkeeping.
-    loopedSlides: count * 4,
+    loopedSlides: count,
     on: {
       init(sw) {
         applyPositions(sw);
@@ -177,12 +174,6 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
         updateDots(sw);
       },
       transitionEnd: applyPositions,
-      // Without this, resizing the viewport (rotating a phone, resizing a
-      // desktop window, or a DevTools device-toolbar resize without a full
-      // reload) leaves the translate() offsets computed for the OLD width
-      // while the box's own CSS width/height already shrank via the media
-      // query - cards fly outside the frame instead of rescaling with it.
-      resize: applyPositions,
       setTransition(sw, duration) {
         slideEls.forEach((s) => (s.style.transitionDuration = `${duration}ms`));
       },
@@ -191,20 +182,12 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
 }
 
 function mountFlash() {
-  try {
-    mountFanCascadeCarousel("flashMobileWrapper", SQV6_FLASH_POSITIONS_MOBILE, {
-      baseWidth: 154.5,
-    });
-  } catch (e) {
-    console.error("mountFlash (mobile) failed", e);
-  }
-  try {
-    mountFanCascadeCarousel("flashDesktopWrapper", SQV6_FLASH_POSITIONS_DESKTOP, {
-      baseWidth: 295.45,
-    });
-  } catch (e) {
-    console.error("mountFlash (desktop) failed", e);
-  }
+  mountFlashCascade("flashMobileWrapper", SQV6_FLASH_POSITIONS_MOBILE, {
+    baseWidth: 154.5,
+  });
+  mountFlashCascade("flashDesktopWrapper", SQV6_FLASH_POSITIONS_DESKTOP, {
+    baseWidth: 295.45,
+  });
 }
 
 function mountTrending() {
@@ -250,17 +233,19 @@ function mountShopCategory() {
   if (!swiperEl) return;
 
   new Swiper(swiperEl, {
+    // A swipe advances one tile at a time rather than paging to the next
+    // group of three/four/six.
     slidesPerView: 3,
-    slidesPerGroup: 3,
+    slidesPerGroup: 1,
     spaceBetween: 12,
     breakpoints: {
-      640: { slidesPerView: 4, slidesPerGroup: 4, spaceBetween: 16 },
+      640: { slidesPerView: 4, slidesPerGroup: 1, spaceBetween: 16 },
       // The comp's 1328px row holds all six tiles at a 16px gap. The blade
       // now renders up to 20 categories (see explore_products.blade.php), so
       // stores with more than 6 still have real overflow to drag through -
       // only a store with 6 or fewer categories won't need to scroll here,
       // which is correct (nothing to scroll to).
-      1024: { slidesPerView: 6, slidesPerGroup: 6, spaceBetween: 16 },
+      1024: { slidesPerView: 6, slidesPerGroup: 1, spaceBetween: 16 },
     },
   });
 }
@@ -277,40 +262,20 @@ function mountBestSeller() {
 
   if (grid) {
     swiperEl.classList.add("sqv6-best--grid");
-    // The CSS stagger (see .sqv6-best--grid rules) needs to know which
-    // physical column each card lands in, but with slidesPerGroup > 1
-    // Swiper's grid module assigns columns via a per-group formula (see
-    // swiper's grid.mjs updateSlide()) rather than simple DOM order, so a
-    // plain nth-child(2n) selector doesn't reliably track "first vs second
-    // column" once there's more than one page of cards - some row-pairs
-    // ended up with both cards on the same side of that parity by accident,
-    // which is why they rendered level. Swiper stores the column it computed
-    // as `.column` directly on each slide element, so reading that back is
-    // the only reliable way to know which column a card is actually in.
-    const applyStagger = () => {
-      wrapper.querySelectorAll(".swiper-slide").forEach((slideEl) => {
-        slideEl.classList.toggle("sqv6-best__slide--stagger", slideEl.column % 2 === 0);
-      });
-    };
     new Swiper(swiperEl, {
       slidesPerView: 2,
       slidesPerGroup: 2,
       spaceBetween: 12,
       grid: { rows: 2, fill: "row" },
-      on: {
-        init: applyStagger,
-        update: applyStagger,
-        resize: applyStagger,
-      },
     });
     return;
   }
 
   new Swiper(swiperEl, {
-    // The comp's 1328px row holds exactly five cards at a 21px gap, so a
-    // swipe swaps the whole set of five for the next five.
+    // The comp's 1328px row holds exactly five cards at a 21px gap, but a
+    // swipe now advances one card at a time rather than the whole page.
     slidesPerView: 5,
-    slidesPerGroup: 5,
+    slidesPerGroup: 1,
     spaceBetween: 21,
   });
 }

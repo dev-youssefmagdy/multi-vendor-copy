@@ -18,7 +18,7 @@
             'url' => $__url,
             'image' => $__img,
             'name' => $__name,
-            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'weight' => $variant?->weight_grams ? $variant->weight_grams . 'g' : null,
             'subtitle' => \Illuminate\Support\Str::limit(strip_tags($product->translationValue('short_description') ?? $product->translationValue('description') ?? ''), 34) ?: null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice * $rate, 2),
@@ -58,7 +58,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        /* Horizontal padding lives on the head and on the carousel's own
+           start offset instead of here, so the carousel can bleed flush to
+           the section's trailing edge while the title stays inset. */
+        padding: 16px 0;
         gap: 16px;
         /* Breathing room from the flash panel above and Trending below. */
         margin: 24px 0;
@@ -94,6 +97,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        padding: 0 16px;
     }
     .sqv5-newin__title {
         font-family: 'Outfit', sans-serif;
@@ -109,7 +113,9 @@
         font-size: 14px;
         line-height: 1.25;              /* 25 / 20 */
         letter-spacing: 0.5px;
-        color: #FFFFFF;
+        /* Black on mobile for contrast against the yellow panel; desktop keeps
+           it white per the Figma comp (see the 1024 override below). */
+        color: #000000;
         white-space: nowrap;
         text-decoration: none;
     }
@@ -141,13 +147,16 @@
 
     @media (min-width: 1024px) {
         .sqv5-newin {
-            /* The comp's content column is 1328px inside the 1440 canvas. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding: 24px 0;
             gap: clamp(16px, 1.667vw, 24px);
             margin: clamp(24px, 3.333vw, 48px) 0;
         }
+        .sqv5-newin__head {
+            /* The comp's content column is 1328px inside the 1440 canvas. */
+            padding: 0 max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+        }
         .sqv5-newin__title { font-size: clamp(28px, 2.778vw, 40px); }
-        .sqv5-newin__seeall { font-size: clamp(15px, 1.389vw, 20px); }
+        .sqv5-newin__seeall { font-size: clamp(15px, 1.389vw, 20px); color: #FFFFFF; }
         .sqv5-newin__col { gap: clamp(8px, 0.897vw, 12.92px); }
     }
 </style>

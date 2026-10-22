@@ -103,7 +103,7 @@
                 $headerKey = 'header';
                 $footerKey = 'footer';
                 $stylesKey = 'styles';
-                $primaryColor = null;
+                $primaryColor = 'var(--color-primary, #111827)';
                 $scriptsKey = 'scripts';
             @endphp
     @endswitch
@@ -113,26 +113,18 @@
     @include('storefront.partials.theme-color-overrides')
 
     {{-- Shared primary-colour tokens. Each edition points --sq-primary at its own
-         brand colour, so the shared inner pages (product, cart, checkout, profile,
-         category, offers, orders...) follow the edition's colour system, not just
-         the home page. The default edition keeps its original blue. --}}
+         brand colour (falling back to the tenant's configured --color-primary),
+         so the shared inner pages (product, cart, checkout, profile, category,
+         offers, orders...) follow the edition's colour system, not just the
+         home page. --}}
     <style id="souqify-primary-tokens">
         :root {
-            @if ($primaryColor)
-                --sq-primary: {!! $primaryColor !!};
-                --sq-primary-hover: color-mix(in srgb, var(--sq-primary) 82%, #000);
-                --sq-primary-deep: color-mix(in srgb, var(--sq-primary) 50%, #000);
-                --sq-primary-muted: color-mix(in srgb, var(--sq-primary) 45%, #fff);
-                --sq-primary-soft-2: color-mix(in srgb, var(--sq-primary) 16%, #fff);
-                --sq-primary-soft: color-mix(in srgb, var(--sq-primary) 7%, #fff);
-            @else
-                --sq-primary: #1d4ed8;
-                --sq-primary-hover: #1e40af;
-                --sq-primary-deep: #002460;
-                --sq-primary-muted: #93c5fd;
-                --sq-primary-soft-2: #dbeafe;
-                --sq-primary-soft: #eff6ff;
-            @endif
+            --sq-primary: {!! $primaryColor !!};
+            --sq-primary-hover: color-mix(in srgb, var(--sq-primary) 82%, #000);
+            --sq-primary-deep: color-mix(in srgb, var(--sq-primary) 50%, #000);
+            --sq-primary-muted: color-mix(in srgb, var(--sq-primary) 45%, #fff);
+            --sq-primary-soft-2: color-mix(in srgb, var(--sq-primary) 16%, #fff);
+            --sq-primary-soft: color-mix(in srgb, var(--sq-primary) 7%, #fff);
         }
     </style>
     @include('storefront.partials.tracking-scripts')

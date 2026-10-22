@@ -2,10 +2,10 @@
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="relative flex flex-col items-start w-[192.01px] h-[290px] lg:w-[282.43px] lg:h-[426.58px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow] duration-200 ease-in-out"
+  class="group relative flex flex-col items-start w-[192.01px] h-[290px] lg:w-[282.43px] lg:h-[426.58px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow,transform] duration-300 ease-out hover:scale-[1.02]"
 >
   <div class="relative w-full h-[166.77px] lg:h-[245.31px] shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover" />
+    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[5.47px] lg:p-[8.04px] gap-[7.29px] lg:gap-[10.72px]">
       <div class="flex w-full justify-between items-start">
         <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
@@ -13,7 +13,7 @@
           aria-label="{{ __('Add to favorites') }}"
           class="flex items-center justify-center w-[29.16px] h-[29.16px] lg:w-[42.9px] lg:h-[42.9px] p-[7.29px] lg:p-[10.72px] bg-white rounded-full shadow-[0px_3.64519px_3.64519px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.36193px_5.36193px_rgba(0,0,0,0.15)] transition-transform duration-150 ease active:scale-95"
         >
-          <img src="{{ asset('elora-2/assets/icons/heart.svg') }}" alt="" class="size-[18.23px] lg:size-[26.81px]" />
+          <svg class="size-[18.23px] lg:size-[26.81px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
         </button>
         <span
           class="flex items-center justify-center h-[22.37px] px-[4.79px] lg:h-[32.9px] lg:px-[7.05px] text-[11.1838px] lg:text-[16.4509px] font-normal leading-[14px] lg:leading-[21px] tracking-[0.399421px] lg:tracking-[0.587531px] rounded-tr-[6.39px] rounded-bl-[6.39px] lg:rounded-tr-[9.4px] lg:rounded-bl-[9.4px]"
