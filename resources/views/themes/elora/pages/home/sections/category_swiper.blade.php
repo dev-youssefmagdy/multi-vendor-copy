@@ -9,7 +9,7 @@
                         class="text-[12px] leading-[15px] tracking-[0.5px] text-[#FF4D00]">{{ __('see all') }}</a>
                 </div>
 
-                <div class="swiper-wrapper">
+                <div class="swiper-wrapper py-1">
                     @foreach ($categories->chunk(2) as $column)
                         <div class="swiper-slide !w-[76px] lg:!w-[85px] !h-auto">
                             <div class="flex flex-col gap-4 lg:gap-8">
