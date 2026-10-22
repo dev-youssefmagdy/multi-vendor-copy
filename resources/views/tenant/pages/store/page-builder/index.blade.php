@@ -12,7 +12,6 @@
 
         @if($availableVariants->isNotEmpty())
             <x-tenant::select name="variant" label="Home Variant" :value="$selectedHomeVariantId"
-                placeholder="Theme default"
                 :options="$availableVariants->map(fn ($variant) => ['value' => $variant->id, 'label' => $variant->name])->all()"
                 data-pb-variant-select />
         @endif

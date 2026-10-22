@@ -195,10 +195,10 @@ final class PageBuilderController extends PanelController
 
     private function resolveVariantId(Request $request, ?int $themeId, Collection $availableVariants): ?int
     {
-        if ($request->has('variant')) {
-            $variantId = $request->query('variant');
+        $requested = (int) $request->query('variant');
 
-            return $variantId !== null && $variantId !== '' ? (int) $variantId : null;
+        if ($requested && $availableVariants->contains('id', $requested)) {
+            return $requested;
         }
 
         $theme = $themeId ? Theme::query()->find($themeId) : null;
@@ -207,13 +207,7 @@ final class PageBuilderController extends PanelController
             return null;
         }
 
-        return tenancy()->central(fn () => HomeVariant::query()
-            ->forTheme($theme->slug)
-            ->where('is_active', true)
-            ->orderByDesc('is_default')
-            ->orderBy('name')
-            ->value('id')
-        );
+        return $availableVariants->first()?->id;
     }
 
     private function variantsForTheme(?Theme $theme): Collection
