@@ -66,7 +66,7 @@
     @endphp
     <section
     wire:ignore
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] mt-12 flex flex-col gap-[16px] lg:gap-[34px]"
+      class="px-[16px] lg:px-[56px] py-[12px] lg:py-[32px] mt-[16px] lg:mt-12 flex flex-col gap-[16px] lg:gap-[24px]"
       style="
         background: linear-gradient(
           90deg,

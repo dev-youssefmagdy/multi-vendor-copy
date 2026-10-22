@@ -445,12 +445,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 3px;
-  margin-top: 24px;
-  margin-bottom: 48px;
+  margin-top: 8px;
+  margin-bottom: 16px;
 }
 @media (min-width: 1024px) {
   .hero-pagination {
     gap: 5.05px;
+    margin-top: 24px;
+    margin-bottom: 48px;
   }
 }
 .hero-dot {
@@ -564,7 +566,7 @@ body {
      own overflow:hidden. Widening the container doesn't risk a 4th card
      ever showing: those slides are forced to opacity:0 in JS regardless of
      how much of them this box could otherwise fit. */
-  padding: 30px 15px;
+  padding: 12px 15px;
 }
 .flash-sale-slide {
   width: 158.52px;
@@ -674,4 +676,17 @@ body {
 
 .desc-readmore-btn:hover {
     text-decoration: underline;
+}
+
+/* Recommended For You: end-edge fade hinting the grid continues / scrolls,
+   matching the Bold edition (elora-v4.css) treatment. Solid color must stay
+   on the true outer edge and fade inward toward the cards in both
+   directions, so the gradient angle is mirrored for RTL rather than being a
+   fixed physical direction that would land its solid stop on the wrong side
+   (over the cards) under RTL's flipped end-0. */
+.recommended-edge-fade {
+  background: linear-gradient(91.97deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
+}
+[dir="rtl"] .recommended-edge-fade {
+  background: linear-gradient(268.03deg, rgba(243, 243, 243, 0) 0%, rgba(243, 243, 243, 0.3) 45%, rgba(243, 243, 243, 0.65) 70%, #F3F3F3 100%);
 }

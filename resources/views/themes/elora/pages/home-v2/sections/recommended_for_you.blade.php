@@ -65,7 +65,7 @@
           ];
       });
     @endphp
-    <section class="relative px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] overflow-hidden">
+    <section class="relative mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] overflow-hidden">
       <div class="flex items-center justify-between">
         <h2 class="font-medium text-[22px] lg:text-[32px] text-black">
           {{ __('Recommended For You') }}
@@ -117,9 +117,9 @@
         </div>
       @endif
 
-      {{-- Right-edge fade hinting the grid continues --}}
+      {{-- End-edge fade hinting the grid continues / scrolls, matching the
+           Bold edition (see .recommended-edge-fade in elora-v2.css). --}}
       <div
-        class="hidden lg:block absolute top-0 end-0 h-full w-[120px] pointer-events-none"
-        style="background: linear-gradient(91.97deg, rgba(255, 255, 255, 0) 1.85%, #F3F3F3 95.21%);"
+        class="recommended-edge-fade hidden lg:block absolute top-0 end-0 h-full w-[200px] pointer-events-none"
       ></div>
     </section>

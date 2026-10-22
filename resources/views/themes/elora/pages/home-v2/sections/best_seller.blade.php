@@ -84,7 +84,7 @@
     @endphp
     <section
     wire:ignore
-      class="px-[16px] lg:px-[56px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px] overflow-hidden"
+      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[18px] lg:py-[32px] flex flex-col gap-0 overflow-hidden"
       style="background: var(--color-yellow-bright)"
     >
       <div class="flex items-center justify-between">

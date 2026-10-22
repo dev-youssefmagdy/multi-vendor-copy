@@ -71,6 +71,14 @@
   width: 100%;
 }
 
+/* Features strip (mobile): numeric slidesPerView (2.25) needs the same
+   clipped, width-pinned container as .trending-swiper above. */
+.elora-v6-root .features-swiper {
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
+}
+
 /* Categories: numeric slidesPerView (7 on desktop) needs its own clipped
    container — unlike .card-swiper's overflow:visible (used for New In/Best
    Seller's shadow bleed), visible overflow here creates a ResizeObserver
@@ -80,9 +88,10 @@
   min-width: 0;
   width: 100%;
 }
-/* Beats swiper-bundle's own default ".swiper-slide{width:100%}" at mobile
-   ("auto" mode) via selector specificity, not !important — so Swiper's own
-   JS-computed inline width still wins at desktop (slidesPerView:7). */
+/* Dead weight now that both breakpoints use a numeric slidesPerView (3.5
+   mobile / 7 desktop) — Swiper's own JS-computed inline width wins over
+   this regardless (inline style beats any stylesheet rule without
+   !important), kept only as a no-op fallback. */
 .elora-v6-root .categories-swiper .swiper-slide {
   width: auto;
 }
@@ -122,12 +131,14 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
-  margin-top: 24px;
-  margin-bottom: 48px;
+  margin-top: 8px;
+  margin-bottom: 16px;
 }
 @media (min-width: 1024px) {
   .elora-v6-root .hero-pagination {
     gap: 5px;
+    margin-top: 24px;
+    margin-bottom: 48px;
   }
 }
 .elora-v6-root .hero-dot {
@@ -161,6 +172,20 @@
   transform: rotate(180deg);
 }
 
+/* "Ends in" label: rotated -90deg, then nudged along its own (pre-rotation)
+   Y axis so the rotation doesn't leave it off-center. That nudge becomes a
+   purely horizontal shift once rotated (translateY(20px) -> rotate(-90deg)
+   nets a 20px shift toward the end of the row in LTR). In RTL the countdown
+   boxes sit on the label's OTHER side, so the same positive shift moves the
+   label further away from them instead of closer — flip the sign so it
+   always closes the gap toward the timer boxes. */
+.elora-v6-root .flash-ends-label {
+  transform: rotate(-90deg) translateY(20px);
+}
+[dir="rtl"] .elora-v6-root .flash-ends-label {
+  transform: rotate(-90deg) translateY(-20px);
+}
+
 /* Flash Sale section diagonal stripe background */
 .elora-v6-root .flash-sale-stripes {
   background-color: var(--color-accent-green);
@@ -171,6 +196,64 @@
     transparent 18px,
     transparent 90px
   );
+}
+
+/* Best Seller: solid yellow on desktop, green linear gradient on mobile
+   (Figma "New In" mobile spec — stops at 20% #1C8B4C / 47% #0BDA64 / 73% #1C8B4C). */
+.elora-v6-root .best-seller-section {
+  background: var(--color-accent-yellow);
+}
+@media (max-width: 1023.98px) {
+  .elora-v6-root .best-seller-section {
+    background: linear-gradient(90deg, #1c8b4c 20%, #0bda64 47%, #1c8b4c 73%);
+  }
+}
+/* Mobile only. display:flex here has higher specificity than Tailwind's
+   lg:hidden utility class (two classes vs one), so the desktop hide has to
+   be declared in this same scoped selector rather than relying on lg:hidden
+   alone, or it gets overridden and shows on desktop too. */
+.elora-v6-root .best-seller-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 12px;
+}
+@media (min-width: 1024px) {
+  .elora-v6-root .best-seller-pagination {
+    display: none;
+  }
+}
+.elora-v6-root .best-seller-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    background 0.2s ease;
+}
+.elora-v6-root .best-seller-dot.is-active {
+  width: 24px;
+  background: var(--color-accent-yellow);
+}
+/* Title/see-all: dark text on desktop's yellow background, switching to
+   white/yellow on mobile to read against the green gradient background. */
+.elora-v6-root .best-seller-title {
+  color: var(--color-text-primary);
+}
+.elora-v6-root .best-seller-see-all {
+  color: var(--color-text-secondary-dark);
+}
+@media (max-width: 1023.98px) {
+  .elora-v6-root .best-seller-title {
+    color: #fff;
+  }
+  .elora-v6-root .best-seller-see-all {
+    color: var(--color-accent-yellow);
+  }
 }
 
 /* Tabbed Products (invented section) */

@@ -25,7 +25,7 @@
 @endphp
 <section
 wire:ignore
-  class="px-[16px] lg:px-[56px] py-[24px] lg:py-[34px] flex flex-col gap-[16px] lg:gap-[34px]"
+  class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[24px] lg:py-[34px] flex flex-col gap-[16px] lg:gap-[34px]"
   style="background: var(--color-page-bg)"
 >
   <div class="flex flex-row items-center justify-between gap-[8px] h-[23px] lg:h-[40px]">
@@ -65,13 +65,13 @@ wire:ignore
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $home['name'] }}
           </p>
-          <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] left-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:left-[173.7px] lg:top-[-21.71px] object-contain" />
+          <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] start-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:start-[173.7px] lg:top-[-21.71px] object-contain" />
         </a>
         <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $electronics['name'] }}
           </p>
-          <img src="{{ $electronics['image'] }}" alt="{{ $electronics['name'] }}" class="absolute z-[1] w-[53px] h-[47px] left-[79px] top-[-3px] lg:w-[104.62px] lg:h-[92.77px] lg:left-[155.94px] lg:top-[-5.92px] object-contain" />
+          <img src="{{ $electronics['image'] }}" alt="{{ $electronics['name'] }}" class="absolute z-[1] w-[53px] h-[47px] start-[79px] top-[-3px] lg:w-[104.62px] lg:h-[92.77px] lg:start-[155.94px] lg:top-[-5.92px] object-contain" />
         </a>
       </div>
 
@@ -89,13 +89,13 @@ wire:ignore
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $home['name'] }}
           </p>
-          <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] left-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:left-[173.7px] lg:top-[-21.71px] object-contain" />
+          <img src="{{ $home['image'] }}" alt="{{ $home['name'] }}" class="absolute z-[1] w-[40px] h-[65px] start-[88px] top-[-11px] lg:w-[79.19px] lg:h-[127.92px] lg:start-[173.7px] lg:top-[-21.71px] object-contain" />
         </a>
         <a href="{{ $electronics['url'] }}" class="bg-white rounded-[9px] lg:rounded-[17.7652px] flex flex-row items-center justify-start gap-[8px] lg:gap-[15.79px] p-[8px] lg:p-[16px] relative overflow-hidden w-full h-[44px] lg:h-[86.85px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg">
           <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] w-[82px] lg:w-[161.86px] truncate relative z-0" style="color: var(--color-accent-purple)">
             {{ $electronics['name'] }}
           </p>
-          <img src="{{ $electronics['image'] }}" alt="{{ $electronics['name'] }}" class="absolute z-[1] w-[53px] h-[47px] left-[79px] top-[-3px] lg:w-[104.62px] lg:h-[92.77px] lg:left-[155.94px] lg:top-[-5.92px] object-contain" />
+          <img src="{{ $electronics['image'] }}" alt="{{ $electronics['name'] }}" class="absolute z-[1] w-[53px] h-[47px] start-[79px] top-[-3px] lg:w-[104.62px] lg:h-[92.77px] lg:start-[155.94px] lg:top-[-5.92px] object-contain" />
         </a>
       </div>
 

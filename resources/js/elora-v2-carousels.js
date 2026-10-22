@@ -19,7 +19,7 @@ function mountFeatures() {
     if (!wrapper) return;
 
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: "auto",
+        slidesPerView: 1.5,
         spaceBetween: 32,
         breakpoints: {
             1024: { slidesPerView: 3.5, spaceBetween: 52.39 },
