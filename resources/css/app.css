@@ -5613,3 +5613,7 @@ details[open] .filters-chevron {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
 }
+
+/* Checkout address modal: phone input fills its column */
+.iti { width: 100%; }
+.iti input.iti__tel-input { padding-right: 16px !important; }

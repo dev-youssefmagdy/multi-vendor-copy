@@ -603,133 +603,205 @@
     </div>
     <!-- add address modal -->
     @if ($data['modal']['show'])
+    @php
+        $addrInput = 'w-full h-12 border border-[#D4D4D4] rounded-[4px] px-4 py-2 text-[16px] leading-5 font-[400] text-[#121212] placeholder-[#8F8F8F] outline-none bg-transparent focus:border-[#FF4D00] transition';
+        $addrLabel = 'flex gap-1 text-[16px] leading-5 font-[400] text-[#121212]';
+        $addrError = fn ($f) => $errors->has($f) ? 'border-[#DE1709]' : '';
+    @endphp
     {{-- Backdrop --}}
     <div class="fixed inset-0 bg-[#0c0c0e]/60 backdrop-blur-[2px] z-[1040]" wire:click="closeAddressModal"></div>
 
     {{-- Dialog --}}
-    <div class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-8 overflow-y-auto">
-        <div class="relative w-full max-w-[620px] my-auto bg-white rounded-[20px] shadow-[0_24px_60px_-12px_rgba(16,24,40,0.25)] ring-1 ring-black/[0.06]" wire:click.stop>
+    <div class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-8 overflow-y-auto font-['Outfit']">
+        <div class="relative w-full max-w-[934px] my-auto bg-[#FDFDFD] rounded-[28px] px-5 py-7 sm:px-[68px] flex flex-col items-end gap-[18px]" wire:click.stop>
 
-            {{-- Header --}}
-            <div class="flex items-start gap-4 px-7 sm:px-8 pt-7 pb-5 border-b border-[#eeeeee]">
-                <div class="shrink-0 w-11 h-11 rounded-[12px] bg-main/10 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <button type="button" wire:click="closeAddressModal"
+                class="absolute top-4 right-4 sm:top-5 sm:right-6 w-9 h-9 rounded-full flex items-center justify-center text-[#8F8F8F] hover:text-[#121212] transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            {{-- Title --}}
+            <h5 class="self-stretch text-[32px] leading-10 font-[500] text-[#121212]">
+                @if ($data['modal']['address_id'])
+                    {{ $data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address') }}
+                @else
+                    {{ $data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address') }}
+                @endif
+            </h5>
+
+            {{-- Contact --}}
+            <div class="self-stretch flex flex-col gap-4">
+                <div class="flex flex-col gap-3">
+                    <label class="{{ $addrLabel }}">{{ __('Full name') }} <span class="text-[#DE1709]">*</span></label>
+                    <input wire:model="data.modal.full_name" type="text" placeholder="{{ __('Full name') }}"
+                        class="{{ $addrInput }} {{ $addrError('data.modal.full_name') }}">
+                    @error('data.modal.full_name')<p class="text-[12px] text-[#DE1709]">{{ $message }}</p>@enderror
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-[31px]">
+                    <div class="flex flex-col gap-3" wire:ignore>
+                        <label class="{{ $addrLabel }}">{{ __('Phone') }}</label>
+                        <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
+                            class="{{ $addrInput }} {{ $addrError('data.modal.phone') }}">
+                        @error('data.modal.phone')<p class="text-[12px] text-[#DE1709]">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <label class="{{ $addrLabel }}">{{ __('Email address') }}</label>
+                        <input wire:model="data.modal.email" type="email" placeholder="{{ __('Email address') }}"
+                            class="{{ $addrInput }} {{ $addrError('data.modal.email') }}">
+                        @error('data.modal.email')<p class="text-[12px] text-[#DE1709]">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+            </div>
+
+            {{-- Select address on map (current location) --}}
+            @php
+                $countryIsoMap = $countries->filter(fn ($c) => $c->iso2)->mapWithKeys(fn ($c) => [strtoupper($c->iso2) => $c->id])->toJson();
+            @endphp
+            <div class="self-stretch flex flex-col items-center gap-3"
+                x-data="{
+                    loading: false,
+                    error: '',
+                    notice: '',
+                    isoMap: {{ $countryIsoMap }},
+                    locate() {
+                        this.error = '';
+                        this.notice = '';
+                        if (!window.isSecureContext) { this.fillFromIp(); return; }
+                        if (!navigator.geolocation) { this.error = @js(__('Your browser does not support location.')); return; }
+                        this.loading = true;
+                        navigator.geolocation.getCurrentPosition(
+                            pos => this.fill(pos.coords.latitude, pos.coords.longitude),
+                            err => {
+                                this.loading = false;
+                                this.error = err.code === 1
+                                    ? @js(__('Location access is blocked. Click the lock icon in the address bar, allow Location, then try again.'))
+                                    : @js(__('Could not get your current location.'));
+                            },
+                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+                        );
+                    },
+                    async fillFromIp() {
+                        // Browsers block precise geolocation on non-HTTPS pages, so fall back to an approximate IP lookup.
+                        this.loading = true;
+                        try {
+                            const res = await fetch('https://ipwho.is/');
+                            const a = await res.json();
+                            if (!a.success) throw new Error('ip lookup failed');
+                            const countryId = this.isoMap[(a.country_code || '').toUpperCase()] ?? null;
+                            const wrap = document.getElementById('addr-country-wrap');
+                            wrap && wrap.querySelector('[x-data]').dispatchEvent(new CustomEvent('country-select-set', { detail: { id: countryId } }));
+                            $wire.set('data.modal.city', a.city || '', false);
+                            $wire.set('data.modal.state', a.region || '', false);
+                            $wire.set('data.modal.country', a.country || '', false);
+                            $wire.set('data.modal.country_id', countryId, true);
+                            this.notice = @js(__('Approximate location detected. Please complete the street address (exact location needs a secure HTTPS connection).'));
+                        } catch (e) {
+                            this.error = @js(__('Could not detect your location. Please enter the address manually.'));
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+                    async fill(lat, lon) {
+                        try {
+                            const lang = document.documentElement.lang || 'en';
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lon}&accept-language=${encodeURIComponent(lang)}`, { headers: { 'Accept': 'application/json' } });
+                            if (!res.ok) throw new Error('geocode failed');
+                            const data = await res.json();
+                            const a = data.address || {};
+                            const street = [[a.house_number, a.road].filter(Boolean).join(' '), a.neighbourhood || a.suburb || a.quarter]
+                                .filter(Boolean).join(', ') || (data.display_name || '').split(',').slice(0, 2).join(',').trim();
+                            const city = a.city || a.town || a.village || a.municipality || a.county || '';
+                            const state = a.state || a.region || a.state_district || '';
+                            const countryId = this.isoMap[(a.country_code || '').toUpperCase()] ?? null;
+
+                            const wrap = document.getElementById('addr-country-wrap');
+                            wrap && wrap.querySelector('[x-data]').dispatchEvent(new CustomEvent('country-select-set', { detail: { id: countryId } }));
+
+                            $wire.set('data.modal.line1', street, false);
+                            $wire.set('data.modal.city', city, false);
+                            $wire.set('data.modal.state', state, false);
+                            $wire.set('data.modal.country', a.country || '', false);
+                            $wire.set('data.modal.country_id', countryId, true);
+                        } catch (e) {
+                            this.error = @js(__('Could not detect your address. Please enter it manually.'));
+                        } finally {
+                            this.loading = false;
+                        }
+                    }
+                }">
+                <button type="button" x-on:click="locate()" x-bind:disabled="loading"
+                    class="w-full sm:w-[376px] h-[54px] px-8 py-2 bg-[#FF4D00] text-white rounded-[32px] flex items-center justify-center gap-2 text-[20px] leading-[25px] font-[500] hover:bg-orange-600 transition disabled:opacity-70">
+                    <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#FDFDFD" stroke-width="1.8" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="6.5" />
+                        <circle cx="12" cy="12" r="2.5" fill="#FDFDFD" />
+                        <path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3" />
                     </svg>
-                </div>
-                <div class="flex-1 min-w-0 pt-1">
-                    <h5 class="text-[18px] font-[700] text-[#101828] leading-tight">
-                        @if ($data['modal']['address_id'])
-                            {{ $data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address') }}
-                        @else
-                            {{ $data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address') }}
-                        @endif
-                    </h5>
-                    <p class="text-[13px] text-[#8a8a8a] mt-1">{{ __('Fill in the details below to save this address.') }}</p>
-                </div>
-                <button type="button" wire:click="closeAddressModal"
-                    class="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[#999] hover:text-[#242424] hover:bg-[#f5f5f5] transition">
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <span x-show="!loading">{{ __('Select address on map') }}</span>
+                    <span x-show="loading" x-cloak>{{ __('Detecting location...') }}</span>
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#FDFDFD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7" /></svg>
                 </button>
+                <p x-show="notice" x-cloak x-text="notice" class="text-[12px] text-[#8F8F8F] self-stretch text-center"></p>
+                <p x-show="error" x-cloak x-text="error" class="text-[12px] text-[#DE1709] self-stretch text-center"></p>
+
+                <div class="self-stretch flex items-center gap-5 h-[25px]">
+                    <span class="flex-1 h-px bg-[#D4D4D4]"></span>
+                    <span class="text-[20px] leading-[25px] font-[500] text-[#8F8F8F] text-center">{{ __('Or Enter address Manually') }}</span>
+                    <span class="flex-1 h-px bg-[#D4D4D4]"></span>
+                </div>
             </div>
 
-            {{-- Body --}}
-            <div class="px-7 sm:px-8 py-6 space-y-7 max-h-[65vh] overflow-y-auto">
+            {{-- Address --}}
+            <div class="self-stretch flex flex-col gap-4">
+                <div class="flex flex-col gap-3">
+                    <label class="{{ $addrLabel }}">{{ __('Street Address') }} <span class="text-[#DE1709]">*</span></label>
+                    <input wire:model="data.modal.line1" type="text" placeholder="{{ __('Street, building, apartment') }}"
+                        class="{{ $addrInput }} {{ $addrError('data.modal.line1') }}">
+                    @error('data.modal.line1')<p class="text-[12px] text-[#DE1709]">{{ $message }}</p>@enderror
+                </div>
 
-                {{-- Contact section --}}
-                <div class="space-y-4">
-                    <p class="text-[11px] font-bold tracking-wider uppercase text-[#a3a3a3]">{{ __('Contact') }}</p>
-                    <div>
-                        <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Full name') }} <span
-                                class="text-[#dc2626]">*</span></label>
-                        <input wire:model="data.modal.full_name" type="text" placeholder="{{ __('Full name') }}"
-                            class="w-full border @error('data.modal.full_name') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        @error('data.modal.full_name')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>
-                        @enderror
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-[31px]">
+                    <div class="flex flex-col gap-3">
+                        <label class="{{ $addrLabel }}">{{ __('City') }}</label>
+                        <input wire:model="data.modal.city" type="text" placeholder="{{ __('City') }}" class="{{ $addrInput }}">
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div wire:ignore>
-                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Phone') }}</label>
-                            <input wire-event="data.modal.phone" value="{{ $data['modal']['phone'] ?? '' }}" type="tel" data-phone-input placeholder="{{ __('Phone number') }}"
-                                class="w-full border @error('data.modal.phone') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                            @error('data.modal.phone')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
-                        </div>
-                        <div>
-                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Email address') }}</label>
-                            <input wire:model="data.modal.email" type="email" placeholder="{{ __('Email address') }}"
-                                class="w-full border @error('data.modal.email') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                            @error('data.modal.email')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
-                        </div>
+                    <div class="flex flex-col gap-3">
+                        <label class="{{ $addrLabel }}">{{ __('State / Region') }}</label>
+                        <input wire:model="data.modal.state" type="text" placeholder="{{ __('State') }}" class="{{ $addrInput }}">
                     </div>
                 </div>
 
-                <div class="h-px bg-[#f0f0f0]"></div>
-
-                {{-- Address section --}}
-                <div class="space-y-4">
-                    <p class="text-[11px] font-bold tracking-wider uppercase text-[#a3a3a3]">{{ __('Address') }}</p>
-                    <div>
-                        <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Street Address') }} <span
-                                class="text-[#dc2626]">*</span></label>
-                        <input wire:model="data.modal.line1" type="text"
-                            placeholder="{{ __('Street, building, apartment') }}"
-                            class="w-full border @error('data.modal.line1') border-[#dc2626] @else border-[#e0e0e0] @enderror rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        @error('data.modal.line1')<p class="text-[11px] text-[#dc2626] mt-1.5">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('City') }}</label>
-                            <input wire:model="data.modal.city" type="text" placeholder="{{ __('City') }}"
-                                class="w-full border border-[#e0e0e0] rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        </div>
-                        <div>
-                            <label
-                                class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('State / Region') }}</label>
-                            <input wire:model="data.modal.state" type="text" placeholder="{{ __('State') }}"
-                                class="w-full border border-[#e0e0e0] rounded-[10px] px-4 py-3 text-[13.5px] outline-none focus:border-main focus:ring-4 focus:ring-main/10 transition bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-[12.5px] font-medium text-[#4a4a4a] mb-1.5">{{ __('Country') }} *</label>
-                            @include('themes.elora.sections.country-select', [
-                                'wireModel' => 'data.modal.country_id',
-                                'countries' => $countries,
-                                'currentId' => $data['modal']['country_id'],
-                            ])
-                            @error('data.modal.country_id') <p class="text-red-500 text-[11px] mt-1.5">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
+                <div class="flex flex-col gap-3" id="addr-country-wrap">
+                    <label class="{{ $addrLabel }}">{{ __('Country') }} <span class="text-[#DE1709]">*</span></label>
+                    @include('themes.elora.sections.country-select', [
+                        'wireModel' => 'data.modal.country_id',
+                        'countries' => $countries,
+                        'currentId' => $data['modal']['country_id'],
+                        'triggerClass' => 'h-12 border border-[#D4D4D4] rounded-[4px] px-4 py-2 text-[16px] leading-5 text-[#121212] bg-transparent',
+                    ])
+                    @error('data.modal.country_id')<p class="text-[12px] text-[#DE1709]">{{ $message }}</p>@enderror
                 </div>
-
-                <label class="flex items-center justify-between gap-3 cursor-pointer rounded-[12px] border border-[#ececec] px-4 py-3.5 hover:border-main/40 hover:bg-main/[0.03] transition">
-                    <span class="text-[13px] text-[#333] font-medium">{{ __('Set as default address') }}</span>
-                    <span class="relative inline-flex shrink-0">
-                        <input wire:model.live="data.modal.is_default" type="checkbox" class="peer sr-only">
-                        <span class="w-9 h-5 rounded-full bg-[#dcdcdc] peer-checked:bg-main transition-colors"></span>
-                        <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></span>
-                    </span>
-                </label>
-
             </div>
 
-            {{-- Footer --}}
-            <div class="px-7 sm:px-8 py-5 border-t border-[#eeeeee] flex flex-col-reverse sm:flex-row justify-end gap-3 bg-[#fafafa] rounded-b-[20px]">
-                <button type="button" wire:click="closeAddressModal"
-                    class="px-5 py-2.5 bg-white border border-[#e0e0e0] text-[#555] rounded-[10px] text-[13px] font-[600] hover:bg-[#f5f5f5] hover:border-[#d4d4d4] transition">
-                    {{ __('Cancel') }}
-                </button>
-                <button type="button" wire:click="saveNewAddress" wire:loading.attr="disabled"
-                    wire:target="saveNewAddress"
-                    class="px-6 py-2.5 bg-main text-white rounded-[10px] text-[13px] font-[600] shadow-sm hover:bg-orange-600 transition disabled:opacity-60">
-                    <span wire:loading.remove wire:target="saveNewAddress">{{ $data['modal']['address_id'] ? __('Update Address') : __('Save Address') }}</span>
-                    <span wire:loading wire:target="saveNewAddress">{{ __('Saving...') }}</span>
-                </button>
-            </div>
+            <label class="self-stretch flex items-center justify-between gap-3 cursor-pointer">
+                <span class="text-[16px] leading-5 text-[#121212]">{{ __('Set as default address') }}</span>
+                <span class="relative inline-flex shrink-0">
+                    <input wire:model.live="data.modal.is_default" type="checkbox" class="sr-only">
+                    <span class="block w-9 h-5 rounded-full transition-colors duration-200"
+                        style="background-color: {{ !empty($data['modal']['is_default']) ? '#FF4D00' : '#D4D4D4' }}"></span>
+                    <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
+                        style="transform: translateX({{ !empty($data['modal']['is_default']) ? '16px' : '0px' }})"></span>
+                </span>
+            </label>
+
+            {{-- Save --}}
+            <button type="button" wire:click="saveNewAddress" wire:loading.attr="disabled" wire:target="saveNewAddress"
+                class="h-[54px] px-8 py-2 bg-[#FF4D00] text-white rounded-[32px] text-[20px] leading-[25px] font-[500] flex items-center justify-center gap-2 hover:bg-orange-600 transition disabled:opacity-60">
+                <span wire:loading.remove wire:target="saveNewAddress">{{ $data['modal']['address_id'] ? __('Update Address') : __('Save') }}</span>
+                <span wire:loading wire:target="saveNewAddress">{{ __('Saving...') }}</span>
+            </button>
 
         </div>
     </div>

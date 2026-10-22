@@ -4,10 +4,12 @@ Searchable country select for the Elora theme.
 Props:
 $wireModel – dot-notation Livewire property (e.g. "data.modal.country_id")
 $countries – collection of country objects (id, name, flag_emoji)
+$triggerClass – optional trigger button classes (border/size/font)
 $currentId – currently selected country id (integer|null)
 --}}
 @php
     $currentId ??= null;
+    $triggerClass ??= 'border border-[#dcdcdc] rounded-[8px] px-4 py-2.5 text-[13px] bg-white';
     $jsonCountries = $countries->map(fn($c) => [
         'id' => $c->id,
         'name' => $c->name,
@@ -33,6 +35,9 @@ $currentId – currently selected country id (integer|null)
             this.$el.addEventListener('country-select-reset', () => {
                 this.selected = null;
                 this.search = '';
+            });
+            this.$el.addEventListener('country-select-set', (e) => {
+                this.selected = this.countries.find(c => c.id === e.detail.id) ?? null;
             });
             window.addEventListener('scroll', () => this.open && this.position(), true);
             window.addEventListener('resize', () => this.open && this.position());
@@ -71,7 +76,7 @@ $currentId – currently selected country id (integer|null)
     }" x-on:click.outside="open = false" class="relative">
     {{-- Trigger --}}
     <button type="button" x-ref="trigger" x-on:click="open ? (open = false) : openDropdown()"
-        class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-2.5 text-[13px] outline-none transition bg-white flex items-center justify-between gap-2"
+        class="w-full {{ $triggerClass }} outline-none transition flex items-center justify-between gap-2"
         :class="open ? 'border-[#242424]' : ''">
         <span class="flex items-center gap-2 truncate">
             <template x-if="selected">
