@@ -76,10 +76,13 @@
             <form
                 action="{{ $category ? route('tenant.storefront.category', $category->slug) : route('tenant.storefront.category') }}"
                 method="GET" class="flex flex-col gap-4">
+                @if (!empty($section))
+                    <input type="hidden" name="section" value="{{ $section }}">
+                @endif
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
                         <h1 class="text-[#222] text-[18px] font-bold">
-                            {{ $category ? $category->name : __('All Products') }}</h1>
+                            {{ $category ? $category->name : ($sectionLabel ?? __('All Products')) }}</h1>
                         <p class="text-[#808080] text-[12px] mt-1">
                             @if ($products->total() > 0)
                                 {{ __('Showing :from-:to of :total products', ['from' => $products->firstItem(), 'to' => $products->lastItem(), 'total' => $products->total()]) }}

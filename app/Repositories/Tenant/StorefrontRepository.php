@@ -266,11 +266,8 @@ class StorefrontRepository
 
         // Section presets: apply filter-side logic for section-based navigation
         $section = (string) ($filters['section'] ?? '');
-        if ($section === 'flash_sale' && $sale === '') {
-            $sale = 'flash_sale';
-        } elseif ($section === 'featured' && $productFlag === '') {
-            $productFlag = 'featured';
-        } elseif ($section === 'hot_deals' && $sale === '') {
+        // (flash_sale / featured / trending / … are product pools — see sectionProductPool().)
+        if ($section === 'hot_deals' && $sale === '') {
             $sale = 'on_sale';
         }
         $minPrice = $filters['min'] ?? null;
@@ -1078,27 +1075,68 @@ class StorefrontRepository
             ->get();
     }
 
+    /**
+     * Ordered product-id pool behind a home-page section, so a "see all" page lists
+     * exactly what the section was drawn from (same curation + fallbacks) instead
+     * of an approximation. Returns null for sections that are plain filters.
+     *
+     * @return int[]|null
+     */
+    public function sectionProductPool(string $section, int $limit = 200): ?array
+    {
+        $service = app(\App\Services\HomeProductService::class);
+        $countryId = $this->customerCountryId();
+
+        $products = match ($section) {
+            'trending' => $service->getTrendingNow($limit, $countryId),
+            'new_arrivals' => $service->getNewIn($limit, $countryId),
+            'top_products' => $service->getBestSelling($limit, $countryId),
+            'featured' => $service->getFeatured($limit, $countryId),
+            'recommended' => $this->recommendedProducts($limit),
+            'flash_sale' => $this->activeFlashSales()->flatMap(fn($flashSale) => $flashSale->products)->unique('id'),
+            default => null,
+        };
+
+        return $products?->pluck('id')->map(fn($id) => (int) $id)->values()->all();
+    }
+
     public function paginatedProductsByCategory(?Category $category = null, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         $userSort = (string) ($filters['sort'] ?? 'latest');
         $sort = $userSort;
+        $section = (string) ($filters['section'] ?? '');
+        $pool = $this->sectionProductPool($section);
 
         // Section presets: override sort when the user hasn't explicitly chosen one
-        if ($sort === 'latest') {
-            $section = (string) ($filters['section'] ?? '');
-            $sort = match ($section) {
-                'trending', 'top_products', 'recommended' => 'best_selling',
-                'new_arrivals' => 'latest',
-                'special_offers', 'top_rated' => 'rating',
-                default => $sort,
-            };
+        if ($sort === 'latest' && in_array($section, ['special_offers', 'top_rated'], true)) {
+            $sort = 'rating';
+        }
+
+        // Home "top rated" shows rated products, falling back to the whole catalog
+        // when nothing has a rating yet — apply the same rule here.
+        if (in_array($section, ['special_offers', 'top_rated'], true) && ($filters['ratings'] ?? '') === ''
+            && $this->productBaseQuery()->whereRaw($this->averageRatingExpression() . ' >= 1')->exists()) {
+            $filters['ratings'] = 1;
         }
 
         $categoryIdWithChildrenIds = $category ? array_merge([$category->id], $this->categoryDescendantIds($category->id)) : null;
-        // dd($categoryIdWithChildrenIds);
         $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
 
-        if ($category && $userSort === 'latest') {
+        if ($pool !== null) {
+            $query->whereIn('products.id', $pool)
+                ->when($categoryIdWithChildrenIds, fn($categoryQuery) => $categoryQuery->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIdWithChildrenIds)));
+
+            $this->applyProductFilters($query, $filters);
+
+            if ($userSort === 'latest') {
+                // Keep the section's own ranking (curated order / velocity / newest).
+                if ($pool !== []) {
+                    $query->orderByRaw('FIELD(products.id, ' . implode(',', $pool) . ')');
+                }
+            } else {
+                $this->applyProductSort($query, $sort);
+            }
+        } elseif ($category && $userSort === 'latest' && $sort === 'latest') {
             $query->join('category_product', function ($join) use ($categoryIdWithChildrenIds) {
                 $join->on('category_product.product_id', '=', 'products.id')
                     ->whereIn('category_product.category_id', $categoryIdWithChildrenIds);
@@ -1224,6 +1262,26 @@ class StorefrontRepository
         return $query->paginate($perPage)->withQueryString();
     }
 
+    /**
+     * "New In" listing: mirrors the home New Arrivals section — merchandiser-badged
+     * products when any exist, otherwise the newest catalog products.
+     */
+    public function paginatedNewInProducts(array $filters = [], int $perPage = 20): LengthAwarePaginator
+    {
+        $hasBadged = $this->productsByBadgeQuery('new-in')->exists();
+
+        if ($hasBadged) {
+            return $this->paginatedProductsByBadge('new-in', $filters, $perPage);
+        }
+
+        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
+
+        $this->applyProductFilters($query, $filters);
+        $this->applyCategoryFilter($query, $filters['category_id'] ?? null);
+
+        return $query->orderByDesc('products.created_at')->paginate($perPage)->withQueryString();
+    }
+
     public function paginatedTopRatedProducts(array $filters = [], int $perPage = 20, int $minimumRating = 5): LengthAwarePaginator
     {
         $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
@@ -1267,7 +1325,8 @@ class StorefrontRepository
             ->when($days, fn($query) => $query->where('orders.created_at', '>=', now()->subDays($days)))
             ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'));
 
-        if (!(clone $salesQuery)->exists()) {
+        // Home "best sellers" shows the curated badge first; keep the listing consistent.
+        if ($this->productsByBadgeQuery('best-selling')->exists() || !(clone $salesQuery)->exists()) {
             return $this->paginatedProductsByBadge('best-selling', $filters, $perPage);
         }
 

@@ -29,7 +29,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ route('tenant.storefront.category') }}?section=flash_sale"
+                <a href="{{ storefront_see_all_url('flash_sale') }}"
                     class="flex items-center gap-0.5 md:gap-2 text-neutral-900 text-[10px] lg:text-xl"> <span class="hidden md:inline">{{ __('View')}}</span>{{ __('all products') }}
                     <svg class="w-2 sm:w-4 lg:w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

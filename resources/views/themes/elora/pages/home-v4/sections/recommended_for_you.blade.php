@@ -14,7 +14,7 @@
           {{ __('Recommended For You') }}
         </h2>
         <a
-          href="{{ route('tenant.storefront.category') }}"
+          href="{{ storefront_see_all_url('recommended') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-accent-purple)"
           >{{ __('see all') }}</a

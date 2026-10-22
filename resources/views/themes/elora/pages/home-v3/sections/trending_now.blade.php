@@ -58,7 +58,7 @@
           {{ __('Trending Now') }}
         </h2>
         <a
-          href="{{ route('tenant.storefront.new-in') }}"
+          href="{{ storefront_see_all_url('trending') }}"
           class="text-[14px] lg:text-[20px] tracking-[0.5px]"
           style="color: var(--color-success)"
           >{{ __('see all') }}</a

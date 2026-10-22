@@ -235,7 +235,7 @@
 
   <div class="sqv2-flash__head">
     <h2 class="sqv2-flash__title">{{ __('Flash Sale') }}</h2>
-    <a href="{{ route('tenant.storefront.category') }}?section=flash_sale" class="sqv2-flash__seeall">{{ __('see all') }}</a>
+    <a href="{{ storefront_see_all_url('flash_sale') }}" class="sqv2-flash__seeall">{{ __('see all') }}</a>
   </div>
 
   @if ($__flashCards->isNotEmpty())
@@ -256,7 +256,7 @@
         <span class="sqv2-flash__digit" data-flash-timer="m">06</span>
         <span class="sqv2-flash__digit" data-flash-timer="s">25</span>
       </div>
-      <a href="{{ route('tenant.storefront.category') }}?section=flash_sale" class="sqv2-flash__cta">
+      <a href="{{ storefront_see_all_url('flash_sale') }}" class="sqv2-flash__cta">
         <span class="sqv2-flash__cta-label">{{ __('Shop now') }}</span>
       </a>
     </div>

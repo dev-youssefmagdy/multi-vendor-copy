@@ -346,7 +346,7 @@
     </div>
 
     @if (!empty($__flashSlides))
-      <a href="{{ route('tenant.storefront.category') }}?section=flash_sale" class="sqv3-flash__cta">
+      <a href="{{ storefront_see_all_url('flash_sale') }}" class="sqv3-flash__cta">
         <span class="sqv3-flash__cta-label">{{ __('Shop now') }}</span>
       </a>
     @endif

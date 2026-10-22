@@ -121,7 +121,7 @@
 <section class="sqv3-trend" wire:ignore>
   <div class="sqv3-trend__head">
     <h2 class="sqv3-trend__title">{{ __('Trending Now') }}</h2>
-    <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv3-trend__seeall">{{ __('see all') }}</a>
+    <a href="{{ storefront_see_all_url('trending') }}" class="sqv3-trend__seeall">{{ __('see all') }}</a>
   </div>
   @if ($__trendingColumns->isNotEmpty())
     <div class="swiper trending-swiper sqv3-trend__row">

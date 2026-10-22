@@ -59,7 +59,7 @@
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="flex items-center justify-between px-3 sm:px-5 py-2.5 rounded-lg mb-4 overflow-hidden"
                 style="background:linear-gradient(89.62deg,#C94F1A 0.07%,#F56323 57.6%,#BA3800 100%);">
-                <a href="{{ route('tenant.storefront.best-selling') }}"
+                <a href="{{ storefront_see_all_url('recommended') }}"
                     class="text-white text-xs sm:text-sm hover:underline"><span class="inline-block rtl:rotate-180">←</span> {{ __('See all') }}</a>
                 <span class="text-white text-xs sm:text-sm hidden sm:block">
                     {{ __('Free shipping when you purchase 1.2 kg') }}

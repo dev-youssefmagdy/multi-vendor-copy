@@ -83,6 +83,21 @@ class CategoryPage extends Component
         }
     }
 
+    /** Human title for a home-section preset (null when no preset is active). */
+    protected function sectionLabel(): ?string
+    {
+        return match ($this->section) {
+            'trending' => __('Trending Now'),
+            'flash_sale', 'hot_deals' => __('Flash Sale'),
+            'new_arrivals' => __('New In'),
+            'top_products' => __('Best-Selling'),
+            'featured' => __('Featured Products'),
+            'recommended' => __('Recommended for You'),
+            'top_rated', 'special_offers' => __('Top Rated Products'),
+            default => null,
+        };
+    }
+
     protected function normalizePrice(string $value): string
     {
         if ($value === '' || !is_numeric($value)) {
@@ -253,10 +268,12 @@ class CategoryPage extends Component
             'section' => $this->section,
             'hasMore' => $this->hasMore,
             'allCategories' => $allCategories,
+            'sectionLabel' => $this->sectionLabel(),
         ]);
 
         $storeName = $repo->storeName();
-        $categoryName = $category ? ($category->translationValue('name') ?? $category->slug) : __('All Products');
+        $sectionLabel = $this->sectionLabel();
+        $categoryName = $category ? ($category->translationValue('name') ?? $category->slug) : ($sectionLabel ?? __('All Products'));
         $categoryDesc = $category ? mb_substr(strip_tags($category->translationValue('description') ?? ''), 0, 160) : '';
         $categoryImage = $category?->thumb_url ?? null;
 

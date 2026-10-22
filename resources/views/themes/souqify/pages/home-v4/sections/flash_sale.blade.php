@@ -447,7 +447,7 @@
       <p class="sqv4-flash__empty">{{ __('No flash deals right now.') }}</p>
     @endif
 
-    <a href="{{ route('tenant.storefront.category') }}?section=flash_sale" class="sqv4-flash__cta">
+    <a href="{{ storefront_see_all_url('flash_sale') }}" class="sqv4-flash__cta">
       <span class="sqv4-flash__cta-label">{{ __('Shop now') }}</span>
     </a>
   </div>

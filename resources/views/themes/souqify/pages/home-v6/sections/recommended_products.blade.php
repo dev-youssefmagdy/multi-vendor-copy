@@ -130,7 +130,7 @@
 <section class="sqv6-reco">
   <div class="sqv6-reco__head">
     <h2 class="sqv6-reco__title">{{ __('Recommended For You') }}</h2>
-    <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv6-reco__seeall">{{ __('see all') }}</a>
+    <a href="{{ storefront_see_all_url('recommended') }}" class="sqv6-reco__seeall">{{ __('see all') }}</a>
   </div>
 
   <div id="recommendedGrid" class="sqv6-reco__grid">

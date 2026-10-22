@@ -4,7 +4,7 @@
     $rate = (float) data_get($currency, 'conversion_rate', 1.0);
     $catName = $category
         ? ($category->translationValue('name') ?? $category->name ?? $category->slug)
-        : __('All Products');
+        : ($sectionLabel ?? __('All Products'));
     $catDesc = $category ? ($category->translationValue('description') ?? $category->description ?? '') : '';
     $totalItems = $products->total();
     $parentName = $parentCategory ? ($parentCategory->translationValue('name') ?? $parentCategory->name) : null;

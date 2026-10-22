@@ -113,7 +113,7 @@
 <section class="sqv5-reco">
     <div class="sqv5-reco__head">
         <h2 class="sqv5-reco__title">{{ __('Recommended For You') }}</h2>
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv5-reco__seeall">{{ __('see all') }}</a>
+        <a href="{{ storefront_see_all_url('recommended') }}" class="sqv5-reco__seeall">{{ __('see all') }}</a>
     </div>
     <div id="recommendedWrapper" class="sqv5-reco__grid">
         @forelse ($__recommendedCards as $p)

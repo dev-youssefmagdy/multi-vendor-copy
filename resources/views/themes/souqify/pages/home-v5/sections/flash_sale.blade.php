@@ -602,7 +602,7 @@
     @endif
 
     <div class="sqv5-flash__bar">
-      <a href="{{ route('tenant.storefront.category') }}?section=flash_sale" class="sqv5-flash__cta">
+      <a href="{{ storefront_see_all_url('flash_sale') }}" class="sqv5-flash__cta">
         <span class="sqv5-flash__cta-label">{{ __('Shop now') }}</span>
       </a>
       <span class="sqv5-flash__badge sqv5-flash__badge--bottom">

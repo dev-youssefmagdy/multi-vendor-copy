@@ -10,7 +10,7 @@
             {{-- Tab pills --}}
             @php $pillBase = 'flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 justify-center sm:justify-start max-sm:w-[calc((100%-16px)/2.75)] max-sm:px-2 max-sm:gap-1 snap-start'; @endphp
             <div class="flex items-center md:justify-center gap-2 mb-4 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
-                <button data-tab="flash" data-see-all="{{ route('tenant.storefront.offers') }}" type="button"
+                <button data-tab="flash" data-see-all="{{ storefront_see_all_url('flash_sale') }}" type="button"
                     class="cat-pill tabbed-pill active {{ $pillBase }} border border-main bg-main text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -35,7 +35,7 @@
                     {{ __('New in') }}
                 </button>
 
-                <button data-tab="toprated" data-see-all="{{ route('tenant.storefront.category') }}" type="button"
+                <button data-tab="toprated" data-see-all="{{ storefront_see_all_url('top_rated') }}" type="button"
                     class="cat-pill tabbed-pill {{ $pillBase }} border border-main-light text-main">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -48,8 +48,8 @@
         </div>
 
         {{-- Single product swiper — populated server-side on first load, then via AJAX.
-             Desktop: full-bleed with a 38px start gutter and none at the end (ps/pe follow LTR/RTL). --}}
-        <div id="tabbed-products-swiper-wrap" class="px-3 sm:px-4 lg:ps-[38px] lg:pe-0">
+             Aligned to the same container gutter as the rest of the page. --}}
+        <div id="tabbed-products-swiper-wrap" class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
                 <div class="swiper product-slid-swiper" id="tabbed-products-swiper" data-per-view="6.25" data-per-view-mobile="2.5">
                     <div class="swiper-wrapper" id="tabbed-products-wrapper">
                         @forelse ($flashProducts as $product)

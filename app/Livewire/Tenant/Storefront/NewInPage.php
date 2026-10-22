@@ -54,7 +54,7 @@ class NewInPage extends Component
         $repo = app(StorefrontRepository::class);
 
         $data = array_merge($this->sharedData(), [
-            'products' => $repo->paginatedProductsByBadge('new-in', [
+            'products' => $repo->paginatedNewInProducts([
                 'keyword' => $this->search,
                 'category_id' => $this->categoryId,
             ], 20),

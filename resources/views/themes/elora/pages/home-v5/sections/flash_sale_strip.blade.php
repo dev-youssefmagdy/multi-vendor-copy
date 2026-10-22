@@ -157,7 +157,7 @@
         </div>
       </div>
       <a
-        href="{{ route('tenant.storefront.best-selling') }}"
+        href="{{ storefront_see_all_url('flash_sale') }}"
         class="relative border border-white rounded-full h-[48px] lg:h-[64px] px-[32px] flex items-center justify-center cursor-pointer"
       >
         <span

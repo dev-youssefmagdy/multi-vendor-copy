@@ -114,7 +114,7 @@
 <section class="sqv5-trend" wire:ignore>
     <div class="sqv5-trend__head">
         <h2 class="sqv5-trend__title">{{ __('Trending Now') }}</h2>
-        <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv5-trend__seeall">{{ __('see all') }}</a>
+        <a href="{{ storefront_see_all_url('trending') }}" class="sqv5-trend__seeall">{{ __('see all') }}</a>
     </div>
     @if ($__trendingCards->isNotEmpty())
         <div class="relative w-full min-w-0">

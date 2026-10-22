@@ -27,7 +27,7 @@
                         <p>{{ __('Save on everything.') }}</p>
                         <p>{{ __('Best seller + more') }}</p>
                     </div>
-                    <a href="{{ route('tenant.storefront.best-selling') }}"
+                    <a href="{{ storefront_see_all_url('flash_sale') }}"
                         class="bg-gray-darkest text-white px-[12px] py-[6px] md:px-6 md:py-3 lg:px-8 lg:py-3.5 rounded-full font-bold hover:bg-black transition text-[9px] md:text-xs lg:text-sm tracking-wide shadow w-fit whitespace-nowrap">
                         {{ __('Shop flash deals') }}
                     </a>

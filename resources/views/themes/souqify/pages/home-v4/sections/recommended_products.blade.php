@@ -168,7 +168,7 @@
 <section class="sqv4-reco">
   <div class="sqv4-reco__head">
     <h2 class="sqv4-reco__title">{{ __('Recommended For You') }}</h2>
-    <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv4-reco__seeall">{{ __('see all') }}</a>
+    <a href="{{ storefront_see_all_url('recommended') }}" class="sqv4-reco__seeall">{{ __('see all') }}</a>
   </div>
 
   @if ($__recommendedCards->isNotEmpty())

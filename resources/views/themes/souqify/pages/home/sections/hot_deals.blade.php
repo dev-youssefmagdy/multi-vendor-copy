@@ -2,7 +2,7 @@
     <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16" wire:ignore>
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900">{{ __('Hot Deals') }}</h2>
-            <a href="{{ route('tenant.storefront.category') }}?section=hot_deals"
+            <a href="{{ storefront_see_all_url('flash_sale') }}"
                 class="flex items-center gap-1 text-slate-900 hover:text-[var(--sq-primary)] transition text-sm sm:text-base">{{ __('View all products') }}
                 <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -62,7 +62,7 @@
           />
         </div>
         <a
-          href="{{ route('tenant.storefront.best-selling') }}"
+          href="{{ storefront_see_all_url('flash_sale') }}"
           class="font-normal text-[12px] lg:text-[24px] max-lg:leading-3.75 tracking-[0.5px] lg:tracking-[0.8px] text-white whitespace-nowrap"
           >{{ __('see all') }}</a
         >
@@ -121,7 +121,7 @@
           </div>
         </div>
         <a
-          href="{{ route('tenant.storefront.best-selling') }}"
+          href="{{ storefront_see_all_url('flash_sale') }}"
           class="flex-1 bg-white h-[38px] lg:h-[63px] rounded-full flex items-center justify-center max-lg:p-2 lg:px-[16px]"
         >
           <span

@@ -190,7 +190,7 @@
   {{-- "Explore all" CTA (shared) --}}
   <div class="flex items-center justify-center pt-[8px] lg:pt-[4px]">
     <a
-      href="{{ route('tenant.storefront.category') }}"
+      href="{{ storefront_see_all_url('flash_sale') }}"
       class="border border-white rounded-full h-[38px] lg:h-[64px] w-[121px] lg:w-auto px-[8px] lg:px-[48px] gap-[8px] lg:gap-0 flex items-center justify-center font-medium text-white text-[14px] lg:text-[20px] tracking-[0.5px] opacity-85 transition-opacity duration-150 hover:opacity-75"
       style="background: var(--color-brand-orange)"
     >

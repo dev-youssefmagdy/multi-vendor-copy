@@ -50,3 +50,46 @@ if (!function_exists('tt')) {
         return strtr($value, $shorts);
     }
 }
+
+if (!function_exists('storefront_see_all_url')) {
+    /**
+     * Destination of a home-page section's "see all" button, so it lists the same
+     * products the section was drawn from.
+     *
+     * Sections: new_arrivals, top_products, flash_sale, trending, featured,
+     * recommended, top_rated, hot_deals, special_offers, explore.
+     * Dedicated pages are used where they list the identical pool; everything else
+     * goes to the category listing with a matching ?section= preset.
+     */
+    function storefront_see_all_url(string $section, array $query = []): string
+    {
+        $section = match ($section) {
+            'best_selling', 'best_seller' => 'top_products',
+            'new_in', 'new' => 'new_arrivals',
+            'flash', 'flash_sale_strip' => 'flash_sale',
+            'trending_now' => 'trending',
+            default => $section,
+        };
+
+        if ($section === 'new_arrivals') {
+            return route('tenant.storefront.new-in', $query);
+        }
+
+        if ($section === 'top_products') {
+            return route('tenant.storefront.best-selling', $query);
+        }
+
+        if ($section === 'flash_sale') {
+            try {
+                $offersView = app(\App\Services\Tenant\TemplateRegistryService::class)->active()->pageView('offers');
+                if (view()->exists($offersView)) {
+                    return route('tenant.storefront.offers', $query);
+                }
+            } catch (\Throwable) {
+                // fall through to the category listing
+            }
+        }
+
+        return route('tenant.storefront.category', ['section' => $section] + $query);
+    }
+}

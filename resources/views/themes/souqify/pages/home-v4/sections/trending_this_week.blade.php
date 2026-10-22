@@ -438,7 +438,7 @@
 <section class="sqv4-trend" wire:ignore>
   <div class="sqv4-trend__head">
     <h2 class="sqv4-trend__title">{{ __('Trending Now') }}</h2>
-    <a href="{{ route('tenant.storefront.best-selling') }}" class="sqv4-trend__seeall">{{ __('see all') }}</a>
+    <a href="{{ storefront_see_all_url('trending') }}" class="sqv4-trend__seeall">{{ __('see all') }}</a>
   </div>
   @if ($__trendingCards->isNotEmpty())
     <div class="swiper trending-swiper sqv4-trend__row">

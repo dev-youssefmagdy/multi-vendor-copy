@@ -7,6 +7,9 @@
   <div class="relative flex flex-col gap-[4px] lg:gap-[6px] h-[130px] lg:h-[190px] items-end justify-end px-[5px] lg:px-[7px] py-[4px] lg:py-[5px] shrink-0 w-full">
     <div class="absolute start-0 top-0 h-full w-full rounded-t-[6px] lg:rounded-t-[8px] overflow-hidden">
       <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+@if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
     </div>
     <div class="absolute top-0 start-0 flex items-center justify-center px-[10px] py-[5px] rounded-bl-[8px] rounded-tr-[6px] lg:rounded-tr-[8px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
       <p class="font-normal text-[11px] lg:text-[14px] tracking-[0.3px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : ($p['sold'] ?? __('Sold'))) }}</p>

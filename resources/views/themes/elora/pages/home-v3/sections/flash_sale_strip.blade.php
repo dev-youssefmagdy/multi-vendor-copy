@@ -214,7 +214,7 @@
       </div>
       <div class="elora-v3-flash__cta flex items-center justify-center">
         <a
-          href="{{ route('tenant.storefront.best-selling') }}"
+          href="{{ storefront_see_all_url('flash_sale') }}"
           class="border border-white rounded-full h-[44px] lg:h-[64px] px-[24px] lg:px-[55px] flex items-center justify-center cursor-pointer"
         >
           <span

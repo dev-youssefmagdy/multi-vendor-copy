@@ -20,7 +20,7 @@
 
                     <h2 class="text-lg sm:text-2xl font-bold text-gradient-main">{{ __('Trending Now') }}</h2>
                 </div>
-                <a href="{{ route('tenant.storefront.new-in') }}"
+                <a href="{{ storefront_see_all_url('trending') }}"
                     class="flex items-center gap-1.5 text-xs sm:text-sm text-main hover:underline font-medium">
                     {{ __('See all') }}
                     <svg class="rtl:rotate-180" width="5" height="12" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">
