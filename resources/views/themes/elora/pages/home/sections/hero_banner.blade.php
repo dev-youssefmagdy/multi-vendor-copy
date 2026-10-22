@@ -19,7 +19,7 @@
                     @endphp
                     @if ($bTitle || $bSubtitle || $bButton)
                     <div class="absolute inset-0 flex items-center pointer-events-none" style="background: linear-gradient(90deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 60%)">
-                        <div class="flex flex-col items-start gap-2 lg:gap-4 px-6 lg:px-14 max-w-[70%] lg:max-w-[45%]">
+                        <div class="flex flex-col items-start gap-2 lg:gap-4 px-6 sm:px-20 lg:px-24 max-w-[70%] lg:max-w-[45%]">
                             @if ($bTitle)<h2 class="text-white font-bold text-xl lg:text-5xl leading-tight">{{ $bTitle }}</h2>@endif
                             @if ($bSubtitle)<p class="text-white/90 text-xs lg:text-xl leading-snug">{{ $bSubtitle }}</p>@endif
                             @if ($bButton)
