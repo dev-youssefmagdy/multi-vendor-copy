@@ -36,6 +36,7 @@
 
           return [
               'url' => route('tenant.storefront.product', $product->slug),
+              'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
               'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),

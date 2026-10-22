@@ -17,11 +17,20 @@
         <svg class="size-[13px] lg:size-[20px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     </div>
-    <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
+    @if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" type="button"
+      aria-label="{{ __('Add to cart') }}"
+      class="opacity-50 cursor-not-allowed flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[16px] shrink-0 h-[28px] lg:h-[45px] w-[36px] lg:w-[57px]  bg-[var(--color-bg-main)]">
+      <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="size-[15px] lg:size-[24px]" />
+    </button>
+@else
+<button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})" onclick="event.stopPropagation()"
       aria-label="{{ __('Add to cart') }}"
       class="flex items-center justify-center px-[8px] lg:px-[12px] py-[3px] lg:py-[4px] relative rounded-[10px] lg:rounded-[16px] shrink-0 h-[28px] lg:h-[45px] w-[36px] lg:w-[57px] cursor-pointer bg-[var(--color-bg-main)]">
       <img src="{{ asset('elora-4/assets/icons/add-to-cart-dark.svg') }}" alt="" class="size-[15px] lg:size-[24px]" />
     </button>
+@endif
   </div>
   <div class="flex flex-col gap-[4px] lg:gap-[8px] items-start p-[4px] lg:p-[8px] relative shrink-0 w-full">
 

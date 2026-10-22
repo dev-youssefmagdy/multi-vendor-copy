@@ -117,6 +117,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-cover w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div
                                         class="w-[80px] h-[80px] text-4xl flex items-center justify-center text-neutral-300">
@@ -133,7 +136,21 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
+                                </svg>
+
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
@@ -145,6 +162,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
 
                             </button>
+@endif
                         </div>
                         @if($hasFreeShipping ?? false)
                         <div class="absolute bottom-0 left-0 w-[112px] h-4 flex items-center justify-start px-2 rounded-tr-2xl text-white text-[8px] font-medium"
@@ -257,6 +275,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-cover w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div
                                         class="w-[80px] h-[80px] text-4xl flex items-center justify-center text-neutral-300">
@@ -273,7 +294,21 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
+                                </svg>
+
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
@@ -285,6 +320,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
 
                             </button>
+@endif
                             @if($hasFreeShipping ?? false)
                             <div class="absolute bottom-0 left-0 w-[112px] h-4 flex items-center justify-start px-2 rounded-tr-2xl text-white text-[8px] font-medium"
                                 dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}"
@@ -398,6 +434,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-cover w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div
                                         class="w-[80px] h-[80px] text-4xl flex items-center justify-center text-neutral-300">
@@ -414,7 +453,21 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M8.69531 8.15657H13.0286M10.862 5.98991V10.3232M1.33948 3.17324H17.8213C19.3141 3.17324 20.3921 4.54907 19.9826 5.93357L18.1907 12.0002C17.9145 12.9319 17.0326 13.5732 16.0295 13.5732H6.10831C5.10406 13.5732 4.22114 12.9308 3.94598 12.0002L1.33948 3.17324ZM1.33948 3.17324L0.570312 0.573242M15.1953 20.0732C15.6263 20.0732 16.0396 19.902 16.3444 19.5973C16.6491 19.2925 16.8203 18.8792 16.8203 18.4482C16.8203 18.0173 16.6491 17.6039 16.3444 17.2992C16.0396 16.9944 15.6263 16.8232 15.1953 16.8232C14.7643 16.8232 14.351 16.9944 14.0463 17.2992C13.7415 17.6039 13.5703 18.0173 13.5703 18.4482C13.5703 18.8792 13.7415 19.2925 14.0463 19.5973C14.351 19.902 14.7643 20.0732 15.1953 20.0732ZM6.52864 20.0732C6.95962 20.0732 7.37294 19.902 7.67769 19.5973C7.98244 19.2925 8.15364 18.8792 8.15364 18.4482C8.15364 18.0173 7.98244 17.6039 7.67769 17.2992C7.37294 16.9944 6.95962 16.8232 6.52864 16.8232C6.09767 16.8232 5.68434 16.9944 5.37959 17.2992C5.07485 17.6039 4.90364 18.0173 4.90364 18.4482C4.90364 18.8792 5.07485 19.2925 5.37959 19.5973C5.68434 19.902 6.09767 20.0732 6.52864 20.0732Z"
+                                        stroke-width="1.14706" stroke-linecap="round"
+                                        stroke-linejoin="round" style="stroke: var(--sq-primary)" />
+                                </svg>
+
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-8 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none"
@@ -426,6 +479,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 </svg>
 
                             </button>
+@endif
                             @if($hasFreeShipping ?? false)
                             <div class="absolute bottom-0 left-0 w-[112px] h-4 flex items-center justify-start px-2 rounded-tr-2xl text-white text-[8px] font-medium"
                                 dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}"
@@ -563,6 +617,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-contain w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div class="text-5xl text-neutral-300">🛍️</div>
                                 @endif
@@ -577,7 +634,22 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
+                                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <line x1="3" y1="6" x2="21" y2="6"
+                                        stroke-width="1.5" />
+                                    <path d="M16 10a4 4 0 01-8 0" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
@@ -590,6 +662,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-linejoin="round" />
                                 </svg>
                             </button>
+@endif
                         </div>
                         <div class="bg-[color:var(--sq-primary)] h-[20px] flex items-center overflow-hidden px-3">
                             <span class="text-white text-[9px] whitespace-nowrap">🔥 {{ __('Hot Deal') }} •
@@ -697,6 +770,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-contain w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div class="text-5xl text-neutral-300">🛍️</div>
                                 @endif
@@ -711,7 +787,22 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
+                                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <line x1="3" y1="6" x2="21" y2="6"
+                                        stroke-width="1.5" />
+                                    <path d="M16 10a4 4 0 01-8 0" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
@@ -724,6 +815,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-linejoin="round" />
                                 </svg>
                             </button>
+@endif
                             @if($hasFreeShipping ?? false)
                             <div class="absolute bottom-0 left-0 w-[112px] h-4 flex items-center justify-start px-2 rounded-tr-2xl text-white text-[8px] font-medium"
                                 dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}"
@@ -845,6 +937,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $pName }}"
                                         class="object-contain w-full h-full">
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div class="text-5xl text-neutral-300">🛍️</div>
                                 @endif
@@ -859,7 +954,22 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                             </button>
-                            <button wire:click="addToCart({{ $product->id }})"
+                            @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                class="opacity-50 cursor-not-allowed absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
+                                aria-label="{{ __('Out of Stock') }}">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" style="stroke: var(--sq-primary)">
+                                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <line x1="3" y1="6" x2="21" y2="6"
+                                        stroke-width="1.5" />
+                                    <path d="M16 10a4 4 0 01-8 0" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                 class="absolute bottom-10 right-2 w-[38px] h-[38px] bg-white shadow-md rounded-full border border-[color:var(--sq-primary)] flex items-center justify-center"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
@@ -872,6 +982,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                                         stroke-linejoin="round" />
                                 </svg>
                             </button>
+@endif
                             @if($hasFreeShipping ?? false)
                             <div class="absolute bottom-0 left-0 w-[112px] h-4 flex items-center justify-start px-2 rounded-tr-2xl text-white text-[8px] font-medium"
                                 dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}"

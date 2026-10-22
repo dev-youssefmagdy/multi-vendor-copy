@@ -3,6 +3,9 @@
   <a href="{{ $p['url'] ?? '#' }}" class="group bg-white flex flex-col items-start h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
     <div class="relative w-full shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-[228px] lg:h-[363px] w-full object-cover bg-[var(--color-page-bg)] transition-transform duration-300 group-hover:scale-105" />
+      @if (!empty($p['isOutOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+      @endif
       @if (!empty($p['discount']))
         <span class="absolute top-[5px] start-[5px] lg:top-[8px] lg:start-[8px] font-extrabold text-[9px] lg:text-[14px] text-white px-[4px] lg:px-[7px] py-[1px] rounded-[2px] lg:rounded-[3px]" style="background:var(--color-brand-pink)">{{ $p['discount'] }}</span>
       @endif

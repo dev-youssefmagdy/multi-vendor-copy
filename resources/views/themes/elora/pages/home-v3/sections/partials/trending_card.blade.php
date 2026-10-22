@@ -3,6 +3,9 @@
   <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[11px] shadow-[0_0_34px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-full h-[213px] shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      @if (!empty($p['isOutOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+      @endif
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
@@ -14,7 +17,7 @@
       <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[14px] tracking-[0.5px] px-[10px] py-[5px] rounded-es-[12px]" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
       @endif
       <div aria-hidden="true" class="absolute bottom-[8px] end-[8px] flex items-center justify-center w-[66px] h-[52px] bg-[#FDFDFD] rounded-[19px] shadow-sm">
-        <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="size-[28px]" alt="" />
+        <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[28px]" alt="" />
       </div>
     </div>
     <div class="flex-1 flex flex-col gap-[7px] p-[7px] w-full">

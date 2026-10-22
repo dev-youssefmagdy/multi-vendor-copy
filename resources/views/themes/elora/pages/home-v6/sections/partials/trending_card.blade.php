@@ -3,6 +3,9 @@
 <a href="{{ $p['url'] ?? '#' }}" class="group flex h-auto bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.1143px] shadow-sm overflow-hidden no-underline transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
   <div class="relative w-[41.77%] shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    @if (!empty($p['isOutOfStock']))
+    <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+    @endif
     <span
       class="absolute top-0 end-0 flex items-center justify-center whitespace-nowrap text-[7.71px] lg:text-[13.0037px] leading-[10px] lg:leading-[16px] tracking-[0.2755px] lg:tracking-[0.464px] font-normal p-[3.31px] lg:p-[5.573px] rounded-tr-[4.41px] lg:rounded-tr-[7.43px] rounded-bl-[4.41px] lg:rounded-bl-[7.43px]"
       style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}; color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}"
@@ -12,7 +15,7 @@
       <svg class="size-[12.57px] lg:size-[21.19px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
     <div class="absolute bottom-[3.77px] lg:bottom-[5.298px] end-[3.77px] lg:end-[6.358px] flex items-center justify-center w-[35.83px] h-[28.29px] lg:w-[60.4px] lg:h-[47.68px] bg-[var(--color-bg-main)] rounded-[10.057px] lg:rounded-[16.954px] px-[7.543px] lg:px-[12.715px] py-[2.514px] lg:py-[4.238px] shadow">
-      <img src="{{ asset('elora-2/assets/icons/cart-add.svg') }}" class="size-[15.09px] lg:size-[25.43px]" alt="" />
+      <img src="{{ asset('elora-2/assets/icons/cart-add.svg') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[15.09px] lg:size-[25.43px]" alt="" />
     </div>
   </div>
   <div class="flex-1 px-2 py-1 lg:px-[13.486px] lg:py-[6.743px] flex flex-col gap-2 lg:gap-[13.49px] min-w-0">

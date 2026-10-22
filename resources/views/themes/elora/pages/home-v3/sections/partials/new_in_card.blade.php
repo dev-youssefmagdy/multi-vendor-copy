@@ -3,6 +3,9 @@
   <a href="{{ $p['url'] ?? '#' }}" class="group bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
     <div class="relative shrink-0 w-[124px] lg:w-[178px]">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover bg-[var(--color-page-bg)] transition-transform duration-300 group-hover:scale-105" />
+      @if (!empty($p['isOutOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+      @endif
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
@@ -14,7 +17,7 @@
       <span class="absolute top-0 end-0 text-[8px] lg:text-[11px] font-normal tracking-[0.3px] lg:tracking-[0.4px] px-[4px] py-[2px] lg:px-[5px] lg:py-[3px] rounded-es-[5px] lg:rounded-es-[6px] whitespace-nowrap" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
       @endif
       <div aria-hidden="true" class="absolute bottom-[4px] end-[4px] flex items-center justify-center w-[29px] h-[23px] lg:w-[51px] lg:h-[41px] bg-[#FDFDFD] rounded-[8px] lg:rounded-[14px] shadow-sm">
-        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="" class="size-[12px] lg:size-[22px]" />
+        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[12px] lg:size-[22px]" />
       </div>
     </div>
     <div class="flex-1 flex flex-col gap-[2px] lg:gap-[4px] p-[6px] lg:p-[10px] min-w-0 justify-center overflow-hidden">

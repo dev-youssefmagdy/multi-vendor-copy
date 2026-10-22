@@ -249,14 +249,23 @@
     <a href="{{ $p['url'] }}" class="sqv2-mob__media">
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv2-mob__img" />
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
         @endif
         @if (!empty($p['sold']))
             <span class="sqv2-mob__sale">{{ $p['sold'] }}</span>
         @endif
-        <span class="sqv2-mob__cart" role="button" tabindex="0" aria-label="{{ __('Add to cart') }}"
+        @if (!empty($p['outOfStock']))
+<span aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" class="opacity-50 cursor-not-allowed sqv2-mob__cart" role="button" tabindex="0" aria-label="{{ __('Add to cart') }}">
+            <img src="{{ asset('souqify-1/assets/icons/' . ($cartIcon ?? 'icon-cart-navy.svg')) }}" alt="{{ __('Add to cart') }}" />
+        </span>
+@else
+<span class="sqv2-mob__cart" role="button" tabindex="0" aria-label="{{ __('Add to cart') }}"
             wire:click.stop.prevent="addToCart({{ $p['id'] }})">
             <img src="{{ asset('souqify-1/assets/icons/' . ($cartIcon ?? 'icon-cart-navy.svg')) }}" alt="{{ __('Add to cart') }}" />
         </span>
+@endif
     </a>
 
     @if (!empty($p['slug']) && !empty($p['favData']))

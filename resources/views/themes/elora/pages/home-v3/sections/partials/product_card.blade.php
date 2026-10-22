@@ -6,6 +6,9 @@
       <div class="absolute flex flex-col gap-[8px] {{ $imgHeight }} items-end start-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 {{ $imgHeight }} rounded-t-[8px] top-0 w-full overflow-hidden bg-[var(--color-page-bg)]">
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          @if (!empty($p['isOutOfStock']))
+          <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+          @endif
         </div>
         <div class="content-stretch flex h-[28px] items-center justify-center p-[6px] relative rounded-es-[8px] rounded-se-[8px] shrink-0" style="background:{{ $p['badgeBg'] }}">
           <p class="font-normal text-[14px] tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeText'] }}">{{ $p['badge'] }}</p>
@@ -20,7 +23,7 @@
       </button>
     </div>
     <div class="flex h-[45px] items-center justify-center px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[57px]" style="background:var(--color-text-primary)">
-      <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="size-[24px]" />
+      <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[24px]" />
     </div>
   </div>
   <div class="flex flex-col gap-[8px] items-start p-[8px] relative shrink-0 w-full">

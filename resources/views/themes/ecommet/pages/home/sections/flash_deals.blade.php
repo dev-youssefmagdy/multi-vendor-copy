@@ -29,7 +29,12 @@
                             <a href="{{ route('tenant.storefront.product', $product->slug) }}"
                                 class="group shrink-0 w-[160px] md:w-auto cursor-pointer bg-white rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
 
-                                <div class="bg-[#f8f8f8] flex items-center justify-center min-h-[180px] overflow-hidden">
+                                <div class="relative bg-[#f8f8f8] flex items-center justify-center min-h-[180px] overflow-hidden">
+                                    @if ($product->stockStatus() === 'out_of_stock')
+                                        <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-10 pointer-events-none">
+                                            <span class="bg-neutral-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span>
+                                        </div>
+                                    @endif
                                     @if ($saleImg)
                                         <img loading="lazy" src="{{ $saleImg }}" alt="{{ $product->translationValue('name') }}"
                                             class="max-h-full max-w-full mix-blend-multiply object-contain transition-transform duration-300 group-hover:scale-105">

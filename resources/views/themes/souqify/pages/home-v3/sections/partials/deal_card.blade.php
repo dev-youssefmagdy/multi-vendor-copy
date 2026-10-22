@@ -18,6 +18,9 @@
   <a href="{{ $p['url'] }}" class="sqv3-deal__media">
     @if ($p['image'])
       <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv3-deal__img" />
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
     @endif
 
     @if (!empty($p['badge']))
@@ -28,9 +31,15 @@
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </button>
 
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-deal__cart">
+    @if (!empty($p['outOfStock']))
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" type="button" aria-label="{{ __('Add to cart') }}" class="opacity-50 cursor-not-allowed sqv3-deal__cart">
       <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
     </button>
+@else
+<button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-deal__cart">
+      <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
+    </button>
+@endif
 
     @if (!empty($p['stock']))
       <span class="sqv3-deal__ribbon">

@@ -17,6 +17,7 @@
 
         return [
             'id' => $product->id,
+            'outOfStock' => $product->stockStatus() === 'out_of_stock',
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,

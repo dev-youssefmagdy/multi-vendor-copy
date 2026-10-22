@@ -41,6 +41,7 @@
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
               'sold' => $__soldPct > 0 ? $__soldPct : null,
+              'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
               'favData' => $favData,
           ];
       });

@@ -5,6 +5,9 @@
   <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-full h-[142px] lg:h-[269px] shrink-0">
       <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      @if (!empty($p['isOutOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+      @endif
       <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
         data-fav="{{ $p['favData'] ?? '' }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
@@ -16,7 +19,7 @@
       <span class="absolute top-0 end-0 flex items-center justify-center font-normal text-[9.52px] lg:text-[18px] leading-[12px] tracking-[0.34px] lg:tracking-[0.64px] px-[4.08px] lg:px-[8px] py-[4.08px] lg:py-[6px] rounded-es-[5.44px] lg:rounded-es-[10px]" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
       @endif
       <div aria-hidden="true" class="absolute bottom-[4.66px] end-[4.66px] lg:bottom-[9px] lg:end-[9px] flex items-center justify-center w-[44.24px] h-[34.92px] lg:w-[84px] lg:h-[66px] bg-[#FDFDFD] rounded-[12.42px] lg:rounded-[23px]">
-        <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="size-[18.63px] lg:size-[35px]" alt="" />
+        <img src="{{ asset('elora-3/assets/icons/cart-add-dark.svg') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[18.63px] lg:size-[35px]" alt="" />
       </div>
     </div>
     <div class="flex-1 flex flex-col gap-[4.94px] lg:gap-[9px] p-[4.94px] lg:p-[9px] w-full">

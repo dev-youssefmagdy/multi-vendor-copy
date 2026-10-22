@@ -2,6 +2,9 @@
 <a href="{{ $p['url'] ?? '#' }}" class="group flex gap-[3px] lg:gap-[5px] rounded-[6px] lg:rounded-[10px] overflow-hidden h-full lg:h-[148px] no-underline transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="background:var(--color-bg-main)">
   <div class="relative w-[43%] lg:w-[204px] lg:h-[148px] shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    @if (!empty($p['isOutOfStock']))
+    <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+    @endif
     <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}'
       type="button"
       aria-label="{{ __('Add to favorites') }}"
@@ -17,7 +20,7 @@
     <button
       type="button"
       aria-label="{{ __('Add to cart') }}"
-      class="flex absolute bottom-[3.77px] lg:bottom-1.5 end-[3.77px] lg:end-1.5 items-center justify-center w-[35.83px] lg:w-auto h-[28.29px] lg:h-12 px-[7.54px] lg:px-3 py-[2.51px] rounded-[10.06px] lg:rounded-[17px]"
+      class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}flex absolute bottom-[3.77px] lg:bottom-1.5 end-[3.77px] lg:end-1.5 items-center justify-center w-[35.83px] lg:w-auto h-[28.29px] lg:h-12 px-[7.54px] lg:px-3 py-[2.51px] rounded-[10.06px] lg:rounded-[17px]"
       style="background: var(--color-bg-main)"
     >
       <svg class="size-[15.09px] lg:size-6.5" style="color:var(--color-accent-green)" viewBox="0 0 33.9158 33.9158" fill="none" aria-hidden="true"><path d="M14.8382 14.1316H20.4908M17.6645 11.3053V16.9579M5.24282 7.63106H26.7426C28.69 7.63106 30.0961 9.42578 29.5619 11.2318L27.2245 19.1455C26.8642 20.3608 25.7139 21.1974 24.4053 21.1974H11.4636C10.1536 21.1974 9.00183 20.3594 8.64289 19.1455L5.24282 7.63106ZM5.24282 7.63106L4.23948 4.23948M23.3171 29.6764C23.8793 29.6764 24.4185 29.453 24.816 29.0555C25.2135 28.658 25.4369 28.1188 25.4369 27.5566C25.4369 26.9944 25.2135 26.4553 24.816 26.0577C24.4185 25.6602 23.8793 25.4369 23.3171 25.4369C22.7549 25.4369 22.2158 25.6602 21.8183 26.0577C21.4207 26.4553 21.1974 26.9944 21.1974 27.5566C21.1974 28.1188 21.4207 28.658 21.8183 29.0555C22.2158 29.453 22.7549 29.6764 23.3171 29.6764ZM12.0119 29.6764C12.574 29.6764 13.1132 29.453 13.5107 29.0555C13.9083 28.658 14.1316 28.1188 14.1316 27.5566C14.1316 26.9944 13.9083 26.4553 13.5107 26.0577C13.1132 25.6602 12.574 25.4369 12.0119 25.4369C11.4497 25.4369 10.9105 25.6602 10.513 26.0577C10.1154 26.4553 9.89212 26.9944 9.89212 27.5566C9.89212 28.1188 10.1154 28.658 10.513 29.0555C10.9105 29.453 11.4497 29.6764 12.0119 29.6764Z" stroke="currentColor" stroke-width="2.11974" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -17,6 +17,7 @@
 
             return [
                 'id' => $product->id,
+                'outOfStock' => $product->stockStatus() === 'out_of_stock',
                 'slug' => $product->slug,
                 'url' => route('tenant.storefront.product', $product->slug),
                 'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,

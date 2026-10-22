@@ -15,6 +15,7 @@
 
         return [
             'id' => $product->id,
+            'outOfStock' => $product->stockStatus() === 'out_of_stock',
             'url' => route('tenant.storefront.product', $product->slug),
             'slug' => $product->slug,
             'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),

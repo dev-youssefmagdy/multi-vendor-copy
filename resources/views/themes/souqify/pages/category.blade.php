@@ -254,6 +254,9 @@
                                 @if ($img)
                                     <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
                                 @else
                                     <div class="w-full h-full bg-zinc-100 flex items-center justify-center">
                                         <svg class="w-12 h-12 text-zinc-300" fill="none" stroke="currentColor"
@@ -317,7 +320,17 @@
 
                             <!-- Actions -->
                             <div class="flex items-center gap-2">
-                                <button wire:click="addToCart({{ $product->id }})"
+                                @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+                                    class="opacity-50 cursor-not-allowed flex-1 h-12 px-4 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg flex items-center justify-center gap-2 transition text-sm font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    {{ __('Out of Stock') }}
+                                </button>
+@else
+<button wire:click="addToCart({{ $product->id }})"
                                     class="flex-1 h-12 px-4 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg flex items-center justify-center gap-2 transition text-sm font-medium">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -325,6 +338,7 @@
                                     </svg>
                                     {{ __('Add to cart') }}
                                 </button>
+@endif
                                 <button
                                     class="souqify-fav-btn w-12 h-12 border border-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-soft)] rounded-lg flex items-center justify-center text-[color:var(--sq-primary)] transition"
                                     onclick="souqifyToggleFavorite(this)" data-slug="{{ $product->slug }}"

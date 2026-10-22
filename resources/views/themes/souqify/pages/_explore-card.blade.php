@@ -71,6 +71,9 @@
         <!-- image -->
         <img loading="lazy" src="{{ $img }}" alt="{{ $productName }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             @if($sliderJson) data-slider='{{ $sliderJson }}' @endif>
+@if ($product->stockStatus() === 'out_of_stock')
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
         @if($sliderJson)
             <button type="button"
                 class="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-5 h-5 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
@@ -97,7 +100,17 @@
             </p>
         @endif
         <!-- cart button -->
-        <button type="button" wire:click.prevent="addToCart({{ $product->id }})"
+        @if ($product->stockStatus() === 'out_of_stock')
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" type="button"
+            class="opacity-50 cursor-not-allowed bg-white p-[7px] lg:p-2.5 rounded-lg absolute bottom-2.5 right-2.5">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8.25 7.75024H12.25M10.25 5.75024V9.75024M1.46 3.15024H16.674C18.052 3.15024 19.047 4.42024 18.669 5.69824L17.015 11.2982C16.76 12.1582 15.946 12.7502 15.02 12.7502H5.862C4.935 12.7502 4.12 12.1572 3.866 11.2982L1.46 3.15024ZM1.46 3.15024L0.75 0.750244M14.25 18.7502C14.6478 18.7502 15.0294 18.5922 15.3107 18.3109C15.592 18.0296 15.75 17.6481 15.75 17.2502C15.75 16.8524 15.592 16.4709 15.3107 16.1896C15.0294 15.9083 14.6478 15.7502 14.25 15.7502C13.8522 15.7502 13.4706 15.9083 13.1893 16.1896C12.908 16.4709 12.75 16.8524 12.75 17.2502C12.75 17.6481 12.908 18.0296 13.1893 18.3109C13.4706 18.5922 13.8522 18.7502 14.25 18.7502ZM6.25 18.7502C6.64782 18.7502 7.02936 18.5922 7.31066 18.3109C7.59196 18.0296 7.75 17.6481 7.75 17.2502C7.75 16.8524 7.59196 16.4709 7.31066 16.1896C7.02936 15.9083 6.64782 15.7502 6.25 15.7502C5.85218 15.7502 5.47064 15.9083 5.18934 16.1896C4.90804 16.4709 4.75 16.8524 4.75 17.2502C4.75 17.6481 4.90804 18.0296 5.18934 18.3109C5.47064 18.5922 5.85218 18.7502 6.25 18.7502Z"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
+            </svg>
+        </button>
+@else
+<button type="button" wire:click.prevent="addToCart({{ $product->id }})"
             class="bg-white p-[7px] lg:p-2.5 rounded-lg absolute bottom-2.5 right-2.5">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -105,6 +118,7 @@
                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sq-primary)" />
             </svg>
         </button>
+@endif
     </a>
     <!-- body -->
     <div class="flex-1">

@@ -44,7 +44,17 @@
       </button>
 
       {{-- Add to cart button --}}
-      <button
+      @if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
+        type="button"
+        class="opacity-50 cursor-not-allowed flash-card-cart"
+        aria-label="{{ __('Add to cart') }}"
+      >
+        <img src="{{ asset('elora-4/assets/icons/add-to-cart.svg') }}" alt="" class="flash-card-cart-icon" />
+      </button>
+@else
+<button
         type="button"
         class="flash-card-cart"
         wire:click.prevent="addToCart({{ $p['id'] ?? 0 }})"
@@ -53,6 +63,7 @@
       >
         <img src="{{ asset('elora-4/assets/icons/add-to-cart.svg') }}" alt="" class="flash-card-cart-icon" />
       </button>
+@endif
 
     </div>
 

@@ -3,6 +3,9 @@
 <a href="{{ $p['url'] ?? '#' }}" class="group relative flex-1 flex gap-[3px] lg:gap-[5px] bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10px] overflow-hidden shadow-[var(--shadow-card)] no-underline transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
   <div class="relative w-[40%] shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    @if (!empty($p['isOutOfStock']))
+    <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+    @endif
     <div class="absolute inset-0 flex flex-col justify-between items-end p-[3px_4px] lg:p-[5px_6.5px]">
       <div class="flex w-full justify-between items-start">
         <button onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)" data-fav='{{ $p['favData'] ?? '{}' }}' type="button" aria-label="{{ __('Add to favorites') }}" class="flex items-center justify-center w-[20px] h-[20px] lg:w-[35px] lg:h-[35px] p-[5px] bg-white rounded-full shadow">
@@ -15,7 +18,7 @@
         >
       </div>
       <button type="button" aria-label="{{ __('Add to cart') }}" class="flex items-center justify-center w-[36px] h-[28px] lg:w-auto lg:h-[48px] lg:px-[12px] rounded-[10px] lg:rounded-[17px]" style="background: var(--color-bg-main)">
-        <img src="{{ asset('elora-2/assets/icons/cart-add-blue.svg') }}" class="size-[15px] lg:size-[26px]" alt="" />
+        <img src="{{ asset('elora-2/assets/icons/cart-add-blue.svg') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[15px] lg:size-[26px]" alt="" />
       </button>
     </div>
   </div>

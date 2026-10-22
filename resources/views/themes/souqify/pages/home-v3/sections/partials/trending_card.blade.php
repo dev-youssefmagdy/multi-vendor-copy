@@ -18,6 +18,9 @@
   <a href="{{ $p['url'] }}" class="sqv3-trend-card__media">
     @if ($p['image'])
       <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv3-trend-card__img" />
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
     @endif
     @if (!empty($p['sold']))
       <span class="sqv3-trend-card__sale">{{ $p['sold'] }}</span>
@@ -25,9 +28,15 @@
     <button type="button" onclick="event.preventDefault();event.stopPropagation();souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $__favData }}' aria-label="{{ __('Add to favorites') }}" class="sqv3-trend-card__heart souqify-fav-btn">
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </button>
-    <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-trend-card__cart">
+    @if (!empty($p['outOfStock']))
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" type="button" aria-label="{{ __('Add to cart') }}" class="opacity-50 cursor-not-allowed sqv3-trend-card__cart">
       <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
     </button>
+@else
+<button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="sqv3-trend-card__cart">
+      <img src="{{ asset('souqify-3/assets/icons/icon-cart-teal.svg') }}" alt="" />
+    </button>
+@endif
   </a>
 
   <div class="sqv3-trend-card__info">

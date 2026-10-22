@@ -5,6 +5,9 @@
     <a href="{{ $p['url'] }}" class="group block w-full h-[183px] lg:h-[277px] overflow-hidden" style="background:var(--color-card-bg-soft)">
       @if ($p['image'])
         <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
       @endif
     </a>
     @if (!empty($p['slug']) && !empty($p['favData']))
@@ -17,9 +20,15 @@
       </button>
     @endif
     <div class="absolute bottom-[8px] right-[8px] rtl:right-auto rtl:left-[8px] lg:bottom-[14px] lg:right-[14px] lg:rtl:right-auto lg:rtl:left-[14px] bg-white rounded-[5px] p-[8px] lg:p-[11px] shadow flex items-center justify-center">
-      <button type="button" wire:click="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}">
+      @if (!empty($p['outOfStock']))
+<button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()" type="button" aria-label="{{ __('Add to cart') }}" class="opacity-50 cursor-not-allowed">
         <img src="{{ asset('souqify-1/assets/icons/icon-cart-add.svg') }}" class="size-[22px] lg:size-[33px]" alt="" />
       </button>
+@else
+<button type="button" wire:click="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}">
+        <img src="{{ asset('souqify-1/assets/icons/icon-cart-add.svg') }}" class="size-[22px] lg:size-[33px]" alt="" />
+      </button>
+@endif
     </div>
     @if (!empty($p['badge']))
       <div class="absolute top-0 left-0 rtl:left-auto rtl:right-0 flex items-center h-[18px] lg:h-[26px]">
