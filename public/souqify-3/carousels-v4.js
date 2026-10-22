@@ -100,6 +100,26 @@ function mountShopCategory() {
 // entirely: the active card's CSS base position is centered directly, and
 // each neighbor is offset from that centered base by a fixed, symmetric
 // pixel amount via transform, independent of anything Swiper measures.
+// Swiper warns ("number of slides is not enough for loop mode") when a loop has
+// fewer slides than it needs. These carousels position every slide themselves
+// via modulo math, so repeating the real slides until there are `min` of them
+// keeps loop mode healthy without changing what is shown. Returns all slides
+// (originals first) and how many of them are real.
+function padSlidesForLoop(container, min) {
+  const originals = [...container.children];
+  const realCount = originals.length;
+  if (!realCount) return { slideEls: originals, realCount };
+  for (let n = realCount; n < min; n++) {
+    const clone = originals[n % realCount].cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    clone.removeAttribute("id");
+    clone.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+    clone.querySelectorAll("a, button").forEach((el) => el.setAttribute("tabindex", "-1"));
+    container.appendChild(clone);
+  }
+  return { slideEls: [...container.children], realCount };
+}
+
 const SQV4_FLASH_MOBILE_MAX_ROTATE_DEG = 12;
 const SQV4_FLASH_MOBILE_STEP_PX = 110;
 
@@ -115,7 +135,7 @@ function mountFlashSaleMobile() {
   // its own clones) get positioned here — clones are hidden separately
   // below, since our own modulo wrap already makes the cascade infinite
   // without needing Swiper's duplicated DOM nodes to be visually meaningful.
-  const slideEls = [...container.children];
+  const { slideEls } = padSlidesForLoop(container, 6);
   const count = slideEls.length;
   if (!count) return;
 
@@ -220,13 +240,13 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   // own clone slides) get positioned here — clones are neutralized separately
   // below, since our own modulo wrap already makes the cascade infinite
   // without needing Swiper's duplicated DOM nodes to be visually meaningful.
-  const slideEls = [...container.children];
+  const { slideEls, realCount } = padSlidesForLoop(container, positions.length * 2);
   const count = slideEls.length;
 
   const dotsEl = dotsContainerId ? document.getElementById(dotsContainerId) : null;
   if (dotsEl) {
     dotsEl.innerHTML = "";
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < realCount; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
       dot.className = "best-seller-dot" + (i === 0 ? " is-active" : "");
@@ -237,7 +257,7 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   const updateDots = (sw) => {
     if (!dotsEl) return;
     dotsEl.querySelectorAll(".best-seller-dot").forEach((dot, i) => {
-      dot.classList.toggle("is-active", i === sw.realIndex);
+      dot.classList.toggle("is-active", i === sw.realIndex % realCount);
     });
   };
 

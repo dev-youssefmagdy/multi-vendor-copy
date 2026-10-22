@@ -108,6 +108,26 @@ function sqv6MirrorPositionsRtl(positions, containerWidth) {
   return positions.map((p) => ({ ...p, left: containerWidth - p.left - p.width }));
 }
 
+// Swiper warns ("number of slides is not enough for loop mode") when a loop has
+// fewer slides than it needs. The cascade positions every slide itself via
+// modulo math, so repeating the real slides until there are `min` of them
+// keeps loop mode healthy without changing what is shown. Returns all slides
+// (originals first) and how many of them are real.
+function padSlidesForLoop(container, min) {
+  const originals = [...container.children];
+  const realCount = originals.length;
+  if (!realCount) return { slideEls: originals, realCount };
+  for (let n = realCount; n < min; n++) {
+    const clone = originals[n % realCount].cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    clone.removeAttribute("id");
+    clone.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+    clone.querySelectorAll("a, button").forEach((el) => el.setAttribute("tabindex", "-1"));
+    container.appendChild(clone);
+  }
+  return { slideEls: [...container.children], realCount };
+}
+
 function mountFlashCascade(containerId, positions, { baseWidth, dotsContainerId = null } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -116,13 +136,13 @@ function mountFlashCascade(containerId, positions, { baseWidth, dotsContainerId 
   container.style.position = "relative";
   container.style.height = `${boxes[0].top + boxes[0].height}px`;
 
-  const slideEls = [...container.children];
+  const { slideEls, realCount } = padSlidesForLoop(container, boxes.length * 2);
   const count = slideEls.length;
 
   const dotsEl = dotsContainerId ? document.getElementById(dotsContainerId) : null;
   if (dotsEl) {
     dotsEl.innerHTML = "";
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < realCount; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
       dot.className = "sqv6-flash-dot" + (i === 0 ? " is-active" : "");
@@ -133,7 +153,7 @@ function mountFlashCascade(containerId, positions, { baseWidth, dotsContainerId 
   const updateDots = (sw) => {
     if (!dotsEl) return;
     dotsEl.querySelectorAll(".sqv6-flash-dot").forEach((dot, i) => {
-      dot.classList.toggle("is-active", i === sw.realIndex);
+      dot.classList.toggle("is-active", i === sw.realIndex % realCount);
     });
   };
 
