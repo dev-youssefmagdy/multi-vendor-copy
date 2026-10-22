@@ -1,5 +1,10 @@
     {{-- ── Tabbed Products (Flash / Best-selling / New In / Top-rated) ──────────────────── --}}
-    <section class="py-5 sm:py-8 bg-white" wire:ignore>
+    <style>
+    /* Beats the global body[data-page="index"] .cat-pill.active (dark) rule */
+    body[data-page="index"] .tabbed-pill { background: transparent; color: #FF4D00; border-color: #FFAC88; }
+    body[data-page="index"] .tabbed-pill.active { background: #FF4D00 !important; color: #fff !important; border-color: #FF4D00 !important; }
+</style>
+<section class="py-5 sm:py-8 bg-white" wire:ignore>
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
 
             {{-- Tab pills --}}
