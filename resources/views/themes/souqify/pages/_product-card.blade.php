@@ -119,6 +119,11 @@
                 <div class="w-full h-full flex items-center justify-center text-4xl text-neutral-300">🛍️</div>
             @endif
         </a>
+        @if ($isOutOfStock)
+            <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none">
+                <span class="bg-neutral-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span>
+            </div>
+        @endif
 
         @if($sliderJson)
             <button type="button"

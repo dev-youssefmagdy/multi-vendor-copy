@@ -6,6 +6,9 @@
     @if ($p['image'])
       <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv4-trend-card__img" />
     @endif
+    @if (!empty($p['outOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+    @endif
     @if (!empty($p['sold']))
       <span class="sqv4-trend-card__sale">{{ $p['sold'] }}</span>
     @endif
@@ -18,7 +21,7 @@
       @else
         disabled onclick="event.preventDefault(); event.stopPropagation();"
       @endif
-      aria-label="{{ __('Add to cart') }}" class="sqv4-trend-card__cart">
+      aria-label="{{ __('Add to cart') }}" class="sqv4-trend-card__cart" @if (!empty($p['outOfStock'])) style="opacity:.45;cursor:not-allowed" @endif>
       <img src="{{ asset('souqify-3/assets/icons/icon-cart.svg') }}" alt="" />
     </button>
   </a>

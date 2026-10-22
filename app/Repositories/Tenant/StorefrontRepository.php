@@ -1397,7 +1397,7 @@ class StorefrontRepository
     {
         $sort = (string) ($filters['sort'] ?? 'latest');
 
-        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
+        $query = $this->productBaseQuery(excludeOutOfStock: empty($filters['include_out_of_stock']) && ($filters['availability'] ?? '') !== 'out_of_stock');
 
         $this->applyProductFilters($query, $filters);
         $this->applyCategoryFilter($query, $filters['category_id'] ?? null);

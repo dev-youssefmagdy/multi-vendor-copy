@@ -1,5 +1,5 @@
 @php
-    $__heroBanners = collect($banners ?? [])->take(3)->values();
+    $__heroBanners = collect($banners ?? [])->take(8)->values();
     // Guarantee at least one slide so the markup below stays single-sourced.
     $__heroSlides = $__heroBanners->isNotEmpty() ? $__heroBanners : collect([null]);
 @endphp
@@ -113,8 +113,8 @@
 
 <!-- ============ HERO ============ -->
 <section class="relative" wire:ignore>
-  <div class="sqv-hero-static">
-    <div class="sqv-hero-static__inner">
+  <div class="swiper sqv4-hero-swiper">
+    <div class="swiper-wrapper">
       @foreach ($__heroSlides as $banner)
         <div class="swiper-slide">
           <div class="sqv4-hero__slide">
@@ -142,14 +142,41 @@
         </div>
       @endforeach
     </div>
+    @if ($__heroSlides->count() > 1)
+      <div class="swiper-pagination sqv4-hero-pagination"></div>
+    @endif
   </div>
 </section>
 
 <style>
-    /* Hero shows one static banner - the carousel was removed, so the extra
-       banners stay in the markup but only the first one renders. */
-    .sqv-hero-static { position: relative; width: 100%; overflow: hidden; }
-    .sqv-hero-static__inner { display: block; width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide { width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide:not(:first-child) { display: none; }
+    .sqv4-hero-swiper { position: relative; width: 100%; overflow: hidden; }
+    .sqv4-hero-swiper .swiper-slide { width: 100%; }
+    .sqv4-hero-pagination { position: absolute; bottom: 12px; z-index: 20; }
+    .sqv4-hero-pagination .swiper-pagination-bullet { background: #fff; opacity: .6; }
+    .sqv4-hero-pagination .swiper-pagination-bullet-active { background: var(--color-brand-green); opacity: 1; }
 </style>
+
+<script>
+(function () {
+  function mountHeroV4() {
+    var el = document.querySelector('.sqv4-hero-swiper');
+    if (!el || el.swiper || typeof Swiper === 'undefined') return;
+    var multi = el.querySelectorAll('.swiper-slide').length > 1;
+    new Swiper(el, {
+      loop: multi,
+      allowTouchMove: multi,
+      speed: 600,
+      autoplay: multi ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
+      pagination: multi ? { el: el.querySelector('.sqv4-hero-pagination'), clickable: true } : undefined,
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountHeroV4);
+  } else {
+    mountHeroV4();
+  }
+  window.addEventListener('load', mountHeroV4);
+  document.addEventListener('livewire:navigated', mountHeroV4);
+})();
+</script>
+

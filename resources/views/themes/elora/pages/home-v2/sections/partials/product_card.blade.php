@@ -5,6 +5,9 @@
       <div class="absolute flex flex-col gap-[8px] h-[183px] lg:h-[227px] items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-[183px] lg:h-[227px] rounded-t-[8px] top-0 w-full overflow-hidden">
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+@if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
         </div>
         <div class="content-stretch flex h-[28px] items-center justify-center p-[6px] relative rounded-bl-[8px] rounded-tr-[8px] shrink-0" style="background:{{ $p['badgeBg'] }}">
           <p class="font-medium text-[14px] text-white tracking-[0.5px] whitespace-nowrap">{{ $p['badge'] }}</p>

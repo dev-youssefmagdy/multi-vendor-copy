@@ -8,6 +8,9 @@
     @if ($p['image'])
       <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv4-deal__img" />
     @endif
+    @if (!empty($p['outOfStock']))
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+    @endif
 
     <span class="sqv4-deal__badge">{{ $p['badge'] }}</span>
 
@@ -15,7 +18,7 @@
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />
     </span>
 
-    <span class="sqv4-deal__cart"
+    <span class="sqv4-deal__cart" @if (!empty($p['outOfStock'])) style="opacity:.45;cursor:not-allowed" @endif
       @if (empty($p['outOfStock']))
         wire:click="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})"
         onclick="event.preventDefault(); event.stopPropagation();"

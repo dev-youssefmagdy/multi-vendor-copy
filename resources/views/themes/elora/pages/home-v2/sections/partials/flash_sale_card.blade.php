@@ -13,6 +13,9 @@
       alt="{{ $p['name'] }}"
       class="absolute inset-0 w-full h-full object-cover rounded-t-[6.02px] lg:rounded-t-[12.44px] transition-transform duration-300 group-hover:scale-105"
     />
+@if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
 
     @if (!empty($p['badge']))
       <span

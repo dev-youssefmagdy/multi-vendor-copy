@@ -49,7 +49,7 @@ class StorefrontSearchController extends Controller
     {
         $currentCurrency = $request->attributes->get('storefrontCurrentCurrency')
             ?: $repo->currentCurrency();
-        $paginator = $repo->paginatedProducts([], 20);
+        $paginator = $repo->paginatedProducts(['include_out_of_stock' => true], 20);
         $cardView = $this->resolveCardView($request);
         $cards = $this->renderCards($paginator, $cardView, $currentCurrency);
 
@@ -112,7 +112,7 @@ class StorefrontSearchController extends Controller
     {
         $currentCurrency = $request->attributes->get('storefrontCurrentCurrency')
             ?: $repo->currentCurrency();
-        $paginator = $repo->paginatedProducts([], 20);
+        $paginator = $repo->paginatedProducts(['include_out_of_stock' => true], 20);
         $cardView = $this->resolveCardView($request);
         $cards = $this->renderCards($paginator, $cardView, $currentCurrency);
 
