@@ -1,5 +1,5 @@
     {{-- ── Recommended For You ──────────────────────────────────────────────── --}}
-    <section class="py-5 sm:py-8 bg-white"  wire:ignore>
+    <section class="py-5 sm:py-8 bg-white">
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="flex items-center justify-center mb-4 sm:mb-5">
                 <div class="flex items-center gap-2 sm:gap-3">
@@ -31,19 +31,27 @@
                     <h2 class="text-lg sm:text-2xl font-bold text-gradient-main">{{ __('Recommended For You') }}</h2>
                 </div>
             </div>
-            {{-- products slide --}}
-            <div class="swiper product-slid-swiper elora-mobile-grid" data-per-view="6" data-mobile-grid>
-                @include('themes.elora.pages._carousel-nav')
-                <div class="swiper-wrapper">
-                    @forelse (($recommendedProducts->isEmpty() ? $bestSelling : $recommendedProducts) as $product)
-                    <div class="swiper-slide w-[132px] sm:w-[182px]  lg:w-[210px]">
+            {{-- product grid — next page loads when the sentinel scrolls into view --}}
+            <div id="recommendedWrapper" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 justify-items-center">
+                @forelse (($recommendedProducts->isEmpty() ? $bestSelling : $recommendedProducts) as $product)
+                    <div class="w-full flex justify-center" wire:key="recommended-{{ $product->id }}">
                         @include('themes.elora.pages._product-card', ['product' => $product, 'badge' => null])
                     </div>
-                    @empty
-                    <p class="text-sm text-gray-400 py-6 w-full">{{ __('No recommended products yet.') }}</p>
-                    @endforelse
-                </div>
+                @empty
+                    <p class="text-sm text-gray-400 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
+                @endforelse
             </div>
+            @if ($hasMoreRecommended ?? false)
+                <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-3">
+                    <div wire:loading wire:target="loadMoreRecommended" class="flex items-center gap-2 text-sm text-gray-500">
+                        <svg class="animate-spin w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        {{ __('Loading more...') }}
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
 
