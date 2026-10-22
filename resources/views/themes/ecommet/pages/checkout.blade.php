@@ -311,13 +311,9 @@
                         <button type="submit"
                             id="pay-btn"
                             @disabled(!$shippingAvailable || !$hasAddresses)
-<<<<<<< HEAD
                             wire:loading.attr="disabled"
                             wire:loading.class="opacity-60 cursor-not-allowed"
                             class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
-=======
-                            class="w-full bg-[#1b1b1b] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:bg-black transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
->>>>>>> 25155fc97e8e922ec2ea5bc52da5e8a85085ec11
                             <span wire:loading.remove>Pay {{ $formattedFinalTotal }}</span>
                             <span wire:loading class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
