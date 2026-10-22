@@ -12,9 +12,12 @@
         <a href="{{ route('tenant.home') }}">
           <x-storefront-logo :storeName="$storeName" class="h-[28px] w-auto" />
         </a>
+        <div class="flex items-center gap-[12px]">
+        <button type="button" onclick="Livewire.dispatch('open-locale-modal')" aria-label="{{ __('Currency & Language') }}" class="flex items-center justify-center rounded-full shrink-0 cursor-pointer size-[36px] bg-white"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-brand-purple)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></button>
         <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer" class="cursor-pointer">
           <img src="{{ asset('souqify-1/assets/icons/icon-hamburger.svg') }}" alt="" class="size-[24px] invert" />
         </button>
+        </div>
       </div>
     </div>
     <div class="px-[16px] -mt-[21px]">

@@ -46,6 +46,7 @@
         </div>
       </div>
       <div class="flex items-center gap-[10px] shrink-0">
+        <button type="button" onclick="Livewire.dispatch('open-locale-modal')" aria-label="{{ __('Currency & Language') }}" class="flex items-center justify-center rounded-full shrink-0 cursor-pointer size-[40px]" style="border:1px solid var(--color-stroke)"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></button>
         <a href="{{ route('tenant.storefront.search') }}" aria-label="{{ __('Search') }}" class="flex items-center justify-center rounded-full size-[40px] shrink-0" style="border:1px solid var(--color-stroke)">
           <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         </a>

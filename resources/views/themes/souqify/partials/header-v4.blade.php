@@ -45,9 +45,12 @@
           @endauth
         </div>
       </div>
+      <div class="flex items-center gap-[8px] shrink-0">
+      <button type="button" onclick="Livewire.dispatch('open-locale-modal')" aria-label="{{ __('Currency & Language') }}" class="flex items-center justify-center rounded-full shrink-0 cursor-pointer size-[36px]" style="background:var(--color-brand-green-tint)"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-brand-green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></button>
       <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="flex items-center justify-center rounded-full size-[36px] shrink-0" style="background:var(--color-brand-green-tint)">
         <img src="{{ asset('souqify-3/assets/icons/icon-cart-round.svg') }}" alt="" class="size-[18px]" />
       </a>
+      </div>
     </div>
     {{-- Half the bar's own height (h-[48px]) sits on the white header strip,
          the other half lays over the hero section that follows: translate-y-1/2
