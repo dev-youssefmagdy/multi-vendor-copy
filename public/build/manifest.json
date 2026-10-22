@@ -2554,11 +2554,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CTughXpk.css",
+    "file": "assets/app-S05FEHeu.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Qaw4sxqn.css",
+    "file": "assets/ecommet-DbKcTysi.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2841,7 +2841,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DNdMGHJl.css",
+    "file": "assets/souqify-Bz2vAoi4.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2850,7 +2850,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-Ci22kxS0.css",
+    "file": "assets/app-SVAbnArf.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2858,7 +2858,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-CTughXpk.css"
+      "assets/app-S05FEHeu.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",

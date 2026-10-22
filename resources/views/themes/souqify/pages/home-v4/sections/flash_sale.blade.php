@@ -96,6 +96,11 @@
         gap: 6.18px;
         flex: none;
     }
+    .sqv4-flash__endsin-slot {
+        /* Timer's own gap is 6.18px; pull it back to exactly 4px between the
+           label and the first countdown box (boxes themselves keep 6.18px). */
+        margin-right: -2.18px;
+    }
     .sqv4-flash__endsin {
         font-family: 'Outfit', sans-serif;
         font-weight: 600;
@@ -104,6 +109,11 @@
         letter-spacing: 1.0303px;
         color: #FFD428;
         white-space: nowrap;
+        /* Vertical, reading bottom-to-top - writing-mode + rotate(180deg), same
+           combo as .sqv3-flash__endsin, rather than a rotate()-only transform
+           (which has no visual effect on a plain inline box). */
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
     }
     .sqv4-flash__box {
         box-sizing: border-box;
@@ -159,7 +169,7 @@
         width: 1.6em;
         height: 1.6em;
         flex: none;
-        fill: #FFD428;
+        object-fit: contain;
         pointer-events: none;
     }
     .sqv4-flash__title {
@@ -332,21 +342,24 @@
             gap: clamp(4px, 0.429vw, 6.18px);
         }
         /* Reserve the rotated label's on-screen height (its own line-height) so the
-           column does not reserve its full horizontal width. */
+           column does not reserve its full horizontal width. Column-reverse
+           stacks the label (DOM-first) at the visual bottom, right under the
+           "hours" box, so the gap to cancel here is margin-top, not
+           margin-right like the mobile row layout. */
         .sqv4-flash__endsin-slot {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 1.5em;
-            height: 5em;
+            margin-right: 0;
+            margin-top: clamp(-6.18px, -0.429vw, -4px);
         }
         .sqv4-flash__endsin {
-            /* 24.7273px. The comp nets +90deg on this label (-90 from the rotated
-               timer row, +180 on the text itself), so rotate the flat text rather
-               than using writing-mode, which would flip each glyph. */
+            /* 24.7273px. Vertical, reading bottom-to-top - writing-mode +
+               rotate(180deg) (see the base rule above), not a rotate()-only
+               transform, which has no visual effect on a plain inline box. */
             font-size: clamp(16px, 1.717vw, 24.7273px);
-            transform: rotate(-90deg);
-            transform-origin: center;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
             white-space: nowrap;
         }
         .sqv4-flash__box {
@@ -357,6 +370,9 @@
         .sqv4-flash__digit {
             /* 49.4545px */
             font-size: clamp(30px, 3.434vw, 49.4545px);
+            transform: rotate(-90deg);
+            transform-origin: center;
+            display: inline-block;
         }
         .sqv4-flash__main {
             /* 1176.38 wide, 32px gap - centred in the frame */
@@ -395,11 +411,7 @@
 
   <div class="sqv4-flash__main">
     <div class="sqv4-flash__titlewrap">
-      {{-- oi:flash - an 81.94px square box whose vector spans the middle 50%
-           horizontally (left 25% / right 25%) and the full height. --}}
-      <svg viewBox="0 0 24 24" class="sqv4-flash__bolt" aria-hidden="true">
-        <path d="M15.6 0 L6 15 H10.8 L8.4 24 L18 9 H13.2 Z"/>
-      </svg>
+      <img src="{{ asset('souqify-3/assets/icons/flash-sale.png') }}" class="sqv4-flash__bolt" alt="" aria-hidden="true" />
       <h2 class="sqv4-flash__title">{{ __('Flash Sale') }}</h2>
     </div>
 

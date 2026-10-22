@@ -46,7 +46,9 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        padding-block: 24px;
+        padding-inline-start: 16px;
+        padding-inline-end: 0;
         gap: 16px;
         background: var(--color-page-bg);
     }
@@ -102,7 +104,9 @@
             /* The comp's content column is 1328px inside a 1440 canvas. Capping it
                keeps slidesPerView from inflating the cards on wider displays;
                max() still leaves the Figma 56px gutter at exactly 1440. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-block: 24px;
+            padding-inline-start: max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding-inline-end: 0;
             gap: clamp(16px, 1.667vw, 24px);
         }
         .sqv3-newin__title {
