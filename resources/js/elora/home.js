@@ -133,9 +133,10 @@
         document.querySelectorAll('.category-swiper-2row').forEach(function (element) {
             new Swiper(element, {
                 slidesPerView: 'auto',
-                spaceBetween: 0,
+                spaceBetween: 20,
                 freeMode: true,
                 grabCursor: true,
+                rtl: document.documentElement.dir === 'rtl',
                 breakpoints: {
                     640: { spaceBetween: 16 },
                     1024: { spaceBetween: 32 },
