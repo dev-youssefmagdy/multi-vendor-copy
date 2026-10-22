@@ -36,13 +36,13 @@
                             </p>
                             {{-- FOR DESIGN PURPOSE: "FLASH30" is a placeholder shown until the store has an active coupon --}}
                             @php $flashCtaCode = ($flashCouponCode ?? null) ?: 'FLASH30'; @endphp
-                            <button type="button" data-copy-code="{{ $flashCtaCode }}"
+                            {{-- <button type="button" data-copy-code="{{ $flashCtaCode }}"
                                 onclick="navigator.clipboard && navigator.clipboard.writeText(this.dataset.copyCode)"
                                 title="{{ __('Copy code') }}"
                                 class="inline-flex items-center justify-center gap-1.5 bg-[#121212] text-white text-sm sm:text-xl font-normal px-4 sm:px-6 h-9 sm:h-[50px] rounded-full hover:bg-black transition-colors whitespace-nowrap">
                                 <span>{{ __('Use Code:') }}</span>
                                 <span class="text-[#F56323]">{{ $flashCtaCode }}</span>
-                            </button>
+                            </button> --}}
                         </div>
                     </div>
                 </div>
