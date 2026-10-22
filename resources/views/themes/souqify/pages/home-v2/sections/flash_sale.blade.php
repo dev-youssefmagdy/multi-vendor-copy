@@ -46,7 +46,9 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        /* Horizontal padding lives on the head and the bottom bar instead of
+           here, so the carousel can bleed flush to both edges. */
+        padding: 12px 0;
         gap: 16px;
         overflow: hidden;
         /* Broad bands on a 45deg diagonal - lying open across the panel rather
@@ -82,6 +84,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        padding: 0 16px;
     }
     .sqv2-flash__title {
         font-family: 'Outfit', sans-serif;
@@ -126,6 +129,7 @@
         align-items: center;
         gap: 12px;
         width: 100%;
+        padding: 0 16px;
     }
     .sqv2-flash__ends {
         display: flex;
@@ -199,9 +203,13 @@
 
     @media (min-width: 1024px) {
         .sqv2-flash {
-            /* The comp's content column is 1328px inside the 1440 canvas. */
-            padding: clamp(24px, 2.222vw, 32px) max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
+            padding: clamp(24px, 2.222vw, 32px) 0;
             gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv2-flash__head,
+        .sqv2-flash__bar {
+            /* The comp's content column is 1328px inside the 1440 canvas. */
+            padding: 0 max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
         }
         .sqv2-flash__title { font-size: clamp(32px, 2.778vw, 40px); }
         .sqv2-flash__seeall { font-size: clamp(15px, 1.389vw, 20px); }

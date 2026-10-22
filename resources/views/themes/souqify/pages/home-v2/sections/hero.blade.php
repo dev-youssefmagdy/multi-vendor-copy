@@ -22,13 +22,16 @@
      background, anchored right. Values are clamp(min, <value>/1440*100vw, max)
      off the 1440 canvas. --}}
 <style>
+    .sqv2-hero {
+        margin-bottom: 16px;
+    }
     .sqv2-hero__slide {
         position: relative;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 16px;
+        padding: 12px 16px;
         height: 200px;
         background: #FFFFFF;
         overflow: hidden;
@@ -93,6 +96,9 @@
     }
 
     @media (min-width: 1024px) {
+        .sqv2-hero {
+            margin-bottom: 48px;
+        }
         .sqv2-hero__slide {
             /* 623 tall, 32px 56px padding */
             height: clamp(430px, 43.264vw, 623px);
@@ -120,7 +126,7 @@
 </style>
 
 <!-- ============ HERO ============ -->
-<section class="relative bg-white" wire:ignore>
+<section class="sqv2-hero relative bg-white" wire:ignore>
   <div class="sqv-hero-static">
     <div class="sqv-hero-static__inner">
       @forelse ($__heroBanners as $banner)

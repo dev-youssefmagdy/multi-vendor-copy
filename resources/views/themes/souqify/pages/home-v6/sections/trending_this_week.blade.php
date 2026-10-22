@@ -55,7 +55,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding-block: 24px;
+        padding-block: 12px;
         padding-inline-start: 16px;
         padding-inline-end: 0;
         gap: 16px;

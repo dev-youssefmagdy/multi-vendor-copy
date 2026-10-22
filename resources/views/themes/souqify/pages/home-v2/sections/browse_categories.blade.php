@@ -19,7 +19,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: 16px;
+        padding: 12px 16px;
         gap: 16px;
         background: var(--color-page-bg, #FFFFFF);
     }

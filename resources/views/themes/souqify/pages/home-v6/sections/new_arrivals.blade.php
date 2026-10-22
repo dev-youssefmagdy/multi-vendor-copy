@@ -59,8 +59,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 16px;
-        padding-bottom: 24px;
+        padding-top: 12px;
+        padding-bottom: 12px;
         padding-inline-start: 16px;
         padding-inline-end: 0;
         gap: 16px;

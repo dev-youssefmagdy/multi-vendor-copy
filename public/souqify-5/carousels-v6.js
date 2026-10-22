@@ -76,16 +76,16 @@ function mountCategories() {
   });
 }
 
-// Flash Sale uses a draggable fan cascade - same technique as Green
-// Edition's Best Seller carousel (souqify-3/carousels-v4.js's
-// mountFanCascadeCarousel). Geometry is indexed by DISTANCE from the
-// swiper's activeIndex (0 = the "front" slot ... down to the last), not by
-// a fixed product index. Every slide is absolutely positioned from a table
-// each time activeIndex changes, so dragging shifts which product lands in
-// the distance-0 slot while the rest cascade down in size behind it - the
-// front card cycles to the back as you page through. Swiper's own loop mode
-// is only reliable with enough real slides; mobile's fixed 3-card set is too
-// few (see mountFlash() below), so it runs on `rewind` instead.
+// Flash Sale: draggable fan cascade — ported mechanism-for-mechanism from
+// Elora Minimal Edition's Best Seller carousel (resources/js/elora-v5-carousels.js,
+// mountBestSellerCarousel): a real Swiper instance drives touch/drag with
+// explicit `loop: true` + `loopedSlides` (so loop mode never falls back to
+// the broken clone-count guess it makes for a short slide set — that guess
+// is what caused the old fan cascade here to get stuck after one swipe),
+// while every slide is absolutely positioned from a fixed geometry table
+// indexed by DISTANCE from the swiper's activeIndex (0 = biggest/frontmost
+// ... down to smallest), so dragging shifts which product lands in the
+// front slot while the rest cascade down in size behind it.
 const SQV6_FLASH_POSITIONS_DESKTOP = [
   { left: 0, top: 0, width: 295.45, height: 472.89 },
   { left: 273, top: 9, width: 283.96, height: 454.2 },
@@ -100,17 +100,22 @@ const SQV6_FLASH_POSITIONS_MOBILE = [
   { left: 248.25, top: 26.77, width: 127.5, height: 182.94 },
 ];
 
-function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null, loop = true } = {}) {
+// RTL: the geometry table is captured left-to-right (distance 0 pinned off
+// the start edge). Under RTL the biggest/active card keeps that same gap but
+// from the right edge instead, so every box's `left` is mirrored around the
+// container's actual rendered width (matches Elora's mirrorPositionsRtl()).
+function sqv6MirrorPositionsRtl(positions, containerWidth) {
+  return positions.map((p) => ({ ...p, left: containerWidth - p.left - p.width }));
+}
+
+function mountFlashCascade(containerId, positions, { baseWidth, dotsContainerId = null } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  const isRtl = document.documentElement.getAttribute("dir") === "rtl";
+  const boxes = isRtl ? sqv6MirrorPositionsRtl(positions, container.clientWidth) : positions;
   container.style.position = "relative";
-  container.style.height = `${Math.max(...positions.map((p) => p.top + (p.height ?? baseHeight)))}px`;
+  container.style.height = `${boxes[0].top + boxes[0].height}px`;
 
-  // Only the ORIGINAL slides (captured before Swiper's loop mode, where used,
-  // injects its own clone slides) get positioned here - any clones are
-  // neutralized separately below, since our own modulo wrap already makes
-  // the cascade infinite without needing Swiper's duplicated DOM nodes to be
-  // visually meaningful.
   const slideEls = [...container.children];
   const count = slideEls.length;
 
@@ -120,14 +125,14 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
     for (let i = 0; i < count; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
-      dot.className = "best-seller-dot" + (i === 0 ? " is-active" : "");
+      dot.className = "sqv6-flash-dot" + (i === 0 ? " is-active" : "");
       dot.setAttribute("aria-label", `Product ${i + 1}`);
       dotsEl.appendChild(dot);
     }
   }
   const updateDots = (sw) => {
     if (!dotsEl) return;
-    dotsEl.querySelectorAll(".best-seller-dot").forEach((dot, i) => {
+    dotsEl.querySelectorAll(".sqv6-flash-dot").forEach((dot, i) => {
       dot.classList.toggle("is-active", i === sw.realIndex);
     });
   };
@@ -135,10 +140,8 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   const applyPositions = (sw) => {
     slideEls.forEach((slideEl, i) => {
       const distance = (((i - sw.realIndex) % count) + count) % count;
-      const box = positions[distance];
+      const box = boxes[distance];
       if (!box) {
-        // more products than fan slots: park the rest off-screen rather
-        // than stacking them at position 0 on top of the active card.
         slideEl.style.opacity = "0";
         slideEl.style.pointerEvents = "none";
         slideEl.style.zIndex = "0";
@@ -146,10 +149,9 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
       }
       slideEl.style.opacity = "1";
       slideEl.style.pointerEvents = "";
-      const scale = box.width != null ? box.width / baseWidth : 1;
-      const rotate = box.rot ? ` rotate(${box.rot}deg)` : "";
-      slideEl.style.transform = `translate(${box.left}px, ${box.top}px)${rotate} scale(${scale})`;
-      slideEl.style.zIndex = String(positions.length - distance);
+      const scale = box.width / baseWidth;
+      slideEl.style.transform = `translate(${box.left}px, ${box.top}px) scale(${scale})`;
+      slideEl.style.zIndex = String(boxes.length - distance);
     });
     container.querySelectorAll(".swiper-slide-duplicate").forEach((clone) => {
       clone.style.opacity = "0";
@@ -158,32 +160,10 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   };
 
   return new Swiper(container.closest(".swiper"), {
-    // The cascade's own look (overlap, scale, stacking order) comes entirely
-    // from applyPositions()'s inline transforms below, never from Swiper's
-    // box model - so Swiper only needs ONE swipe to equal ONE step through
-    // the cascade. slidesPerView:"auto" let Swiper measure each slide's real
-    // (overlapping) width instead, which on a short, heavily-overlapped set
-    // like this one left it thinking there was almost nothing to scroll -
-    // e.g. mobile's 3 cards (154.5px each, cascaded) only needed 56px of
-    // scroll range to show them all. Any normal swipe overshoots a range
-    // that small, and Swiper's touch-end logic reads "dragged past the end"
-    // and rewinds straight back to the first card - which is exactly the
-    // "carousel doesn't move" symptom this was shipped with. slidesPerView:1
-    // gives Swiper one full-width snap point per real slide instead, so a
-    // normal swipe always lands on exactly the next/previous one.
-    slidesPerView: 1,
+    slidesPerView: "auto",
     virtualTranslate: true,
-    // Swiper's clone-based loop needs enough real slides to cover
-    // slidesPerView on both sides of the active one; mobile's fixed 3-card
-    // set is too few, so loop silently misbehaves there ("not enough slides
-    // for loop mode") - cards land outside their cascade position and
-    // dragging stops advancing. `rewind` gives the same "keeps going past
-    // the last card" feel by snapping back to the opposite end instead,
-    // without needing Swiper's own clones at all - our modulo-based
-    // applyPositions() already draws the infinite cascade regardless of
-    // which real slide Swiper reports as active.
-    loop,
-    rewind: !loop,
+    loop: true,
+    loopedSlides: count,
     on: {
       init(sw) {
         applyPositions(sw);
@@ -194,12 +174,6 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
         updateDots(sw);
       },
       transitionEnd: applyPositions,
-      // Without this, resizing the viewport (rotating a phone, resizing a
-      // desktop window, or a DevTools device-toolbar resize without a full
-      // reload) leaves the translate() offsets computed for the OLD width
-      // while the box's own CSS width/height already shrank via the media
-      // query - cards fly outside the frame instead of rescaling with it.
-      resize: applyPositions,
       setTransition(sw, duration) {
         slideEls.forEach((s) => (s.style.transitionDuration = `${duration}ms`));
       },
@@ -208,24 +182,12 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
 }
 
 function mountFlash() {
-  try {
-    mountFanCascadeCarousel("flashMobileWrapper", SQV6_FLASH_POSITIONS_MOBILE, {
-      baseWidth: 154.5,
-      // Only 3 real slides on mobile - not enough for Swiper's loop mode
-      // (see the mountFanCascadeCarousel comments above), so it rewinds
-      // instead of looping.
-      loop: false,
-    });
-  } catch (e) {
-    console.error("mountFlash (mobile) failed", e);
-  }
-  try {
-    mountFanCascadeCarousel("flashDesktopWrapper", SQV6_FLASH_POSITIONS_DESKTOP, {
-      baseWidth: 295.45,
-    });
-  } catch (e) {
-    console.error("mountFlash (desktop) failed", e);
-  }
+  mountFlashCascade("flashMobileWrapper", SQV6_FLASH_POSITIONS_MOBILE, {
+    baseWidth: 154.5,
+  });
+  mountFlashCascade("flashDesktopWrapper", SQV6_FLASH_POSITIONS_DESKTOP, {
+    baseWidth: 295.45,
+  });
 }
 
 function mountTrending() {

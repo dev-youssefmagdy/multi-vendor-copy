@@ -24,7 +24,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px 16px;
+        padding: 12px 16px;
         gap: 16px;
         background: var(--color-page-bg, #FFFFFF);
     }
