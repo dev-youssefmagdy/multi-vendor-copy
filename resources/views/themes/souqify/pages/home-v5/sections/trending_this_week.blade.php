@@ -26,6 +26,7 @@
             'tag' => '🔥 ' . __('Trending Now'),
             'stock' => __('Only 5 left - Hurry up'),
             'name' => $__name,
+            'weight' => $variant?->weight_grams ? $variant->weight_grams . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
@@ -53,7 +54,10 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: 24px 16px;
+        /* Horizontal padding lives on the head and on the carousel's own
+           start offset instead of here, so the carousel can bleed flush to
+           the section's trailing edge while the title stays inset. */
+        padding: 16px 0;
         gap: 16px;
         background: #FFFFFF;
     }
@@ -64,6 +68,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
+        padding: 0 16px;
     }
     .sqv5-trend__title {
         font-family: 'Outfit', sans-serif;
@@ -92,11 +97,14 @@
 
     @media (min-width: 1024px) {
         .sqv5-trend {
+            padding: 24px 0;
+            gap: clamp(16px, 1.667vw, 24px);
+        }
+        .sqv5-trend__head {
             /* The comp's content column is 1328px inside a 1440 canvas. Capping it
                keeps slidesPerView from inflating the cards on wider displays;
                max() still leaves the Figma 56px gutter at exactly 1440. */
-            padding: 24px max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
-            gap: clamp(16px, 1.667vw, 24px);
+            padding: 0 max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
         }
         .sqv5-trend__title { font-size: clamp(28px, 2.778vw, 40px); }
         .sqv5-trend__seeall { font-size: clamp(15px, 1.389vw, 20px); }

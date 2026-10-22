@@ -76,6 +76,14 @@
         background: var(--color-brand-pink, #FF1A90);
         border-radius: 0px 34px 34px 0px;
     }
+    @media (max-width: 1023.98px) {
+        /* The title reads short on phones, so centering it against the
+           countdown's own height (rather than bottom-aligning it) keeps the
+           two balanced instead of the title looking like it's sinking. */
+        .sqv6-flash__head {
+            align-items: center;
+        }
+    }
     .sqv6-flash__title {
         font-family: 'Outfit', sans-serif;
         font-weight: 800;

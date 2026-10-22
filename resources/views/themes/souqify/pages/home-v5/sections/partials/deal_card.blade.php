@@ -39,7 +39,12 @@
     </button>
 
     <div class="sqv5-deal__info">
-        <a href="{{ $p['url'] }}" class="sqv5-deal__name">{{ $p['name'] }}</a>
+        <div class="sqv5-deal__head">
+            <a href="{{ $p['url'] }}" class="sqv5-deal__name">{{ $p['name'] }}</a>
+            @if (!empty($p['weight']))
+                <span class="sqv5-deal__weight">{{ $p['weight'] }}</span>
+            @endif
+        </div>
 
         @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
         <div class="sqv5-deal__rating">

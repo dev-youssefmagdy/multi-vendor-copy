@@ -83,7 +83,9 @@ function mountCategories() {
 // a fixed product index. Every slide is absolutely positioned from a table
 // each time activeIndex changes, so dragging shifts which product lands in
 // the distance-0 slot while the rest cascade down in size behind it - the
-// front card cycles to the back as you page through.
+// front card cycles to the back as you page through. Swiper's own loop mode
+// is only reliable with enough real slides; mobile's fixed 3-card set is too
+// few (see mountFlash() below), so it runs on `rewind` instead.
 const SQV6_FLASH_POSITIONS_DESKTOP = [
   { left: 0, top: 0, width: 295.45, height: 472.89 },
   { left: 273, top: 9, width: 283.96, height: 454.2 },
@@ -98,16 +100,17 @@ const SQV6_FLASH_POSITIONS_MOBILE = [
   { left: 248.25, top: 26.77, width: 127.5, height: 182.94 },
 ];
 
-function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null } = {}) {
+function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight = null, dotsContainerId = null, loop = true } = {}) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.style.position = "relative";
   container.style.height = `${Math.max(...positions.map((p) => p.top + (p.height ?? baseHeight)))}px`;
 
-  // Only the ORIGINAL slides (captured before Swiper's loop mode injects its
-  // own clone slides) get positioned here - clones are neutralized separately
-  // below, since our own modulo wrap already makes the cascade infinite
-  // without needing Swiper's duplicated DOM nodes to be visually meaningful.
+  // Only the ORIGINAL slides (captured before Swiper's loop mode, where used,
+  // injects its own clone slides) get positioned here - any clones are
+  // neutralized separately below, since our own modulo wrap already makes
+  // the cascade infinite without needing Swiper's duplicated DOM nodes to be
+  // visually meaningful.
   const slideEls = [...container.children];
   const count = slideEls.length;
 
@@ -157,16 +160,17 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   return new Swiper(container.closest(".swiper"), {
     slidesPerView: "auto",
     virtualTranslate: true,
-    loop: true,
-    // Swiper's own loop mode needs enough duplicated slides to cover
-    // slidesPerView on both sides of the real ones; with slidesPerView:"auto"
-    // and as few as 3 real slides (mobile), count alone isn't enough - Swiper
-    // warns "not enough slides for loop mode" and the first paint can render
-    // slides outside their cascade position until a swipe forces a relayout.
-    // Our own applyPositions() already hides every .swiper-slide-duplicate,
-    // so asking for extra loop clones here is free - it just satisfies
-    // Swiper's internal loop bookkeeping.
-    loopedSlides: count * 4,
+    // Swiper's clone-based loop needs enough real slides to cover
+    // slidesPerView on both sides of the active one; with slidesPerView:"auto"
+    // and as few as 3 real slides (mobile), that check fails ("not enough
+    // slides for loop mode"), and loop silently misbehaves - cards land
+    // outside their cascade position and dragging stops advancing. `rewind`
+    // gives the same "keeps going past the last card" feel by snapping back
+    // to the opposite end instead, without needing Swiper's own clones at
+    // all - our modulo-based applyPositions() already draws the infinite
+    // cascade regardless of which real slide Swiper reports as active.
+    loop,
+    rewind: !loop,
     on: {
       init(sw) {
         applyPositions(sw);
@@ -194,6 +198,10 @@ function mountFlash() {
   try {
     mountFanCascadeCarousel("flashMobileWrapper", SQV6_FLASH_POSITIONS_MOBILE, {
       baseWidth: 154.5,
+      // Only 3 real slides on mobile - not enough for Swiper's loop mode
+      // (see the mountFanCascadeCarousel comments above), so it rewinds
+      // instead of looping.
+      loop: false,
     });
   } catch (e) {
     console.error("mountFlash (mobile) failed", e);
@@ -277,40 +285,20 @@ function mountBestSeller() {
 
   if (grid) {
     swiperEl.classList.add("sqv6-best--grid");
-    // The CSS stagger (see .sqv6-best--grid rules) needs to know which
-    // physical column each card lands in, but with slidesPerGroup > 1
-    // Swiper's grid module assigns columns via a per-group formula (see
-    // swiper's grid.mjs updateSlide()) rather than simple DOM order, so a
-    // plain nth-child(2n) selector doesn't reliably track "first vs second
-    // column" once there's more than one page of cards - some row-pairs
-    // ended up with both cards on the same side of that parity by accident,
-    // which is why they rendered level. Swiper stores the column it computed
-    // as `.column` directly on each slide element, so reading that back is
-    // the only reliable way to know which column a card is actually in.
-    const applyStagger = () => {
-      wrapper.querySelectorAll(".swiper-slide").forEach((slideEl) => {
-        slideEl.classList.toggle("sqv6-best__slide--stagger", slideEl.column % 2 === 0);
-      });
-    };
     new Swiper(swiperEl, {
       slidesPerView: 2,
       slidesPerGroup: 2,
       spaceBetween: 12,
       grid: { rows: 2, fill: "row" },
-      on: {
-        init: applyStagger,
-        update: applyStagger,
-        resize: applyStagger,
-      },
     });
     return;
   }
 
   new Swiper(swiperEl, {
-    // The comp's 1328px row holds exactly five cards at a 21px gap, so a
-    // swipe swaps the whole set of five for the next five.
+    // The comp's 1328px row holds exactly five cards at a 21px gap, but a
+    // swipe now advances one card at a time rather than the whole page.
     slidesPerView: 5,
-    slidesPerGroup: 5,
+    slidesPerGroup: 1,
     spaceBetween: 21,
   });
 }

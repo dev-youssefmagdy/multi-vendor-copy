@@ -6,29 +6,56 @@
 <!-- ============ NAVBAR ============ -->
 <header>
   <!-- Mobile -->
-  <div class="lg:hidden flex flex-col bg-white pb-[12px]" style="box-shadow:0 4px 4px 0 rgba(180,180,180,0.15)">
-    <div class="flex items-center justify-between px-[16px] pt-[12px]">
-      <div class="flex items-center gap-[10px]">
+  <div class="lg:hidden flex flex-col gap-[12px] bg-white pt-[14px] pb-[12px]" style="box-shadow:0 4px 4px 0 rgba(180,180,180,0.15)">
+    <div class="flex items-center justify-between gap-[8px] px-[16px]">
+      <div class="flex items-center gap-[10px] flex-1 min-w-0">
         <button type="button" id="mobileMenuBtn" aria-label="{{ __('Open menu') }}" aria-expanded="false" aria-controls="mobileDrawer" class="flex items-center justify-center cursor-pointer size-[32px] shrink-0">
-          <svg viewBox="0 0 24 24" class="size-[24px]" fill="none" stroke="var(--color-text-primary)" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <svg viewBox="0 0 24 24" class="size-[22px]" fill="none" stroke="var(--color-text-primary)" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
         </button>
-        <a href="{{ route('tenant.home') }}" class="shrink-0">
-          <x-storefront-logo :storeName="$storeName" class="size-[44px] rounded-full object-cover" />
-        </a>
         @auth('storefront')
-          <div class="flex flex-col gap-[3px]">
-            <p class="font-medium text-[18px]" style="color:var(--color-text-primary)">{{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋</p>
+          @php $__sqv5DefaultAddress = auth('storefront')->user()->addresses->first(); @endphp
+          <img
+            src="{{ auth('storefront')->user()->avatar ?: asset('souqify-4/assets/icons/nav-user.svg') }}"
+            alt=""
+            class="size-[44px] rounded-full object-cover shrink-0"
+            style="background:var(--color-page-bg)"
+          />
+        @else
+          <div class="size-[44px] rounded-full shrink-0 flex items-center justify-center" style="background:var(--color-page-bg)">
+            <img src="{{ asset('souqify-4/assets/icons/nav-user.svg') }}" alt="" class="size-[20px] opacity-60" />
           </div>
         @endauth
+        <div class="flex flex-col gap-[2px] min-w-0">
+          <p class="font-medium text-[16px] truncate" style="color:var(--color-text-primary)">
+            @auth('storefront')
+              {{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋
+            @else
+              {{ __('Hi, :name', ['name' => __('Guest')]) }} 👋
+            @endauth
+          </p>
+          @auth('storefront')
+            @if ($__sqv5DefaultAddress)
+              <div class="flex items-center gap-[4px] min-w-0">
+                <span class="text-[12px] tracking-[0.3px] truncate" style="color:var(--color-text-muted)">{{ $__sqv5DefaultAddress->oneliner }}</span>
+                <svg viewBox="0 0 24 24" class="size-[12px] shrink-0 opacity-60" fill="none" stroke="var(--color-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            @endif
+          @else
+            <a href="{{ route('tenant.storefront.login') }}" class="text-[12px] tracking-[0.3px] underline truncate" style="color:var(--color-text-muted)">{{ __('Login / Register') }}</a>
+          @endauth
+        </div>
       </div>
-      <div class="flex items-center gap-[16px] shrink-0">
-        <a href="{{ route('tenant.storefront.search') }}" aria-label="{{ __('Search') }}" class="flex items-center justify-center"><img src="{{ asset('souqify-4/assets/icons/mobile-search.svg') }}" class="size-[22px]" alt="" /></a>
-        <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="flex items-center justify-center relative"><img src="{{ asset('souqify-4/assets/icons/mobile-cart.svg') }}" class="size-[22px]" alt="" />
-          <span id="souqify-v5-mob-cart-badge" class="souqify-cart-badge absolute -top-[6px] -right-[8px] text-white text-[10px] rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-[3px] {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-primary)">{{ $cartCount }}</span>
+      <div class="flex items-center gap-[10px] shrink-0">
+        <a href="{{ route('tenant.storefront.search') }}" aria-label="{{ __('Search') }}" class="flex items-center justify-center rounded-full size-[40px] shrink-0" style="border:1px solid var(--color-stroke)">
+          <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </a>
+        <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="flex items-center justify-center rounded-full size-[40px] shrink-0 relative" style="border:1px solid var(--color-stroke)">
+          <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          <span id="souqify-v5-mob-cart-badge" class="souqify-cart-badge absolute -top-[4px] -right-[4px] text-white text-[10px] rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-[3px] {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-primary)">{{ $cartCount }}</span>
         </a>
       </div>
     </div>
-    <nav class="flex items-center gap-[4px] overflow-x-auto no-scrollbar px-[16px] mt-[10px] border-b" style="border-color:var(--color-page-bg)">
+    <nav class="flex items-center gap-[4px] overflow-x-auto no-scrollbar px-[16px] border-b" style="border-color:var(--color-page-bg)">
       <a href="{{ route('tenant.home') }}" class="category-pill is-active shrink-0 px-[16px] py-[8px] text-[12px] tracking-[0.5px] relative" style="color:var(--color-primary)">{{ __('All') }}
         <span class="absolute left-[16px] right-[16px] -bottom-[1px] h-[2px] rounded-full" style="background:var(--color-primary)"></span>
       </a>

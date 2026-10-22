@@ -148,6 +148,15 @@
         padding: 4.06cqw 2.03cqw;
         background: #FFFFFF;
     }
+    /* Head row: product name plus its weight, same layout as the New In card. */
+    .sqv5-deal__head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1.5cqw;
+        width: 100%;
+    }
     .sqv5-deal__name {
         font-family: 'Outfit', sans-serif;
         font-weight: 500;
@@ -155,10 +164,19 @@
         line-height: 1.2641;
         color: #191B23;
         text-decoration: none;
-        width: 100%;
+        min-width: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+    .sqv5-deal__weight {
+        flex: none;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 400;
+        font-size: 6.25cqw;             /* 14.127 / 226.03, matching .sqv5-deal__old */
+        line-height: 1.2641;
+        color: var(--sqv5-deal-accent, var(--color-primary));
+        white-space: nowrap;
     }
     .sqv5-deal__rating {
         display: flex;

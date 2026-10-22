@@ -119,7 +119,7 @@
 </style>
 
 <!-- ============ HERO ============ -->
-<section class="relative bg-white" wire:ignore>
+<section class="relative bg-white mb-[16px] lg:mb-[48px]" wire:ignore>
   <div class="sqv-hero-static">
     <div class="sqv-hero-static__inner">
       @forelse ($__heroBanners as $banner)
