@@ -27,14 +27,14 @@ function mountNewIn() {
     });
 }
 
-// Categories: numeric slidesPerView so the carousel shows a partial next
-// slide as a scroll affordance (3.5 on mobile, 7.5 at lg) rather than
-// snapping to whole cards like New In's fixed-width slides.
+// Categories: numeric slidesPerView (4 on mobile, 7.5 at lg) so the carousel
+// shows a partial next slide as a scroll affordance rather than snapping to
+// whole cards like New In's fixed-width slides.
 function mountCategories() {
     const wrapper = document.getElementById("categoriesWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: 3.5,
+        slidesPerView: 4,
         spaceBetween: 16,
         breakpoints: {
             1024: { slidesPerView: 7.5, spaceBetween: 26.58 },
@@ -88,11 +88,27 @@ const BEST_SELLER_POSITIONS_DESKTOP = [
     { left: 811, top: 102, width: 215, height: 326 },
     { left: 980, top: 123, width: 203, height: 307 },
 ];
+// Top offsets are normalized so the frontmost card (distance 0) sits at
+// top:0 — the Figma capture had it at top:53, which just padded the
+// swiper-wrapper with 53px of empty space above the cascade.
 const BEST_SELLER_POSITIONS_MOBILE = [
-    { left: 16, top: 53, width: 206.23, height: 312.52 },
-    { left: 172.03, top: 95.01, width: 168.04, height: 254.65 },
-    { left: 284.06, top: 121.74, width: 141.94, height: 215.1 },
+    { left: 16, top: 0, width: 206.23, height: 312.52 },
+    { left: 172.03, top: 42.01, width: 168.04, height: 254.65 },
+    { left: 284.06, top: 68.74, width: 141.94, height: 215.1 },
 ];
+
+// RTL: the cascade's geometry table is captured left-to-right from the Figma
+// LTR layout (distance 0 = biggest, pinned 16px off the start edge). Under
+// RTL the biggest/active card should keep that same 16px gap but from the
+// right edge instead, so every box's `left` is mirrored around the
+// container's actual rendered width — not the geometry's own bounding box,
+// which (on mobile, where the fan overflows past the visible frame) is
+// wider than the container and would push the mirrored card past the right
+// edge instead of flush against it. Desktop's geometry happens to exactly
+// fill its container, so this matches the previous behavior there.
+function mirrorPositionsRtl(positions, containerWidth) {
+    return positions.map((p) => ({ ...p, left: containerWidth - p.left - p.width }));
+}
 
 function mountBestSellerCarousel(
     containerId,
@@ -101,8 +117,12 @@ function mountBestSellerCarousel(
 ) {
     const container = document.getElementById(containerId);
     if (!container) return;
+    const isRtl = document.documentElement.getAttribute("dir") === "rtl";
+    const boxes = isRtl
+        ? mirrorPositionsRtl(positions, container.clientWidth)
+        : positions;
     container.style.position = "relative";
-    container.style.height = `${positions[0].top + positions[0].height}px`;
+    container.style.height = `${boxes[0].top + boxes[0].height}px`;
 
     // Only the ORIGINAL slides (captured before Swiper's loop mode injects its
     // own clone slides) get positioned here — clones are neutralized separately
@@ -134,7 +154,7 @@ function mountBestSellerCarousel(
     const applyPositions = (sw) => {
         slideEls.forEach((slideEl, i) => {
             const distance = (((i - sw.realIndex) % count) + count) % count;
-            const box = positions[distance];
+            const box = boxes[distance];
             if (!box) {
                 // more products than fan slots: park the rest off-screen rather
                 // than stacking them at position 0 on top of the active card.
@@ -152,7 +172,7 @@ function mountBestSellerCarousel(
             // at any cascade depth.
             const scale = box.width / baseWidth;
             slideEl.style.transform = `translate(${box.left}px, ${box.top}px) scale(${scale})`;
-            slideEl.style.zIndex = String(positions.length - distance);
+            slideEl.style.zIndex = String(boxes.length - distance);
             // Tracks which cascade slot this slide currently occupies (0 = active/front),
             // independent of DOM order — not used for styling any more (the transform
             // above handles all sizing), kept only as a debugging hook.
