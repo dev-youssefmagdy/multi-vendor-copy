@@ -3,7 +3,7 @@
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="flex items-center justify-center mb-4 sm:mb-5">
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-5 h-5 sm:w-8 sm:h-8 flex-shrink-0" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M16 10.667H27.3333C27.8638 10.667 28.3725 10.8777 28.7475 11.2528C29.1226 11.6279 29.3333 12.1366 29.3333 12.667C29.3333 13.1974 29.1226 13.7061 28.7475 14.0812C28.3725 14.4563 27.8638 14.667 27.3333 14.667H17.3333M18 14.667H20.6667C21.1971 14.667 21.7058 14.8777 22.0809 15.2528C22.456 15.6279 22.6667 16.1366 22.6667 16.667C22.6667 17.1974 22.456 17.7061 22.0809 18.0812C21.7058 18.4563 21.1971 18.667 20.6667 18.667H17.3333M19.3333 18.667C19.8638 18.667 20.3725 18.8777 20.7475 19.2528C21.1226 19.6279 21.3333 20.1366 21.3333 20.667C21.3333 21.1974 21.1226 21.7061 20.7475 22.0812C20.3725 22.4563 19.8638 22.667 19.3333 22.667H17.3333"
                             stroke="url(#paint0_linear_3_1304)" stroke-width="2" stroke-linecap="round"
@@ -32,7 +32,8 @@
                 </div>
             </div>
             {{-- products slide --}}
-            <div class="swiper product-slid-swiper">
+            <div class="swiper product-slid-swiper elora-mobile-grid" data-per-view="6" data-mobile-grid>
+                @include('themes.elora.pages._carousel-nav')
                 <div class="swiper-wrapper">
                     @forelse (($recommendedProducts->isEmpty() ? $bestSelling : $recommendedProducts) as $product)
                     <div class="swiper-slide w-[132px] sm:w-[182px]  lg:w-[210px]">
@@ -51,28 +52,24 @@
             <div class="flex items-center justify-between px-3 sm:px-5 py-2.5 rounded-lg mb-4 overflow-hidden"
                 style="background:linear-gradient(89.62deg,#C94F1A 0.07%,#F56323 57.6%,#BA3800 100%);">
                 <a href="{{ route('tenant.storefront.best-selling') }}"
-                    class="text-white text-xs sm:text-sm hover:underline">← {{ __('See all') }}</a>
+                    class="text-white text-xs sm:text-sm hover:underline"><span class="inline-block rtl:rotate-180">←</span> {{ __('See all') }}</a>
                 <span class="text-white text-xs sm:text-sm hidden sm:block">
                     {{ __('Free shipping when you purchase 1.2 kg') }}
                 </span>
                 <div></div>
             </div>
-            {{-- infinite scroll grid --}}
-            <div id="all-products-grid"
-                 class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-                @forelse ($paginatedProducts as $product)
-                    @include('themes.elora.pages._product-card', ['product' => $product, 'badge' => null])
-                @empty
-                    <p class="col-span-full text-sm text-gray-400 py-6">{{ __('No products yet.') }}</p>
-                @endforelse
-            </div>
-            {{-- sentinel / loader --}}
-            <div id="all-products-sentinel" class="flex justify-center py-8">
-                <svg id="all-products-spinner" class="hidden animate-spin h-7 w-7 text-orange-500"
-                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                </svg>
+            {{-- products slide — next page is appended when the carousel reaches its end --}}
+            <div class="swiper product-slid-swiper" data-per-view="6" data-load-more="all-products">
+                @include('themes.elora.pages._carousel-nav')
+                <div class="swiper-wrapper" id="all-products-wrapper">
+                    @forelse ($paginatedProducts as $product)
+                    <div class="swiper-slide w-[132px] sm:w-[182px] lg:w-[210px]">
+                        @include('themes.elora.pages._product-card', ['product' => $product, 'badge' => null])
+                    </div>
+                    @empty
+                    <p class="text-sm text-gray-400 py-6 w-full">{{ __('No products yet.') }}</p>
+                    @endforelse
+                </div>
             </div>
         </div>
     </section>

@@ -2,7 +2,8 @@
 var _eloraSwiperCfg = {
     spaceBetween: 24,
     slidesPerView: 1,
-    freeMode: true,
+    slidesPerGroup: 1,
+    freeMode: false,
     breakpoints: {
         400: { slidesPerView: 2, spaceBetween: 10 },
         550: { slidesPerView: 3, spaceBetween: 20 },

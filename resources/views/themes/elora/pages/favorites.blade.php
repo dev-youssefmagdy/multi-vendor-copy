@@ -7,7 +7,7 @@
             class="max-w-[1390px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
             <a href="{{ route('tenant.home') }}"
                 class="hover:text-[var(--color-primary)] transition-colors tracking-[0.5px]">{{ __('Home') }}</a>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="m9 18 6-6-6-6" />
             </svg>
             <span class="text-[#1B1B1B] font-medium tracking-[0.5px]">{{ __('Favorite') }}</span>

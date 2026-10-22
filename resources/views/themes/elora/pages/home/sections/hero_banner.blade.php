@@ -32,31 +32,10 @@
                 @endif
                 @endforeach
             </div>
-            <div class="swiper-pagination"></div>
-            <!-- <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div> -->
         </div>
-        <!-- Navigation buttons -->
-         @if(app()->getLocale() === 'ar')
-                 <div class="swiper-button-prev hidden sm:flex w-10 h-10 rounded-full bg-white drop-shadow-2xl" style="inset-inline-start: 1.5rem; inset-inline-end: auto;"><svg
-                class="!fill-white !w-[10px]" width="7" height="14" viewBox="0 0 7 14" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.75 12.75L5.34317 7.81061C5.88561 7.22727 5.88561 6.27273 5.34317 5.68939L0.75 0.75"
-                    stroke="#242424" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </div>
-        <div class="swiper-button-next hidden sm:flex w-10 h-10 rounded-full bg-white drop-shadow-2xl" style="inset-inline-end: 1.5rem; inset-inline-start: auto;"><svg
-                class="!fill-white !w-[10px]" width="7" height="14" viewBox="0 0 7 14" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.75 0.75L1.15683 5.68939C0.614389 6.27273 0.614389 7.22727 1.15683 7.81061L5.75 12.75"
-                    stroke="#242424" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </div>
-        @else
+        <!-- Navigation buttons: Swiper swaps prev/next sides in RTL, the chevrons flip with it -->
         <div class="swiper-button-prev hidden sm:flex w-10 h-10 rounded-full bg-white drop-shadow-2xl" style="inset-inline-start: 1.5rem; inset-inline-end: auto;"><svg
-                class="!fill-white !w-[10px]" width="7" height="14" viewBox="0 0 7 14" fill="none"
+                class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path d="M5.75 0.75L1.15683 5.68939C0.614389 6.27273 0.614389 7.22727 1.15683 7.81061L5.75 12.75"
                     stroke="#242424" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
@@ -64,14 +43,13 @@
             </svg>
         </div>
         <div class="swiper-button-next hidden sm:flex w-10 h-10 rounded-full bg-white drop-shadow-2xl" style="inset-inline-end: 1.5rem; inset-inline-start: auto;"><svg
-                class="!fill-white !w-[10px]" width="7" height="14" viewBox="0 0 7 14" fill="none"
+                class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.75 12.75L5.34317 7.81061C5.88561 7.22727 5.88561 6.27273 5.34317 5.68939L0.75 0.75"
                     stroke="#242424" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
                     stroke-linejoin="round" />
             </svg>
         </div>
-        @endif
 
 
         @if ($banners->isEmpty())

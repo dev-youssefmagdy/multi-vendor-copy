@@ -45,10 +45,10 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
     <div class="bg-white border-b border-gray-100">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 py-2.5 flex items-center gap-1 text-sm text-[#808080] flex-wrap">
             <a href="{{ route('tenant.home') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Home') }}</a>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
             @auth('storefront')
             <a href="{{ route('tenant.storefront.profile') }}" class="hover:text-[var(--color-primary)] transition-colors">{{ __('Orders') }}</a>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
             @endauth
             <span class="text-[#1B1B1B] font-semibold">{{ __('Order #:uuid', ['uuid' => $order->uuid]) }}</span>
         </div>

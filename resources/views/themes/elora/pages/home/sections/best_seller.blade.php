@@ -2,9 +2,9 @@
     <section class="py-5 sm:py-8 bg-white"  wire:ignore>
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="flex items-center justify-between mb-4 sm:mb-5">
-                <div class="hidden sm:block"></div>
+                <div class="hidden sm:block sm:order-last"></div>
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-5 h-5 sm:w-[30px] sm:h-[30px] flex-shrink-0" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M5.32422 13.7748V19.9873C5.32422 22.2623 5.32422 22.2623 7.47422 23.7123L13.3867 27.1248C14.2742 27.6373 15.7242 27.6373 16.6117 27.1248L22.5242 23.7123C24.6742 22.2623 24.6742 22.2623 24.6742 19.9873V13.7748C24.6742 11.4998 24.6742 11.4998 22.5242 10.0498L16.6117 6.6373C15.7242 6.1248 14.2742 6.1248 13.3867 6.6373L7.47422 10.0498C5.32422 11.4998 5.32422 11.4998 5.32422 13.7748Z"
                             stroke="url(#paint0_linear_23_638)" stroke-width="1.5" stroke-linecap="round"
@@ -42,9 +42,9 @@
                     <h2 class="text-lg sm:text-2xl font-bold text-gradient-main">{{ __('Best Seller') }}</h2>
                 </div>
                 <a href="{{ route('tenant.storefront.best-selling') }}"
-                    class="flex items-center gap-1.5 text-xs sm:text-sm text-main hover:underline font-medium">
+                    class="flex items-center gap-1.5 sm:gap-3 text-xs sm:text-lg text-main hover:underline sm:order-first">
                     {{ __('See all') }}
-                    <svg width="5" height="12" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-[5px] h-3 sm:w-[7px] sm:h-[14px] sm:order-first rtl:rotate-180 sm:rotate-180 sm:rtl:rotate-0" width="5" height="12" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0.75 0.75L5.34317 5.68939C5.88561 6.27273 5.88561 7.22727 5.34317 7.81061L0.75 12.75"
                             stroke="url(#paint0_linear_13_11426)" stroke-width="1.5" stroke-miterlimit="10"
                             stroke-linecap="round" stroke-linejoin="round" />
@@ -60,7 +60,8 @@
                 </a>
             </div>
             {{-- products slide --}}
-            <div class="swiper product-slid-swiper">
+            <div class="swiper product-slid-swiper" data-per-view="6" data-per-view-mobile="2.5">
+                @include('themes.elora.pages._carousel-nav')
                 <div class="swiper-wrapper">
                     @forelse ($bestSelling as $product)
                     <div class="swiper-slide w-[132px] sm:w-[182px]  lg:w-[210px]">

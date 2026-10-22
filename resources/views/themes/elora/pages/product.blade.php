@@ -213,7 +213,7 @@
                             class="swiper-pagination absolute !right-0 bottom-0 !left-auto bg-black text-white w-fit rounded-ss-xl px-2 sm:hidden"></div>
                     </div>
                     <!-- Navigation buttons -->
-                    <div class="swiper-button-prev w-10 h-10 rounded-full bg-white -translate-x-5 drop-shadow-2xl">
+                    <div class="swiper-button-prev w-10 h-10 rounded-full bg-white -translate-x-5 rtl:translate-x-5 drop-shadow-2xl">
                         <svg class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -222,7 +222,7 @@
                                 stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="swiper-button-next w-10 h-10 rounded-full bg-white translate-x-5 drop-shadow-2xl">
+                    <div class="swiper-button-next w-10 h-10 rounded-full bg-white translate-x-5 rtl:-translate-x-5 drop-shadow-2xl">
                         <svg class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -998,7 +998,7 @@
                 </div>
             </div>
             <!-- Navigation buttons -->
-            <div class="swiper-button-prev w-10 h-10 rounded-full bg-white !left-0 drop-shadow-2xl">
+            <div class="swiper-button-prev w-10 h-10 rounded-full bg-white !start-0 drop-shadow-2xl">
                 <svg
                     class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -1008,7 +1008,7 @@
                 </svg>
 
             </div>
-            <div class="swiper-button-next w-10 h-10 rounded-full bg-white !right-0 drop-shadow-2xl">
+            <div class="swiper-button-next w-10 h-10 rounded-full bg-white !end-0 drop-shadow-2xl">
                 <svg
                     class="!fill-white !w-[10px] rtl:rotate-180" width="7" height="14" viewBox="0 0 7 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">

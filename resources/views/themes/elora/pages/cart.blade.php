@@ -18,7 +18,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
         {{-- ── Breadcrumb ──────────────────────────────────────────────────── --}}
         <div class="hidden lg:flex items-center gap-2 text-[13px] text-[#707070] mb-8">
             <a href="{{ route('tenant.home') }}" class="hover:text-primary transition">{{ __('Home') }}</a>
-            <svg class="w-[10px] h-[10px] text-[#707070]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            <svg class="w-[10px] h-[10px] text-[#707070] rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>

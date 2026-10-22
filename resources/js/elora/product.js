@@ -63,21 +63,21 @@ window.eloraOpenDeliveryModal = function () {
         var thumbsSwiper = new Swiper(".product-preview-thumbs", {
             spaceBetween: 16,
             slidesPerView: 'auto',
-            freeMode: true,
+            freeMode: false,
             watchSlidesProgress: true,
             slideActiveClass: 'swiper-slide-thumb-active',
         });
         var fsThumbsSwiper = new Swiper(".fs-product-preview-thumbs", {
             spaceBetween: 16,
             slidesPerView: 'auto',
-            freeMode: true,
+            freeMode: false,
             watchSlidesProgress: true,
             slideActiveClass: 'swiper-slide-thumb-active',
         });
         var productSlid = new Swiper(".product-slid-swiper", {
             spaceBetween: 24,
             slidesPerView: "auto",
-            freeMode: true,
+            freeMode: false,
         });
 
         function eloraStopAllVideos(swiperEl, videoClass) {

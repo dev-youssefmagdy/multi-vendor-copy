@@ -4,11 +4,13 @@ namespace App\Livewire\Tenant\Storefront;
 
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
+use App\Models\Tenant\Coupon;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantPageSection;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\CountryDetectorService;
+use App\Services\Tenant\CustomerCountryResolver;
 use App\Services\Tenant\HomeVariantResolver;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use Livewire\Component;
@@ -207,6 +209,19 @@ class HomePage extends Component
                 ->get()
             : collect();
 
+        // Code advertised on the Flash Sale strip's CTA: the newest currently-valid coupon
+        // usable in the customer's country (same validity window CartPage::applyCoupon checks).
+        $flashCouponCode = null;
+        if ($flashSales->isNotEmpty() && in_array('flash_sale_strip', $homeSections, true)) {
+            $countryId = app(CustomerCountryResolver::class)->resolveId();
+            $flashCouponCode = Coupon::query()
+                ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
+                ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
+                ->where(fn($q) => $q->whereNull('country_id')->when($countryId, fn($q) => $q->orWhere('country_id', $countryId)))
+                ->latest()
+                ->value('code');
+        }
+
         $paginatedProducts = $repo->paginatedProducts([], $this->perPage, 1);
 
         $data = array_merge($this->sharedData(), [
@@ -214,6 +229,7 @@ class HomePage extends Component
             'flashSales' => $flashSales,
             'flashProducts' => $flashProducts,
             'flashBanner' => $flashBanner,
+            'flashCouponCode' => $flashCouponCode,
             'newInProducts' => collect($newInPaginator->items()),
             'bestSelling' => collect($bestSellingPaginator->items()),
             'topRatedProducts' => collect($topRatedPaginator->items()),

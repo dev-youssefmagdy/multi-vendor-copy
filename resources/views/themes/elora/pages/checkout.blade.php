@@ -6,13 +6,13 @@
         {{-- ── Breadcrumb ──────────────────────────────────────────────────── --}}
         <div class="hidden md:flex items-center gap-2 text-[11px] font-[500] text-[#999] mb-8">
             <a href="{{ route('tenant.home') }}"  class="hover:text-black transition">{{ __('Home') }}</a>
-            <svg class="w-[5px] h-[5px] text-[#707070]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            <svg class="w-[5px] h-[5px] text-[#707070] rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
             <a href="{{ route('tenant.storefront.cart') }}"
                 class="hover:text-black transition">{{ __('Cart') }}</a>
-            <svg class="w-[5px] h-[5px] text-[#707070]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            <svg class="w-[5px] h-[5px] text-[#707070] rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>

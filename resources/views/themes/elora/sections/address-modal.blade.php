@@ -157,7 +157,7 @@ $cityRequired – optional, shows the required marker on City
                     </svg>
                     <span x-show="!loading">{{ __('Select address on map') }}</span>
                     <span x-show="loading" x-cloak>{{ __('Detecting location...') }}</span>
-                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#FDFDFD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+                    <svg class="w-4 h-4 shrink-0 rtl:rotate-180" viewBox="0 0 24 24" fill="none" stroke="#FDFDFD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7" /></svg>
                 </button>
                 <p x-show="notice" x-cloak x-text="notice" class="text-[12px] text-[#8F8F8F] self-stretch text-center"></p>
                 <p x-show="error" x-cloak x-text="error" class="text-[12px] text-[#DE1709] self-stretch text-center"></p>

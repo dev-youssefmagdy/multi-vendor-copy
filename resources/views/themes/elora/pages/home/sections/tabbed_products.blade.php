@@ -8,9 +8,9 @@
         <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
 
             {{-- Tab pills --}}
-            @php $pillBase = 'flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0'; @endphp
-            <div class="flex items-center md:justify-center gap-2 mb-4 overflow-x-auto no-scrollbar pb-1">
-                <button data-tab="flash" type="button"
+            @php $pillBase = 'flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 justify-center sm:justify-start max-sm:w-[calc((100%-16px)/2.75)] max-sm:px-2 max-sm:gap-1 snap-start'; @endphp
+            <div class="flex items-center md:justify-center gap-2 mb-4 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
+                <button data-tab="flash" data-see-all="{{ route('tenant.storefront.offers') }}" type="button"
                     class="cat-pill tabbed-pill active {{ $pillBase }} border border-main bg-main text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -18,7 +18,7 @@
                     {{ __('Flash products') }}
                 </button>
 
-                <button data-tab="bestselling" type="button"
+                <button data-tab="bestselling" data-see-all="{{ route('tenant.storefront.best-selling') }}" type="button"
                     class="cat-pill tabbed-pill {{ $pillBase }} border border-main-light text-main">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -27,7 +27,7 @@
                     {{ __('Best-selling') }}
                 </button>
 
-                <button data-tab="newin" type="button"
+                <button data-tab="newin" data-see-all="{{ route('tenant.storefront.new-in') }}" type="button"
                     class="cat-pill tabbed-pill {{ $pillBase }} border border-main-light text-main">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -35,7 +35,7 @@
                     {{ __('New in') }}
                 </button>
 
-                <button data-tab="toprated" type="button"
+                <button data-tab="toprated" data-see-all="{{ route('tenant.storefront.category') }}" type="button"
                     class="cat-pill tabbed-pill {{ $pillBase }} border border-main-light text-main">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -45,9 +45,12 @@
                 </button>
             </div>
 
-            {{-- Single product swiper — populated server-side on first load, then via AJAX --}}
-            <div id="tabbed-products-swiper-wrap">
-                <div class="swiper product-slid-swiper" id="tabbed-products-swiper">
+        </div>
+
+        {{-- Single product swiper — populated server-side on first load, then via AJAX.
+             Desktop: full-bleed with a 38px start gutter and none at the end (ps/pe follow LTR/RTL). --}}
+        <div id="tabbed-products-swiper-wrap" class="px-3 sm:px-4 lg:ps-[38px] lg:pe-0">
+                <div class="swiper product-slid-swiper" id="tabbed-products-swiper" data-per-view="6.25" data-per-view-mobile="2.5">
                     <div class="swiper-wrapper" id="tabbed-products-wrapper">
                         @forelse ($flashProducts as $product)
                         <div class="swiper-slide w-[132px] sm:w-[182px] lg:w-[210px]">
@@ -58,18 +61,18 @@
                         @endforelse
                     </div>
                 </div>
-            </div>
+        </div>
 
+        <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             {{-- Show More --}}
-            {{--<div class="flex justify-center mt-6" id="tabbed-products-more"
-                @if(!($hasMoreFlash ?? false)) style="display:none" @endif>
+            <div class="hidden sm:flex justify-center mt-6 sm:mt-10" id="tabbed-products-more">
                 <button type="button" id="tabbed-products-more-btn"
-                    class="flex items-center gap-2 px-8 py-3 rounded-full border-2 border-main text-main text-sm font-semibold hover:bg-main hover:text-white transition-colors">
+                    class="flex items-center justify-center gap-2 w-full max-w-[340px] h-[50px] rounded-lg border border-main text-main text-base font-medium hover:bg-main hover:text-white transition-colors">
                     {{ __('Show More') }}
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-            </div>--}}
+            </div>
         </div>
     </section>

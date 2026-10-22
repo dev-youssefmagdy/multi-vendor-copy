@@ -1,0 +1,1 @@
+import{t as e}from"./forms-B56Rp87p.js";export{e as TenantForm};

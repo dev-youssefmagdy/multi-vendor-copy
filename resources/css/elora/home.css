@@ -52,3 +52,28 @@
             .elora-cat-label    { height: 51px; padding: 8px; }
             .elora-cat-label span { font-size: 18px; line-height: 23px; }
         }
+
+        /* ── Hero: rounded, inset banner (387px tall, 108px side gutters on desktop) ── */
+        body[data-page="index"] .hero-wrapper .hero-slider { cursor: grab; }
+        body[data-page="index"] .hero-wrapper .hero-slider:active { cursor: grabbing; }
+        @media (min-width: 1024px) {
+            body[data-page="index"] .hero-wrapper { padding: 30px 108px; }
+            body[data-page="index"] .hero-wrapper .hero-slider { border-radius: 20px; overflow: hidden; }
+            body[data-page="index"] .hero-wrapper .hero-img { height: 387px; max-height: 387px; object-fit: cover; }
+            body[data-page="index"] .hero-wrapper .swiper-button-prev,
+            body[data-page="index"] .hero-wrapper .swiper-button-next { margin-top: 0; transform: translateY(-50%); }
+        }
+
+        /* ── Mobile 2-column product grid (sections marked data-mobile-grid; carousel from sm up) ── */
+        @media (max-width: 639px) {
+            .elora-mobile-grid .swiper-wrapper {
+                display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+                transform: none !important;
+            }
+            .elora-mobile-grid .swiper-slide { width: auto !important; margin: 0 !important; }
+            .elora-mobile-grid .product-card { max-width: none; }
+        }
+
+        /* ── Desktop carousel arrows: fade out at the ends ── */
+        .elora-carousel-prev.swiper-button-disabled,
+        .elora-carousel-next.swiper-button-disabled { opacity: 0; pointer-events: none; }

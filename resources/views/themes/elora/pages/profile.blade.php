@@ -560,7 +560,7 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                             <a href="{{ route('tenant.storefront.order-status', $order->uuid) }}"
                                 class="flex items-center justify-center gap-2 bg-[#171717] text-white text-sm font-medium rounded-full px-6 py-2.5 hover:bg-black transition-colors whitespace-nowrap">
                                 {{ __('View Details') }}
-                                <svg class="w-4 h-4" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
                                     <path d="m9 18 6-6-6-6" stroke-linecap="round" />
                                 </svg>
                             </a>
