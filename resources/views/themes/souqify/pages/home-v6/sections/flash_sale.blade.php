@@ -75,6 +75,13 @@
         background: var(--color-brand-pink, #FF1A90);
         border-radius: 0px 34px 34px 0px;
     }
+    /* RTL: the pill still sits flush against the section's leading edge
+       (flex-start flips it to the right), so the rounded corner has to move
+       with it - to the left - instead of staying pinned to the physical
+       right where it would land right against that same edge. */
+    [dir="rtl"] .sqv6-flash__head {
+        border-radius: 34px 0px 0px 34px;
+    }
     @media (max-width: 1023.98px) {
         /* The title reads short on phones, so centering it against the
            countdown's own height (rather than bottom-aligning it) keeps the
@@ -86,7 +93,7 @@
     .sqv6-flash__title {
         font-family: 'Outfit', sans-serif;
         font-weight: 800;
-        font-size: 26px;
+        font-size: 22px;
         line-height: 1.25;              /* 60 / 48 */
         text-align: right;
         color: #FFFFFF;
@@ -145,6 +152,9 @@
         /* Nothing leaves the panel: the swiper clips its own track, and this
            catches anything the track's rounding pushes past it. */
         overflow: hidden;
+    }
+    [dir="rtl"] .sqv6-flash__panel {
+        border-radius: 34px 0px 0px 0px;
     }
     /* Draggable fan cascade - same technique as Elora Minimal Edition's Best
        Seller carousel (see mountFlashCascade() in carousels-v6.js): a real
@@ -227,6 +237,9 @@
             gap: clamp(24px, 4.788vw, 68.94px);
             border-radius: 0px clamp(34px, 4.681vw, 67.4118px) clamp(34px, 4.681vw, 67.4118px) 0px;
         }
+        [dir="rtl"] .sqv6-flash__head {
+            border-radius: clamp(34px, 4.681vw, 67.4118px) 0px 0px clamp(34px, 4.681vw, 67.4118px);
+        }
         .sqv6-flash__title { font-size: clamp(32px, 3.333vw, 48px); }
         .sqv6-flash__ends-label { font-size: clamp(12px, 1.1298vw, 16.2687px); }
         .sqv6-flash__digit {
@@ -241,6 +254,9 @@
             padding: clamp(24px, 2.222vw, 32px) max(clamp(24px, 3.889vw, 56px), calc((100% - 1328px) / 2));
             gap: clamp(16px, 1.667vw, 24px);
             border-radius: 0px clamp(34px, 4.681vw, 67.4118px) 0px 0px;
+        }
+        [dir="rtl"] .sqv6-flash__panel {
+            border-radius: clamp(34px, 4.681vw, 67.4118px) 0px 0px 0px;
         }
         .sqv6-flash__cta {
             /* 320.21 x 67.41 */
