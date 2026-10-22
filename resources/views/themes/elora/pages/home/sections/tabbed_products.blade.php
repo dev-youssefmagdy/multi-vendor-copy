@@ -63,8 +63,7 @@
                 </div>
         </div>
 
-        <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
-            {{-- Show More --}}
+        {{-- <div class="max-w-screen-xl mx-auto px-3 sm:px-4 lg:px-6">
             <div class="hidden sm:flex justify-center mt-6 sm:mt-10" id="tabbed-products-more">
                 <button type="button" id="tabbed-products-more-btn"
                     class="flex items-center justify-center gap-2 w-full max-w-[340px] h-[50px] rounded-lg border border-main text-main text-base font-medium hover:bg-main hover:text-white transition-colors">
@@ -74,5 +73,5 @@
                     </svg>
                 </button>
             </div>
-        </div>
+        </div> --}}
     </section>
