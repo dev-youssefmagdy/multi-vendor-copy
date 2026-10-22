@@ -60,7 +60,7 @@ function mountCategories() {
   if (!swiperEl) return;
 
   new Swiper(swiperEl, {
-    // Phones show exactly four tiles; a swipe replaces them with the next four.
+    // Phones show exactly four tiles, one view per swipe.
     slidesPerView: 4,
     slidesPerGroup: 4,
     spaceBetween: 12,
@@ -233,17 +233,19 @@ function mountShopCategory() {
   if (!swiperEl) return;
 
   new Swiper(swiperEl, {
+    // A swipe advances one tile at a time rather than paging to the next
+    // group of three/four/six.
     slidesPerView: 3,
-    slidesPerGroup: 3,
+    slidesPerGroup: 1,
     spaceBetween: 12,
     breakpoints: {
-      640: { slidesPerView: 4, slidesPerGroup: 4, spaceBetween: 16 },
+      640: { slidesPerView: 4, slidesPerGroup: 1, spaceBetween: 16 },
       // The comp's 1328px row holds all six tiles at a 16px gap. The blade
       // now renders up to 20 categories (see explore_products.blade.php), so
       // stores with more than 6 still have real overflow to drag through -
       // only a store with 6 or fewer categories won't need to scroll here,
       // which is correct (nothing to scroll to).
-      1024: { slidesPerView: 6, slidesPerGroup: 6, spaceBetween: 16 },
+      1024: { slidesPerView: 6, slidesPerGroup: 1, spaceBetween: 16 },
     },
   });
 }
