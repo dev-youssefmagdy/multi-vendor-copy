@@ -156,7 +156,7 @@
             <div id="mantiProductMediaSlider" data-media-items='@json($mediaItems)' class="flex flex-col gap-4 lg:gap-6"
                  wire:ignore>
 
-                <div class="relative select-none w-[500px] h-[500px] max-w-full mx-auto">
+                <div class="relative select-none w-full max-w-[500px] aspect-square mx-auto">
                     <!-- top left badge -->
                     @if($badgeLabel)
                         <span
@@ -202,7 +202,7 @@
                                     </div>
                                 @else
                                     <div class="swiper-slide flex items-center justify-center bg-[#E6E6E6]">
-                                        <img {{ $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }} class="w-full h-full object-contain" src="{{ $item['src'] }}"
+                                        <img {{ $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' }} class="w-full h-full object-cover sm:object-contain" src="{{ $item['src'] }}"
                                              alt="{{ $item['alt'] ?? ($product->translationValue('name') ?? '') }}">
                                     </div>
                                 @endif
