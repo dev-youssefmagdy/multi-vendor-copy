@@ -404,7 +404,7 @@ class ProfilePage extends Component
             'statusFilter' => $this->statusFilter,
             'reviewedProductIds' => $reviewedProductIds,
             'addresses' => $addresses,
-            'countries' => Country::with('translations.language')->orderBy('name')->get(['id', 'name', 'flag_emoji']),
+            'countries' => Country::with('translations.language')->orderBy('name')->get(['id', 'name', 'iso2', 'flag_emoji']),
             'showAddressModal' => $this->showAddressModal,
             'editingAddressId' => $this->editingAddressId,
             'addrLabel' => $this->addrLabel,
