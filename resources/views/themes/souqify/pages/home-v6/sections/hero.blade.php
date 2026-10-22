@@ -1,5 +1,5 @@
 @php
-    $__heroBanners = collect($banners ?? [])->take(3)->values();
+    $__heroBanners = collect($banners ?? [])->take(8)->values();
 
     // The heading reads as a pink first word followed by the rest in black, so a
     // banner title from the database is split the same way the designed copy is.
@@ -120,8 +120,8 @@
 
 <!-- ============ HERO ============ -->
 <section class="relative bg-white mb-[16px] lg:mb-[48px]" wire:ignore>
-  <div class="sqv-hero-static">
-    <div class="sqv-hero-static__inner">
+  <div class="swiper sqv6-hero-swiper">
+    <div class="swiper-wrapper">
       @forelse ($__heroBanners as $banner)
         <div class="swiper-slide">
           <div class="sqv6-hero__slide">
@@ -151,7 +151,7 @@
           </div>
         </div>
       @empty
-        @foreach ($__fallbackSlides as $__slide)
+        @foreach (array_slice($__fallbackSlides, 0, 1) as $__slide)
           <div class="swiper-slide">
             <div class="sqv6-hero__slide">
               <div class="sqv6-hero__copy">
@@ -168,14 +168,40 @@
         @endforeach
       @endforelse
     </div>
+    @if ($__heroBanners->count() > 1)
+      <div class="swiper-pagination sqv6-hero-pagination"></div>
+    @endif
   </div>
 </section>
 
 <style>
-    /* Hero shows one static banner - the carousel was removed, so the extra
-       banners stay in the markup but only the first one renders. */
-    .sqv-hero-static { position: relative; width: 100%; overflow: hidden; }
-    .sqv-hero-static__inner { display: block; width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide { width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide:not(:first-child) { display: none; }
+    .sqv6-hero-swiper { position: relative; width: 100%; overflow: hidden; }
+    .sqv6-hero-swiper .swiper-slide { width: 100%; }
+    .sqv6-hero-pagination { position: absolute; bottom: 12px; z-index: 20; }
+    .sqv6-hero-pagination .swiper-pagination-bullet { background: #fff; opacity: .6; }
+    .sqv6-hero-pagination .swiper-pagination-bullet-active { background: var(--color-brand-pink); opacity: 1; }
 </style>
+
+<script>
+(function () {
+  function mountHeroV6() {
+    var el = document.querySelector('.sqv6-hero-swiper');
+    if (!el || el.swiper || typeof Swiper === 'undefined') return;
+    var multi = el.querySelectorAll('.swiper-slide').length > 1;
+    new Swiper(el, {
+      loop: multi,
+      allowTouchMove: multi,
+      speed: 600,
+      autoplay: multi ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
+      pagination: multi ? { el: el.querySelector('.sqv6-hero-pagination'), clickable: true } : undefined,
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountHeroV6);
+  } else {
+    mountHeroV6();
+  }
+  window.addEventListener('load', mountHeroV6);
+  document.addEventListener('livewire:navigated', mountHeroV6);
+})();
+</script>

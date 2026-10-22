@@ -1,5 +1,5 @@
 @php
-    $__heroBanners = collect($banners ?? [])->take(3)->values();
+    $__heroBanners = collect($banners ?? [])->take(8)->values();
 
     // Design tokens (Figma – souqify v3 "Modern Edition" hero)
     $__slideCls   = 'relative flex flex-col items-center justify-center h-[280px] lg:h-[581px] px-[18px] lg:px-[61px] py-[22px] lg:py-[49px] overflow-hidden';
@@ -18,8 +18,8 @@
 @endphp
 <!-- ============ HERO ============ -->
 <section class="relative mb-[16px] lg:mb-[48px]" wire:ignore>
-  <div class="sqv-hero-static">
-    <div class="sqv-hero-static__inner">
+  <div class="swiper sqv3-hero-swiper">
+    <div class="swiper-wrapper">
       @forelse ($__heroBanners as $banner)
         <div class="swiper-slide">
           <div class="{{ $__slideCls }}">
@@ -45,7 +45,7 @@
           </div>
         </div>
       @empty
-        @foreach ($__fallbackSlides as $__slide)
+        @foreach (array_slice($__fallbackSlides, 0, 1) as $__slide)
           <div class="swiper-slide">
             <div class="{{ $__slideCls }}">
               <div class="{{ $__overlayCls }}" style="{{ $__overlayBg }}"></div>
@@ -66,14 +66,40 @@
         @endforeach
       @endforelse
     </div>
+    @if ($__heroBanners->count() > 1)
+      <div class="swiper-pagination sqv3-hero-pagination"></div>
+    @endif
   </div>
 </section>
 
 <style>
-    /* Hero shows one static banner - the carousel was removed, so the extra
-       banners stay in the markup but only the first one renders. */
-    .sqv-hero-static { position: relative; width: 100%; overflow: hidden; }
-    .sqv-hero-static__inner { display: block; width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide { width: 100%; }
-    .sqv-hero-static__inner > .swiper-slide:not(:first-child) { display: none; }
+    .sqv3-hero-swiper { position: relative; width: 100%; overflow: hidden; }
+    .sqv3-hero-swiper .swiper-slide { width: 100%; }
+    .sqv3-hero-pagination { position: absolute; bottom: 12px; z-index: 20; }
+    .sqv3-hero-pagination .swiper-pagination-bullet { background: #fff; opacity: .6; }
+    .sqv3-hero-pagination .swiper-pagination-bullet-active { background: var(--color-souqify-teal); opacity: 1; }
 </style>
+
+<script>
+(function () {
+  function mountHeroV3() {
+    var el = document.querySelector('.sqv3-hero-swiper');
+    if (!el || el.swiper || typeof Swiper === 'undefined') return;
+    var multi = el.querySelectorAll('.swiper-slide').length > 1;
+    new Swiper(el, {
+      loop: multi,
+      allowTouchMove: multi,
+      speed: 600,
+      autoplay: multi ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
+      pagination: multi ? { el: el.querySelector('.sqv3-hero-pagination'), clickable: true } : undefined,
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountHeroV3);
+  } else {
+    mountHeroV3();
+  }
+  window.addEventListener('load', mountHeroV3);
+  document.addEventListener('livewire:navigated', mountHeroV3);
+})();
+</script>

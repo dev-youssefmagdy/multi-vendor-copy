@@ -5,6 +5,9 @@
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
         @endif
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
         <button type="button" onclick="souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['fav'] ?? '{}' }}' aria-label="{{ __('Wishlist') }}" class="absolute top-[6px] left-[6px] rtl:left-auto rtl:right-[6px] bg-white rounded-full p-[5px] shadow"><img src="{{ asset('souqify-5/assets/icons/heart.svg') }}" class="size-[14px]" alt="" /></button>
         @if (empty($p['outOfStock']))
             <button type="button" wire:click.stop.prevent="addToCart({{ $p['id'] }})" wire:loading.attr="disabled" wire:target="addToCart({{ $p['id'] }})" aria-label="{{ __('Add to cart') }}" class="absolute bottom-[6px] right-[6px] rtl:right-auto rtl:left-[6px] rounded-[8px] p-[5px] shadow" style="background:var(--color-black-alt)"><img src="{{ asset('souqify-5/assets/icons/cart-add.svg') }}" class="size-[16px] invert" alt="" /></button>

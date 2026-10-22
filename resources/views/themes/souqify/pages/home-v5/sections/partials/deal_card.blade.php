@@ -9,6 +9,9 @@
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="sqv5-deal__img" onerror="this.style.display='none'" />
         @endif
+@if (!empty($p['outOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
 
         @if (!empty($p['tag']))
             <span class="sqv5-deal__tag"><span class="sqv5-deal__tag-text">{{ $p['tag'] }}</span></span>
