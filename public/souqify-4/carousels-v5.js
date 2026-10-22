@@ -97,24 +97,40 @@ function mountTrending() {
   if (!wrapper) return;
   const swiperEl = wrapper.closest(".swiper");
   if (!swiperEl) return;
+  const head = document.querySelector(".sqv5-trend__head");
 
-  new Swiper(swiperEl, {
+  // The section's own horizontal padding was removed so the carousel can
+  // bleed flush to the trailing edge; slidesOffsetBefore recreates the
+  // gutter at the start only. The head's padding is a fluid clamp()/calc(),
+  // not a static breakpoint value, so it's read live from the rendered head
+  // instead of approximated, keeping the two exactly equal at every width.
+  // Swiper mirrors the offset to the visual start automatically under RTL.
+  // A ResizeObserver on the head (rather than Swiper's own resize event,
+  // which watches the swiper container and doesn't fire reliably here)
+  // keeps it in sync as the fluid padding changes.
+  const sw = new Swiper(swiperEl, {
     // Figma runs 5.5 cards per view: the sixth is half-cut so the row reads as
     // swipeable. Card width follows from slidesPerView, not a fixed px width.
     slidesPerView: 2.3,
     spaceBetween: 12,
-    // The section's own horizontal padding was removed so the carousel can
-    // bleed flush to the trailing edge; this leading offset recreates the
-    // gutter at the start only, matching the title row's own padding.
-    // Swiper mirrors it to the visual start automatically under RTL
-    // (direction read from the container's computed style), so no separate
-    // RTL handling is needed.
-    slidesOffsetBefore: 16,
     breakpoints: {
       640: { slidesPerView: 3.2, spaceBetween: 12 },
-      1024: { slidesPerView: 5.5, spaceBetween: 12, slidesOffsetBefore: 24 },
+      1024: { slidesPerView: 5.5, spaceBetween: 12 },
     },
   });
+  const syncOffset = () => {
+    if (!head) return;
+    const gutter = parseFloat(getComputedStyle(head).paddingInlineStart) || 0;
+    if (sw.params.slidesOffsetBefore !== gutter) {
+      sw.params.slidesOffsetBefore = gutter;
+      sw.update();
+    }
+  };
+  syncOffset();
+  if (head && "ResizeObserver" in window) {
+    new ResizeObserver(syncOffset).observe(head);
+  }
+  window.addEventListener("resize", syncOffset);
 }
 
 function mountShopCategory() {
@@ -138,26 +154,42 @@ function mountNewIn() {
   if (!wrapper) return;
   const swiperEl = wrapper.closest(".swiper");
   if (!swiperEl) return;
+  const head = document.querySelector(".sqv5-newin__head");
 
-  new Swiper(swiperEl, {
+  // The section's own horizontal padding was removed so the carousel can
+  // bleed flush to the trailing edge; slidesOffsetBefore recreates the
+  // gutter at the start only. The head's padding is a fluid clamp()/calc(),
+  // not a static breakpoint value, so it's read live from the rendered head
+  // instead of approximated, keeping the two exactly equal at every width.
+  // Swiper mirrors the offset to the visual start automatically under RTL.
+  // A ResizeObserver on the head (rather than Swiper's own resize event,
+  // which watches the swiper container and doesn't fire reliably here)
+  // keeps it in sync as the fluid padding changes.
+  const sw = new Swiper(swiperEl, {
     // One whole column (three cards) per phone screen, and a swipe brings the
     // next three - no peek, so no card is cut.
     slidesPerView: 1,
     slidesPerGroup: 1,
     spaceBetween: 12,
-    // The section's own horizontal padding was removed so the carousel can
-    // bleed flush to the trailing edge; this leading offset recreates the
-    // gutter at the start only, matching the title row's own padding.
-    // Swiper mirrors it to the visual start automatically under RTL
-    // (direction read from the container's computed style), so no separate
-    // RTL handling is needed.
-    slidesOffsetBefore: 16,
     breakpoints: {
       640: { slidesPerView: 1.6, spaceBetween: 12 },
       // Two full columns plus half of the third, per the comp.
-      1024: { slidesPerView: 2.5, spaceBetween: 12, slidesOffsetBefore: 24 },
+      1024: { slidesPerView: 2.5, spaceBetween: 12 },
     },
   });
+  const syncOffset = () => {
+    if (!head) return;
+    const gutter = parseFloat(getComputedStyle(head).paddingInlineStart) || 0;
+    if (sw.params.slidesOffsetBefore !== gutter) {
+      sw.params.slidesOffsetBefore = gutter;
+      sw.update();
+    }
+  };
+  syncOffset();
+  if (head && "ResizeObserver" in window) {
+    new ResizeObserver(syncOffset).observe(head);
+  }
+  window.addEventListener("resize", syncOffset);
 }
 
 // Best Seller (desktop) uses a draggable ROTATED fan cascade - same

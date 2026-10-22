@@ -158,17 +158,30 @@ function mountFanCascadeCarousel(containerId, positions, { baseWidth, baseHeight
   };
 
   return new Swiper(container.closest(".swiper"), {
-    slidesPerView: "auto",
+    // The cascade's own look (overlap, scale, stacking order) comes entirely
+    // from applyPositions()'s inline transforms below, never from Swiper's
+    // box model - so Swiper only needs ONE swipe to equal ONE step through
+    // the cascade. slidesPerView:"auto" let Swiper measure each slide's real
+    // (overlapping) width instead, which on a short, heavily-overlapped set
+    // like this one left it thinking there was almost nothing to scroll -
+    // e.g. mobile's 3 cards (154.5px each, cascaded) only needed 56px of
+    // scroll range to show them all. Any normal swipe overshoots a range
+    // that small, and Swiper's touch-end logic reads "dragged past the end"
+    // and rewinds straight back to the first card - which is exactly the
+    // "carousel doesn't move" symptom this was shipped with. slidesPerView:1
+    // gives Swiper one full-width snap point per real slide instead, so a
+    // normal swipe always lands on exactly the next/previous one.
+    slidesPerView: 1,
     virtualTranslate: true,
     // Swiper's clone-based loop needs enough real slides to cover
-    // slidesPerView on both sides of the active one; with slidesPerView:"auto"
-    // and as few as 3 real slides (mobile), that check fails ("not enough
-    // slides for loop mode"), and loop silently misbehaves - cards land
-    // outside their cascade position and dragging stops advancing. `rewind`
-    // gives the same "keeps going past the last card" feel by snapping back
-    // to the opposite end instead, without needing Swiper's own clones at
-    // all - our modulo-based applyPositions() already draws the infinite
-    // cascade regardless of which real slide Swiper reports as active.
+    // slidesPerView on both sides of the active one; mobile's fixed 3-card
+    // set is too few, so loop silently misbehaves there ("not enough slides
+    // for loop mode") - cards land outside their cascade position and
+    // dragging stops advancing. `rewind` gives the same "keeps going past
+    // the last card" feel by snapping back to the opposite end instead,
+    // without needing Swiper's own clones at all - our modulo-based
+    // applyPositions() already draws the infinite cascade regardless of
+    // which real slide Swiper reports as active.
     loop,
     rewind: !loop,
     on: {
