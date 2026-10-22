@@ -30,6 +30,7 @@ class SectionRegistry
                 'trust_bar' => 'Trust Bar',
                 'category_carousel' => 'Category Carousel (Static)',
                 'tabbed_products' => 'Tabbed Products',
+                'category_swiper' => 'Category Swiper (2 Rows)',
                 'flash_sale_strip' => 'Flash Sale Strip',
                 'trending_now' => 'Trending Now',
                 'category_strip' => 'Orange Category Strip',

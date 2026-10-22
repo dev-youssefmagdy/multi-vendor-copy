@@ -106,6 +106,7 @@
     function eloraInitSwipers() {
         eloraDestroySwiper('.hero-slider');
         eloraDestroySwiper('.categories-slide');
+        eloraDestroySwiper('.category-swiper-2row');
         eloraInitProductSliders();
 
         var heroElement = document.querySelector('.hero-slider');
@@ -128,6 +129,18 @@
                 },
             });
         }
+
+        document.querySelectorAll('.category-swiper-2row').forEach(function (element) {
+            new Swiper(element, {
+                slidesPerView: 'auto',
+                spaceBetween: 16,
+                freeMode: true,
+                grabCursor: true,
+                breakpoints: {
+                    1024: { spaceBetween: 32 },
+                },
+            });
+        });
 
         var categoriesElement = document.querySelector('.categories-slide');
         if (categoriesElement) {
