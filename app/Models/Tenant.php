@@ -94,12 +94,16 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     static function saveData($tenantId, $data): void
     {
+        // Every attribute lives in the single `data` JSON column, so concurrent writers (queue jobs + the
+        // onboarding wizard) would overwrite each other's keys. Lock the row for the read-modify-write.
         tenancy()->central(function () use ($tenantId, $data) {
-            $tenant = self::query()
-                ->where('id', $tenantId)->first();
+            self::query()->getConnection()->transaction(function () use ($tenantId, $data) {
+                $tenant = self::query()
+                    ->where('id', $tenantId)->lockForUpdate()->first();
 
-            $tenant->fill($data);
-            $tenant->save();
+                $tenant->fill($data);
+                $tenant->save();
+            });
         });
     }
 

@@ -20,6 +20,7 @@ class SyncTenantSectionJob implements ShouldQueue
     public function __construct(
         public string $tenantId,
         public string $section,
+        public bool $onboarding = false,
     ) {
         $this->onQueue('tenant-sync');
     }
@@ -33,6 +34,13 @@ class SyncTenantSectionJob implements ShouldQueue
         }
 
         $syncService->syncSection($tenant, $this->section);
+
+        // Post-registration chain: profit is its own chained job, and the wizard shows progress.
+        if ($this->onboarding) {
+            Tenant::saveData($tenant->id, ['sync_completed_section' => $this->section]);
+
+            return;
+        }
 
         if ($this->section === 'products') {
             ApplyTenantProfitPercentageJob::dispatch($tenant->id);

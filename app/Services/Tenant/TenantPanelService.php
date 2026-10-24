@@ -25,6 +25,7 @@ use App\Models\Tenant\Subscriber;
 use App\Services\TenantNotificationService;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\TenantThemeColor;
+use App\Support\CacheVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -1130,13 +1131,6 @@ class TenantPanelService
             'logo_text_en' => $shopName ?: 'My Store',
         ];
 
-        foreach ($synced as $key => $value) {
-            Setting::query()->updateOrCreate(
-                ['name' => $key],
-                ['value' => $value, 'group' => 'appearance']
-            );
-        }
-
         $defaults = [
             'logo_path' => '',
             'footer_text' => '',
@@ -1150,12 +1144,25 @@ class TenantPanelService
             'logo_path_en' => '',
         ];
 
-        foreach ($defaults as $key => $value) {
-            Setting::query()->firstOrCreate(
-                ['name' => $key],
-                ['value' => $value, 'group' => 'appearance']
-            );
-        }
+        $now = now();
+        $row = fn (string $key, string $value) => [
+            'name' => $key,
+            'value' => $value,
+            'group' => 'appearance',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        // Synced keys are overwritten; defaults are only inserted when missing. One query each.
+        Setting::query()->upsert(
+            array_map($row, array_keys($synced), $synced),
+            ['name'],
+            ['value', 'group', 'updated_at']
+        );
+        Setting::query()->insertOrIgnore(array_map($row, array_keys($defaults), $defaults));
+
+        // Bulk writes skip model events; bump the storefront cache version once instead.
+        CacheVersion::bump('Setting');
 
         $this->syncDefaultBanners();
     }
@@ -1173,6 +1180,8 @@ class TenantPanelService
             ->orderBy('id')
             ->get();
 
+        $tenantLanguageIds = \App\Models\Tenant\Language::query()->pluck('id', 'code');
+
         foreach ($defaults as $default) {
             $banner = Banner::query()->create([
                 'url' => $default->url,
@@ -1187,9 +1196,7 @@ class TenantPanelService
                 if (!$localeCode) {
                     continue;
                 }
-                $tenantLanguageId = \App\Models\Tenant\Language::query()
-                    ->where('code', $localeCode)
-                    ->value('id');
+                $tenantLanguageId = $tenantLanguageIds->get($localeCode);
                 if (!$tenantLanguageId) {
                     continue;
                 }

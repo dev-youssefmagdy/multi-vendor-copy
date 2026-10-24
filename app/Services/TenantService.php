@@ -27,7 +27,12 @@ class TenantService
     ) {
     }
 
-    public function save(array $attributes, ?Tenant $tenant = null): Tenant
+    /**
+     * @param bool $deferProvisioning When true (public registration) only the central rows are written here;
+     *                                the tenant database, owner admin and catalog sync are done by
+     *                                {@see \App\Jobs\ProvisionTenantJob} so the request returns immediately.
+     */
+    public function save(array $attributes, ?Tenant $tenant = null, bool $deferProvisioning = false): Tenant
     {
         $previousEmail = $tenant?->email;
         $isNew = $tenant === null || !$tenant->exists;
@@ -89,6 +94,10 @@ class TenantService
 
         // Fire TenantCreated after the central DB transaction commits so the job pipeline
         // (CreateDatabase, MigrateDatabase) runs without an active central transaction.
+        if ($deferProvisioning && $isNew) {
+            return $tenant;
+        }
+
         if ($isNew) {
             event(new TenantCreated($tenant));
 

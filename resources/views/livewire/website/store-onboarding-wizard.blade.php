@@ -74,7 +74,20 @@
             @endif
 
             {{-- STEP 2: Languages --}}
-            @if($step === 2)
+            {{-- Tenant database is still being built in the background --}}
+            @if(in_array($step, [2, 3], true) && !$provisioned)
+                <div class="text-center py-10" @if(!$provisionFailed) wire:poll.3s @endif>
+                    @if($provisionFailed)
+                        <i class="fas fa-triangle-exclamation text-red-500 text-3xl mb-4"></i>
+                        <p class="text-sm text-gray-600">{{ __('Something went wrong while preparing your store. Our team has been notified — please contact support.') }}</p>
+                    @else
+                        <i class="fas fa-spinner fa-spin text-primary text-3xl mb-4"></i>
+                        <p class="text-sm text-gray-600">{{ __('Preparing your store… this only takes a moment.') }}</p>
+                    @endif
+                </div>
+            @endif
+
+            @if($step === 2 && $provisioned)
                 <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Store Languages') }}</h2>
                 <p class="text-sm text-gray-500 mb-5">{{ __('Select the languages your store will support. You can add more later.') }}</p>
 
@@ -111,7 +124,7 @@
             @endif
 
             {{-- STEP 3: Theme --}}
-            @if($step === 3)
+            @if($step === 3 && $provisioned)
                 <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Storefront Theme') }}</h2>
                 <p class="text-sm text-gray-500 mb-5">{{ __('Pick the theme your storefront will use. You can change this later from the dashboard.') }}</p>
 
@@ -156,7 +169,24 @@
                     <p class="text-gray-500 text-sm mb-6 leading-relaxed">
                         {{ __('Your store is configured and ready. Click the button below to launch your storefront and go to your dashboard.') }}
                     </p>
+                    @if($catalogFailed)
+                        <div class="text-xs text-red-600 mb-3">
+                            <i class="fas fa-triangle-exclamation me-1"></i>
+                            {{ __('We could not finish importing your catalog. Our team has been notified — please contact support.') }}
+                        </div>
+                    @elseif(!$catalogSynced)
+                        <div wire:poll.3s class="mb-4">
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-1.5">
+                                <span><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Importing your products and catalog…') }}</span>
+                                <span>{{ $catalogProgress }}%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary rounded-full transition-all duration-500" style="width: {{ $catalogProgress }}%"></div>
+                            </div>
+                        </div>
+                    @endif
                     <button wire:click="launch" type="button"
+                        @disabled(!$catalogSynced)
                         wire:loading.attr="disabled"
                         wire:loading.class="opacity-75 cursor-not-allowed"
                         class="w-full btn-primary py-4 font-bold text-base rounded-xl mb-3">

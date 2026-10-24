@@ -41,7 +41,9 @@ use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Theme;
 use App\Models\Tenant\ThemeCountry;
+use App\Models\Tenant\Translation;
 use App\Models\Template as CentralTemplate;
+use App\Support\CacheVersion;
 use InvalidArgumentException;
 
 class TenantCatalogSyncService
@@ -239,17 +241,34 @@ class TenantCatalogSyncService
         $currencies = tenancy()->central(fn() => CentralCurrency::query()->orderBy('name')->get());
         $defaultCode = strtoupper((string) (tenancy()->central(fn() => CentralAppSetting::query()->where('key', 'default_currency')->value('value')) ?? 'USD'));
 
-        foreach ($currencies as $currency) {
-            Currency::query()->updateOrCreate(
-                ['central_currency_id' => $currency->id],
-                [
-                    'code' => strtoupper((string) ($currency->code ?: $this->inferCurrencyCode($currency))),
-                    'name' => $currency->name,
-                    'symbol' => $currency->sign,
-                    'conversion_rate' => $currency->conversion_rate,
-                    'is_active' => true,
-                    'is_default' => strtoupper((string) ($currency->code ?: $this->inferCurrencyCode($currency))) === $defaultCode,
-                ]
+        // Single bulk upsert: existing rows are matched by their tenant id (looked up by central id), new rows get id NULL.
+        $existingIds = Currency::query()
+            ->whereNotNull('central_currency_id')
+            ->pluck('id', 'central_currency_id');
+        $now = now();
+
+        $rows = $currencies->map(function ($currency) use ($existingIds, $defaultCode, $now) {
+            $code = strtoupper((string) ($currency->code ?: $this->inferCurrencyCode($currency)));
+
+            return [
+                'id' => $existingIds->get($currency->id),
+                'central_currency_id' => $currency->id,
+                'code' => $code,
+                'name' => $currency->name,
+                'symbol' => $currency->sign,
+                'conversion_rate' => $currency->conversion_rate,
+                'is_active' => true,
+                'is_default' => $code === $defaultCode,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        })->all();
+
+        foreach (array_chunk($rows, 500) as $chunk) {
+            Currency::query()->upsert(
+                $chunk,
+                ['id'],
+                ['central_currency_id', 'code', 'name', 'symbol', 'conversion_rate', 'is_active', 'is_default', 'updated_at']
             );
         }
 
@@ -257,6 +276,9 @@ class TenantCatalogSyncService
             ->whereNotNull('central_currency_id')
             ->whereNotIn('central_currency_id', $currencies->pluck('id'))
             ->delete();
+
+        // Bulk writes skip model events; bump the storefront cache version once instead.
+        CacheVersion::bump('Currency');
 
         return $currencies->count();
     }
@@ -272,29 +294,46 @@ class TenantCatalogSyncService
             ->pluck('value', 'key')
             ->all());
         $defaultLocale = $this->defaultLocale();
+        $now = now();
 
-        foreach ($settings as $setting) {
-            $centralValue = is_scalar($setting->value) || $setting->value === null
+        // `value` is only seeded on insert — the upsert never overwrites a tenant-customised value.
+        $rows = $settings->map(fn ($setting) => [
+            'name' => $setting->key,
+            'value' => is_scalar($setting->value) || $setting->value === null
                 ? (string) $setting->value
-                : json_encode($setting->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                : json_encode($setting->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'type' => $this->mapSettingType($setting->type),
+            'group' => str_starts_with($setting->key, 'mail_') ? 'mail' : 'general',
+            'options' => null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all();
 
-            $tenantSetting = Setting::query()->firstOrNew(['name' => $setting->key]);
+        if ($rows !== []) {
+            Setting::query()->upsert($rows, ['name'], ['type', 'group', 'options', 'updated_at']);
 
-            $tenantSetting->fill([
-                'type' => $this->mapSettingType($setting->type),
-                'group' => str_starts_with($setting->key, 'mail_') ? 'mail' : 'general',
-                'options' => null,
-            ]);
+            $settingIds = Setting::query()->whereIn('name', array_column($rows, 'name'))->pluck('id', 'name');
 
-            if (!$tenantSetting->exists) {
-                $tenantSetting->value = $centralValue;
+            // Same result as syncTranslations() per setting (its translations replaced by one title row),
+            // done as one delete + one insert.
+            Translation::query()
+                ->where('translatable_type', Setting::class)
+                ->whereIn('translatable_id', $settingIds->values())
+                ->delete();
+
+            $languageId = Language::query()->where('code', $defaultLocale)->value('id');
+
+            if ($languageId) {
+                Translation::query()->insert($settings->map(fn ($setting) => [
+                    'language_id' => $languageId,
+                    'translatable_type' => Setting::class,
+                    'translatable_id' => $settingIds[$setting->key],
+                    'field' => 'title',
+                    'value' => str($setting->key)->replace('_', ' ')->headline()->toString(),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])->all());
             }
-
-            $tenantSetting->save();
-
-            $tenantSetting->syncTranslations([
-                $defaultLocale => ['title' => str($setting->key)->replace('_', ' ')->headline()->toString()],
-            ]);
         }
 
         Setting::query()
@@ -310,6 +349,8 @@ class TenantCatalogSyncService
                 }
             });
 
+        CacheVersion::bump('Setting');
+
         return $settings->count();
     }
 
@@ -319,13 +360,17 @@ class TenantCatalogSyncService
             ->where('type', PaymentGatewayType::Orders->value)
             ->orderBy('name')->get());
 
+        $existing = PaymentGateway::query()
+            ->whereIn('central_payment_gateway_id', $gateways->pluck('id'))
+            ->get()
+            ->keyBy('central_payment_gateway_id');
+
         foreach ($gateways as $gateway) {
             $requiredKeys = array_values(array_unique(array_keys($gateway->credentials ?? [])));
             $isActive = $gateway->status === \App\Enums\ActivationStatus::Active;
 
-            $tenantGateway = PaymentGateway::query()->firstOrNew([
-                'central_payment_gateway_id' => $gateway->id,
-            ]);
+            $tenantGateway = $existing->get($gateway->id)
+                ?? new PaymentGateway(['central_payment_gateway_id' => $gateway->id]);
 
             $tenantGateway->fill([
                 'name' => $gateway->name,
@@ -361,15 +406,28 @@ class TenantCatalogSyncService
     protected function syncThemes(): int
     {
         $themes = tenancy()->central(fn() => CentralTemplate::query()
-            ->with(['previewFile', 'countries', 'parts'])
+            ->with(['previewFile', 'countries.translations.language', 'parts'])
             ->orderBy('name')
             ->get());
+
+        $existing = Theme::query()
+            ->whereIn('central_theme_id', $themes->pluck('id'))
+            ->get()
+            ->keyBy('central_theme_id');
+
+        // "All countries" is the same list for every universal template — fetch it once.
+        $allCountries = $themes->contains(fn ($theme) => $theme->countries->isEmpty())
+            ? tenancy()->central(fn() => \App\Models\Country::query()
+                ->with('translations.language') // `name` is translated — avoid 2 lazy queries per country
+                ->orderBy('name')
+                ->get(['id', 'iso2', 'name', 'flag_emoji']))
+            : collect();
 
         foreach ($themes as $theme) {
             // A template with no country assignments means "all countries" ⇒ universal.
             $isUniversal = $theme->countries->isEmpty();
 
-            $tenantTheme = Theme::query()->firstOrNew(['central_theme_id' => $theme->id]);
+            $tenantTheme = $existing->get($theme->id) ?? new Theme(['central_theme_id' => $theme->id]);
             $tenantTheme->fill([
                 'name' => $theme->name,
                 'slug' => $theme->slug,
@@ -383,7 +441,7 @@ class TenantCatalogSyncService
 
             $tenantTheme->save();
 
-            $this->syncThemeCountries($tenantTheme, $theme);
+            $this->syncThemeCountries($tenantTheme, $isUniversal ? $allCountries : $theme->countries);
         }
 
         Theme::query()
@@ -407,17 +465,8 @@ class TenantCatalogSyncService
      *   - Country no longer allowed → delete row (tenant cannot enable it anymore)
      *   - Existing row             → keep `is_enabled` untouched, refresh snapshot fields
      */
-    protected function syncThemeCountries(Theme $tenantTheme, CentralTemplate $centralTemplate): void
+    protected function syncThemeCountries(Theme $tenantTheme, Collection $assigned): void
     {
-        $assigned = $centralTemplate->countries; // eager-loaded
-
-        // Empty assignment means "all countries" — resolve by fetching every central country.
-        if ($assigned->isEmpty()) {
-            $assigned = tenancy()->central(fn() => \App\Models\Country::query()
-                ->orderBy('name')
-                ->get(['id', 'iso2', 'name', 'flag_emoji']));
-        }
-
         $allowedIds = $assigned->pluck('id')->map(fn($v) => (int) $v)->all();
 
         // Remove rows for countries that are no longer allowed.
@@ -426,44 +475,26 @@ class TenantCatalogSyncService
             ->whereNotIn('country_id', $allowedIds ?: [0])
             ->delete();
 
-        $existingIds = ThemeCountry::query()
-            ->where('theme_id', $tenantTheme->id)
-            ->pluck('country_id')
-            ->map(fn($v) => (int) $v)
-            ->all();
-
-        $now = now();
-        $inserts = [];
-        foreach ($assigned as $country) {
-            $cid = (int) $country->id;
-            if (in_array($cid, $existingIds, true)) {
-                // Refresh denormalised snapshot fields without touching is_enabled.
-                ThemeCountry::query()
-                    ->where('theme_id', $tenantTheme->id)
-                    ->where('country_id', $cid)
-                    ->update([
-                        'iso2' => $country->iso2,
-                        'name' => $country->name,
-                        'flag_emoji' => $country->flag_emoji,
-                        'updated_at' => $now,
-                    ]);
-                continue;
-            }
-
-            $inserts[] = [
-                'theme_id' => $tenantTheme->id,
-                'country_id' => $cid,
-                'iso2' => $country->iso2,
-                'name' => $country->name,
-                'flag_emoji' => $country->flag_emoji,
-                'is_enabled' => true, // default: tenant has every allowed country enabled
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+        if ($assigned->isEmpty()) {
+            return;
         }
 
-        if (!empty($inserts)) {
-            ThemeCountry::query()->insert($inserts);
+        // One upsert on the (theme_id, country_id) unique key: new countries are inserted enabled,
+        // existing rows only get their snapshot fields refreshed (is_enabled is left untouched).
+        $now = now();
+        $rows = $assigned->map(fn ($country) => [
+            'theme_id' => $tenantTheme->id,
+            'country_id' => (int) $country->id,
+            'iso2' => $country->iso2,
+            'name' => $country->name,
+            'flag_emoji' => $country->flag_emoji,
+            'is_enabled' => true, // default: tenant has every allowed country enabled
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all();
+
+        foreach (array_chunk($rows, 500) as $chunk) {
+            ThemeCountry::query()->upsert($chunk, ['theme_id', 'country_id'], ['iso2', 'name', 'flag_emoji', 'updated_at']);
         }
     }
 

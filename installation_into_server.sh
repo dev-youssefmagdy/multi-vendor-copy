@@ -27,7 +27,7 @@ systemctl restart apache2
 
 # php artisan queue:work database --queue=translations --sleep=3 --tries=1 --timeout=300 --max-time=3600
 
-# php artisan queue:work database --queue=tenant-sync --sleep=3 --tries=1 --timeout=600 --max-time=3600
+# php artisan queue:work database --queue=tenant-provision,tenant-sync,tenant-profit --sleep=3 --tries=1 --timeout=600 --max-time=3600
 
 systemctl restart supervisor
 supervisorctl reread
@@ -41,10 +41,13 @@ echo "This project uses these runtime commands:"
 echo "  php artisan subscriptions:send-renewal-reminders --days=7"
 echo "  php artisan currencies:update-rates"
 echo "  php artisan tenants:sync-data --all --ensure-database"
+echo "  php artisan tenants:schema-dump   # after adding tenant migrations (keeps new-tenant provisioning fast)"
 echo
 echo "This project uses these queues:"
 echo "  default"
 echo "  translations"
+echo "  tenant-provision"
 echo "  tenant-sync"
+echo "  tenant-profit"
 echo
 echo "After editing .env, run: php artisan config:cache"

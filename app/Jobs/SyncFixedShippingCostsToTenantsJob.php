@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
+use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
 use App\Models\Tenant\ProductVariant;
 use App\Services\Tenant\TenantPricingService;
 use Illuminate\Bus\Queueable;
@@ -101,19 +102,22 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
 
 
         foreach ($tenants as $tenant) {
-            // try {
+            try {
                 tenancy()->initialize($tenant);
                 $this->syncForTenant($costMap, $variantCostMap, $targetProductId);
-            // } catch (\Throwable $e) {
-            //     Log::error(
-            //         "SyncFixedShippingCostsToTenantsJob: Failed for tenant [{$tenant->id}]: " .
-            //         $e->getMessage()
-            //     );
-            //     // Continue with remaining tenants even if one fails.
-            // }
+            } catch (TenantDatabaseDoesNotExistException) {
+                // Tenant is still being provisioned; it gets a full sync once ready.
+                continue;
+            } catch (\Throwable $e) {
+                Log::error(
+                    "SyncFixedShippingCostsToTenantsJob: Failed for tenant [{$tenant->id}]: " .
+                    $e->getMessage()
+                );
+                // Continue with remaining tenants even if one fails.
+            } finally {
+                tenancy()->end();
+            }
         }
-
-        tenancy()->end();
     }
 
     /**

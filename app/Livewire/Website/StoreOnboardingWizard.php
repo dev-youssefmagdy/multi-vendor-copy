@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Website;
 
+use App\Jobs\ProvisionTenantJob;
 use App\Models\Country;
 use App\Models\Tenant;
 use App\Models\TenantCountry;
 use App\Models\Tenant\Language as TenantLanguage;
 use App\Models\Tenant\Theme;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class StoreOnboardingWizard extends Component
@@ -24,6 +26,9 @@ class StoreOnboardingWizard extends Component
 
     // Step 3 — Active theme (global, not per-country)
     public string $activeThemeId = '';
+
+    // Languages/theme defaults are read from the tenant DB once, as soon as background provisioning is done.
+    public bool $tenantDataLoaded = false;
 
     public function mount(string $tenantId): void
     {
@@ -57,17 +62,49 @@ class StoreOnboardingWizard extends Component
                 ->all();
         }
 
+        $this->loadTenantStepData($tenant);
+    }
+
+    /** `provision_status` is only set for tenants registered through the deferred flow; legacy tenants are ready. */
+    public function isProvisioned(?Tenant $tenant = null): bool
+    {
+        $tenant ??= Tenant::query()->find($this->tenantId);
+
+        return $tenant && ($tenant->provision_status ?? 'ready') === 'ready';
+    }
+
+    public function isCatalogSynced(?Tenant $tenant = null): bool
+    {
+        $tenant ??= Tenant::query()->find($this->tenantId);
+
+        return $tenant && ($tenant->sync_status ?? 'ready') === 'ready';
+    }
+
+    /**
+     * Languages/theme defaults live in the tenant database, which is built in the background after
+     * registration. Step 1 (countries) is central-only and never waits for it.
+     */
+    protected function loadTenantStepData(Tenant $tenant): void
+    {
+        if ($this->tenantDataLoaded || !$this->isProvisioned($tenant)) {
+            return;
+        }
+
         tenancy()->initialize($tenant);
 
-        $this->languageIds = TenantLanguage::query()
-            ->where('is_active', true)
-            ->pluck('id')
-            ->map(fn ($id) => (string) $id)
-            ->all();
+        try {
+            $this->languageIds = TenantLanguage::query()
+                ->where('is_active', true)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id)
+                ->all();
 
-        $this->activeThemeId = (string) (Theme::query()->where('is_active', true)->value('id') ?? '');
+            $this->activeThemeId = (string) (Theme::query()->where('is_active', true)->value('id') ?? '');
+        } finally {
+            tenancy()->end();
+        }
 
-        tenancy()->end();
+        $this->tenantDataLoaded = true;
     }
 
     public function nextStep(): void
@@ -82,7 +119,7 @@ class StoreOnboardingWizard extends Component
 
     public function skipStep(): void
     {
-        if ($this->step < 4) {
+        if ($this->step < 4 && ($this->step < 2 || $this->isProvisioned())) {
             $this->step++;
         }
     }
@@ -100,9 +137,16 @@ class StoreOnboardingWizard extends Component
 
     public function submitCountries(): void
     {
+        // `exists` per array item would run one query per country; check them all in one query instead.
         $this->validate([
-            'countryIds' => ['required', 'array', 'min:1'],
-            'countryIds.*' => ['integer', 'exists:countries,id'],
+            'countryIds' => ['required', 'array', 'min:1', function (string $attribute, array $value, \Closure $fail) {
+                $ids = array_unique(array_map('intval', $value));
+
+                if (Country::query()->whereIn('id', $ids)->count() !== count($ids)) {
+                    $fail(__('validation.exists', ['attribute' => $attribute]));
+                }
+            }],
+            'countryIds.*' => ['integer'],
         ]);
 
         $tenant = Tenant::query()->find($this->tenantId);
@@ -110,14 +154,19 @@ class StoreOnboardingWizard extends Component
             return;
         }
 
-        TenantCountry::query()->where('tenant_id', $this->tenantId)->delete();
-        foreach ($this->countryIds as $cid) {
-            TenantCountry::create([
-                'tenant_id' => $this->tenantId,
-                'country_id' => (int) $cid,
-                'is_active' => true,
-            ]);
-        }
+        $now = now();
+        $rows = array_map(fn ($cid) => [
+            'tenant_id' => $this->tenantId,
+            'country_id' => $cid,
+            'is_active' => true,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], array_values(array_unique(array_map('intval', $this->countryIds))));
+
+        DB::transaction(function () use ($rows) {
+            TenantCountry::query()->where('tenant_id', $this->tenantId)->delete();
+            TenantCountry::query()->insert($rows);
+        });
 
         Tenant::saveData($this->tenantId, [
             'country_ids' => array_map('intval', $this->countryIds),
@@ -129,7 +178,7 @@ class StoreOnboardingWizard extends Component
     public function submitLanguages(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant) {
+        if (!$tenant || !$this->isProvisioned($tenant)) {
             return;
         }
 
@@ -147,7 +196,7 @@ class StoreOnboardingWizard extends Component
     public function submitTheme(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant) {
+        if (!$tenant || !$this->isProvisioned($tenant)) {
             return;
         }
 
@@ -164,13 +213,26 @@ class StoreOnboardingWizard extends Component
     public function launch(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant) {
+        if (!$tenant || !$this->isProvisioned($tenant) || !$this->isCatalogSynced($tenant)) {
             return;
         }
 
         Tenant::saveData($this->tenantId, ['launch_ready' => true]);
 
         $this->redirectToDashboard($tenant);
+    }
+
+    /** Percentage of phase-2 catalog sections done (0–100), from the last section the sync chain recorded. */
+    protected function catalogProgress(?Tenant $tenant): int
+    {
+        if (!$tenant || $this->isCatalogSynced($tenant)) {
+            return 100;
+        }
+
+        $sections = ProvisionTenantJob::catalogSections();
+        $done = array_search($tenant->sync_completed_section ?? null, $sections, true);
+
+        return $done === false ? 0 : (int) floor(($done + 1) / (count($sections) + 1) * 100);
     }
 
     private function redirectToDashboard(Tenant $tenant): void
@@ -191,18 +253,32 @@ class StoreOnboardingWizard extends Component
 
         $themes = collect();
         $availableLanguages = collect();
+        $provisioned = $this->isProvisioned($tenant);
 
-        if ($tenant) {
-            tenancy()->initialize($tenant);
-            $themes = Theme::query()->get();
-            $availableLanguages = TenantLanguage::query()->orderBy('name')->get();
-            tenancy()->end();
+        if ($tenant && $provisioned) {
+            $this->loadTenantStepData($tenant);
+
+            if (in_array($this->step, [2, 3], true)) {
+                tenancy()->initialize($tenant);
+
+                try {
+                    $themes = $this->step === 3 ? Theme::query()->get() : $themes;
+                    $availableLanguages = $this->step === 2 ? TenantLanguage::query()->orderBy('name')->get() : $availableLanguages;
+                } finally {
+                    tenancy()->end();
+                }
+            }
         }
 
         return view('livewire.website.store-onboarding-wizard', [
             'allCountries' => $allCountries,
             'themes' => $themes,
             'availableLanguages' => $availableLanguages,
+            'provisioned' => $provisioned,
+            'provisionFailed' => $tenant && ($tenant->provision_status ?? 'ready') === 'failed',
+            'catalogSynced' => $this->isCatalogSynced($tenant),
+            'catalogFailed' => $tenant && ($tenant->sync_status ?? 'ready') === 'failed',
+            'catalogProgress' => $this->catalogProgress($tenant),
         ])->layout('layouts.website', ['title' => __('Set Up Your Store') . ' — Ecommet']);
     }
 }

@@ -390,7 +390,8 @@ class CompleteRegistrationPage extends Component
 
         $payment = !empty($pending->payment_data) ? $pending->payment_data : null;
 
-        $tenant = $registrationService->finalize($registrationData, $payment);
+        // Central rows only — tenant DB, catalog sync and mails are provisioned in the background.
+        $tenant = $registrationService->finalize($registrationData, $payment, deferProvisioning: true);
 
         session()->forget('website.register.oauth');
 
@@ -405,6 +406,7 @@ class CompleteRegistrationPage extends Component
             : '';
         $this->hasDomainRequest = $this->domainType === 'custom';
         $this->registered = true;
+        $this->registeredTenantId = (string) $tenant->getTenantKey();
         $this->dispatch('scrollToTop');
 
         if (!$this->hasDomainRequest) {
@@ -413,8 +415,6 @@ class CompleteRegistrationPage extends Component
             ]));
             return;
         }
-
-        $this->registeredTenantId = (string) $tenant->getTenantKey();
     }
 
     public function continueToOnboarding(): void

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PackageStatus;
+use App\Jobs\ProvisionTenantJob;
 use App\Enums\PaymentLogStatus;
 use App\Enums\Tenant\SubscriptionGatewayType;
 use App\Enums\Tenant\SubscriptionStatus;
@@ -79,7 +80,12 @@ class WebsiteRegistrationService
         return $candidate;
     }
 
-    public function finalize(array $registrationData, ?array $payment = null): Tenant
+    /**
+     * @param bool $deferProvisioning Public registration: write only central rows in the request and hand the
+     *                                tenant database / owner admin / billing / mails / catalog sync to
+     *                                {@see ProvisionTenantJob}.
+     */
+    public function finalize(array $registrationData, ?array $payment = null, bool $deferProvisioning = false): Tenant
     {
         $centralDomain = $this->centralDomain();
         $slug = $this->uniqueTenantSlug((string) $registrationData['shop_name']);
@@ -115,7 +121,7 @@ class WebsiteRegistrationService
             'password' => (string) $registrationData['password'],
         ];
 
-        $tenant = $this->tenantService->save($tenantAttributes);
+        $tenant = $this->tenantService->save($tenantAttributes, null, $deferProvisioning);
 
         // Every new store gets its own affiliate account (owner email + registration password).
         try {
@@ -140,32 +146,17 @@ class WebsiteRegistrationService
             );
         }
 
-        if ($package && $payment && (float) ($payment['amount'] ?? 0) > 0) {
+        $paymentLog = null;
+        $paid = $package && $payment && (float) ($payment['amount'] ?? 0) > 0;
+
+        if ($paid) {
             $paymentLog = $this->createCentralPaymentLog($tenant, $package, $payment);
-            $this->createTenantBillingRecords($tenant, $package, $payment);
 
-            if ($paymentLog) {
-                $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
-                $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
-
-                $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
-                $affiliateCoupon   = null;
-                $couponAffiliateId = null;
-
-                if ($affiliateCouponId) {
-                    $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
-                    $couponAffiliateId = $affiliateCoupon?->affiliate_id;
-                }
-
-                // URL-referral commission — suppressed when an affiliate coupon was used
-                app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
-
-                // Affiliate coupon commission — fires only when an affiliate coupon was applied
-                if ($affiliateCoupon) {
-                    app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
-                }
+            if (!$deferProvisioning) {
+                $this->createTenantBillingRecords($tenant, $package, $payment);
+                $this->notifySubscriptionActivated($tenant, $package, $paymentLog, $payment, $locale);
             }
-        } else {
+        } elseif (!$deferProvisioning) {
             // Free plan: create the tenant admin synchronously in the HTTP request,
             // matching the paid plan's synchronous tenant initialisation in createTenantBillingRecords().
             $this->tenantService->syncTenantOwnerAdmin($tenant, $tenantAttributes);
@@ -198,7 +189,36 @@ class WebsiteRegistrationService
         $subdomainUrl = 'https://' . $subdomain;
         $adminLoginUrl = 'https://' . $subdomain . '/admin/login';
         $storeUrl = $customDomain ? 'https://' . $customDomain : $subdomainUrl;
-        $this->templateMailService->sendTenantWelcome($tenant, $storeUrl, $adminLoginUrl, $customDomain ? $subdomainUrl : null, $locale);
+
+        if ($deferProvisioning) {
+            // Everything that needs the tenant database (or is slow network I/O) runs in the queue.
+            // The job payload is encrypted because it carries the owner's registration password.
+            $safePayment = $paid ? collect($payment)->except('raw_response')->all() : null;
+
+            Tenant::saveData($tenant->getTenantKey(), ['provision_status' => 'pending', 'sync_status' => 'pending']);
+
+            ProvisionTenantJob::dispatch(
+                $tenant->getTenantKey(),
+                $tenantAttributes,
+                $safePayment,
+                $paymentLog?->id,
+                $storeUrl,
+                $adminLoginUrl,
+                $customDomain ? $subdomainUrl : null,
+                $locale,
+            );
+
+            return $tenant;
+        }
+
+        $this->notifyTenantRegistered($tenant, $storeUrl, $adminLoginUrl, $customDomain ? $subdomainUrl : null, $locale);
+
+        return $tenant;
+    }
+
+    public function notifyTenantRegistered(Tenant $tenant, string $storeUrl, string $adminLoginUrl, ?string $subdomainUrl, ?string $locale): void
+    {
+        $this->templateMailService->sendTenantWelcome($tenant, $storeUrl, $adminLoginUrl, $subdomainUrl, $locale);
 
         $this->adminNotifier->notify(
             type: 'tenant',
@@ -206,8 +226,33 @@ class WebsiteRegistrationService
             message: sprintf('A new store "%s" has registered and is awaiting activation.', $tenant->shop_name ?? $tenant->id),
             data: ['tenant_id' => $tenant->getTenantKey(), 'email' => $tenant->email ?? null],
         );
+    }
 
-        return $tenant;
+    public function notifySubscriptionActivated(Tenant $tenant, Package $package, ?PaymentLog $paymentLog, array $payment, ?string $locale): void
+    {
+        if (!$paymentLog) {
+            return;
+        }
+
+        $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
+        $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
+
+        $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
+        $affiliateCoupon   = null;
+        $couponAffiliateId = null;
+
+        if ($affiliateCouponId) {
+            $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
+            $couponAffiliateId = $affiliateCoupon?->affiliate_id;
+        }
+
+        // URL-referral commission — suppressed when an affiliate coupon was used
+        app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
+
+        // Affiliate coupon commission — fires only when an affiliate coupon was applied
+        if ($affiliateCoupon) {
+            app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
+        }
     }
 
     protected function createCentralPaymentLog(Tenant $tenant, Package $package, array $payment): PaymentLog
@@ -226,7 +271,7 @@ class WebsiteRegistrationService
         ]);
     }
 
-    protected function createTenantBillingRecords(Tenant $tenant, Package $package, array $payment): void
+    public function createTenantBillingRecords(Tenant $tenant, Package $package, array $payment): void
     {
         $gateway = PaymentGateway::query()->where('code', $payment['gateway_code'])->first();
 
