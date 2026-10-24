@@ -213,7 +213,8 @@ class StoreOnboardingWizard extends Component
     public function launch(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant || !$this->isProvisioned($tenant) || !$this->isCatalogSynced($tenant)) {
+        // Catalog sync may still be running; it keeps filling the tenant DB after the owner logs in.
+        if (!$tenant || !$this->isProvisioned($tenant)) {
             return;
         }
 

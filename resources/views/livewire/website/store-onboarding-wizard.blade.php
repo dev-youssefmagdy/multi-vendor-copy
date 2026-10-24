@@ -186,7 +186,6 @@
                         </div>
                     @endif
                     <button wire:click="launch" type="button"
-                        @disabled(!$catalogSynced)
                         wire:loading.attr="disabled"
                         wire:loading.class="opacity-75 cursor-not-allowed"
                         class="w-full btn-primary py-4 font-bold text-base rounded-xl mb-3">

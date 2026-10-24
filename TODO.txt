@@ -18,6 +18,7 @@ php artisan neozena:import --product=5288 --sync
 
 php artisan queue:work
 php artisan queue:work --queue=tenant-sync
+php artisan queue:work --queue=tenant-provision
 # Process the queue:
 php artisan queue:work --queue=neozena-import
 php artisan queue:work --queue=translations

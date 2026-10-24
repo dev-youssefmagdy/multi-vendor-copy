@@ -142,7 +142,7 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
 
     /**
      * Remaining sections run in order while the user fills the wizard. Profit is applied inside the chain,
-     * right after products, so `sync_status=ready` (which unlocks Launch) means prices are final too.
+     * right after products, so `sync_status=ready` means prices are final too. Launch does not wait for it.
      */
     protected function dispatchCatalogSync(): void
     {
