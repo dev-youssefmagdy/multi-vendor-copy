@@ -21,6 +21,7 @@ use App\Models\Tenant\Transaction as TenantTransaction;
 use App\Models\Language;
 use App\Services\AdminNotificationService;
 use App\Services\Mail\TemplateMailService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Database\Models\Domain;
 
@@ -105,6 +106,10 @@ class WebsiteRegistrationService
         $locale = filled($registrationData['locale'] ?? null) ? (string) $registrationData['locale'] : null;
         $language = $locale ? Language::query()->where('code', $locale)->where('is_active', true)->first() : null;
 
+        // Hashed once (bcrypt is ~250ms) and reused for the central owner and the tenant admin — the queued
+        // provisioning job then never needs the plaintext password.
+        $passwordHash = bcrypt((string) $registrationData['password']);
+
         $tenantAttributes = [
             'name' => (string) $registrationData['shop_name'],
             'slug' => $slug,
@@ -118,7 +123,7 @@ class WebsiteRegistrationService
             'shop_name' => (string) $registrationData['shop_name'],
             'domain' => $customDomain ?: $subdomain,
             'profit_percentage' => (float) ($registrationData['profit_percentage'] ?? 0),
-            'password' => (string) $registrationData['password'],
+            'password_hash' => $passwordHash,
         ];
 
         $tenant = $this->tenantService->save($tenantAttributes, null, $deferProvisioning);
@@ -177,7 +182,7 @@ class WebsiteRegistrationService
             ['email' => strtolower(trim((string) $registrationData['email']))],
             array_filter([
                 'tenant_id' => $tenant->id,
-                'password' => bcrypt((string) $registrationData['password']),
+                'password' => $passwordHash,
                 'provider' => $registrationData['provider'] ?? null,
                 'provider_id' => $registrationData['provider_id'] ?? null,
                 'avatar' => $registrationData['avatar'] ?? null,
@@ -271,41 +276,52 @@ class WebsiteRegistrationService
         ]);
     }
 
-    public function createTenantBillingRecords(Tenant $tenant, Package $package, array $payment): void
+    /**
+     * @param bool $deferReceipts When true the wallet transaction is written without firing its observer (which
+     *                            sends two mails over SMTP, seconds each); the caller sends the receipts later.
+     * @return int The tenant wallet transaction id.
+     */
+    public function createTenantBillingRecords(Tenant $tenant, Package $package, array $payment, bool $deferReceipts = false): int
     {
         $gateway = PaymentGateway::query()->where('code', $payment['gateway_code'])->first();
 
         tenancy()->initialize($tenant);
 
         try {
-            $transaction = TenantTransaction::query()->create([
-                'uuid' => (string) Str::uuid(),
-                'amount' => (float) $payment['amount'],
-                'type' => WalletTransactionDirection::Credit->value,
-                'admin_profit' => null,
-                'description' => sprintf(
-                    'Subscription payment for %s via %s',
-                    $package->name,
-                    str((string) $payment['gateway_code'])->replace(['_', '-'], ' ')->headline()->toString()
-                ),
-            ]);
+            // One commit (one fsync) for the three writes instead of one each.
+            return DB::transaction(function () use ($package, $payment, $gateway, $deferReceipts) {
+                $createTransaction = fn () => TenantTransaction::query()->create([
+                    'uuid' => (string) Str::uuid(),
+                    'amount' => (float) $payment['amount'],
+                    'type' => WalletTransactionDirection::Credit->value,
+                    'admin_profit' => null,
+                    'description' => sprintf(
+                        'Subscription payment for %s via %s',
+                        $package->name,
+                        str((string) $payment['gateway_code'])->replace(['_', '-'], ' ')->headline()->toString()
+                    ),
+                ]);
+                $transaction = $deferReceipts ? TenantTransaction::withoutEvents($createTransaction) : $createTransaction();
 
-            $subscription = Subscription::query()->create([
-                'package_id' => $package->id,
-                'price' => (float) $payment['amount'],
-                'status' => SubscriptionStatus::Active->value,
-                'term' => $package->term?->value ?? $package->term,
-                'payment_gateway_type' => SubscriptionGatewayType::Central->value,
-                'payment_gateway_id' => $gateway?->id,
-                'transaction_id' => $transaction->id,
-                'start_date' => now(),
-                'end_date' => $this->resolveSubscriptionEndDate($package),
-            ]);
+                $subscription = Subscription::query()->create([
+                    'package_id' => $package->id,
+                    'price' => (float) $payment['amount'],
+                    'status' => SubscriptionStatus::Active->value,
+                    'term' => $package->term?->value ?? $package->term,
+                    'payment_gateway_type' => SubscriptionGatewayType::Central->value,
+                    'payment_gateway_id' => $gateway?->id,
+                    'transaction_id' => $transaction->id,
+                    'start_date' => now(),
+                    'end_date' => $this->resolveSubscriptionEndDate($package),
+                ]);
 
-            $transaction->update([
-                'model_type' => Subscription::class,
-                'model_id' => $subscription->id,
-            ]);
+                $transaction->update([
+                    'model_type' => Subscription::class,
+                    'model_id' => $subscription->id,
+                ]);
+
+                return $transaction->id;
+            });
         } finally {
             tenancy()->end();
         }

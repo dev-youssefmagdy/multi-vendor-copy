@@ -124,39 +124,52 @@ class TenantService
     {
         tenancy()->initialize($tenant);
 
-        //        try {
-        $roles = [];
+        // `password_hash` is an already-hashed password (registration hashes once for owner and admin).
+        // Hash outside the transaction so the row locks aren't held while bcrypt runs.
+        $passwordHash = $attributes['password_hash']
+            ?? (filled($attributes['password'] ?? null) ? Hash::make((string) $attributes['password']) : null);
 
-        foreach (TenantAdminRole::defaultRoleDefinitions() as $roleName => $permissions) {
-            $roles[$roleName] = TenantAdminRole::query()->updateOrCreate(
-                ['name' => $roleName],
-                ['permissions' => $permissions, 'permissions_count' => count($permissions)]
+        // One commit for the roles, the owner and the appearance defaults instead of one per statement.
+        DB::connection('tenant')->transaction(function () use ($tenant, $attributes, $previousEmail, $passwordHash) {
+            $now = now();
+            $definitions = TenantAdminRole::defaultRoleDefinitions();
+
+            TenantAdminRole::query()->toBase()->upsert(
+                collect($definitions)->map(fn (array $permissions, string $name) => [
+                    'name' => $name,
+                    'permissions' => json_encode($permissions),
+                    'permissions_count' => count($permissions),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])->values()->all(),
+                ['name'],
+                ['permissions', 'permissions_count', 'updated_at']
             );
-        }
+            $ownerRoleId = TenantAdminRole::query()->where('name', TenantAdminRole::STORE_OWNER)->value('id');
 
-        $email = strtolower(trim((string) ($attributes['email'] ?? $tenant->email)));
-        $admin = TenantAdminUser::query()
-            ->whereIn('email', array_values(array_filter([$email, $previousEmail])))
-            ->first() ?? TenantAdminUser::query()->first();
+            $email = strtolower(trim((string) ($attributes['email'] ?? $tenant->email)));
+            $admin = TenantAdminUser::query()
+                ->whereIn('email', array_values(array_filter([$email, $previousEmail])))
+                ->first() ?? TenantAdminUser::query()->first();
 
-        $admin ??= new TenantAdminUser();
-        $admin->fill([
-            'role_id' => $roles[TenantAdminRole::STORE_OWNER]->id,
-            'name' => $attributes['name'] ?? ($tenant->data['shop_name'] ?? $tenant->name),
-            'email' => $email,
-            'status' => ActivationStatus::Active->value,
-        ]);
+            $admin ??= new TenantAdminUser();
+            $admin->fill([
+                'role_id' => $ownerRoleId,
+                'name' => $attributes['name'] ?? ($tenant->data['shop_name'] ?? $tenant->name),
+                'email' => $email,
+                'status' => ActivationStatus::Active->value,
+            ]);
 
-        if (filled($attributes['password'] ?? null)) {
-            $admin->password = Hash::make((string) $attributes['password']);
-        }
+            if ($passwordHash) {
+                $admin->password = $passwordHash;
+            }
 
-        $admin->save();
+            $admin->save();
 
-        $shopName = (string) ($attributes['shop_name'] ?? $tenant->shop_name ?? $tenant->name ?? '');
-        $this->tenantPanelService->seedAppearanceDefaults($shopName);
-        //        } finally {
+            $shopName = (string) ($attributes['shop_name'] ?? $tenant->shop_name ?? $tenant->name ?? '');
+            $this->tenantPanelService->seedAppearanceDefaults($shopName);
+        });
+
         tenancy()->end();
-        //        }
     }
 }

@@ -7,6 +7,7 @@ use App\Models\PaymentLog;
 use App\Models\Tenant;
 use App\Services\StaticPageService;
 use App\Services\Tenant\TenantCatalogSyncService;
+use App\Services\Tenant\TenantDatabasePool;
 use App\Services\TenantService;
 use App\Services\WebsiteRegistrationService;
 use Illuminate\Bus\Queueable;
@@ -25,8 +26,8 @@ use Throwable;
 /**
  * Builds a freshly registered tenant in the background so the registration request can return at once.
  *
- * Phase 1 (this job, `tenant-provision`): tenant DB + migrations, the data the onboarding wizard needs
- * (languages, themes, ...), owner admin and billing records. Marks `provision_status=ready`.
+ * Phase 1 (this job, `tenant-provision`): tenant DB (claimed from the pre-migrated pool, else created + migrated),
+ * the data the onboarding wizard needs (languages, themes, ...), owner admin and billing records. Marks `provision_status=ready`.
  * Phase 2 (`tenant-sync` chain): catalog (categories, products, ...). Marks `sync_status=ready`.
  *
  * Encrypted because the payload carries the owner's registration password. Idempotent: safe to retry.
@@ -69,9 +70,7 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
         $this->createDatabase($tenant);
 
         // Languages first: the owner admin's appearance defaults (banners) map translations onto them.
-        foreach (self::CORE_SECTIONS as $section) {
-            $syncService->syncSection($tenant, $section);
-        }
+        $syncService->syncSectionsAtomically($tenant, self::CORE_SECTIONS);
         tenancy()->end();
 
         $tenantService->syncTenantOwnerAdmin($tenant, $this->ownerAttributes);
@@ -81,8 +80,11 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
             : null;
         $paymentLog = $this->paymentLogId ? PaymentLog::query()->find($this->paymentLogId) : null;
 
-        if ($package && $this->payment && !$this->billingExists()) {
-            $registrationService->createTenantBillingRecords($tenant, $package, $this->payment);
+        $walletTransactionId = null;
+
+        if ($package && $this->payment && !$this->billingExists($tenant)) {
+            // Receipts are mailed by the notifications job below, not inline (SMTP is seconds per mail).
+            $walletTransactionId = $registrationService->createTenantBillingRecords($tenant, $package, $this->payment, deferReceipts: true);
         }
 
         // Footer pages must exist centrally before the `pages` section is pulled into the tenant.
@@ -99,6 +101,7 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
             $package?->id,
             $paymentLog?->id,
             $this->payment,
+            $walletTransactionId,
         );
 
         $this->dispatchCatalogSync();
@@ -113,6 +116,20 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
 
     protected function createDatabase(Tenant $tenant): void
     {
+        $pool = app(TenantDatabasePool::class);
+        $pooled = $pool->enabled() ? $pool->claim($tenant) : null;
+
+        if ($pooled) {
+            RefillTenantDatabasePoolJob::dispatch();
+
+            // A database prepared before the latest tenant migration only needs the newer ones applied.
+            if (!$pooled['current']) {
+                (new MigrateDatabase($tenant))->handle();
+            }
+
+            return;
+        }
+
         try {
             (new CreateDatabase($tenant))->handle(app(DatabaseManager::class));
         } catch (TenantDatabaseAlreadyExistsException) {
@@ -122,9 +139,8 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
         (new MigrateDatabase($tenant))->handle();
     }
 
-    protected function billingExists(): bool
+    protected function billingExists(Tenant $tenant): bool
     {
-        $tenant = Tenant::query()->find($this->tenantId);
         tenancy()->initialize($tenant);
 
         try {
@@ -142,7 +158,7 @@ class ProvisionTenantJob implements ShouldQueue, ShouldBeEncrypted
 
     /**
      * Remaining sections run in order while the user fills the wizard. Profit is applied inside the chain,
-     * right after products, so `sync_status=ready` means prices are final too. Launch does not wait for it.
+     * right after products, so `sync_status=ready` (which unlocks Launch) means prices are final too.
      */
     protected function dispatchCatalogSync(): void
     {

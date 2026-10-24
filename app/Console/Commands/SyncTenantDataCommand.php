@@ -75,6 +75,10 @@ class SyncTenantDataCommand extends Command
                 if (! $syncAll && filled($identifier)) {
                     return self::FAILURE;
                 }
+            } finally {
+                // Leave the tenant context and release the per-tenant working set before the next one.
+                tenancy()->end();
+                gc_collect_cycles();
             }
         }
 

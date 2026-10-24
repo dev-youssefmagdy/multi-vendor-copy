@@ -1180,37 +1180,41 @@ class TenantPanelService
             ->orderBy('id')
             ->get();
 
+        if ($defaults->isEmpty()) {
+            return;
+        }
+
         $tenantLanguageIds = \App\Models\Tenant\Language::query()->pluck('id', 'code');
+        $now = now();
 
-        foreach ($defaults as $default) {
-            $banner = Banner::query()->create([
-                'url' => $default->url,
-                'image_path' => $default->image_path,
-                'serial_number' => $default->serial_number,
-            ]);
+        // One INSERT for all banners; the table was just checked empty, so a multi-row insert's
+        // auto-increment ids are consecutive and in row order — read them back instead of one INSERT each.
+        Banner::query()->toBase()->insert($defaults->map(fn ($default) => [
+            'url' => $default->url,
+            'image_path' => $default->image_path,
+            'serial_number' => $default->serial_number,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all());
 
+        $bannerIds = Banner::query()->toBase()->orderBy('id')->pluck('id')->all();
+        $desired = [];
+
+        foreach ($defaults->values() as $index => $default) {
             // Re-map translations: central locale code → tenant Language ID
-            $translationRows = [];
             foreach ($default->translations as $translation) {
-                $localeCode = $translation->language?->code;
-                if (!$localeCode) {
-                    continue;
-                }
-                $tenantLanguageId = $tenantLanguageIds->get($localeCode);
-                if (!$tenantLanguageId) {
-                    continue;
-                }
-                $translationRows[] = [
-                    'language_id' => $tenantLanguageId,
-                    'field' => $translation->field,
-                    'value' => $translation->value,
-                ];
-            }
+                $tenantLanguageId = $tenantLanguageIds->get($translation->language?->code);
 
-            if ($translationRows !== []) {
-                $banner->translations()->createMany($translationRows);
+                if ($tenantLanguageId) {
+                    $desired[$bannerIds[$index]][(int) $tenantLanguageId][$translation->field] = $translation->value;
+                }
             }
         }
+
+        (new BulkTranslationWriter())->replace((new Banner())->getMorphClass(), $desired);
+
+        // Bulk writes skip model events; bump the storefront cache version once instead.
+        CacheVersion::bump('Banner');
     }
 
     /**

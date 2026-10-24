@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Models\Package;
 use App\Models\PaymentLog;
 use App\Models\Tenant;
+use App\Models\Tenant\Transaction;
+use App\Services\Mail\TemplateMailService;
 use App\Services\WebsiteRegistrationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,10 +30,11 @@ class SendTenantRegistrationNotificationsJob implements ShouldQueue
         public ?int $packageId,
         public ?int $paymentLogId,
         public ?array $payment,
+        public ?int $walletTransactionId = null,
     ) {
     }
 
-    public function handle(WebsiteRegistrationService $service): void
+    public function handle(WebsiteRegistrationService $service, TemplateMailService $mail): void
     {
         $tenant = Tenant::query()->with(['domains', 'package.translations.language'])->find($this->tenantId);
 
@@ -47,5 +50,26 @@ class SendTenantRegistrationNotificationsJob implements ShouldQueue
         }
 
         $service->notifyTenantRegistered($tenant, $this->storeUrl, $this->adminLoginUrl, $this->subdomainUrl, $this->locale);
+
+        if ($this->walletTransactionId) {
+            $this->sendWalletReceipts($tenant, $mail);
+        }
+    }
+
+    /** What TenantTransactionObserver does on creation — provisioning writes the transaction without it. */
+    protected function sendWalletReceipts(Tenant $tenant, TemplateMailService $mail): void
+    {
+        tenancy()->initialize($tenant);
+
+        try {
+            $transaction = Transaction::query()->find($this->walletTransactionId);
+
+            if ($transaction) {
+                $mail->sendTenantWalletTransactionReceipt($transaction, $tenant);
+                $mail->sendAdminVendorWalletTransaction($tenant, $transaction);
+            }
+        } finally {
+            tenancy()->end();
+        }
     }
 }

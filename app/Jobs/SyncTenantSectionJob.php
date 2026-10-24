@@ -36,7 +36,8 @@ class SyncTenantSectionJob implements ShouldQueue
         $syncService->syncSection($tenant, $this->section);
 
         // Post-registration chain: profit is its own chained job, and the wizard shows progress.
-        if ($this->onboarding) {
+        // `??` also covers jobs queued before $onboarding existed (property uninitialized after unserialize).
+        if ($this->onboarding ?? false) {
             Tenant::saveData($tenant->id, ['sync_completed_section' => $this->section]);
 
             return;
