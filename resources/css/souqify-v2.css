@@ -215,7 +215,7 @@ body {
 }
 .stripe-bg-purple {
   background-color: var(--color-brand-purple);
-  background-image: url("assets/images/new-in.png");
+  background-image: url("/souqify-1/assets/images/new-in.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
