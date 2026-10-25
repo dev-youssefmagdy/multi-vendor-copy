@@ -5,6 +5,7 @@ namespace App\Livewire\Tenant\Badge;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Support\CacheVersion;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -62,6 +63,7 @@ class BadgeProductsList extends Component
         ProductBadge::query()->findOrFail($this->badgeId)
             ->products()
             ->sync($this->selectedProducts);
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         session()->flash('status', 'Badge assignment saved — ' . count($this->selectedProducts) . ' products assigned.');
     }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Tenant;
 
 use App\Models\Tenant\Translation;
+use App\Observers\CacheVersionObserver;
+use App\Support\CacheVersion;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -109,6 +111,11 @@ final class BulkTranslationWriter
                 ['language_id', 'translatable_type', 'translatable_id', 'field'],
                 ['value', 'updated_at'],
             );
+        }
+
+        // Raw upserts/deletes skip the Translation observer.
+        if ($upserts !== [] || $deleted > 0) {
+            CacheVersion::bumpMany(array_filter(['Translation', CacheVersionObserver::ownerTag($type)]));
         }
 
         return ['written' => count($upserts), 'deleted' => $deleted];

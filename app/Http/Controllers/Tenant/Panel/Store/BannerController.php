@@ -13,6 +13,7 @@ use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -155,6 +156,8 @@ final class BannerController extends PanelController
         foreach ($ids as $index => $id) {
             Banner::query()->where('id', (int) $id)->where('country_id', $filterCountryId)->update(['serial_number' => $index]);
         }
+
+        CacheVersion::bump('Banner');
 
         return $this->success('Banner order saved.');
     }

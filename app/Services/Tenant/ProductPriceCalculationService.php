@@ -5,6 +5,7 @@ namespace App\Services\Tenant;
 use App\Models\FixedShippingCost;
 use App\Models\Tenant;
 use App\Models\Tenant\Product;
+use App\Support\CacheVersion;
 
 class ProductPriceCalculationService
 {
@@ -93,6 +94,11 @@ class ProductPriceCalculationService
                         \App\Models\Tenant\ProductVariant::query()->upsert($variantRows, ['id'], ['sell_price', 'default_sell_price', 'profit', 'updated_at']);
                     }
                 });
+
+            // Bulk upserts skip the CacheVersionObserver (bumped inside the tenant context).
+            if ($productsUpdated > 0 || $variantsUpdated > 0) {
+                CacheVersion::bumpMany(['Product', 'ProductVariant']);
+            }
         });
 
         return [

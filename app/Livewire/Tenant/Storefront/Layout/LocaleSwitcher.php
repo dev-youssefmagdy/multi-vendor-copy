@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Storefront\Layout;
 
 use App\Repositories\Tenant\StorefrontRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -98,6 +99,23 @@ class LocaleSwitcher extends Component
         return $referer;
     }
 
+    /**
+     * Central countries list (with translations) for the country tab. Rendered
+     * on every page (some themes render the switcher twice) and on every Livewire
+     * round-trip, so it is cached briefly. Central `countries`/translations have
+     * no cache-version tag, hence the short TTL. Keyed per tenant because the
+     * models carry the tenant's default-locale fallback (Translator::$defaultLocale).
+     */
+    protected function countries()
+    {
+        $key = 'storefront:' . (tenant()?->id ?? 'central') . ':locale_switcher:countries';
+
+        return Cache::driver('file')->remember($key, 600, fn() => \App\Models\Country::query()
+            ->with('translations.language')
+            ->orderBy('name')
+            ->get(['id', 'name', 'iso2', 'flag_emoji']));
+    }
+
     public function render()
     {
         $repo = app(StorefrontRepository::class);
@@ -107,7 +125,7 @@ class LocaleSwitcher extends Component
             'currencies' => $repo->activeCurrencies(),
             'currentLanguage' => $repo->currentLanguage(),
             'currentCurrency' => $repo->currentCurrency(),
-            'countries' => \App\Models\Country::query()->with('translations.language')->orderBy('name')->get(['id', 'name', 'iso2', 'flag_emoji']),
+            'countries' => $this->countries(),
             'currentCountryId' => session('storefront_country_id'),
         ]);
     }

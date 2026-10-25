@@ -114,15 +114,46 @@ class File extends Model
         return $q->where('key', $value);
     }
 
+    /**
+     * Request-scoped memo of computed URLs ("tenant|storage_type|path" => url).
+     * Storefront pages read full_path for ~1000 files per render (cards, sliders);
+     * resolving the enum cast + disk + URL each time dominated the card cost.
+     * Reset whenever the current request instance changes (new HTTP request,
+     * new test application), so host/disk changes are never served stale.
+     */
+    private static array $fullPathMemo = [];
+    private static ?\WeakReference $fullPathMemoOwner = null;
+
     function getFullPathAttribute()
     {
-        if (!$this->path) {
+        $path = $this->attributes['path'] ?? null;
+
+        if (!$path) {
             return null;
         }
 
-        /** @var FilesystemAdapter $disk */
-        $disk = Storage::disk($this->disk());
+        if (!is_string($path)) {
+            /** @var FilesystemAdapter $disk */
+            $disk = Storage::disk($this->disk());
 
-        return url($disk->url($this->path));
+            return url($disk->url($path));
+        }
+
+        $request = app('request');
+        if (self::$fullPathMemoOwner?->get() !== $request || count(self::$fullPathMemo) >= 20000) {
+            self::$fullPathMemo = [];
+            self::$fullPathMemoOwner = \WeakReference::create($request);
+        }
+
+        $storageType = $this->attributes['storage_type'] ?? null;
+        $memoKey = (tenancy()->tenant?->getTenantKey() ?? '') . '|' . ($storageType instanceof \BackedEnum ? $storageType->value : (string) $storageType) . '|' . $path;
+
+        if (!isset(self::$fullPathMemo[$memoKey])) {
+            /** @var FilesystemAdapter $disk */
+            $disk = Storage::disk($this->disk());
+            self::$fullPathMemo[$memoKey] = url($disk->url($path));
+        }
+
+        return self::$fullPathMemo[$memoKey];
     }
 }

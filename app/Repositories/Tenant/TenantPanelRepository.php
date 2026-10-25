@@ -1182,7 +1182,7 @@ class TenantPanelRepository
      * Paginated product search for async dropdowns.
      * Returns up to $perPage items plus a has_more flag.
      */
-    public function searchProducts(string $search = '', int $page = 1, int $perPage = 15): array
+    public function searchProducts(string $search = '', int $page = 1, int $perPage = 15, bool $activeOnly = false): array
     {
         $defaultLangId = $this->defaultLanguageId();
 
@@ -1193,6 +1193,10 @@ class TenantPanelRepository
                     ->where('t.field', '=', 'name')
                     ->where('t.language_id', '=', $defaultLangId);
             })
+            // Mirror Product's `centralVisible` global scope: hidden products never
+            // show on a badge/flash sale, so don't offer them for assignment.
+            ->where('p.central_visible', true)
+            ->when($activeOnly, fn ($q) => $q->where('p.active', true))
             ->select('p.id', DB::raw('COALESCE(t.value, p.slug, CONCAT("Product #", p.id)) as name'));
 
         if (filled($search)) {

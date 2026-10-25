@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\Tenant\ProductBadge;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,8 @@ final class BadgeSortController extends PanelController
                 ->when($countryId === null, fn ($q) => $q->whereNull('country_id'), fn ($q) => $q->where('country_id', $countryId))
                 ->update(['sort_order' => $index]);
         }
+
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         return $this->success('Product order saved.');
     }

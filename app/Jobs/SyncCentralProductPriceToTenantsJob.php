@@ -9,6 +9,7 @@ use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
 use App\Models\Tenant\ProductVariant;
 use App\Services\Tenant\TenantPricingService;
+use App\Support\CacheVersion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -237,6 +238,9 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
         info('[SyncCentralProductPriceToTenantsJob] syncForTenant: flushed variant updates', [
             'duration_ms' => round((microtime(true) - $step) * 1000, 2),
         ]);
+
+        // Raw CASE updates skip the CacheVersionObserver.
+        CacheVersion::bumpMany(['Product', 'ProductVariant']);
     }
 
     /**

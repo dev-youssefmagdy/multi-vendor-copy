@@ -296,6 +296,10 @@ class TenantPanelService
                 }
             }
 
+            // Pivots, translations, quiet price writes and variant deletes above
+            // bypass the observer; bumped once, after commit (see CacheVersion).
+            CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category']);
+
             return $product->fresh(['translations.language', 'categories', 'variants']);
         });
     }
@@ -386,6 +390,7 @@ class TenantPanelService
             ]);
             $category->save();
             $category->syncTranslations($translations);
+            CacheVersion::bump('Category');
 
             return $category->fresh(['translations.language', 'parent']);
         });
@@ -514,6 +519,7 @@ class TenantPanelService
                 ? $productIds
                 : array_filter([(int) ($flashSale->product_id ?? 0)])
             );
+            CacheVersion::bumpMany(['FlashSale', 'Product']);
 
             return $flashSale->fresh(['product.translations.language', 'products.translations.language']);
         });
@@ -615,6 +621,7 @@ class TenantPanelService
                     ->where('id', '!=', $theme->id)
                     ->where('is_universal', true)
                     ->update(['is_active' => false]);
+                CacheVersion::bump('Theme');
             }
 
             // Country-specific themes just toggle on independently.
@@ -656,6 +663,7 @@ class TenantPanelService
         DB::transaction(function () use ($currency) {
             Currency::query()->update(['is_default' => false]);
             $currency->update(['is_default' => true, 'is_active' => true]);
+            CacheVersion::bump('Currency');
             Setting::query()->updateOrCreate(['name' => 'default_currency'], ['value' => $currency->code, 'type' => 'string', 'group' => 'general']);
         });
     }
@@ -665,6 +673,7 @@ class TenantPanelService
         DB::transaction(function () use ($language) {
             Language::query()->update(['is_default' => false]);
             $language->update(['is_default' => true, 'is_active' => true]);
+            CacheVersion::bump('Language');
             Setting::query()->updateOrCreate(['name' => 'default_language'], ['value' => $language->code, 'type' => 'string', 'group' => 'general']);
         });
     }
@@ -684,6 +693,7 @@ class TenantPanelService
 
             if ($normalizedValue === '' || $normalizedValue === $centralValue) {
                 Setting::query()->where('name', $name)->delete();
+                CacheVersion::bump('Setting');
                 continue;
             }
 
@@ -891,6 +901,7 @@ class TenantPanelService
             ]);
             $banner->save();
             $banner->syncTranslations($data['translations'] ?? []);
+            CacheVersion::bump('Banner');
 
             return $banner->fresh('translations');
         });
@@ -919,6 +930,8 @@ class TenantPanelService
             ->where('home_variant_id', $homeVariantId)
             ->where('country_id', $countryId)
             ->delete();
+
+        CacheVersion::bump('TenantThemeColor');
     }
 
     public function saveSocialLink(array $data, ?SocialLink $link = null): SocialLink
@@ -1076,6 +1089,8 @@ class TenantPanelService
 
                 $setting->syncTranslations($payload);
             }
+
+            CacheVersion::bump('Setting');
         });
     }
 

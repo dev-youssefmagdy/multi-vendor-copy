@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Badge;
 
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\ProductBadge;
+use App\Support\CacheVersion;
 use Illuminate\Support\Facades\Request;
 use Livewire\Component;
 
@@ -30,6 +31,8 @@ class SortBadgeProducts extends Component
                 ->when($this->activeCountryId === null, fn ($q) => $q->whereNull('country_id'), fn ($q) => $q->where('country_id', $this->activeCountryId))
                 ->update(['sort_order' => $index]);
         }
+
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $this->toast('Product order saved.');
     }

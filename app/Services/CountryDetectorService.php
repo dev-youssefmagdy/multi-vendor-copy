@@ -24,18 +24,31 @@ use Illuminate\Http\Request;
  */
 class CountryDetectorService
 {
+    /** Request attribute holding the per-request country lookup memo (by ISO2). */
+    public const MEMO_ATTRIBUTE = '_country_detector_memo';
+
     public function detect(Request $request): ?Country
     {
+        // Always re-run detection (it may persist the code to the session); only
+        // the central `countries` lookup is memoized, per request and per ISO2.
         $iso2 = $this->extractIso2($request);
 
         if ($iso2 === null) {
             return null;
         }
 
-        return Country::query()
-            ->where('iso2', strtoupper($iso2))
-            ->select(['id', 'iso2', 'iso3', 'name', 'currency_code', 'language_code', 'language_direction'])
-            ->first();
+        $iso2 = strtoupper($iso2);
+        $memo = $request->attributes->get(self::MEMO_ATTRIBUTE, []);
+
+        if (!array_key_exists($iso2, $memo)) {
+            $memo[$iso2] = Country::query()
+                ->where('iso2', $iso2)
+                ->select(['id', 'iso2', 'iso3', 'name', 'currency_code', 'language_code', 'language_direction'])
+                ->first();
+            $request->attributes->set(self::MEMO_ATTRIBUTE, $memo);
+        }
+
+        return $memo[$iso2];
     }
 
     protected function extractIso2(Request $request): ?string

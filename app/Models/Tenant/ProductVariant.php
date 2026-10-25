@@ -221,9 +221,7 @@ class ProductVariant extends Model
 
         if ($shipping === null) {
             $weightGrams = (int) ($this->weight_grams ?? $this->product?->weight_grams ?? $this->product?->centralProduct?->weight_grams ?? 0);
-            $shippingCost = \App\Models\FixedShippingCost::active()
-                ->where('country_id', $countryId)
-                ->first();
+            $shippingCost = Product::activeFixedShippingCostFor($countryId);
             $shipping = $shippingCost ? $shippingCost->costForWeight($weightGrams) : 0.0;
         }
 

@@ -8,6 +8,7 @@ use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -165,6 +166,7 @@ class AddEditProduct extends Component
         ], $this->productId ? ($existingProduct ?? Product::query()->findOrFail($this->productId)) : null);
 
         $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         if ($editRequestSubmitted) {
             session()->flash('status', 'Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.');

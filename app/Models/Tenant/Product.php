@@ -303,14 +303,75 @@ class Product extends Model
         $shipping = $this->fixedShippingCostForCountry((int) $countryId);
         if ($shipping === null) {
             $weightGrams = (int) ($this->weight_grams ?? $this->centralProduct?->weight_grams ?? 0);
-            $shippingCost = \App\Models\FixedShippingCost::active()
-                ->where('country_id', $countryId)
-                ->first();
+            $shippingCost = static::activeFixedShippingCostFor($countryId);
             $shipping = $shippingCost ? $shippingCost->costForWeight($weightGrams) : 0.0;
         }
 
         return static::priceBreakdown($basePrice, $profitType, $profitValue, $shipping);
     }
+
+    /** Request attribute holding the activeFixedShippingCostFor() memo. */
+    public const FIXED_SHIPPING_MEMO_ATTRIBUTE = '_fixed_shipping_cost_memo';
+
+    /**
+     * Same lookup as `FixedShippingCost::active()->where('country_id', $countryId)->first()`
+     * (a null country keeps Eloquent's `where country_id is null` meaning), memoized
+     * per request: it runs for every variant-less price calculation, i.e. per card.
+     */
+    public static function activeFixedShippingCostFor(?int $countryId): ?\App\Models\FixedShippingCost
+    {
+        $memoKey = $countryId === null ? 'null' : (string) $countryId;
+        $attributes = request()->attributes;
+        $memo = $attributes->get(self::FIXED_SHIPPING_MEMO_ATTRIBUTE, []);
+
+        if (!array_key_exists($memoKey, $memo)) {
+            $memo[$memoKey] = \App\Models\FixedShippingCost::active()
+                ->where('country_id', $countryId)
+                ->first();
+            $attributes->set(self::FIXED_SHIPPING_MEMO_ATTRIBUTE, $memo);
+        }
+
+        return $memo[$memoKey];
+    }
+
+    /**
+     * Gallery + primary image URLs of the central product's files followed by the
+     * tenant's own, exactly what the storefront cards computed with
+     * `merge()->whereIn('key', [...])->where('file_type', 'image')->map(full_path)
+     * ->filter()->unique()->values()->all()` — in one pass over the files.
+     *
+     * @return array<int, string>
+     */
+    public function storefrontSliderImageUrls(): array
+    {
+        $keys = ['gallery', 'primary_medium', 'primary_original'];
+        $urls = [];
+
+        foreach ([$this->centralProduct?->files, $this->files] as $files) {
+            foreach ($files ?? [] as $file) {
+                // whereIn('key', $keys): loose in_array on data_get().
+                if (!in_array($file->getAttribute('key'), $keys)) {
+                    continue;
+                }
+
+                // where('file_type', 'image'): enum value, loose ==, non-stringable object never equal.
+                $type = \Illuminate\Support\enum_value($file->getAttribute('file_type'));
+                if ((is_object($type) && !$type instanceof \Stringable) || $type != 'image') {
+                    continue;
+                }
+
+                $urls[] = $file->full_path;
+            }
+        }
+
+        return array_values(array_unique(array_filter($urls), SORT_REGULAR));
+    }
+
+    /**
+     * Per-instance memo of storefrontPricing() results (a card reads it several
+     * times). Kept off the model (WeakMap) so serialization is unchanged.
+     */
+    private static ?\WeakMap $storefrontPricingMemo = null;
 
     public function storefrontPricing(?ProductVariant $variant = null, ?int $countryId = null): array
     {
@@ -318,6 +379,38 @@ class Product extends Model
 
         $resolvedCountryId = $countryId ?? ((int) session('storefront_country_id') ?: null);
 
+        self::$storefrontPricingMemo ??= new \WeakMap();
+        $entries = self::$storefrontPricingMemo[$this] ?? [];
+        $memoKey = ($variant ? spl_object_id($variant) : 'none') . '|' . ($resolvedCountryId ?? 'null');
+        $entry = $entries[$memoKey] ?? null;
+
+        // Hit only while neither model's attributes changed since the entry was
+        // stored (identical arrays compare in O(1); cheaper than isDirty()).
+        if ($entry !== null && $entry['variant'] === $variant
+            && $entry['attributes'] === $this->attributes
+            && $entry['variant_attributes'] === $variant?->attributes) {
+            return $entry['pricing'];
+        }
+
+        // Unsaved attribute changes (e.g. price previews) always recompute.
+        if ($this->isDirty() || $variant?->isDirty()) {
+            return $this->computeStorefrontPricing($variant, $resolvedCountryId);
+        }
+
+        $pricing = $this->computeStorefrontPricing($variant, $resolvedCountryId);
+        $entries[$memoKey] = [
+            'variant' => $variant,
+            'attributes' => $this->attributes,
+            'variant_attributes' => $variant?->attributes,
+            'pricing' => $pricing,
+        ];
+        self::$storefrontPricingMemo[$this] = $entries;
+
+        return $pricing;
+    }
+
+    private function computeStorefrontPricing(?ProductVariant $variant, ?int $resolvedCountryId): array
+    {
         $breakdown = ($variant ?? $this)->priceBreakdownForCountry($resolvedCountryId);
         $_basePrice = round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
 

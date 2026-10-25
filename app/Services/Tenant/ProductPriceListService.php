@@ -6,6 +6,7 @@ namespace App\Services\Tenant;
 
 use App\Models\FixedShippingCost;
 use App\Models\Tenant\Product;
+use App\Support\CacheVersion;
 
 final class ProductPriceListService
 {
@@ -176,6 +177,9 @@ final class ProductPriceListService
             $variant->profit = $vProfitJson;
             $variant->saveQuietly();
         }
+
+        // saveQuietly() skips the CacheVersionObserver.
+        CacheVersion::bumpMany(['Product', 'ProductVariant']);
 
         $variantPrices = [];
         foreach ($product->variants as $variant) {

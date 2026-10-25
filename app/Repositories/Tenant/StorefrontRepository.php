@@ -76,6 +76,40 @@ class StorefrontRepository
     /** In-request memoization: populated once, reused for every subsequent call. */
     protected array $memo = [];
 
+    /** Request attribute holding memos that must survive the repository being re-bound. */
+    private const REQUEST_MEMO_ATTRIBUTE = '_storefront_repository_memo';
+
+    /**
+     * Products collected while a hydration batch is open (see batchProductHydration());
+     * null when no batch is open and lists are hydrated immediately.
+     */
+    protected ?Collection $deferredHydration = null;
+
+    /**
+     * Per-request memo stored on the request's attributes (keyed by tenant), so it
+     * survives the repository singleton being re-bound mid-request and never
+     * outlives the request (queue workers / long-running processes get a fresh one).
+     */
+    protected function requestMemo(string $key, \Closure $callback): mixed
+    {
+        $attributes = request()->attributes;
+        $fullKey = (tenant()?->id ?? 'central') . '|' . $key;
+        $memo = $attributes->get(self::REQUEST_MEMO_ATTRIBUTE, []);
+
+        if (array_key_exists($fullKey, $memo)) {
+            return $memo[$fullKey];
+        }
+
+        $value = $callback();
+
+        // Re-read: the callback may have stored other entries meanwhile.
+        $memo = $attributes->get(self::REQUEST_MEMO_ATTRIBUTE, []);
+        $memo[$fullKey] = $value;
+        $attributes->set(self::REQUEST_MEMO_ATTRIBUTE, $memo);
+
+        return $value;
+    }
+
     private function detectedCountry(): ?\App\Models\Country
     {
         return $this->memo['detected_country'] ??= app(CountryDetectorService::class)->detect(request());
@@ -177,6 +211,8 @@ class StorefrontRepository
         $relations = [
             'variants',
             'variants.centralVariant',
+            // Cards read $variant->centralVariant?->title (translated attribute).
+            'variants.centralVariant.translations.language',
             'flashSales' => fn($query) => $query->activeWindow()->orderByDesc('discount_percentage'),
             'translations.language',
             'files',
@@ -185,6 +221,8 @@ class StorefrontRepository
             'centralProduct' => fn($query) => $query->with([
                 'files',
                 'shippingZones.rates',
+                // souqify cards sum central variant stock.
+                'variants',
             ]),
         ];
 
@@ -204,6 +242,15 @@ class StorefrontRepository
     protected function hydrateProductCards(Collection $products): Collection
     {
         if ($products->isEmpty()) {
+            return $products;
+        }
+
+        // Inside batchProductHydration(): collect now, load once for the merged set.
+        if ($this->deferredHydration !== null) {
+            foreach ($products as $product) {
+                $this->deferredHydration->push($product);
+            }
+
             return $products;
         }
 
@@ -228,6 +275,59 @@ class StorefrontRepository
         }
 
         return $products;
+    }
+
+    /**
+     * Runs $callback with product-card hydration deferred: every list the
+     * repository returns inside it is collected and its relations are loaded
+     * with ONE merged loadMissing() when the callback returns (instead of one
+     * round of ~12 eager loads per list). Lists must only be counted, not
+     * rendered, inside the callback. Nested calls join the outer batch.
+     */
+    public function batchProductHydration(\Closure $callback): mixed
+    {
+        if ($this->deferredHydration !== null) {
+            return $callback();
+        }
+
+        $this->deferredHydration = new Collection();
+
+        try {
+            return $callback();
+        } finally {
+            $pending = $this->deferredHydration;
+            $this->deferredHydration = null;
+            $this->hydrateProductCards($pending);
+        }
+    }
+
+    /**
+     * One page of $query for the home page without paginate()'s COUNT(*) over the
+     * whole filtered set: the items are exactly what paginate($perPage) returns
+     * (same SQL, same request page), and total() is a lower bound that is exact
+     * whenever nothing follows this page — so hasMorePages() and `total() > n`
+     * checks against the page end behave as with paginate().
+     */
+    protected function pageWithoutCount(Builder $query, int $perPage): LengthAwarePaginator
+    {
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+
+        // Past page 1 the earlier pages' size is unknown without counting.
+        if ($page > 1) {
+            return $query->paginate($perPage)->withQueryString();
+        }
+
+        $items = (clone $query)->forPage($page, $perPage)->get();
+
+        $hasMore = $items->count() >= $perPage
+            && (clone $query)->reorder()->offset($page * $perPage)->limit(1)->exists();
+
+        $total = $hasMore ? $page * $perPage + 1 : ($page - 1) * $perPage + $items->count();
+
+        return (new \Illuminate\Pagination\LengthAwarePaginator($items, $total, $perPage, $page, [
+            'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+            'pageName' => 'page',
+        ]))->withQueryString();
     }
 
     protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
@@ -670,11 +770,28 @@ class StorefrontRepository
         }
 
         $code = Session::get('storefront_language');
+        $countryKey = ':' . (Session::get('storefront_country_id') ?? '');
+        $resolved = $this->requestMemo(
+            'current_language:' . ($code ?? '') . $countryKey,
+            fn() => $this->resolveCurrentLanguage($code),
+        );
 
+        // ApplyStorefrontSessionContext stores the resolved code in the session; a
+        // lookup by that code (active only) yields this same row, so a re-bound
+        // repository later in the request can reuse it instead of re-querying.
+        if ($resolved?->is_active && $resolved->code !== $code) {
+            $this->requestMemo('current_language:' . $resolved->code . $countryKey, fn() => $resolved);
+        }
+
+        return $this->memo['current_language'] = $resolved;
+    }
+
+    protected function resolveCurrentLanguage(?string $code): ?Language
+    {
         if ($code) {
             $lang = Language::query()->where('code', $code)->where('is_active', true)->with('imageFile')->first();
             if ($lang) {
-                return $this->memo['current_language'] = $lang;
+                return $lang;
             }
         }
 
@@ -687,11 +804,11 @@ class StorefrontRepository
                 ->with('imageFile')
                 ->first();
             if ($detected) {
-                return $this->memo['current_language'] = $detected;
+                return $detected;
             }
         }
 
-        return $this->memo['current_language'] = Language::query()->where('is_default', true)->with('imageFile')->first()
+        return Language::query()->where('is_default', true)->with('imageFile')->first()
             ?? Language::query()->where('is_active', true)->with('imageFile')->first();
     }
 
@@ -702,11 +819,28 @@ class StorefrontRepository
         }
 
         $code = Session::get('storefront_currency');
+        $countryKey = ':' . (Session::get('storefront_country_id') ?? '');
+        $resolved = $this->requestMemo(
+            'current_currency:' . ($code ?? '') . $countryKey,
+            fn() => $this->resolveCurrentCurrency($code),
+        );
 
+        // ApplyStorefrontSessionContext stores the resolved code in the session; a
+        // lookup by that code (active only) yields this same row, so a re-bound
+        // repository later in the request can reuse it instead of re-querying.
+        if ($resolved?->is_active && $resolved->code !== $code) {
+            $this->requestMemo('current_currency:' . $resolved->code . $countryKey, fn() => $resolved);
+        }
+
+        return $this->memo['current_currency'] = $resolved;
+    }
+
+    protected function resolveCurrentCurrency(?string $code): ?Currency
+    {
         if ($code) {
             $cur = Currency::query()->where('code', $code)->where('is_active', true)->first();
             if ($cur) {
-                return $this->memo['current_currency'] = $cur;
+                return $cur;
             }
         }
 
@@ -718,11 +852,11 @@ class StorefrontRepository
                 ->where('is_active', true)
                 ->first();
             if ($detected) {
-                return $this->memo['current_currency'] = $detected;
+                return $detected;
             }
         }
 
-        return $this->memo['current_currency'] = Currency::query()->where('is_default', true)->first()
+        return Currency::query()->where('is_default', true)->first()
             ?? Currency::query()->where('is_active', true)->first();
     }
 
@@ -789,6 +923,26 @@ class StorefrontRepository
     }
 
     /**
+     * The first Theme row with $slug — exactly `Theme::where('slug', $slug)->first()`
+     * (slugs are not unique per tenant, so this is not always currentTheme()),
+     * cached behind the Theme version and memoized for the request.
+     */
+    public function themeBySlug(string $slug): ?Theme
+    {
+        $key = 'theme_by_slug_' . $slug;
+
+        if (\array_key_exists($key, $this->memo)) {
+            return $this->memo[$key];
+        }
+
+        return $this->memo[$key] = $this->cacheRemember(
+            'theme_by_slug_' . md5($slug),
+            ['Theme'],
+            fn() => Theme::query()->where('slug', $slug)->first(),
+        );
+    }
+
+    /**
      * Resolve the home page layout variant the tenant picked for the current
      * theme, preferring a country-specific pick over the tenant-wide default,
      * and falling back to the theme's default catalog entry.
@@ -806,10 +960,10 @@ class StorefrontRepository
         }
 
         if (PreviewOverrides::active() && PreviewOverrides::homepageVariantKey()) {
-            $forced = tenancy()->central(fn() => HomeVariant::query()
+            $forced = HomeVariant::query()
                 ->forTheme($theme->slug)
                 ->where('key', PreviewOverrides::homepageVariantKey())
-                ->first());
+                ->first();
 
             if ($forced) {
                 return $this->memo['current_home_variant'] = $forced;
@@ -837,17 +991,18 @@ class StorefrontRepository
                     ->first();
 
                 if ($tenantChoice) {
-                    $variant = tenancy()->central(fn() => HomeVariant::query()->find($tenantChoice->home_variant_id));
+                    // HomeVariant uses the central connection (CentralConnection trait).
+                    $variant = HomeVariant::query()->find($tenantChoice->home_variant_id);
 
                     if ($variant) {
                         return $variant;
                     }
                 }
 
-                return tenancy()->central(fn() => HomeVariant::forTheme($theme->slug)
+                return HomeVariant::forTheme($theme->slug)
                     ->where('is_default', true)
                     ->where('is_active', true)
-                    ->first());
+                    ->first();
             },
         );
     }
@@ -876,7 +1031,8 @@ class StorefrontRepository
 
         return $this->memo['resolved_theme_colors'] = $this->cacheRemember(
             'resolved_theme_colors_' . $theme->id . '_' . $variant->id . '_' . ($country?->id ?? 'default'),
-            ['TenantThemeColor'],
+            // The variant's default palette ($defaults) is part of the cached value.
+            ['TenantThemeColor', 'HomeVariant', 'TenantHomeVariant'],
             function () use ($defaults, $theme, $variant, $country) {
                 $override = null;
 
@@ -952,7 +1108,7 @@ class StorefrontRepository
 
     public function activeCategories(): Collection
     {
-        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories', ['Category'], fn() => Category::query()
+        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories', ['Category', 'Product', 'CentralCategory'], fn() => Category::query()
             ->where('active', true)
             ->withCount(['products', 'children']) // For fallback thumb in header menu
             ->with(['translations.language', 'files', 'centralCategory.files'])
@@ -964,7 +1120,7 @@ class StorefrontRepository
 
     public function rootCategoriesWithChildren(): Collection
     {
-        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories', ['Category'], fn() => $this->pruneEmptyLeaves(
+        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories', ['Category', 'Product', 'CentralCategory'], fn() => $this->pruneEmptyLeaves(
             Category::query()
                 ->where('active', true)
                 ->whereNull('parent_id')
@@ -1093,7 +1249,8 @@ class StorefrontRepository
             'top_products' => $service->getBestSelling($limit, $countryId),
             'featured' => $service->getFeatured($limit, $countryId),
             'recommended' => $this->recommendedProducts($limit),
-            'flash_sale' => $this->activeFlashSales()->flatMap(fn($flashSale) => $flashSale->products)->unique('id'),
+            // Ids only: no need to hydrate the cards.
+            'flash_sale' => $this->activeFlashSaleRows()->flatMap(fn($flashSale) => $flashSale->products)->unique('id'),
             default => null,
         };
 
@@ -1298,6 +1455,29 @@ class StorefrontRepository
     }
 
     /**
+     * Home-page variant of paginatedTopRatedProducts([], $perPage, $minimumRating):
+     * the same rows (same SQL and request page) without the COUNT(*) query — see
+     * pageWithoutCount() for the total() contract. Cards are hydrated through
+     * hydrateProductCards() so they join a batchProductHydration() merge.
+     */
+    public function homeTopRatedProducts(int $perPage = 20, int $minimumRating = 5): LengthAwarePaginator
+    {
+        $query = $this->productBaseQuery(excludeOutOfStock: true)->setEagerLoads([]);
+
+        $this->applyProductFilters($query, []);
+
+        $query
+            ->whereRaw($this->averageRatingExpression() . ' >= ?', [$minimumRating])
+            ->orderByRaw($this->effectivePriceExpression() . ' asc')
+            ->orderByDesc('created_at');
+
+        $paginator = $this->pageWithoutCount($query, $perPage);
+        $this->hydrateProductCards($paginator->getCollection());
+
+        return $paginator;
+    }
+
+    /**
      * Merchandiser-curated "trending-now" badge wins when set; otherwise this
      * falls back to a recency-decayed sales-velocity score, and finally to the
      * newest products if nothing has sold recently — see
@@ -1406,6 +1586,97 @@ class StorefrontRepository
         return $query->paginate($perPage)->withQueryString();
     }
 
+    /**
+     * Home-page variant of paginatedProducts([], $perPage): the same rows (same SQL
+     * and request page) without the COUNT(*) query — see pageWithoutCount() for
+     * the total() contract (hasMorePages() is exact).
+     */
+    public function homeProducts(int $perPage = 20): LengthAwarePaginator
+    {
+        $query = $this->productBaseQuery(excludeOutOfStock: true)->setEagerLoads([]);
+
+        $this->applyProductFilters($query, []);
+        $this->applyProductSort($query, 'latest');
+
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+        if ($page > 1) {
+            $paginator = $this->pageWithoutCount($query, $perPage);
+            $this->hydrateProductCards($paginator->getCollection());
+
+            return $paginator;
+        }
+
+        // Page 1 is the same for every visitor of a country, but its ORDER BY runs
+        // four dependent subqueries per product (~40 ms). Cache only the ordered
+        // ids + total; the flash-sale window in the sort uses CURRENT_TIMESTAMP, so
+        // the TTL matches the flash-sale lists' (bounded staleness, as there).
+        $fresh = null;
+        $entry = $this->cacheRemember(
+            "home_products_page1:{$perPage}:" . ($this->customerCountryId() ?? 'default'),
+            ['Product', 'ProductVariant', 'FlashSale'],
+            function () use (&$fresh, $query, $perPage) {
+                $fresh = $this->pageWithoutCount($query, $perPage);
+
+                return ['ids' => $fresh->getCollection()->modelKeys(), 'total' => $fresh->total()];
+            },
+            ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
+        );
+
+        if ($fresh === null) {
+            $position = array_flip($entry['ids']);
+            $items = $entry['ids'] === [] ? new Collection() : Product::query()
+                ->whereIn('id', $entry['ids'])
+                ->get()
+                ->sortBy(fn(Product $product) => $position[$product->getKey()] ?? PHP_INT_MAX)
+                ->values();
+
+            // A cached id no longer resolves (deleted / hidden without a bump): recompute.
+            $fresh = $items->count() === count($entry['ids'])
+                ? (new \Illuminate\Pagination\LengthAwarePaginator($items, $entry['total'], $perPage, $page, [
+                    'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                    'pageName' => 'page',
+                ]))->withQueryString()
+                : $this->pageWithoutCount($query, $perPage);
+        }
+
+        $this->hydrateProductCards($fresh->getCollection());
+
+        return $fresh;
+    }
+
+    /**
+     * $count random active products (the home "buy together" pair). Same result
+     * set as `Product::where('active', true)->inRandomOrder()->limit($count)`
+     * (global scopes included) but drawn from a cached id pool instead of an
+     * ORDER BY RAND() scan of the products table.
+     */
+    public function randomActiveProducts(int $count = 2): Collection
+    {
+        $ids = $this->memo['active_product_ids'] ??= $this->cacheRemember(
+            'active_product_ids',
+            ['Product'],
+            fn() => Product::query()->where('active', true)->toBase()->pluck('id')->map(fn($id) => (int) $id)->all(),
+        );
+
+        if ($ids === [] || $count < 1) {
+            return new Collection();
+        }
+
+        $picked = array_map(fn($index) => $ids[$index], (array) array_rand($ids, min($count, count($ids))));
+        shuffle($picked);
+        $position = array_flip($picked);
+
+        $products = Product::query()
+            ->whereIn('id', $picked)
+            // Re-checked: the pool may predate a deactivation not yet bumped.
+            ->where('active', true)
+            ->get()
+            ->sortBy(fn(Product $product) => $position[$product->getKey()] ?? PHP_INT_MAX)
+            ->values();
+
+        return $this->hydrateProductCards($products);
+    }
+
     public function activeBadges(): Collection
     {
         return ProductBadge::query()->where('active', true)->orderBy('text')->get();
@@ -1419,14 +1690,36 @@ class StorefrontRepository
             return $this->memo['active_flash_sales'];
         }
 
+        $flashSales = $this->activeFlashSaleRows();
+
+        $this->hydrateProductCards(new Collection(
+            $flashSales->flatMap(fn(FlashSale $flashSale) => $flashSale->products->all())->all()
+        ));
+
+        return $this->memo['active_flash_sales'] = $flashSales;
+    }
+
+    /**
+     * Active flash sales (with files) and their bare product rows, cached; the
+     * products' card relations are NOT loaded — activeFlashSales() hydrates them.
+     */
+    protected function activeFlashSaleRows(): Collection
+    {
+        if (array_key_exists('active_flash_sale_rows', $this->memo)) {
+            return $this->memo['active_flash_sale_rows'];
+        }
+
         $countryId = $this->customerCountryId() ?? $this->detectedCountry()?->id;
 
         // Short TTL: the "active" window is time-based (start/end timestamps), so
         // a sale can flip active/inactive with no model write — keep this fresh
-        // rather than relying solely on the version bump.
-        return $this->memo['active_flash_sales'] = $this->cacheRemember(
+        // rather than relying solely on the version bump. Only the sales and their
+        // bare product rows are cached: card relations (variants, central product /
+        // variant data, translations, flash sales, badges…) are hydrated per request,
+        // so central catalog edits — which bump no tenant tag — show up immediately.
+        return $this->memo['active_flash_sale_rows'] = $this->cacheRemember(
             'active_flash_sales_' . ($countryId ?? 'default'),
-            ['FlashSale', 'Product'],
+            ['FlashSale', 'Product', 'ProductVariant', 'ProductBadge'],
             function () use ($countryId) {
                 // Priority: country-specific flash sales first, fall back to the default
                 // (country_id IS NULL) set only when no country-specific sale applies.
@@ -1434,10 +1727,7 @@ class StorefrontRepository
                     $countrySpecific = FlashSale::query()
                         ->activeWindow()
                         ->where('country_id', $countryId)
-                        ->with([
-                            'files',
-                            'products' => fn($query) => $query->with($this->productRelations()),
-                        ])
+                        ->with(['files', 'products'])
                         ->orderByDesc('created_at')
                         ->get();
 
@@ -1449,15 +1739,39 @@ class StorefrontRepository
                 return FlashSale::query()
                     ->activeWindow()
                     ->whereNull('country_id')
-                    ->with([
-                        'files',
-                        'products' => fn($query) => $query->with($this->productRelations()),
-                    ])
+                    ->with(['files', 'products'])
                     ->orderByDesc('created_at')
                     ->get();
             },
             ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
         );
+    }
+
+    /**
+     * Unique active flash-sale products sorted by storefront current price (asc,
+     * stable — ties keep flash-sale order), as the tabbed home API lists them.
+     * The resulting id order is cached briefly per product set, country and
+     * currency, so later pages don't re-price every flash product per request.
+     */
+    public function flashProductsByPrice(): \Illuminate\Support\Collection
+    {
+        $products = $this->activeFlashSales()->flatMap(fn($flashSale) => $flashSale->products)->unique('id');
+        $byId = $products->keyBy(fn(Product $product) => (int) $product->getKey());
+
+        $order = $this->cacheRemember(
+            'flash_products_by_price_' . md5($byId->keys()->implode(','))
+                . '_' . ($this->customerCountryId() ?? 'default')
+                . '_' . ($this->currentCurrency()?->code ?? 'none'),
+            ['FlashSale', 'Product', 'ProductVariant'],
+            fn() => $products
+                ->sortBy(fn($product) => (float) $product->storefrontPricing()['current_price'])
+                ->map(fn(Product $product) => (int) $product->getKey())
+                ->values()
+                ->all(),
+            ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
+        );
+
+        return collect($order)->map(fn(int $id) => $byId->get($id))->filter()->values();
     }
 
     // ─── Cart (session-based) ────────────────────────────────────────────────

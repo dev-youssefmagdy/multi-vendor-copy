@@ -12,6 +12,7 @@ use App\Models\TenantCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\FlashSaleMediaService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
@@ -295,6 +296,7 @@ final class FlashSaleController extends PanelController
                 ->where('flash_sale_id', $flashSale->id)
                 ->where('product_id', $productId)
                 ->delete();
+            CacheVersion::bumpMany(['FlashSale', 'Product']);
 
             return $this->success('Product removed from flash sale.', ['attached' => false]);
         }
@@ -305,6 +307,7 @@ final class FlashSaleController extends PanelController
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);
+        CacheVersion::bumpMany(['FlashSale', 'Product']);
 
         return $this->success('Product added to flash sale.', ['attached' => true]);
     }

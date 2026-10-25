@@ -1,11 +1,18 @@
 @php
-    use App\Models\Tenant\Setting;
-    $promoBannerImageUrl = Setting::query()->where('name', 'promo_banner_image_url')->value('value') ?: null;
-    $promoBannerMobileImageUrl = Setting::query()->where('name', 'promo_banner_mobile_image_url')->value('value') ?: null;
-    $promoBannerLink = Setting::query()->where('name', 'promo_banner_link')->value('value') ?: '#';
-    $promoBannerTitle = Setting::query()->where('name', 'promo_banner_title')->value('value') ?: null;
-    $promoBannerSubtitle = Setting::query()->where('name', 'promo_banner_subtitle')->value('value') ?: null;
-    $promoBannerCta = Setting::query()->where('name', 'promo_banner_cta_text')->value('value') ?: __('Shop Now');
+    $__promoSettings = app(\App\Services\Tenant\HomeViewData::class)->settings([
+        'promo_banner_image_url',
+        'promo_banner_mobile_image_url',
+        'promo_banner_link',
+        'promo_banner_title',
+        'promo_banner_subtitle',
+        'promo_banner_cta_text',
+    ]);
+    $promoBannerImageUrl = $__promoSettings['promo_banner_image_url'] ?: null;
+    $promoBannerMobileImageUrl = $__promoSettings['promo_banner_mobile_image_url'] ?: null;
+    $promoBannerLink = $__promoSettings['promo_banner_link'] ?: '#';
+    $promoBannerTitle = $__promoSettings['promo_banner_title'] ?: null;
+    $promoBannerSubtitle = $__promoSettings['promo_banner_subtitle'] ?: null;
+    $promoBannerCta = $__promoSettings['promo_banner_cta_text'] ?: __('Shop Now');
 @endphp
 
 @if ($promoBannerImageUrl || $promoBannerMobileImageUrl || $promoBannerTitle)

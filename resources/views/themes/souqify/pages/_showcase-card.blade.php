@@ -23,12 +23,14 @@ Vars: $product (Product model), $badgeText (optional)
     $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null;
 
     // Slider: collect all gallery + primary image URLs from central & tenant files
-    $_sliderSrcs = ($product->centralProduct?->files ?? collect())
-        ->merge($product->files ?? collect())
-        ->whereIn('key', ['gallery', 'primary_medium', 'primary_original'])
-        ->where('file_type', 'image')
-        ->map(fn($f) => $f->full_path)
-        ->filter()->unique()->values()->all();
+    $_sliderSrcs = $product instanceof \App\Models\Tenant\Product
+        ? $product->storefrontSliderImageUrls()
+        : ($product->centralProduct?->files ?? collect())
+            ->merge($product->files ?? collect())
+            ->whereIn('key', ['gallery', 'primary_medium', 'primary_original'])
+            ->where('file_type', 'image')
+            ->map(fn($f) => $f->full_path)
+            ->filter()->unique()->values()->all();
     if ($img && !in_array($img, $_sliderSrcs)) {
         array_unshift($_sliderSrcs, $img);
     }

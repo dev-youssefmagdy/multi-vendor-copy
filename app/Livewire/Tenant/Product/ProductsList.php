@@ -13,6 +13,7 @@ use App\Models\Tenant\ProductVariant;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\PriceFinderService;
 use App\Services\SocialPostService;
+use App\Support\CacheVersion;
 use Livewire\WithPagination;
 
 class ProductsList extends ListPage
@@ -815,6 +816,9 @@ class ProductsList extends ListPage
             $variant->profit = $vProfitJson;
             $variant->saveQuietly();
         }
+
+        // saveQuietly() skips the CacheVersionObserver.
+        CacheVersion::bumpMany(['Product', 'ProductVariant']);
 
         // Sync computed prices back to state for display
         $this->priceListPrices = $prices;

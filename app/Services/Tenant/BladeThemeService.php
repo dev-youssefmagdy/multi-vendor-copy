@@ -7,7 +7,9 @@ use App\Models\HomeVariant;
 use App\Models\Tenant as TenantModel;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
+use App\Support\CacheVersion;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use RuntimeException;
 use ZipArchive;
@@ -198,14 +200,33 @@ class BladeThemeService
             ->get());
     }
 
+    /**
+     * The tenant's approved + active Blade theme. Checked on every storefront
+     * home request (ServeBladeThemeHome), so it is cached behind the global
+     * `BladeTheme` cache version: Eloquent writes bump it via
+     * CacheVersionObserver, and the query-builder writes in this service bump
+     * it explicitly. BladeTheme uses the central connection, so no
+     * tenancy()->central() round-trip is needed.
+     */
     public function activeBladeTheme(string $tenantId): ?BladeTheme
     {
-        return tenancy()->central(fn() => BladeTheme::query()
+        $key = 'blade_theme:active:' . $tenantId . ':v' . CacheVersion::get('BladeTheme');
+        $ttl = (int) config('cache.storefront.default_ttl', 3600);
+
+        // Wrapped in an array so a "no active theme" (null) result is cached too.
+        return Cache::driver('file')->remember($key, $ttl, fn() => [
+            'theme' => $this->queryActiveBladeTheme($tenantId),
+        ])['theme'];
+    }
+
+    private function queryActiveBladeTheme(string $tenantId): ?BladeTheme
+    {
+        return BladeTheme::query()
             ->where('tenant_id', $tenantId)
             ->where('status', BladeTheme::STATUS_APPROVED)
             ->where('is_active', true)
             ->latest('id')
-            ->first());
+            ->first();
     }
 
     public function deactivate(string $tenantId): void
@@ -213,6 +234,7 @@ class BladeThemeService
         tenancy()->central(function () use ($tenantId) {
             BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
         });
+        CacheVersion::bump('BladeTheme');
 
         $liveLink = $this->liveViewsPath($tenantId);
         if (is_link($liveLink)) {
@@ -248,6 +270,7 @@ class BladeThemeService
 
             return true;
         });
+        CacheVersion::bump('BladeTheme');
 
         if ($activated) {
             $this->relinkLiveViews($tenantId);
@@ -260,6 +283,7 @@ class BladeThemeService
         tenancy()->central(function () use ($tenantId) {
             BladeTheme::query()->where('tenant_id', $tenantId)->update(['is_active' => false]);
         });
+        CacheVersion::bump('BladeTheme');
 
         $liveLink = $this->liveViewsPath($tenantId);
         if (is_link($liveLink)) {
@@ -424,7 +448,8 @@ class BladeThemeService
     /** Symlinks a blade theme's storage_path into the private path IdentifyTenantTheme looks for. */
     public function relinkLiveViews(string $tenantId, ?BladeTheme $theme = null): void
     {
-        $theme ??= $this->activeBladeTheme($tenantId);
+        // Write path: read the DB directly rather than the cached lookup.
+        $theme ??= $this->queryActiveBladeTheme($tenantId);
 
         $liveLink = $this->liveViewsPath($tenantId);
 
@@ -468,6 +493,7 @@ class BladeThemeService
 
             return $bladeTheme;
         });
+        CacheVersion::bump('BladeTheme');
         $this->relinkLiveViews($tenantId, $bladeTheme);
         $this->seedPageBuilderSectionsForVariant($tenantId, $bladeTheme, $homeVariantId);
         $this->syncThemeRow(activate: true);

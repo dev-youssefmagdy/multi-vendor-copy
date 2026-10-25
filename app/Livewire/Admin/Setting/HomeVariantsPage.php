@@ -7,6 +7,7 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\HomeVariant;
 use App\Services\Tenant\PageBuilder\SectionRegistry;
 use App\Services\Tenant\TemplateRegistryService;
+use App\Support\CacheVersion;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -189,6 +190,7 @@ class HomeVariantsPage extends AdminPage
                 ->where('theme_slug', $this->themeSlug)
                 ->when($this->editingId, fn($q) => $q->where('id', '!=', $this->editingId))
                 ->update(['is_default' => false]);
+            CacheVersion::bump('HomeVariant');
         }
 
         if ($this->editingId) {

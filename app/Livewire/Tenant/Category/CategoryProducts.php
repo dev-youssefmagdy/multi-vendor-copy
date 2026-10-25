@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Category;
 
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Category;
+use App\Support\CacheVersion;
 use Livewire\Component;
 
 class CategoryProducts extends Component
@@ -22,6 +23,8 @@ class CategoryProducts extends Component
         foreach ($orderedIds as $index => $productId) {
             $this->category->products()->updateExistingPivot((int) $productId, ['sort_order' => $index]);
         }
+
+        CacheVersion::bumpMany(['Category', 'Product']);
 
         $this->toast('Product order saved.');
     }

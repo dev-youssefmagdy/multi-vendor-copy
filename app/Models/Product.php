@@ -144,7 +144,10 @@ class Product extends Model
         //     ? $this->files->firstWhere('key', 'primary_medium') ?? $this->files->firstWhere('key', 'primary_original')
         //     : $this->files->whereIn('key', ['primary_medium', 'primary_original', 'gallery'])->first();
 
-        $file = $this->files->whereIn('key', ['primary_medium', 'primary_original', 'gallery'])->first();
+        // Same as ->whereIn('key', [...])->first() (non-strict in_array, collection
+        // order) but stops at the first match instead of filtering every file.
+        $keys = ['primary_medium', 'primary_original', 'gallery'];
+        $file = $this->files->first(fn ($file) => in_array(data_get($file, 'key'), $keys));
         return $file?->full_path;
     }
 

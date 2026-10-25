@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Category;
 
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Category;
+use App\Support\CacheVersion;
 use Livewire\Component;
 
 class SortCategories extends Component
@@ -15,6 +16,8 @@ class SortCategories extends Component
         foreach ($orderedIds as $index => $categoryId) {
             Category::query()->whereKey((int) $categoryId)->update(['order_number' => $index]);
         }
+
+        CacheVersion::bump('Category');
 
         $this->toast('Category order saved.');
     }

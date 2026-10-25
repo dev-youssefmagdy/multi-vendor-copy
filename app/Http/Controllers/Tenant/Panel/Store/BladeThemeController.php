@@ -11,6 +11,7 @@ use App\Models\HomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
 use App\Services\Tenant\BladeThemeService;
+use App\Support\CacheVersion;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
@@ -119,6 +120,7 @@ final class BladeThemeController extends PanelController
                     ->where('theme_id', $customTheme->id)
                     ->where('home_variant_id', $deletedVariantId)
                     ->delete();
+                CacheVersion::bump('TenantPageSection');
             }
         }
 

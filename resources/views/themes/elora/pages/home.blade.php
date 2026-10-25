@@ -5,7 +5,7 @@ $currency = $currentCurrency ?? null;
 $symbol = data_get($currency, 'symbol', '$');
 $rate = (float) data_get($currency, 'conversion_rate', 1.0);
 $selectedCountryId = session('storefront_country_id');
-$selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCountryId) : null;
+$selectedCountry = $selectedCountryId ? app(\App\Services\Tenant\HomeViewData::class)->country($selectedCountryId) : null;
 @endphp
 
 @push('head')
@@ -47,7 +47,7 @@ $selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCount
                                     if ($selectedCountry) {
                                         $countryLabel = $selectedCountry->name;
                                     } elseif ($authCustomer->country_id) {
-                                        $countryLabel = \App\Models\Country::find($authCustomer->country_id)?->name ?? __('Default');
+                                        $countryLabel = app(\App\Services\Tenant\HomeViewData::class)->country($authCustomer->country_id)?->name ?? __('Default');
                                     } else {
                                         $countryLabel = __('Default');
                                     }

@@ -13,6 +13,7 @@ use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -203,6 +204,7 @@ final class ProductController extends PanelController
         ], $product);
 
         $saved->badges()->sync(array_filter((array) ($validated['badge_ids'] ?? []), filled(...)));
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $message = $editRequestSubmitted
             ? 'Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.'

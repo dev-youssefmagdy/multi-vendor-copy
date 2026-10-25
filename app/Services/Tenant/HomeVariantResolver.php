@@ -22,16 +22,50 @@ use App\Services\Tenant\PageBuilder\SectionRegistry;
  */
 class HomeVariantResolver
 {
+    /** Request attribute holding the per-request resolveFor() memo. */
+    public const MEMO_ATTRIBUTE = '_home_variant_resolver_memo';
+
     /**
+     * Memoized per request (keyed by tenant, theme, country and preview key):
+     * the layout composer and HomePage both resolve the same variant on every
+     * page load. The memo lives on the request's attributes, so it never
+     * outlives the request (queue workers / Octane get a fresh one).
+     *
      * @return HomeVariant|null
      */
     public function resolveFor(Theme $theme, ?Country $country): ?HomeVariant
     {
+        $previewKey = PreviewOverrides::active() ? PreviewOverrides::homepageVariantKey() : null;
+        $memoKey = implode('|', [
+            (string) (tenant('id') ?? 'central'),
+            (string) $theme->id,
+            (string) $theme->slug,
+            (string) ($country?->id ?? ''),
+            (string) ($previewKey ?? ''),
+        ]);
+
+        $attributes = request()->attributes;
+        $memo = $attributes->get(self::MEMO_ATTRIBUTE, []);
+
+        if (!array_key_exists($memoKey, $memo)) {
+            $memo[$memoKey] = $this->resolveUncached($theme, $country);
+            $attributes->set(self::MEMO_ATTRIBUTE, $memo);
+        }
+
+        return $memo[$memoKey];
+    }
+
+    /**
+     * HomeVariant uses the central connection (CentralConnection trait), so
+     * no tenancy()->central() round-trip is needed for its queries.
+     */
+    private function resolveUncached(Theme $theme, ?Country $country): ?HomeVariant
+    {
         if (PreviewOverrides::active() && PreviewOverrides::homepageVariantKey()) {
-            $forced = tenancy()->central(fn() => HomeVariant::query()
+            $forced = HomeVariant::query()
                 ->forTheme($theme->slug)
                 ->where('key', PreviewOverrides::homepageVariantKey())
-                ->first());
+                ->first();
 
             if ($forced) {
                 return $forced;
@@ -53,16 +87,16 @@ class HomeVariantResolver
             ->first();
 
         if ($row) {
-            $variant = tenancy()->central(fn() => HomeVariant::query()->find($row->home_variant_id));
+            $variant = HomeVariant::query()->find($row->home_variant_id);
             if ($variant) {
                 return $variant;
             }
         }
 
-        return tenancy()->central(fn() => HomeVariant::query()
+        return HomeVariant::query()
             ->forTheme($theme->slug)
             ->where('is_default', true)
-            ->first());
+            ->first();
     }
 
     /**

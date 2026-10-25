@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\Tenant\Category;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,6 +31,8 @@ final class CategorySortController extends PanelController
         foreach ($ids as $index => $categoryId) {
             Category::query()->whereKey((int) $categoryId)->update(['order_number' => $index]);
         }
+
+        CacheVersion::bump('Category');
 
         return $this->success('Category order saved.');
     }

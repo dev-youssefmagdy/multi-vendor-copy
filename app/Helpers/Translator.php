@@ -12,11 +12,22 @@ trait Translator
     /** Per-request in-memory locale cache, keyed by tenant ID. Avoids repeated file-cache reads. */
     private static array $defaultLocaleCache = [];
 
+    /**
+     * Per-instance memo of lazily loaded translations (used when the
+     * `translations` relation was not eager loaded). A WeakMap keeps it off
+     * the model itself, so serialization / toArray() output is unchanged and
+     * the entry is released together with the model instance.
+     */
+    private static ?\WeakMap $lazyTranslationsMemo = null;
+
+    /** @see translationsByField() */
+    private static ?\WeakMap $translationsByFieldMemo = null;
+
     function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $tenantId = (string) (tenant('id') ?? 'central');
+        $tenantId = (string) (tenancy()->tenant?->getTenantKey() ?? 'central');
 
         if (!isset(static::$defaultLocaleCache[$tenantId])) {
             $languageModel = $this->translationLanguageModelClass();
@@ -63,21 +74,78 @@ trait Translator
         $defaultLocale = $this->defaultLocale;
         //$defaultLocale = $languageModel::query()->where('is_default', true)->value('code') ?? config('app.fallback_locale', 'en');
 
-        $translations = $this->relationLoaded('translations')
-            ? $this->getRelation('translations')
-            : $this->translations()->with('language')->get();
+        $translations = $this->loadedTranslations();
 
-        $match = $translations->first(function ($translation) use ($key, $locale) {
-            return $translation->field === $key && $translation->language?->code === $locale;
-        });
+        // Same first-match semantics as scanning $translations in order for
+        // (field, locale) and then (field, default locale), but only over the
+        // rows of this field (storefront pages call t() thousands of times).
+        $candidates = self::translationsByField($translations)[$key] ?? [];
 
-        if ($match) {
-            return $match->value;
+        foreach ($candidates as $translation) {
+            if ($translation->language?->code === $locale) {
+                return $translation->value;
+            }
         }
 
-        return $translations->first(function ($translation) use ($key, $defaultLocale) {
-            return $translation->field === $key && $translation->language?->code === $defaultLocale;
-        })?->value;
+        foreach ($candidates as $translation) {
+            if ($translation->language?->code === $defaultLocale) {
+                return $translation->value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Translation rows grouped by `field` (collection order kept), memoized per
+     * collection instance and rebuilt whenever its size changes.
+     *
+     * @return array<string, array<int, mixed>>
+     */
+    private static function translationsByField($translations): array
+    {
+        self::$translationsByFieldMemo ??= new \WeakMap();
+        $memo = self::$translationsByFieldMemo[$translations] ?? null;
+        $count = $translations->count();
+
+        if ($memo !== null && $memo['count'] === $count) {
+            return $memo['index'];
+        }
+
+        $index = [];
+        foreach ($translations as $translation) {
+            $field = $translation->field;
+            if (is_string($field)) {
+                $index[$field][] = $translation;
+            }
+        }
+
+        self::$translationsByFieldMemo[$translations] = ['count' => $count, 'index' => $index];
+
+        return $index;
+    }
+
+    /**
+     * The eager-loaded `translations` relation when present; otherwise the
+     * translations (with language) are queried once per model instance and
+     * reused for every subsequent attribute read on that instance.
+     */
+    protected function loadedTranslations()
+    {
+        if ($this->relationLoaded('translations')) {
+            return $this->getRelation('translations');
+        }
+
+        self::$lazyTranslationsMemo ??= new \WeakMap();
+        $key = $this->getKey();
+        $memo = self::$lazyTranslationsMemo[$this] ?? null;
+
+        if ($memo === null || $memo['key'] !== $key) {
+            $memo = ['key' => $key, 'translations' => $this->translations()->with('language')->get()];
+            self::$lazyTranslationsMemo[$this] = $memo;
+        }
+
+        return $memo['translations'];
     }
 
     public function translationValue(string $field, ?string $locale = null): ?string
@@ -110,9 +178,7 @@ trait Translator
             )
             ->orderByDesc('is_default')
             ->get();
-        $translations = $this->relationLoaded('translations')
-            ? $this->getRelation('translations')
-            : $this->translations()->with('language')->get();
+        $translations = $this->loadedTranslations();
 
         return $languages->mapWithKeys(function ($language) use ($fields, $translations) {
             $payload = [];
@@ -155,6 +221,7 @@ trait Translator
         }
 
         $this->translations()->delete();
+        self::$lazyTranslationsMemo?->offsetUnset($this);
 
         if ($rows === []) {
             return;

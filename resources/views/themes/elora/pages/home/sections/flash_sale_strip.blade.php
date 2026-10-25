@@ -1,14 +1,16 @@
     {{-- ── Flash Sale Strip ─────────────────────────────────────────────────────── --}}
     @if ($flashSales->isNotEmpty())
-    @php $firstSale = $flashSales->first(); @endphp
+    @php
+        $firstSale = $flashSales->first();
+        // Same default the tenant panel assigns to flash sales saved without a banner.
+        $flashBannerSrc = $flashBanner ?: asset('elora/assets/images/flash-sales-banner.png');
+    @endphp
     <section  wire:ignore>
         <div class="w-full overflow-hidden">
-            @if ($flashBanner)
             <div class="mb-1 sm:mb-0">
-                <img loading="lazy" src="{{ $flashBanner }}" alt="{{ __('Flash Sale') }}" class="block w-full h-auto object-cover"
+                <img loading="lazy" src="{{ $flashBannerSrc }}" alt="{{ __('Flash Sale') }}" class="block w-full h-auto object-cover"
                     style="max-height:180px;object-position:center;" />
             </div>
-            @endif
             <div class="py-5 sm:py-6"
                 style="background:linear-gradient(89.62deg,#C94F1A,#2DCF9C 23%,#E0A340 58%,#F23F3F 72%,#BA3800 100%);">
                 {{-- Header keeps the page gutter; the carousel below runs edge to edge --}}

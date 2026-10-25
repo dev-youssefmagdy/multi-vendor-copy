@@ -10,6 +10,7 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Models\TenantCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Support\CacheVersion;
 use App\Support\Tenant\Metric;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -47,7 +48,9 @@ final class BadgeController extends PanelController
             ->orderBy('name')
             ->get(['id', 'iso2', 'name', 'flag_emoji']));
 
-        $selectedProductIds = $badge->productsForCountry($activeCountryId)->pluck('products.id')->map(fn ($id) => (int) $id)->all();
+        // Only products the storefront actually renders for this badge (active +
+        // central-visible, see HomeProductService::queryBadge).
+        $selectedProductIds = $badge->productsForCountry($activeCountryId)->where('products.active', true)->pluck('products.id')->map(fn ($id) => (int) $id)->all();
         $selectedProductLabels = $this->repo->productNamesForIds($selectedProductIds);
 
         return view('tenant.pages.catalog.badges.show', [
@@ -70,6 +73,7 @@ final class BadgeController extends PanelController
         $result = $this->repo->searchProducts(
             (string) $request->input('q', ''),
             (int) $request->input('page', 1),
+            activeOnly: true,
         );
 
         return response()->json([
@@ -87,6 +91,7 @@ final class BadgeController extends PanelController
         }
 
         $productIds = Product::query()
+            ->where('active', true)
             ->whereHas('categories', fn ($q) => $q->where('categories.id', $categoryId))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
@@ -110,6 +115,9 @@ final class BadgeController extends PanelController
     {
         $countryId = $request->integer('country_id') ?: null;
         $ids = array_filter(array_map('intval', $request->input('product_ids', [])));
+        // Drop ids the storefront would never render (inactive / centrally hidden).
+        $ids = Product::query()->where('active', true)->whereIn('id', $ids)->pluck('id')
+            ->map(fn ($id) => (int) $id)->sortBy(fn ($id) => array_search($id, $ids, true))->values()->all();
 
         $existingOrder = $badge->productsForCountry($countryId)->pluck('product_badge_product.sort_order', 'products.id');
         $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
@@ -130,6 +138,8 @@ final class BadgeController extends PanelController
                 'updated_at' => $now,
             ]);
         }
+
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $label = $countryId ? ('country #'.$countryId) : 'Default';
 

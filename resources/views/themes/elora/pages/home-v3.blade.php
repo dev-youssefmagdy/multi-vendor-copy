@@ -5,7 +5,7 @@ $currency = $currentCurrency ?? null;
 $symbol = data_get($currency, 'symbol', '$');
 $rate = (float) data_get($currency, 'conversion_rate', 1.0);
 $selectedCountryId = session('storefront_country_id');
-$selectedCountry = $selectedCountryId ? \App\Models\Country::find($selectedCountryId) : null;
+$selectedCountry = $selectedCountryId ? app(\App\Services\Tenant\HomeViewData::class)->country($selectedCountryId) : null;
 @endphp
 
 

@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\HomeVariant;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Support\CacheVersion;
 
 class HomeVariantsPage extends TenantPage
 {
@@ -39,6 +40,7 @@ class HomeVariantsPage extends TenantPage
                 ->where('theme_id', $this->selectedThemeId)
                 ->where('country_id', $countryId)
                 ->delete();
+            CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
             $this->toast('Reverted to the theme\'s default variant.');
             return;
@@ -77,13 +79,12 @@ class HomeVariantsPage extends TenantPage
         if ($selectedTheme) {
             $slug = strtolower($selectedTheme->slug);
 
-            $availableVariants = tenancy()->central(fn() => HomeVariant::query()
+            $availableVariants = HomeVariant::query()
                 ->where('theme_slug', $slug)
                 ->where('is_active', true)
                 ->orderByDesc('is_default')
                 ->orderBy('name')
-                ->get()
-            );
+                ->get();
 
             $selections = TenantHomeVariant::query()
                 ->where('theme_id', $selectedTheme->id)

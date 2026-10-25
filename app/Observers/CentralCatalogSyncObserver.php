@@ -12,6 +12,7 @@ use App\Models\ProductVariant;
 use App\Models\Tenant;
 use App\Models\Variation;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
+use App\Support\CacheVersion;
 
 class CentralCatalogSyncObserver
 {
@@ -86,9 +87,14 @@ class CentralCatalogSyncObserver
                 try {
                     // Use withoutGlobalScope so we can find the row even when
                     // central_visible is currently false (archived product).
-                    \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
+                    $affected = \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
                         ->where('central_product_id', $model->id)
                         ->update(['central_visible' => $model->isVisibleToTenants()]);
+
+                    // Query-builder update skips the CacheVersionObserver.
+                    if ($affected > 0) {
+                        CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category']);
+                    }
                 } finally {
                     tenancy()->end();
                 }

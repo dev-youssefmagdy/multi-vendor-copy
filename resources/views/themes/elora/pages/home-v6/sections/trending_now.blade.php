@@ -5,17 +5,7 @@
 
       // Real 30-day sales volume per product, used to size the "ordered" progress bar.
       $__trendingProductIds = $trendingNowProducts->pluck('id')->all();
-      $__trendingSoldQty = empty($__trendingProductIds) ? collect() : \App\Models\Tenant\OrderItem::query()
-          ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
-          ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
-          ->join('orders', 'orders.id', '=', 'order_items.order_id')
-          ->where('orders.created_at', '>=', now()->subDays(30))
-          ->where(function ($q) use ($__trendingProductIds): void {
-              $q->whereIn('order_items.product_id', $__trendingProductIds)
-                  ->orWhereIn('product_variants.product_id', $__trendingProductIds);
-          })
-          ->groupBy(\Illuminate\Support\Facades\DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
-          ->pluck('total_qty', 'product_id');
+      $__trendingSoldQty = app(\App\Services\Tenant\HomeViewData::class)->soldQtyLast30Days($__trendingProductIds);
       $__trendingMaxSold = max(1, (int) ($__trendingSoldQty->max() ?? 1));
 
       $trendingCards = $trendingNowProducts->map(function ($product) use ($symbol, $rate, $__trendingSoldQty, $__trendingMaxSold) {

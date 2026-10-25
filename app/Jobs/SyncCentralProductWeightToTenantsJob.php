@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
+use App\Support\CacheVersion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -50,7 +51,7 @@ class SyncCentralProductWeightToTenantsJob implements ShouldQueue
             $weight = $weight !== null ? (int) $weight : null;
 
             $this->pushToTenants(function () use ($weight) {
-                DB::connection('tenant')->table('product_variants')
+                return DB::connection('tenant')->table('product_variants')
                     ->where('central_product_variant_id', $this->centralVariantId)
                     ->update(['weight_grams' => $weight]);
             });
@@ -63,7 +64,7 @@ class SyncCentralProductWeightToTenantsJob implements ShouldQueue
             $weight = $weight !== null ? (int) $weight : null;
 
             $this->pushToTenants(function () use ($weight) {
-                DB::connection('tenant')->table('products')
+                return DB::connection('tenant')->table('products')
                     ->where('central_product_id', $this->centralProductId)
                     ->update(['weight_grams' => $weight]);
             });
@@ -98,7 +99,12 @@ class SyncCentralProductWeightToTenantsJob implements ShouldQueue
     {
         foreach (Tenant::all() as $tenant) {
             tenancy()->initialize($tenant);
-            $callback();
+
+            // Raw updates skip the CacheVersionObserver; a callback returning 0
+            // affected rows (tenant doesn't carry the product) needs no bump.
+            if ($callback() !== 0) {
+                CacheVersion::bumpMany(['Product', 'ProductVariant']);
+            }
         }
 
         tenancy()->end();

@@ -10,6 +10,7 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -178,6 +179,9 @@ class OwnProductController extends Controller
                 }
             }
         }
+
+        // Badge pivot sync and primary-image deletes above bypass the observers.
+        CacheVersion::bumpMany(['ProductBadge', 'Product', 'File']);
 
         session()->flash('status', $product ? 'Product updated successfully.' : 'Product created successfully.');
         return redirect()->route('tenant.own-products.edit', $savedProduct);

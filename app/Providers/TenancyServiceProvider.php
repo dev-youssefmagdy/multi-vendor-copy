@@ -6,12 +6,16 @@ namespace App\Providers;
 
 use App\Http\Middleware\InitializeTenancyByDomainForLivewire;
 use App\Http\Middleware\InitializeTenancyBySlug;
+use App\Models\Tenant\Product;
 use App\Repositories\Tenant\StorefrontRepository;
+use App\Services\CountryDetectorService;
+use App\Services\Tenant\CustomerCountryResolver;
+use App\Services\Tenant\HomeVariantResolver;
 use App\Translation\TenantTranslator;
 use App\View\Composers\StorefrontComposer;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Features\SupportFileUploads\FilePreviewController;
 use Livewire\Livewire;
@@ -113,23 +117,78 @@ class TenancyServiceProvider extends ServiceProvider
         $this->bootEvents();
         $this->mapRoutes();
         $this->registerStorefrontComposer();
+        $this->resetRequestMemosPerQueueJob();
 
         $this->makeTenancyMiddlewareHighestPriority();
     }
 
+    /** Tenant the StorefrontRepository binding was last (re)registered for. */
+    private ?string $storefrontRepositoryTenant = null;
+
+    /** View factory the storefront composer was registered on (once per factory). */
+    private ?\WeakReference $storefrontComposerFactory = null;
+
     /**
      * Register the view composer for all theme views after tenancy boots
      * (so the tenant DB connection is available when the composer runs).
+     *
+     * TenancyBootstrapped also fires on every tenancy()->central() round-trip
+     * (end + re-initialize), so:
+     *  - the composer is registered only once per view factory
+     *    (re-registering stacked duplicate composers on every round-trip);
+     *  - the repository binding is replaced only when the tenant actually
+     *    changes, so a round-trip back to the same tenant keeps its in-request
+     *    memo. It is bound as `scoped`, so queue workers (per job) and Octane
+     *    (per request) still get a fresh instance even for the same tenant.
      */
     protected function registerStorefrontComposer(): void
     {
-        Event::listen(Events\TenancyBootstrapped::class, function () {
-            // Re-bind as a fresh singleton each time tenancy initialises (once per request).
-            // This ensures the in-request $memo cache is isolated per request while the
-            // same instance is shared across all themes.* view-composer calls on that request.
-            app()->singleton(StorefrontRepository::class);
+        Event::listen(Events\TenancyBootstrapped::class, function (Events\TenancyBootstrapped $event) {
+            $tenantId = (string) $event->tenancy->tenant?->getTenantKey();
 
-            View::composer(['themes.*', 'layout.*', 'pages.*'], StorefrontComposer::class);
+            if ($this->storefrontRepositoryTenant !== $tenantId || !app()->bound(StorefrontRepository::class)) {
+                $this->storefrontRepositoryTenant = $tenantId;
+                app()->scoped(StorefrontRepository::class);
+            }
+
+            $viewFactory = app('view');
+
+            if ($this->storefrontComposerFactory?->get() !== $viewFactory) {
+                $this->storefrontComposerFactory = \WeakReference::create($viewFactory);
+
+                // The composer computes its data once per request (request attribute
+                // `_sf_layout`); once present, share it directly instead of resolving
+                // the composer (and its dependencies) from the container for every view.
+                $viewFactory->composer(['themes.*', 'layout.*', 'pages.*'], function ($view) {
+                    $layout = request()->attributes->get('_sf_layout');
+
+                    if ($layout === null) {
+                        app(StorefrontComposer::class)->compose($view);
+
+                        return;
+                    }
+
+                    $view->with($layout);
+                });
+            }
+        });
+    }
+
+    /**
+     * Request-scoped memos live on request()->attributes. A queue worker reuses
+     * one request object for every job, so drop them before each job.
+     */
+    protected function resetRequestMemosPerQueueJob(): void
+    {
+        Event::listen(JobProcessing::class, function () {
+            if (!app()->bound('request')) {
+                return;
+            }
+
+            request()->attributes->remove(HomeVariantResolver::MEMO_ATTRIBUTE);
+            request()->attributes->remove(CountryDetectorService::MEMO_ATTRIBUTE);
+            request()->attributes->remove(CustomerCountryResolver::MEMO_ATTRIBUTE);
+            request()->attributes->remove(Product::FIXED_SHIPPING_MEMO_ATTRIBUTE);
         });
     }
 

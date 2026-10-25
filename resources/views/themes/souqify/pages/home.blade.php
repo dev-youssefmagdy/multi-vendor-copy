@@ -30,10 +30,14 @@ $promoCardImage = $promoCardBanner?->image_path ??
 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80';
 
 // Promo card discount: highest active flash-sale % among featured products, else static 30
-$promoFlashPct = $featuredProds
-    ->map(fn($p) => $p->activeStorefrontFlashSale()?->discount_percentage)
-    ->filter()
-    ->max();
+// (only the featured_products section renders it — skip the per-product lookup otherwise)
+$__promoSectionList = $homeSections ?? \App\Services\Tenant\PageBuilder\SectionRegistry::defaultsFor('souqify', 'home');
+$promoFlashPct = in_array('featured_products', $__promoSectionList instanceof \Illuminate\Support\Collection ? $__promoSectionList->all() : (array) $__promoSectionList, true)
+    ? $featuredProds
+        ->map(fn($p) => $p->activeStorefrontFlashSale()?->discount_percentage)
+        ->filter()
+        ->max()
+    : null;
 $promoDiscountPct = $promoFlashPct ? (int) round((float) $promoFlashPct) : 30;
 
 // Currency helpers

@@ -15,6 +15,7 @@ use App\Models\Tenant\ThemeCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\BladeThemeService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use App\Support\Tenant\Metric;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -251,6 +252,8 @@ final class ThemesController extends PanelController
                 ->update(['is_enabled' => true]);
         }
 
+        CacheVersion::bump('Theme');
+
         return $this->success('Theme countries updated successfully.');
     }
 
@@ -322,6 +325,7 @@ final class ThemesController extends PanelController
                     ->where('theme_id', $theme->id)
                     ->where('country_id', $countryId)
                     ->delete();
+                CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
                 continue;
             }
 

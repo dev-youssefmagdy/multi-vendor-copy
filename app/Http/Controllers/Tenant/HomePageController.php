@@ -17,10 +17,8 @@ class HomePageController extends Controller
 
         switch ($tab) {
             case 'flash':
-                $flashSales = $repo->activeFlashSales();
-                $allFlash = $flashSales->flatMap(fn($fs) => $fs->products)->unique('id')
-                    ->sortBy(fn($p) => (float) $p->storefrontPricing()['current_price'])
-                    ->values();
+                // Sorted by current price; the id order is cached briefly per country/currency.
+                $allFlash = $repo->flashProductsByPrice();
                 $offset = ($page - 1) * $perPage;
                 $items = $allFlash->slice($offset, $perPage)->values();
                 $hasMore = $allFlash->count() > $offset + $perPage;
@@ -39,7 +37,8 @@ class HomePageController extends Controller
                 $badge = __('New In');
                 break;
             case 'toprated':
-                $paginator = $repo->paginatedTopRatedProducts([], $perPage, 1);
+                // Same rows / hasMorePages() as paginatedTopRatedProducts([], $perPage, 1), minus its COUNT(*).
+                $paginator = $repo->homeTopRatedProducts($perPage, 1);
                 $items = collect($paginator->items());
                 $hasMore = $paginator->hasMorePages();
                 $badge = null;

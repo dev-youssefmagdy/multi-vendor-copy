@@ -45,20 +45,48 @@ class File extends Model
             : ($this->storage_type ?: FileStorageType::Public ->value);
     }
 
+    /**
+     * Request-scoped memo of computed URLs ("tenant|storage_type|path" => url);
+     * see App\Models\File::getFullPathAttribute(). Reset whenever the current
+     * request instance changes.
+     */
+    private static array $fullPathMemo = [];
+    private static ?\WeakReference $fullPathMemoOwner = null;
+
     public function getFullPathAttribute(): ?string
     {
-        if (!$this->path) {
+        $path = $this->attributes['path'] ?? null;
+
+        if (!$path) {
             return null;
         }
 
+        if (!is_string($path)) {
+            return $this->computeFullPath($path);
+        }
+
+        $request = app('request');
+        if (self::$fullPathMemoOwner?->get() !== $request || count(self::$fullPathMemo) >= 20000) {
+            self::$fullPathMemo = [];
+            self::$fullPathMemoOwner = \WeakReference::create($request);
+        }
+
+        $storageType = $this->attributes['storage_type'] ?? null;
+        $memoKey = (tenancy()->tenant?->getTenantKey() ?? '') . '|' . ($storageType instanceof \BackedEnum ? $storageType->value : (string) $storageType) . '|' . $path;
+
+        return self::$fullPathMemo[$memoKey] ??= $this->computeFullPath($path);
+    }
+
+    private function computeFullPath($path): ?string
+    {
         if ($this->disk() === FileStorageType::Public->value) {
-            return tenant_asset($this->path);
+            return tenant_asset($path);
         }
 
         /** @var FilesystemAdapter $disk */
         $disk = Storage::disk($this->disk());
 
-        return url($disk->url($this->path));
+        return url($disk->url($path));
     }
 
     /**

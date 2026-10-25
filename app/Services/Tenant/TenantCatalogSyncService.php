@@ -520,13 +520,14 @@ class TenantCatalogSyncService
             (int) $tenantThemeIds[$theme->id] => $theme->countries->isEmpty() ? $allCountries : $theme->countries,
         ]));
 
-        // Bulk writes skip model events; bump the storefront cache version once instead.
-        CacheVersion::bump('Theme');
-
         Theme::query()
             ->whereNotNull('central_theme_id')
             ->whereNotIn('central_theme_id', $themes->pluck('id'))
             ->delete();
+
+        // Bulk writes skip model events; bump the storefront cache version once
+        // instead — after the stale delete, so it isn't cached under the new version.
+        CacheVersion::bump('Theme');
 
         return $themes->count();
     }
@@ -911,9 +912,9 @@ class TenantCatalogSyncService
 
         $this->deleteStaleCatalogRows($ctx->seenVariants, array_flip($allIds));
 
-        // Bulk writes skip model events; bump the storefront cache versions once instead.
-        CacheVersion::bump('Product');
-        CacheVersion::bump('ProductVariant');
+        // Bulk writes skip model events; bump the storefront cache versions once instead
+        // (Category too: category_product pivot rows and per-category counts change).
+        CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category']);
 
         if ($ctx->flagged !== [] && $currentTenant = tenant()) {
             $this->notifyNewCatalogProducts($currentTenant, $ctx->flagged);
@@ -1568,6 +1569,9 @@ class TenantCatalogSyncService
                 ->delete();
         }
 
+        // Category pivot sync, translations and the variant delete skip model events.
+        CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category']);
+
         $this->central(fn() => ProductTenantAssignment::query()
             ->where('product_id', $centralProduct->id)
             ->where('tenant_id', $tenant->id)
@@ -1709,6 +1713,9 @@ class TenantCatalogSyncService
             ->whereNotIn('central_flash_sale_id', $centralSales->pluck('id'))
             ->delete();
 
+        // Pivot sync and the stale delete skip model events.
+        CacheVersion::bumpMany(['FlashSale', 'Product']);
+
         return $centralSales->count();
     }
 
@@ -1777,6 +1784,9 @@ class TenantCatalogSyncService
         ProductBadge::query()
             ->whereNotIn('text', $centralBadges->pluck('text'))
             ->delete();
+
+        // Raw pivot writes and the stale delete skip model events.
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         return $centralBadges->count();
     }

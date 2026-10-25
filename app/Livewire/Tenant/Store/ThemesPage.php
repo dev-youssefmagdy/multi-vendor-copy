@@ -11,6 +11,7 @@ use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Support\Str;
 
 class ThemesPage extends ListPage
@@ -78,15 +79,15 @@ class ThemesPage extends ListPage
         $themes = app(TenantPanelRepository::class)->themes();
 
         // Load all HomeVariants for all tenant themes from central DB
+        // (HomeVariant uses CentralConnection — no tenancy switch needed).
         $slugs = $themes->pluck('slug')->map(fn($s) => strtolower($s))->all();
-        $allVariants = tenancy()->central(fn() => HomeVariant::query()
+        $allVariants = HomeVariant::query()
             ->whereIn('theme_slug', $slugs)
             ->where('is_active', true)
             ->orderBy('theme_slug')
             ->orderByDesc('is_default')
             ->orderBy('name')
-            ->get()
-        );
+            ->get();
 
         // Find the currently active universal variant:
         // The active universal Theme is the one with is_universal=true and is_active=true.
@@ -136,7 +137,7 @@ class ThemesPage extends ListPage
 
             // Always build a live preview URL pointing at the preview tenant.
             // theme + homepage_variant + sections order are encoded as query params.
-            $variantKey = tenancy()->central(fn() => $variant->key ?? null);
+            $variantKey = $variant->key ?? null;
             $previewUrl = $this->buildPreviewUrl(strtolower($theme->slug), $theme->id, $variantKey ?: null, $variant->id);
 
             $domain = tenant()?->domains()->first()?->domain;
@@ -271,6 +272,8 @@ class ThemesPage extends ListPage
                 ->whereIn('country_id', $enabled)
                 ->update(['is_enabled' => true]);
         }
+
+        CacheVersion::bump('Theme');
 
         $this->closeCountries();
         $this->toast('Theme countries updated successfully.');

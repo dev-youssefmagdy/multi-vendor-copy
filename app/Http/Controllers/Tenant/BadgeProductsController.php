@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -113,6 +114,8 @@ class BadgeProductsController extends Controller
                 'updated_at'       => $now,
             ]);
         }
+
+        CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $label = $countryId ? ('country #' . $countryId) : 'Default';
 

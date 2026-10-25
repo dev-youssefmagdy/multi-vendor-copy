@@ -12,6 +12,7 @@ use App\Models\Tenant\Setting;
 use App\Models\Tenant\Translation;
 use App\Models\Tenant\TranslationOverride;
 use App\Services\OpenAiTranslationService;
+use App\Support\CacheVersion;
 use App\Translation\TenantTranslator;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -193,6 +194,11 @@ class StoreTranslatorService
             );
         }
 
+        // Bulk upserts skip the Translation observer.
+        if ($rows !== []) {
+            CacheVersion::bumpMany(['Translation', class_basename($modelClass)]);
+        }
+
         return count($translatedIds);
     }
 
@@ -339,6 +345,11 @@ class StoreTranslatorService
                     ['value', 'updated_at'],
                 );
             }
+        }
+
+        // Bulk upserts skip the Translation observer.
+        if ($touchedIds !== []) {
+            CacheVersion::bumpMany(['Translation', 'Product', 'ProductVariant']);
         }
 
         return count($touchedIds);

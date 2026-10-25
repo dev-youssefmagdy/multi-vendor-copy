@@ -56,6 +56,9 @@ class CustomerCountryResolver
         return $customer?->addresses()->select(['id', 'country_id'])->find($addressId);
     }
 
+    /** Request attribute holding the defaultCustomerAddress() memo. */
+    public const MEMO_ATTRIBUTE = '_customer_country_default_address_memo';
+
     private function defaultCustomerAddress(): ?CustomerAddress
     {
         $customer = Auth::guard('storefront')->user();
@@ -64,6 +67,27 @@ class CustomerCountryResolver
             return null;
         }
 
+        // resolveId() runs several times per page render; memoize the address
+        // lookup for read-only (GET/HEAD) requests only, so a request that adds or
+        // changes an address (checkout / Livewire POST) always sees the fresh row.
+        $request = request();
+        if (!$request->isMethodSafe()) {
+            return $this->queryDefaultCustomerAddress($customer);
+        }
+
+        $memoKey = get_class($customer) . ':' . $customer->getAuthIdentifier();
+        $memo = $request->attributes->get(self::MEMO_ATTRIBUTE, []);
+
+        if (!array_key_exists($memoKey, $memo)) {
+            $memo[$memoKey] = $this->queryDefaultCustomerAddress($customer);
+            $request->attributes->set(self::MEMO_ATTRIBUTE, $memo);
+        }
+
+        return $memo[$memoKey];
+    }
+
+    private function queryDefaultCustomerAddress($customer): ?CustomerAddress
+    {
         return $customer->addresses()->where('is_default', true)->first()
             ?? $customer->addresses()->latest()->first();
     }

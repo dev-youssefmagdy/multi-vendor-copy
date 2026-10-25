@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\HomeVariant;
 use App\Models\Tenant\TenantHomeVariant;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Support\CacheVersion;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,6 +107,7 @@ final class HomeVariantsController extends PanelController
                 ->where('theme_id', $themeId)
                 ->where('country_id', $countryId)
                 ->delete();
+            CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
             return $this->success('Reverted to the theme\'s default variant.');
         }

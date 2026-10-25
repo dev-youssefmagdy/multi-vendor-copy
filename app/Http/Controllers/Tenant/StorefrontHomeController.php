@@ -34,13 +34,20 @@ class StorefrontHomeController extends Controller
         $categories = $repo->activeCategories();
 
         $banners             = $repo->activeBanners();
-        $flash_sales         = $repo->activeFlashSales();
-        $new_arrivals        = $repo->newInProducts(10)->getCollection();
-        $recommended_products = $repo->recommendedProducts(10);
-        $best_sellers        = $repo->bestSellingProducts(10)->getCollection();
-        $trending_products   = $repo->trendingNowProducts(10);
-        $featured_products   = $repo->featuredProducts(10);
-        $top_rated_products  = $repo->paginatedTopRatedProducts([], 10)->getCollection();
+
+        // Uploaded templates are arbitrary Blade, so every list is still provided;
+        // their product cards are hydrated with one merged eager load.
+        [$flash_sales, $new_arrivals, $recommended_products, $best_sellers, $trending_products, $featured_products, $top_rated_products]
+            = $repo->batchProductHydration(fn() => [
+                $repo->activeFlashSales(),
+                $repo->newInProducts(10)->getCollection(),
+                $repo->recommendedProducts(10),
+                $repo->bestSellingProducts(10)->getCollection(),
+                $repo->trendingNowProducts(10),
+                $repo->featuredProducts(10),
+                // Same rows as paginatedTopRatedProducts([], 10)->getCollection(), minus its COUNT(*).
+                $repo->homeTopRatedProducts(10)->getCollection(),
+            ]);
 
         $homeSections = $this->resolveHomeSections();
 
@@ -86,12 +93,12 @@ class StorefrontHomeController extends Controller
         }
 
         // Resolve the active HomeVariant for the custom slug (stored in the central DB).
-        $variantId = tenancy()->central(fn () => HomeVariant::query()
+        // HomeVariant uses the central connection (CentralConnection trait).
+        $variantId = HomeVariant::query()
             ->where('theme_slug', 'custom')
             ->where('is_active', true)
             ->orderByDesc('is_default')
-            ->value('id')
-        );
+            ->value('id');
 
         $rows = TenantPageSection::query()
             ->where('theme_id', $theme->id)

@@ -8,6 +8,7 @@ use App\Models\Product as CentralProduct;
 use App\Models\Tenant;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductVariant as TenantVariant;
+use App\Support\CacheVersion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -74,13 +75,18 @@ class SyncCentralProductStockToTenantsJob implements ShouldQueue
                 tenancy()->initialize($tenant);
 
                 // ── Tenant product stock ───────────────────────────────────
-                TenantProduct::where('central_product_id', $this->centralProductId)
+                $affected = TenantProduct::where('central_product_id', $this->centralProductId)
                     ->update(['stock' => $productStock]);
 
                 // ── Tenant variant stocks ──────────────────────────────────
                 foreach ($variantStocks as $centralVariantId => $variantStock) {
-                    TenantVariant::where('central_product_variant_id', $centralVariantId)
+                    $affected += TenantVariant::where('central_product_variant_id', $centralVariantId)
                         ->update(['stock' => $variantStock]);
+                }
+
+                // Query-builder updates skip the CacheVersionObserver.
+                if ($affected > 0) {
+                    CacheVersion::bumpMany(['Product', 'ProductVariant']);
                 }
             } catch (\Throwable $e) {
                 Log::error(

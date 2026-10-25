@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\Tenant\Product;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -40,6 +41,8 @@ final class ProductSortController extends PanelController
         foreach ($ids as $index => $productId) {
             Product::query()->whereKey((int) $productId)->update(['order_number' => $index]);
         }
+
+        CacheVersion::bump('Product');
 
         return $this->success('Product order saved.');
     }

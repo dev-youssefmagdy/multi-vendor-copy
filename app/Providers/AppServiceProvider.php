@@ -7,9 +7,11 @@ use App\Http\Middleware\ApplyStorefrontSessionContext;
 use App\Http\Middleware\InitializeTenancyBySlug;
 use App\Livewire\Tenant\Storefront\ThemeKit\AddToCartButton;
 use App\Livewire\Tenant\Storefront\ThemeKit\CartIcon;
+use App\Models\BladeTheme;
 use App\Models\Category;
 use App\Models\CentralCoupon;
 use App\Models\CentralFlashSale;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\EmailTemplate;
 use App\Models\File;
@@ -24,6 +26,7 @@ use App\Models\TemplatePart;
 use App\Models\Tenant\Banner as TenantBanner;
 use App\Models\Tenant\Category as TenantCategory;
 use App\Models\Tenant\Currency as TenantCurrency;
+use App\Models\Tenant\File as TenantFile;
 use App\Models\Tenant\FlashSale as TenantFlashSale;
 use App\Models\Tenant\Language as TenantLanguage;
 use App\Models\Tenant\Order as TenantOrder;
@@ -34,9 +37,13 @@ use App\Models\Tenant\ProductVariant as TenantProductVariant;
 use App\Models\Tenant\Setting as TenantSetting;
 use App\Models\Tenant\SocialLink as TenantSocialLink;
 use App\Models\Tenant\TenantHomeVariant;
+use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\TenantThemeColor;
 use App\Models\Tenant\Theme as TenantTheme;
+use App\Models\Tenant\ThemeCountry as TenantThemeCountry;
+use App\Models\Tenant\Translation as TenantTranslation;
 use App\Models\Tenant\Transaction as TenantTransaction;
+use App\Models\Translation as CentralTranslation;
 use App\Models\Variation;
 use App\Observers\CacheVersionObserver;
 use App\Observers\CentralCatalogSyncObserver;
@@ -179,6 +186,17 @@ class AppServiceProvider extends ServiceProvider
         TenantThemeColor::observe(CacheVersionObserver::class);
         TenantOrder::observe(CacheVersionObserver::class);
         TenantOrderItem::observe(CacheVersionObserver::class);
+        // Child rows bump their owner's tag too (see CacheVersionObserver::tagsFor).
+        TenantTranslation::observe(CacheVersionObserver::class);
+        TenantFile::observe(CacheVersionObserver::class);
+        TenantThemeCountry::observe(CacheVersionObserver::class);
+        TenantPageSection::observe(CacheVersionObserver::class);
+        // Central models tenant caches depend on (CacheVersion::GLOBAL_TAGS).
+        BladeTheme::observe(CacheVersionObserver::class);
+        Category::observe(CacheVersionObserver::class);
+        Country::observe(CacheVersionObserver::class);
+        CentralTranslation::observe(CacheVersionObserver::class);
+        Template::observe(CacheVersionObserver::class);
 
         $this->app->terminating(fn () => CachedBelongsTo::flushCache());
 

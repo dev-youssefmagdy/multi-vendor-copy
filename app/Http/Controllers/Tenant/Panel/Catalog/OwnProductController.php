@@ -14,6 +14,7 @@ use App\Models\Tenant\ProductBadge;
 use App\Models\VariationOption;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -180,6 +181,9 @@ final class OwnProductController extends PanelController
                 }
             }
         }
+
+        // Badge pivot sync and primary-image deletes above bypass the observers.
+        CacheVersion::bumpMany(['ProductBadge', 'Product', 'File']);
 
         return $this->success(
             $product ? 'Product updated successfully.' : 'Product created successfully.',

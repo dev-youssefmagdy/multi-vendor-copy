@@ -6,6 +6,7 @@ use App\Models\BladeTheme;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 /**
  * Admin-managed catalog of homepage layout variants for a theme.
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class HomeVariant extends Model
 {
-    use HasFactory;
+    use HasFactory, CentralConnection;
 
     protected $fillable = [
         'theme_slug',

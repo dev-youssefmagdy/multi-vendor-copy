@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralProductVariant;
 use App\Models\Tenant;
+use App\Support\CacheVersion;
 use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
 use App\Models\Tenant\ProductVariant;
 use App\Services\Tenant\TenantPricingService;
@@ -218,6 +219,9 @@ class SyncFixedShippingCostsToTenantsJob implements ShouldQueue
         }
 
         $this->flushBatchedUpdate('product_variants', $variantUpdates, ['sell_price', 'default_sell_price', 'profit']);
+
+        // Raw CASE updates skip the CacheVersionObserver.
+        CacheVersion::bumpMany(['Product', 'ProductVariant']);
     }
 
     /**

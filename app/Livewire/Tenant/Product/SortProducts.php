@@ -4,6 +4,7 @@ namespace App\Livewire\Tenant\Product;
 
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\Tenant\Product;
+use App\Support\CacheVersion;
 use Livewire\Component;
 
 class SortProducts extends Component
@@ -17,6 +18,8 @@ class SortProducts extends Component
         foreach ($orderedIds as $index => $productId) {
             Product::query()->whereKey((int) $productId)->update(['order_number' => $index]);
         }
+
+        CacheVersion::bump('Product');
 
         $this->toast('Product order saved.');
     }

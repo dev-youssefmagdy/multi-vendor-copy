@@ -1,10 +1,7 @@
 @php
-    // Resolve tracking pixel IDs from tenant settings. Cheap query, cached
-    // for the request via the Setting model's default query caching layer
-    // (none here — this partial is rendered at most once per request).
-    $trackingSettings = \App\Models\Tenant\Setting::query()
-        ->whereIn('name', ['tracking_fb_pixel_id', 'tracking_tiktok_pixel_id', 'tracking_snapchat_pixel_id', 'tracking_ga_measurement_id'])
-        ->pluck('value', 'name');
+    // Resolve tracking pixel IDs from tenant settings (versioned cache, tag `Setting`).
+    $trackingSettings = app(\App\Services\Tenant\HomeViewData::class)
+        ->settings(['tracking_fb_pixel_id', 'tracking_tiktok_pixel_id', 'tracking_snapchat_pixel_id', 'tracking_ga_measurement_id']);
 
     $fbPixelId = trim((string) ($trackingSettings['tracking_fb_pixel_id'] ?? ''));
     $tiktokPixelId = trim((string) ($trackingSettings['tracking_tiktok_pixel_id'] ?? ''));

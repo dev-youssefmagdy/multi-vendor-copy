@@ -10,6 +10,7 @@ use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CacheVersion;
 use Illuminate\Validation\Rule;
 use Livewire\WithFileUploads;
 
@@ -152,6 +153,8 @@ class BannersPage extends TenantPage
         foreach ($orderedIds as $index => $id) {
             Banner::query()->where('id', (int) $id)->update(['serial_number' => $index]);
         }
+
+        CacheVersion::bump('Banner');
 
         $this->toast('Banner order saved.');
     }

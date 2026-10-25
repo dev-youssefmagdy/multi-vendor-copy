@@ -213,7 +213,7 @@ class StoreOnboardingWizard extends Component
     public function launch(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant || !$this->isProvisioned($tenant) || !$this->isCatalogSynced($tenant)) {
+        if (!$tenant || !$this->isProvisioned($tenant)) {
             return;
         }
 
