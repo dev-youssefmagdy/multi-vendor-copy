@@ -126,26 +126,21 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware(['signed', 'throttle:6,1'])
     ->name('tenant.verification.verify');
 
-Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group(function () {
+Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
 
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
         ->middleware('throttle:6,1')
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.verification.send');
 
     Route::post('/compliance/accept', [ComplianceController::class, 'accept'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.compliance.accept');
     Route::post('/compliance/accept/validate', [ComplianceController::class, 'validateAccept'])
         ->middleware('throttle:tenant-validate')
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.compliance.accept.validate');
 
     Route::get('/widgets/setup-progress', [SetupProgressController::class, 'show'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.widgets.setup-progress');
     Route::post('/widgets/setup-progress/pages-reviewed', [SetupProgressController::class, 'pagesReviewed'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.widgets.setup-progress.pages-reviewed');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -164,20 +159,15 @@ Route::middleware(['auth:tenant', 'tenant.setup.enforce', 'tenant.tour'])->group
         ->where('tab', 'tour|setup')
         ->name('tenant.onboarding');
     Route::post('/onboarding/tour/complete', [OnboardingController::class, 'completeTour'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.onboarding.tour.complete');
     Route::post('/onboarding/logo', [OnboardingController::class, 'saveLogo'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.onboarding.logo');
     Route::post('/onboarding/logo/validate', [OnboardingController::class, 'validateLogo'])
         ->middleware('throttle:tenant-validate')
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.onboarding.logo.validate');
     Route::post('/onboarding/payment-readiness/skip', [OnboardingController::class, 'skipPaymentReadiness'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.onboarding.payment-readiness.skip');
     Route::post('/onboarding/dismiss', [OnboardingController::class, 'dismiss'])
-        ->withoutMiddleware('tenant.setup.enforce')
         ->name('tenant.onboarding.dismiss');
 
     if (app()->environment('local')) {

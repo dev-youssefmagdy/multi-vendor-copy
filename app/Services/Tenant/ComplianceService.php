@@ -65,6 +65,24 @@ final class ComplianceService
         return $accepted === $currentVersion;
     }
 
+    /**
+     * Acceptance snapshot captured on the public register page (central context).
+     * Empty when no compliance documents are published, so nothing is recorded.
+     *
+     * @return array{compliance_version?: string, compliance_accepted_at?: string}
+     */
+    public function registrationAcceptance(): array
+    {
+        if (!$this->compliancePagesExist()) {
+            return [];
+        }
+
+        return [
+            'compliance_version' => $this->complianceVersion(),
+            'compliance_accepted_at' => now()->toDateTimeString(),
+        ];
+    }
+
     public function accept(): void
     {
         TenantModel::saveData(tenant('id'), [

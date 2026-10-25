@@ -19,6 +19,8 @@ class PendingRegistration extends Model
         'expires_at',
         'completed_at',
         'affiliate_referral_id',
+        'compliance_version',
+        'compliance_accepted_at',
     ];
 
     protected $casts = [
@@ -27,6 +29,7 @@ class PendingRegistration extends Model
         'payment_data' => 'array',
         'expires_at' => 'datetime',
         'completed_at' => 'datetime',
+        'compliance_accepted_at' => 'datetime',
     ];
 
     public function package(): BelongsTo

@@ -124,26 +124,15 @@
                                             </svg>
                                         </div>
                                     @else
-                                        <div class="ob-check-pending {{ $item['mandatory'] ? 'ob-check-mandatory' : 'ob-check-optional' }}">
-                                            @if($item['mandatory'])
-                                                <span class="ob-check-asterisk">*</span>
-                                            @else
-                                                <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                    <circle cx="12" cy="12" r="9" />
-                                                </svg>
-                                            @endif
-                                        </div>
+                                        <div class="ob-check-pending ob-check-optional">
+<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" /></svg>
+</div>
                                     @endif
                                 </div>
 
                                 <div class="ob-setup-item-body">
                                     <div class="ob-setup-item-head">
                                         <span class="ob-setup-item-label">{{ $item['label'] }}</span>
-                                        @if($item['mandatory'])
-                                            <span class="ob-badge-mandatory">Required</span>
-                                        @else
-                                            <span class="ob-badge-optional">Optional</span>
-                                        @endif
                                     </div>
                                     <p class="ob-setup-item-detail">{{ $item['detail'] }}</p>
                                 </div>
@@ -300,7 +289,7 @@
                                 <line x1="12" y1="8" x2="12" y2="12" />
                                 <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg>
-                            Required items must be completed before your store goes live. You can come back to this page anytime from the sidebar.
+                            You can come back to this page anytime from the sidebar.
                         </p>
                         <button type="button" class="ob-btn-dismiss" data-action-url="{{ route('tenant.onboarding.dismiss') }}">
                             I'll do this later

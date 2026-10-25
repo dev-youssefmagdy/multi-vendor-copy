@@ -24,7 +24,7 @@ use Stancl\Tenancy\Database\Models\Domain;
  * Boots a real tenant (own SQLite database, created + migrated through the
  * normal stancl/tenancy TenantCreated job pipeline), seeds it with enough
  * data to satisfy TenantNavigation::onboardingSetupComplete() (so the global
- * EnforceOnboardingSetup / SetupGuard middleware never redirects us away),
+ * SetupGuard middleware never redirects us away),
  * and logs in a tenant admin holding every permission.
  */
 trait SetsUpTenantPanel

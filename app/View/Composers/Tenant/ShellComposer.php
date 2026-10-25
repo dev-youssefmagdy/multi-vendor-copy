@@ -12,6 +12,7 @@ use App\Models\Tenant\AdminUser;
 use App\Models\Tenant\Subscription;
 use App\Models\Tenant\TenantNotification;
 use App\Services\Tenant\ComplianceService;
+use App\Services\Tenant\OnboardingService;
 use Illuminate\View\View;
 
 final class ShellComposer
@@ -55,6 +56,10 @@ final class ShellComposer
             && !$complianceRequired
             && $onboardingProgress['done'] < $onboardingProgress['total'];
 
+        $setupNext = $setupBanner
+            ? collect(app(OnboardingService::class)->setupItems())->firstWhere('done', false)
+            : null;
+
         return $this->shell = [
             'sections' => TenantNavigation::visibleSections(),
             'currentRoute' => $currentRoute,
@@ -72,7 +77,8 @@ final class ShellComposer
                 'required' => $complianceRequired,
                 'pages' => $complianceRequired ? $this->compliance->compliancePages() : collect(),
             ],
-            'setupBanner' => $setupBanner,
+            'setupBanner' => $setupBanner && $setupNext !== null,
+            'setupNext' => $setupNext,
         ];
     }
 

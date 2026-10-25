@@ -139,7 +139,6 @@ class OnboardingService
                 'key' => 'logo',
                 'label' => 'Set Up Your Store Logo',
                 'detail' => 'Your brand logo appears on the storefront header and invoices.',
-                'mandatory' => true,
                 'done' => $logoSet,
                 'action_url' => route('tenant.store.appearance'),
                 'action_label' => 'Go to Appearance',
@@ -151,7 +150,6 @@ class OnboardingService
                 'detail' => $activeTheme
                     ? 'Active theme: ' . $activeTheme . '. You can switch anytime.'
                     : 'Pick a theme to define the look and feel of your store.',
-                'mandatory' => false,
                 'done' => $activeTheme !== null,
                 'action_url' => route('tenant.store.themes'),
                 'action_label' => 'Browse Themes',
@@ -163,7 +161,6 @@ class OnboardingService
                 'detail' => $this->paymentGatewayConfigured()
                     ? 'At least one payment method is active on your store.'
                     : 'Enable a payment gateway so customers can complete purchases.',
-                'mandatory' => false,
                 'done' => $this->paymentGatewayConfigured(),
                 'action_url' => route('tenant.settings.payment-gateways', ['from' => 'onboarding']),
                 'action_label' => 'Configure Payments',
@@ -175,7 +172,6 @@ class OnboardingService
                 'detail' => $this->languageConfigured()
                     ? 'Multiple languages are active on your store.'
                     : 'Add more languages to reach a wider audience.',
-                'mandatory' => false,
                 'done' => $this->languageConfigured(),
                 'action_url' => route('tenant.settings.languages'),
                 'action_label' => 'Manage Languages',
@@ -187,7 +183,6 @@ class OnboardingService
                 'detail' => TenantNavigation::profileComplete()
                     ? 'Your business name and contact info are set.'
                     : 'Add your business name and contact info.',
-                'mandatory' => true,
                 'done' => TenantNavigation::profileComplete(),
                 'action_url' => route('tenant.settings.account', ['from' => 'onboarding']),
                 'action_label' => 'Go to Account Settings',
@@ -199,7 +194,6 @@ class OnboardingService
                 'detail' => TenantNavigation::storeDetailsComplete()
                     ? 'Your store name, description, and address are set.'
                     : 'Add your store name, description, and address.',
-                'mandatory' => true,
                 'done' => TenantNavigation::storeDetailsComplete(),
                 'action_url' => route('tenant.settings.account', ['from' => 'onboarding']) . '#store-details',
                 'action_label' => 'Go to Store Details',
@@ -211,7 +205,6 @@ class OnboardingService
                 'detail' => TenantNavigation::complianceComplete()
                     ? 'Owner details, business registration, and bank info are on file.'
                     : 'Add owner details, business registration, and bank info in the Compliance Center.',
-                'mandatory' => true,
                 'done' => TenantNavigation::complianceComplete(),
                 'action_url' => route('tenant.settings.compliance', ['from' => 'onboarding']),
                 'action_label' => 'Go to Compliance Center',

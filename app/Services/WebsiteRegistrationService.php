@@ -128,6 +128,14 @@ class WebsiteRegistrationService
 
         $tenant = $this->tenantService->save($tenantAttributes, null, $deferProvisioning);
 
+        // Compliance documents were accepted on the register page, so the panel must not ask again.
+        if (filled($registrationData['compliance_version'] ?? null)) {
+            Tenant::saveData($tenant->getTenantKey(), [
+                'compliance_version' => (string) $registrationData['compliance_version'],
+                'compliance_accepted_at' => $registrationData['compliance_accepted_at'] ?? now(),
+            ]);
+        }
+
         // Every new store gets its own affiliate account (owner email + registration password).
         try {
             app(\App\Services\TenantAffiliateService::class)

@@ -9,6 +9,7 @@ use App\Models\Package;
 use App\Models\PaymentGateway;
 use App\Models\PendingRegistration;
 use App\Services\Mail\TemplateMailService;
+use App\Services\Tenant\ComplianceService;
 use App\Services\WebsiteRegistrationService;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
@@ -44,6 +45,9 @@ class RegisterPage extends Component
     public string $couponError = '';
     public ?float $couponDiscount = null;
     public ?int $appliedCouponId = null;
+
+    // Step 2 – Compliance consent (required before payment / registration link when documents are published)
+    public bool $acceptCompliance = false;
 
     // UI state
     public bool $emailSent = false;
@@ -135,6 +139,10 @@ class RegisterPage extends Component
     {
         $this->validateIdentity();
 
+        if (!$this->complianceAccepted()) {
+            return;
+        }
+
         if ($this->requiresPayment()) {
             if ($this->step < 3) {
                 $this->step = 3;
@@ -159,6 +167,10 @@ class RegisterPage extends Component
         string $providerId = '',
         string $avatar = '',
     ): void {
+        if (!$this->complianceAccepted()) {
+            return;
+        }
+
         $this->email = strtolower(trim($email));
         $this->oauthName = $name;
         $this->oauthProvider = $provider;
@@ -190,7 +202,7 @@ class RegisterPage extends Component
             'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
-        ]);
+        ] + app(ComplianceService::class)->registrationAcceptance());
 
         session([
             'website.register.oauth' => [
@@ -270,7 +282,7 @@ class RegisterPage extends Component
                     'gateway_code' => $this->gatewayCode,
                     'applied_affiliate_coupon_id' => $this->appliedCouponId,
                     'coupon_code' => $this->appliedCouponId ? strtoupper(trim($this->couponCode)) : null,
-                ],
+                ] + app(ComplianceService::class)->registrationAcceptance(),
             ],
         ]);
 
@@ -297,7 +309,7 @@ class RegisterPage extends Component
             'affiliate_referral_id' => app(\App\Services\AffiliateService::class)->resolveReferral(request())?->id,
             'payment_data' => null,
             'expires_at' => now()->addHours(48),
-        ]);
+        ] + app(ComplianceService::class)->registrationAcceptance());
 
         if ($this->oauthProvider && $this->email) {
             session([
@@ -351,6 +363,31 @@ class RegisterPage extends Component
         $this->resendStatus = $remaining > 0
             ? __('Email resent. :count resend(s) left.', ['count' => $remaining])
             : __('Email resent. You have reached the resend limit.');
+    }
+
+    /** Called by the social buttons when the consent box is unticked. */
+    public function requireCompliance(): void
+    {
+        $this->complianceAccepted();
+    }
+
+    /**
+     * Compliance documents must be accepted before the visitor pays or receives
+     * the registration link. No-op when no compliance documents are published.
+     */
+    protected function complianceAccepted(): bool
+    {
+        if (!app(ComplianceService::class)->compliancePagesExist()) {
+            return true;
+        }
+
+        if ($this->acceptCompliance) {
+            return true;
+        }
+
+        $this->addError('acceptCompliance', __('Please confirm you have read and accept the compliance documents.'));
+
+        return false;
     }
 
     protected function validateIdentity(): array
@@ -453,6 +490,7 @@ class RegisterPage extends Component
                 ->where('status', PackageStatus::Published->value)
                 ->get(),
             'selectedPackage' => $selectedPackage,
+            'compliancePages' => app(ComplianceService::class)->compliancePages(),
             'gateways' => $gateways,
             'activeInlineGateway' => $activeInlineGateway,
             'hasStripe' => $hasStripe,

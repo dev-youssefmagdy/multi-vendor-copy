@@ -111,11 +111,7 @@ function renderSetupItem(itemEl, item) {
     if (status) {
         status.innerHTML = item.done
             ? '<div class="ob-check-done"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg></div>'
-            : `<div class="ob-check-pending ${item.mandatory ? 'ob-check-mandatory' : 'ob-check-optional'}">${
-                  item.mandatory
-                      ? '<span class="ob-check-asterisk">*</span>'
-                      : '<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" /></svg>'
-              }</div>`;
+            : '<div class="ob-check-pending ob-check-optional"><svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" /></svg></div>';
     }
 
     const row = qs('.ob-setup-item-row', itemEl);

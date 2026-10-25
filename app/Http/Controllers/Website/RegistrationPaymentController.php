@@ -155,6 +155,8 @@ class RegistrationPaymentController extends Controller
                     'coupon_code' => $data['coupon_code'] ?? null,
                 ]),
                 'expires_at' => now()->addHours(48),
+                'compliance_version' => $data['compliance_version'] ?? null,
+                'compliance_accepted_at' => $data['compliance_accepted_at'] ?? null,
             ]);
         } catch (\Throwable $e) {
             report($e);
