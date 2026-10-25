@@ -53,7 +53,7 @@ final class SaveOwnProductRequest extends TenantFormRequest
             'badge_ids' => ['array'],
             'badge_ids.*' => ['integer', 'exists:product_badges,id'],
             'countries' => ['array'],
-            'countries.*' => ['string', Rule::in(array_keys(OwnProductController::COUNTRY_OPTIONS))],
+            'countries.*' => ['string', Rule::in(array_keys(OwnProductController::countryOptions()))],
             'primary_image' => ['nullable', 'image', 'max:4096'],
             'remove_primary_image' => ['boolean'],
             'gallery_files' => ['array'],

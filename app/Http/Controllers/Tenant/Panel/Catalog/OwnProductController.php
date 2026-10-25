@@ -23,14 +23,36 @@ use Illuminate\View\View;
 final class OwnProductController extends PanelController
 {
     /**
-     * Countries offered by the "sold in" picker, keyed by lowercase ISO2 code
-     * (matches x-tenant::flag artwork). Ticks are saved as central country ids
-     * in products.allowed_country_ids.
+     * Countries offered by the "sold in" picker: the store's active targeted countries,
+     * keyed by lowercase ISO2 code (matches x-tenant::flag artwork). Ticks are saved as
+     * central country ids in products.allowed_country_ids.
+     *
+     * @return array<string, string>
      */
-    public const COUNTRY_OPTIONS = [
-        'qa' => 'Qatar', 'ma' => 'Morocco', 'fr' => 'France', 'eg' => 'Egypt',
-        'ae' => 'UAE', 'us' => 'USA', 'iq' => 'Iraq', 'gb' => 'United Kingdom',
-    ];
+    public static function countryOptions(): array
+    {
+        return array_map(fn ($row) => $row['name'], self::countryRows());
+    }
+
+    /** @return array<string, string> lowercase ISO2 => flag emoji */
+    public static function countryFlags(): array
+    {
+        return array_map(fn ($row) => $row['flag'], self::countryRows());
+    }
+
+    /** @return array<string, array{name: string, flag: string}> */
+    private static function countryRows(): array
+    {
+        $tenantId = tenant()->getTenantKey();
+
+        return tenancy()->central(fn () => \App\Models\Country::query()
+            ->whereIn('id', \App\Models\TenantCountry::where('tenant_id', $tenantId)->where('is_active', true)->pluck('country_id'))
+            ->whereNotNull('iso2')
+            ->orderBy('name')
+            ->get(['iso2', 'name', 'flag_emoji'])
+            ->mapWithKeys(fn ($c) => [strtolower((string) $c->iso2) => ['name' => (string) $c->name, 'flag' => (string) ($c->flag_emoji ?? '')]])
+            ->all());
+    }
 
     public function __construct(
         private readonly TenantPanelRepository $repo,
@@ -368,7 +390,8 @@ final class OwnProductController extends PanelController
             'variationsJson' => $variationsJson,
             'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
             'selectedBadgeIds' => $selectedBadgeIds,
-            'countryOptions' => self::COUNTRY_OPTIONS,
+            'countryOptions' => self::countryOptions(),
+            'countryFlags' => self::countryFlags(),
             'selectedCountries' => $selectedCountries,
         ];
     }

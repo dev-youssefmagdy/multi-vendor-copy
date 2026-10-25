@@ -39,6 +39,13 @@
                 </div>
 
                 <div class="op-countries" data-op-countries>
+                    <div class="op-countries-head">
+                        <span class="op-countries-title">Sold in countries</span>
+                        <span class="op-countries-hint">Pick from your targeted countries. Leave all unticked to make it available everywhere.</span>
+                    </div>
+                    @if(empty($countryOptions))
+                        <div class="op-country-none">No targeted countries yet. Add countries to your store first, then choose where this product is sold.</div>
+                    @else
                     <label class="op-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
                         <input type="search" placeholder="Search" aria-label="Search countries" data-op-country-search>
@@ -54,13 +61,14 @@
                             <li data-op-country="{{ strtolower($country) }}">
                                 <label class="ds-check op-country">
                                     <input type="checkbox" name="countries[]" value="{{ $code }}" @checked(in_array($code, $selectedCountries, true))>
-                                    <x-tenant::flag :code="$code" class="op-flag" />
+                                    <span class="op-flag" aria-hidden="true">{{ $countryFlags[$code] ?? '' }}</span>
                                     <span>{{ $country }}</span>
                                 </label>
                             </li>
                         @endforeach
                         <li class="op-country-empty" data-op-country-empty hidden>No countries match your search.</li>
                     </ul>
+                    @endif
                 </div>
 
                 @if($languages->count())
