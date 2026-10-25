@@ -40,6 +40,19 @@ class AuthPage extends Component
         $this->dispatch('storefront-auth-tab-changed', ['tab' => $this->tab]);
     }
 
+    protected function validationAttributes(): array
+    {
+        return [
+            'loginEmail' => __('Email'),
+            'loginPassword' => __('Password'),
+            'regName' => __('Full name'),
+            'regEmail' => __('Email'),
+            'regPhone' => __('Phone'),
+            'regPassword' => __('Password'),
+            'regConfirm' => __('Confirm password'),
+        ];
+    }
+
     public function login(): void
     {
         $data = $this->validate([

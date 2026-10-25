@@ -56,12 +56,12 @@ $tab 'login' | 'register'
                 <div>
                     <input type="email" wire:model.lazy="loginEmail" placeholder="{{ __('Email') }}"
                         class="w-full border rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999] {{ $errors->has('loginEmail') ? 'border-red-500' : 'border-[#dcdcdc]' }}">
-                    @error('loginEmail') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
+                    @error('loginEmail') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <div>
                     <input type="password" wire:model.lazy="loginPassword" placeholder="{{ __('Password') }}"
                         class="w-full border rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999] {{ $errors->has('loginPassword') ? 'border-red-500' : 'border-[#dcdcdc]' }}">
-                    @error('loginPassword') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
+                    @error('loginPassword') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <button wire:click="login" wire:loading.attr="disabled"
                     class="w-full bg-[#171717] text-white rounded-full py-3.5 text-[14px] font-semibold hover:bg-black transition mt-2 disabled:opacity-70">
@@ -74,12 +74,12 @@ $tab 'login' | 'register'
                 <div>
                     <input type="text" wire:model.lazy="regName" placeholder="{{ __('Full name') }}"
                         class="w-full border rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999] {{ $errors->has('regName') ? 'border-red-500' : 'border-[#dcdcdc]' }}">
-                    @error('regName') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
+                    @error('regName') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <div>
                     <input type="email" wire:model.lazy="regEmail" placeholder="{{ __('Email') }}"
                         class="w-full border rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999] {{ $errors->has('regEmail') ? 'border-red-500' : 'border-[#dcdcdc]' }}">
-                    @error('regEmail') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
+                    @error('regEmail') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <div wire:ignore>
                     <input type="tel" value="" data-phone-input wire-event="regPhone" placeholder="{{ __('Phone (optional)') }}"
@@ -88,11 +88,12 @@ $tab 'login' | 'register'
                 <div>
                     <input type="password" wire:model.lazy="regPassword" placeholder="{{ __('Password (min 8 chars)') }}"
                         class="w-full border rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999] {{ $errors->has('regPassword') ? 'border-red-500' : 'border-[#dcdcdc]' }}">
-                    @error('regPassword') <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
+                    @error('regPassword') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <div>
                     <input type="password" wire:model.lazy="regConfirm" placeholder="{{ __('Confirm password') }}"
                         class="w-full border border-[#dcdcdc] rounded-[6px] px-4 py-3 outline-none focus:border-[#171717] text-[13px] placeholder-[#999]">
+@error('regConfirm') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                 </div>
                 <button wire:click="register" wire:loading.attr="disabled"
                     class="w-full bg-[#171717] text-white rounded-full py-3.5 text-[14px] font-semibold hover:bg-black transition mt-2 disabled:opacity-70">

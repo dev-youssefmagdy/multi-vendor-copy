@@ -65,13 +65,13 @@ $tab 'login' | 'register'
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Email') }}</label>
                         <input type="email" wire:model.lazy="loginEmail"
                             class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('loginEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
-                        @error('loginEmail') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('loginEmail') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Password') }}</label>
                         <input type="password" wire:model.lazy="loginPassword"
                             class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('loginPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
-                        @error('loginPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('loginPassword') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                     </div>
                     <button type="submit" wire:loading.attr="disabled" wire:target="login"
                         class="w-full bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg py-3.5 text-sm font-semibold transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2">
@@ -91,13 +91,13 @@ $tab 'login' | 'register'
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Full name') }}</label>
                         <input type="text" wire:model.lazy="regName"
                             class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regName') ? 'border-red-500' : 'border-neutral-300' }}" />
-                        @error('regName') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('regName') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Email') }}</label>
                         <input type="email" wire:model.lazy="regEmail"
                             class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regEmail') ? 'border-red-500' : 'border-neutral-300' }}" />
-                        @error('regEmail') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('regEmail') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Phone') }} <span
@@ -111,12 +111,13 @@ $tab 'login' | 'register'
                             <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Password') }}</label>
                             <input type="password" wire:model.lazy="regPassword"
                                 class="w-full border rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm {{ $errors->has('regPassword') ? 'border-red-500' : 'border-neutral-300' }}" />
-                            @error('regPassword') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('regPassword') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-neutral-600 mb-1.5">{{ __('Confirm') }}</label>
                             <input type="password" wire:model.lazy="regConfirm"
                                 class="w-full border border-neutral-300 rounded-lg px-4 py-3 outline-none focus:border-[color:var(--sq-primary)] focus:ring-2 focus:ring-[color:var(--sq-primary-soft-2)] text-sm" />
+@error('regConfirm') <div role="alert" style="margin-top:6px;padding:8px 12px;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;border-radius:8px;font-size:12px;line-height:1.5">{{ $message }}</div> @enderror
                         </div>
                     </div>
                     <button type="submit" wire:loading.attr="disabled" wire:target="register"
