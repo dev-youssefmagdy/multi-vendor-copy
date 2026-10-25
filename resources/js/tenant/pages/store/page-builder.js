@@ -17,3 +17,9 @@ themeSelect?.addEventListener('change', () => {
 });
 
 variantSelect?.addEventListener('change', () => form.submit());
+
+// Dim the row right away when its visibility switch is toggled (the request itself is sent by core/actions.js).
+document.addEventListener('change', (event) => {
+    const input = event.target.closest('.pb-section-row input[data-action-url]');
+    input?.closest('.pb-section-row')?.classList.toggle('pb-hidden', !input.checked);
+});

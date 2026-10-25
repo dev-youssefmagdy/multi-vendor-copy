@@ -30,6 +30,9 @@ export async function init(el) {
 
     Sortable.create(items, {
         handle: el.dataset.handle || '.t-drag',
+        // Controls inside a draggable row (switches, buttons, links) must keep their native click behaviour.
+        filter: 'input, label, button, a, select, textarea',
+        preventOnFilter: false,
         animation: 150,
         onEnd() {
             if (autosave) {

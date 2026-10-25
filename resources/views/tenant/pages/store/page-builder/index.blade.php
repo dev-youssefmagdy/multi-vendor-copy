@@ -48,7 +48,7 @@
                         <span class="pb-section-label">{{ $section['label'] }}</span>
                         <x-tenant::switch
                             :checked="$section['is_visible']"
-                            action-url="{{ route('tenant.store.page-builder.sections.visibility', ['section' => $section['section_key'], 'theme_id' => $selectedThemeId, 'home_variant_id' => $selectedHomeVariantId]) }}"
+                            :action-url="route('tenant.store.page-builder.sections.visibility', ['section' => $section['section_key'], 'theme_id' => $selectedThemeId, 'home_variant_id' => $selectedHomeVariantId])"
                             action-method="PATCH"
                             payload-key="visible" />
                     </div>

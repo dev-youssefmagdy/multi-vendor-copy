@@ -177,7 +177,9 @@ final class PageBuilderController extends PanelController
             ]
         );
 
-        $row->update(['is_visible' => !$row->is_visible]);
+        $row->update([
+            'is_visible' => $request->has('visible') ? $request->boolean('visible') : !$row->is_visible,
+        ]);
 
         return $this->success('Section visibility updated.');
     }
