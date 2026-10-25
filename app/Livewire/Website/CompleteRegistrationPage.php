@@ -38,6 +38,7 @@ class CompleteRegistrationPage extends Component
     public string $name = '';
     public string $password = '';
     public string $passwordConfirmation = '';
+    public string $accountType = 'individual';
     public string $shopName = '';
     public string $domainType = 'subdomain';
     public string $customDomain = '';
@@ -268,6 +269,7 @@ class CompleteRegistrationPage extends Component
             'name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
             'passwordConfirmation' => ['required', 'same:password'],
+            'accountType' => ['required', Rule::in(['individual', 'company'])],
             'shopName' => ['required', 'string', 'max:255'],
             'domainType' => ['required', Rule::in(['subdomain', 'custom'])],
             'customDomain' => $this->domainType === 'custom'
@@ -369,6 +371,7 @@ class CompleteRegistrationPage extends Component
             'password' => $this->password,
             'password_confirmation' => $this->passwordConfirmation,
             'phone' => $pending->phone ?? $this->phone,
+            'account_type' => $this->accountType,
             'shop_name' => $this->shopName,
             'category_ids' => !empty($categoryIds) ? $categoryIds : null,
             'profit_percentage' => (float) ($this->profitPercentage ?: 0),

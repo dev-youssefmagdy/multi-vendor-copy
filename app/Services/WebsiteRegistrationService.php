@@ -128,6 +128,12 @@ class WebsiteRegistrationService
 
         $tenant = $this->tenantService->save($tenantAttributes, null, $deferProvisioning);
 
+        Tenant::saveData($tenant->getTenantKey(), [
+            'account_type' => in_array($registrationData['account_type'] ?? null, ['individual', 'company'], true)
+                ? $registrationData['account_type']
+                : 'individual',
+        ]);
+
         // Compliance documents were accepted on the register page, so the panel must not ask again.
         if (filled($registrationData['compliance_version'] ?? null)) {
             Tenant::saveData($tenant->getTenantKey(), [

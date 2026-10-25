@@ -222,6 +222,18 @@
                         @error('passwordConfirmation')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
 
+                    {{-- Account type --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('Registering as') }} <span
+                                class="text-red-500">*</span></label>
+                        <select wire:model="accountType"
+                            class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all {{ $errors->has('accountType') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20' }}">
+                            <option value="individual">{{ __('Individual') }}</option>
+                            <option value="company">{{ __('Company') }}</option>
+                        </select>
+                        @error('accountType')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    </div>
+
                     {{-- Shop name --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('Shop Name') }} <span
