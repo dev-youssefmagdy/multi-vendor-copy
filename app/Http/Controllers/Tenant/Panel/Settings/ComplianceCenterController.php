@@ -53,6 +53,7 @@ final class ComplianceCenterController extends PanelController
         $rawPhone = (string) ($s['compliance_phone'] ?? $tenant?->phone ?? '');
 
         return view('tenant.pages.settings.compliance.index', [
+            'accountType' => tenant()?->account_type === 'company' ? 'company' : 'individual',
             'businessName' => (string) ($s['compliance_business_name'] ?? ''),
             'storeName' => (string) ($s['compliance_store_name'] ?? $tenant?->shop_name ?? ''),
             'countryId' => $s['compliance_country'] ?? null,
@@ -104,6 +105,11 @@ final class ComplianceCenterController extends PanelController
             'bank' => $this->bankUpdates($validated),
             'documents' => $this->documentsUpdates($request, $validated),
         };
+
+        // Account type is the tenant's own `account_type` (chosen on the register page), not a compliance setting.
+        if ($section === 'business') {
+            \App\Models\Tenant::saveData(tenant('id'), ['account_type' => $validated['accountType']]);
+        }
 
         $this->service->updateCompliance($updates);
 

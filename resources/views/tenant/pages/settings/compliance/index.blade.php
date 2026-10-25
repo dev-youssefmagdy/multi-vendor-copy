@@ -31,6 +31,9 @@
                 </div>
             </div>
             <div class="form-grid form-grid-2">
+                <x-tenant::select name="accountType" label="Account Type" required
+                    :options="['individual' => 'Individual', 'company' => 'Company']" :value="$accountType"
+                    help="Choose Company to enable the Company Info section." />
                 <x-tenant::input name="businessName" label="Business Name" required maxlength="255" :value="$businessName" />
                 <x-tenant::input name="storeName" label="Store Name" required maxlength="255" :value="$storeName" />
                 <x-tenant::select2 name="countryId" label="Country" placeholder="Select country"
@@ -78,7 +81,7 @@
         :validate="route('tenant.settings.compliance.validate')" success="redirect" files>
         <input type="hidden" name="section" value="company">
         <input type="hidden" name="from" value="{{ request('from') }}">
-        <section class="card form-card fu d3 section-gap">
+        <section class="card form-card fu d3 section-gap" @if($accountType !== 'company') style="opacity:.55" @endif>
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
                     <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,12 +90,15 @@
                 </div>
                 <div>
                     <h3 class="panel-title">Company Info (if applicable)</h3>
-                    <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
+                    <p class="panel-copy">Registered company details, if you operate under a legal entity.@if($accountType !== 'company') Disabled — set Account Type to Company in Business Info to fill this in.@endif</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    @if($accountType === 'company')
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    @endif
                 </div>
             </div>
+            <fieldset @disabled($accountType !== 'company') style="border:0;padding:0;margin:0;min-width:0">
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="companyName" label="Company Name" maxlength="255" :value="$companyName" />
                 <x-tenant::input name="registrationNumber" label="Commercial Registration Number" required maxlength="100" :value="$registrationNumber" />
@@ -112,6 +118,7 @@
                     <x-tenant::file name="registrationDocumentUpload" />
                 </div>
             </div>
+            </fieldset>
         </section>
     </x-tenant::form>
 

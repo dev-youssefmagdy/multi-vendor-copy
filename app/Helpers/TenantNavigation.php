@@ -291,7 +291,6 @@ class TenantNavigation
             'compliance_email',
             'compliance_owner_name',
             'compliance_owner_id_number',
-            'compliance_registration_number',
             'compliance_bank_name',
             'compliance_bank_holder_name',
             'compliance_bank_account_number',
@@ -300,9 +299,15 @@ class TenantNavigation
         ];
 
         $values = Setting::query()
-            ->whereIn('name', $fields)
+            ->whereIn('name', [...$fields, 'compliance_registration_number'])
             ->pluck('value', 'name')
             ->all();
+
+        // Company registration only applies to companies; individuals aren't asked for it.
+        $isCompany = tenant()?->account_type === 'company';
+        if ($isCompany) {
+            $fields[] = 'compliance_registration_number';
+        }
 
         $filledCount = 0;
         foreach ($fields as $field) {

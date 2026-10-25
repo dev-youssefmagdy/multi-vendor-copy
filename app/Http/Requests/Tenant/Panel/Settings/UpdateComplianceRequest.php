@@ -60,6 +60,7 @@ final class UpdateComplianceRequest extends TenantFormRequest
                 'remove_doc_additional_paths' => ['nullable', 'array'],
             ],
             default => [
+                'accountType' => ['required', 'in:individual,company'],
                 'businessName' => ['required', 'string', 'max:255'],
                 'storeName' => ['required', 'string', 'max:255'],
                 // Country lives only in the central DB (Country::class uses CentralConnection),
@@ -76,6 +77,7 @@ final class UpdateComplianceRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
+            'accountType' => 'account type',
             'businessName' => 'business name',
             'storeName' => 'store name',
             'countryId' => 'country',
