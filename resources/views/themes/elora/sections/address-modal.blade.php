@@ -20,13 +20,13 @@ $cityRequired – optional, shows the required marker on City
 @endphp
     
     {{-- Backdrop --}}
-    <div class="fixed inset-0 bg-[#0c0c0e]/60 backdrop-blur-[2px] z-[1040]" wire:click="closeAddressModal"></div>
+    <div class="fixed inset-0 bg-[#0c0c0e]/60 backdrop-blur-[2px] z-[1040]" style="position:fixed;inset:0;background:rgba(12,12,14,.6);backdrop-filter:blur(2px);z-index:1040" wire:click="closeAddressModal"></div>
 
     {{-- Dialog --}}
-    <div class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-8 overflow-y-auto font-['Outfit']">
-        <div class="relative w-full max-w-[934px] my-auto bg-[#FDFDFD] rounded-[28px] px-5 py-7 sm:px-[68px] flex flex-col items-end gap-[18px]" wire:click.stop>
+    <div class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-8 overflow-y-auto font-['Outfit']" style="position:fixed;inset:0;z-index:1050;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;font-family:'Outfit',sans-serif">
+        <div class="relative w-full max-w-[934px] my-auto bg-[#FDFDFD] rounded-[28px] px-5 py-7 sm:px-[68px] flex flex-col items-end gap-[18px]" style="position:relative;width:100%;max-width:934px;margin:auto;background:#FDFDFD;border-radius:28px;padding:28px 24px;display:flex;flex-direction:column;align-items:stretch;gap:18px;box-shadow:0 20px 60px rgba(0,0,0,.25)" wire:click.stop>
 
-            <button type="button" wire:click="closeAddressModal"
+            <button type="button" wire:click="closeAddressModal" style="position:absolute;top:16px;right:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:none;border:0;cursor:pointer;color:#8F8F8F"
                 class="absolute top-4 right-4 sm:top-5 sm:right-6 w-9 h-9 rounded-full flex items-center justify-center text-[#8F8F8F] hover:text-[#121212] transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

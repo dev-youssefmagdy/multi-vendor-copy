@@ -1492,33 +1492,23 @@ class StorefrontRepository
         );
     }
 
+    /**
+     * "Best Selling" listing: mirrors the home best-sellers section (same flow as New In) —
+     * merchandiser-badged products when any exist, otherwise the top ordered catalog products.
+     */
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
-        $salesQuery = OrderItem::query()
-            ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
-            ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where(function ($query): void {
-                $query->whereNotNull('order_items.product_id')
-                    ->orWhereNotNull('product_variants.product_id');
-            })
-            ->when($days, fn($query) => $query->where('orders.created_at', '>=', now()->subDays($days)))
-            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'));
-
-        // Home "best sellers" shows the curated badge first; keep the listing consistent.
-        if ($this->productsByBadgeQuery('best-selling')->exists() || !(clone $salesQuery)->exists()) {
+        if ($this->productsByBadgeQuery('best-selling')->exists()) {
             return $this->paginatedProductsByBadge('best-selling', $filters, $perPage);
         }
 
-        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock')
-            ->joinSub($salesQuery, 'sales_totals', fn($join) => $join->on('sales_totals.product_id', '=', 'products.id'))
-            ->select('products.*');
+        $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
 
         $this->applyProductFilters($query, $filters);
         $this->applyCategoryFilter($query, $filters['category_id'] ?? null);
 
         return $query
-            ->orderByRaw($this->effectivePriceExpression() . ' asc')
+            ->orderByDesc('products.orders_count')
             ->orderByDesc('products.created_at')
             ->paginate($perPage)
             ->withQueryString();
