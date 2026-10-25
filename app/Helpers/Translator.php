@@ -227,7 +227,19 @@ trait Translator
             return;
         }
 
-        $this->translations()->createMany($rows);
+        $now = now();
+        $this->translations()->insert(array_map(fn (array $row) => $row + [
+            'translatable_id' => $this->getKey(),
+            'translatable_type' => $this->getMorphClass(),
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], $rows));
+
+        // A raw insert skips the Translation observer (one cache bump per row);
+        // bump the same tags once instead.
+        $probe = new ($this->translationModelClass())();
+        $probe->translatable_type = $this->getMorphClass();
+        \App\Support\CacheVersion::bumpMany(\App\Observers\CacheVersionObserver::tagsFor($probe));
         $this->load('translations.language');
     }
 }

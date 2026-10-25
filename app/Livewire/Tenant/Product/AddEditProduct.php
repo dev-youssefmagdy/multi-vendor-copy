@@ -116,29 +116,17 @@ class AddEditProduct extends Component
             $existingProduct = Product::query()->findOrFail($this->productId);
             $currentTranslations = $existingProduct->translationsByLocale(['name', 'description']);
 
-            $changedTranslations = [];
-            foreach ($validated['translations'] as $locale => $fields) {
-                $currentName = data_get($currentTranslations, "$locale.name", '');
-                $currentDescription = data_get($currentTranslations, "$locale.description", '');
-                $newName = $fields['name'] ?? '';
-                $newDescription = $fields['description'] ?? '';
-
-                if ($newName !== $currentName || $newDescription !== $currentDescription) {
-                    $changedTranslations[$locale] = [
-                        'name' => $newName,
-                        'description' => $newDescription,
-                    ];
-                }
-            }
+            [$changedTranslations, $previousValues] = $service->diffProductTranslations($currentTranslations, $validated['translations']);
 
             if ($changedTranslations) {
-                $service->submitProductEditRequest($existingProduct, $changedTranslations, $currentTranslations);
+                $service->submitProductEditRequest($existingProduct, $changedTranslations, $previousValues);
 
                 // Strip name/description from translations so they are NOT updated now;
                 // only meta_keywords and meta_description save immediately.
-                foreach (array_keys($changedTranslations) as $locale) {
-                    $validated['translations'][$locale]['name'] = data_get($currentTranslations, "$locale.name", '');
-                    $validated['translations'][$locale]['description'] = data_get($currentTranslations, "$locale.description", '');
+                foreach ($previousValues as $locale => $fields) {
+                    foreach ($fields as $field => $old) {
+                        $validated['translations'][$locale][$field] = $old;
+                    }
                 }
 
                 $editRequestSubmitted = true;

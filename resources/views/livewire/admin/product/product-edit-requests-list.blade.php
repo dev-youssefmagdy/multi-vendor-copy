@@ -140,7 +140,11 @@
                                 </td>
                                 <td>
                                     <div class="entity-title">
-                                        {{ data_get($record->current_translations, "$firstLocale.name") ?: '—' }}
+                                        @if (array_key_exists('name', $record->current_translations[$firstLocale] ?? []))
+                                            {{ data_get($record->current_translations, "$firstLocale.name") ?: '—' }}
+                                        @else
+                                            <span class="entity-subtitle">Unchanged</span>
+                                        @endif
                                     </div>
                                     @if (count($locales) > 1)
                                         <div class="entity-subtitle">+{{ count($locales) - 1 }} more locale(s)</div>
@@ -148,7 +152,11 @@
                                 </td>
                                 <td>
                                     <div class="entity-title text-amber-500">
-                                        {{ data_get($record->requested_translations, "$firstLocale.name") ?: '—' }}
+                                        @if (array_key_exists('name', $record->requested_translations[$firstLocale] ?? []))
+                                            {{ data_get($record->requested_translations, "$firstLocale.name") ?: '—' }}
+                                        @else
+                                            <span class="entity-subtitle">Unchanged</span>
+                                        @endif
                                     </div>
                                     @if (count($locales) > 1)
                                         <div class="entity-subtitle">+{{ count($locales) - 1 }} more locale(s)</div>
@@ -198,28 +206,29 @@
                             </tr>
                             {{-- Expanded diff row --}}
                             @foreach ($locales as $locale)
-                                @php
-                                    $curName  = data_get($record->current_translations,   "$locale.name",        '');
-                                    $reqName  = data_get($record->requested_translations, "$locale.name",        '');
-                                    $curDesc  = data_get($record->current_translations,   "$locale.description", '');
-                                    $reqDesc  = data_get($record->requested_translations, "$locale.description", '');
-                                @endphp
-                                @if ($curDesc !== $reqDesc || ($curName !== $reqName && count($locales) > 1))
-                                <tr style="background:var(--surface-2)">
-                                    <td colspan="{{ $canManage ? 8 : 7 }}" style="padding:12px 16px">
-                                        <div style="display:flex;gap:16px;flex-wrap:wrap">
-                                            <div style="flex:1;min-width:260px">
-                                                <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Current Description</div>
-                                                <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto">{{ $curDesc ?: '—' }}</div>
+                                @foreach (['name' => 'Name', 'description' => 'Description'] as $field => $label)
+                                    @php
+                                        $changed = array_key_exists($field, $record->requested_translations[$locale] ?? []);
+                                        $cur = data_get($record->current_translations, "$locale.$field", '');
+                                        $req = data_get($record->requested_translations, "$locale.$field", '');
+                                    @endphp
+                                    @if ($changed && ($field === 'description' || count($locales) > 1))
+                                    <tr style="background:var(--surface-2)">
+                                        <td colspan="{{ $canManage ? 8 : 7 }}" style="padding:12px 16px">
+                                            <div style="display:flex;gap:16px;flex-wrap:wrap">
+                                                <div style="flex:1;min-width:260px">
+                                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Current {{ $label }}</div>
+                                                    <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto">{{ $cur ?: '—' }}</div>
+                                                </div>
+                                                <div style="flex:1;min-width:260px">
+                                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Requested {{ $label }}</div>
+                                                    <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto;color:var(--amber)">{{ $req ?: '—' }}</div>
+                                                </div>
                                             </div>
-                                            <div style="flex:1;min-width:260px">
-                                                <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Requested Description</div>
-                                                <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto;color:var(--amber)">{{ $reqDesc ?: '—' }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endif
+                                        </td>
+                                    </tr>
+                                    @endif
+                                @endforeach
                             @endforeach
                         @endforeach
                     </tbody>

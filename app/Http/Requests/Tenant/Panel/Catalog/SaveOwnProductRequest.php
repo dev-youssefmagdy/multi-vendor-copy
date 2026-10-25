@@ -49,9 +49,9 @@ final class SaveOwnProductRequest extends TenantFormRequest
             'active' => ['boolean'],
             'featured' => ['boolean'],
             'category_ids' => ['array'],
-            'category_ids.*' => ['integer', 'exists:categories,id'],
+            'category_ids.*' => ['integer'],
             'badge_ids' => ['array'],
-            'badge_ids.*' => ['integer', 'exists:product_badges,id'],
+            'badge_ids.*' => ['integer'],
             'countries' => ['array'],
             'countries.*' => ['string', Rule::in(array_keys(OwnProductController::countryOptions()))],
             'primary_image' => ['nullable', 'image', 'max:4096'],
@@ -110,6 +110,29 @@ final class SaveOwnProductRequest extends TenantFormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
+            // One whereIn query per list instead of one `exists` query per id.
+            foreach (['category_ids' => 'categories', 'badge_ids' => 'product_badges'] as $field => $table) {
+                if ($validator->errors()->has($field) || $validator->errors()->has("{$field}.*")) {
+                    continue;
+                }
+
+                $ids = collect((array) $this->input($field, []))->filter(fn ($id) => filled($id))->map(fn ($id) => (int) $id)->unique()->values();
+
+                if ($ids->isEmpty()) {
+                    continue;
+                }
+
+                $found = \Illuminate\Support\Facades\DB::table($table)->whereIn('id', $ids)->count();
+
+                if ($found !== $ids->count()) {
+                    foreach ((array) $this->input($field, []) as $index => $id) {
+                        if (filled($id) && ! \Illuminate\Support\Facades\DB::table($table)->where('id', (int) $id)->exists()) {
+                            $validator->errors()->add("{$field}.{$index}", __('validation.exists', ['attribute' => str_replace('_', ' ', $field)]));
+                        }
+                    }
+                }
+            }
+
             $seen = [];
 
             foreach ($this->variantOptionSignatures() as $sig) {

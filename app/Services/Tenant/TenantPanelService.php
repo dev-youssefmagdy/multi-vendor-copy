@@ -169,17 +169,20 @@ class TenantPanelService
             if (array_key_exists('variants', $attributes)) {
                 $keptVariantIds = [];
 
+                // One query for the product's existing variants instead of one lookup per row.
+                $existingVariants = $product->exists ? $product->variants()->get() : collect();
+                $variantsById = $existingVariants->keyBy('id');
+                $variantsByCentralId = $existingVariants->filter(fn ($v) => filled($v->central_product_variant_id))->keyBy('central_product_variant_id');
+
                 foreach ($attributes['variants'] ?? [] as $variantAttributes) {
                     $variant = null;
 
                     if (filled($variantAttributes['id'] ?? null)) {
-                        $variant = $product->variants()->find($variantAttributes['id']);
+                        $variant = $variantsById->get((int) $variantAttributes['id']);
                     }
 
                     if (!$variant && filled($variantAttributes['central_product_variant_id'] ?? null)) {
-                        $variant = $product->variants()
-                            ->where('central_product_variant_id', $variantAttributes['central_product_variant_id'])
-                            ->first();
+                        $variant = $variantsByCentralId->get($variantAttributes['central_product_variant_id']);
                     }
 
                     $centralVariant = null;
@@ -1233,11 +1236,41 @@ class TenantPanelService
     }
 
     /**
+     * Field-level diff of name/description per locale.
+     *
+     * @return array{0: array, 1: array} [changed, previous] — both { locale => [field => value] },
+     *                                   containing only the fields that actually differ.
+     */
+    public function diffProductTranslations(array $currentTranslations, array $newTranslations): array
+    {
+        $changed = [];
+        $previous = [];
+
+        foreach ($newTranslations as $locale => $fields) {
+            foreach (['name', 'description'] as $field) {
+                if (!array_key_exists($field, $fields)) {
+                    continue;
+                }
+
+                $old = (string) data_get($currentTranslations, "$locale.$field", '');
+                $new = (string) ($fields[$field] ?? '');
+
+                if ($new !== $old) {
+                    $changed[$locale][$field] = $new;
+                    $previous[$locale][$field] = $old;
+                }
+            }
+        }
+
+        return [$changed, $previous];
+    }
+
+    /**
      * Submit a product name/description edit request to the central admin for review.
      *
      * @param  Product $product            The tenant product being edited
-     * @param  array   $changedTranslations { locale => ['name' => ..., 'description' => ...] }
-     * @param  array   $currentTranslations { locale => ['name' => ..., 'description' => ...] }
+     * @param  array   $changedTranslations { locale => [field => value] } changed fields only
+     * @param  array   $currentTranslations { locale => [field => value] } previous values of the changed fields only
      */
     public function submitProductEditRequest(Product $product, array $changedTranslations, array $currentTranslations): void
     {
