@@ -18,6 +18,9 @@ class BroadcastAuthController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Broadcast::auth($request);
+        $result = Broadcast::auth($request);
+
+        // Pusher/Reverb broadcasters return an array payload, not a Response.
+        return $result instanceof Response ? $result : response()->json($result);
     }
 }
