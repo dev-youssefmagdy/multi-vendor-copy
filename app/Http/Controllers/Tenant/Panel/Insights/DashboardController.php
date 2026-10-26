@@ -126,7 +126,11 @@ final class DashboardController extends PanelController
         $trend = fn (int $n): string => $n > 0 ? '+' . number_format($n) . ' this month' : '—';
         $pending = (float) $stats['pending_requested'];
 
+        $commissionValue = rtrim(rtrim(number_format((float) $affiliate->commission_value, 2, '.', ''), '0'), '.');
+
         return [
+            'commission_type'  => $affiliate->commission_type === 'percentage' ? 'Percentage' : 'Fixed',
+            'commission_value' => $affiliate->commission_type === 'percentage' ? $commissionValue . '%' : '$' . $commissionValue,
             'invite_link'    => $service->referralUrl($affiliate),
             'visits'         => number_format((int) $stats['visits']),
             'visits_trend'   => $trend((int) $stats['visits_30d']),

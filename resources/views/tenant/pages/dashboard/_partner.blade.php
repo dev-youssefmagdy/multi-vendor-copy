@@ -21,6 +21,13 @@
         <div>
             <h2 class="db-brand-title">Participate in NO GRGR and win with us</h2>
             <p class="db-brand-text">Introduce traders to the platform, and track your referrals and rewards from a single dashboard.</p>
+            @if(!empty($partner['commission_type']))
+                <div class="db-partner-commission">
+                    <span class="db-partner-commission-label">Your commission<br>per referral</span>
+                    <strong class="db-partner-commission-value">{{ $partner['commission_value'] }}</strong>
+                    <span class="db-partner-commission-type">{{ $partner['commission_type'] }}</span>
+                </div>
+            @endif
         </div>
 
         <div class="db-partner-actions">
