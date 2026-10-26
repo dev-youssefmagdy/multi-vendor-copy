@@ -193,9 +193,11 @@ class PaymentManager
             ->whereIn('code', $this->centrallyActiveGatewayCodes())
             ->orderBy('name')
             ->get()
-            // A vendor-supplied key that failed its connection check must not be
-            // offered to customers — surfacing it only leads to a failed charge.
-            ->reject(fn (TenantPaymentGateway $gateway) => $gateway->use_own && $gateway->connection_status === 'not_connected')
+            // Only offer gateways that are ready to charge: credentials present and,
+            // for vendor-supplied keys, a passing connection check. A gateway that
+            // loses its connection is marked not_connected and stays hidden until
+            // the vendor re-saves its credentials in the tenant panel.
+            ->filter(fn (TenantPaymentGateway $gateway) => $this->isGatewayReady($gateway))
             ->map(function (TenantPaymentGateway $gateway): array {
                 $mode = $gateway->effective_mode;
                 $useOwn = $gateway->use_own == 1;
@@ -213,6 +215,29 @@ class PaymentManager
                 ];
             })
             ->values();
+    }
+
+    private function isGatewayReady(TenantPaymentGateway $gateway): bool
+    {
+        if ($gateway->use_own && $gateway->getRawOriginal('connection_status') !== 'connected') {
+            return false;
+        }
+
+        $creds = (array) $gateway->effective_credentials;
+
+        if ($creds === []) {
+            return false;
+        }
+
+        if ($gateway->use_own) {
+            foreach ((array) $gateway->required_keys as $key) {
+                if (blank($creds[$key] ?? null)) {
+                    return false;
+                }
+            }
+        }
+
+        return collect($creds)->contains(fn ($value) => filled($value));
     }
 
     /**

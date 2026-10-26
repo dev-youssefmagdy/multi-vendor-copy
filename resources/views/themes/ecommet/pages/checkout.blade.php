@@ -308,12 +308,17 @@
                                 {{ __('Please add a shipping address before placing your order.') }}
                             </p>
                         @endif
+                        @if (!$hasGateways)
+                            <p class="text-red-600 text-sm font-medium text-center mt-4">
+                                {{ __('No payment method is available right now. Please try again later.') }}
+                            </p>
+                        @endif
                         <button type="submit"
                             id="pay-btn"
-                            @disabled(!$shippingAvailable || !$hasAddresses)
+                            @disabled(!$shippingAvailable || !$hasAddresses || !$hasGateways)
                             wire:loading.attr="disabled"
                             wire:loading.class="opacity-60 cursor-not-allowed"
-                            class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses ? 'opacity-50 cursor-not-allowed' : '' }}">
+                            class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses || !$hasGateways ? 'opacity-50 cursor-not-allowed' : '' }}">
                             <span wire:loading.remove>Pay {{ $formattedFinalTotal }}</span>
                             <span wire:loading class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">

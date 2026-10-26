@@ -417,6 +417,11 @@ class CheckoutPage extends Component
         $gatewayId = $this->data['payment']['gateway_id'];
         $gateways = app(PaymentManager::class)->storefrontGateways();
 
+        if ($gateways->isEmpty()) {
+            $this->toast(__('No payment method is available right now. Please try again later.'), 'error');
+            return;
+        }
+
         $selectedGateway = $gateways->where('code', $this->data['payment']['method'])->firstWhere('id', $gatewayId);
 
         if ($gatewayId && !$selectedGateway) {
@@ -591,6 +596,7 @@ class CheckoutPage extends Component
             'cartShipping' => (float) ($shippingCalculation['amount'] ?? 0),
             'appliedCoupon' => $appliedCoupon,
             'gateways' => $gateways,
+            'hasGateways' => $gateways->isNotEmpty(),
             'savedAddresses' => $savedAddresses,
             'hasAddresses' => $savedAddresses->isNotEmpty(),
             'formattedTotal' => $formatMoney($cartTotal),
