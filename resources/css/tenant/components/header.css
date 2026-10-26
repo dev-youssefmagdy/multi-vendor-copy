@@ -24,9 +24,7 @@
 }
 
 /* Everything below the bar shifts with its new height */
-.t-scope #nav2 { top: var(--ds-header-h); }
 .t-scope #mn { margin-top: var(--ds-header-h); min-height: calc(100vh - var(--ds-header-h)); }
-body.t-scope:has(#nav2) #mn { margin-top: calc(var(--ds-header-h) + 36px); min-height: calc(100vh - var(--ds-header-h) - 36px); }
 
 .t-scope #nav svg { flex-shrink: 0; }
 

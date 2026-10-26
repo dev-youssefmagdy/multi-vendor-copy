@@ -1,38 +1,77 @@
-.ob-setup-banner {
-    display: flex;
+/* Setup progress card: first block inside <main>, scrolls with the page. */
+#nav2.ob-setup-banner {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 240px) auto;
     align-items: center;
-    gap: 12px;
-    padding: 0 18px;
-    text-decoration: none;
+    gap: 8px 24px;
+    height: auto;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--ds-surface, var(--panel));
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
     color: var(--t2);
 }
+.ob-sb-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ob-sb-title { font-size: 14px; font-weight: 700; color: var(--t1); }
+.ob-sb-title em {
+    margin-inline-start: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(136, 4, 208, .1);
+    color: var(--ds-brand-500, var(--cyan));
+    font-size: 12px;
+    font-style: normal;
+}
 .ob-setup-banner-bar {
-    flex-shrink: 0;
-    width: 80px;
-    height: 4px;
-    border-radius: 4px;
+    height: 8px;
+    border-radius: 999px;
     background: var(--border);
     overflow: hidden;
 }
 .ob-setup-banner-fill {
     height: 100%;
+    border-radius: 999px;
     background: var(--ds-gradient);
-    border-radius: 4px;
+    transition: width .4s ease;
 }
 .ob-setup-banner-text {
-    flex: 1;
-    min-width: 0;
-    font-size: 12px;
-    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--t3, var(--t2));
 }
 .ob-setup-banner-cta {
-    flex-shrink: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 12px;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--ds-brand-500, var(--cyan));
+    color: #fff;
+    font-size: 13px;
     font-weight: 700;
-    color: var(--cyan);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: filter .15s;
+}
+.ob-setup-banner-cta:hover { filter: brightness(1.1); }
+[dir="rtl"] .ob-setup-banner-cta svg { transform: scaleX(-1); }
+
+@media (max-width: 767px) {
+    #nav2.ob-setup-banner {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 14px;
+    }
+    .ob-setup-banner-text { white-space: normal; }
+    .ob-setup-banner-cta { width: 100%; }
 }
 
 .ob-compliance-pages {
