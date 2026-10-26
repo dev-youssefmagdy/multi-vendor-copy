@@ -19,7 +19,7 @@
 
         @if ($bestSelling->isNotEmpty())
             <section class="max-w-[1280px] mx-auto px-2 md:px-4">
-                <div id="bestSellingItemsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                <div id="bestSellingItemsGrid" class="grid grid-cols-[repeat(auto-fill,minmax(150px,210px))] justify-center gap-3">
                     @foreach ($bestSelling as $product)
                         @include('themes.ecommet.pages._product-card', ['product' => $product, 'badge' => __('Best-Selling')])
                     @endforeach

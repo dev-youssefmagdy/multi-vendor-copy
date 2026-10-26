@@ -20,7 +20,7 @@
 
             {{-- New-In product grid --}}
             @if ($newInProducts->isNotEmpty())
-                <div id="newInItemsGrid" class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                <div id="newInItemsGrid" class="grid grid-cols-[repeat(auto-fill,minmax(150px,210px))] justify-center gap-3">
                     @foreach ($newInProducts as $product)
                         @include('themes.ecommet.pages._product-card', ['product' => $product, 'badge' => null])
                     @endforeach
