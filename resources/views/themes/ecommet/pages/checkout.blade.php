@@ -519,6 +519,7 @@
         ])
     @endif
 
+
     {{-- ── External payment SDK scripts (loaded only when relevant gateways are active) ── --}}
     @if ($hasStripe)
         <script src="https://js.stripe.com/v3/"></script>
@@ -615,11 +616,23 @@
         let _payLocked = false;
         const lockPay = (on) => {
             _payLocked = on;
+            let ov = document.getElementById('checkout-overlay');
+            if (!ov && on) {
+                ov = document.createElement('div');
+                ov.id = 'checkout-overlay';
+                ov.setAttribute('style', 'position:fixed;inset:0;z-index:2147483000;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);align-items:center;justify-content:center;cursor:wait');
+                ov.innerHTML = '<svg class="animate-spin" style="width:48px;height:48px;color:var(--color-primary,#111)" fill="none" viewBox="0 0 24 24"><circle style="opacity:.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path style="opacity:.75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>';
+                document.body.appendChild(ov);
+            }
+            if (ov) ov.style.display = on ? 'flex' : 'none';
             document.querySelectorAll('[id="pay-btn"]').forEach(b => {
                 if (on) { b.disabled = true; b.classList.add('opacity-60', 'cursor-not-allowed'); }
                 else    { b.disabled = false; b.classList.remove('opacity-60', 'cursor-not-allowed'); }
             });
         };
+        document.getElementById('checkout-form')?.addEventListener('submit', () => {
+            if (!document.getElementById('pay-btn')?.disabled) lockPay(true);
+        }, true);
         Livewire.hook('commit', ({ commit, succeed, fail }) => {
             if (!(commit.calls || []).some(c => c.method === 'placeOrder')) return;
             lockPay(true);

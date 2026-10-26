@@ -348,12 +348,15 @@ class CheckoutPage extends Component
     {
         $limitService = app(\App\Services\Tenant\PlanLimitService::class);
         if (!$limitService->canPerform(tenant(), \App\Services\Tenant\PlanLimitService::FEATURE_ORDERS_PER_MONTH)) {
-            $this->addError('order', __('This store cannot accept new orders at this time. Please try again next month.'));
+            $message = __('This store cannot accept new orders at this time. Please try again next month.');
+            $this->addError('order', $message);
+            $this->toast($message, 'error');
             return;
         }
 
         $billingRequired = !$this->data['billing']['same_as_shipping'];
 
+        try {
         $this->validate([
             'data.payment.method' => 'required|string',
             'data.shipping.name' => 'required|string|max:120',
@@ -375,6 +378,10 @@ class CheckoutPage extends Component
             'data.billing.phone' => 'billing phone',
             'data.billing.address' => 'billing address',
         ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->toast($e->validator->errors()->first(), 'error');
+            throw $e;
+        }
 
         $repo = app(StorefrontRepository::class);
         $cartItems = $repo->cartItems();
