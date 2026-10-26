@@ -82,16 +82,16 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
 @endphp
 
 <a href="{{ route('tenant.storefront.product', $product->slug) }}"
-    class="group flex flex-col items-center bg-white rounded-[8px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+    class="group flex flex-col items-center w-full max-w-[210px] justify-self-center mx-auto bg-white rounded-[8px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
     style="border: 0.4px solid #E8E8E8;">
 
-    {{-- Image area: #F6F6F6 bg, rounded top, 136px tall --}}
+    {{-- Image area: #F6F6F6 bg, rounded top, same size as elora (h-48 / sm:h-52, max 210px wide) --}}
     <div
-        class="w-full h-[136px] bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
+        class="w-full h-48 sm:h-52 bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
 
         @if ($img)
             <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"
-                class="w-full h-full  group-hover:scale-105 transition-transform duration-300"
+                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                 @if($sliderJson) data-slider='{{ $sliderJson }}' @endif>
         @else
             <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
