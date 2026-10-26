@@ -91,7 +91,15 @@ class PaymentController extends Controller
         $this->orderLifecycleService->recordPaymentInitiated($order, $gateway);
         session(['storefront_pending_payment' => ['uuid' => $order->uuid, 'gateway' => $gateway]]);
 
-        $result = $this->manager->gateway($gateway)->charge($charge);
+        try {
+            $result = $this->manager->gateway($gateway)->charge($charge);
+        } catch (\Throwable $e) {
+            report($e);
+            session()->forget('storefront_pending_payment');
+
+            return redirect()->route('tenant.storefront.checkout')
+                ->withErrors(['payment' => __('This payment method is currently unavailable. Please use another payment method.')]);
+        }
 
         if ($result->needsRedirect) {
             return redirect()->away($result->redirectUrl);

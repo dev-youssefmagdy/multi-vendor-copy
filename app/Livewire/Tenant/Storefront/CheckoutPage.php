@@ -436,6 +436,32 @@ class CheckoutPage extends Component
             return;
         }
 
+        // Verify the gateway is reachable with valid credentials BEFORE any order
+        // is created, so a broken gateway never leaves a pending order behind.
+        if ($selectedGateway) {
+            $creds = (array) ($selectedGateway['creds'] ?? []);
+            $ping = ['ok' => false, 'message' => ''];
+            try {
+                $ping = app(\App\PaymentGateway\GatewayConnectionChecker::class)->ping(
+                    $selectedGateway['code'],
+                    array_merge($creds, ['sandbox' => ($selectedGateway['mode'] ?? 'test') === 'test']),
+                );
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
+            if (!($ping['ok'] ?? false)) {
+                if (!empty($selectedGateway['use_own'])) {
+                    \App\Models\Tenant\PaymentGateway::query()
+                        ->where('code', $selectedGateway['code'])
+                        ->where('use_own', true)
+                        ->update(['connection_status' => 'not_connected', 'last_error' => $ping['message'] ?? null]);
+                }
+                $this->toast(__('This payment method is currently unavailable. Please use another payment method.'), 'error');
+                return;
+            }
+        }
+
         /** @var \App\Models\Tenant\Customer $customer */
         $customer = Auth::guard('storefront')->user();
 
