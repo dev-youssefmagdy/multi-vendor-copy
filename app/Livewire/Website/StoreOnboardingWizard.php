@@ -7,13 +7,12 @@ use App\Models\Country;
 use App\Models\Tenant;
 use App\Models\TenantCountry;
 use App\Models\Tenant\Language as TenantLanguage;
-use App\Models\Tenant\Theme;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class StoreOnboardingWizard extends Component
 {
-    // Steps: 1=countries  2=languages  3=theme  4=done
+    // Steps: 1=countries  2=languages  3=done (theme comes from the admin panel's default template)
     public int    $step      = 1;
     public string $tenantId  = '';
     public bool   $invalid   = false;
@@ -24,10 +23,7 @@ class StoreOnboardingWizard extends Component
     // Step 2 — Languages
     public array $languageIds = [];
 
-    // Step 3 — Active theme (global, not per-country)
-    public string $activeThemeId = '';
-
-    // Languages/theme defaults are read from the tenant DB once, as soon as background provisioning is done.
+    // Language defaults are read from the tenant DB once, as soon as background provisioning is done.
     public bool $tenantDataLoaded = false;
 
     public function mount(string $tenantId): void
@@ -81,7 +77,7 @@ class StoreOnboardingWizard extends Component
     }
 
     /**
-     * Languages/theme defaults live in the tenant database, which is built in the background after
+     * Language defaults live in the tenant database, which is built in the background after
      * registration. Step 1 (countries) is central-only and never waits for it.
      */
     protected function loadTenantStepData(Tenant $tenant): void
@@ -98,8 +94,6 @@ class StoreOnboardingWizard extends Component
                 ->pluck('id')
                 ->map(fn ($id) => (string) $id)
                 ->all();
-
-            $this->activeThemeId = (string) (Theme::query()->where('is_active', true)->value('id') ?? '');
         } finally {
             tenancy()->end();
         }
@@ -112,14 +106,13 @@ class StoreOnboardingWizard extends Component
         match ($this->step) {
             1 => $this->submitCountries(),
             2 => $this->submitLanguages(),
-            3 => $this->submitTheme(),
             default => null,
         };
     }
 
     public function skipStep(): void
     {
-        if ($this->step < 4 && ($this->step < 2 || $this->isProvisioned())) {
+        if ($this->step < 3 && ($this->step < 2 || $this->isProvisioned())) {
             $this->step++;
         }
     }
@@ -193,23 +186,6 @@ class StoreOnboardingWizard extends Component
         $this->step = 3;
     }
 
-    public function submitTheme(): void
-    {
-        $tenant = Tenant::query()->find($this->tenantId);
-        if (!$tenant || !$this->isProvisioned($tenant)) {
-            return;
-        }
-
-        if (filled($this->activeThemeId)) {
-            tenancy()->initialize($tenant);
-            Theme::query()->update(['is_active' => false]);
-            Theme::query()->whereKey((int) $this->activeThemeId)->update(['is_active' => true]);
-            tenancy()->end();
-        }
-
-        $this->step = 4;
-    }
-
     public function launch(): void
     {
         $tenant = Tenant::query()->find($this->tenantId);
@@ -251,19 +227,17 @@ class StoreOnboardingWizard extends Component
             ->orderBy('name')
             ->get();
 
-        $themes = collect();
         $availableLanguages = collect();
         $provisioned = $this->isProvisioned($tenant);
 
         if ($tenant && $provisioned) {
             $this->loadTenantStepData($tenant);
 
-            if (in_array($this->step, [2, 3], true)) {
+            if ($this->step === 2) {
                 tenancy()->initialize($tenant);
 
                 try {
-                    $themes = $this->step === 3 ? Theme::query()->get() : $themes;
-                    $availableLanguages = $this->step === 2 ? TenantLanguage::query()->orderBy('name')->get() : $availableLanguages;
+                    $availableLanguages = TenantLanguage::query()->orderBy('name')->get();
                 } finally {
                     tenancy()->end();
                 }
@@ -272,7 +246,6 @@ class StoreOnboardingWizard extends Component
 
         return view('livewire.website.store-onboarding-wizard', [
             'allCountries' => $allCountries,
-            'themes' => $themes,
             'availableLanguages' => $availableLanguages,
             'provisioned' => $provisioned,
             'provisionFailed' => $tenant && ($tenant->provision_status ?? 'ready') === 'failed',

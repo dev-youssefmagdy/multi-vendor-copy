@@ -516,6 +516,18 @@ class TenantCatalogSyncService
             ->orderBy('id')
             ->pluck('id', 'central_theme_id');
 
+        // A fresh tenant has no active theme yet: seed it from the central default template
+        // (admin panel → Store Templates → Set Default). Never overrides a tenant's own choice.
+        if (!Theme::query()->where('is_active', true)->exists()) {
+            $defaultCentralId = $themes->firstWhere('is_default', true)?->id
+                ?? $themes->firstWhere('is_active', true)?->id
+                ?? $themes->first()?->id;
+
+            if ($defaultCentralId && isset($tenantThemeIds[$defaultCentralId])) {
+                Theme::query()->whereKey($tenantThemeIds[$defaultCentralId])->update(['is_active' => true]);
+            }
+        }
+
         $this->syncThemeCountries($themes->mapWithKeys(fn ($theme) => [
             (int) $tenantThemeIds[$theme->id] => $theme->countries->isEmpty() ? $allCountries : $theme->countries,
         ]));

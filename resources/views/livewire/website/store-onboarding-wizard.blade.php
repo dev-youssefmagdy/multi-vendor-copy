@@ -13,8 +13,7 @@
             $stepLabels = [
                 1 => __('Countries'),
                 2 => __('Languages'),
-                3 => __('Theme'),
-                4 => __('Launch'),
+                3 => __('Launch'),
             ];
         @endphp
         <div class="flex items-center justify-center gap-1 mb-8">
@@ -75,7 +74,7 @@
 
             {{-- STEP 2: Languages --}}
             {{-- Tenant database is still being built in the background --}}
-            @if(in_array($step, [2, 3], true) && !$provisioned)
+            @if($step === 2 && !$provisioned)
                 <div class="text-center py-10" @if(!$provisionFailed) wire:poll.3s @endif>
                     @if($provisionFailed)
                         <i class="fas fa-triangle-exclamation text-red-500 text-3xl mb-4"></i>
@@ -123,44 +122,8 @@
                 </div>
             @endif
 
-            {{-- STEP 3: Theme --}}
-            @if($step === 3 && $provisioned)
-                <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Storefront Theme') }}</h2>
-                <p class="text-sm text-gray-500 mb-5">{{ __('Pick the theme your storefront will use. You can change this later from the dashboard.') }}</p>
-
-                @if($themes->isEmpty())
-                    <div class="p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-500 mb-4">
-                        <i class="fas fa-info-circle me-1.5 text-gray-400"></i>
-                        {{ __('No themes are available yet. Your catalog sync will add themes automatically.') }}
-                    </div>
-                @else
-                    <div class="space-y-2 mb-4">
-                        @foreach($themes as $theme)
-                            <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors
-                                {{ (string) $activeThemeId === (string) $theme->id ? 'border-primary bg-primary/5' : 'border-gray-200 hover:bg-gray-50' }}">
-                                <input type="radio" name="activeThemeId" value="{{ $theme->id }}"
-                                    wire:model="activeThemeId"
-                                    class="w-4 h-4 text-primary">
-                                <span class="text-sm text-gray-800 font-medium">{{ $theme->name ?? $theme->slug }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                @endif
-
-                <div class="flex gap-3">
-                    <button wire:click="skipStep" type="button"
-                        class="flex-1 py-3.5 font-bold text-sm rounded-xl border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors">
-                        {{ __('Skip for now') }}
-                    </button>
-                    <button wire:click="nextStep" type="button"
-                        class="flex-1 btn-primary py-3.5 font-bold text-sm rounded-xl">
-                        {{ __('Continue') }} <i class="fas fa-arrow-right ms-1.5"></i>
-                    </button>
-                </div>
-            @endif
-
-            {{-- STEP 4: Launch --}}
-            @if($step === 4)
+            {{-- STEP 3: Launch --}}
+            @if($step === 3)
                 <div class="text-center py-4">
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
                         <i class="fas fa-rocket text-green-600 text-2xl"></i>

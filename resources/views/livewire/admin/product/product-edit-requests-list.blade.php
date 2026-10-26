@@ -200,70 +200,108 @@
     {{-- Changes Modal --}}
     @if ($viewing)
         @php $changes = $this->changedFields($viewing); @endphp
-        <div class="modal-backdrop" wire:click="closeDetails">
-            <div class="modal-box" wire:click.stop style="max-width:900px;width:100%">
-                <div class="modal-head">
+        <div x-data @keydown.escape.window="$wire.closeDetails()">
+        <template x-teleport="body">
+        <div class="ier-backdrop" wire:click="closeDetails">
+            <div class="ier-modal" wire:click.stop style="max-width:960px">
+                <div class="ier-head">
                     <div>
                         <h3 class="panel-title">Requested Changes</h3>
-                        <p class="panel-copy">
+                        <p class="panel-copy" style="margin-top:2px">
                             {{ $viewing->product_slug ?: '#' . $viewing->product_id }}
                             · {{ data_get($viewing->tenant?->data, 'name', $viewing->tenant_id) }}
                         </p>
                     </div>
-                    <button type="button" class="modal-close" wire:click="closeDetails" aria-label="Close">
+                    <button type="button" class="ier-close" wire:click="closeDetails" aria-label="Close">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
                 </div>
-                <div class="modal-body" style="max-height:70vh;overflow:auto">
+                <div class="ier-body">
                     @forelse ($changes as $locale => $fields)
-                        @foreach ($fields as $field => $values)
-                            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
-                                <div style="flex:1;min-width:260px">
-                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Current {{ ucfirst($field) }}</div>
-                                    <div class="entity-subtitle" style="white-space:pre-wrap">{{ trim(strip_tags((string) $values['current'])) ?: '—' }}</div>
-                                </div>
-                                <div style="flex:1;min-width:260px">
-                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Requested {{ ucfirst($field) }}</div>
-                                    <div class="entity-subtitle" style="white-space:pre-wrap;color:var(--amber)">{{ trim(strip_tags((string) $values['requested'])) ?: '—' }}</div>
-                                </div>
+                        <section class="ier-locale">
+                            <div class="ier-locale-head">
+                                <span class="badge">{{ strtoupper($locale) }}</span>
+                                <span class="entity-subtitle">{{ count($fields) }} {{ Str::plural('field', count($fields)) }} changed</span>
                             </div>
-                        @endforeach
+                            @foreach ($fields as $field => $values)
+                                <div class="ier-field">
+                                    <div class="ier-field-label">{{ ucfirst($field) }}</div>
+                                    <div class="ier-diff">
+                                        <div class="ier-pane ier-old">
+                                            <div class="ier-pane-label">Current</div>
+                                            <div class="ier-text">{{ trim(strip_tags((string) $values['current'])) ?: '—' }}</div>
+                                        </div>
+                                        <div class="ier-pane ier-new">
+                                            <div class="ier-pane-label">Requested</div>
+                                            <div class="ier-text">{{ trim(strip_tags((string) $values['requested'])) ?: '—' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </section>
                     @empty
                         <p class="panel-copy">No differences between current and requested values.</p>
                     @endforelse
                 </div>
-                <div class="modal-foot">
+                <div class="ier-foot">
                     <button type="button" class="btn btn-secondary" wire:click="closeDetails">Close</button>
                 </div>
             </div>
+        </div>
+        </template>
         </div>
     @endif
 
     {{-- Reject Modal --}}
     @if ($rejectingId)
-        <div class="modal-backdrop" wire:click="cancelReject">
-            <div class="modal-box" wire:click.stop>
-                <div class="modal-head">
+        <div x-data @keydown.escape.window="$wire.cancelReject()">
+        <template x-teleport="body">
+        <div class="ier-backdrop" wire:click="cancelReject">
+            <div class="ier-modal" wire:click.stop>
+                <div class="ier-head">
                     <h3 class="panel-title">Reject Edit Request</h3>
-                    <button type="button" class="modal-close" wire:click="cancelReject" aria-label="Close">
+                    <button type="button" class="ier-close" wire:click="cancelReject" aria-label="Close">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="ier-body">
                     <label class="field-label">Admin Note <span class="field-optional">(optional — visible to vendor)</span></label>
                     <textarea class="field-control" rows="3" placeholder="Reason for rejection…"
                         wire:model="adminNote"></textarea>
                     @error('adminNote') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
-                <div class="modal-foot">
+                <div class="ier-foot">
                     <button type="button" class="btn btn-secondary" wire:click="cancelReject">Cancel</button>
                     <button type="button" class="btn btn-primary btn-danger" wire:click="confirmReject">Reject Request</button>
                 </div>
             </div>
         </div>
+        </template>
+        </div>
     @endif
+
+    <style>
+        .ier-backdrop { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(3, 7, 15, .66); backdrop-filter: blur(3px); }
+        .ier-modal { width: 100%; max-width: 520px; max-height: calc(100vh - 48px); display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border2); border-radius: 16px; box-shadow: 0 24px 64px rgba(0, 0, 0, .45); overflow: hidden; }
+        .ier-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+        .ier-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
+        .ier-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--border); background: var(--surface); }
+        .ier-close { flex-shrink: 0; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--t3); cursor: pointer; }
+        .ier-close:hover { color: var(--t1); border-color: var(--border2); }
+        .ier-locale + .ier-locale { margin-top: 22px; }
+        .ier-locale-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .ier-field + .ier-field { margin-top: 14px; }
+        .ier-field-label { font-size: 12px; font-weight: 600; color: var(--t2); margin-bottom: 6px; }
+        .ier-diff { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ier-pane { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+        .ier-old { background: rgba(255, 77, 109, .07); border-color: rgba(255, 77, 109, .28); }
+        .ier-new { background: rgba(0, 214, 143, .07); border-color: rgba(0, 214, 143, .3); }
+        .ier-pane-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--t3); margin-bottom: 4px; }
+        .ier-text { font-size: 13px; line-height: 1.55; color: var(--t1); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 260px; overflow-y: auto; }
+        @media (max-width: 720px) { .ier-diff { grid-template-columns: 1fr; } .ier-backdrop { padding: 12px; } }
+    </style>
 </main>
