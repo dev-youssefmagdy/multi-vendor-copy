@@ -107,6 +107,7 @@ class CompleteRegistrationPage extends Component
             $this->customDomain = $domainRequest?->domain ?? '';
             $this->hasDomainRequest = $domainRequest !== null;
             $this->registered = true;
+            $this->registeredTenantId = (string) $tenant->getTenantKey();
             return;
         }
 
