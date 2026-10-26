@@ -4,10 +4,12 @@ Searchable country select for the Ecommet theme.
 Props:
 $wireModel – dot-notation Livewire property (e.g. "data.modal.country_id")
 $countries – collection of country objects (id, name, flag_emoji)
+$triggerClass – optional trigger button classes (border/size/font)
 $currentId – currently selected country id (integer|null)
 --}}
 @php
     $currentId ??= null;
+    $triggerClass ??= 'border border-[#dcdcdc] rounded-[8px] px-4 py-2.5 text-[13px] bg-white';
     $jsonCountries = $countries->map(fn($c) => [
         'id' => $c->id,
         'name' => $c->name,
@@ -34,6 +36,9 @@ $currentId – currently selected country id (integer|null)
                 this.selected = null;
                 this.search = '';
             });
+            this.$el.addEventListener('country-select-set', (e) => {
+                this.selected = this.countries.find(c => c.id === e.detail.id) ?? null;
+            });
             window.addEventListener('scroll', () => this.open && this.position(), true);
             window.addEventListener('resize', () => this.open && this.position());
         },
@@ -45,10 +50,10 @@ $currentId – currently selected country id (integer|null)
             const maxPanelHeight = 280;
             if (spaceBelow >= Math.min(maxPanelHeight, 200) || spaceBelow >= spaceAbove) {
                 const height = Math.max(120, Math.min(maxPanelHeight, spaceBelow));
-                this.panelStyle = `position:fixed; top:${r.bottom + 4}px; left:${r.left}px; max-height:${height}px;`;
+                this.panelStyle = `position:fixed; top:${r.bottom + 4}px; left:${r.left}px; width:${r.width}px; z-index:9999; max-height:${height}px;`;
             } else {
                 const height = Math.max(120, Math.min(maxPanelHeight, spaceAbove));
-                this.panelStyle = `position:fixed; bottom:${vh - r.top + 4}px; left:${r.left}px; max-height:${height}px;`;
+                this.panelStyle = `position:fixed; bottom:${vh - r.top + 4}px; left:${r.left}px; width:${r.width}px; z-index:9999; max-height:${height}px;`;
             }
         },
         openDropdown() {
@@ -68,10 +73,10 @@ $currentId – currently selected country id (integer|null)
             this.search = '';
             $wire.set(this.wireModel, null);
         }
-    }" x-on:click.outside="open = false" class="relative">
+    }" x-on:click.outside="open = false" class="relative" wire:ignore>
     {{-- Trigger --}}
     <button type="button" x-ref="trigger" x-on:click="open ? (open = false) : openDropdown()"
-        class="w-full border border-[#dcdcdc] rounded-[8px] px-4 py-2.5 text-[13px] outline-none transition bg-white flex items-center justify-between gap-2"
+        class="w-full {{ $triggerClass }} outline-none transition flex items-center justify-between gap-2"
         :class="open ? 'border-[#242424]' : ''">
         <span class="flex items-center gap-2 truncate">
             <template x-if="selected">
@@ -106,7 +111,7 @@ $currentId – currently selected country id (integer|null)
         x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
         class="z-[9999] flex flex-col bg-white border border-[#dcdcdc] rounded-[8px] shadow-lg ring-1 ring-black/5 overflow-hidden"
-        :style="panelStyle" style="display:none">
+        :style="panelStyle" style="display:none;background:#fff;border:1px solid #dcdcdc;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);overflow:hidden;flex-direction:column">
         {{-- Search --}}
         <div class="p-2 border-b border-[#eee] shrink-0">
             <div
@@ -123,7 +128,7 @@ $currentId – currently selected country id (integer|null)
         </div>
 
         {{-- List --}}
-        <ul class="flex-1 min-h-0 overflow-y-auto py-1">
+        <ul class="flex-1 min-h-0 overflow-y-auto py-1" style="max-height:220px;overflow-y:auto;padding:4px 0;margin:0;list-style:none">
             <template x-for="country in filtered" :key="country.id">
                 <li>
                     <button type="button" x-on:click="select(country)"

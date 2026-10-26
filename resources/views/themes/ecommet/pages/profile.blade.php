@@ -318,26 +318,24 @@ $orders Collection<Order>
                             </div>
 
     {{-- Address Modal --}}
-                            <x-storefront.address-modal
-                                theme="ecommet"
-                                :show="$showAddressModal"
-                                :title="$editingAddressId ? __('Edit Address') : __('New Address')"
-                                close-method="closeAddressModal"
-                                save-method="saveAddress"
-                                :saving-label="__('Save')"
-                                full-name-model="addrFullName"
-                                :full-name-value="$addrFullName"
-                                phone-event-model="addrPhone"
-                                :phone-value="$addrPhone ?? ''"
-                                line1-model="addrLine1"
-                                city-model="addrCity"
-                                :city-value="$addrCity ?? ''"
-                                country-id-model="addrCountryId"
-                                :country-id-value="$addrCountryId"
-                                :countries="$countries"
-                                is-default-model="addrIsDefault"
-                                label-model="addrLabel"
-                            />
+                            @if ($showAddressModal)
+                                @include('themes.ecommet.sections.address-modal', [
+                                    'f' => [
+                                        'full_name' => 'addrFullName', 'label' => 'addrLabel', 'phone' => 'addrPhone',
+                                        'line1' => 'addrLine1', 'city' => 'addrCity', 'state' => 'addrState',
+                                        'country' => 'addrCountry', 'country_id' => 'addrCountryId',
+                                        'is_default' => 'addrIsDefault',
+                                    ],
+                                    'title' => $editingAddressId ? __('Edit Address') : __('New Address'),
+                                    'saveAction' => 'saveAddress',
+                                    'saveLabel' => __('Save'),
+                                    'phone' => $addrPhone ?? '',
+                                    'countryId' => $addrCountryId,
+                                    'isDefault' => $addrIsDefault,
+                                    'countries' => $countries,
+                                    'cityRequired' => true,
+                                ])
+                            @endif
 
                             <button wire:click="logout"
                                 class="mt-8 text-red-600 border border-red-200 hover:bg-red-50 transition rounded-full px-6 py-2 text-[14px] font-semibold">

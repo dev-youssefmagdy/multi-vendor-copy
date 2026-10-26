@@ -494,27 +494,25 @@
         </form>
 
     </div>
-    <x-storefront.address-modal
-        theme="ecommet"
-        :show="$data['modal']['show']"
-        :title="$data['modal']['address_id']
-            ? ($data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address'))
-            : ($data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address'))"
-        close-method="closeAddressModal"
-        save-method="saveNewAddress"
-        :saving-label="$data['modal']['address_id'] ? __('Update Address') : __('Save Address')"
-        full-name-model="data.modal.full_name"
-        :full-name-value="$data['modal']['full_name']"
-        phone-event-model="data.modal.phone"
-        :phone-value="$data['modal']['phone'] ?? ''"
-        line1-model="data.modal.line1"
-        city-model="data.modal.city"
-        :city-value="$data['modal']['city'] ?? ''"
-        country-id-model="data.modal.country_id"
-        :country-id-value="$data['modal']['country_id']"
-        :countries="$countries"
-        is-default-model="data.modal.is_default"
-    />
+    @if ($data['modal']['show'])
+        @include('themes.ecommet.sections.address-modal', [
+            'f' => [
+                'full_name' => 'data.modal.full_name', 'phone' => 'data.modal.phone', 'email' => 'data.modal.email',
+                'line1' => 'data.modal.line1', 'city' => 'data.modal.city', 'state' => 'data.modal.state',
+                'country' => 'data.modal.country', 'country_id' => 'data.modal.country_id',
+                'is_default' => 'data.modal.is_default',
+            ],
+            'title' => $data['modal']['address_id']
+                ? ($data['modal']['context'] === 'shipping' ? __('Edit Shipping Address') : __('Edit Billing Address'))
+                : ($data['modal']['context'] === 'shipping' ? __('Add Shipping Address') : __('Add Billing Address')),
+            'saveAction' => 'saveNewAddress',
+            'saveLabel' => $data['modal']['address_id'] ? __('Update Address') : __('Save'),
+            'phone' => $data['modal']['phone'] ?? '',
+            'countryId' => $data['modal']['country_id'],
+            'isDefault' => $data['modal']['is_default'],
+            'countries' => $countries,
+        ])
+    @endif
 
     {{-- ── External payment SDK scripts (loaded only when relevant gateways are active) ── --}}
     @if ($hasStripe)
