@@ -24,6 +24,13 @@ function positionMenu(el) {
 let bound = false;
 
 export function init(el) {
+    // DataTables redraws re-run init on rows that may already be bound; a second
+    // click listener would toggle the menu open and straight shut again.
+    if (el._dropdownBound) {
+        return;
+    }
+    el._dropdownBound = true;
+
     const trigger = el.querySelector('[data-dropdown-trigger]');
     const menu = el.querySelector('[data-dropdown-menu]');
 
