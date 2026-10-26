@@ -281,12 +281,20 @@
                         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
                         style="position: relative;">
                         <input type="text" name="q" value="{{ request('q') }}" placeholder="{{ __('Search...') }}"
-                            class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] ps-4 pe-9 outline-none text-[13px] placeholder-gray-500">
-                        <button type="submit"
-                            class="absolute end-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 transition">
+                            class="w-full bg-[#f6f6f6] text-black rounded-full py-[7px] ps-4 pe-[68px] outline-none text-[13px] placeholder-gray-500">
+                        <button type="submit" aria-label="{{ __('Search') }}"
+                            class="absolute end-9 inset-y-0 my-auto w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-900 transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0" />
+                            </svg>
+                        </button>
+                        <button type="button" data-image-search-trigger="storefront-image-search-modal"
+                            class="absolute end-2 inset-y-0 my-auto w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-900 transition"
+                            aria-label="{{ __('Search by Image') }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                                <circle cx="12" cy="13" r="3.2" />
                             </svg>
                         </button>
                     </form>
