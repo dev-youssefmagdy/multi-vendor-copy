@@ -26,6 +26,9 @@ class ProductEditRequestsList extends Component
     public ?int $rejectingId = null;
     public string $adminNote = '';
 
+    // Details modal state
+    public ?int $viewingId = null;
+
     // ── Filter watchers ──────────────────────────────────────────────────────
 
     public function updatedSearch(): void
@@ -167,6 +170,36 @@ class ProductEditRequestsList extends Component
         $this->dispatch('admin-toast', message: 'Product translations reset to central values.', type: 'success');
     }
 
+    public function openDetails(int $id): void
+    {
+        $this->viewingId = ProductEditRequest::query()->findOrFail($id)->id;
+    }
+
+    public function closeDetails(): void
+    {
+        $this->viewingId = null;
+    }
+
+    /**
+     * Only the fields that actually differ: [locale => [field => ['current' => , 'requested' => ]]].
+     */
+    public function changedFields(ProductEditRequest $request): array
+    {
+        $changes = [];
+
+        foreach ($request->requested_translations ?? [] as $locale => $fields) {
+            foreach ($fields as $field => $requested) {
+                $current = data_get($request->current_translations, "$locale.$field");
+
+                if ((string) $current !== (string) $requested) {
+                    $changes[$locale][$field] = ['current' => $current, 'requested' => $requested];
+                }
+            }
+        }
+
+        return $changes;
+    }
+
     public function openRejectModal(int $id): void
     {
         $this->authorizePermission('catalog.product-edit-requests.manage');
@@ -256,6 +289,7 @@ class ProductEditRequestsList extends Component
             'stats' => $stats,
             'canManage' => $this->hasPermission('catalog.product-edit-requests.manage'),
             'tenants' => Tenant::query()->orderBy('id')->get(),
+            'viewing' => $this->viewingId ? ProductEditRequest::query()->with('tenant')->find($this->viewingId) : null,
         ]);
     }
 }

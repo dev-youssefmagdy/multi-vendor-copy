@@ -103,14 +103,11 @@
                         <tr>
                             <th>Product</th>
                             <th>Vendor</th>
-                            <th>Locale</th>
-                            <th>Current Name</th>
-                            <th>Requested Name</th>
+                            <th>Locales</th>
+                            <th>Changes</th>
                             <th>Status</th>
                             <th>Submitted</th>
-                            @if ($canManage)
-                                <th class="ta-r">Actions</th>
-                            @endif
+                            <th class="ta-r">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,7 +117,7 @@
                                     $record->requested_translations ?? [],
                                     $record->current_translations ?? []
                                 ));
-                                $firstLocale = $locales[0] ?? 'en';
+                                $changedFields = $this->changedFields($record);
                             @endphp
                             <tr>
                                 <td>
@@ -134,33 +131,16 @@
                                     <div class="entity-subtitle">{{ $record->tenant_id }}</div>
                                 </td>
                                 <td>
-                                    <div class="entity-subtitle">
-                                        {{ implode(', ', $locales) }}
-                                    </div>
+                                    <div class="entity-subtitle">{{ implode(', ', array_map('strtoupper', $locales)) }}</div>
                                 </td>
                                 <td>
-                                    <div class="entity-title">
-                                        @if (array_key_exists('name', $record->current_translations[$firstLocale] ?? []))
-                                            {{ data_get($record->current_translations, "$firstLocale.name") ?: '—' }}
-                                        @else
-                                            <span class="entity-subtitle">Unchanged</span>
-                                        @endif
-                                    </div>
-                                    @if (count($locales) > 1)
-                                        <div class="entity-subtitle">+{{ count($locales) - 1 }} more locale(s)</div>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="entity-title text-amber-500">
-                                        @if (array_key_exists('name', $record->requested_translations[$firstLocale] ?? []))
-                                            {{ data_get($record->requested_translations, "$firstLocale.name") ?: '—' }}
-                                        @else
-                                            <span class="entity-subtitle">Unchanged</span>
-                                        @endif
-                                    </div>
-                                    @if (count($locales) > 1)
-                                        <div class="entity-subtitle">+{{ count($locales) - 1 }} more locale(s)</div>
-                                    @endif
+                                    @forelse ($changedFields as $locale => $fields)
+                                        <div class="entity-subtitle">
+                                            [{{ strtoupper($locale) }}] {{ implode(', ', array_map('ucfirst', array_keys($fields))) }}
+                                        </div>
+                                    @empty
+                                        <span class="entity-subtitle">No changes</span>
+                                    @endforelse
                                 </td>
                                 <td>
                                     <span class="badge {{ $record->status->badgeClass() }}">
@@ -170,10 +150,13 @@
                                 <td>
                                     <div class="entity-subtitle">{{ $record->created_at->diffForHumans() }}</div>
                                 </td>
-                                @if ($canManage)
-                                    <td class="ta-r" style="min-width:160px">
-                                        @if ($record->status->value === 'pending')
-                                            <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+                                <td class="ta-r" style="min-width:160px">
+                                    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+                                        <button type="button" class="btn btn-secondary btn-sm"
+                                            wire:click="openDetails({{ $record->id }})">
+                                            View changes
+                                        </button>
+                                        @if ($canManage && $record->status->value === 'pending')
                                                 <button type="button" class="btn btn-primary btn-sm"
                                                     wire:click="approve({{ $record->id }})"
                                                     wire:loading.attr="disabled"
@@ -184,52 +167,21 @@
                                                     wire:click="openRejectModal({{ $record->id }})">
                                                     Reject
                                                 </button>
-                                            </div>
-                                        @elseif ($record->status->value === 'approved')
+                                        @elseif ($canManage && $record->status->value === 'approved')
                                             <button type="button" class="btn btn-secondary btn-sm"
                                                 wire:click="resetToCentral({{ $record->id }})"
                                                 wire:loading.attr="disabled"
                                                 wire:confirm="Reset this product's translations back to central values?">
                                                 Reset to Central
                                             </button>
-                                        @else
-                                            @if ($record->admin_note)
-                                                <div class="entity-subtitle" title="{{ $record->admin_note }}">
-                                                    {{ Str::limit($record->admin_note, 40) }}
-                                                </div>
-                                            @else
-                                                <span class="entity-subtitle">—</span>
-                                            @endif
-                                        @endif
-                                    </td>
-                                @endif
-                            </tr>
-                            {{-- Expanded diff row --}}
-                            @foreach ($locales as $locale)
-                                @foreach (['name' => 'Name', 'description' => 'Description'] as $field => $label)
-                                    @php
-                                        $changed = array_key_exists($field, $record->requested_translations[$locale] ?? []);
-                                        $cur = data_get($record->current_translations, "$locale.$field", '');
-                                        $req = data_get($record->requested_translations, "$locale.$field", '');
-                                    @endphp
-                                    @if ($changed && ($field === 'description' || count($locales) > 1))
-                                    <tr style="background:var(--surface-2)">
-                                        <td colspan="{{ $canManage ? 8 : 7 }}" style="padding:12px 16px">
-                                            <div style="display:flex;gap:16px;flex-wrap:wrap">
-                                                <div style="flex:1;min-width:260px">
-                                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Current {{ $label }}</div>
-                                                    <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto">{{ $cur ?: '—' }}</div>
-                                                </div>
-                                                <div style="flex:1;min-width:260px">
-                                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Requested {{ $label }}</div>
-                                                    <div class="entity-subtitle" style="white-space:pre-wrap;max-height:80px;overflow:auto;color:var(--amber)">{{ $req ?: '—' }}</div>
-                                                </div>
+                                        @elseif ($record->admin_note)
+                                            <div class="entity-subtitle" title="{{ $record->admin_note }}">
+                                                {{ Str::limit($record->admin_note, 40) }}
                                             </div>
-                                        </td>
-                                    </tr>
-                                    @endif
-                                @endforeach
-                            @endforeach
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -244,6 +196,50 @@
             </div>
         @endif
     </section>
+
+    {{-- Changes Modal --}}
+    @if ($viewing)
+        @php $changes = $this->changedFields($viewing); @endphp
+        <div class="modal-backdrop" wire:click="closeDetails">
+            <div class="modal-box" wire:click.stop style="max-width:900px;width:100%">
+                <div class="modal-head">
+                    <div>
+                        <h3 class="panel-title">Requested Changes</h3>
+                        <p class="panel-copy">
+                            {{ $viewing->product_slug ?: '#' . $viewing->product_id }}
+                            · {{ data_get($viewing->tenant?->data, 'name', $viewing->tenant_id) }}
+                        </p>
+                    </div>
+                    <button type="button" class="modal-close" wire:click="closeDetails" aria-label="Close">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height:70vh;overflow:auto">
+                    @forelse ($changes as $locale => $fields)
+                        @foreach ($fields as $field => $values)
+                            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+                                <div style="flex:1;min-width:260px">
+                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Current {{ ucfirst($field) }}</div>
+                                    <div class="entity-subtitle" style="white-space:pre-wrap">{{ trim(strip_tags((string) $values['current'])) ?: '—' }}</div>
+                                </div>
+                                <div style="flex:1;min-width:260px">
+                                    <div class="eyebrow" style="margin-bottom:4px">[{{ strtoupper($locale) }}] Requested {{ ucfirst($field) }}</div>
+                                    <div class="entity-subtitle" style="white-space:pre-wrap;color:var(--amber)">{{ trim(strip_tags((string) $values['requested'])) ?: '—' }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @empty
+                        <p class="panel-copy">No differences between current and requested values.</p>
+                    @endforelse
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn btn-secondary" wire:click="closeDetails">Close</button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- Reject Modal --}}
     @if ($rejectingId)
