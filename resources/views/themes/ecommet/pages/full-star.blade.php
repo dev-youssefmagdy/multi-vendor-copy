@@ -37,12 +37,9 @@
         ])
 
         @if ($products->count() > 0)
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,210px))] sm:justify-center sm:gap-3">
                 @foreach ($products as $product)
-                    @include('themes.ecommet.pages._showcase-card', [
-                        'product' => $product,
-                        'starIcon' => asset('ecommet/assets/images/home/black-star.png'),
-                    ])
+                    @include('themes.ecommet.pages._product-card', ['product' => $product, 'badge' => null])
                 @endforeach
             </div>
 
@@ -50,7 +47,7 @@
                 @include('themes.ecommet.pages._pagination', ['paginator' => $products])
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,210px))] sm:justify-center sm:gap-3">
                 <div class="col-span-full bg-[#fafafa] border border-[#e5e5e5] rounded-[20px] py-16 text-center text-[#808080] text-[14px]">
                     {{ __('No 5-star products matched your current filters.') }}
                 </div>
