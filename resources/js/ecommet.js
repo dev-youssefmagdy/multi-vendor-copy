@@ -927,6 +927,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return allowed.indexOf(type) !== -1 ? type : 'success';
     }
 
+    var _toastColors = { success: '#2AAF2F', error: '#DC2626', warning: '#F59E0B', info: '#2563EB', question: '#2563EB' };
+
     function toastInstance() {
         return Swal.mixin({
             showCloseButton: true,
@@ -956,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
         var t = normalizeToastType(type || 'success');
         var iconPath = _toastIcons[t] || _toastIcons.success;
         toastInstance().fire({
+            background: _toastColors[t] || _toastColors.success,
             html: '<div style="display:flex;align-items:center;gap:10px">' +
                 '<svg style="flex-shrink:0;width:18px;height:18px" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' + iconPath + '</svg>' +
                 '<span style="color:white;font-size:13px;font-weight:500;line-height:1.3">' + (message + '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span></div>',
