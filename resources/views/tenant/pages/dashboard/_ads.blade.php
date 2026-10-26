@@ -35,7 +35,7 @@
     @if(empty($ads))
         <div class="empty-state-sm">No ads generated yet. <a href="{{ route('tenant.products.index') }}">Go to products</a> to generate social posts.</div>
     @else
-    <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1.25" aria-label="Successful advertisements">
+    <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1" aria-label="Successful advertisements">
         <div class="swiper-wrapper">
             @foreach($ads as $ad)
                 <article class="db-opp db-ad swiper-slide">

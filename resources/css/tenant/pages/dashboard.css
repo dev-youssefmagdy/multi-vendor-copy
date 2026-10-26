@@ -1712,19 +1712,19 @@
     .db-opp-slider.is-opps[data-mobile-view] .db-opp { width: auto; }
 
     .db-opp-slider.is-opps .db-opp-media,
-    .db-opp-slider.is-opps .db-opp-body { zoom: .5137; }
+    .db-opp-slider.is-opps .db-opp-body { zoom: var(--db-z); }
 
     /* Gauges stay in one row of four inside the (zoomed) card */
     .db-opp-slider.is-opps .db-opp-gauges { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
     /* Price boxes: design text sizes, divided by the zoom */
-    .db-opp-slider.is-opps .db-opp-stat-label { font-size: 19.5px; }  /* → 10px */
-    .db-opp-slider.is-opps .db-opp-stat strong { font-size: 27.3px; } /* → 14px */
-    .db-opp-slider.is-opps .db-opp-stat small { font-size: 19.5px; }  /* → 10px */
+    .db-opp-slider.is-opps .db-opp-stat-label { font-size: calc(10px / var(--db-z)); }
+    .db-opp-slider.is-opps .db-opp-stat strong { font-size: calc(14px / var(--db-z)); } 
+    .db-opp-slider.is-opps .db-opp-stat small { font-size: calc(10px / var(--db-z)); }
     .db-opp-slider.is-opps .db-opp-stat.is-dark { align-items: center; text-align: center; }
     .db-opp-slider.is-opps .db-opp-stat.is-dark .db-opp-stat-label,
-    .db-opp-slider.is-opps .db-opp-stat.is-dark small { font-size: 23.4px; } /* → 12px */
-    .db-opp-slider.is-opps .db-opp-stat.is-dark strong { font-size: 38.9px; } /* → 20px */
+    .db-opp-slider.is-opps .db-opp-stat.is-dark small { font-size: calc(12px / var(--db-z)); } 
+    .db-opp-slider.is-opps .db-opp-stat.is-dark strong { font-size: calc(20px / var(--db-z)); } 
 }
 
 /* New in products: image box is fixed like the products page card
@@ -1748,9 +1748,9 @@
 @media (max-width: 767px) {
     .db-opp-slider.is-newin .db-opp { width: auto; border-radius: 11.29px; }
     .db-opp-slider.is-newin .db-opp-media,
-    .db-opp-slider.is-newin .db-opp-body { zoom: .4705; }
+    .db-opp-slider.is-newin .db-opp-body { zoom: var(--db-z); }
 
-    .db-opp-slider.is-newin .db-opp-desc { font-size: 21.25px; }              /* → 10px */
+    .db-opp-slider.is-newin .db-opp-desc { font-size: calc(10px / var(--db-z)); }
 
     .db-opp-slider.is-newin .db-opp-stats { grid-template-columns: minmax(0, 105fr) minmax(0, 87fr); }
     .db-opp-slider.is-newin .db-opp-stat.is-dark { grid-column: auto; }
@@ -1758,11 +1758,11 @@
     .db-opp-slider.is-newin .db-opp-stat small {
         display: block;
         overflow: hidden;
-        font-size: 21.25px;                                                   /* → 10px */
+        font-size: calc(10px / var(--db-z));
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .db-opp-slider.is-newin .db-opp-stat strong { font-size: 25.5px; }        /* → 12px */
+    .db-opp-slider.is-newin .db-opp-stat strong { font-size: calc(12px / var(--db-z)); }
 }
 
 /* ── Mobile: Successful advertisements (design: 375px, 1.25 cards per view)
@@ -1783,17 +1783,17 @@
 
     .db-opp-slider.is-ads .db-opp { width: auto; border-radius: 15.14px; }
     .db-opp-slider.is-ads .db-ad-media,
-    .db-opp-slider.is-ads .db-ad-body { zoom: .6307; }
+    .db-opp-slider.is-ads .db-ad-body { zoom: var(--db-z); }
 
     .db-opp-slider.is-ads .db-ad-hook-tag,
     .db-opp-slider.is-ads .db-ad-hook p,
-    .db-opp-slider.is-ads .db-opp-markets h4 { font-size: 19.03px; }      /* → 12px */
+    .db-opp-slider.is-ads .db-opp-markets h4 { font-size: calc(12px / var(--db-z)); }
 }
 
 /* Slider cards are zoomed on mobile, so their title keeps the desktop 32px
    (the section's narrow-width rule would otherwise shrink it twice). */
 @media (max-width: 767px) {
-    .db-opp-slider:is(.is-opps, .is-newin, .is-ads) .db-opp-title { font-size: 32px; }
+    .db-opp-slider:is(.is-opps, .is-newin, .is-ads) .db-opp-title { font-size: calc(18px / var(--db-z)); }
 }
 
 /* ── Mobile: brand, live store, product request, partner (design: 375px)
@@ -1866,3 +1866,15 @@
     .db-partner-card { min-height: 0; }
     .db-partner-card-head { font-size: 12px; }
 }
+
+/* Mobile: one full-width card per row, the rest scroll sideways (Swiper).
+   Cards are the 448px desktop design scaled to the row: zoom = (vw - 32px) / 448. */
+@media (max-width: 767px) {
+    .db-opp-slider { --db-z: .64; }
+}
+@media (min-width: 360px) and (max-width: 767px) { .db-opp-slider { --db-z: .73; } }
+@media (min-width: 375px) and (max-width: 767px) { .db-opp-slider { --db-z: .766; } }
+@media (min-width: 390px) and (max-width: 767px) { .db-opp-slider { --db-z: .8; } }
+@media (min-width: 414px) and (max-width: 767px) { .db-opp-slider { --db-z: .853; } }
+@media (min-width: 430px) and (max-width: 767px) { .db-opp-slider { --db-z: .888; } }
+@media (min-width: 480px) and (max-width: 767px) { .db-opp-slider { --db-z: 1; } .db-opp-slider .db-opp { max-width: 448px; } }
