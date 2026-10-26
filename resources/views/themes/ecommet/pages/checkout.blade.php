@@ -316,11 +316,11 @@
                         <button type="submit"
                             id="pay-btn"
                             @disabled(!$shippingAvailable || !$hasAddresses || !$hasGateways)
-                            wire:loading.attr="disabled"
-                            wire:loading.class="opacity-60 cursor-not-allowed"
+                            wire:loading.attr="disabled" wire:target="placeOrder"
+                            wire:loading.class="opacity-60 cursor-not-allowed" wire:target="placeOrder"
                             class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses || !$hasGateways ? 'opacity-50 cursor-not-allowed' : '' }}">
-                            <span wire:loading.remove>Pay {{ $formattedFinalTotal }}</span>
-                            <span wire:loading class="flex items-center justify-center gap-2">
+                            <span wire:loading.remove wire:target="placeOrder">Pay {{ $formattedFinalTotal }}</span>
+                            <span wire:loading wire:target="placeOrder" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>

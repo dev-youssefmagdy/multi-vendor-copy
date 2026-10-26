@@ -425,6 +425,7 @@ class CheckoutPage extends Component
         $gateways = app(PaymentManager::class)->storefrontGateways();
 
         if ($gateways->isEmpty()) {
+            $this->addError('data.payment.method', __('No payment method is available right now. Please try again later.'));
             $this->toast(__('No payment method is available right now. Please try again later.'), 'error');
             return;
         }
@@ -432,6 +433,7 @@ class CheckoutPage extends Component
         $selectedGateway = $gateways->where('code', $this->data['payment']['method'])->firstWhere('id', $gatewayId);
 
         if ($gatewayId && !$selectedGateway) {
+            $this->addError('data.payment.method', __('Selected payment gateway is no longer available. Please choose another payment method.'));
             $this->toast(__('Selected payment gateway is no longer available. Please choose another payment method.'), 'error');
             return;
         }
@@ -457,7 +459,8 @@ class CheckoutPage extends Component
                         ->where('use_own', true)
                         ->update(['connection_status' => 'not_connected', 'last_error' => $ping['message'] ?? null]);
                 }
-                $this->toast(__('This payment method is currently unavailable. Please use another payment method.'), 'error');
+                $this->addError('data.payment.method', __('This payment method is currently unavailable. Please use another payment method.'));
+            $this->toast(__('This payment method is currently unavailable. Please use another payment method.'), 'error');
                 return;
             }
         }

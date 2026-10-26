@@ -585,7 +585,7 @@ tailwind.config = {
 // ── Livewire storefront toast listeners ─────────────────────────────────────
 document.addEventListener('livewire:init', function () {
     Livewire.on('storefront-cart-added', function (event) {
-        var payload = event && event[0] ? event[0] : {};
+        var payload = (Array.isArray(event) ? event[0] : event) || {};
         var itemName = payload.itemName;
         var qty = Number(payload.qty || 1);
         var message = itemName
@@ -602,12 +602,12 @@ document.addEventListener('livewire:init', function () {
     });
 
     Livewire.on('storefront-toast', function (event) {
-        var payload = event && event[0] ? event[0] : {};
+        var payload = (Array.isArray(event) ? event[0] : event) || {};
         showStorefrontToast(payload.message, payload.type || 'success');
     });
 
     Livewire.on('admin-toast', function (event) {
-        var payload = event && event[0] ? event[0] : {};
+        var payload = (Array.isArray(event) ? event[0] : event) || {};
         showStorefrontToast(payload.message, payload.type || 'success');
     });
 });

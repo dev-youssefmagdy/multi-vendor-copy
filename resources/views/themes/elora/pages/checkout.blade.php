@@ -310,11 +310,11 @@
                                 {{ __('No payment method is available right now. Please try again later.') }}
                             </p>
                         @endif
-                        <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses || !$hasGateways) wire:loading.attr="disabled"
-                            wire:loading.class="opacity-60 cursor-not-allowed"
+                        <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses || !$hasGateways) wire:loading.attr="disabled" wire:target="placeOrder"
+                            wire:loading.class="opacity-60 cursor-not-allowed" wire:target="placeOrder"
                             class="w-full bg-[var(--color-primary)] text-white py-4 rounded-full font-bold text-[15px] shadow-sm transition active:scale-[0.98] uppercase tracking-wider flex items-center justify-center {{ !$shippingAvailable || !$hasAddresses || !$hasGateways ? 'opacity-50 cursor-not-allowed' : '' }}">
-                            <span wire:loading.remove>{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
-                            <span wire:loading class="flex items-center justify-center gap-2">
+                            <span wire:loading.remove wire:target="placeOrder">{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
+                            <span wire:loading wire:target="placeOrder" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                         stroke-width="4" />
@@ -495,10 +495,10 @@
                         </p>
                     @endif
                     <button type="submit" id="pay-btn" @disabled(!$shippingAvailable || !$hasAddresses || !$hasGateways)
-                        wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed"
+                        wire:loading.attr="disabled" wire:target="placeOrder" wire:loading.class="opacity-60 cursor-not-allowed" wire:target="placeOrder"
                         class="hidden sm:flex w-full bg-[var(--color-primary)] text-white items-center justify-center rounded-[32px] h-16 px-8 py-2 gap-2 text-3xl font-medium font-['Outfit'] hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses || !$hasGateways ? 'opacity-50 cursor-not-allowed' : '' }}">
-                        <span wire:loading.remove>{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
-                        <span wire:loading class="flex items-center justify-center gap-2 text-base">
+                        <span wire:loading.remove wire:target="placeOrder">{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
+                        <span wire:loading wire:target="placeOrder" class="flex items-center justify-center gap-2 text-base">
                             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
