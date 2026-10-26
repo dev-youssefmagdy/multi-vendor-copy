@@ -1,6 +1,6 @@
         {{-- ── Best-Selling Items ───────────────────────────────────────────────── --}}
         <div
-            class="flex items-center md:justify-center overflow-x-auto no-scrollbar gap-5 md:gap-8 max-w-[1280px] mx-auto px-4 mb-4 md:mb-6 border-b md:border-none border-[#eaeaea]">
+            class="flex items-center justify-between md:justify-center overflow-x-auto no-scrollbar gap-5 md:gap-8 max-w-[1280px] mx-auto px-4 mb-4 md:mb-6 border-b md:border-none border-[#eaeaea]">
             <h2
                 class="flex items-center gap-1.5 md:gap-2 text-primary text-[14px] md:text-2xl font-bold pb-3 relative whitespace-nowrap">
                 <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -9,7 +9,7 @@
                         clip-rule="evenodd" />
                 </svg>
                 {{ __('Best-Selling Items') }}
-                <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-sm md:hidden"></div>
+                <div class="absolute bottom-0 inset-x-0 h-[3px] bg-primary rounded-t-sm md:hidden"></div>
             </h2>
             <a href="{{ route('tenant.storefront.best-selling') }}"
                 class="flex md:hidden items-center gap-1.5 text-gray-500 hover:text-gray-darkest transition text-[14px] font-bold pb-3 whitespace-nowrap">
@@ -19,7 +19,7 @@
 
         @if ($bestSelling->isNotEmpty())
             <section class="max-w-[1280px] mx-auto px-2 md:px-4">
-                <div id="bestSellingItemsGrid" class="grid grid-cols-[repeat(auto-fill,minmax(150px,210px))] justify-center gap-3">
+                <div id="bestSellingItemsGrid" class="grid grid-cols-2 gap-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,210px))] sm:justify-center sm:gap-3">
                     @foreach ($bestSelling as $product)
                         @include('themes.ecommet.pages._product-card', ['product' => $product, 'badge' => __('Best-Selling')])
                     @endforeach

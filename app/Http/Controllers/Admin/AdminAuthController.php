@@ -28,6 +28,8 @@ class AdminAuthController extends Controller
      */
     public function broadcastAuth(Request $request): Response
     {
-        return Broadcast::auth($request);
+        $result = Broadcast::auth($request);
+
+        return $result instanceof Response ? $result : response()->json($result);
     }
 }
