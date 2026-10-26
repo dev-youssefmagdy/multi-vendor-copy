@@ -106,27 +106,33 @@ function initCarousels() {
     });
   }
 
-  // Flash-sale countdown: continue ticking down from whatever the server
-  // already rendered (real sale end time), rather than a hardcoded value.
+  // Flash-sale countdown: tick against the absolute end timestamp
+  // (data-countdown, unix seconds) so it never drifts; falls back to the
+  // server-rendered h/m/s when no end date is present.
   const hEl = document.getElementById("flashHours");
   const mEl = document.getElementById("flashMinutes");
   const sEl = document.getElementById("flashSeconds");
-  let remaining =
-    hEl && mEl && sEl
-      ? parseInt(hEl.textContent, 10) * 3600 +
-        parseInt(mEl.textContent, 10) * 60 +
-        parseInt(sEl.textContent, 10)
-      : 0;
   if (hEl && mEl && sEl) {
-    setInterval(() => {
-      remaining = Math.max(0, remaining - 1);
-      hEl.textContent = String(Math.floor(remaining / 3600)).padStart(2, "0");
-      mEl.textContent = String(Math.floor((remaining % 3600) / 60)).padStart(
-        2,
-        "0",
-      );
-      sEl.textContent = String(remaining % 60).padStart(2, "0");
-    }, 1000);
+    const pad = (n) => String(n).padStart(2, "0");
+    const endTs = Number(
+      hEl.closest("[data-countdown]")?.dataset.countdown || 0,
+    );
+    let remaining =
+      parseInt(hEl.textContent, 10) * 3600 +
+      parseInt(mEl.textContent, 10) * 60 +
+      parseInt(sEl.textContent, 10);
+    const render = () => {
+      if (endTs > 0) {
+        remaining = Math.max(0, Math.floor(endTs - Date.now() / 1000));
+      } else {
+        remaining = Math.max(0, remaining - 1);
+      }
+      hEl.textContent = pad(Math.floor(remaining / 3600));
+      mEl.textContent = pad(Math.floor((remaining % 3600) / 60));
+      sEl.textContent = pad(remaining % 60);
+    };
+    render();
+    setInterval(render, 1000);
   }
 }
 

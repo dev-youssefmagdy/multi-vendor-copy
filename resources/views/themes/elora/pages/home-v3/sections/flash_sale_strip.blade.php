@@ -37,7 +37,7 @@
           ];
       });
 
-      $countdownRemaining = $firstSale->end_date ? max(0, now()->diffInSeconds($firstSale->end_date, false)) : 0;
+      $countdownRemaining = $firstSale->end_date ? max(0, (int) now()->diffInSeconds($firstSale->end_date, false)) : 0;
       $countdownH = str_pad((string) intdiv($countdownRemaining, 3600), 2, '0', STR_PAD_LEFT);
       $countdownM = str_pad((string) intdiv($countdownRemaining % 3600, 60), 2, '0', STR_PAD_LEFT);
       $countdownS = str_pad((string) ($countdownRemaining % 60), 2, '0', STR_PAD_LEFT);
@@ -157,13 +157,13 @@
         <div class="flex items-center gap-[8px] lg:gap-[28px]" @if($firstSale->end_date) data-countdown="{{ $firstSale->end_date->timestamp }}" @endif>
           <div class="flex items-center gap-[3px] lg:gap-[5px]">
             <span
-              class="font-semibold text-[13px] lg:text-[20px] tracking-[0.5px] lg:tracking-[0.83px]"
+              class="whitespace-nowrap font-semibold text-[13px] lg:text-[20px] tracking-[0.5px] lg:tracking-[0.83px]"
               style="color: var(--color-accent-yellow)"
               >{{ __('Ends in') }}</span
             >
             <span
               id="flashHours"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] min-w-[36px] lg:min-w-[77px] px-[4px] lg:px-[8px] shrink-0 tabular-nums"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
@@ -172,7 +172,7 @@
             >
             <span
               id="flashMinutes"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] min-w-[36px] lg:min-w-[77px] px-[4px] lg:px-[8px] shrink-0 tabular-nums"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
@@ -181,7 +181,7 @@
             >
             <span
               id="flashSeconds"
-              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] w-[36px] lg:w-[77px]"
+              class="flex items-center justify-center font-semibold text-[16px] lg:text-[40px] tracking-[0.83px] text-white rounded-[8px] lg:rounded-[12px] h-[36px] lg:h-[73px] min-w-[36px] lg:min-w-[77px] px-[4px] lg:px-[8px] shrink-0 tabular-nums"
               style="
                 background: var(--color-brand-pink);
                 border: 1.5px solid white;
