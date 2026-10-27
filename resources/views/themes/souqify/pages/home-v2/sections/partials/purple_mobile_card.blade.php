@@ -29,7 +29,7 @@
     .sqv2-mob__media {
         position: relative;
         display: block;
-        flex: 0 0 36.13%;               /* 148.83 / 411.94 */
+        flex: 0 0 26.23%;               /* square: 108.05 / 411.94 */
         align-self: stretch;
         background: var(--color-page-bg, #F3F3FE);
         overflow: hidden;
@@ -39,7 +39,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 0.4s ease;
     }
     .sqv2-mob:hover .sqv2-mob__img {

@@ -31,7 +31,7 @@
         display: block;
         width: 100%;
         /* 270.36 / 377.33 */
-        flex: 0 0 71.65%;
+        flex: 0 0 62.6%;  /* square: 236.19 / 377.33 */
         background: #F3F3FE;
         overflow: hidden;
     }
@@ -40,7 +40,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 0.4s ease;
     }
     .sqv2-deal:hover .sqv2-deal__img {
