@@ -207,7 +207,7 @@
 
                                 @unless ($isLast)
                                 <div class="w-0.5 flex-1 min-h-[24px]"
-                                    style="background-color: {{  ? "var(--color-primary)" : "#D4D4D4" }}"></div>
+                                    style="background-color: {{ $isDone ? "var(--color-primary)" : "#D4D4D4" }}"></div>
                                 @endunless
                             </div>
 

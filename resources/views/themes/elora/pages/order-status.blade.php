@@ -116,7 +116,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                 @endif
 
                 {{-- ── Two-column content layout ── --}}
-                <div class="detail-layout flex gap-5 items-start">
+                <div class="detail-layout flex flex-col min-[901px]:flex-row gap-5 items-stretch min-[901px]:items-start">
 
                     {{-- LEFT: Items + Shipping --}}
                     <div class="flex-1 min-w-0 flex flex-col gap-4">
@@ -210,7 +210,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     </div>
 
                     {{-- RIGHT: Payment Summary + Actions --}}
-                    <div class="detail-right flex flex-col gap-4" style="width:358px;flex-shrink:0">
+                    <div class="detail-right flex flex-col gap-4 w-full min-[901px]:w-[358px] min-[901px]:shrink-0">
 
                         {{-- Payment Summary --}}
                         <div class="bg-white rounded-2xl border border-gray-200 px-4 pt-4 pb-3 flex flex-col gap-3">
