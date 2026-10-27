@@ -37,8 +37,8 @@ class VendorPurchaseService
 
     /**
      * Preview the payment breakdown for an order given a chosen gateway.
-     * Keys product_cost/shipping_cost kept for the invoice/mail templates: product_cost carries the whole
-     * platform share, shipping_cost is always 0 (shipping is part of platform_profit).
+     * The platform share (platform_profit) includes the order's shipping charge: shipping_cost is the part of
+     * the amount due that is that charge, product_cost is the rest (cost + fixed shipping - central discounts + tax).
      *
      * @return array{amount:float,product_cost:float,shipping_cost:float,subtotal:float,gateway_fee:float,total:float}
      */
@@ -46,11 +46,12 @@ class VendorPurchaseService
     {
         $due = round($this->amountDue($order), 2);
         $gatewayFee = ($gateway && $due > 0) ? $this->gatewayFee($gateway, $due) : 0.0;
+        $shipping = round(min(max((float) $order->shipping_charge, 0.0), $due), 2);
 
         return [
             'amount' => $due,
-            'product_cost' => $due,
-            'shipping_cost' => 0.0,
+            'product_cost' => round($due - $shipping, 2),
+            'shipping_cost' => $shipping,
             'subtotal' => $due,
             'gateway_fee' => $gatewayFee,
             'total' => round($due + $gatewayFee, 2),

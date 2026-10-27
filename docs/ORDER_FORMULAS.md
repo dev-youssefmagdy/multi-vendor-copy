@@ -64,6 +64,8 @@ platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0
 
 * "Settlement Payments" = the existing central `vendor_settlements` records (`VendorSettlement`, shown in the vendor panel
   at Finance > Settlement Payments). The paid principal is `product_cost` (gateway fee is separate). No extra transactions table.
+* Pay-central page (`VendorPurchaseService::previewBreakdown`) splits the amount due for display only: `shipping_cost = min(order.shipping_charge, due)`,
+  `product_cost = due - shipping_cost` (cost + fixed shipping - central discounts + tax - central coupon). `amount` (the recorded principal) stays the full due.
 * Platform -> vendor money is tracked by `orders.payout_released` / `TenantPayout`.
 * Cancelled / rejected / fully-refunded orders produce 0 for all figures. A partial refund reduces the
   vendor's share only (platform_profit unchanged).
