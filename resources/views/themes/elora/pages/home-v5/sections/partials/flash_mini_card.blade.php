@@ -1,7 +1,7 @@
 {{-- Expects $p: name, weight, price, oldPrice, discount --}}
 <a href="{{ $p['url'] ?? '#' }}" class="group flex gap-0 h-[110px] lg:h-[169px] items-stretch rounded-[10px] lg:rounded-[11.27px] shadow-[var(--shadow-card-lg)] lg:shadow-none overflow-hidden w-full transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="background:var(--color-bg-main)">
-  <div class="relative shrink-0 w-[42%] lg:w-[43.37%]">
-    <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+  <div class="relative shrink-0 h-full aspect-square">
+    <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
     @if (!empty($p['isOutOfStock']))
     <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
     @endif
