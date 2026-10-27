@@ -281,24 +281,28 @@
           </svg>
         </button>
       </div>
-      <div
-        class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] rounded-[24px] px-[16px]"
+      <form
+        action="{{ route('tenant.storefront.search') }}"
+        method="GET"
+        class="flex items-center gap-[8px] mx-[16px] mt-[16px] h-[44px] min-h-[44px] shrink-0 rounded-[24px] px-[16px]"
         style="background: var(--color-page-bg)"
       >
         <img
           src="{{ asset('elora-5/assets/icons/search.svg') }}"
           alt=""
-          class="size-[18px] opacity-70"
+          class="size-[18px] shrink-0 opacity-70"
         />
         <input
           type="search"
+          name="q"
           placeholder="{{ __('Search...') }}"
-          class="bg-transparent outline-none text-[14px] w-full"
-          style="color: var(--color-gray)"
+          autocomplete="off"
+          class="flex-1 min-w-0 h-full p-0 m-0 border-0 bg-transparent shadow-none ring-0 outline-none focus:outline-none focus:ring-0 appearance-none text-[14px] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+          style="color: var(--color-gray); -webkit-appearance: none; appearance: none"
         />
-      </div>
+      </form>
       <nav
-        class="flex flex-col px-[16px] py-[12px] overflow-y-auto no-scrollbar"
+        class="flex flex-col flex-1 min-h-0 px-[16px] py-[12px] overflow-y-auto no-scrollbar"
       >
         @forelse ($rootCategories as $index => $category)
           <a
@@ -325,7 +329,7 @@
         @endforelse
       </nav>
       <div
-        class="mt-auto flex flex-col gap-[16px] px-[20px] py-[20px] border-t"
+        class="mt-auto shrink-0 flex flex-col gap-[16px] px-[20px] py-[20px] border-t"
         style="border-color: var(--color-page-bg)"
       >
         @auth('storefront')
