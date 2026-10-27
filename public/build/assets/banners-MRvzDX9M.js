@@ -1,0 +1,1 @@
+document.querySelectorAll(`.banner-country-filter select`).forEach(e=>{e.addEventListener(`change`,()=>e.form.submit())});

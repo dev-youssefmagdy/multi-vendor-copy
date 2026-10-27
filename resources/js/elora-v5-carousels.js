@@ -67,7 +67,7 @@ function mountTrending() {
         slidesOffsetAfter: 16,
         breakpoints: {
             1024: {
-                slidesPerView: 2.5,
+                slidesPerView: 3.5,
             },
         },
     });
