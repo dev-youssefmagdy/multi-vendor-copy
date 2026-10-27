@@ -1,10 +1,10 @@
 {{--
-    Products module header + tab carousel, shared by every page of the
+    Products module header + scrollable tab strip, shared by every page of the
     Products module (products, own products, categories, edit requests and
     the product badge lists). Pass $activeTab (a key of $tabs below).
     The header shows the active tab's title + description beside the search box.
     Optional $addUrl / $addLabel override the add button (e.g. Own products, Categories).
-    The carousel is mounted by resources/js/tenant/pages/catalog/module-nav.js.
+    The strip behaviour (drag, wheel, fades) lives in resources/js/tenant/pages/catalog/module-nav.js.
 --}}
 
 @php
@@ -43,12 +43,10 @@
     </div>
 
     <div class="pm-bar">
-        <nav class="pm-tabs swiper" data-pm-tabs aria-label="Products module">
-            <div class="swiper-wrapper">
-                @foreach($tabs as $key => [$label, $url])
-                    <a href="{{ $url }}" class="pm-tab swiper-slide {{ ($activeTab ?? '') === $key ? 'is-active' : '' }}" @if(($activeTab ?? '') === $key) aria-current="page" @endif>{{ $label }}</a>
-                @endforeach
-            </div>
+        <nav class="pm-tabs" data-pm-tabs aria-label="Products module">
+            @foreach($tabs as $key => [$label, $url])
+                <a href="{{ $url }}" class="pm-tab {{ ($activeTab ?? '') === $key ? 'is-active' : '' }}" draggable="false" @if(($activeTab ?? '') === $key) aria-current="page" @endif>{{ $label }}</a>
+            @endforeach
         </nav>
 
         <a href="{{ $addUrl ?? route('tenant.products.create') }}" class="btn btn-primary btn-lg pm-add">

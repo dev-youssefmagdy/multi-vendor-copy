@@ -65,14 +65,32 @@
     gap: 20px;
 }
 
+/* Native horizontal scroller: touch/trackpad scroll works everywhere, the JS
+   only adds mouse drag, wheel-to-horizontal and the edge fades. */
 .pm-tabs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     flex: 1;
     min-width: 0;
     margin: 0;
-    mask-image: linear-gradient(90deg, #000 92%, transparent);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    cursor: grab;
 }
 
-.pm-tabs .swiper-wrapper { align-items: center; }
+.pm-tabs::-webkit-scrollbar { display: none; }
+.pm-tabs.is-dragging { cursor: grabbing; user-select: none; }
+.pm-tabs.is-dragging .pm-tab { pointer-events: none; }
+.pm-tabs.has-end { mask-image: linear-gradient(90deg, #000 92%, transparent); }
+.pm-tabs.has-start { mask-image: linear-gradient(90deg, transparent, #000 8%); }
+.pm-tabs.has-start.has-end { mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+[dir="rtl"] .pm-tabs.has-end { mask-image: linear-gradient(270deg, #000 92%, transparent); }
+[dir="rtl"] .pm-tabs.has-start { mask-image: linear-gradient(270deg, transparent, #000 8%); }
+[dir="rtl"] .pm-tabs.has-start.has-end { mask-image: linear-gradient(270deg, transparent, #000 8%, #000 92%, transparent); }
 
 .pm-tabs .pm-tab {
     display: inline-flex;
@@ -81,6 +99,7 @@
     width: auto;
     height: 54px;
     padding: 12px 24px;
+    flex: 0 0 auto;
     border-radius: 38px;
     background: #F5F5F5;
     color: #5E5E5E;
@@ -111,6 +130,12 @@
 }
 
 .t-scope .pm-add svg { width: 24px; height: 24px; }
+
+@media (min-width: 768px) and (max-width: 1100px) {
+    .pm-bar { flex-wrap: wrap; }
+    .pm-tabs { flex-basis: 100%; order: 2; }
+    .t-scope .pm-add { min-width: 0; margin-inline-start: auto; }
+}
 
 /* Filters row */
 .pm-filters {

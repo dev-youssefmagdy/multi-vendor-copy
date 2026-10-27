@@ -40,8 +40,8 @@
       "_vendor-swal-B-aeBw4T.js"
     ]
   },
-  "_core-CM5ehQbq.js": {
-    "file": "assets/core-CM5ehQbq.js",
+  "_core-CI7Pr6r5.js": {
+    "file": "assets/core-CI7Pr6r5.js",
     "name": "core",
     "imports": [
       "_events-Cyr27uQe.js",
@@ -530,11 +530,11 @@
     "file": "assets/logo-builder-DY3RbYyQ.css",
     "src": "_logo-builder-DY3RbYyQ.css"
   },
-  "_mobile-kpi-carousel-uVRjewVw.js": {
-    "file": "assets/mobile-kpi-carousel-uVRjewVw.js",
+  "_mobile-kpi-carousel-BU9PDA-l.js": {
+    "file": "assets/mobile-kpi-carousel-BU9PDA-l.js",
     "name": "mobile-kpi-carousel",
     "imports": [
-      "_swiper-BdLOu4_e.js"
+      "_swiper-Co0PFJiA.js"
     ]
   },
   "_modals-tomdyZl1.js": {
@@ -551,21 +551,13 @@
       "_forms-B_Cm85wO.js"
     ]
   },
-  "_mousewheel-HvmECQBC.js": {
-    "file": "assets/mousewheel-HvmECQBC.js",
-    "name": "mousewheel",
-    "imports": [
-      "_swiper-BdLOu4_e.js"
-    ]
-  },
-  "_opportunities-CuFYgk2s.js": {
-    "file": "assets/opportunities-CuFYgk2s.js",
+  "_opportunities-Bsmure--.js": {
+    "file": "assets/opportunities-Bsmure--.js",
     "name": "opportunities",
     "imports": [
       "_http-D2FmgMTJ.js",
       "_modals-tomdyZl1.js",
-      "_swiper-BdLOu4_e.js",
-      "_mousewheel-HvmECQBC.js"
+      "_swiper-Co0PFJiA.js"
     ]
   },
   "_orders-DUFjdNup.css": {
@@ -630,16 +622,16 @@
     "file": "assets/support-DPusLhcR.css",
     "src": "_support-DPusLhcR.css"
   },
-  "_swiper-BdLOu4_e.js": {
-    "file": "assets/swiper-BdLOu4_e.js",
+  "_swiper-Bdbi0viN.css": {
+    "file": "assets/swiper-Bdbi0viN.css",
+    "src": "_swiper-Bdbi0viN.css"
+  },
+  "_swiper-Co0PFJiA.js": {
+    "file": "assets/swiper-Co0PFJiA.js",
     "name": "swiper",
     "css": [
       "assets/swiper-Bdbi0viN.css"
     ]
-  },
-  "_swiper-Bdbi0viN.css": {
-    "file": "assets/swiper-Bdbi0viN.css",
-    "src": "_swiper-Bdbi0viN.css"
   },
   "_toast-CI99b6U-.js": {
     "file": "assets/toast-CI99b6U-.js",
@@ -2560,7 +2552,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BLT8Lckv.css",
+    "file": "assets/app-CLhEz_Ib.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2611,7 +2603,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Clkl-IiS.css",
+    "file": "assets/ecommet-CD60AbCm.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2894,7 +2886,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-tUP84sk7.css",
+    "file": "assets/souqify-DQSpY-ud.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2903,7 +2895,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-BsSUKW_k.css",
+    "file": "assets/app-DGm0cnpW.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3235,13 +3227,13 @@
     ]
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-BwBWaDfK.js",
+    "file": "assets/app-DXmu1a5K.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
       "_events-Cyr27uQe.js",
-      "_core-CM5ehQbq.js"
+      "_core-CI7Pr6r5.js"
     ]
   },
   "resources/js/tenant/components/ajax-list.js": {
@@ -3448,12 +3440,12 @@
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/kpi-carousel.js": {
-    "file": "assets/kpi-carousel-CnaCMIA8.js",
+    "file": "assets/kpi-carousel-C_roeTJM.js",
     "name": "kpi-carousel",
     "src": "resources/js/tenant/components/kpi-carousel.js",
     "isDynamicEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ]
   },
   "resources/js/tenant/components/locale-tabs.js": {
@@ -3607,16 +3599,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-CX6X8H-o.js",
+    "file": "assets/module-nav-Br1EcHFL.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
-    "imports": [
-      "_swiper-BdLOu4_e.js",
-      "_mousewheel-HvmECQBC.js"
-    ],
     "css": [
-      "assets/module-nav-D1O-YXD_.css",
+      "assets/module-nav-D0yredtA.css",
       "assets/dashboard-BMpd_T-n.css"
     ]
   },
@@ -3679,7 +3667,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-c04qgXBa.js",
+    "file": "assets/index-CQU6j60g.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3688,9 +3676,9 @@
       "_events-Cyr27uQe.js",
       "_toast-CI99b6U-.js",
       "_registry-CuhCklDv.js",
-      "_core-CM5ehQbq.js",
-      "_swiper-BdLOu4_e.js",
-      "_opportunities-CuFYgk2s.js",
+      "_core-CI7Pr6r5.js",
+      "_swiper-Co0PFJiA.js",
+      "_opportunities-Bsmure--.js",
       "_clipboard-DO2GcrsM.js",
       "_product-modals-DFSlP_b8.js"
     ],
@@ -3759,7 +3747,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/insights/analytics.js": {
-    "file": "assets/analytics-C3X9h-RV.js",
+    "file": "assets/analytics-BbSXyYXb.js",
     "name": "analytics",
     "src": "resources/js/tenant/pages/insights/analytics.js",
     "isEntry": true,
@@ -3767,7 +3755,7 @@
       "_vendor-charts-CcW1Tr__.js",
       "_events-Cyr27uQe.js",
       "_toast-CI99b6U-.js",
-      "_swiper-BdLOu4_e.js"
+      "_swiper-Co0PFJiA.js"
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css"
@@ -3809,12 +3797,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-DKp-52qR.js",
+    "file": "assets/brand-index-CTmZKA83.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ],
     "css": [
       "assets/dashboard-BMpd_T-n.css",
@@ -3848,12 +3836,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-DKp-52qR.js",
+    "file": "assets/manufacturing-index-CTmZKA83.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ],
     "css": [
       "assets/dashboard-BMpd_T-n.css",
@@ -3897,12 +3885,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-DQdR6sXz.js",
+    "file": "assets/product-requests-index-DkTSbvw6.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ],
     "css": [
       "assets/dashboard-BMpd_T-n.css",
@@ -3924,12 +3912,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-DKp-52qR.js",
+    "file": "assets/customers-index-CTmZKA83.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ],
     "css": [
       "assets/dashboard-BMpd_T-n.css",
@@ -3938,7 +3926,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-Ca3OGVyc.js",
+    "file": "assets/order-show-CrKDq_ke.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
@@ -3946,19 +3934,19 @@
       "_events-Cyr27uQe.js",
       "_forms-B_Cm85wO.js",
       "_registry-CuhCklDv.js",
-      "_core-CM5ehQbq.js"
+      "_core-CI7Pr6r5.js"
     ],
     "css": [
       "assets/order-show-DF9i_jxp.css"
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-DKp-52qR.js",
+    "file": "assets/orders-index-CTmZKA83.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
     "imports": [
-      "_mobile-kpi-carousel-uVRjewVw.js"
+      "_mobile-kpi-carousel-BU9PDA-l.js"
     ],
     "css": [
       "assets/dashboard-BMpd_T-n.css",
@@ -4278,12 +4266,12 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-DThAsULr.js",
+    "file": "assets/todays-chances-DJMpes_R.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
     "imports": [
-      "_opportunities-CuFYgk2s.js",
+      "_opportunities-Bsmure--.js",
       "_product-modals-DFSlP_b8.js"
     ],
     "css": [
