@@ -45,19 +45,20 @@
             aria-label="{{ __('Currency & Language') }}">
             <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>
         </button>
-            <button
-              type="button"
-              aria-label="Notifications"
+            <a
+              href="{{ route('tenant.storefront.cart') }}"
+              aria-label="{{ __('Cart') }}"
               class="relative flex items-center justify-center rounded-full size-[36px]"
               style="background: var(--color-page-bg)"
             >
-              <img src="{{ asset('elora-5/assets/icons/icon-bell.svg') }}" alt="" class="size-[20px]" />
+              <img src="{{ asset('elora-5/assets/icons/cart.svg') }}" alt="" class="size-[20px]" />
               <span
-                class="absolute -top-[2px] -right-[2px] flex items-center justify-center rounded-full size-[15px] text-[9px] font-medium text-white"
+                id="elora-v5-mob-top-cart-badge"
+                class="elora-cart-badge absolute -top-[2px] -right-[2px] flex items-center justify-center rounded-full min-w-[15px] h-[15px] px-[3px] text-[9px] font-medium text-white {{ $cartCount > 0 ? '' : 'hidden' }}"
                 style="background: var(--color-secondary)"
-                >0</span
+                >{{ $cartCount }}</span
               >
-            </button>
+            </a>
           </div>
         </div>
         <div class="flex items-center">
