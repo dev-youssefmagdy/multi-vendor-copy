@@ -511,7 +511,7 @@
                     <div class="pt-4 border-t border-gray-200">
                         <p class="text-sm text-[#8F8F8F] flex items-center gap-1 flex-wrap leading-5">
                             <span>{{ __('Powered by') }}</span>
-                            <span class="font-bold text-[#364153]">ELORA</span>
+                            <span class="font-bold text-[#364153]">{{ app(\App\Repositories\Tenant\StorefrontRepository::class)->storeName() ?: "ELORA" }}</span>
                             <span>|</span>
                             <a href="{{ route('tenant.home') }}" class="underline hover:text-[#555] transition">{{ __('Terms') }}</a>
                             <a href="{{ route('tenant.home') }}" class="underline hover:text-[#555] transition">{{ __('Privacy') }}</a>
