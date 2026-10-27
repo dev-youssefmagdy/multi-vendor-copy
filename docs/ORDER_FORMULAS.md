@@ -16,6 +16,7 @@ order_grand_total   = items_grand_total + order.shipping_charge - order.coupon_d
 ```
 
 * `fixed_shipping` ("fixed cost price") is **per order line, not multiplied by qty**.
+* **Customer-facing display:** storefront order pages (all themes + starter kit) never show `fixed_shipping` as its own row; "Items subtotal" = `subtotal + items_fixed_shipping` (per line: `sub_total + fixed_shipping`). Stored columns and formulas are unchanged.
 * `shipping_charge` comes from the existing weight/zone logic (unchanged).
 * `tax` is 0 today; whatever is calculated per item is summed into `order.tax`.
 

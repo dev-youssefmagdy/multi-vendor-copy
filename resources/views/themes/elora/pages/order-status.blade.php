@@ -147,10 +147,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                                         <p class="text-sm text-[#808080] leading-5">{{ $orderedVariantTitle }}</p>
                                         @endif
                                         <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }} &times; {{ $fmt($item->price) }}</p>
-                                        <p class="text-sm text-[#808080] leading-5">{{ __('Subtotal') }}: {{ $fmt($item->sub_total) }}</p>
-                                        @if ((float) $item->fixed_shipping > 0)
-                                        <p class="text-sm text-[#808080] leading-5">{{ __('Fixed shipping') }}: {{ $fmt($item->fixed_shipping) }}</p>
-                                        @endif
+                                        <p class="text-sm text-[#808080] leading-5">{{ __('Subtotal') }}: {{ $fmt($item->sub_total + $item->fixed_shipping) }}</p>
                                         @if ((float) $item->discount > 0)
                                         <p class="text-sm text-red-500 leading-5">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
                                         @endif
@@ -229,14 +226,8 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                                 {{-- Subtotal --}}
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-[#808080] leading-5">{{ __('Items subtotal') }}</span>
-                                    <span class="text-[#242424] text-right leading-5">{{ $fmt($order->subtotal) }}</span>
+                                    <span class="text-[#242424] text-right leading-5">{{ $fmt($order->subtotal + $order->items_fixed_shipping) }}</span>
                                 </div>
-                                @if ($order->items_fixed_shipping > 0)
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-[#808080]">{{ __('Fixed shipping') }}</span>
-                                    <span class="text-[#242424]">{{ $fmt($order->items_fixed_shipping) }}</span>
-                                </div>
-                                @endif
                                 @if ($order->items_discount > 0)
                                 <div class="flex items-center justify-between text-sm text-red-500">
                                     <span>{{ __('Flash-sale discount') }}</span>

@@ -135,9 +135,6 @@
                                     <span>×</span>
                                     <span class="font-medium text-[#242424]">{{ $fmt($item->price) }}</span>
                                 </div>
-                                @if ((float) $item->fixed_shipping > 0)
-                                    <p class="text-[11px] text-gray-medium mt-1">{{ __('Fixed shipping') }}: {{ $fmt($item->fixed_shipping) }}</p>
-                                @endif
                                 @if ((float) $item->discount > 0)
                                     <p class="text-[11px] text-gray-medium mt-1">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
                                 @endif
@@ -177,14 +174,8 @@
                     <div class="flex flex-col gap-2 text-[13px]">
                         <div class="flex justify-between">
                             <span class="text-gray-medium">{{ __('Items subtotal') }}</span>
-                            <span class="font-medium">{{ $fmt($order->subtotal) }}</span>
+                            <span class="font-medium">{{ $fmt($order->subtotal + $order->items_fixed_shipping) }}</span>
                         </div>
-                        @if ($order->items_fixed_shipping > 0)
-                            <div class="flex justify-between">
-                                <span class="text-gray-medium">{{ __('Fixed shipping') }}</span>
-                                <span>{{ $fmt($order->items_fixed_shipping) }}</span>
-                            </div>
-                        @endif
                         @if ($order->items_discount > 0)
                             <div class="flex justify-between text-primary">
                                 <span>{{ __('Flash-sale discount') }}</span>
