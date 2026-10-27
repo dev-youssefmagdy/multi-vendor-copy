@@ -550,7 +550,7 @@ class TemplateMailService
         $rows = '';
         foreach ($order->items as $item) {
             $productName = $item->product?->name ?? "Product #{$item->product_id}";
-            $unitPrice = number_format((float) $item->price, 2);
+            $unitPrice = number_format(((float) $item->sub_total + (float) $item->fixed_shipping) / max(1, (int) $item->qty), 2);
             $subtotal = number_format((float) $item->grand_total, 2);
             $discount = (float) $item->discount > 0 ? '-'.number_format((float) $item->discount, 2) : '-';
             $tax = (float) $item->tax > 0 ? number_format((float) $item->tax, 2) : '-';
@@ -564,8 +564,7 @@ class TemplateMailService
                 .'</tr>';
         }
 
-        $subtotal = number_format($order->subtotal, 2);
-        $fixedShipping = $order->items_fixed_shipping > 0 ? number_format($order->items_fixed_shipping, 2) : null;
+        $subtotal = number_format($order->subtotal + $order->items_fixed_shipping, 2);
         $itemsDiscount = $order->items_discount > 0 ? number_format($order->items_discount, 2) : null;
         $orderDiscount = $order->discount_amount > 0 ? number_format($order->discount_amount, 2) : null;
         $tax = $order->items_tax > 0 ? number_format($order->items_tax, 2) : null;
@@ -573,9 +572,6 @@ class TemplateMailService
         $grandTotal = number_format($order->grand_total, 2);
 
         $summaryRows = '<tr><td colspan="4" style="padding:8px 10px;font-size:13px;color:#6b7280;text-align:right;">Items Subtotal</td><td style="padding:8px 10px;font-size:13px;color:#111827;text-align:right;">'.$currency.' '.$subtotal.'</td></tr>';
-        if ($fixedShipping) {
-            $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Fixed Shipping</td><td style="padding:4px 10px;font-size:13px;color:#374151;text-align:right;">'.$currency.' '.$fixedShipping.'</td></tr>';
-        }
         if ($itemsDiscount) {
             $summaryRows .= '<tr><td colspan="4" style="padding:4px 10px;font-size:13px;color:#6b7280;text-align:right;">Flash-sale Discount</td><td style="padding:4px 10px;font-size:13px;color:#16a34a;text-align:right;">-'.$currency.' '.$itemsDiscount.'</td></tr>';
         }
