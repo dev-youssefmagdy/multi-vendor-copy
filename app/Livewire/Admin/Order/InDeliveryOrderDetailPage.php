@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Order;
 
-use App\Enums\OrderShippingStatus;
 use App\Enums\OrderStatus;
 use App\Enums\ReturnReason;
 use App\Enums\ReturnStatus;
@@ -27,7 +26,6 @@ class InDeliveryOrderDetailPage extends AdminPage
     public string $orderNumber = '';
     public array $order = [];
     public array $orderAttachments = [];
-    public string $selectedShippingStatus = '';
     public string $selectedOrderStatus = '';
     public string $trackingNumber = '';
 
@@ -48,7 +46,6 @@ class InDeliveryOrderDetailPage extends AdminPage
         abort_if(!$record, 404);
 
         $this->order = app(OrderRepository::class)->orderDetail($record);
-        $this->selectedShippingStatus = (string) ($this->order['shipping_status_value'] ?? OrderShippingStatus::Pending->value);
         $this->selectedOrderStatus = (string) ($this->order['status_value'] ?? OrderStatus::Pending->value);
         $this->trackingNumber = (string) ($this->order['tracking_number'] ?? '');
         $this->loadOrderAttachments();
@@ -59,7 +56,7 @@ class InDeliveryOrderDetailPage extends AdminPage
         return [
             'title' => $this->order['uuid'] ?? 'Delivery Order',
             'badge' => 'Shipping Queue',
-            'description' => 'Manage shipping status, upload attachments, and review full order details for this delivery.',
+            'description' => 'Manage order status, upload attachments, and review full order details for this delivery.',
         ];
     }
 
@@ -74,44 +71,11 @@ class InDeliveryOrderDetailPage extends AdminPage
             ->mapWithKeys(fn(OrderStatus $s) => [$s->value => $s->label()])
             ->all();
 
-        $shippingStatusOptions = [
-            OrderShippingStatus::Pending->value => OrderShippingStatus::Pending->label(),
-            OrderShippingStatus::InDelivery->value => OrderShippingStatus::InDelivery->label(),
-            OrderShippingStatus::Shipped->value => OrderShippingStatus::Shipped->label(),
-            OrderShippingStatus::Delivered->value => OrderShippingStatus::Delivered->label(),
-        ];
-
         return array_merge(parent::pageData(), [
             'order' => $this->order,
             'orderAttachments' => $this->orderAttachments,
-            'shippingStatusOptions' => $shippingStatusOptions,
             'orderStatusOptions' => $orderStatusOptions,
         ]);
-    }
-
-    public function updateShippingStatus(OrderFulfillmentService $service): void
-    {
-        $shippingStatus = OrderShippingStatus::tryFrom($this->selectedShippingStatus);
-
-        if (!$shippingStatus) {
-            $this->toast('Select a valid shipping status.', 'error');
-            return;
-        }
-
-        try {
-            $service->updateShippingStatus($this->tenantId, $this->orderNumber, $shippingStatus);
-        } catch (\InvalidArgumentException | \RuntimeException $e) {
-            $this->toast($e->getMessage(), 'error');
-            return;
-        }
-
-        $record = app(OrderRepository::class)->find($this->tenantId, $this->orderNumber);
-        if ($record) {
-            $this->order = app(OrderRepository::class)->orderDetail($record);
-            $this->selectedShippingStatus = (string) ($this->order['shipping_status_value'] ?? $shippingStatus->value);
-        }
-
-        $this->toast('Shipping status updated successfully.');
     }
 
     public function updateOrderStatus(OrderFulfillmentService $service): void

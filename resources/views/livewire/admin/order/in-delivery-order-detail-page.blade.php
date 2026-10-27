@@ -47,17 +47,6 @@
         <h4 class="panel-title">Status Controls</h4>
         <div class="form-grid form-grid-2" style="align-items:flex-end;gap:12px">
             <div>
-                <label class="field-label">Shipping Status</label>
-                <x-select wire:model.defer="selectedShippingStatus">
-                    @foreach ($shippingStatusOptions as $val => $label)
-                        <option value="{{ $val }}">{{ $label }}</option>
-                    @endforeach
-                </x-select>
-            </div>
-            <div>
-                <x-btn type="button" wire:click="updateShippingStatus">Update Shipping Status</x-btn>
-            </div>
-            <div>
                 <label class="field-label">Order Status</label>
                 <x-select wire:model.defer="selectedOrderStatus">
                     @foreach ($orderStatusOptions as $val => $label)
@@ -130,7 +119,6 @@
             'canManageShipping' => false,
             'showAttachments' => true,
             'orderAttachments' => $orderAttachments,
-            'shippingStatusOptions' => $shippingStatusOptions,
         ])
     </div>
 
