@@ -111,12 +111,14 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                 <div class="w-full lg:w-[795px] flex flex-col gap-6">
 
                     {{-- Login Banner (desktop only) --}}
+                    @guest('storefront')
                     <div class="hidden lg:flex items-center p-3 bg-[#FFFBFB] border border-[#CCCCCC] rounded-lg gap-2">
                         <svg class="w-6 h-6 shrink-0" fill="none" stroke="#171717" stroke-width="1.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                         <span class="text-[#171717] text-sm font-normal font-['Outfit'] tracking-[0.5px]">{{ __('Log in to complete your shopping faster') }}</span>
                     </div>
+                    @endguest
 
                     <div class="flex flex-col gap-6">
                         {{-- Select All Header --}}
