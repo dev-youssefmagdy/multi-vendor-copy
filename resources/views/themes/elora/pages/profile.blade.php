@@ -577,23 +577,18 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                                 {{ __('Track Order') }}
                             </a>
                             @endif
-                            {{-- Leave a Review --}}
+                            {{-- Rate / edit rating (delivered orders only) --}}
+                            @if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))
                             @php
                                 $reviewProductId   = $firstProduct?->id ?? null;
                                 $reviewProductName = $firstProduct?->translationValue('name') ?? $firstProduct?->slug ?? '';
-                                $alreadyReviewed   = $reviewProductId && in_array($reviewProductId, $reviewedProductIds ?? []);
+                                $myReview          = $reviewProductId ? ($myReviews[$reviewProductId] ?? null) : null;
                             @endphp
-                            @if ($alreadyReviewed)
-                                <button type="button" disabled
-                                    class="flex items-center justify-center gap-1.5 border border-[#E0E0E0] text-[#ADADAD] text-sm font-normal rounded-full px-5 py-2.5 whitespace-nowrap cursor-not-allowed">
-                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.719c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 00.951-.69l1.069-3.292z"/></svg>
-                                    {{ __('Reviewed') }}
-                                </button>
-                            @else
-                                <button onclick="swalLeaveReview({{ $reviewProductId ?? 'null' }}, @js($reviewProductName))"
-                                    class="flex items-center justify-center border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap {{ !$reviewProductId ? 'pointer-events-none opacity-40' : '' }}">
-                                    {{ __('Leave a Review') }}
-                                </button>
+                            <button onclick="swalLeaveReview({{ $reviewProductId ?? 'null' }}, @js($reviewProductName), @js($myReview))"
+                                class="flex items-center justify-center gap-1.5 border border-[#E0E0E0] text-[#171717] text-sm font-normal rounded-full px-5 py-2.5 hover:border-[#171717] hover:bg-gray-50 transition-all whitespace-nowrap">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118L10 13.347l-2.8 2.034c-.784.57-1.838-.197-1.54-1.118l1.07-3.292a1 1 0 00-.363-1.118L3.567 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                {{ $myReview ? __('Edit Review') : __('Leave a Review') }}
+                            </button>
                             @endif
                             {{-- Reorder (all statuses) – always sits right before Cancel --}}
                             <button wire:click="reorder('{{ $order->uuid }}')"
@@ -720,11 +715,11 @@ $wire.on('profile-swal', (event) => {
 });
 
 // ── SweetAlert2 leave-a-review modal ──────────────────────────────────────
-window.swalLeaveReview = function (productId, productName) {
+window.swalLeaveReview = function (productId, productName, existing) {
     if (!productId) return;
 
     Swal.fire({
-        title: @js(__('Leave a Review')),
+        title: existing ? @js(__('Edit Review')) : @js(__('Leave a Review')),
         html: `
             <p class="text-sm text-gray-500 mb-4">${productName}</p>
             <div id="swal-stars" class="flex justify-center gap-2 mb-4 text-3xl">
@@ -736,11 +731,16 @@ window.swalLeaveReview = function (productId, productName) {
         showCancelButton: true,
         confirmButtonColor: '#171717',
         cancelButtonColor:  '#6b7280',
-        confirmButtonText:  @js(__('Submit Review')),
+        confirmButtonText:  existing ? @js(__('Update Review')) : @js(__('Submit Review')),
         cancelButtonText:   @js(__('Cancel')),
         reverseButtons: true,
         didOpen: () => {
             const stars = document.querySelectorAll('#swal-stars [data-star]');
+            if (existing) {
+                document.getElementById('swal-star-value').value = existing.stars;
+                stars.forEach(s => s.style.color = parseInt(s.dataset.star) <= existing.stars ? '#facc15' : '');
+                document.getElementById('swal-comment').value = existing.comment || '';
+            }
             stars.forEach(star => {
                 star.addEventListener('mouseenter', () => {
                     const val = parseInt(star.dataset.star);

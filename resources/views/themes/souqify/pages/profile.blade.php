@@ -323,28 +323,18 @@
                                 </button>
 
 
-                                {{-- Leave a Review --}}
+                                {{-- Rate / edit rating (delivered orders only) --}}
+                                @if (in_array($order->status, [\App\Enums\OrderStatus::Delivered, \App\Enums\OrderStatus::Completed], true))
                                 @php
                                 $reviewProductId = $firstItem?->product?->id ?? null;
                                 $reviewProductName = $firstItem?->product?->translationValue('name') ??
                                 $firstItem?->product?->slug ?? '';
-                                $alreadyReviewed = $reviewProductId && in_array($reviewProductId, $reviewedProductIds ??
-                                []);
+                                $myReview = $reviewProductId ? ($myReviews[$reviewProductId] ?? null) : null;
                                 @endphp
-                                @if ($alreadyReviewed)
-                                <button type="button" disabled
-                                    class="w-full py-3 border border-stone-200 rounded-[40px] flex items-center justify-center gap-2 text-base font-['Outfit'] text-stone-300 cursor-not-allowed">
-                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.719c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 00.951-.69l1.069-3.292z" />
-                                    </svg>
-                                    {{ __('Reviewed') }}
-                                </button>
-                                @else
                                 <button type="button" @if ($reviewProductId)
-                                    onclick="swalLeaveReview({{ $reviewProductId }}, @js($reviewProductName))" @endif
-                                    class="w-full py-3 border border-stone-300 rounded-[40px] flex items-center justify-center text-base font-['Outfit'] {{ $reviewProductId ? 'text-neutral-800 hover:border-neutral-500 transition' : 'text-stone-300 pointer-events-none' }}">
-                                    {{ __('Leave a Review') }}
+                                    onclick="swalLeaveReview({{ $reviewProductId }}, @js($reviewProductName), @js($myReview))" @endif
+                                    class="w-full py-3 border border-stone-300 rounded-[40px] flex items-center justify-center text-base font-['Outfit'] {{ $reviewProductId ? 'text-neutral-800 hover:border-neutral-800 transition-all' : 'text-stone-300 cursor-not-allowed' }}">
+                                    {{ $myReview ? __('Edit Review') : __('Leave a Review') }}
                                 </button>
                                 @endif
 
@@ -711,10 +701,10 @@
             if (match) visible++;
         });
     };
-    window.swalLeaveReview = function(productId, productName) {
+    window.swalLeaveReview = function(productId, productName, existing) {
         if (!productId) return;
         Swal.fire({
-            title: @js(__('Leave a Review')),
+            title: existing ? @js(__('Edit Review')) : @js(__('Leave a Review')),
             html: `
             <p class="text-sm text-gray-500 mb-4">${productName ? productName : ''}</p>
             <div id="star-rating" class="flex justify-center gap-2 mb-4" style="font-size:2rem;cursor:pointer">
@@ -729,12 +719,16 @@
             showCancelButton: true,
             confirmButtonColor: '#242424',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: @js(__('Submit Review')),
+            confirmButtonText: existing ? @js(__('Update Review')) : @js(__('Submit Review')),
             cancelButtonText: @js(__('Cancel')),
             reverseButtons: true,
             didOpen: () => {
-                let selected = 0;
+                let selected = existing ? existing.stars : 0;
                 const stars = document.querySelectorAll('#star-rating span');
+                if (existing) {
+                    stars.forEach(s => s.style.color = parseInt(s.dataset.value) <= selected ? '#F59E0B' : '#D1D5DB');
+                    document.getElementById('review-comment').value = existing.comment || '';
+                }
                 stars.forEach(star => {
                     star.addEventListener('mouseover', () => {
                         const v = parseInt(star.dataset.value);

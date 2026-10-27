@@ -341,26 +341,18 @@
                         </button>
 
                         {{-- 3. Leave a Review --}}
+                        @if ($isDelivered)
                         @php
                             $reviewProduct   = $order->items->first()?->product ?? $order->items->first()?->variant?->product;
                             $reviewProductId = $reviewProduct?->id ?? null;
                             $alreadyReviewed = $reviewProductId && in_array($reviewProductId, $reviewedProductIds ?? []);
                         @endphp
-                        @if ($alreadyReviewed)
-                            <button type="button" disabled
-                                class="w-full px-12 py-4 bg-transparent border border-neutral-200 rounded-[32px] flex items-center justify-center gap-2 text-neutral-400 text-base font-['Arial'] leading-6 cursor-not-allowed">
-                                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.719c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 00.951-.69l1.069-3.292z"/>
-                                </svg>
-                                {{ __('Reviewed') }}
-                            </button>
-                        @else
                             <button type="button" wire:click="openReviewModal"
                                 class="w-full px-12 py-4 bg-transparent border border-[color:var(--sq-primary)] rounded-[32px] flex items-center justify-center gap-2 text-[color:var(--sq-primary)] text-base font-['Arial'] leading-6 hover:bg-[color:var(--sq-primary-soft)] transition">
                                 <svg class="w-5 h-5 shrink-0" fill="none" stroke-width="1.67" viewBox="0 0 20 20" style="stroke: var(--sq-primary)">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 1.67l2.47 5.32 5.86.85-4.24 4.13 1 5.84L10 15.17l-5.09 2.64 1-5.84L1.67 7.84l5.86-.85z"/>
                                 </svg>
-                                {{ __('Leave a Review') }}
+                                {{ $alreadyReviewed ? __('Edit Review') : __('Leave a Review') }}
                             </button>
                         @endif
 
@@ -406,7 +398,7 @@
                                 </svg>
                             </button>
 
-                            <h3 class="text-lg font-semibold text-[#242424] font-['Outfit'] mb-1">{{ __('Leave a Review') }}</h3>
+                            <h3 class="text-lg font-semibold text-[#242424] font-['Outfit'] mb-1">{{ ($reviewProductId && isset($myReviews[$reviewProductId])) ? __('Edit Review') : __('Leave a Review') }}</h3>
                             <p class="text-sm text-neutral-500 mb-6 font-['Outfit']">{{ __('Share your experience with this order.') }}</p>
 
                             <div class="flex justify-center gap-2 mb-5">
@@ -431,7 +423,7 @@
                                 <button type="button" wire:click="submitReview"
                                         wire:loading.attr="disabled" wire:target="submitReview"
                                         class="flex-1 py-3 rounded-[32px] bg-[color:var(--sq-primary)] text-white text-sm font-semibold hover:bg-[color:var(--sq-primary-hover)] transition disabled:opacity-60 font-['Outfit']">
-                                    <span wire:loading.remove wire:target="submitReview">{{ __('Submit Review') }}</span>
+                                    <span wire:loading.remove wire:target="submitReview">{{ ($reviewProductId && isset($myReviews[$reviewProductId])) ? __('Update Review') : __('Submit Review') }}</span>
                                     <span wire:loading wire:target="submitReview">{{ __('Submitting…') }}</span>
                                 </button>
                             </div>

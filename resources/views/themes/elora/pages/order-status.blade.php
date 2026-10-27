@@ -301,13 +301,17 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                             </button>
 
                             {{-- Leave a Review (delivered/completed) --}}
+                            @php
+                                $__firstPid = $order->items->first()?->product_id;
+                                $__hasReview = $__firstPid && isset($myReviews[$__firstPid]);
+                            @endphp
                             @if ($isCompleted)
                             <button wire:click="openReviewModal"
                                 class="w-full flex items-center justify-center gap-2 bg-[#FFF3EE] text-[var(--color-primary)] font-normal text-base px-12 py-4 rounded-[32px] border border-[var(--color-primary)] hover:bg-orange-100 transition-colors">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="var(--color-primary)" stroke-width="1.67" viewBox="0 0 24 24">
                                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                                 </svg>
-                                {{ __('Leave a Review') }}
+                                {{ $__hasReview ? __('Edit Review') : __('Leave a Review') }}
                             </button>
                             @endif
 
@@ -369,7 +373,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                 <svg class="w-5 h-5 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.67" viewBox="0 0 24 24">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
-                <h2 class="text-lg font-semibold text-[#0A0A0A] font-['Inter']">{{ __('Leave a Review') }}</h2>
+                <h2 class="text-lg font-semibold text-[#0A0A0A] font-['Inter']">{{ ($reviewProductId && isset($myReviews[$reviewProductId])) ? __('Edit Review') : __('Leave a Review') }}</h2>
             </div>
             <button wire:click="closeReviewModal"
                 class="w-8 h-8 flex items-center justify-center rounded-full border border-[#E0E0E0] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors text-[#808080]">
@@ -457,7 +461,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     class="flex-1 py-3 rounded-[32px] bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-orange-600 transition-colors font-['Inter']"
                     wire:loading.attr="disabled" wire:loading.class="opacity-70 cursor-not-allowed"
                     wire:target="submitReview">
-                    <span wire:loading.remove wire:target="submitReview">{{ __('Submit Review') }}</span>
+                    <span wire:loading.remove wire:target="submitReview">{{ ($reviewProductId && isset($myReviews[$reviewProductId])) ? __('Update Review') : __('Submit Review') }}</span>
                     <span wire:loading wire:target="submitReview">{{ __('Submitting...') }}</span>
                 </button>
             </div>

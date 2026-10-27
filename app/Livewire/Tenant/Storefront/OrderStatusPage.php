@@ -112,10 +112,40 @@ class OrderStatusPage extends Component
         }
 
         // Auto-select the first product
+        if (! $this->orderIsDelivered($order)) {
+            $this->dispatch('order-status-swal', message: __('You can rate a product once your order is delivered.'), type: 'error');
+
+            return;
+        }
+
         $this->reviewProductId = $order->items->first()?->product_id;
-        $this->reviewStars = 5;
-        $this->reviewComment = '';
+        $this->fillExistingReview($customer->id);
         $this->showReviewModal = true;
+    }
+
+    public function updatedReviewProductId(): void
+    {
+        $customer = Auth::guard('storefront')->user();
+
+        if ($customer) {
+            $this->fillExistingReview($customer->id);
+        }
+    }
+
+    /** Prefill the modal with the customer's existing rating of the selected product (edit mode). */
+    protected function fillExistingReview(int $customerId): void
+    {
+        $existing = $this->reviewProductId
+            ? ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customerId)->first()
+            : null;
+
+        $this->reviewStars = $existing ? (int) $existing->stars : 5;
+        $this->reviewComment = $existing ? (string) $existing->comment : '';
+    }
+
+    protected function orderIsDelivered($order): bool
+    {
+        return in_array($order->status, [\App\Enums\OrderStatus::Delivered, \App\Enums\OrderStatus::Completed], true);
     }
 
     public function setReviewStars(int $stars): void
@@ -150,9 +180,19 @@ class OrderStatusPage extends Component
             return;
         }
 
-        if (ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customer->id)->exists()) {
+        if (! $order || ! $this->orderIsDelivered($order)) {
             $this->showReviewModal = false;
-            $this->dispatch('order-status-swal', message: __('You have already reviewed this product.'), type: 'error');
+            $this->dispatch('order-status-swal', message: __('You can rate a product once your order is delivered.'), type: 'error');
+
+            return;
+        }
+
+        $existing = ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customer->id)->first();
+
+        if ($existing) {
+            $existing->update(['stars' => $this->reviewStars, 'comment' => $this->reviewComment ?: null]);
+            $this->showReviewModal = false;
+            $this->dispatch('order-status-swal', message: __('Review updated successfully.'), type: 'success');
 
             return;
         }
@@ -235,6 +275,11 @@ class OrderStatusPage extends Component
 
         $data = array_merge($this->sharedData(), [
             'order' => $order,
+            'myReviews' => $customer
+                ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'stars', 'comment'])
+                    ->mapWithKeys(fn ($r) => [$r->product_id => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
+                    ->all()
+                : [],
             'reviewedProductIds' => $customer
                 ? ProductRate::where('customer_id', $customer->id)->pluck('product_id')->toArray()
                 : [],

@@ -341,8 +341,24 @@ class ProfilePage extends Component
             return;
         }
 
-        if (ProductRate::where('product_id', $productId)->where('customer_id', $customer->id)->exists()) {
-            $this->dispatch('profile-swal', message: __('You have already reviewed this product.'), type: 'error');
+        // Ratings are only allowed once the customer actually received the product.
+        $received = Order::query()
+            ->where('customer_id', $customer->id)
+            ->whereIn('status', [OrderStatus::Delivered->value, OrderStatus::Completed->value])
+            ->whereHas('items', fn ($q) => $q->where('product_id', $productId))
+            ->exists();
+
+        if (! $received) {
+            $this->dispatch('profile-swal', message: __('You can rate a product once your order is delivered.'), type: 'error');
+
+            return;
+        }
+
+        $existing = ProductRate::where('product_id', $productId)->where('customer_id', $customer->id)->first();
+
+        if ($existing) {
+            $existing->update(['stars' => $stars, 'comment' => trim($comment) ?: null]);
+            $this->dispatch('profile-swal', message: __('Review updated successfully.'), type: 'success');
 
             return;
         }
@@ -369,9 +385,12 @@ class ProfilePage extends Component
             $orders = $orders->filter(fn ($o) => in_array($o->status, $statuses, true))->values();
         }
 
-        $reviewedProductIds = $customer
-            ? ProductRate::where('customer_id', $customer->id)->pluck('product_id')->toArray()
+        $myReviews = $customer
+            ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'stars', 'comment'])
+                ->mapWithKeys(fn ($r) => [$r->product_id => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
+                ->all()
             : [];
+        $reviewedProductIds = array_keys($myReviews);
 
         $addresses = CustomerAddress::where('customer_id', $customer->id)
             ->orderByDesc('is_default')
@@ -403,6 +422,7 @@ class ProfilePage extends Component
             'activeTab' => $this->activeTab,
             'statusFilter' => $this->statusFilter,
             'reviewedProductIds' => $reviewedProductIds,
+            'myReviews' => $myReviews,
             'addresses' => $addresses,
             'countries' => Country::with('translations.language')->orderBy('name')->get(['id', 'name', 'iso2', 'flag_emoji']),
             'showAddressModal' => $this->showAddressModal,
