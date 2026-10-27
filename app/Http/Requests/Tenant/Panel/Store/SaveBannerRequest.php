@@ -9,13 +9,14 @@ use App\Repositories\Tenant\TenantPanelRepository;
 
 final class SaveBannerRequest extends TenantFormRequest
 {
+    use ScopesToCountries;
+
     public function rules(): array
     {
         $rules = [
             'url' => ['nullable', 'url', 'max:500'],
             'serial_number' => ['required', 'integer', 'min:0'],
             'banner_image' => ['nullable', 'image', 'max:2048'],
-            'country_id' => ['nullable', 'integer'],
         ];
 
         $languages = app(TenantPanelRepository::class)->activeLanguages();
@@ -32,6 +33,7 @@ final class SaveBannerRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
+            'country_ids' => 'countries',
             'serial_number' => 'sort order',
             'banner_image' => 'banner image',
         ];

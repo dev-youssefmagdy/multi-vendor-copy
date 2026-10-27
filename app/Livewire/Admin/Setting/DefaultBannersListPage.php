@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\Setting;
 
 use App\Livewire\Admin\Base\AdminPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
-use App\Models\Country;
+use App\Livewire\Admin\Concerns\ManagesCountryScope;
 use App\Models\DefaultBanner;
 use App\Models\Language;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +13,8 @@ use Livewire\WithFileUploads;
 class DefaultBannersListPage extends AdminPage
 {
     use InteractsWithAdminUi;
+    use ManagesCountryScope;
     use WithFileUploads;
-
-    public ?int $countryId = null;
 
     // ── Modal state ────────────────────────────────────────────────────────
     public bool $modalOpen = false;
@@ -27,10 +26,9 @@ class DefaultBannersListPage extends AdminPage
     public $bannerImage = null;
     public array $bannerTranslations = [];
 
-    public function mount(?int $countryId = null): void
+    public function mount(): void
     {
         $this->authorizePermission('settings.default-banners.manage');
-        $this->countryId = $countryId;
         $this->initTranslations();
     }
 
@@ -51,14 +49,16 @@ class DefaultBannersListPage extends AdminPage
     protected function pageData(): array
     {
         return array_merge($this->pageMeta(), [
-            'country' => $this->countryId ? Country::query()->find($this->countryId) : null,
+            'countryOptions' => $this->countryOptions(),
+            'countryFilterOptions' => $this->countryFilterOptions(),
             'banners' => DefaultBanner::query()
-                ->with('translations.language')
-                ->where('country_id', $this->countryId)
+                ->with(['translations.language', 'countryRows'])
+                ->filterByCountry($this->countryFilter)
                 ->orderBy('serial_number')
                 ->orderBy('id')
                 ->get(),
             'languages' => Language::query()->where('is_active', true)->orderBy('sort_order')->orderByDesc('is_default')->get(),
+            'countriesById' => $this->centralCountries()->keyBy('id'),
         ]);
     }
 
@@ -77,6 +77,7 @@ class DefaultBannersListPage extends AdminPage
                 $this->bannerTranslations,
                 $banner->translationsByLocale(['title', 'subtitle', 'button_text'])
             );
+            $this->fillCountryScope($banner->countryIds());
         }
 
         $this->modalOpen = true;
@@ -104,7 +105,7 @@ class DefaultBannersListPage extends AdminPage
             $rules["bannerTranslations.{$locale}.subtitle"] = ['nullable', 'string', 'max:500'];
             $rules["bannerTranslations.{$locale}.button_text"] = ['nullable', 'string', 'max:100'];
         }
-        $this->validate($rules);
+        $this->validate($rules + $this->countryRules());
 
         $imagePath = $this->bannerId
             ? DefaultBanner::query()->find($this->bannerId)?->image_path
@@ -123,9 +124,9 @@ class DefaultBannersListPage extends AdminPage
             'url' => $this->bannerUrl ?: null,
             'image_path' => $imagePath,
             'serial_number' => $this->bannerSerial,
-            'country_id' => $this->countryId,
         ])->save();
 
+        $banner->syncCountries($this->selectedCountryIds());
         $banner->syncTranslations($this->bannerTranslations);
 
         $this->modalOpen = false;
@@ -148,8 +149,17 @@ class DefaultBannersListPage extends AdminPage
     {
         $this->authorizePermission('settings.default-banners.manage');
 
-        foreach ($orderedIds as $index => $id) {
-            DefaultBanner::query()->where('id', (int) $id)->update(['serial_number' => $index]);
+        $ids = array_map('intval', $orderedIds);
+        $current = DefaultBanner::query()->whereIn('id', $ids)->pluck('serial_number', 'id');
+        $ids = array_values(array_filter($ids, fn (int $id) => $current->has($id)));
+
+        // A filtered list only shows some banners: reuse the serial numbers those banners
+        // already held so the hidden ones keep their place; unfiltered, renumber from 0.
+        $slots = $current->values()->sort()->values();
+        $unfiltered = count($ids) === DefaultBanner::query()->count();
+
+        foreach ($ids as $index => $id) {
+            DefaultBanner::query()->where('id', $id)->update(['serial_number' => $unfiltered ? $index : (int) $slots[$index]]);
         }
 
         $this->dispatch('admin-toast', message: 'Banner order saved.', type: 'success');
@@ -172,6 +182,12 @@ class DefaultBannersListPage extends AdminPage
         $this->bannerSerial = 0;
         $this->bannerImage = null;
         $this->initTranslations();
+        $this->resetCountryScope();
         $this->resetErrorBag();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->countryFilter = '';
     }
 }

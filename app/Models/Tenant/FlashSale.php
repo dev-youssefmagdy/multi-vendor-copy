@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class FlashSale extends Model
 {
+    use HasCountries;
     use HasFactory;
+
+    protected string $countryPivotTable = 'flash_sale_country';
+
+    protected ?string $countryCacheTag = 'FlashSale';
 
     protected $appends = ['banner_url'];
 
@@ -25,7 +31,6 @@ class FlashSale extends Model
         'end_date',
         'active',
         'banner_image',
-        'country_id',
     ];
 
     protected function casts(): array

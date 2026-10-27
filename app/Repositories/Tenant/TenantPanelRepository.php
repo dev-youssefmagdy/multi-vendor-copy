@@ -792,52 +792,51 @@ class TenantPanelRepository
         ];
     }
 
-    public function queryCoupons(?int $countryId): Builder
+    /** @param int|string|null $country 'all' (available everywhere only), a country id, or null (no filter) */
+    public function queryCoupons(int|string|null $country = null): Builder
     {
-        return Coupon::query()->with('translations.language')->where('country_id', $countryId)->latest();
+        return Coupon::query()->with('translations.language')->filterByCountry($country)->latest();
     }
 
-    public function paginateCoupons(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    public function paginateCoupons(int|string|null $country = null, int $perPage = 10): LengthAwarePaginator
     {
-        return $this->queryCoupons($countryId)->paginate($perPage);
+        return $this->queryCoupons($country)->paginate($perPage);
     }
 
-    public function couponStats(?int $countryId = null): array
+    public function couponStats(): array
     {
         return [
-            'total' => Coupon::query()->where('country_id', $countryId)->count(),
-            'active' => Coupon::query()->where('country_id', $countryId)->where(function ($query) {
+            'total' => Coupon::query()->count(),
+            'active' => Coupon::query()->where(function ($query) {
                 $query->whereNull('end_date')->orWhere('end_date', '>=', now());
             })->count(),
-            'scheduled' => Coupon::query()->where('country_id', $countryId)->whereNotNull('start_date')->where('start_date', '>', now())->count(),
+            'scheduled' => Coupon::query()->whereNotNull('start_date')->where('start_date', '>', now())->count(),
         ];
     }
 
-    public function queryFlashSales(?int $countryId): Builder
+    /** @param int|string|null $country 'all' (available everywhere only), a country id, or null (no filter) */
+    public function queryFlashSales(int|string|null $country = null): Builder
     {
         return FlashSale::query()
             ->with(['product.translations.language', 'products.translations.language', 'files'])
-            ->where('country_id', $countryId)
+            ->filterByCountry($country)
             ->latest();
     }
 
-    public function paginateFlashSales(?int $countryId = null, int $perPage = 10): LengthAwarePaginator
+    public function paginateFlashSales(int|string|null $country = null, int $perPage = 10): LengthAwarePaginator
     {
-        return $this->queryFlashSales($countryId)->paginate($perPage);
+        return $this->queryFlashSales($country)->paginate($perPage);
     }
 
-    public function flashSaleStats(?int $countryId = null): array
+    public function flashSaleStats(): array
     {
         $row = DB::table('flash_sales')
-            ->where('country_id', $countryId)
             ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
             ->first();
 
         $productCount = DB::table('flash_sale_product')
-            ->join('flash_sales', 'flash_sales.id', '=', 'flash_sale_product.flash_sale_id')
-            ->where('flash_sales.country_id', $countryId)
-            ->distinct('flash_sale_product.product_id')
-            ->count('flash_sale_product.product_id');
+            ->distinct('product_id')
+            ->count('product_id');
 
         return [
             'total' => (int) ($row->total ?? 0),

@@ -132,7 +132,6 @@ export default defineConfig({
                 'resources/js/tenant/pages/store/themes.js',
                 'resources/js/tenant/pages/store/pages-index.js',
                 'resources/js/tenant/pages/store/page-form.js',
-                'resources/js/tenant/pages/store/country-index.js',
                 'resources/js/tenant/pages/store/coupons.js',
                 'resources/js/tenant/pages/store/flash-sales.js',
                 'resources/js/tenant/pages/store/banners.js',

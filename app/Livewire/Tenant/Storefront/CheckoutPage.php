@@ -308,7 +308,7 @@ class CheckoutPage extends Component
             return;
         }
 
-        if (!$coupon->availableInCountry($this->resolveShippingCountryId())) {
+        if (!$coupon->appliesToCountry($this->resolveShippingCountryId())) {
             $this->addError('data.coupon.code', __('This coupon is not available in your country.'));
             $this->toast(__('This coupon is not available in your country.'), 'error');
             return;

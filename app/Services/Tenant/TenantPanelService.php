@@ -486,9 +486,11 @@ class TenantPanelService
                 'start_date' => $attributes['start_date'] ?? null,
                 'end_date' => $attributes['end_date'] ?? null,
                 'minimum_spend' => filled($attributes['minimum_spend'] ?? null) ? $attributes['minimum_spend'] : 0,
-                'country_id' => $attributes['country_id'] ?? $coupon->country_id,
             ]);
             $coupon->save();
+            if (array_key_exists('country_ids', $attributes)) {
+                $coupon->syncCountries($attributes['country_ids']);
+            }
             $coupon->syncTranslations($attributes['translations'] ?? []);
 
             return $coupon->fresh('translations.language');
@@ -513,9 +515,11 @@ class TenantPanelService
                 'end_date' => $attributes['end_date'] ?? null,
                 'active' => (bool) ($attributes['active'] ?? true),
                 'banner_image' => $attributes['banner_image'] ?? $flashSale->banner_image,
-                'country_id' => $attributes['country_id'] ?? $flashSale->country_id,
             ]);
             $flashSale->save();
+            if (array_key_exists('country_ids', $attributes)) {
+                $flashSale->syncCountries($attributes['country_ids']);
+            }
 
             $flashSale->products()->sync(
                 $productIds !== []
@@ -900,9 +904,11 @@ class TenantPanelService
                 'url' => $data['url'] ?? null,
                 'image_path' => $data['image_path'] ?? null,
                 'serial_number' => (int) ($data['serial_number'] ?? 0),
-                'country_id' => $data['country_id'] ?? null,
             ]);
             $banner->save();
+            if (array_key_exists('country_ids', $data)) {
+                $banner->syncCountries($data['country_ids']);
+            }
             $banner->syncTranslations($data['translations'] ?? []);
             CacheVersion::bump('Banner');
 
@@ -1230,6 +1236,18 @@ class TenantPanelService
         }
 
         (new BulkTranslationWriter())->replace((new Banner())->getMorphClass(), $desired);
+
+        // Carry each default banner's country targeting over (no rows = all countries).
+        DefaultBanner::hydrateCountryIds($defaults);
+        $countryRows = [];
+        foreach ($defaults->values() as $index => $default) {
+            foreach ($default->countryIds() as $countryId) {
+                $countryRows[] = ['banner_id' => $bannerIds[$index], 'country_id' => $countryId];
+            }
+        }
+        if ($countryRows !== []) {
+            DB::table('banner_country')->insert($countryRows);
+        }
 
         // Bulk writes skip model events; bump the storefront cache version once instead.
         CacheVersion::bump('Banner');

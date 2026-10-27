@@ -90,6 +90,21 @@ export async function init(el) {
         }
     });
 
+    // data-exclusive-value="all": picking that option clears the others, and
+    // picking any other option drops it (e.g. "All countries" vs specific ones).
+    const exclusive = el.dataset.exclusiveValue;
+    if (exclusive && el.multiple) {
+        $el.on('select2:select', (event) => {
+            const picked = String(event.params.data.id);
+            const current = ($el.val() || []).map(String);
+            const next = picked === exclusive ? [exclusive] : current.filter((value) => value !== exclusive);
+
+            if (next.length !== current.length || next.some((value, i) => value !== current[i])) {
+                $el.val(next).trigger('change');
+            }
+        });
+    }
+
     if (dependsOn) {
         const form = el.closest('form');
         const source = form?.querySelector(`[name="${CSS.escape(dependsOn)}"]`);

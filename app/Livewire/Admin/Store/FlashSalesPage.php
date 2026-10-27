@@ -4,21 +4,19 @@ namespace App\Livewire\Admin\Store;
 
 use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
+use App\Livewire\Admin\Concerns\ManagesCountryScope;
 use App\Models\CentralFlashSale;
-use App\Models\Country;
 use App\Repositories\ProductRepository;
 use App\Services\Admin\CentralFlashSaleService;
-use App\Services\Tenant\CentralCatalogTenantSyncService;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class FlashSalesPage extends ListPage
 {
     use InteractsWithAdminUi;
+    use ManagesCountryScope;
     use WithPagination;
     use WithFileUploads;
-
-    public ?int $countryId = null;
 
     public bool $showFormModal = false;
     public ?int $flashSaleId = null;
@@ -35,25 +33,20 @@ class FlashSalesPage extends ListPage
     public bool $hasMoreProducts = false;
     public array $selectedProductLabels = [];
 
-    public function mount(?int $countryId = null): void
+    public function mount(): void
     {
         $this->authorizePermission('store.flash-sales.manage');
-        $this->countryId = $countryId;
     }
 
     protected function pageMeta(): array
     {
-        $country = $this->countryId ? Country::query()->find($this->countryId) : null;
-
         return [
-            'title' => $country ? "Central Flash Sales — {$country->flag_emoji} {$country->name}" : 'Central Flash Sales — Default',
+            'title' => 'Central Flash Sales',
             'badge' => 'Store',
-            'description' => $country
-                ? "Flash sale campaigns synced to tenants targeting {$country->name}."
-                : 'Default flash sale campaigns synced to every tenant with no country-specific campaigns.',
+            'description' => 'Flash sale campaigns running in all countries or only the countries you choose, synced to tenant storefronts.',
             'actionLabel' => 'Add Flash Sale',
             'tableTitle' => 'Flash Sale Campaigns',
-            'headers' => ['Products', 'Discount', 'Window', 'Status', 'Actions'],
+            'headers' => ['Products', 'Discount', 'Countries', 'Window', 'Status', 'Actions'],
         ];
     }
 
@@ -62,18 +55,19 @@ class FlashSalesPage extends ListPage
         $this->authorizePermission('store.flash-sales.manage');
 
         $records = CentralFlashSale::query()
-            ->with('products.translations.language')
-            ->where('country_id', $this->countryId)
+            ->with(['products.translations.language', 'countryRows'])
+            ->filterByCountry($this->countryFilter)
             ->orderByDesc('id')
             ->paginate(15);
 
-        $total = CentralFlashSale::query()->where('country_id', $this->countryId)->count();
-        $active = CentralFlashSale::query()->where('country_id', $this->countryId)->where('active', true)->count();
-        $avgDisc = CentralFlashSale::query()->where('country_id', $this->countryId)->avg('discount_percentage') ?? 0;
+        $total = CentralFlashSale::query()->count();
+        $active = CentralFlashSale::query()->where('active', true)->count();
+        $avgDisc = CentralFlashSale::query()->avg('discount_percentage') ?? 0;
 
         $rows = collect($records->items())->map(fn(CentralFlashSale $flashSale) => [
             $this->productSummaryCell($flashSale),
             e(number_format((float) $flashSale->discount_percentage, 2)) . '%',
+            $this->countryBadges($flashSale->countryIds()),
             e(optional($flashSale->start_date)->format('M d, Y') ?: '-') . ' – ' . e(optional($flashSale->end_date)->format('M d, Y') ?: '-'),
             '<span class="badge ' . ($flashSale->active ? 'badge-green' : 'badge-amber') . '">' . e($flashSale->active ? 'Active' : 'Inactive') . '</span>',
             '<div class="flex gap-2">
@@ -84,8 +78,12 @@ class FlashSalesPage extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
-            'secondaryActionLabel' => '← All Countries',
-            'secondaryActionUrl' => route('admin.store.flash-sales.index'),
+            'filtersTitle' => 'Filters',
+            'filtersDescription' => 'Narrow the flash sales by the country they run in.',
+            'filterFields' => [
+                ['label' => 'Country', 'model' => 'countryFilter', 'type' => 'select', 'options' => $this->countryFilterOptions()],
+            ],
+            'modalCountryScope' => $this->countryOptions(),
             'records' => $records,
             'rows' => $rows,
             'statistics' => [
@@ -116,6 +114,7 @@ class FlashSalesPage extends ListPage
         $this->productSearchResults = [];
         $this->hasMoreProducts = false;
         $this->selectedProductLabels = [];
+        $this->resetCountryScope();
         $this->resetErrorBag();
         $this->loadProducts();
         $this->showFormModal = true;
@@ -136,11 +135,13 @@ class FlashSalesPage extends ListPage
         $this->hasMoreProducts = false;
         $intIds = array_map('intval', $this->productIds);
         $this->selectedProductLabels = app(ProductRepository::class)->productNamesForIds($intIds);
+        $this->fillCountryScope($flashSale->countryIds());
+        $this->resetErrorBag();
         $this->loadProducts();
         $this->showFormModal = true;
     }
 
-    public function save(CentralFlashSaleService $service, CentralCatalogTenantSyncService $syncService): void
+    public function save(CentralFlashSaleService $service): void
     {
         $this->authorizePermission('store.flash-sales.manage');
 
@@ -151,7 +152,7 @@ class FlashSalesPage extends ListPage
             'startDate' => ['required', 'date'],
             'endDate' => ['required', 'date', 'after_or_equal:startDate'],
             'active' => ['boolean'],
-        ]);
+        ] + $this->countryRules());
 
         $existing = $this->flashSaleId
             ? CentralFlashSale::query()->findOrFail($this->flashSaleId)
@@ -163,11 +164,8 @@ class FlashSalesPage extends ListPage
             'start_date' => $validated['startDate'] ?? null,
             'end_date' => $validated['endDate'] ?? null,
             'active' => $validated['active'],
-            'country_id' => $this->countryId,
+            'country_ids' => $this->selectedCountryIds(),
         ], $existing);
-
-        // Sync to all tenants
-        $syncService->syncAllTenants(['flash-sales']);
 
         $this->closeModal();
         $this->toast($this->flashSaleId ? __('Flash sale updated and synced to tenants.') : __('Flash sale created and synced to tenants.'));
@@ -181,12 +179,12 @@ class FlashSalesPage extends ListPage
         ]);
     }
 
-    public function deleteFlashSale(int $flashSaleId, CentralFlashSaleService $service, CentralCatalogTenantSyncService $syncService): void
+    public function deleteFlashSale(int $flashSaleId, CentralFlashSaleService $service): void
     {
         $this->authorizePermission('store.flash-sales.manage');
 
+        // The CentralFlashSale observer re-syncs tenants on delete.
         $service->delete(CentralFlashSale::query()->findOrFail($flashSaleId));
-        $syncService->syncAllTenants(['flash-sales']);
         $this->toast(__('Flash sale deleted and synced to tenants.'));
     }
 
@@ -204,11 +202,14 @@ class FlashSalesPage extends ListPage
         $this->productSearchResults = [];
         $this->hasMoreProducts = false;
         $this->selectedProductLabels = [];
+        $this->resetCountryScope();
         $this->resetErrorBag();
     }
 
     public function clearFilters(): void
     {
+        $this->countryFilter = '';
+        $this->resetPage();
     }
 
     // ── Async product picker ────────────────────────────────────────────────

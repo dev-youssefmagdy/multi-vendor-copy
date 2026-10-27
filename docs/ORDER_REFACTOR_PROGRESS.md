@@ -74,3 +74,13 @@ Not tested / notes:
 * Ledger `settlements_received` sums settlement `total` (incl. fee) while the principal is `product_cost` - review.
 * CouponController / CartPage::applyCoupon still use inline coupon preview maths (should call OrderPricing::couponDiscount).
 * Orders report page shows only the Platform Profit card (no Vendor Profit chart).
+
+## Multi-country targeting for banners, coupons & flash sales (2026-10-28)
+* `country_id` is gone from `banners`, `coupons`, `flash_sales` (tenant DB) and `central_coupons`, `central_flash_sales`, `default_banners` (central DB).
+  Replaced by pivots `banner_country`, `coupon_country`, `flash_sale_country`, `central_coupon_country`, `central_flash_sale_country`, `default_banner_country`
+  (trait `App\Models\Concerns\HasCountries`). **No pivot rows = available in ALL countries.** Run `php artisan migrate` and `php artisan tenants:migrate`.
+* Pricing rule change (formulas in ORDER_FORMULAS.md are unchanged): a flash sale / coupon applies to a visitor when it targets all countries OR the visitor's
+  country. The old "country-specific first, fall back to the default set" priority is removed; among applicable flash sales the highest discount wins
+  (`StorefrontRepository::activeFlashDiscountExpression`, `Product::activeStorefrontFlashSale`, product cards and the `flash_sale` listing filter are all country-aware now).
+* Coupon validity: `Coupon::appliesToCountry()` (was `availableInCountry()`).
+* Central -> tenant sync copies the country set; coupons are only synced to tenants serving at least one targeted country, with the set trimmed to the tenant's countries.

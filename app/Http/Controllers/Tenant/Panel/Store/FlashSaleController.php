@@ -6,16 +6,16 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\SaveFlashSaleRequest;
-use App\Models\Country;
 use App\Models\Tenant\FlashSale;
-use App\Models\TenantCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\FlashSaleMediaService;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\CacheVersion;
+use App\Support\CountryScope;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -31,39 +31,11 @@ final class FlashSaleController extends PanelController
 
     public function index(): View
     {
-        $counts = FlashSale::query()
-            ->selectRaw('country_id, count(*) as aggregate')
-            ->groupBy('country_id')
-            ->pluck('aggregate', 'country_id');
-
-        $countryIds = TenantCountry::query()
-            ->where('tenant_id', tenant()->id)
-            ->where('is_active', true)
-            ->pluck('country_id');
-
-        $countries = Country::query()->whereIn('id', $countryIds)->orderBy('name')->get();
-
-        $domain = tenant()?->domains()->first()?->domain;
-        $storefrontBase = $domain
-            ? ((str_starts_with($domain, 'http') ? '' : 'https://').$domain)
-            : null;
+        $stats = $this->repo->flashSaleStats();
+        $countries = CountryScope::tenantCountries();
 
         return view('tenant.pages.store.flash-sales.index', [
-            'countries' => $countries,
-            'defaultCount' => (int) ($counts[null] ?? 0),
-            'countryCounts' => $counts,
-            'storefrontBase' => $storefrontBase,
-        ]);
-    }
-
-    public function list(?int $countryId = null): View
-    {
-        $country = $countryId ? Country::query()->find($countryId) : null;
-        $stats = $this->repo->flashSaleStats($countryId);
-
-        return view('tenant.pages.store.flash-sales.list', [
-            'countryId' => $countryId,
-            'country' => $country,
+            'countryOptions' => CountryScope::options($countries),
             'defaultBanner' => asset('elora/assets/images/flash-sales-banner.png'),
             'stats' => Metric::cards([
                 ['label' => 'Flash Sales', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Discount campaigns configured', 'dot' => 'dot-cyan'],
@@ -76,6 +48,7 @@ final class FlashSaleController extends PanelController
                 TableColumn::make('product', 'Product')->orderable(false),
                 TableColumn::make('banner', 'Banner')->orderable(false),
                 TableColumn::make('discount', 'Discount')->orderable(false),
+                TableColumn::make('countries', 'Countries')->orderable(false),
                 TableColumn::make('window', 'Window')->orderable(false),
                 TableColumn::make('source', 'Source')->orderable(false),
                 TableColumn::make('status', 'Status')->orderable(false),
@@ -84,9 +57,18 @@ final class FlashSaleController extends PanelController
         ]);
     }
 
-    public function data(Request $request, ?int $countryId = null): JsonResponse
+    /** Old per-country URLs (/flash-sales/list/{countryId}) now map to the filtered list. */
+    public function list(?int $countryId = null): RedirectResponse
     {
-        $query = $this->repo->queryFlashSales($countryId);
+        return redirect()->route('tenant.store.flash-sales.index', $countryId ? ['filters' => ['country' => $countryId]] : []);
+    }
+
+    public function data(Request $request): JsonResponse
+    {
+        $filters = $this->filters($request, ['country']);
+        $countriesById = CountryScope::tenantCountries()->keyBy('id');
+
+        $query = $this->repo->queryFlashSales($filters['country'] ?? null)->with('countryRows');
 
         // Batch productNamesForIds()/productImagesForIds() ONCE per draw
         // (mirroring ProductsListController::data()'s centralProductSnapshots
@@ -133,6 +115,7 @@ final class FlashSaleController extends PanelController
             })
             ->editColumn('banner', fn (FlashSale $flashSale) => view('tenant.pages.store.flash-sales._cols.banner', ['flashSale' => $flashSale])->render())
             ->editColumn('discount', fn (FlashSale $flashSale) => e(number_format((float) $flashSale->discount_percentage, 2)).'%')
+            ->addColumn('countries', fn (FlashSale $flashSale) => CountryScope::badges($flashSale->countryIds(), $countriesById))
             ->editColumn('window', fn (FlashSale $flashSale) => e(optional($flashSale->start_date)->format('M d, Y') ?: '-').' - '.e(optional($flashSale->end_date)->format('M d, Y') ?: '-'))
             ->editColumn('source', fn (FlashSale $flashSale) => $flashSale->central_flash_sale_id
                 ? '<span class="badge badge-cyan">Platform</span>'
@@ -141,7 +124,7 @@ final class FlashSaleController extends PanelController
             ->addColumn('actions', fn (FlashSale $flashSale) => $flashSale->central_flash_sale_id
                 ? '<span style="font-size:11.5px;color:var(--t3);">Managed by platform</span>'
                 : view('tenant.pages.store.flash-sales._cols.actions', ['flashSale' => $flashSale])->render())
-            ->rawColumns(['product', 'banner', 'source', 'status', 'actions'])
+            ->rawColumns(['product', 'banner', 'countries', 'source', 'status', 'actions'])
             ->toJson();
     }
 
@@ -182,7 +165,7 @@ final class FlashSaleController extends PanelController
             'end_date' => optional($flashSale->end_date)->format('Y-m-d\TH:i'),
             'active' => $flashSale->active,
             'banner_image_current' => $flashSale->banner_url,
-            'country_id' => $flashSale->country_id,
+            'country_ids' => CountryScope::formValue($flashSale->countryIds()),
         ]]);
     }
 
@@ -222,7 +205,7 @@ final class FlashSaleController extends PanelController
             'end_date' => $validated['end_date'] ?? null,
             'active' => $validated['active'] ?? true,
             'banner_image' => $flashSale?->banner_url,
-            'country_id' => $validated['country_id'] ?? null,
+            'country_ids' => $request->countryIds(),
         ], $flashSale);
 
         if ($request->hasFile('banner_image')) {

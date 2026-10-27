@@ -28,7 +28,7 @@ class CouponController extends Controller
             return response()->json(['coupon' => null]);
         }
 
-        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+        if (!$coupon->appliesToCountry(app(CustomerCountryResolver::class)->resolveId())) {
             session()->forget('storefront_coupon');
             return response()->json(['coupon' => null]);
         }
@@ -52,7 +52,7 @@ class CouponController extends Controller
             return response()->json(['success' => false, 'message' => __('This coupon code is invalid or has expired.')], 422);
         }
 
-        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+        if (!$coupon->appliesToCountry(app(CustomerCountryResolver::class)->resolveId())) {
             return response()->json(['success' => false, 'message' => __('This coupon is not available in your country.')], 422);
         }
 

@@ -3,14 +3,18 @@
 namespace App\Models;
 
 use App\Enums\Tenant\CouponType;
+use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CentralCoupon extends Model
 {
+    use HasCountries;
+
+    protected string $countryPivotTable = 'central_coupon_country';
+
     protected $table = 'central_coupons';
 
     protected $fillable = [
@@ -22,7 +26,6 @@ class CentralCoupon extends Model
         'end_date',
         'minimum_spend',
         'active',
-        'country_id',
     ];
 
     protected function casts(): array
@@ -35,16 +38,6 @@ class CentralCoupon extends Model
             'end_date' => 'datetime',
             'active' => 'boolean',
         ];
-    }
-
-    // ── Relationships ────────────────────────────────────────────────
-
-    /**
-     * The single country this coupon is scoped to. Null = Default (available everywhere).
-     */
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
     }
 
     // ── Scopes ───────────────────────────────────────────────────────

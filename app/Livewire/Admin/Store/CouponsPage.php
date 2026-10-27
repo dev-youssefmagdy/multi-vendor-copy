@@ -5,18 +5,17 @@ namespace App\Livewire\Admin\Store;
 use App\Enums\Tenant\CouponType;
 use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
+use App\Livewire\Admin\Concerns\ManagesCountryScope;
 use App\Models\CentralCoupon;
 use App\Services\Admin\CentralCouponService;
-use App\Services\Tenant\CentralCatalogTenantSyncService;
 use Carbon\Carbon;
 use Livewire\WithPagination;
 
 class CouponsPage extends ListPage
 {
     use InteractsWithAdminUi;
+    use ManagesCountryScope;
     use WithPagination;
-
-    public ?int $countryId = null;
 
     public bool $showFormModal = false;
     public ?int $couponId = null;
@@ -29,25 +28,20 @@ class CouponsPage extends ListPage
     public ?string $endDate = null;
     public bool $active = true;
 
-    public function mount(?int $countryId = null): void
+    public function mount(): void
     {
         $this->authorizePermission('store.coupons.manage');
-        $this->countryId = $countryId;
     }
 
     protected function pageMeta(): array
     {
-        $country = $this->countryId ? \App\Models\Country::query()->find($this->countryId) : null;
-
         return [
-            'title' => $country ? "Central Coupons — {$country->flag_emoji} {$country->name}" : 'Central Coupons — Default',
+            'title' => 'Central Coupons',
             'badge' => 'Store',
-            'description' => $country
-                ? "Discount codes synced to tenants targeting {$country->name}."
-                : 'Default discount codes synced to every tenant with no country-specific coupons.',
+            'description' => 'Platform-wide discount codes, available in all countries or only the countries you choose, and synced to tenant storefronts.',
             'actionLabel' => 'Add Coupon',
             'tableTitle' => 'Discount Codes',
-            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Window', 'Status', 'Actions'],
+            'headers' => ['Code', 'Type', 'Value', 'Min. Spend', 'Countries', 'Window', 'Status', 'Actions'],
         ];
     }
 
@@ -56,17 +50,18 @@ class CouponsPage extends ListPage
         $this->authorizePermission('store.coupons.manage');
 
         $records = CentralCoupon::query()
-            ->where('country_id', $this->countryId)
+            ->with('countryRows')
+            ->filterByCountry($this->countryFilter)
             ->orderByDesc('id')
             ->paginate(15);
 
-        $total = CentralCoupon::query()->where('country_id', $this->countryId)->count();
+        $total = CentralCoupon::query()->count();
         $now = Carbon::now();
-        $active = CentralCoupon::query()->where('country_id', $this->countryId)->where('active', true)
+        $active = CentralCoupon::query()->where('active', true)
             ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', $now))
             ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $now))
             ->count();
-        $scheduled = CentralCoupon::query()->where('country_id', $this->countryId)->where('active', true)->where('start_date', '>', $now)->count();
+        $scheduled = CentralCoupon::query()->where('active', true)->where('start_date', '>', $now)->count();
 
         $rows = collect($records->items())->map(fn(CentralCoupon $coupon) => [
             '<div class="entity-title">' . e($coupon->code) . '</div>' . ($coupon->name ? '<div class="entity-subtitle">' . e($coupon->name) . '</div>' : ''),
@@ -75,6 +70,7 @@ class CouponsPage extends ListPage
             ? e(number_format((float) $coupon->value, 2)) . '%'
             : '$' . e(number_format((float) $coupon->value, 2)),
             '$' . e(number_format((float) $coupon->minimum_spend, 2)),
+            $this->countryBadges($coupon->countryIds()),
             e(optional($coupon->start_date)->format('M d, Y') ?: '∞') . ' – ' . e(optional($coupon->end_date)->format('M d, Y') ?: '∞'),
             '<span class="badge ' . ($coupon->active ? 'badge-green' : 'badge-amber') . '">' . e($coupon->active ? 'Active' : 'Inactive') . '</span>',
             '<div class="flex gap-2">
@@ -85,8 +81,12 @@ class CouponsPage extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
-            'secondaryActionLabel' => '← All Countries',
-            'secondaryActionUrl' => route('admin.store.coupons.index'),
+            'filtersTitle' => 'Filters',
+            'filtersDescription' => 'Narrow the coupons by the country they apply to.',
+            'filterFields' => [
+                ['label' => 'Country', 'model' => 'countryFilter', 'type' => 'select', 'options' => $this->countryFilterOptions()],
+            ],
+            'modalCountryScope' => $this->countryOptions(),
             'records' => $records,
             'rows' => $rows,
             'statistics' => [
@@ -128,6 +128,7 @@ class CouponsPage extends ListPage
         $this->startDate = null;
         $this->endDate = null;
         $this->active = true;
+        $this->resetCountryScope();
         $this->resetErrorBag();
         $this->showFormModal = true;
     }
@@ -145,11 +146,13 @@ class CouponsPage extends ListPage
         $this->startDate = optional($coupon->start_date)->format('Y-m-d\TH:i');
         $this->endDate = optional($coupon->end_date)->format('Y-m-d\TH:i');
         $this->active = $coupon->active;
+        $this->fillCountryScope($coupon->countryIds());
+        $this->resetErrorBag();
 
         $this->showFormModal = true;
     }
 
-    public function save(CentralCouponService $service, CentralCatalogTenantSyncService $syncService): void
+    public function save(CentralCouponService $service): void
     {
         $this->authorizePermission('store.coupons.manage');
 
@@ -160,7 +163,7 @@ class CouponsPage extends ListPage
             'minimumSpend' => 'nullable|numeric|min:0',
             'startDate' => 'nullable|date',
             'endDate' => 'nullable|date|after_or_equal:startDate',
-        ]);
+        ] + $this->countryRules());
 
         $existing = CentralCoupon::query()
             ->where('code', strtoupper(trim($this->code)))
@@ -183,11 +186,8 @@ class CouponsPage extends ListPage
             'start_date' => $this->startDate,
             'end_date' => $this->endDate,
             'active' => $this->active,
-            'country_id' => $this->countryId,
+            'country_ids' => $this->selectedCountryIds(),
         ], $coupon);
-
-        // Observer triggers sync automatically; explicit call is a safety net.
-        $syncService->syncCoupons();
 
         $this->closeModal();
         $this->toast($this->couponId ? 'Coupon updated and synced to tenants.' : 'Coupon created and synced to tenants.');
@@ -201,12 +201,12 @@ class CouponsPage extends ListPage
         ]);
     }
 
-    public function deleteCoupon(int $couponId, CentralCouponService $service, CentralCatalogTenantSyncService $syncService): void
+    public function deleteCoupon(int $couponId, CentralCouponService $service): void
     {
         $this->authorizePermission('store.coupons.manage');
 
+        // The CentralCoupon observer re-syncs tenants on delete.
         $service->delete(CentralCoupon::query()->findOrFail($couponId));
-        $syncService->syncCoupons();
 
         $this->toast('Coupon deleted and removed from all tenant storefronts.');
     }
@@ -223,10 +223,13 @@ class CouponsPage extends ListPage
         $this->startDate = null;
         $this->endDate = null;
         $this->active = true;
+        $this->resetCountryScope();
         $this->resetErrorBag();
     }
 
     public function clearFilters(): void
     {
+        $this->countryFilter = '';
+        $this->resetPage();
     }
 }

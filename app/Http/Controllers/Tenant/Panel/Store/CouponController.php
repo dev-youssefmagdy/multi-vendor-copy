@@ -7,14 +7,14 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 use App\Enums\Tenant\CouponType;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\SaveCouponRequest;
-use App\Models\Country;
 use App\Models\Tenant\Coupon;
-use App\Models\TenantCountry;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
+use App\Support\CountryScope;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
@@ -29,33 +29,11 @@ final class CouponController extends PanelController
 
     public function index(): View
     {
-        $counts = Coupon::query()
-            ->selectRaw('country_id, count(*) as aggregate')
-            ->groupBy('country_id')
-            ->pluck('aggregate', 'country_id');
-
-        $countryIds = TenantCountry::query()
-            ->where('tenant_id', tenant()->id)
-            ->where('is_active', true)
-            ->pluck('country_id');
-
-        $countries = Country::query()->whereIn('id', $countryIds)->orderBy('name')->get();
+        $stats = $this->repo->couponStats();
+        $countries = CountryScope::tenantCountries();
 
         return view('tenant.pages.store.coupons.index', [
-            'countries' => $countries,
-            'defaultCount' => (int) ($counts[null] ?? 0),
-            'countryCounts' => $counts,
-        ]);
-    }
-
-    public function list(?int $countryId = null): View
-    {
-        $country = $countryId ? Country::query()->find($countryId) : null;
-        $stats = $this->repo->couponStats($countryId);
-
-        return view('tenant.pages.store.coupons.list', [
-            'countryId' => $countryId,
-            'country' => $country,
+            'countryOptions' => CountryScope::options($countries),
             'stats' => Metric::cards([
                 ['label' => 'Coupons', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Coupons stored for this tenant', 'dot' => 'dot-cyan'],
                 ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Coupons currently usable', 'dot' => 'dot-green'],
@@ -66,15 +44,25 @@ final class CouponController extends PanelController
                 TableColumn::make('coupon', 'Coupon')->orderable(false),
                 TableColumn::make('type', 'Type')->orderable(false),
                 TableColumn::make('value', 'Value')->orderable(false),
+                TableColumn::make('countries', 'Countries')->orderable(false),
                 TableColumn::make('window', 'Window')->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
     }
 
-    public function data(Request $request, ?int $countryId = null): JsonResponse
+    /** Old per-country URLs (/coupons/list/{countryId}) now map to the filtered list. */
+    public function list(?int $countryId = null): RedirectResponse
     {
-        $query = $this->repo->queryCoupons($countryId);
+        return redirect()->route('tenant.store.coupons.index', $countryId ? ['filters' => ['country' => $countryId]] : []);
+    }
+
+    public function data(Request $request): JsonResponse
+    {
+        $filters = $this->filters($request, ['country']);
+        $countriesById = CountryScope::tenantCountries()->keyBy('id');
+
+        $query = $this->repo->queryCoupons($filters['country'] ?? null)->with('countryRows');
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
@@ -83,9 +71,10 @@ final class CouponController extends PanelController
             ->editColumn('value', fn (Coupon $coupon) => $coupon->type === CouponType::Percentage
                 ? e(number_format((float) $coupon->value, 2)).'%'
                 : '$'.e(number_format((float) $coupon->value, 2)))
+            ->addColumn('countries', fn (Coupon $coupon) => CountryScope::badges($coupon->countryIds(), $countriesById))
             ->editColumn('window', fn (Coupon $coupon) => e(optional($coupon->start_date)->format('M d, Y') ?: '-').' - '.e(optional($coupon->end_date)->format('M d, Y') ?: '-'))
             ->addColumn('actions', fn (Coupon $coupon) => view('tenant.pages.store.coupons._cols.actions', ['coupon' => $coupon])->render())
-            ->rawColumns(['actions'])
+            ->rawColumns(['countries', 'actions'])
             ->toJson();
     }
 
@@ -102,7 +91,7 @@ final class CouponController extends PanelController
             'minimum_spend' => number_format((float) $coupon->minimum_spend, 2, '.', ''),
             'start_date' => optional($coupon->start_date)->format('Y-m-d\TH:i'),
             'end_date' => optional($coupon->end_date)->format('Y-m-d\TH:i'),
-            'country_id' => $coupon->country_id,
+            'country_ids' => CountryScope::formValue($coupon->countryIds()),
         ]]);
     }
 
@@ -140,7 +129,7 @@ final class CouponController extends PanelController
             'start_date' => $validated['start_date'] ?? null,
             'end_date' => $validated['end_date'] ?? null,
             'translations' => [$defaultLocale => ['name' => $validated['name_text']]],
-            'country_id' => $validated['country_id'] ?? null,
+            'country_ids' => $request->countryIds(),
         ], $coupon);
 
         return $this->success($coupon ? 'Coupon updated successfully.' : 'Coupon created successfully.');

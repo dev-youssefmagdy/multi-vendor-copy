@@ -1,4 +1,4 @@
-@props(['banner'])
+@props(['banner', 'countriesById'])
 
 <div class="t-sortable-row" data-id="{{ $banner->id }}">
     <span class="t-drag" style="cursor:grab">
@@ -21,6 +21,10 @@
                 No link
             @endif
         </div>
+    </div>
+
+    <div style="flex:0 1 220px;min-width:0">
+        {!! \App\Support\CountryScope::badges($banner->countryIds(), $countriesById) !!}
     </div>
 
     <span class="badge">#{{ $banner->serial_number }}</span>

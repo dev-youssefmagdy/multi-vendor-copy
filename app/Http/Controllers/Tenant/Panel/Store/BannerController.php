@@ -6,15 +6,15 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\SaveBannerRequest;
-use App\Models\Country;
 use App\Models\Tenant\Banner;
-use App\Models\TenantCountry;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\CacheVersion;
+use App\Support\CountryScope;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -26,56 +26,50 @@ final class BannerController extends PanelController
     ) {
     }
 
-    public function index(): View
-    {
-        $counts = Banner::query()
-            ->selectRaw('country_id, count(*) as aggregate')
-            ->groupBy('country_id')
-            ->pluck('aggregate', 'country_id');
-
-        $countryIds = TenantCountry::query()
-            ->where('tenant_id', tenant()->id)
-            ->where('is_active', true)
-            ->pluck('country_id');
-
-        $countries = Country::query()->whereIn('id', $countryIds)->orderBy('name')->get();
-
-        $domain = tenant()?->domains()->first()?->domain;
-        $storefrontBase = $domain
-            ? ((str_starts_with($domain, 'http') ? '' : 'https://').$domain)
-            : null;
-
-        return view('tenant.pages.store.banners.index', [
-            'countries' => $countries,
-            'defaultCount' => (int) ($counts[null] ?? 0),
-            'countryCounts' => $counts,
-            'storefrontBase' => $storefrontBase,
-        ]);
-    }
-
-    public function list(?int $countryId = null): View
+    public function index(Request $request): View
     {
         $storefrontRepo = app(StorefrontRepository::class);
         $activeTheme = $storefrontRepo->currentTheme();
         $bannerDimensions = config('image_dimensions.themes.'.($activeTheme->slug ?? ''));
 
-        $country = $countryId ? Country::query()->find($countryId) : null;
+        $countries = CountryScope::tenantCountries();
+        $countryFilter = $this->countryFilter($request);
 
         $banners = Banner::query()
-            ->with('translations.language')
-            ->where('country_id', $countryId)
+            ->with(['translations.language', 'countryRows'])
+            ->filterByCountry($countryFilter)
             ->orderBy('serial_number')
+            ->orderBy('id')
             ->get();
 
-        return view('tenant.pages.store.banners.list', [
-            'countryId' => $countryId,
-            'country' => $country,
+        return view('tenant.pages.store.banners.index', [
             'banners' => $banners,
+            'countries' => $countries,
+            'countriesById' => $countries->keyBy('id'),
+            'countryOptions' => CountryScope::options($countries),
+            'countryFilter' => $countryFilter,
             'languages' => $this->repo->activeLanguages(),
             'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
             'bannerWidth' => $bannerDimensions['width'] ?? null,
             'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
+    }
+
+    /** Old per-country URLs (/banners/list/{countryId}) now map to the filtered list. */
+    public function list(?int $countryId = null): RedirectResponse
+    {
+        return redirect()->route('tenant.store.banners.index', $countryId ? ['country' => $countryId] : []);
+    }
+
+    private function countryFilter(Request $request): int|string|null
+    {
+        $value = $request->query('country');
+
+        if ($value === CountryScope::ALL) {
+            return CountryScope::ALL;
+        }
+
+        return is_numeric($value) ? (int) $value : null;
     }
 
     public function show(Banner $banner): JsonResponse
@@ -87,7 +81,7 @@ final class BannerController extends PanelController
             'serial_number' => (int) $banner->serial_number,
             'banner_image_current' => $banner->image_path,
             'translations' => $banner->translationsByLocale(['title', 'subtitle', 'button_text']),
-            'country_id' => $banner->country_id,
+            'country_ids' => CountryScope::formValue($banner->countryIds()),
         ]]);
     }
 
@@ -122,7 +116,7 @@ final class BannerController extends PanelController
             'url' => $validated['url'] ?: null,
             'image_path' => $imagePath,
             'serial_number' => $validated['serial_number'],
-            'country_id' => $validated['country_id'] ?? null,
+            'country_ids' => $request->countryIds(),
             'translations' => $validated['translations'] ?? [],
         ], $banner);
 
@@ -146,15 +140,21 @@ final class BannerController extends PanelController
         return $this->success('Banner deleted.');
     }
 
-    public function updateOrder(Request $request, int $countryId): JsonResponse
+    public function updateOrder(Request $request): JsonResponse
     {
-        // The route parameter is a required int, so "0" is used as the URL
-        // sentinel for the default (no country) banner list.
-        $filterCountryId = $countryId === 0 ? null : $countryId;
-        $ids = (array) $request->input('ids', []);
+        $ids = array_map('intval', (array) $request->input('ids', []));
+
+        $banners = Banner::query()->whereIn('id', $ids)->pluck('serial_number', 'id');
+        $ids = array_values(array_filter($ids, fn (int $id) => $banners->has($id)));
+
+        // A filtered list only shows some banners: hand the new order the same set of
+        // serial numbers those banners already held so the hidden ones keep their place.
+        $slots = $banners->values()->sort()->values();
+        $unfiltered = count($ids) === Banner::query()->count();
 
         foreach ($ids as $index => $id) {
-            Banner::query()->where('id', (int) $id)->where('country_id', $filterCountryId)->update(['serial_number' => $index]);
+            $serial = $unfiltered ? $index : (int) $slots[$index];
+            Banner::query()->where('id', $id)->update(['serial_number' => $serial]);
         }
 
         CacheVersion::bump('Banner');

@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Services\Tenant\CustomerCountryResolver;
 use Carbon\Carbon;
 use App\Models\Tenant\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -225,7 +226,7 @@ class Product extends Model
 
         $flashSales = $this->relationLoaded('flashSales')
             ? $this->flashSales
-            : $this->flashSales()->activeWindow($moment)->get();
+            : $this->flashSales()->activeWindow($moment)->forCountry(app(CustomerCountryResolver::class)->resolveId())->get();
 
         return $flashSales
             ->filter(fn(FlashSale $flashSale) => $flashSale->isCurrentlyActive($moment))

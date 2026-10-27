@@ -1684,6 +1684,7 @@ class TenantCatalogSyncService
         $centralSales = $this->central(
             fn() => CentralFlashSale::query()->with('products:id')->get()
         );
+        $this->central(fn() => CentralFlashSale::hydrateCountryIds($centralSales));
 
         // Map central_product_id => tenant product id
         $tenantProductIds = Product::withoutGlobalScope("centralVisible")
@@ -1712,11 +1713,11 @@ class TenantCatalogSyncService
                     'end_date' => $centralSale->end_date,
                     'active' => $centralSale->active,
                     'banner_image' => $centralSale->getBannerUrlAttribute(),
-                    'country_id' => $centralSale->country_id,
                 ]
             );
 
             $tenantSale->products()->sync($tenantProductIdList);
+            $tenantSale->syncCountries($centralSale->countryIds());
         }
 
         // Remove tenant flash sales whose central counterpart was deleted
@@ -1808,10 +1809,11 @@ class TenantCatalogSyncService
         $centralCoupons = $this->central(
             fn() => CentralCoupon::query()->get()
         );
+        $this->central(fn() => CentralCoupon::hydrateCountryIds($centralCoupons));
 
-        // Only sync Default coupons (country_id null) plus coupons scoped to a
+        // Only sync coupons for all countries plus coupons that target at least one
         // country this tenant actually serves — a tenant should never receive a
-        // coupon targeting a country it doesn't sell in.
+        // coupon targeting only countries it doesn't sell in.
         $tenantCountryIds = TenantCountry::query()
             ->where('tenant_id', tenant()->id)
             ->where('is_active', true)
@@ -1819,11 +1821,11 @@ class TenantCatalogSyncService
             ->all();
 
         $applicableCoupons = $centralCoupons->filter(
-            fn(CentralCoupon $coupon) => $coupon->country_id === null || in_array($coupon->country_id, $tenantCountryIds, true)
+            fn(CentralCoupon $coupon) => $coupon->isAllCountries() || array_intersect($coupon->countryIds(), $tenantCountryIds) !== []
         );
 
         foreach ($applicableCoupons as $centralCoupon) {
-            Coupon::query()->updateOrCreate(
+            $tenantCoupon = Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
                 [
                     'code' => $centralCoupon->code,
@@ -1832,8 +1834,12 @@ class TenantCatalogSyncService
                     'minimum_spend' => $centralCoupon->minimum_spend,
                     'start_date' => $centralCoupon->start_date,
                     'end_date' => $centralCoupon->end_date,
-                    'country_id' => $centralCoupon->country_id,
                 ]
+            );
+
+            // Keep only the countries this tenant serves (empty = all countries).
+            $tenantCoupon->syncCountries(
+                $centralCoupon->isAllCountries() ? [] : array_intersect($centralCoupon->countryIds(), $tenantCountryIds)
             );
         }
 

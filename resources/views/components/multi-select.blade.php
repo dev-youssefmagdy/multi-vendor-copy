@@ -8,6 +8,8 @@
       selected    — currently selected array
       placeholder — search placeholder text
       errorKey    — validation error key
+      exclusive   — optional option key that is mutually exclusive with the rest
+                    (e.g. "all": picking it clears the others, picking another drops it)
 --}}
 @props([
     'label'       => 'Select',
@@ -17,10 +19,12 @@
     'selected'    => [],
     'placeholder' => 'Search…',
     'errorKey'    => '',
+    'exclusive'   => '',
+    'hint'        => '',
 ])
 
 @php
-    $selectedArr  = is_array($selected) ? $selected : [];
+    $selectedArr  = is_array($selected) ? array_map('strval', $selected) : [];
     $optionsJson  = json_encode((object) $options, JSON_UNESCAPED_UNICODE);
     $selectedJson = json_encode(array_values($selectedArr), JSON_UNESCAPED_UNICODE);
     $modelName    = $model;
@@ -70,10 +74,13 @@
             if (trigger && trigger.contains(e.target)) return;
             this.open = false;
         },
+        exclusive: {{ json_encode((string) $exclusive) }},
         toggle(code) {
             const idx = this.selected.indexOf(code);
             if (idx === -1) {
-                this.selected = [...this.selected, code];
+                this.selected = (this.exclusive && code === this.exclusive)
+                    ? [code]
+                    : [...this.selected.filter(c => !this.exclusive || c !== this.exclusive), code];
             } else {
                 this.selected = this.selected.filter(c => c !== code);
             }
@@ -183,6 +190,10 @@
                 <input type="hidden" name="{{ $inputName }}[]" value="{{ $code }}">
             @endforeach
         </div>
+    @endif
+
+    @if ($hint)
+        <p class="field-hint" style="margin-top:6px;">{{ $hint }}</p>
     @endif
 
     @if ($errorKey)

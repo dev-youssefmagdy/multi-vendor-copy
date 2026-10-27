@@ -126,7 +126,7 @@ class CartPage extends Component
             return;
         }
 
-        if (!$coupon->availableInCountry(app(CustomerCountryResolver::class)->resolveId())) {
+        if (!$coupon->appliesToCountry(app(CustomerCountryResolver::class)->resolveId())) {
             $this->addError('coupon', __('This coupon is not available in your country.'));
             $this->toast(__('This coupon is not available in your country.'), 'error');
             return;

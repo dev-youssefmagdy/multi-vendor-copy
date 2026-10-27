@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 final class SaveCouponRequest extends TenantFormRequest
 {
+    use ScopesToCountries;
+
     public function rules(): array
     {
         $couponId = $this->route('coupon')?->id;
@@ -21,13 +23,13 @@ final class SaveCouponRequest extends TenantFormRequest
             'minimum_spend' => ['nullable', 'numeric', 'min:0'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'country_id' => ['nullable', 'integer'],
         ];
     }
 
     public function attributes(): array
     {
         return [
+            'country_ids' => 'countries',
             'name_text' => 'name',
             'minimum_spend' => 'minimum spend',
             'start_date' => 'start date',

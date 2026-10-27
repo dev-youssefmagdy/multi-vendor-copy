@@ -67,7 +67,6 @@ use App\Livewire\Admin\Setting\BladeThemeQueuePage;
 use App\Livewire\Admin\Setting\TemplatePartsPage;
 use App\Livewire\Admin\Setting\TranslationsPage;
 use App\Livewire\Admin\Setting\LanguagePurchasesPage;
-use App\Livewire\Admin\Setting\DefaultBannersIndexPage;
 use App\Livewire\Admin\Setting\DefaultBannersListPage;
 use App\Livewire\Admin\Shipping\DeliveryChargesList;
 use App\Livewire\Admin\Shipping\AddEditShippingZone;
@@ -76,9 +75,7 @@ use App\Livewire\Admin\Shipping\AddEditFixedShippingCost;
 use App\Livewire\Admin\Shipping\DeliveryPopupPage;
 use App\Livewire\Admin\Shipping\ShippingDaysPage;
 use App\Livewire\Admin\Shipping\ShippingSettingsPage;
-use App\Livewire\Admin\Store\CouponsIndexPage as AdminCouponsIndexPage;
 use App\Livewire\Admin\Store\CouponsPage as AdminCouponsPage;
-use App\Livewire\Admin\Store\FlashSalesIndexPage as AdminFlashSalesIndexPage;
 use App\Livewire\Admin\Store\FlashSalesPage as AdminFlashSalesPage;
 use App\Livewire\Admin\Store\TenantSyncPage as AdminTenantSyncPage;
 use App\Livewire\Admin\Branch\BranchesList;
@@ -310,10 +307,10 @@ Route::group([
     Route::get('products-run', [DevToolsController::class, 'syncProductFixedShippingCosts']);
 
     Route::prefix('store')->name('store.')->group(function () {
-        Route::get('/flash-sales', AdminFlashSalesIndexPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
-        Route::get('/flash-sales/list/{countryId?}', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.list');
-        Route::get('/coupons', AdminCouponsIndexPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
-        Route::get('/coupons/list/{countryId?}', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.list');
+        Route::get('/flash-sales', AdminFlashSalesPage::class)->middleware('admin.permission:store.flash-sales.manage')->name('flash-sales.index');
+        Route::get('/flash-sales/list/{countryId?}', fn () => redirect()->route('admin.store.flash-sales.index'))->name('flash-sales.list');
+        Route::get('/coupons', AdminCouponsPage::class)->middleware('admin.permission:store.coupons.manage')->name('coupons.index');
+        Route::get('/coupons/list/{countryId?}', fn () => redirect()->route('admin.store.coupons.index'))->name('coupons.list');
         Route::get('/tenant-sync', AdminTenantSyncPage::class)->middleware('admin.permission:store.sync.manage')->name('tenant-sync.index');
     });
 
@@ -446,8 +443,8 @@ Route::group([
         Route::get('/translations', TranslationsPage::class)->middleware('admin.permission:settings.languages.view,settings.languages.manage')->name('translations');
         Route::get('/countries', CountriesPage::class)->middleware('admin.permission:settings.countries.view,settings.countries.manage')->name('countries');
         Route::get('/maintenance', MaintenanceModePage::class)->middleware('admin.permission:settings.maintenance.manage')->name('maintenance');
-        Route::get('/default-banners', DefaultBannersIndexPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
-        Route::get('/default-banners/list/{countryId?}', DefaultBannersListPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners.list');
+        Route::get('/default-banners', DefaultBannersListPage::class)->middleware('admin.permission:settings.default-banners.manage')->name('default-banners');
+        Route::get('/default-banners/list/{countryId?}', fn () => redirect()->route('admin.settings.default-banners'))->name('default-banners.list');
         Route::get('/ai-logo-limit', AiLogoLimitPage::class)->middleware('admin.permission:settings.ai-logo-limits.manage')->name('ai-logo-limit');
         Route::get('/translation-key-access', TranslationKeyAccessPage::class)->middleware('admin.permission:settings.languages.manage')->name('translation-key-access');
         Route::get('/return-policy', \App\Livewire\Admin\Setting\ReturnPolicySettingsPage::class)->middleware('admin.permission:settings.general.manage')->name('return-policy');

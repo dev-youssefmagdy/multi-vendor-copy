@@ -8,6 +8,8 @@ use App\Http\Requests\Tenant\Panel\TenantFormRequest;
 
 final class SaveFlashSaleRequest extends TenantFormRequest
 {
+    use ScopesToCountries;
+
     protected function booleanFields(): array
     {
         return ['active'];
@@ -23,13 +25,13 @@ final class SaveFlashSaleRequest extends TenantFormRequest
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'active' => ['boolean'],
             'banner_image' => ['nullable', 'image'],
-            'country_id' => ['nullable', 'integer'],
         ];
     }
 
     public function attributes(): array
     {
         return [
+            'country_ids' => 'countries',
             'product_ids' => 'products',
             'discount_percentage' => 'discount percentage',
             'start_date' => 'start date',

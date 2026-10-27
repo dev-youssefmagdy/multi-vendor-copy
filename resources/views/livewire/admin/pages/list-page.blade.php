@@ -185,6 +185,11 @@
             @if ($modalContentView)
                 <form wire:submit="{{ $modalSubmitAction }}" class="page-stack">
                     @include($modalContentView, $modalContentData)
+                    @if (!empty($modalCountryScope))
+                        <div class="form-grid">
+                            @include('livewire.admin.partials.country-scope-field', ['countryOptions' => $modalCountryScope, 'countryScopeVersion' => $countryScopeVersion ?? 0, 'countryIds' => $countryIds ?? ['all']])
+                        </div>
+                    @endif
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>
                         <x-btn type="submit" wire:loading.attr="disabled" wire:target="{{ $modalSubmitAction }}">
@@ -233,6 +238,10 @@
                             @endforeach
                         </div>
                     @endforeach
+
+                    @if (!empty($modalCountryScope))
+                        @include('livewire.admin.partials.country-scope-field', ['countryOptions' => $modalCountryScope, 'countryScopeVersion' => $countryScopeVersion ?? 0, 'countryIds' => $countryIds ?? ['all']])
+                    @endif
 
                     @if (!empty($modalCountryPicker))
                         <div class="card section-gap" style="padding:18px 20px;">

@@ -413,7 +413,7 @@ export class TenantForm {
                 return;
             }
 
-            const selector = `[name="${this.toInputName(fullKey)}"]`;
+            const selector = `[name="${this.toInputName(fullKey)}"], select[multiple][name="${this.toInputName(fullKey)}[]"]`;
             const fields = this.form.querySelectorAll(selector);
 
             fields.forEach((field) => {
@@ -456,6 +456,11 @@ export class TenantForm {
 
     reset() {
         this.form.reset();
+        // form.reset() restores each select's default <option selected> but select2
+        // keeps showing the previous selection until it is told the value changed.
+        if (window.jQuery?.fn.select2) {
+            window.jQuery(this.form).find('select[data-tenant-select2]').trigger('change');
+        }
         this.clearErrors();
         this.touched.clear();
     }

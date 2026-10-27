@@ -3,20 +3,22 @@
         <div>
             <div class="eyebrow">Settings</div>
             <h1 class="D page-title">{{ $title }}</h1>
-            <p class="page-copy">
-                @if ($country)
-                    Default banners synced to new tenants targeting {{ $country->flag_emoji }} {{ $country->name }}.
-                @else
-                    Default banners synced to every new tenant that has no country-specific default banners.
-                @endif
-            </p>
+            <p class="page-copy">Default banners synced to new tenants on registration. Each banner targets all countries or only the countries you choose.</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('admin.settings.default-banners') }}" class="btn btn-secondary">Back to countries</a>
             <button type="button" class="btn btn-primary" wire:click="openModal()">
                 Add Banner
             </button>
         </div>
+    </div>
+
+    <div class="card section-gap" style="padding:14px 18px;max-width:360px">
+        <label class="field-label">Filter by country</label>
+        <x-select wire:model.live="countryFilter">
+            @foreach ($countryFilterOptions as $optionValue => $optionLabel)
+                <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
+            @endforeach
+        </x-select>
     </div>
 
     {{-- ── Banner grid ──────────────────────────────────────────────────────── --}}
@@ -31,6 +33,7 @@
                             <th>Image</th>
                             <th>Title (default locale)</th>
                             <th>URL</th>
+                            <th>Countries</th>
                             <th class="ta-r">Actions</th>
                         </tr>
                     </thead>
@@ -64,6 +67,7 @@
                                         <span class="entity-subtitle">—</span>
                                     @endif
                                 </td>
+                                <td>{!! \App\Support\CountryScope::badges($banner->countryIds(), $countriesById) !!}</td>
                                 <td class="ta-r">
                                     <div class="table-actions-inline">
                                         <button type="button" class="btn btn-secondary btn-sm"
@@ -87,7 +91,7 @@
         <div class="card section-gap">
             <div class="empty-state">
                 <h3 class="panel-title">No default banners yet</h3>
-                <p class="panel-copy">Add banners here and they will be automatically created in every matching new tenant store upon registration.</p>
+                <p class="panel-copy">Add banners here and they will be automatically created in every new tenant store upon registration.</p>
                 <button type="button" class="btn btn-primary mt-4" wire:click="openModal()">Add First Banner</button>
             </div>
         </div>
@@ -125,6 +129,11 @@
                 @if ($bannerImage)
                     <p class="field-hint mt-1">New image selected — will replace existing on save.</p>
                 @endif
+            </div>
+
+            {{-- Countries --}}
+            <div class="form-grid">
+                @include('livewire.admin.partials.country-scope-field', ['countryOptions' => $countryOptions, 'countryScopeVersion' => $countryScopeVersion, 'countryIds' => $countryIds])
             </div>
 
             {{-- URL + serial --}}

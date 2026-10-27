@@ -379,7 +379,7 @@ class HomePage extends Component
             $flashCouponCode = Coupon::query()
                 ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
                 ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-                ->where(fn($q) => $q->whereNull('country_id')->when($countryId, fn($q) => $q->orWhere('country_id', $countryId)))
+                ->forCountry($countryId)
                 ->latest()
                 ->value('code');
         }

@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CentralFlashSale extends Model
 {
+    use HasCountries;
+
+    protected string $countryPivotTable = 'central_flash_sale_country';
+
     protected $table = 'central_flash_sales';
 
     protected $appends = ['banner_url'];
@@ -22,7 +26,6 @@ class CentralFlashSale extends Model
         'end_date',
         'active',
         'banner_image',
-        'country_id',
     ];
 
     protected function casts(): array
@@ -49,11 +52,6 @@ class CentralFlashSale extends Model
     public function files(): MorphMany
     {
         return $this->morphMany(File::class, 'model');
-    }
-
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
     }
 
     public function getBannerUrlAttribute(): ?string

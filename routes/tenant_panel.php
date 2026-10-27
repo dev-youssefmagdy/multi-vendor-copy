@@ -622,7 +622,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         });
         Route::middleware('tenant.permission:store.coupons.manage')->group(function () {
             Route::get('/coupons', [CouponController::class, 'index'])->name('coupons.index');
-            Route::get('/coupons/data/{countryId?}', [CouponController::class, 'data'])->whereNumber('countryId')->name('coupons.data');
+            Route::get('/coupons/data', [CouponController::class, 'data'])->name('coupons.data');
             Route::get('/coupons/item/{coupon}', [CouponController::class, 'show'])->whereNumber('coupon')->name('coupons.show');
             Route::post('/coupons', [CouponController::class, 'store'])->name('coupons.store');
             Route::post('/coupons/validate', [CouponController::class, 'validateStore'])->name('coupons.validate');
@@ -634,7 +634,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
 
         Route::middleware('tenant.permission:store.flash-sales.manage')->group(function () {
             Route::get('/flash-sales', [FlashSaleController::class, 'index'])->name('flash-sales.index');
-            Route::get('/flash-sales/data/{countryId?}', [FlashSaleController::class, 'data'])->whereNumber('countryId')->name('flash-sales.data');
+            Route::get('/flash-sales/data', [FlashSaleController::class, 'data'])->name('flash-sales.data');
             Route::get('/flash-sales/products/search', [FlashSaleController::class, 'searchProducts'])->name('flash-sales.products.search');
             Route::get('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'show'])->whereNumber('flashSale')->name('flash-sales.show');
             Route::post('/flash-sales', [FlashSaleController::class, 'store'])->name('flash-sales.store');
@@ -683,7 +683,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::put('/banners/item/{banner}', [BannerController::class, 'update'])->whereNumber('banner')->name('banners.update');
             Route::post('/banners/item/{banner}/validate', [BannerController::class, 'validateUpdate'])->whereNumber('banner')->name('banners.validate.update');
             Route::delete('/banners/item/{banner}', [BannerController::class, 'destroy'])->whereNumber('banner')->name('banners.destroy');
-            Route::post('/banners/{countryId}/order', [BannerController::class, 'updateOrder'])->whereNumber('countryId')->name('banners.order');
+            Route::post('/banners/order', [BannerController::class, 'updateOrder'])->name('banners.order');
             Route::get('/banners/list/{countryId?}', [BannerController::class, 'list'])->whereNumber('countryId')->name('banners');
         });
         Route::middleware('tenant.permission:store.blade-theme.manage')->group(function () {
