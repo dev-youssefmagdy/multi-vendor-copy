@@ -174,6 +174,7 @@
                 </div>
             @endif
             @foreach($payment['headline'] as $row)
+                @continue(strtolower($row['label'] ?? '') === 'card')
                 <div class="details-kv">
                     <span class="details-label">{{ $row['label'] }}</span>
                     @if(!empty($row['href']))

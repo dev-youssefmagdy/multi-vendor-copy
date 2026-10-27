@@ -31,7 +31,7 @@
     .sqv5-new__media {
         position: relative;
         display: block;
-        flex: 0 0 36.13%;               /* 200.16 / 554 */
+        flex: 0 0 26.23%;               /* square: 145.31 / 554 (= card height) */
         align-self: stretch;
         background: #F3F3FE;
         overflow: hidden;
@@ -41,7 +41,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 0.4s ease;
     }
     .sqv5-new:hover .sqv5-new__img {

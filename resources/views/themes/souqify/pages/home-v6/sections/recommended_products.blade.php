@@ -101,6 +101,10 @@
         border-radius: 7.63145px;
         box-shadow: none;
     }
+    /* Square, uncropped photo: 289.73 / 472.89 of the card height equals the
+       card width. */
+    .sqv6-reco__grid .sqv6-deal__media { flex-basis: 61.27%; }
+    .sqv6-reco__grid .sqv6-deal__img { object-fit: contain; }
     .sqv6-reco__empty {
         font-family: 'Outfit', sans-serif;
         font-size: 14px;

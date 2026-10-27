@@ -11,11 +11,11 @@
   style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
 >
   {{-- Media --}}
-  <div class="relative flex flex-col justify-end items-end p-[4px_4px] lg:p-[5px_6px] gap-[5px] lg:gap-[8px] w-full h-[115px] lg:h-[183px] isolate overflow-hidden box-border">
+  <div class="relative flex flex-col justify-end items-end p-[4px_4px] lg:p-[5px_6px] gap-[5px] lg:gap-[8px] w-full aspect-square isolate overflow-hidden box-border">
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"
-      class="absolute inset-0 z-0 w-full h-full object-cover rounded-t-[6px] lg:rounded-t-[8px] transition-transform duration-300 group-hover:scale-105"
+      class="absolute inset-0 z-0 w-full h-full object-contain rounded-t-[6px] lg:rounded-t-[8px] transition-transform duration-300 group-hover:scale-105"
     />
 @if (!empty($p['isOutOfStock']))
 <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
