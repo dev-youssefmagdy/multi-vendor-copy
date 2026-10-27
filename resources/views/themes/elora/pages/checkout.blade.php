@@ -450,6 +450,33 @@
                         @endforeach
                     </div>
 
+                    {{-- Coupon (all breakpoints) --}}
+                    <div class="pt-4 border-t border-gray-200 flex flex-col gap-2">
+                        @if ($appliedCoupon)
+                            <div class="flex items-center justify-between gap-3 bg-[#f0fdf4] border border-[#bbf7d0] rounded-[12px] px-4 py-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <svg class="w-4 h-4 text-[#16a34a] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-[#166534] truncate">{{ $appliedCoupon->code }}</span>
+                                </div>
+                                <button type="button" wire:click="removeCoupon" class="text-[13px] text-[#dc2626] hover:underline shrink-0">{{ __('Remove') }}</button>
+                            </div>
+                        @else
+                            <div class="flex items-center border border-gray-300 rounded-full h-[48px] overflow-hidden bg-white">
+                                <input wire:model="data.coupon.code" wire:keydown.enter.prevent="applyCoupon" type="text"
+                                    placeholder="{{ __('Enter coupon or promo code') }}" autocomplete="off"
+                                    class="flex-1 min-w-0 px-4 text-sm outline-none text-[#171717] placeholder-[#8F8F8F] h-full bg-transparent">
+                                <button type="button" wire:click="applyCoupon" wire:loading.attr="disabled" wire:target="applyCoupon"
+                                    class="bg-[var(--color-primary)] text-white px-5 h-full text-sm font-medium shrink-0 disabled:opacity-60">
+                                    <span wire:loading.remove wire:target="applyCoupon">{{ __('Apply') }}</span>
+                                    <span wire:loading wire:target="applyCoupon">...</span>
+                                </button>
+                            </div>
+                            @error('data.coupon.code')<p class="text-xs text-[#dc2626] px-1">{{ $message }}</p>@enderror
+                        @endif
+                    </div>
+
                     {{-- Subtotal + Shipping --}}
                     <div class="pt-4 border-t border-gray-200 flex flex-col gap-3">
                         <div class="flex justify-between items-start">

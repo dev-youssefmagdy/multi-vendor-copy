@@ -285,6 +285,28 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                         </div>
                     </div>
 
+                    {{-- Mobile Coupon (desktop has it in the order summary) --}}
+                    <div class="lg:hidden mt-6">
+                        @if ($appliedCoupon)
+                            <div class="flex items-center justify-between bg-[#f0fdf4] border border-[#bbf7d0] rounded-lg px-3 py-2 h-12">
+                                <span class="text-xs text-[#166534] font-medium">{{ __('":code" applied', ['code' => $appliedCoupon->code]) }}</span>
+                                <button wire:click="removeCoupon" type="button"
+                                    class="text-xs text-[#dc2626] font-semibold hover:underline ml-3 shrink-0">{{ __('Remove') }}</button>
+                            </div>
+                        @else
+                            <div class="flex items-center w-full border border-[#CACACA] rounded-lg overflow-hidden h-12 bg-white">
+                                <input wire:model="couponCode" type="text" placeholder="{{ __('Enter the discount code') }}"
+                                    class="flex-1 min-w-0 px-3 text-sm bg-transparent outline-none text-[#171717] placeholder-[#ADADAD] h-full"
+                                    wire:keydown.enter="applyCoupon">
+                                <button wire:click="applyCoupon" type="button"
+                                    class="bg-[var(--color-primary)] text-white px-5 h-full text-sm font-medium shrink-0">{{ __('Apply') }}</button>
+                            </div>
+                            @error('coupon')
+                                <p class="text-xs text-[#dc2626] mt-1">{{ $message }}</p>
+                            @enderror
+                        @endif
+                    </div>
+
                     {{-- Mobile CTA --}}
                     <div
                         class="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px] sm:h-auto">
