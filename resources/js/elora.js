@@ -345,7 +345,7 @@ tailwind.config = {
 
 // ── Favorites: heart toggle ──────────────────────────────────────────────────
 // Shared by every elora home variant / card. Any `button[data-fav]` heart is
-// toggled by eloraHeartToggle(); the product page has its own (#elora-fav-btn).
+// toggled by eloraHeartToggle(); the product page has its own ([data-fav-btn]).
 (function () {
     const FAV_KEY = 'elora_favorites';
     const ACTIVE_COLOR = '#FF4D00';
@@ -353,7 +353,7 @@ tailwind.config = {
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="' + ACTIVE_COLOR + '" stroke="' + ACTIVE_COLOR + '" stroke-width="1.5" stroke-linejoin="round">' +
         '<path d="M12.62 20.81c-.34.12-.9.12-1.24 0C8.48 19.82 2 15.69 2 8.69 2 5.6 4.49 3.1 7.56 3.1c1.82 0 3.43.88 4.44 2.24 1.01-1.36 2.63-2.24 4.44-2.24C19.51 3.1 22 5.6 22 8.69c0 7-6.48 11.13-9.38 12.12Z"/></svg>'
     );
-    const HEART_SELECTOR = 'button[data-fav]:not(#elora-fav-btn):not(.souqify-fav-btn)';
+    const HEART_SELECTOR = 'button[data-fav]:not([data-fav-btn]):not(.souqify-fav-btn)';
 
     function getFavs() {
         try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }

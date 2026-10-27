@@ -58,8 +58,25 @@
 
 <main class="flex-grow bg-white pt-4 pb-14 w-full">
     <div class="max-w-[1280px] mx-auto px-5 sm:px-8">
+        @php
+            $favData = json_encode([
+                'id'        => $product->id,
+                'name'      => $product->translationValue('name') ?? $product->slug,
+                'image'     => $mediaItems->first()['src'] ?? null,
+                'url'       => url()->current(),
+                'price'     => $displaySell,
+                'old_price' => $displayReal,
+                'discount'  => $hasDiscount && $discountPct ? '-' . $discountPct . '%' : null,
+                'badge'     => $badgeLabel,
+                'rating'    => $avgRating,
+                'reviews'   => $reviewCount,
+                'weight'    => $weightDisplay,
+                'added'     => now()->timestamp,
+            ]);
+            $isLoggedIn = auth()->guard('storefront')->check();
+        @endphp
         <!-- Mobile Header -->
-        <div class="sm:hidden mb-4 flex items-center gap-3">
+        <div class="sm:hidden mt-8 mb-4 flex items-center gap-3">
             <!-- Back Button -->
             <button class="w-12 h-12 flex justify-center items-center rounded-full border hover:bg-gray-200"
                     aria-label="{{ __('Back') }}" onclick="window.location.href='{{ url('/') }}'">
@@ -105,15 +122,20 @@
                 </div>
             </a>
             <!-- Favorite -->
-            <a href="{{ route('tenant.storefront.favorites') }}"
+<button type="button" data-fav-btn onclick="eloraProductHeartToggle(this)"
+               data-fav="{{ $favData }}"
+               data-logged-in="{{ $isLoggedIn ? 'true' : 'false' }}"
+               data-product-id="{{ $product->id }}"
                class="flex items-center justify-center transition-colors rounded-full w-12 h-12 border hover:bg-gray-200"
-               aria-label="{{ __('Favorites') }}">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none">
-                    <path
-                        d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"
+               aria-label="{{ __('Add to Favorites') }}">
+                <svg class="elora-fav-icon-outline w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none">
+                    <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"
                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-            </a>
+                <svg class="elora-fav-icon-filled w-5 h-5 sm:w-6 sm:h-6 hidden" viewBox="0 0 24 24" fill="var(--color-primary)">
+                    <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"/>
+                </svg>
+            </button>
             <button
                 onclick="eloraOpenShareModal()"
                 class="flex items-center justify-center transition-colors rounded-full w-12 h-12 border hover:bg-gray-200"
@@ -563,26 +585,9 @@
                         <span id="elora-add-to-cart-label">{{ __('Add to Cart') }}</span>
                     </button>
                     {{-- Favorite / heart button --}}
-                    @php
-                        $favData = json_encode([
-                            'id'        => $product->id,
-                            'name'      => $product->translationValue('name') ?? $product->slug,
-                            'image'     => $mediaItems->first()['src'] ?? null,
-                            'url'       => url()->current(),
-                            'price'     => $displaySell,
-                            'old_price' => $displayReal,
-                            'discount'  => $hasDiscount && $discountPct ? '-' . $discountPct . '%' : null,
-                            'badge'     => $badgeLabel,
-                            'rating'    => $avgRating,
-                            'reviews'   => $reviewCount,
-                            'weight'    => $weightDisplay,
-                            'added'     => now()->timestamp,
-                        ]);
-                        $isLoggedIn = auth()->guard('storefront')->check();
-                    @endphp
                     <button type="button"
-                            id="elora-fav-btn"
-                            onclick="eloraHeartToggle(this)"
+                            data-fav-btn
+                            onclick="eloraProductHeartToggle(this)"
                             data-fav="{{ $favData }}"
                             data-logged-in="{{ $isLoggedIn ? 'true' : 'false' }}"
                             data-product-id="{{ $product->id }}"
@@ -590,14 +595,14 @@
                             class="w-12 h-12 bg-white rounded-full flex items-center justify-center z-10 transition-transform hover:scale-110"
                             style="box-shadow:0 4px 4px rgba(0,0,0,.15)">
                         {{-- outline heart (default) --}}
-                        <svg id="elora-fav-icon-outline" class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none">
+                        <svg class="elora-fav-icon-outline w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"
                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                 stroke-linejoin="round"/>
                         </svg>
                         {{-- filled heart (when favorited) --}}
-                        <svg id="elora-fav-icon-filled" class="w-3 h-3 sm:w-5 sm:h-5 hidden" viewBox="0 0 24 24" fill="var(--color-primary)">
+                        <svg class="elora-fav-icon-filled w-3 h-3 sm:w-5 sm:h-5 hidden" viewBox="0 0 24 24" fill="var(--color-primary)">
                             <path
                                 d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"/>
                         </svg>
@@ -634,16 +639,19 @@
                         </div>
                     </div>
 
-                    <button type="button"
-                            onclick="eloraHeartToggle(this)"
+                    <button type="button" data-fav-btn
+                            onclick="eloraProductHeartToggle(this)"
                             data-fav="{{ $favData }}"
                             data-logged-in="{{ $isLoggedIn ? 'true' : 'false' }}"
                             data-product-id="{{ $product->id }}"
                             aria-label="{{ __('Add to Favorites') }}"
                             class="w-11 h-11 bg-white rounded-full flex items-center justify-center flex-shrink-0 transition-transform hover:scale-110 border border-gray-200 shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                        <svg class="elora-fav-icon-outline w-5 h-5" viewBox="0 0 24 24" fill="none">
                             <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"
                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg class="elora-fav-icon-filled w-5 h-5 hidden" viewBox="0 0 24 24" fill="#FF4D00">
+                            <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z"/>
                         </svg>
                     </button>
 

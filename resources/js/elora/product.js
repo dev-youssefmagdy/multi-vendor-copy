@@ -662,23 +662,18 @@ window.eloraOpenDeliveryModal = function () {
             }
 
             function syncHeartUI(favorited) {
-                var outline = document.getElementById('elora-fav-icon-outline');
-                var filled  = document.getElementById('elora-fav-icon-filled');
-                var btn     = document.getElementById('elora-fav-btn');
-                if (!outline || !filled || !btn) return;
-                if (favorited) {
-                    outline.classList.add('hidden');
-                    filled.classList.remove('hidden');
-                    btn.style.color = '#FF4D00';
-                } else {
-                    filled.classList.add('hidden');
-                    outline.classList.remove('hidden');
-                    btn.style.color = '';
-                }
+                document.querySelectorAll('[data-fav-btn]').forEach(function (btn) {
+                    var outline = btn.querySelector('.elora-fav-icon-outline');
+                    var filled  = btn.querySelector('.elora-fav-icon-filled');
+                    if (!outline || !filled) return;
+                    outline.classList.toggle('hidden', favorited);
+                    filled.classList.toggle('hidden', !favorited);
+                    btn.style.color = favorited ? '#FF4D00' : '';
+                });
             }
 
             // Expose toggle function globally
-            window.eloraHeartToggle = function (btn) {
+            window.eloraProductHeartToggle = function (btn) {
                 var isLoggedIn = btn.getAttribute('data-logged-in') === 'true';
 
                 if (!isLoggedIn) {
@@ -712,14 +707,14 @@ window.eloraOpenDeliveryModal = function () {
                             showStorefrontToast(window.__eloraProductConfig && window.__eloraProductConfig.textAddedFav || window.trans('Added to favorites!'), 'success');
                         }
                     } catch (e) {
-                        console.error('eloraHeartToggle: failed to parse fav data', e);
+                        console.error('eloraProductHeartToggle: failed to parse fav data', e);
                     }
                 }
             };
 
             // Initialise heart state on page load
             document.addEventListener('DOMContentLoaded', function () {
-                var btn = document.getElementById('elora-fav-btn');
+                var btn = document.querySelector('[data-fav-btn]');
                 if (!btn) return;
                 var productId = btn.getAttribute('data-product-id');
                 syncHeartUI(isFavorited(productId));
@@ -727,7 +722,7 @@ window.eloraOpenDeliveryModal = function () {
 
             // Re-sync after Livewire navigations
             document.addEventListener('livewire:navigated', function () {
-                var btn = document.getElementById('elora-fav-btn');
+                var btn = document.querySelector('[data-fav-btn]');
                 if (!btn) return;
                 var productId = btn.getAttribute('data-product-id');
                 syncHeartUI(isFavorited(productId));
