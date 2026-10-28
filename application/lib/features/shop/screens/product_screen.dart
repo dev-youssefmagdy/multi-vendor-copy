@@ -13,6 +13,7 @@ import '../../../themes/shared/primitives.dart';
 import '../../../themes/shared/product_card.dart';
 import '../../../themes/shared/skin.dart';
 import '../commerce_models.dart';
+import '../../../app/providers.dart';
 import '../commerce_providers.dart';
 import '../widgets/shop_widgets.dart';
 
@@ -31,11 +32,18 @@ class ProductScreen extends ConsumerWidget {
           key: const Key('share_product'),
           tooltip: context.tr('Share'),
           onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: slug));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.tr('Link copied'))),
-              );
+            final host = ref.read(tenantControllerProvider).tenant?.domain;
+            final link = host == null ? slug : 'https://$host/products/$slug';
+            try {
+              await ref.read(shareServiceProvider).shareText(link);
+            } catch (_) {
+              // No share sheet available: fall back to copying the link.
+              await Clipboard.setData(ClipboardData(text: link));
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(context.tr('Link copied'))),
+                );
+              }
             }
           },
           icon: const Icon(Icons.ios_share),

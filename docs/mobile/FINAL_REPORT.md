@@ -66,11 +66,27 @@ Defects found/fixed: Android backup + cleartext defaults (fixed). Release still 
 ## KNOWN GAPS
 - Not run on any device/emulator; not tested against a real backend or real payment gateways; deep links unverified with Google/Apple.
 - Placeholders needing input: platform domain, package/bundle id (`com.yourcompany.storeapp`), Android SHA-256, Apple Team ID, store URLs, URL scheme.
-- Fonts are not bundled; backend `lang/` files are gitignored (translations must be provided at deploy).
-- Not built: image search, social login (Google/Apple), push notifications (device-token endpoint exists only).
+- Fonts are not bundled (Flutter falls back to the platform font; a skin `fontFamily` is optional); backend `lang/` files are gitignored (translations must be provided at deploy).
+- Not built: image search, social login (Google/Apple), push delivery (no Firebase). Client registration code exists but is gated by `--dart-define=PUSH_ENABLED=true` and a `PushTokenSource` (default: none), so it is a no-op.
 - Custom-domain verified deep links are not possible without per-tenant builds (see DEEPLINKS.md).
 - Payment URL returned by the server is not scheme-restricted client-side (trusted backend).
 - iOS was never built (no macOS toolchain).
+
+## P8: splash, store entry, gap sweep
+- Splash: Android 12+ splash API (`values-v31`, `values-night-v31`) + legacy `launch_background` (light/dark colour), iOS LaunchScreen
+  with a neutral placeholder mark; label/CFBundleDisplayName = `Store App`. Hand-edited (flutter_native_splash not used).
+  Flutter `SplashScreen` shows cached store logo (`branding.splash_image_url` > logo), name (`branding.app_name`) and primary colour
+  only when the store being opened is known (`TenantState.brandingTenant`); neutral otherwise; fade into home.
+- Backend: bootstrap `branding.splash_image_url` and `branding.app_name` (falls back to store name); test added.
+- Store entry: platform branding, live normalisation preview, Paste button, clipboard suggestion (asks before use, only for dotted/URL text),
+  recents with logos (letter fallback), help sheet, RTL-safe paddings. A deep link while it is shown resolves and replaces it. Tests in
+  `test/widget/store_entry_test.dart`. Invalid/suspended/offline remain dedicated screens.
+- Gap sweep: share via share_plus (product link `https://<domain>/products/<slug>`, clipboard fallback); payment return link arriving
+  outside the WebView routes to `/payment/result` (server still verifies); placeholder launcher icons (Android mipmaps, iOS AppIcon);
+  push registration client (gated, see above).
+- Skipped: QR scanning (mobile_scanner needs camera permissions/native setup and cannot be verified without a device); Install Referrer
+  deferred deep link (no mature cross-platform plugin; Android-only play referrer wrappers are thin and unverified) - documented only;
+  fonts (none bundled, system fallback); iOS native files unverified (no macOS).
 
 ## Production checklist
 1. Set domain, package/bundle ids, SHA-256, Team ID, store URLs; verify well-known files with curl/adb/device.

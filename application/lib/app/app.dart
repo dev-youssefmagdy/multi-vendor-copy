@@ -17,6 +17,7 @@ class MobileApp extends ConsumerStatefulWidget {
 
 class _MobileAppState extends ConsumerState<MobileApp> {
   StreamSubscription<dynamic>? _sub;
+  StreamSubscription<String>? _paySub;
 
   @override
   void initState() {
@@ -28,12 +29,19 @@ class _MobileAppState extends ConsumerState<MobileApp> {
           .read(deepLinkServiceProvider)
           .targets
           .listen(ref.read(tenantControllerProvider.notifier).handleDeepLink);
+      _paySub = ref.read(deepLinkServiceProvider).paymentLocations.listen((loc) {
+        // Only meaningful with an active store; the result screen verifies.
+        if (ref.read(tenantControllerProvider).phase == StartupPhase.ready) {
+          ref.read(routerProvider).go(loc);
+        }
+      });
     });
   }
 
   @override
   void dispose() {
     _sub?.cancel();
+    _paySub?.cancel();
     super.dispose();
   }
 

@@ -45,4 +45,27 @@ class DeepLinkService {
       .map(_normalizer.parseUri)
       .where((t) => t != null)
       .cast<DeepLinkTarget>();
+
+  /// Gateway return links `<scheme>://payment/result?order=..&status=..` that
+  /// arrive outside the payment WebView (e.g. external browser). Mapped to the
+  /// in-app result route; the screen verifies the status server-side, the
+  /// `status` value is only a hint.
+  Stream<String> get paymentLocations => _source.links
+      .map(paymentLocationFor)
+      .where((l) => l != null)
+      .cast<String>();
+
+  static String? paymentLocationFor(Uri u) {
+    if (u.scheme == 'http' || u.scheme == 'https' || u.scheme.isEmpty) {
+      return null;
+    }
+    if (u.host != 'payment' || u.path != '/result') return null;
+    final order = u.queryParameters['order'];
+    if (order == null || order.isEmpty) return null;
+    final status = u.queryParameters['status'];
+    return Uri(path: '/payment/result', queryParameters: {
+      'order': order,
+      if (status != null && status.isNotEmpty) 'status': status,
+    }).toString();
+  }
 }

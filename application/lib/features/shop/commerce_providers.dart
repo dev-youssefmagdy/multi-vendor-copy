@@ -606,6 +606,11 @@ class AuthActions {
     } on AppException {
       // keep the device cart; the user can retry from the cart screen
     }
+    try {
+      await _ref.read(pushRegistrationProvider).register(); // no-op unless enabled
+    } on AppException {
+      // push is best effort
+    }
   }
 
   Future<void> login(String email, String password) async {
@@ -619,6 +624,11 @@ class AuthActions {
   }
 
   Future<void> logout() async {
+    try {
+      await _ref.read(pushRegistrationProvider).unregister();
+    } on AppException {
+      // best effort
+    }
     await _ref.read(authRepositoryProvider).logout(_tenant);
     _ref.invalidate(authSessionProvider);
     _ref.read(sessionEpochProvider.notifier).bump(); // drop all account data

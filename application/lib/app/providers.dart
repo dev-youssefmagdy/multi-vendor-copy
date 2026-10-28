@@ -9,6 +9,8 @@ import '../features/auth/auth_repository.dart';
 import '../features/auth/token_vault.dart';
 import '../features/deeplink/deep_link_service.dart';
 import '../features/deeplink/url_normalizer.dart';
+import '../features/notifications/push_registration.dart';
+import '../features/share/share_service.dart';
 import '../features/startup/tenant_controller.dart';
 import '../features/startup/tenant_state.dart';
 import '../features/tenant/tenant_repository.dart';
@@ -92,3 +94,9 @@ final themeRegistryProvider = Provider((_) => ThemeRegistry());
 final resolvedThemeProvider = Provider((ref) => ref
     .watch(themeRegistryProvider)
     .resolve(ref.watch(tenantControllerProvider.select((s) => s.config))));
+
+final shareServiceProvider = Provider<ShareService>((_) => const SharePlusService());
+final pushTokenSourceProvider =
+    Provider<PushTokenSource>((_) => const NoPushTokenSource());
+final pushRegistrationProvider = Provider((ref) => PushRegistration(
+    ref.watch(apiClientProvider), ref.watch(pushTokenSourceProvider)));
