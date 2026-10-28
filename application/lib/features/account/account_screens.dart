@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/l10n/strings.dart';
+import '../../design/design.dart';
 import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
 import '../shop/commerce_models.dart';
@@ -172,11 +173,11 @@ class _ProfileFormState extends ConsumerState<_ProfileForm> {
         _phone.text = '${p['phone'] ?? ''}';
       }
       return ListView(padding: const EdgeInsets.all(16), children: [
-        TextField(key: const Key('p_name'), controller: _name, decoration: InputDecoration(labelText: context.tr('Name'), errorText: _errors['full_name'])),
+        AppTextField(fieldKey: const Key('p_name'), controller: _name, label: context.tr('Name'), errorText: _errors['full_name']),
         const SizedBox(height: 12),
-        TextField(key: const Key('p_email'), controller: _email, decoration: InputDecoration(labelText: context.tr('Email'), errorText: _errors['email'])),
+        AppTextField(fieldKey: const Key('p_email'), controller: _email, label: context.tr('Email'), errorText: _errors['email']),
         const SizedBox(height: 12),
-        TextField(key: const Key('p_phone'), controller: _phone, decoration: InputDecoration(labelText: context.tr('Phone'), errorText: _errors['phone'])),
+        AppTextField(fieldKey: const Key('p_phone'), controller: _phone, label: context.tr('Phone'), errorText: _errors['phone']),
         const SizedBox(height: 12),
         SkinButton(
             key: const Key('p_save'),
@@ -195,11 +196,11 @@ class _ProfileFormState extends ConsumerState<_ProfileForm> {
         const Divider(height: 32),
         Text(context.tr('Change password'), style: const TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),
-        TextField(key: const Key('pw_current'), controller: _cur, obscureText: true, decoration: InputDecoration(labelText: context.tr('Current password'))),
+        AppTextField(fieldKey: const Key('pw_current'), controller: _cur, password: true, label: context.tr('Current password')),
         const SizedBox(height: 12),
-        TextField(key: const Key('pw_new'), controller: _new, obscureText: true, decoration: InputDecoration(labelText: context.tr('Password'), errorText: _errors['password'])),
+        AppTextField(fieldKey: const Key('pw_new'), controller: _new, password: true, label: context.tr('Password'), errorText: _errors['password']),
         const SizedBox(height: 12),
-        TextField(key: const Key('pw_confirm'), controller: _conf, obscureText: true, decoration: InputDecoration(labelText: context.tr('Confirm password'))),
+        AppTextField(fieldKey: const Key('pw_confirm'), controller: _conf, password: true, label: context.tr('Confirm password')),
         const SizedBox(height: 12),
         SkinButton(
             key: const Key('pw_save'),
@@ -265,7 +266,9 @@ class AddressesScreen extends ConsumerWidget {
                         icon: Icons.location_off_outlined,
                         actionLabel: context.tr('Add address'),
                         onAction: () => _edit(context, ref, null))
-                    : ListView(children: [
+                    : RefreshIndicator(
+                        onRefresh: () async => ref.invalidate(addressesProvider),
+                        child: ListView(physics: const AlwaysScrollableScrollPhysics(), children: [
                         for (final a in list)
                           ListTile(
                             key: Key('addr_${a['id']}'),
@@ -297,7 +300,7 @@ class AddressesScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                      ]))),
+                      ])))),
       );
 
   Future<void> _edit(BuildContext context, WidgetRef ref, Map<String, dynamic>? a) async {
@@ -429,7 +432,9 @@ class FavoritesScreen extends ConsumerWidget {
                         icon: Icons.favorite_border,
                         actionLabel: context.tr('Continue shopping'),
                         onAction: () => openRoute(context, '/home'))
-                    : ProductGridView(key: const Key('favorites_grid'), products: items))),
+                    : RefreshIndicator(
+                        onRefresh: () async => ref.invalidate(favoritesListProvider),
+                        child: ProductGridView(key: const Key('favorites_grid'), products: items)))),
       );
 }
 

@@ -21,7 +21,10 @@ class ReturnsScreen extends ConsumerWidget {
                 onRetry: () => ref.invalidate(returnsProvider),
                 data: (list) => list.isEmpty
                     ? EmptyView(context.tr('No returns yet'), icon: Icons.assignment_return_outlined)
-                    : ListView.separated(
+                    : RefreshIndicator(
+                        onRefresh: () async => ref.invalidate(returnsProvider),
+                        child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: list.length,
                         separatorBuilder: (_, _) => const Divider(height: 1),
                         itemBuilder: (_, i) {
@@ -33,7 +36,7 @@ class ReturnsScreen extends ConsumerWidget {
                             trailing: StatusChip('${r['status']}'),
                             onTap: () => openRoute(context, '/returns/${r['id']}'),
                           );
-                        }))),
+                        })))),
       );
 }
 
