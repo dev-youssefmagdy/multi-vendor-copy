@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/l10n/strings.dart';
+import '../theme/theme_mode.dart';
 import '../../design/design.dart';
 import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
@@ -58,6 +59,7 @@ class AccountScreen extends ConsumerWidget {
           _tile(context, Icons.percent, 'Offers', '/list/offers'),
           const Divider(),
           _tile(context, Icons.language, 'Preferences', '/account/preferences'),
+          const _ThemeModeTile(),
           const PagesListSection(),
           const _AboutTile(),
           if (ok) ...[
@@ -514,6 +516,31 @@ class _AboutTile extends ConsumerWidget {
       leading: const Icon(Icons.info_outline),
       title: Text(context.tr('About')),
       children: [FooterInfo(text: text, copyright: copy, social: cfg.socialLinks)],
+    );
+  }
+}
+
+/// Light / dark / system appearance toggle (stored per device).
+class _ThemeModeTile extends ConsumerWidget {
+  const _ThemeModeTile();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(themeModeProvider);
+    return ListTile(
+      key: const Key('theme_mode_tile'),
+      leading: const Icon(Icons.brightness_6_outlined),
+      title: Text(context.tr('Appearance')),
+      subtitle: SegmentedButton<ThemeMode>(
+        key: const Key('theme_mode_toggle'),
+        showSelectedIcon: false,
+        segments: [
+          ButtonSegment(value: ThemeMode.system, label: Text(context.tr('System'))),
+          ButtonSegment(value: ThemeMode.light, label: Text(context.tr('Light'))),
+          ButtonSegment(value: ThemeMode.dark, label: Text(context.tr('Dark'))),
+        ],
+        selected: {mode},
+        onSelectionChanged: (v) => ref.read(themeModeProvider.notifier).set(v.first),
+      ),
     );
   }
 }

@@ -43,7 +43,7 @@ class ProductCard extends StatelessWidget {
           child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: r.topLeft),
               child: ColoredBox(
-                  color: s.themeSlug == 'ecommet' ? const Color(0xFFF8F8F8) : s.muted,
+                  color: s.themeSlug == 'ecommet' && !s.isDark ? const Color(0xFFF8F8F8) : s.muted,
                   child: NetImage(p.image, fit: s.imageFit)))),
       if (badgeText != null)
         PositionedDirectional(

@@ -7,6 +7,7 @@ import '../../../design/design.dart';
 import '../../../themes/shared/primitives.dart';
 import '../../../themes/shared/models.dart';
 import '../../../themes/shared/skin.dart';
+import '../../theme/theme_mode.dart';
 import '../commerce_models.dart';
 import '../commerce_providers.dart';
 import '../widgets/shop_widgets.dart';
@@ -84,7 +85,7 @@ class _ListingScreenState extends ConsumerState<ListingScreen> {
   }
 
   Future<void> _openFilters() async {
-    final skin = ref.read(resolvedThemeProvider).skin;
+    final skin = effectiveSkin(context, ref, ref.read(resolvedThemeProvider));
     final r = await showModalBottomSheet<ListingQuery>(
       context: context,
       isScrollControlled: true,

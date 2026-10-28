@@ -101,7 +101,7 @@ class _CartBodyState extends ConsumerState<_CartBody> {
         ),
         Material(
           elevation: Elevation.sheet,
-          color: Colors.white,
+          color: s.surface,
           child: SafeArea(
             top: false,
             child: Padding(

@@ -42,7 +42,7 @@ class HeaderBar extends StatelessWidget {
         height: 42,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-            color: filled ? s.muted : Colors.white,
+            color: filled ? s.muted : s.surface,
             border: filled ? null : Border.all(color: s.border),
             borderRadius: BorderRadius.circular(searchRadius)),
         child: Row(children: [
@@ -53,7 +53,7 @@ class HeaderBar extends StatelessWidget {
       ),
     );
     return Material(
-      color: Colors.white,
+      color: s.surface,
       elevation: st == HeaderStyle.eloraV3 || st == HeaderStyle.eloraV6 ? 1 : 0,
       child: SafeArea(
         bottom: false,
@@ -145,8 +145,8 @@ class HomeSliverAppBar extends StatelessWidget {
       floating: true,
       snap: true,
       pinned: false,
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
+      backgroundColor: s.surface,
+      surfaceTintColor: s.surface,
       scrolledUnderElevation: Elevation.card,
       titleSpacing: Space.gutter,
       toolbarHeight: 56,
@@ -182,7 +182,7 @@ class HomeSliverAppBar extends StatelessWidget {
                 height: kMinTouch,
                 padding: const EdgeInsets.symmetric(horizontal: Space.x4),
                 decoration: BoxDecoration(
-                    color: s.searchFilled ? s.muted : Colors.white,
+                    color: s.searchFilled ? s.muted : s.surface,
                     border: s.searchFilled ? null : Border.all(color: s.border),
                     borderRadius: BorderRadius.circular(s.searchRadius)),
                 child: Row(children: [
@@ -244,7 +244,7 @@ class AppBottomNav extends StatelessWidget {
     // `current` indexes the default order (Home=0, Categories=1, Cart=2, Fav=3, Account=4).
     final currentKey = current >= 0 && current < _default.length ? _default[current] : '';
     return Container(
-      decoration: BoxDecoration(color: Colors.white, boxShadow: Elevation.shadow(Elevation.bar)),
+      decoration: BoxDecoration(color: s.surface, boxShadow: Elevation.shadow(Elevation.bar)),
       child: SafeArea(
         top: false,
         child: SizedBox(

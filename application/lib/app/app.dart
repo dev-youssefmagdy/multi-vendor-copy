@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'connectivity_banner.dart';
+import '../features/theme/theme_mode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/shop/commerce_providers.dart';
@@ -51,6 +52,8 @@ class _MobileAppState extends ConsumerState<MobileApp> {
       title: ref.watch(tenantControllerProvider.select((s) => s.config?.displayName)) ??
           'Store',
       theme: theme.tokens.toThemeData(),
+      darkTheme: theme.tokens.toDarkThemeData(),
+      themeMode: ref.watch(themeModeProvider),
       routerConfig: router,
       builder: (context, child) {
         // Honour user text scaling but cap at 200% so layouts stay usable.

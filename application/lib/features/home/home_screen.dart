@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/theme_mode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../design/design.dart';
@@ -43,7 +44,7 @@ class HomeScreen extends ConsumerWidget {
     final s = ref.watch(tenantControllerProvider);
     final theme = ref.watch(resolvedThemeProvider);
     final config = s.config;
-    final skin = theme.skin;
+    final skin = effectiveSkin(context, ref, theme);
     final sections = visibleSections(config, theme);
     final name = config?.displayName ?? s.tenant?.name ?? 'Store';
 

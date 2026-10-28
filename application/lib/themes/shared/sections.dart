@@ -455,7 +455,7 @@ class FlashSaleStrip extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-          color: ecommet ? const Color(0xFFFEF2F2) : s.primary.withValues(alpha: 0.08),
+          color: ecommet && !s.isDark ? const Color(0xFFFEF2F2) : s.primary.withValues(alpha: s.isDark ? 0.16 : 0.08),
           borderRadius: BorderRadius.circular(ecommet ? 0 : s.radius + 4),
           border: Border.symmetric(
               horizontal: BorderSide(color: s.primary.withValues(alpha: 0.2)))),

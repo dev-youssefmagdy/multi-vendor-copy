@@ -81,6 +81,22 @@ class ThemeSkin {
   Color get border => isDark ? const Color(0xFF3A3A3A) : const Color(0xFFE7E7E7);
   Color get muted => isDark ? const Color(0xFF262626) : const Color(0xFFF5F5F5);
 
+  /// Dark counterpart derived safely from this skin: neutral dark surfaces,
+  /// brand colors lifted until they reach AA contrast on the dark background.
+  ThemeSkin toDark() {
+    if (isDark) return this;
+    const bg = Color(0xFF121212);
+    return copyWith(
+      primary: Contrast.ensureAA(primary, bg),
+      secondary: Contrast.ensureAA(secondary, bg),
+      background: bg,
+      text: const Color(0xFFEDEDED),
+      subtitle: const Color(0xFFA8A8A8),
+      success: Contrast.ensureAA(success, bg),
+      error: Contrast.ensureAA(error, bg),
+    );
+  }
+
   /// Variant defaults (blade/CSS) overlaid with bootstrap colors.
   factory ThemeSkin.resolve(
       String themeSlug, String variantKey, Map<String, String> colors) {

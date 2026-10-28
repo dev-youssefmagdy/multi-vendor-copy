@@ -15,7 +15,7 @@ class NetImage extends StatelessWidget {
     final ph = Container(
         width: width,
         height: height,
-        color: const Color(0xFFF5F5F5),
+        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF262626) : const Color(0xFFF5F5F5),
         alignment: Alignment.center,
         child: const Icon(Icons.image_outlined, color: Color(0xFFC4C4C4)));
     final u = url;

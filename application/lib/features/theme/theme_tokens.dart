@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
+import '../../design/tokens.dart';
 
 /// Design tokens derived from bootstrap colors with safe defaults.
 class ThemeTokens {
@@ -57,8 +58,24 @@ class ThemeTokens {
     );
   }
 
-  ThemeData toThemeData() {
+  /// Dark counterpart: neutral dark surfaces, brand colors lifted to AA.
+  ThemeData toDarkThemeData() {
+    const bg = Color(0xFF121212);
+    final dark = ThemeTokens(
+      primary: Contrast.ensureAA(primary, bg),
+      secondary: Contrast.ensureAA(secondary, bg),
+      background: bg,
+      surface: const Color(0xFF1E1E1E),
+      onSurface: const Color(0xFFEDEDED),
+      error: Contrast.ensureAA(error, bg),
+      radius: radius,
+    );
+    return dark.toThemeData(brightness: Brightness.dark);
+  }
+
+  ThemeData toThemeData({Brightness brightness = Brightness.light}) {
     final scheme = ColorScheme.fromSeed(
+      brightness: brightness,
       seedColor: primary,
       primary: primary,
       secondary: secondary,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/theme_mode.dart';
 import '../../../design/design.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -54,14 +55,15 @@ class ShopScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final skin = ref.watch(resolvedThemeProvider).skin;
+    final skin = effectiveSkin(context, ref, ref.watch(resolvedThemeProvider));
     return SkinScope(
       skin: skin,
       onOpen: openRoute,
       child: Scaffold(
         backgroundColor: skin.background,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: skin.surface,
+          surfaceTintColor: skin.surface,
           foregroundColor: skin.text,
           elevation: 0,
           scrolledUnderElevation: 1,

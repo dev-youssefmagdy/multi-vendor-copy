@@ -316,7 +316,7 @@ class _StickyBuyBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: Elevation.sheet,
-      color: Colors.white,
+      color: SkinScope.of(context).surface,
       child: SafeArea(
         top: false,
         child: Padding(
