@@ -209,6 +209,7 @@ class OrderController extends Controller
             'shipping_address' => $order->shipping_address,
             'coupon_code' => $order->coupon?->code,
             'items' => $order->items->map(fn ($item) => [
+                'id' => $item->id,
                 'product_id' => $item->product_id,
                 'product_name' => $item->product?->translationValue('name'),
                 'variant_id' => $item->product_variant_id,

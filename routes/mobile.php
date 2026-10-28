@@ -42,6 +42,7 @@ Route::middleware('mobile.tenant')->group(function () {
     Route::get('/categories/{slug}', [CatalogController::class, 'category'])->name('categories.show');
     Route::get('/products', [CatalogController::class, 'products'])->name('products.index');
     Route::get('/products/{slug}', [CatalogController::class, 'product'])->name('products.show');
+    Route::get('/products/{slug}/related', [CatalogController::class, 'related'])->name('products.related');
     Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
     Route::get('/search', [CatalogController::class, 'search'])->name('search');
     Route::get('/search/autocomplete', [CatalogController::class, 'autocomplete'])->name('search.autocomplete');
