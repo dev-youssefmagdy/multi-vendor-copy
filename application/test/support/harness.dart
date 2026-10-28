@@ -34,6 +34,7 @@ class Harness {
     InMemorySecureStore? secure,
     MockTenantRepository? repo,
     Uri? initialLink,
+    List<Override> extraOverrides = const [],
   }) async {
     SharedPreferences.setMockInitialValues(initialPrefs);
     final prefs = await SharedPreferences.getInstance();
@@ -50,7 +51,7 @@ class Harness {
           ..add(shopB, code: 'shopb')
           ..add(shopS));
     final l = FakeDeepLinkSource(initialLink);
-    final c = ProviderContainer(overrides: overrides(prefs, s, r, l));
+    final c = ProviderContainer(overrides: [...overrides(prefs, s, r, l), ...extraOverrides]);
     return Harness._(prefs, s, r, l, c);
   }
 

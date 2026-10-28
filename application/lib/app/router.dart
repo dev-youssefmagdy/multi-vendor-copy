@@ -14,8 +14,18 @@ import '../features/shop/screens/misc_screens.dart';
 import '../features/shop/screens/product_screen.dart';
 import '../features/shop/screens/search_screen.dart';
 import '../features/startup/screens.dart';
+import '../features/startup/store_entry_screen.dart';
 import '../features/tenant/tenant_guard.dart';
 import 'providers.dart';
+
+CustomTransitionPage<void> _fade(GoRouterState s, Widget child) =>
+    CustomTransitionPage<void>(
+      key: s.pageKey,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (_, a, _, c) =>
+          FadeTransition(opacity: CurvedAnimation(parent: a, curve: Curves.easeOut), child: c),
+    );
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -30,7 +40,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         ref.read(tenantControllerProvider), state.uri.toString()),
     errorBuilder: (_, _) => const NotFoundScreen(),
     routes: [
-      GoRoute(path: TenantGuard.splash, builder: (_, _) => const SplashScreen()),
+      GoRoute(
+          path: TenantGuard.splash,
+          pageBuilder: (_, s) => _fade(s, const SplashScreen())),
       GoRoute(
           path: TenantGuard.storeEntry,
           builder: (_, _) => const StoreEntryScreen()),
@@ -46,7 +58,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: TenantGuard.updateRequired,
           builder: (_, _) => const UpdateRequiredScreen()),
-      GoRoute(path: TenantGuard.home, builder: (_, _) => const HomeScreen()),
+      GoRoute(
+          path: TenantGuard.home,
+          pageBuilder: (_, s) => _fade(s, const HomeScreen())),
 
       // Catalog
       GoRoute(
