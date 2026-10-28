@@ -98,6 +98,19 @@ class MobileBootstrapBuilder
             }] = $hex;
         }
 
+        // Panel "Mobile App" overrides win over variant defaults and tenant_theme_colors.
+        $settings = MobileAppSetting::allKeyed();
+        foreach ((array) ($settings['color_overrides'] ?? []) as $token => $hex) {
+            if (is_string($hex) && $hex !== '') {
+                $tokens[str_replace('-', '_', preg_replace('/^--(color-)?/', '', (string) $token))] = $hex;
+            }
+        }
+        foreach (['primary_color' => 'primary', 'secondary_color' => 'secondary'] as $key => $token) {
+            if (!empty($settings[$key]) && is_string($settings[$key])) {
+                $tokens[$token] = $settings[$key];
+            }
+        }
+
         return $tokens;
     }
 

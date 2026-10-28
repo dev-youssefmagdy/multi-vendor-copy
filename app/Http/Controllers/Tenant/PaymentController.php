@@ -280,7 +280,7 @@ class PaymentController extends Controller
      *
      * @param  array<string, mixed>  $paymentDetails
      */
-    private function confirmPayment(Order $order, string $gateway, array $paymentDetails, bool $notifyAdmin = true): void
+    public function confirmPayment(Order $order, string $gateway, array $paymentDetails, bool $notifyAdmin = true): void
     {
         if ($order->isCancelled() && $this->cancellationService->recordPaymentAfterCancellation($order, $paymentDetails)) {
             return;

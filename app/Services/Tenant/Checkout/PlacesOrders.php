@@ -169,7 +169,7 @@ class PlacesOrders
 
     // ─── Private helpers (mirrors of the former CheckoutPage private methods) ──
 
-    private function resolveShippingCalculation(array $cartItems, ?int $shippingAddressId, ?int $shippingCountryIdInline, Customer $customer): array
+    public function resolveShippingCalculation(array $cartItems, ?int $shippingAddressId, ?int $shippingCountryIdInline, Customer $customer): array
     {
         $lineWeights = collect($cartItems)
             ->mapWithKeys(fn(array $item) => [(string) ($item['key'] ?? uniqid('cart_', true)) => $this->resolveCartItemWeight($item)])

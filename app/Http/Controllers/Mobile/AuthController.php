@@ -10,6 +10,8 @@ use App\Services\Mobile\MobileTokenService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Services\Mobile\MobilePasswordReset;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -79,12 +81,30 @@ class AuthController extends Controller
         return response()->json(['success' => true]);
     }
 
-    /** Always 200 (no account enumeration). Reset mail delivery is not wired for storefront customers yet. */
-    public function forgotPassword(Request $request): JsonResponse
+    /** Always 200 (no account enumeration). The reset token is e-mailed; delivery failures are logged only. */
+    public function forgotPassword(Request $request, MobilePasswordReset $reset): JsonResponse
     {
         $request->validate(['email' => 'required|email']);
 
+        if ($token = $reset->issue((string) $request->input('email'))) {
+            try {
+                Mail::raw(__('Your password reset code: :token (valid for :min minutes).', ['token' => $token, 'min' => MobilePasswordReset::TTL_MINUTES]),
+                    fn ($m) => $m->to($request->input('email'))->subject(__('Reset your password')));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
         return response()->json(['success' => true, 'message' => 'If the email exists, reset instructions will be sent.']);
+    }
+
+    public function resetPassword(Request $request, MobilePasswordReset $reset): JsonResponse
+    {
+        $request->validate(['email' => 'required|email', 'token' => 'required|string', 'password' => 'required|min:8|confirmed']);
+
+        return $reset->reset((string) $request->input('email'), (string) $request->input('token'), (string) $request->input('password'), $this->tokens)
+            ? response()->json(['success' => true])
+            : response()->json(['success' => false, 'message' => 'Invalid or expired reset code.', 'code' => 'invalid_reset_token'], 422);
     }
 
     public function deleteAccount(Request $request): JsonResponse

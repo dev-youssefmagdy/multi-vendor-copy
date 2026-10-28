@@ -72,7 +72,7 @@ Not tested / notes:
 * Run `php artisan tenants:migrate` for every tenant DB (only e57e205f has been migrated).
 * Not exercised end-to-end: confirmMarkPaid, payout release, gateway charge/callback, mixed carts, coupon checkout, central-gateway (collected_by=platform) checkout, starter-kit theme render.
 * Ledger `settlements_received` sums settlement `total` (incl. fee) while the principal is `product_cost` - review.
-* CouponController / CartPage::applyCoupon still use inline coupon preview maths (should call OrderPricing::couponDiscount).
+* CartPage::applyCoupon still uses inline coupon preview maths (CouponController now calls OrderPricing::couponDiscount).
 * Orders report page shows only the Platform Profit card (no Vendor Profit chart).
 
 ## Multi-country targeting for banners, coupons & flash sales (2026-10-28)

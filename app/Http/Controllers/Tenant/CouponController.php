@@ -90,10 +90,7 @@ class CouponController extends Controller
         $currency = $repo->currentCurrency();
         $rate = (float) ($currency?->conversion_rate ?? 1.0);
 
-        $discountBase = match ($coupon->type) {
-            CouponType::Percentage => $cartTotal * (float) $coupon->value / 100,
-            CouponType::Fixed => min((float) $coupon->value, $cartTotal),
-        };
+        $discountBase = \App\Support\OrderPricing::couponDiscount($coupon->type->value, (float) $coupon->value, $cartTotal);
 
         return [
             'code' => $coupon->code,

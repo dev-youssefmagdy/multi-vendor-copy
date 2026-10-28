@@ -6,4 +6,6 @@ return [
     'android_sha256' => env('MOBILE_ANDROID_SHA256'),
     // "<TeamID>.<BundleID>"
     'ios_app_id' => env('MOBILE_IOS_APP_ID'),
+    // Custom scheme the payment success/cancel pages redirect to (WebView intercepts it).
+    'deep_link_scheme' => env('MOBILE_DEEP_LINK_SCHEME', 'storeapp'),
 ];

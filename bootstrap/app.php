@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function (): void {
             \Illuminate\Support\Facades\Route::prefix('api/mobile/v1')
+                ->middleware('mobile.envelope')
                 ->name('mobile.')
                 ->group(base_path('routes/mobile.php'));
             \Illuminate\Support\Facades\Route::middleware('web')
@@ -42,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
             'mobile.tenant' => \App\Http\Middleware\ResolveMobileTenant::class,
+            'mobile.envelope' => \App\Http\Middleware\WrapMobileEnvelope::class,
             'mobile.auth' => \App\Http\Middleware\AuthenticateMobileToken::class,
             'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
             'store.launch.gate' => \App\Http\Middleware\StoreLaunchGate::class,

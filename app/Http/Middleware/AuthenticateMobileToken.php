@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Tenant\MobileCart;
 use App\Services\Mobile\MobileTokenService;
 use Closure;
 use Illuminate\Http\Request;
@@ -38,6 +39,29 @@ class AuthenticateMobileToken
         $request->setUserResolver(fn () => $customer);
         $request->attributes->set('mobile_token', $token);
 
-        return $next($request);
+        // Hydrate the customer's server-side cart into the (in-memory) session keys the existing
+        // cart / coupon / checkout services read, then persist whatever they changed.
+        $tenantModel = tenancy()->tenant;
+        $cart = MobileCart::query()->where('customer_id', $customer->id)->first();
+        session(['storefront_cart' => (array) ($cart?->items ?? [])]);
+        $cart?->coupon_code ? session(['storefront_coupon' => $cart->coupon_code]) : session()->forget('storefront_coupon');
+
+        $response = $next($request);
+
+        // Some services run work in the central context; make sure we write back to the tenant DB.
+        if ($tenantModel && (!tenancy()->initialized || tenancy()->tenant?->getKey() !== $tenantModel->getKey())) {
+            tenancy()->initialize($tenantModel);
+        }
+
+        $items = (array) session('storefront_cart', []);
+        $coupon = session('storefront_coupon');
+        if ($cart || $items !== [] || $coupon) {
+            MobileCart::query()->updateOrCreate(
+                ['customer_id' => $customer->id],
+                ['items' => $items, 'coupon_code' => $coupon],
+            );
+        }
+
+        return $response;
     }
 }

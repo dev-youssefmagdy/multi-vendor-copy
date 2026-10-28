@@ -37,7 +37,7 @@ class HomeController extends CatalogController
         ]);
     }
 
-    private function products($collection): array
+    private function productCards($collection): array
     {
         return collect($collection instanceof \Illuminate\Pagination\LengthAwarePaginator ? $collection->items() : $collection)
             ->map(fn ($p) => $this->transformProduct($p))->values()->all();
@@ -58,11 +58,11 @@ class HomeController extends CatalogController
                     'button_text' => $b->translationValue('button_text'),
                 ])->values()->all()];
             case 'categories':
-                return ['categories' => $this->categories($repo)];
+                return ['categories' => $this->categoryTree($repo)];
             case 'categories_new_in':
-                return ['categories' => $this->categories($repo), 'products' => $this->products($repo->newInProducts($limit))];
+                return ['categories' => $this->categoryTree($repo), 'products' => $this->productCards($repo->newInProducts($limit))];
             case 'buy_together':
-                return ['categories' => $this->categories($repo), 'products' => $this->products($repo->randomActiveProducts(2))];
+                return ['categories' => $this->categoryTree($repo), 'products' => $this->productCards($repo->randomActiveProducts(2))];
             case 'flash':
                 return $this->flash($repo);
             case 'tabbed':
@@ -80,11 +80,11 @@ class HomeController extends CatalogController
 
                 return ['promo' => ($promo['image'] || $promo['title']) ? $promo : null];
             case 'trending':
-                return ['products' => $this->products($repo->trendingNowProducts($limit))];
+                return ['products' => $this->productCards($repo->trendingNowProducts($limit))];
             case 'new_in':
-                return ['products' => $this->products($repo->newInProducts($limit)), 'see_all' => 'new-in'];
+                return ['products' => $this->productCards($repo->newInProducts($limit)), 'see_all' => 'new-in'];
             case 'featured':
-                return ['products' => $this->products($repo->featuredProducts($limit))];
+                return ['products' => $this->productCards($repo->featuredProducts($limit))];
             case 'recommended':
                 $items = $repo->recommendedProducts($limit);
                 // Same fallback as the web (bestSellingIfNoRecommended).
@@ -92,7 +92,7 @@ class HomeController extends CatalogController
                     $items = collect($repo->bestSellingProducts($limit)->items());
                 }
 
-                return ['products' => $this->products($items)];
+                return ['products' => $this->productCards($items)];
             case 'top_rated':
                 $items = $repo->homeTopRatedProducts($limit);
                 // Same fallback as the web (productsIfNoTopRated).
@@ -100,19 +100,19 @@ class HomeController extends CatalogController
                     $items = $repo->homeProducts($limit);
                 }
 
-                return ['products' => $this->products($items), 'see_all' => 'top-rated'];
+                return ['products' => $this->productCards($items), 'see_all' => 'top-rated'];
             case 'hot_deals':
                 $flash = $repo->flashProductsByPrice();
 
-                return ['products' => $this->products($flash->isNotEmpty() ? $flash->take($limit)->values() : $repo->featuredProducts($limit))];
+                return ['products' => $this->productCards($flash->isNotEmpty() ? $flash->take($limit)->values() : $repo->featuredProducts($limit))];
             case 'best_selling':
-                return ['products' => $this->products($repo->bestSellingProducts($limit)), 'see_all' => 'best-selling'];
+                return ['products' => $this->productCards($repo->bestSellingProducts($limit)), 'see_all' => 'best-selling'];
             default: // products
-                return ['products' => $this->products($repo->homeProducts($limit))];
+                return ['products' => $this->productCards($repo->homeProducts($limit))];
         }
     }
 
-    private function categories(StorefrontRepository $repo): array
+    private function categoryTree(StorefrontRepository $repo): array
     {
         return $repo->rootCategoriesWithChildren()->map(fn (Category $c) => $this->transformCategory($c))->values()->all();
     }
@@ -137,7 +137,7 @@ class HomeController extends CatalogController
                 'ends_at' => $s->end_date?->toIso8601String(),
                 'banner' => $s->banner_url,
             ])->values()->all(),
-            'products' => $this->products($repo->flashProductsByPrice()->take(20)->values()),
+            'products' => $this->productCards($repo->flashProductsByPrice()->take(20)->values()),
             'banner' => $sales->first()?->banner_url,
             'coupon_code' => $couponCode,
             'ends_at' => $sales->map->end_date->filter()->sort()->first()?->toIso8601String(),
@@ -160,6 +160,6 @@ class HomeController extends CatalogController
             'cat-toprated' => $repo->homeTopRatedProducts($limit),
         };
 
-        return $data + ['tab' => $tab, 'products' => $this->products($items)];
+        return $data + ['tab' => $tab, 'products' => $this->productCards($items)];
     }
 }
