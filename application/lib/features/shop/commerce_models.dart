@@ -136,12 +136,16 @@ class ProductDetail {
       {required this.item,
       required this.numericId,
       this.description,
+      this.images = const [],
+      this.related = const [],
       this.variants = const [],
       this.ratingAvg = 0,
       this.ratingCount = 0});
   final ProductItem item;
   final int numericId;
   final String? description;
+  final List<String> images;
+  final List<ProductItem> related;
   final List<Variant> variants;
   final double ratingAvg;
   final int ratingCount;
@@ -152,6 +156,8 @@ class ProductDetail {
       item: ProductItem.fromJson(j),
       numericId: _n(j['id'])?.toInt() ?? 0,
       description: j['description'] as String?,
+      images: [for (final i in (j['images'] as List? ?? const [])) '$i'],
+      related: productsOf(j['related']),
       variants: [for (final v in _l(j['variants'])) Variant.fromJson(v)],
       ratingAvg: _n(rs['average'])?.toDouble() ?? 0,
       ratingCount: _n(rs['count'])?.toInt() ?? 0,
@@ -189,9 +195,9 @@ class ReviewPage {
 }
 
 class CmsPage {
-  const CmsPage(this.slug, this.title, this.body);
+  const CmsPage(this.slug, this.title, this.body, {this.bodyHtml});
   final String slug;
-  final String? title, body;
+  final String? title, body, bodyHtml;
 }
 
 class PreferenceOptions {

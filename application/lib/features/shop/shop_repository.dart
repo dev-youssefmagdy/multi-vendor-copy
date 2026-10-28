@@ -66,7 +66,8 @@ class RemoteShopRepository implements ShopRepository {
   @override
   Future<CmsPage> cmsPage(String slug) async {
     final d = asMap(await _api.request('/pages/$slug'));
-    return CmsPage('${d['slug']}', d['title'] as String?, d['body'] as String?);
+    return CmsPage('${d['slug']}', d['title'] as String?, d['body'] as String?,
+        bodyHtml: d['body_html'] as String?);
   }
 
   @override

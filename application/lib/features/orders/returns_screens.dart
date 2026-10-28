@@ -182,9 +182,9 @@ class _ReturnRequestState extends ConsumerState<ReturnRequestScreen> {
                         decoration: InputDecoration(labelText: context.tr('Item')),
                         items: [
                           for (final it in items)
-                            if ((it['id'] ?? it['order_item_id']) != null)
+                            if (it['id'] != null)
                               DropdownMenuItem(
-                                  value: ((it['id'] ?? it['order_item_id']) as num).toInt(),
+                                  value: (it['id'] as num).toInt(),
                                   child: Text('${it['product_name']}')),
                         ],
                         onChanged: (v) => setState(() => _itemId = v),

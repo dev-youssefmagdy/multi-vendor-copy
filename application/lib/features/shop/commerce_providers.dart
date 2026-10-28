@@ -131,14 +131,6 @@ final productProvider =
   return ref.watch(shopRepositoryProvider).product(slug);
 });
 
-final relatedProductsProvider = FutureProvider<List<ProductItem>>((ref) async {
-  watchScope(ref);
-  final r = await ref
-      .watch(shopRepositoryProvider)
-      .listing(const ListingQuery(ListingKind.list, slug: 'best-selling'), 1);
-  return r.items.take(8).toList();
-});
-
 final cmsPageProvider = FutureProvider.family<CmsPage, String>((ref, slug) {
   watchScope(ref);
   ref.watch(prefsProvider);

@@ -106,6 +106,21 @@ void main() {
     // blue variant has no stock => chip disabled
     final blue = t.widget<ChoiceChip>(find.byKey(const Key('variant_102')));
     expect(blue.onSelected, isNull);
+    // gallery: 3 dots, swipe moves to the next image
+    expect(find.byKey(const Key('dot_2')), findsOneWidget);
+    await t.drag(find.byKey(const Key('gallery_pager')), const Offset(-300, 0));
+    await t.pumpAndSettle();
+    final pager = t.widget<PageView>(find.byKey(const Key('gallery_pager')));
+    expect(pager.controller, isNull);
+  });
+
+  testWidgets('related products come from the product payload', (t) async {
+    final s = await Shop.create();
+    await s.launch(t);
+    await s.push(t, '/product/p2');
+    await t.scrollUntilVisible(find.byKey(const Key('related_title')), 300,
+        scrollable: find.byType(Scrollable).first);
+    expect(find.byKey(const Key('product_p9')), findsOneWidget);
   });
 
   testWidgets('product not found => error state, unknown route => 404', (t) async {
@@ -123,7 +138,8 @@ void main() {
     final s = await Shop.create();
     await s.launch(t);
     await s.push(t, '/page/about');
-    expect(find.text('Hello world'), findsOneWidget);
+    expect(find.byKey(const Key('cms_body')), findsOneWidget);
+    expect(find.textContaining('Hello', findRichText: true), findsOneWidget);
     s.c.read(routerProvider).pop();
     await t.pumpAndSettle();
     await s.push(t, '/page/missing');

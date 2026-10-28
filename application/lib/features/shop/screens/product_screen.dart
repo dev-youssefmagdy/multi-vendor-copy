@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/platform/html_text.dart';
+import '../../../themes/shared/models.dart';
 import '../../../themes/shared/primitives.dart';
 import '../../../themes/shared/product_card.dart';
 import '../../../themes/shared/skin.dart';
@@ -81,10 +82,7 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
     final desc = htmlToText(d.description);
     return ListView(children: [
       Stack(children: [
-        AspectRatio(
-            aspectRatio: 1,
-            child: ColoredBox(
-                color: s.muted, child: NetImage(p.image, fit: BoxFit.contain))),
+        _Gallery(d.images.isNotEmpty ? d.images : [if (p.image != null) p.image!]),
         PositionedDirectional(
             top: 12, end: 12, child: FavoriteHeart(p.id, size: 22)),
         if (p.hasDiscount)
@@ -186,7 +184,7 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
           _Reviews(d),
         ]),
       ),
-      const _Related(),
+      _Related(d.related),
       const SizedBox(height: 24),
     ]);
   }
@@ -343,23 +341,71 @@ class _ReviewsState extends ConsumerState<_Reviews> {
   }
 }
 
-class _Related extends ConsumerWidget {
-  const _Related();
+class _Related extends StatelessWidget {
+  const _Related(this.items);
+  final List<ProductItem> items;
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(relatedProductsProvider);
-    return async.maybeWhen(
-      data: (items) => items.isEmpty
-          ? const SizedBox.shrink()
-          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(context.tr('Related products'),
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16))),
-              const SizedBox(height: 8),
-              ProductRow(items),
+  Widget build(BuildContext context) => items.isEmpty
+      ? const SizedBox.shrink()
+      : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(context.tr('Related products'),
+                  key: const Key('related_title'),
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16))),
+          const SizedBox(height: 8),
+          ProductRow(items),
+        ]);
+}
+
+/// Swipeable product gallery with page dots.
+class _Gallery extends StatefulWidget {
+  const _Gallery(this.images);
+  final List<String> images;
+  @override
+  State<_Gallery> createState() => _GalleryState();
+}
+
+class _GalleryState extends State<_Gallery> {
+  int _i = 0;
+  @override
+  Widget build(BuildContext context) {
+    final s = SkinScope.of(context);
+    final imgs = widget.images;
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Stack(children: [
+        Positioned.fill(
+          child: ColoredBox(
+            color: s.muted,
+            child: PageView.builder(
+              key: const Key('gallery_pager'),
+              itemCount: imgs.isEmpty ? 1 : imgs.length,
+              onPageChanged: (v) => setState(() => _i = v),
+              itemBuilder: (_, i) =>
+                  NetImage(imgs.isEmpty ? null : imgs[i], fit: BoxFit.contain),
+            ),
+          ),
+        ),
+        if (imgs.length > 1)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 8,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              for (var k = 0; k < imgs.length; k++)
+                Container(
+                  key: Key('dot_$k'),
+                  width: 7,
+                  height: 7,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: k == _i ? s.primary : s.border),
+                ),
             ]),
-      orElse: () => const SizedBox.shrink(),
+          ),
+      ]),
     );
   }
 }

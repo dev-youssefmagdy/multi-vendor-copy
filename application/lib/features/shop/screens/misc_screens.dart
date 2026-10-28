@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/platform/html_text.dart';
@@ -87,7 +88,12 @@ class CmsPageScreen extends ConsumerWidget {
                     Text(p.title ?? '',
                         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 12),
-                    Text(htmlToText(p.body), key: const Key('cms_body'), style: const TextStyle(height: 1.6)),
+                    if (p.bodyHtml != null && p.bodyHtml!.isNotEmpty)
+                      HtmlWidget(p.bodyHtml!, key: const Key('cms_body'))
+                    else
+                      Text(htmlToText(p.body),
+                          key: const Key('cms_body'),
+                          style: const TextStyle(height: 1.6)),
                   ])),
     );
   }

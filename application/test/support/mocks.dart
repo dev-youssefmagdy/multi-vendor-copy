@@ -63,6 +63,8 @@ class FakeShop implements ShopRepository {
         item: p,
         numericId: int.parse(p.id),
         description: '<p>About <b>${p.name}</b></p>',
+        images: const ['https://img/1.jpg', 'https://img/2.jpg', 'https://img/3.jpg'],
+        related: [prod(9), prod(10)],
         variants: const [
           Variant(id: 101, title: 'Red', stock: 5),
           Variant(id: 102, title: 'Blue', stock: 0),
@@ -81,7 +83,7 @@ class FakeShop implements ShopRepository {
   @override
   Future<CmsPage> cmsPage(String slug) async {
     if (slug == 'missing') throw const ApiException('Page not found.', statusCode: 404);
-    return CmsPage(slug, 'About us', '<p>Hello&nbsp;world</p>');
+    return CmsPage(slug, 'About us', 'Hello world', bodyHtml: '<p>Hello <b>world</b></p>');
   }
 
   @override

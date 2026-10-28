@@ -46,6 +46,7 @@ dependencies:
   connectivity_plus: ^7.3.2
   webview_flutter: ^4.14.1
   image_picker: ^1.2.4
+  flutter_widget_from_html_core: ^0.17.4
 
 dev_dependencies:
   flutter_test:
