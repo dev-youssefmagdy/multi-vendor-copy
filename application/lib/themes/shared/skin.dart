@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../design/design.dart';
 import '../../features/theme/theme_tokens.dart';
 
 enum CardStyle { base, flat, shadow, compact, square, overlay }
@@ -68,6 +69,12 @@ class ThemeSkin {
   final bool showFooter;
   final double searchRadius;
   final bool searchFilled;
+
+  /// Mobile design-system helpers derived from the variant colors.
+  Color get onPrimary => Contrast.on(primary);
+  Color get subtitleAA => Contrast.ensureAA(subtitle, background);
+  Color get primaryAA => Contrast.ensureAA(primary, background);
+  double get touch => kMinTouch;
 
   Color get border => const Color(0xFFE7E7E7);
   Color get muted => const Color(0xFFF5F5F5);
