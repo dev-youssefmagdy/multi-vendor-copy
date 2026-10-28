@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/l10n/strings.dart';
+import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
 import '../shop/commerce_models.dart';
 import '../shop/commerce_providers.dart';
@@ -57,6 +58,7 @@ class AccountScreen extends ConsumerWidget {
           const Divider(),
           _tile(context, Icons.language, 'Preferences', '/account/preferences'),
           const PagesListSection(),
+          const _AboutTile(),
           if (ok) ...[
             const Divider(),
             ListTile(
@@ -489,4 +491,24 @@ class PreferencesScreen extends ConsumerWidget {
   Widget _section(BuildContext c, String t) => Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
       child: Text(c.tr(t), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)));
+}
+
+/// Footer info (about text, social, copyright) moved off home into a collapsible tile.
+class _AboutTile extends ConsumerWidget {
+  const _AboutTile();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cfg = ref.watch(tenantControllerProvider.select((s) => s.config));
+    final text = cfg?.footer['text'] as String?;
+    final copy = cfg?.footer['copyright'] as String?;
+    if (cfg == null || ((text ?? '').isEmpty && (copy ?? '').isEmpty && cfg.socialLinks.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+    return ExpansionTile(
+      key: const Key('about_tile'),
+      leading: const Icon(Icons.info_outline),
+      title: Text(context.tr('About')),
+      children: [FooterInfo(text: text, copyright: copy, social: cfg.socialLinks)],
+    );
+  }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
+import '../../design/design.dart';
 import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
 import '../tenant/tenant_models.dart';
 import '../theme/theme_registry.dart';
-import '../shop/widgets/shop_widgets.dart' show openRoute;
+import '../shop/commerce_providers.dart' show cartCountProvider;
+import '../shop/widgets/shop_widgets.dart' show openRoute, ConnectedBottomNav;
 import 'home_providers.dart';
 
 /// Which bootstrap sections to render, in server order: only keys the active
@@ -49,12 +51,9 @@ class HomeScreen extends ConsumerWidget {
       onOpen: openRoute,
       child: Scaffold(
         backgroundColor: skin.background,
-        bottomNavigationBar: AppBottomNav(showFavorites: config?.feature('favorites', fallback: true) ?? true),
+        bottomNavigationBar: const ConnectedBottomNav(current: 0),
         body: Column(children: [
-          HeaderBar(
-              storeName: name,
-              logoUrl: config?.logoUrl,
-              showFavorites: config?.feature('favorites', fallback: true) ?? true),
+          OfflineBanner(offline: s.fromCache),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -63,28 +62,29 @@ class HomeScreen extends ConsumerWidget {
                   ref.invalidate(homeSectionProvider(sec.key));
                 }
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  for (final sec in sections)
-                    _SectionLoader(key: ValueKey('section_${sec.key}'), sectionKey: sec.key, theme: theme),
-                  const SizedBox(height: 8),
-                  FooterInfo(
-                    text: config?.footer['text'] as String?,
-                    copyright: config?.footer['copyright'] as String?,
-                    social: config?.socialLinks ?? const [],
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Text(
-                          '${theme.definition.slug}/${theme.variantKey}'
-                          '${s.fromCache ? ' (offline cache)' : ''}',
-                          key: const Key('home_marker'),
-                          style: TextStyle(fontSize: 9, color: skin.subtitle)),
+                slivers: [
+                  HomeSliverAppBar(
+                      storeName: name,
+                      logoUrl: config?.logoUrl,
+                      cartCount: ref.watch(cartCountProvider),
+                      showFavorites: config?.feature('favorites', fallback: true) ?? true),
+                  SliverList.list(children: [
+                    for (final sec in sections)
+                      _SectionLoader(key: ValueKey('section_${sec.key}'), sectionKey: sec.key, theme: theme),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(
+                            '${theme.definition.slug}/${theme.variantKey}'
+                            '${s.fromCache ? ' (offline cache)' : ''}',
+                            key: const Key('home_marker'),
+                            style: TextStyle(fontSize: 9, color: skin.subtitleAA)),
+                      ),
                     ),
-                  ),
-                ]),
+                  ]),
+                ],
               ),
             ),
           ),
@@ -103,8 +103,8 @@ class _SectionLoader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(homeSectionProvider(sectionKey));
     return async.when(
-      data: (d) => theme.builderFor(sectionKey)!(context, {...d, 'key': sectionKey}),
-      loading: () => const SizedBox(height: 80),
+      data: (d) => FadeIn(child: theme.builderFor(sectionKey)!(context, {...d, 'key': sectionKey})),
+      loading: () => const SectionSkeleton(),
       error: (_, _) => const SizedBox.shrink(), // a failing section never breaks home
     );
   }

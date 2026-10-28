@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/l10n/strings.dart';
+import '../../design/design.dart';
 import 'primitives.dart';
 import 'skin.dart';
 
@@ -121,51 +122,166 @@ class FooterInfo extends StatelessWidget {
   }
 }
 
-/// Bottom navigation shell (Home / Categories / Cart / Favorites / Account).
+/// Collapsing home app bar: brand + actions, floating search pill that
+/// hides on scroll down and returns on scroll up.
+class HomeSliverAppBar extends StatelessWidget {
+  const HomeSliverAppBar(
+      {super.key, required this.storeName, this.logoUrl, this.showFavorites = true, this.cartCount = 0});
+  final String storeName;
+  final String? logoUrl;
+  final bool showFavorites;
+  final int cartCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = SkinScope.of(context);
+    final logo = logoUrl != null && logoUrl!.isNotEmpty
+        ? SizedBox(height: 32, child: NetImage(logoUrl, fit: BoxFit.contain))
+        : Text(storeName,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: s.text, fontWeight: FontWeight.w900, fontSize: TypeScale.title + 2));
+    return SliverAppBar(
+      key: const Key('home_app_bar'),
+      floating: true,
+      snap: true,
+      pinned: false,
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      scrolledUnderElevation: Elevation.card,
+      titleSpacing: Space.gutter,
+      toolbarHeight: 56,
+      title: Align(alignment: AlignmentDirectional.centerStart, child: logo),
+      actions: [
+        if (showFavorites)
+          IconButton(
+              key: const Key('header_favorites'),
+              tooltip: 'Favorites',
+              onPressed: () => SkinScope.open(context, '/favorites'),
+              icon: Icon(Icons.favorite_border, color: s.text)),
+        IconButton(
+            key: const Key('header_cart'),
+            tooltip: 'Cart',
+            onPressed: () => SkinScope.open(context, '/cart'),
+            icon: Badge(
+                isLabelVisible: cartCount > 0,
+                label: Text('$cartCount'),
+                child: Icon(Icons.shopping_bag_outlined, color: s.text))),
+        const SizedBox(width: Space.x2),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(kMinTouch + Space.x3),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(Space.gutter, 0, Space.gutter, Space.x3),
+          child: Semantics(
+            button: true,
+            label: 'Search products',
+            child: GestureDetector(
+              key: const Key('header_search'),
+              onTap: () => SkinScope.open(context, '/search'),
+              child: Container(
+                height: kMinTouch,
+                padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+                decoration: BoxDecoration(
+                    color: s.searchFilled ? s.muted : Colors.white,
+                    border: s.searchFilled ? null : Border.all(color: s.border),
+                    borderRadius: BorderRadius.circular(s.searchRadius)),
+                child: Row(children: [
+                  Icon(Icons.search, size: 20, color: s.subtitleAA),
+                  const SizedBox(width: Space.x2),
+                  Expanded(
+                      child: Text('Search products',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: s.subtitleAA, fontSize: TypeScale.body))),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Bottom navigation (Home / Categories / Cart w/ badge / Favorites / Account).
+/// [keys] lets the mobile settings choose and order the tabs.
 class AppBottomNav extends StatelessWidget {
-  const AppBottomNav({super.key, this.current = 0, this.showFavorites = true});
+  const AppBottomNav(
+      {super.key, this.current = 0, this.showFavorites = true, this.cartCount = 0, this.keys});
   final int current;
   final bool showFavorites;
+  final int cartCount;
+  final List<String>? keys;
 
-  static const _items = [
-    (Icons.home_outlined, Icons.home, 'Home', '/home'),
-    (Icons.grid_view_outlined, Icons.grid_view, 'Categories', '/category/all'),
-    (Icons.shopping_bag_outlined, Icons.shopping_bag, 'Cart', '/cart'),
-    (Icons.favorite_border, Icons.favorite, 'Favorites', '/favorites'),
-    (Icons.person_outline, Icons.person, 'Account', '/account'),
-  ];
+  static const _all = {
+    'home': (Icons.home_outlined, Icons.home, 'Home', '/home'),
+    'categories': (Icons.grid_view_outlined, Icons.grid_view, 'Categories', '/category/all'),
+    'cart': (Icons.shopping_bag_outlined, Icons.shopping_bag, 'Cart', '/cart'),
+    'favorites': (Icons.favorite_border, Icons.favorite, 'Favorites', '/favorites'),
+    'offers': (Icons.percent, Icons.percent, 'Offers', '/list/offers'),
+    'account': (Icons.person_outline, Icons.person, 'Account', '/account'),
+  };
+  static const _default = ['home', 'categories', 'cart', 'favorites', 'account'];
+
+  /// Parses `settings.bottom_nav` (list of keys or {key} maps); falls back to defaults.
+  static List<String> parseKeys(Object? raw) {
+    final out = <String>[];
+    if (raw is List) {
+      for (final e in raw) {
+        final k = e is Map ? '${e['key'] ?? e['id'] ?? ''}' : '$e';
+        if (_all.containsKey(k) && !out.contains(k)) out.add(k);
+      }
+    }
+    return out.length >= 2 ? out.take(5).toList() : _default;
+  }
 
   @override
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
     final items = [
-      for (final it in _items)
-        if (showFavorites || it.$3 != 'Favorites') it
+      for (final k in keys ?? _default)
+        if ((showFavorites || k != 'favorites') && _all[k] != null) (k, _all[k]!)
     ];
+    // `current` indexes the default order (Home=0, Categories=1, Cart=2, Fav=3, Account=4).
+    final currentKey = current >= 0 && current < _default.length ? _default[current] : '';
     return Container(
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, -2))
-      ]),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: Elevation.shadow(Elevation.bar)),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 58,
+          height: 60,
           child: Row(children: [
-            for (var i = 0; i < items.length; i++)
+            for (final (k, it) in items)
               Expanded(
-                child: InkWell(
-                  key: Key('nav_${items[i].$3.toLowerCase()}'),
-                  onTap: () => SkinScope.open(context, items[i].$4),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Icon(i == current ? items[i].$2 : items[i].$1,
-                        size: 22, color: i == current ? s.primary : s.subtitle),
-                    const SizedBox(height: 2),
-                    Text(context.tr(items[i].$3),
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: i == current ? s.primary : s.subtitle)),
-                  ]),
+                child: Semantics(
+                  button: true,
+                  selected: k == currentKey,
+                  label: it.$3,
+                  child: InkWell(
+                    key: Key('nav_${it.$3.toLowerCase()}'),
+                    onTap: () {
+                      if (k != currentKey) Haptics.tap();
+                      SkinScope.open(context, it.$4);
+                    },
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: kMinTouch),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        Badge(
+                          isLabelVisible: k == 'cart' && cartCount > 0,
+                          label: Text('$cartCount'),
+                          child: Icon(k == currentKey ? it.$2 : it.$1,
+                              size: 24, color: k == currentKey ? s.primaryAA : s.subtitleAA),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(context.tr(it.$3),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: k == currentKey ? s.primaryAA : s.subtitleAA)),
+                      ]),
+                    ),
+                  ),
                 ),
               ),
           ]),

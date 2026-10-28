@@ -53,9 +53,6 @@ class ShopScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final skin = ref.watch(resolvedThemeProvider).skin;
-    final favOn = ref.watch(tenantControllerProvider
-            .select((s) => s.config?.feature('favorites', fallback: true))) ??
-        true;
     return SkinScope(
       skin: skin,
       onOpen: openRoute,
@@ -73,7 +70,7 @@ class ShopScaffold extends ConsumerWidget {
           actions: actions,
         ),
         bottomNavigationBar: bottom ??
-            (navIndex == null ? null : AppBottomNav(current: navIndex!, showFavorites: favOn)),
+            (navIndex == null ? null : ConnectedBottomNav(current: navIndex!)),
         body: SafeArea(top: false, child: body),
       ),
     );
@@ -315,4 +312,20 @@ void showError(BuildContext context, Object e) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(msg)));
+}
+
+/// Bottom nav wired to cart count, favorites flag and `settings.bottom_nav`.
+class ConnectedBottomNav extends ConsumerWidget {
+  const ConnectedBottomNav({super.key, this.current = 0});
+  final int current;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cfg = ref.watch(tenantControllerProvider.select((s) => s.config));
+    return AppBottomNav(
+      current: current,
+      showFavorites: cfg?.feature('favorites', fallback: true) ?? true,
+      cartCount: ref.watch(cartCountProvider),
+      keys: cfg == null ? null : AppBottomNav.parseKeys(cfg.settings['bottom_nav']),
+    );
+  }
 }
