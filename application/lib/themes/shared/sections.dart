@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/home/home_providers.dart';
@@ -35,8 +36,24 @@ class HeroBannerCarousel extends StatefulWidget {
 class _HeroState extends State<HeroBannerCarousel> {
   final _ctl = PageController();
   int _i = 0;
+  Timer? _auto;
+
+  @override
+  void initState() {
+    super.initState();
+    final n = mapList(widget.section['banners']).length;
+    if (n > 1) {
+      _auto = Timer.periodic(const Duration(seconds: 5), (_) {
+        if (!mounted || !_ctl.hasClients) return;
+        _ctl.animateToPage((_i + 1) % n,
+            duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _auto?.cancel();
     _ctl.dispose();
     super.dispose();
   }
@@ -184,19 +201,29 @@ class TrustBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
     final ecommet = s.themeSlug == 'ecommet';
-    final fg = ecommet ? Colors.white : s.text;
+    final souq = s.themeSlug == 'souqify';
+    // souqify v1: blue gradient + white text; v2..v6: amber #FFB00A + dark text.
+    final souqBlue = souq && s.variantKey == 'v1';
+    final fg = ecommet || souqBlue ? Colors.white : (souq ? Colors.black : s.text);
+    final bg = ecommet
+        ? s.success
+        : (souq ? (souqBlue ? null : const Color(0xFFFFB00A)) : s.muted);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: souq ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-          color: ecommet ? s.success : s.muted,
-          borderRadius: BorderRadius.circular(s.radius),
+          color: bg,
+          gradient: souqBlue
+              ? const LinearGradient(
+                  colors: [Color(0xFF002562), Color(0xFF144AA6), Color(0xFF003387)])
+              : null,
+          borderRadius: souq ? null : BorderRadius.circular(s.radius),
           border: ecommet ? Border.all(color: s.success, width: 2) : null),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         for (final it in items)
           Flexible(
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(it.$1, size: 16, color: ecommet ? fg : s.primary),
+              Icon(it.$1, size: 16, color: ecommet || souq ? fg : s.primary),
               const SizedBox(width: 4),
               Flexible(
                   child: Text(it.$2,
@@ -364,8 +391,14 @@ class ProductRail extends StatelessWidget {
     if (products.isEmpty) return const SizedBox.shrink();
     final k = _key(section);
     final t = title ?? sectionTitles[k] ?? k;
+    final see = section['see_all'] as String?;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SectionTitle(t, center: grid),
+      SectionTitle(t,
+          center: grid,
+          actionLabel: see != null ? 'See all' : null,
+          onAction: see == null
+              ? null
+              : () => SkinScope.open(context, see.startsWith('/') ? see : '/category/$see')),
       grid ? LoadMoreProducts(k, products) : ProductRow(products),
     ]);
   }

@@ -14,13 +14,8 @@ class HeaderBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
     final st = s.headerStyle;
-    final searchRadius = switch (st) {
-      HeaderStyle.ecommet => 8.0,
-      HeaderStyle.eloraV2 || HeaderStyle.eloraV6 => 28.0,
-      HeaderStyle.eloraV4 => 12.0,
-      _ => 24.0,
-    };
-    final filled = st != HeaderStyle.eloraV5 && st != HeaderStyle.ecommet;
+    final searchRadius = s.searchRadius;
+    final filled = s.searchFilled;
     final logo = logoUrl != null && logoUrl!.isNotEmpty
         ? SizedBox(height: 32, child: NetImage(logoUrl, fit: BoxFit.contain))
         : Text(storeName,
@@ -85,10 +80,10 @@ class FooterInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
-    final dark = s.themeSlug == 'ecommet' || s.headerStyle == HeaderStyle.eloraV4;
-    final bg = dark ? const Color(0xFF232323) : s.muted;
-    final fg = dark ? Colors.white : s.text;
-    final sub = dark ? Colors.white70 : s.subtitle;
+    if (!s.showFooter) return const SizedBox.shrink();
+    final bg = s.footerBg;
+    const fg = Colors.white;
+    const sub = Colors.white70;
     return Container(
       width: double.infinity,
       color: bg,
