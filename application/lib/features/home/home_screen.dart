@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
 import '../tenant/tenant_models.dart';
 import '../theme/theme_registry.dart';
+import '../shop/widgets/shop_widgets.dart' show openRoute;
 import 'home_providers.dart';
 
 /// Which bootstrap sections to render, in server order: only keys the active
@@ -46,11 +46,7 @@ class HomeScreen extends ConsumerWidget {
 
     return SkinScope(
       skin: skin,
-      onOpen: (ctx, route) {
-        final r = mapRoute(route);
-        final router = GoRouter.maybeOf(ctx);
-        if (r != null && router != null) router.push(r);
-      },
+      onOpen: openRoute,
       child: Scaffold(
         backgroundColor: skin.background,
         bottomNavigationBar: AppBottomNav(showFavorites: config?.feature('favorites', fallback: true) ?? true),

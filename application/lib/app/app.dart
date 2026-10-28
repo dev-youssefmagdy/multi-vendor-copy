@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../features/shop/commerce_providers.dart';
 import '../features/startup/tenant_state.dart';
 import 'providers.dart';
 import 'router.dart';
@@ -49,6 +51,9 @@ class _MobileAppState extends ConsumerState<MobileApp> {
           'Store',
       theme: theme.tokens.toThemeData(),
       routerConfig: router,
+      locale: ref.watch(appLocaleProvider),
+      supportedLocales: const [Locale('en'), Locale('ar'), Locale('he'), Locale('fa'), Locale('ur')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
     );
   }
 }

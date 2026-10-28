@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:application/app/app.dart';
 import 'package:application/features/tenant/tenant_models.dart';
+import 'package:application/features/shop/commerce_providers.dart';
 import '../support/harness.dart';
+import '../support/mocks.dart';
 
 Future<void> pumpApp(WidgetTester t, Harness h) async {
   await t.pumpWidget(UncontrolledProviderScope(
@@ -75,8 +77,19 @@ void main() {
 
   testWidgets('deep link launches into product screen', (t) async {
     final h = await Harness.create(
-        initialLink: Uri.parse('https://shop-b.example.com/product/77'));
-    await pumpApp(t, h);
+        initialLink: Uri.parse('https://shop-b.example.com/product/p77'));
+    t.view.physicalSize = const Size(420, 1100);
+    t.view.devicePixelRatio = 1.0;
+    addTearDown(t.view.resetPhysicalSize);
+    addTearDown(t.view.resetDevicePixelRatio);
+    final shop = FakeShop(count: 80);
+    final c = ProviderContainer(overrides: [
+      ...Harness.overrides(h.prefs, h.secure, h.repo, h.links),
+      shopRepositoryProvider.overrideWithValue(shop),
+    ]);
+    await t.pumpWidget(UncontrolledProviderScope(container: c, child: const MobileApp()));
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('product_name')), findsOneWidget);
     expect(find.text('Product 77'), findsWidgets);
   });
 

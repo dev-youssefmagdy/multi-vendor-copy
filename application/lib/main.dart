@@ -8,6 +8,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   runApp(ProviderScope(
+    // Failed requests are surfaced with a Retry button, not retried silently.
+    retry: (_, _) => null,
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
     child: const MobileApp(),
   ));
