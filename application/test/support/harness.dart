@@ -52,14 +52,16 @@ class Harness {
   }
 
   static List<Override> overrides(SharedPreferences prefs, InMemorySecureStore s,
-          MockTenantRepository r, FakeDeepLinkSource l) =>
+          MockTenantRepository r, FakeDeepLinkSource l,
+          {bool includeAuth = true}) =>
       [
         sharedPreferencesProvider.overrideWithValue(prefs),
         secureStoreProvider.overrideWithValue(s),
         tenantRepositoryProvider.overrideWithValue(r as TenantRepository),
         deepLinkSourceProvider.overrideWithValue(l),
         connectivityProvider.overrideWithValue(FakeConnectivityService()),
-        authRepositoryProvider.overrideWith((ref) =>
-            MockAuthRepository(ref.watch(tokenVaultProvider))),
+        if (includeAuth)
+          authRepositoryProvider.overrideWith((ref) =>
+              MockAuthRepository(ref.watch(tokenVaultProvider))),
       ];
 }

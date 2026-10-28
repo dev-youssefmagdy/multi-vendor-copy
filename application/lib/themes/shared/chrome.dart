@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/strings.dart';
 import 'primitives.dart';
 import 'skin.dart';
 
@@ -159,7 +160,7 @@ class AppBottomNav extends StatelessWidget {
                     Icon(i == current ? items[i].$2 : items[i].$1,
                         size: 22, color: i == current ? s.primary : s.subtitle),
                     const SizedBox(height: 2),
-                    Text(items[i].$3,
+                    Text(context.tr(items[i].$3),
                         style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,

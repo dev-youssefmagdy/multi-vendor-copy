@@ -13,9 +13,16 @@ class NetworkException extends AppException {
 
 /// Server answered with a non-success status.
 class ApiException extends AppException {
-  const ApiException(super.message, {this.statusCode, this.errors});
+  const ApiException(super.message,
+      {this.statusCode, this.errors, this.code, this.data});
   final int? statusCode;
   final Map<String, dynamic>? errors;
+
+  /// Machine readable envelope `code` (e.g. `price_changed`, `cart_empty`).
+  final String? code;
+
+  /// Envelope `data` of an error response (e.g. the fresh quote on 409).
+  final Object? data;
 }
 
 class UnauthorizedException extends AppException {

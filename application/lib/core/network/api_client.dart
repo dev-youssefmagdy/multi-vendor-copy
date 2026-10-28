@@ -21,6 +21,7 @@ class ApiSession {
   TenantContext? tenant;
   String locale = 'en';
   String? currency;
+  int? countryId;
   CancelToken _cancel = CancelToken();
   CancelToken get cancelToken => _cancel;
 
@@ -47,6 +48,7 @@ class HeaderInterceptor extends Interceptor {
     o.headers['X-Platform'] = config.platform;
     o.headers['Accept-Language'] = session.locale;
     if (session.currency != null) o.headers['X-Currency'] = session.currency;
+    if (session.countryId != null) o.headers['X-Country'] = session.countryId;
     o.cancelToken ??= session.cancelToken;
     final t = session.tenant;
     if (t != null && o.extra['no_tenant'] != true) {
@@ -191,10 +193,22 @@ class ApiClient {
     }
   }
 
+  /// Fetches a text body (invoice HTML) with the usual auth/tenant headers.
+  Future<String> requestText(String path) async {
+    try {
+      final r = await dio.get<String>(path,
+          options: Options(responseType: ResponseType.plain));
+      return r.data ?? '';
+    } on DioException catch (e) {
+      throw mapError(e);
+    }
+  }
+
   static dynamic unwrap(dynamic body) {
     if (body is Map && body.containsKey('success')) {
       if (body['success'] == false) {
-        throw ApiException((body['message'] ?? 'Request failed').toString());
+        throw ApiException((body['message'] ?? 'Request failed').toString(),
+            code: body['code']?.toString());
       }
       return body.containsKey('data') ? body['data'] : body;
     }
@@ -208,11 +222,14 @@ class ApiClient {
           ? const NetworkException('Request cancelled')
           : const NetworkException();
     }
-    if (s == 401) return const UnauthorizedException();
     final d = e.response?.data;
+    final code = d is Map ? d['code']?.toString() : null;
+    if (s == 401 && code == null) return const UnauthorizedException();
     return ApiException(
       d is Map && d['message'] != null ? d['message'].toString() : 'HTTP $s',
       statusCode: s,
+      code: code,
+      data: d is Map ? d['data'] : null,
       errors: d is Map && d['errors'] is Map
           ? Map<String, dynamic>.from(d['errors'] as Map)
           : null,

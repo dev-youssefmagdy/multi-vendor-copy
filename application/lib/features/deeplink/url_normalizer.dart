@@ -88,6 +88,11 @@ class UrlNormalizer {
   /// A `?store=<host>` query (custom-domain landing handoff) wins over the
   /// URL host. `api_base`-style parameters are ignored by design.
   DeepLinkTarget? parseUri(Uri uri) {
+    // Gateway return link `<scheme>://payment/result` is handled by the
+    // payment WebView, never as a store switch.
+    if (uri.scheme != 'http' && uri.scheme != 'https' && uri.host == 'payment') {
+      return null;
+    }
     final storeParam = uri.queryParameters['store'];
     String host;
     try {
