@@ -12,6 +12,7 @@ import 'package:application/features/theme/theme_registry.dart';
 import 'package:application/themes/ecommet/ecommet_theme.dart';
 import 'package:application/themes/elora/elora_theme.dart';
 import 'package:application/themes/shared/chrome.dart';
+import 'package:application/themes/souqify/souqify_theme.dart';
 import 'package:application/themes/shared/skin.dart';
 import '../support/harness.dart';
 import '../support/home_fixtures.dart';
@@ -23,7 +24,7 @@ Map<String, Map<String, List<String>>> matrixFromDoc() {
   final out = <String, Map<String, List<String>>>{};
   for (final line in f.readAsLinesSync()) {
     final c = line.split('|').map((e) => e.trim()).toList();
-    if (c.length < 9 || (c[1] != 'ecommet' && c[1] != 'elora')) continue;
+    if (c.length < 9 || (c[1] != 'ecommet' && c[1] != 'elora' && c[1] != 'souqify')) continue;
     out.putIfAbsent(c[1], () => {})[c[2]] = [c[8]]; // raw, resolved below
   }
   for (final t in out.values) {
@@ -66,6 +67,7 @@ void main() {
   final variants = <String, Map<String, List<String>>>{
     'ecommet': ecommetVariants,
     'elora': eloraVariants,
+    'souqify': souqifyVariants,
   };
 
   group('coverage', () {
@@ -78,6 +80,7 @@ void main() {
           }
         }
       });
+      expect(souqifyVariants.keys, ['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
       expect(eloraVariants.keys, ['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
     });
 
@@ -102,6 +105,8 @@ void main() {
       expect(c('elora', 'v2'), const Color(0xFFFF4D00));
       expect(c('elora', 'v5'), const Color(0xFF132092));
       expect(c('ecommet', 'v1'), const Color(0xFF111827));
+      expect(c('souqify', 'v2'), const Color(0xFF8B03BD));
+      expect(c('souqify', 'v6'), const Color(0xFFFF1A90));
       // bootstrap tokens win over defaults
       expect(ThemeSkin.resolve('elora', 'v2', {'primary': '#C0392B'}).primary,
           const Color(0xFFC0392B));

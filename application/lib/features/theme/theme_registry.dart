@@ -3,6 +3,7 @@ import '../tenant/tenant_models.dart';
 import '../../themes/ecommet/ecommet_theme.dart';
 import '../../themes/elora/elora_theme.dart';
 import '../../themes/shared/skin.dart';
+import '../../themes/souqify/souqify_theme.dart';
 import 'theme_tokens.dart';
 
 typedef SectionBuilder = Widget Function(
@@ -48,7 +49,7 @@ class ThemeRegistry {
   static final Map<String, ThemeDefinition> builtIn = {
     'ecommet': buildEcommetDefinition(),
     'elora': buildEloraDefinition(),
-    'souqify': ThemeDefinition(slug: 'souqify', displayName: 'Souqify', radius: 10),
+    'souqify': buildSouqifyDefinition(),
   };
 
   final Map<String, ThemeDefinition> _themes;
