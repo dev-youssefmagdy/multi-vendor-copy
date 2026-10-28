@@ -8,6 +8,14 @@ abstract class AuthRepository {
   Future<void> logout(String tenantId);
   Future<bool> refresh(String tenantId);
   Future<bool> isAuthenticated(String tenantId);
+
+  /// Always succeeds server-side (no account enumeration).
+  Future<void> forgotPassword(String email);
+  Future<void> resetPassword(
+      {required String email,
+      required String token,
+      required String password,
+      required String confirmation});
 }
 
 class RemoteAuthRepository implements AuthRepository {
@@ -63,6 +71,25 @@ class RemoteAuthRepository implements AuthRepository {
   @override
   Future<bool> isAuthenticated(String tenantId) async =>
       (await _vault.readAccess(tenantId)) != null;
+
+  @override
+  Future<void> forgotPassword(String email) async => _api.request(
+      '/auth/forgot-password',
+      method: 'POST',
+      body: {'email': email});
+
+  @override
+  Future<void> resetPassword(
+          {required String email,
+          required String token,
+          required String password,
+          required String confirmation}) async =>
+      _api.request('/auth/reset-password', method: 'POST', body: {
+        'email': email,
+        'token': token,
+        'password': password,
+        'password_confirmation': confirmation,
+      });
 }
 
 class MockAuthRepository implements AuthRepository {
@@ -83,4 +110,13 @@ class MockAuthRepository implements AuthRepository {
   @override
   Future<bool> isAuthenticated(String tenantId) async =>
       (await _vault.readAccess(tenantId)) != null;
+
+  @override
+  Future<void> forgotPassword(String email) async {}
+  @override
+  Future<void> resetPassword(
+          {required String email,
+          required String token,
+          required String password,
+          required String confirmation}) async {}
 }
