@@ -1,3 +1,4 @@
+import '../../design/fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
@@ -34,17 +35,15 @@ class _StoreEntryState extends ConsumerState<StoreEntryScreen> {
       appBar: AppBar(title: const Text('Find your store')),
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.all(16), children: [
-          TextField(
-            key: const Key('store_input'),
+          AppTextField(
+            fieldKey: const Key('store_input'),
             controller: _ctl,
             keyboardType: TextInputType.url,
             autocorrect: false,
             textInputAction: TextInputAction.go,
             onSubmitted: (_) => _submit(),
-            decoration: InputDecoration(
-              labelText: 'Store URL or store code',
-              errorText: message,
-            ),
+            label: 'Store URL or store code',
+            errorText: message,
           ),
           const SizedBox(height: 12),
           FilledButton(

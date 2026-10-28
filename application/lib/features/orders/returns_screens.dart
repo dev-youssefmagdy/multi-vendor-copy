@@ -1,3 +1,4 @@
+import '../../design/fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/errors/app_exception.dart';
@@ -207,18 +208,20 @@ class _ReturnRequestState extends ConsumerState<ReturnRequestScreen> {
                       dd('return_method', 'Return method', _opts(_options!['methods']), _method, (v) => setState(() => _method = v)),
                       if (_type == 'exchange') ...[
                         const SizedBox(height: 12),
-                        TextField(
-                            key: const Key('return_variant'),
+                        AppTextField(
+                            fieldKey: const Key('return_variant'),
                             controller: _variant,
                             keyboardType: TextInputType.number,
-                            decoration: InputDecoration(labelText: context.tr('Replacement variant id'))),
+                            label: context.tr('Replacement variant id')),
                       ],
                       const SizedBox(height: 12),
-                      TextField(
-                          key: const Key('return_desc'),
+                      AppTextField(
+                          fieldKey: const Key('return_desc'),
                           controller: _desc,
                           maxLines: 3,
-                          decoration: InputDecoration(labelText: context.tr('Description'))),
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
+                          label: context.tr('Description')),
                       const SizedBox(height: 12),
                       Wrap(spacing: 8, children: [
                         for (final p in _photos)

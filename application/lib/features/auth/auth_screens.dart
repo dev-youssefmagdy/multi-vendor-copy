@@ -254,12 +254,13 @@ class _ForgotState extends ConsumerState<ForgotPasswordScreen> with _FormState {
     return ShopScaffold(
       title: context.tr('Reset password'),
       body: ListView(padding: const EdgeInsets.all(24), children: [
-        TextField(
-            key: const Key('forgot_email'),
+        AppTextField(
+            fieldKey: const Key('forgot_email'),
             controller: _email,
             enabled: !_sent,
             keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(labelText: context.tr('Email'))),
+            autofillHints: const [AutofillHints.email],
+            label: context.tr('Email')),
         if (!_sent) ...[
           const SizedBox(height: 16),
           SkinButton(
@@ -277,22 +278,25 @@ class _ForgotState extends ConsumerState<ForgotPasswordScreen> with _FormState {
           Text(context.tr('If the email exists, we sent a reset code to it.'),
               key: const Key('forgot_sent')),
           const SizedBox(height: 12),
-          TextField(
-              key: const Key('reset_token'),
+          AppTextField(
+              fieldKey: const Key('reset_token'),
               controller: _token,
-              decoration: InputDecoration(labelText: context.tr('Reset code'))),
+              autocorrect: false,
+              label: context.tr('Reset code')),
           const SizedBox(height: 12),
-          TextField(
-              key: const Key('reset_password'),
+          AppTextField(
+              fieldKey: const Key('reset_password'),
               controller: _pass,
-              obscureText: true,
-              decoration: InputDecoration(labelText: context.tr('Password'), errorText: fieldErrors['password'])),
+              password: true,
+              label: context.tr('Password'),
+              errorText: fieldErrors['password']),
           const SizedBox(height: 12),
-          TextField(
-              key: const Key('reset_confirm'),
+          AppTextField(
+              fieldKey: const Key('reset_confirm'),
               controller: _conf,
-              obscureText: true,
-              decoration: InputDecoration(labelText: context.tr('Confirm password'))),
+              password: true,
+              textInputAction: TextInputAction.done,
+              label: context.tr('Confirm password')),
           if (error != null)
             Padding(padding: const EdgeInsets.only(top: 8), child: Text(error!, key: const Key('auth_error'), style: const TextStyle(color: Colors.red))),
           const SizedBox(height: 16),

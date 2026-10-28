@@ -378,10 +378,11 @@ class _AddressFormState extends ConsumerState<AddressFormScreen> {
     final opts = ref.watch(preferenceOptionsProvider);
     Widget f(String k, String label) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: TextField(
-            key: Key('addr_$k'),
-            controller: _c[k],
-            decoration: InputDecoration(labelText: context.tr(label), errorText: _errors[k])));
+        child: AppTextField(
+            fieldKey: Key('addr_$k'),
+            controller: _c[k]!,
+            label: context.tr(label),
+            errorText: _errors[k]));
     return ShopScaffold(
       title: context.tr(widget.address == null ? 'Add address' : 'Edit address'),
       body: ListView(padding: const EdgeInsets.all(16), children: [
