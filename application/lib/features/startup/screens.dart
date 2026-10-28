@@ -186,28 +186,6 @@ class UpdateRequiredScreen extends ConsumerWidget {
       );
 }
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final s = ref.watch(tenantControllerProvider);
-    final theme = ref.watch(resolvedThemeProvider);
-    return Scaffold(
-      appBar: AppBar(title: Text(s.config?.displayName ?? s.tenant?.name ?? 'Store')),
-      body: Center(
-          child: Text(
-              '${theme.definition.slug}/${theme.variantKey}'
-              '${s.fromCache ? ' (offline cache)' : ''}',
-              key: const Key('home_marker'))),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-        label: const Text('Switch store'),
-        icon: const Icon(Icons.swap_horiz),
-      ),
-    );
-  }
-}
-
 class PlaceholderScreen extends StatelessWidget {
   const PlaceholderScreen({super.key, required this.title});
   final String title;

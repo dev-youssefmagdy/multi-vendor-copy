@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import '../tenant/tenant_models.dart';
+import '../../themes/ecommet/ecommet_theme.dart';
+import '../../themes/shared/skin.dart';
 import 'theme_tokens.dart';
 
 typedef SectionBuilder = Widget Function(
@@ -22,10 +24,18 @@ class ThemeDefinition {
 }
 
 class ResolvedTheme {
-  const ResolvedTheme(this.definition, this.variantKey, this.tokens);
+  const ResolvedTheme(this.definition, this.variantKey, this.tokens,
+      [this.colors = const {}]);
   final ThemeDefinition definition;
   final String variantKey;
   final ThemeTokens tokens;
+  final Map<String, String> colors;
+
+  /// Visual skin for this theme x variant (bootstrap colors over defaults).
+  ThemeSkin get skin => ThemeSkin.resolve(definition.slug, variantKey, colors);
+
+  /// Builder for a section key, or null (unknown keys are ignored).
+  SectionBuilder? builderFor(String key) => definition.sectionBuilders[key];
 }
 
 class ThemeRegistry {
@@ -34,8 +44,8 @@ class ThemeRegistry {
 
   static const fallback = ThemeDefinition(slug: 'default');
 
-  static const Map<String, ThemeDefinition> builtIn = {
-    'ecommet': ThemeDefinition(slug: 'ecommet', displayName: 'Ecommet', radius: 8),
+  static final Map<String, ThemeDefinition> builtIn = {
+    'ecommet': buildEcommetDefinition(),
     'elora': ThemeDefinition(slug: 'elora', displayName: 'Elora', radius: 14),
     'souqify': ThemeDefinition(slug: 'souqify', displayName: 'Souqify', radius: 10),
   };
@@ -52,6 +62,7 @@ class ThemeRegistry {
       def,
       config.variantKey,
       ThemeTokens.fromColors(config.colors, radius: def.radius),
+      config.colors,
     );
   }
 }
