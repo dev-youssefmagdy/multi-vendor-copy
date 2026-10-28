@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../app/providers.dart';
 import '../../../core/l10n/strings.dart';
+import '../../../design/design.dart';
+import '../../../themes/shared/primitives.dart';
+import '../../../themes/shared/models.dart';
 import '../../../themes/shared/skin.dart';
 import '../commerce_models.dart';
 import '../commerce_providers.dart';
@@ -61,6 +65,7 @@ class ListingScreen extends ConsumerStatefulWidget {
 class _ListingScreenState extends ConsumerState<ListingScreen> {
   late ListingQuery _q = widget.initial;
   final _scroll = ScrollController();
+  bool _list = false;
 
   @override
   void initState() {
@@ -97,77 +102,240 @@ class _ListingScreenState extends ConsumerState<ListingScreen> {
       navIndex: widget.navIndex,
       actions: [
         IconButton(
-            key: const Key('open_filters'),
-            tooltip: context.tr('Filters'),
-            onPressed: _openFilters,
-            icon: Badge(
-                isLabelVisible: _q.hasFilters || _q.sort != 'latest',
-                smallSize: 8,
-                child: const Icon(Icons.tune))),
+          key: const Key('toggle_layout'),
+          tooltip: context.tr(_list ? 'Grid view' : 'List view'),
+          onPressed: () {
+            Haptics.tap();
+            setState(() => _list = !_list);
+          },
+          icon: Icon(_list ? Icons.grid_view : Icons.view_agenda_outlined),
+        ),
+        IconButton(
+          key: const Key('open_filters'),
+          tooltip: context.tr('Filters'),
+          onPressed: _openFilters,
+          icon: Badge(
+            isLabelVisible: _q.hasFilters || _q.sort != 'latest',
+            smallSize: 8,
+            child: const Icon(Icons.tune),
+          ),
+        ),
       ],
-      body: Builder(builder: (context) {
-        if (state.initialLoading) return const LoadingView();
-        if (state.error != null && state.items.isEmpty) {
-          return ErrorView(state.error!, onRetry: notifier.retry);
-        }
-        if (state.items.isEmpty) {
-          return EmptyView(context.tr('No results'), icon: Icons.search_off);
-        }
-        return RefreshIndicator(
-          onRefresh: notifier.refresh,
-          child: ProductGridView(
-              key: const Key('listing_grid'),
-              products: state.items,
-              controller: _scroll,
-              footer: state.loading
-                  ? const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)))
-                  : (state.error != null
-                      ? ErrorView(state.error!, onRetry: notifier.retry)
-                      : null)),
-        );
-      }),
+      body: Builder(
+        builder: (context) {
+          if (state.initialLoading) return const LoadingView();
+          if (state.error != null && state.items.isEmpty) {
+            return ErrorView(state.error!, onRetry: notifier.retry);
+          }
+          if (state.items.isEmpty) {
+            return EmptyView(context.tr('No results'), icon: Icons.search_off);
+          }
+          return Column(
+            children: [
+              if (_q.hasFilters || _q.sort != 'latest')
+                _ActiveFilters(_q, (q) => setState(() => _q = q)),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: notifier.refresh,
+                  child: ProductGridView(
+                    key: const Key('listing_grid'),
+                    products: state.items,
+                    controller: _scroll,
+                    list: _list,
+                    footer: state.loading
+                        ? const Padding(
+                            padding: EdgeInsets.all(Space.x4),
+                            child: SectionSkeleton(cards: 2, height: 100),
+                          )
+                        : (state.error != null
+                              ? ErrorView(state.error!, onRetry: notifier.retry)
+                              : null),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
 
-/// Lazy 2-column grid of themed product cards (each with a favorite heart).
+/// Removable chips for the active sort/filters.
+class _ActiveFilters extends StatelessWidget {
+  const _ActiveFilters(this.q, this.onChange);
+  final ListingQuery q;
+  final void Function(ListingQuery) onChange;
+  @override
+  Widget build(BuildContext context) {
+    final chips = <Widget>[
+      if (q.sort != 'latest')
+        InputChip(
+          label: Text(context.tr(sortOptions[q.sort] ?? q.sort)),
+          onDeleted: () => onChange(q.copyWith(sort: 'latest')),
+        ),
+      if (q.min != null || q.max != null)
+        InputChip(
+          label: Text(
+            '${q.min != null ? money(q.min) : '0'} - ${q.max != null ? money(q.max) : '∞'}',
+          ),
+          onDeleted: () => onChange(q.copyWith(clearPrice: true)),
+        ),
+      if (q.availability.isNotEmpty)
+        InputChip(
+          label: Text(context.tr('In stock')),
+          onDeleted: () => onChange(q.copyWith(availability: '')),
+        ),
+      if (q.ratings != null)
+        InputChip(
+          label: Text('${q.ratings}★ +'),
+          onDeleted: () => onChange(q.copyWith(clearRatings: true)),
+        ),
+    ];
+    return SizedBox(
+      height: kMinTouch,
+      child: ListView(
+        key: const Key('active_filters'),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.gutter,
+          vertical: Space.x1,
+        ),
+        children: [
+          for (final c in chips)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: Space.x2),
+              child: c,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Lazy responsive grid (2 cols on phones, more on tablets) or a list.
 class ProductGridView extends StatelessWidget {
-  const ProductGridView(
-      {super.key, required this.products, this.controller, this.footer});
+  const ProductGridView({
+    super.key,
+    required this.products,
+    this.controller,
+    this.footer,
+    this.list = false,
+  });
   final List<dynamic> products;
   final ScrollController? controller;
   final Widget? footer;
+  final bool list;
 
   @override
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
-    return LayoutBuilder(builder: (context, c) {
-      const gap = 10.0;
-      final w = (c.maxWidth - 32 - gap) / 2;
-      final imgH = s.cardStyle == CardStyle.square ? w : s.cardImageHeight;
-      return CustomScrollView(
-        controller: controller,
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: gap,
-                  mainAxisSpacing: gap,
-                  mainAxisExtent: imgH + 118),
-              delegate: SliverChildBuilderDelegate(
-                  (_, i) => ProductTile(products[i], width: w),
-                  childCount: products.length),
+    return LayoutBuilder(
+      builder: (context, c) {
+        const gap = 10.0;
+        final cols = Breakpoints.gridColumns(c.maxWidth);
+        final w = (c.maxWidth - 32 - gap * (cols - 1)) / cols;
+        final imgH = s.cardStyle == CardStyle.square ? w : s.cardImageHeight;
+        final scale = MediaQuery.textScalerOf(context).scale(1.0);
+        final extra = 118 * scale.clamp(1.0, 2.0);
+        return CustomScrollView(
+          controller: controller,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: list
+                  ? SliverList.separated(
+                      itemCount: products.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: gap),
+                      itemBuilder: (_, i) => ProductRowTile(products[i]),
+                    )
+                  : SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: cols,
+                        crossAxisSpacing: gap,
+                        mainAxisSpacing: gap,
+                        mainAxisExtent: imgH + extra,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (_, i) => ProductTile(products[i], width: w),
+                        childCount: products.length,
+                      ),
+                    ),
+            ),
+            if (footer != null) SliverToBoxAdapter(child: footer),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Horizontal list-mode row for a product.
+class ProductRowTile extends StatelessWidget {
+  const ProductRowTile(this.p, {super.key});
+  final ProductItem p;
+  @override
+  Widget build(BuildContext context) {
+    final s = SkinScope.of(context);
+    return Semantics(
+      button: true,
+      label: p.name,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(s.cardRadius),
+        onTap: () => SkinScope.open(context, '/product/${p.slug}'),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 104),
+          decoration: BoxDecoration(
+            border: Border.all(color: s.border),
+            borderRadius: BorderRadius.circular(s.cardRadius),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadiusDirectional.horizontal(
+                    start: Radius.circular(s.cardRadius),
+                  ).resolve(Directionality.of(context)),
+                  child: SizedBox(width: 104, child: NetImage(p.image)),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(Space.x3),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: s.text,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: Space.x1),
+                        if (p.rating != null) RatingStars(p.rating!, size: 14),
+                        const SizedBox(height: Space.x1),
+                        Text(
+                          money(p.price),
+                          style: TextStyle(
+                            color: s.primaryAA,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                FavoriteHeart(p.id, size: 18),
+              ],
             ),
           ),
-          if (footer != null) SliverToBoxAdapter(child: footer),
-        ],
-      );
-    });
+        ),
+      ),
+    );
   }
 }
 
@@ -182,10 +350,12 @@ class _FilterSheetState extends State<_FilterSheet> {
   late String sort = widget.q.sort;
   late String availability = widget.q.availability;
   int? ratings;
-  late final TextEditingController min =
-      TextEditingController(text: widget.q.min?.toString() ?? '');
-  late final TextEditingController max =
-      TextEditingController(text: widget.q.max?.toString() ?? '');
+  late final TextEditingController min = TextEditingController(
+    text: widget.q.min?.toString() ?? '',
+  );
+  late final TextEditingController max = TextEditingController(
+    text: widget.q.max?.toString() ?? '',
+  );
 
   @override
   void initState() {
@@ -203,77 +373,116 @@ class _FilterSheetState extends State<_FilterSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(context.tr('Sort'), style: const TextStyle(fontWeight: FontWeight.w800)),
-          Wrap(spacing: 8, children: [
-            for (final e in sortOptions.entries)
-              ChoiceChip(
-                  key: Key('sort_${e.key}'),
-                  label: Text(context.tr(e.value)),
-                  selected: sort == e.key,
-                  onSelected: (_) => setState(() => sort = e.key)),
-          ]),
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(
-                child: TextField(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.tr('Sort'),
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final e in sortOptions.entries)
+                  ChoiceChip(
+                    key: Key('sort_${e.key}'),
+                    label: Text(context.tr(e.value)),
+                    selected: sort == e.key,
+                    onSelected: (_) => setState(() => sort = e.key),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
                     key: const Key('filter_min'),
                     controller: min,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: context.tr('Min price')))),
-            const SizedBox(width: 12),
-            Expanded(
-                child: TextField(
+                    decoration: InputDecoration(
+                      labelText: context.tr('Min price'),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
                     key: const Key('filter_max'),
                     controller: max,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: context.tr('Max price')))),
-          ]),
-          const SizedBox(height: 12),
-          Wrap(spacing: 8, children: [
-            FilterChip(
-                label: Text(context.tr('In stock')),
-                selected: availability == 'in_stock',
-                onSelected: (v) => setState(() => availability = v ? 'in_stock' : '')),
-            for (final r in [4, 3])
-              FilterChip(
-                  label: Text('$r★ +'),
-                  selected: ratings == r,
-                  onSelected: (v) => setState(() => ratings = v ? r : null)),
-          ]),
-          const SizedBox(height: 16),
-          Row(children: [
-            Expanded(
-                child: SkinButton(
+                    decoration: InputDecoration(
+                      labelText: context.tr('Max price'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: [
+                FilterChip(
+                  label: Text(context.tr('In stock')),
+                  selected: availability == 'in_stock',
+                  onSelected: (v) =>
+                      setState(() => availability = v ? 'in_stock' : ''),
+                ),
+                for (final r in [4, 3])
+                  FilterChip(
+                    label: Text('$r★ +'),
+                    selected: ratings == r,
+                    onSelected: (v) => setState(() => ratings = v ? r : null),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: SkinButton(
                     outline: true,
                     label: context.tr('Reset'),
                     onPressed: () => Navigator.pop(
-                        context,
-                        widget.q.copyWith(
-                            sort: 'latest',
-                            availability: '',
-                            clearPrice: true,
-                            clearRatings: true)))),
-            const SizedBox(width: 12),
-            Expanded(
-                child: SkinButton(
+                      context,
+                      widget.q.copyWith(
+                        sort: 'latest',
+                        availability: '',
+                        clearPrice: true,
+                        clearRatings: true,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SkinButton(
                     key: const Key('apply_filters'),
                     label: context.tr('Apply'),
                     onPressed: () => Navigator.pop(
-                        context,
-                        ListingQuery(widget.q.kind,
-                            slug: widget.q.slug,
-                            keyword: widget.q.keyword,
-                            sort: sort,
-                            availability: availability,
-                            ratings: ratings,
-                            min: num.tryParse(min.text),
-                            max: num.tryParse(max.text))))),
-          ]),
-        ]),
+                      context,
+                      ListingQuery(
+                        widget.q.kind,
+                        slug: widget.q.slug,
+                        keyword: widget.q.keyword,
+                        sort: sort,
+                        availability: availability,
+                        ratings: ratings,
+                        min: num.tryParse(min.text),
+                        max: num.tryParse(max.text),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

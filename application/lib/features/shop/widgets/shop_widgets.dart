@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../design/design.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
@@ -14,6 +15,7 @@ const _tabRoutes = {'/home', '/cart', '/favorites', '/account', '/category/all'}
 
 /// Navigation used by every themed widget (`SkinScope.open`).
 void openRoute(BuildContext context, String route) {
+  ScaffoldMessenger.maybeOf(context)?.hideCurrentSnackBar();
   var path = route;
   final u = Uri.tryParse(route);
   if (u != null && u.hasScheme) path = u.path;
@@ -77,13 +79,33 @@ class ShopScaffold extends ConsumerWidget {
   }
 }
 
+/// Skeleton placeholder (shimmer) used instead of spinners.
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
   @override
-  Widget build(BuildContext context) => const Center(
-      child: Padding(
-          padding: EdgeInsets.all(32),
-          child: CircularProgressIndicator(key: Key('loading'))));
+  Widget build(BuildContext context) => Shimmer(
+        key: const Key('loading'),
+        child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(Space.gutter),
+            child: Column(children: [
+              for (var i = 0; i < 4; i++)
+                const Padding(
+                    padding: EdgeInsets.only(bottom: Space.x4),
+                    child: Row(children: [
+                      SkeletonBox(width: 72, height: 72, radius: 12),
+                      SizedBox(width: Space.x3),
+                      Expanded(
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        SkeletonBox(height: 14),
+                        SizedBox(height: Space.x2),
+                        SkeletonBox(width: 120, height: 12),
+                        SizedBox(height: Space.x2),
+                        SkeletonBox(width: 60, height: 12),
+                      ])),
+                    ])),
+            ])),
+      );
 }
 
 class ErrorView extends StatelessWidget {
