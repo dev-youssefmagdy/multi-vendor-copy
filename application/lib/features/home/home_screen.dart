@@ -68,8 +68,9 @@ class HomeScreen extends ConsumerWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   HomeSliverAppBar(
-                      storeName: name,
+                      storeName: config?.logoText ?? name,
                       logoUrl: config?.logoUrl,
+                      logoFont: config?.logoFontFamily,
                       cartCount: ref.watch(cartCountProvider),
                       showFavorites: config?.feature('favorites', fallback: true) ?? true),
                   SliverPersistentHeader(

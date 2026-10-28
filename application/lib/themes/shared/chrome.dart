@@ -7,9 +7,12 @@ import 'skin.dart';
 /// Header shell: logo / store name, search field, favorites + cart.
 /// Skin controls search shape, divider and whether the search sits inline.
 class HeaderBar extends StatelessWidget {
-  const HeaderBar({super.key, required this.storeName, this.logoUrl, this.showFavorites = true});
+  const HeaderBar({super.key, required this.storeName, this.logoUrl, this.logoFont, this.showFavorites = true});
   final String storeName;
   final String? logoUrl;
+
+  /// Bundled font of the tenant's text logo (null = theme default).
+  final String? logoFont;
   final bool showFavorites;
 
   @override
@@ -23,6 +26,7 @@ class HeaderBar extends StatelessWidget {
         : Text(storeName,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
+                fontFamily: logoFont,
                 color: s.text, fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: -0.3));
     final icons = [
       if (showFavorites)
@@ -126,9 +130,12 @@ class FooterInfo extends StatelessWidget {
 /// hides on scroll down and returns on scroll up.
 class HomeSliverAppBar extends StatelessWidget {
   const HomeSliverAppBar(
-      {super.key, required this.storeName, this.logoUrl, this.showFavorites = true, this.cartCount = 0});
+      {super.key, required this.storeName, this.logoUrl, this.logoFont, this.showFavorites = true, this.cartCount = 0});
   final String storeName;
   final String? logoUrl;
+
+  /// Bundled font of the tenant's text logo (null = theme default).
+  final String? logoFont;
   final bool showFavorites;
   final int cartCount;
 
@@ -139,7 +146,7 @@ class HomeSliverAppBar extends StatelessWidget {
         ? SizedBox(height: 32, child: NetImage(logoUrl, fit: BoxFit.contain))
         : Text(storeName,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: s.text, fontWeight: FontWeight.w900, fontSize: TypeScale.title + 2));
+            style: TextStyle(fontFamily: logoFont, color: s.text, fontWeight: FontWeight.w900, fontSize: TypeScale.title + 2));
     return SliverAppBar(
       key: const Key('home_app_bar'),
       floating: true,

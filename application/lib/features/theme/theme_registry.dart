@@ -1,3 +1,4 @@
+import '../../design/fonts.dart';
 import 'package:flutter/widgets.dart';
 import '../tenant/tenant_models.dart';
 import '../../themes/ecommet/ecommet_theme.dart';
@@ -63,7 +64,9 @@ class ThemeRegistry {
     return ResolvedTheme(
       def,
       config.variantKey,
-      ThemeTokens.fromColors(config.colors, radius: def.radius),
+      ThemeTokens.fromColors(config.colors,
+          radius: def.radius,
+          fontFamily: AppFonts.forTheme(config.themeSlug, config.variantKey)),
       config.colors,
     );
   }

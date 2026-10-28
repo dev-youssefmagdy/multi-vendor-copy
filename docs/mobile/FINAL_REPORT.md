@@ -66,7 +66,7 @@ Defects found/fixed: Android backup + cleartext defaults (fixed). Release still 
 ## KNOWN GAPS
 - Not run on any device/emulator; not tested against a real backend or real payment gateways; deep links unverified with Google/Apple.
 - Placeholders needing input: platform domain, package/bundle id (`com.yourcompany.storeapp`), Android SHA-256, Apple Team ID, store URLs, URL scheme.
-- Fonts are not bundled (Flutter falls back to the platform font; a skin `fontFamily` is optional); backend `lang/` files are gitignored (translations must be provided at deploy).
+- Fonts: bundled in `application/assets/fonts` (Outfit for every theme/variant, Noto Sans Arabic fallback, 23 more for text-logo; 7.6 MB, OFL licenses included; see `docs/mobile/FONTS.md`); no runtime font loading. Backend `lang/` files are gitignored (translations must be provided at deploy).
 - Not built: image search, social login (Google/Apple), push delivery (no Firebase). Client registration code exists but is gated by `--dart-define=PUSH_ENABLED=true` and a `PushTokenSource` (default: none), so it is a no-op.
 - Custom-domain verified deep links are not possible without per-tenant builds (see DEEPLINKS.md).
 - Payment URL returned by the server is not scheme-restricted client-side (trusted backend).
@@ -86,13 +86,13 @@ Defects found/fixed: Android backup + cleartext defaults (fixed). Release still 
   push registration client (gated, see above).
 - Skipped: QR scanning (mobile_scanner needs camera permissions/native setup and cannot be verified without a device); Install Referrer
   deferred deep link (no mature cross-platform plugin; Android-only play referrer wrappers are thin and unverified) - documented only;
-  fonts (none bundled, system fallback); iOS native files unverified (no macOS).
+  fonts (bundled, see FONTS.md); iOS native files unverified (no macOS).
 
 ## Production checklist
 1. Set domain, package/bundle ids, SHA-256, Team ID, store URLs; verify well-known files with curl/adb/device.
 2. Real release signing config; Play App Signing fingerprint in `MOBILE_ANDROID_SHA256`.
 3. `php artisan tenants:migrate`; set `MOBILE_*` env; wildcard TLS.
-4. Build with `PLATFORM_API_BASE` over HTTPS; bundle fonts; deploy lang files.
+4. Build with `PLATFORM_API_BASE` over HTTPS; deploy lang files.
 5. Test every payment gateway end to end (success, cancel, pending) on devices.
 6. Run on physical Android + iOS; exercise tenant switching, suspension, force update.
 7. Fix or accept the 4 pre-existing web test failures.

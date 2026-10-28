@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
+import '../../design/fonts.dart';
 import '../../design/tokens.dart';
 
 /// Design tokens derived from bootstrap colors with safe defaults.
@@ -12,10 +13,14 @@ class ThemeTokens {
     required this.onSurface,
     required this.error,
     this.radius = 12,
+    this.fontFamily = AppFonts.base,
   });
 
   final Color primary, secondary, background, surface, onSurface, error;
   final double radius;
+
+  /// Bundled body font (all text inherits it) + Arabic fallback.
+  final String fontFamily;
 
   static const defaults = ThemeTokens(
     primary: Color(0xFF1F6FEB),
@@ -37,7 +42,7 @@ class ThemeTokens {
     return n == null ? null : Color(n);
   }
 
-  factory ThemeTokens.fromColors(Map<String, String> c, {double? radius}) {
+  factory ThemeTokens.fromColors(Map<String, String> c, {double? radius, String? fontFamily}) {
     Color pick(List<String> keys, Color fallback) {
       for (final k in keys) {
         final p = parseColor(c[k]);
@@ -55,6 +60,7 @@ class ThemeTokens {
       onSurface: pick(['text', 'on_surface', 'text_color'], d.onSurface),
       error: pick(['error', 'danger'], d.error),
       radius: radius ?? d.radius,
+      fontFamily: fontFamily ?? d.fontFamily,
     );
   }
 
@@ -69,6 +75,7 @@ class ThemeTokens {
       onSurface: const Color(0xFFEDEDED),
       error: Contrast.ensureAA(error, bg),
       radius: radius,
+      fontFamily: fontFamily,
     );
     return dark.toThemeData(brightness: Brightness.dark);
   }
@@ -85,6 +92,8 @@ class ThemeTokens {
     );
     return ThemeData(
       useMaterial3: true,
+      fontFamily: fontFamily,
+      fontFamilyFallback: AppFonts.fallback,
       colorScheme: scheme,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       pageTransitionsTheme: const PageTransitionsTheme(builders: {

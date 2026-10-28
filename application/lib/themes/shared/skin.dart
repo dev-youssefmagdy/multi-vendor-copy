@@ -1,3 +1,4 @@
+import '../../design/fonts.dart';
 import 'package:flutter/material.dart';
 import '../../design/design.dart';
 import '../../features/theme/theme_tokens.dart';
@@ -47,7 +48,7 @@ class ThemeSkin {
     this.heroTextAlign = CrossAxisAlignment.start,
     this.heroDotsBelow = false,
     this.pillButtons = true,
-    this.fontFamily,
+    this.fontFamily = AppFonts.base,
     this.footerBg = const Color(0xFF3B3B3B),
     this.showFooter = true,
     this.searchRadius = 28,

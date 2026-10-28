@@ -1,3 +1,4 @@
+import '../../design/fonts.dart';
 enum TenantStatus {
   active,
   suspended,
@@ -137,6 +138,8 @@ class TenantConfig {
     this.sections = const [],
     this.allowedSectionKeys = const {},
     this.logoUrl,
+    this.logoText,
+    this.logoFontFamily,
     this.splashImageUrl,
     this.socialLinks = const [],
     this.footer = const {},
@@ -165,6 +168,10 @@ class TenantConfig {
   /// theme slug -> variant key -> allowed section keys.
   final Map<String, Map<String, List<String>>> allowedSectionKeys;
   final String? logoUrl;
+
+  /// Text-logo mode: text + bundled font family (unknown -> theme default).
+  final String? logoText;
+  final String? logoFontFamily;
   final String? splashImageUrl;
   final List<Map<String, dynamic>> socialLinks;
   final Map<String, dynamic> footer;
@@ -218,6 +225,10 @@ class TenantConfig {
       logoUrl: logo is Map
           ? (logo['image_url'] ?? logo['url']) as String?
           : (logo is String ? logo : null),
+      logoText: logo is Map && logo['mode'] == 'text' && '${logo['text'] ?? ''}'.isNotEmpty
+          ? '${logo['text']}'
+          : null,
+      logoFontFamily: logo is Map ? AppFonts.resolve(logo['font_family'] as String?) : null,
       splashImageUrl: splashUrl is String && splashUrl.isNotEmpty ? splashUrl : null,
       socialLinks: _maps(j['social_links']),
       footer: _map(j['footer']),
@@ -245,7 +256,12 @@ class TenantConfig {
         'sections': [for (final s in sections) s.toJson()],
         'allowed_section_keys': allowedSectionKeys,
         'branding': {
-          'logo': {'image_url': logoUrl},
+          'logo': {
+            'image_url': logoUrl,
+            if (logoText != null) 'mode': 'text',
+            'text': logoText,
+            'font_family': logoFontFamily,
+          },
           'splash_image_url': splashImageUrl,
           'app_name': appName,
         },
