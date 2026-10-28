@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.application"
+    namespace = "com.example.application" // source package only (MainActivity.kt); NOT the store id
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,8 +15,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.application"
+        applicationId = project.property("app.applicationId") as String
+        manifestPlaceholders["platformDomain"] = project.property("app.platformDomain") as String
+        manifestPlaceholders["urlScheme"] = project.property("app.urlScheme") as String
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

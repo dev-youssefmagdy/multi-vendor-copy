@@ -1,0 +1,7 @@
+// ===== iOS app identity: THE ONE PLACE TO CHANGE (see docs/mobile/DEEPLINKS.md) =====
+// PLACEHOLDERS - replace before any real build / App Store submission.
+APP_BUNDLE_ID = com.yourcompany.storeapp
+// Platform wildcard host for Universal Links (without "applinks:"; "*." wildcard covers all tenant subdomains).
+APP_ASSOCIATED_DOMAIN = *.platform.example.com
+// Custom scheme used by payment return links (must equal MOBILE_DEEP_LINK_SCHEME on the backend).
+APP_URL_SCHEME = storeapp
