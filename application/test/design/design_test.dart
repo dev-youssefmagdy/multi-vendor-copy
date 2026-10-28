@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:application/design/design.dart';
 
 void main() {
+  rtlAndFormTests();
   test('contrast ensureAA lifts low contrast colors', () {
     final c = Contrast.ensureAA(const Color(0xFFADADAD), Colors.white);
     expect(Contrast.ratio(c, Colors.white), greaterThanOrEqualTo(4.5));
@@ -29,5 +30,24 @@ void main() {
       expect(t.getSize(find.byType(MinTouch)).height, greaterThanOrEqualTo(kMinTouch));
     }
     await t.binding.setSurfaceSize(null);
+  });
+}
+
+void rtlAndFormTests() {
+  testWidgets('password field toggles visibility', (t) async {
+    final c = TextEditingController(text: 'secret');
+    await t.pumpWidget(MaterialApp(
+        home: Scaffold(body: AppTextField(fieldKey: const Key('pw'), controller: c, label: 'Password', password: true))));
+    expect(t.widget<EditableText>(find.byType(EditableText)).obscureText, isTrue);
+    await t.tap(find.byIcon(Icons.visibility_outlined));
+    await t.pump();
+    expect(t.widget<EditableText>(find.byType(EditableText)).obscureText, isFalse);
+  });
+  testWidgets('empty state renders RTL without overflow', (t) async {
+    await t.pumpWidget(const MaterialApp(
+        home: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(body: EmptyState(icon: Icons.inbox, title: 'لا شيء', actionLabel: 'تسوق')))));
+    expect(t.takeException(), isNull);
   });
 }

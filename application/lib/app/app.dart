@@ -51,6 +51,13 @@ class _MobileAppState extends ConsumerState<MobileApp> {
           'Store',
       theme: theme.tokens.toThemeData(),
       routerConfig: router,
+      builder: (context, child) {
+        // Honour user text scaling but cap at 200% so layouts stay usable.
+        final mq = MediaQuery.of(context);
+        return MediaQuery(
+            data: mq.copyWith(textScaler: mq.textScaler.clamp(maxScaleFactor: 2.0)),
+            child: child ?? const SizedBox.shrink());
+      },
       locale: ref.watch(appLocaleProvider),
       supportedLocales: const [Locale('en'), Locale('ar'), Locale('he'), Locale('fa'), Locale('ur')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,

@@ -159,8 +159,12 @@ class EmptyView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, size: 56, color: s.subtitle),
-          const SizedBox(height: 12),
+          Container(
+              width: 104,
+              height: 104,
+              decoration: BoxDecoration(color: s.primary.withValues(alpha: 0.08), shape: BoxShape.circle),
+              child: Icon(icon, size: 48, color: s.primaryAA)),
+          const SizedBox(height: Space.x4),
           Text(message,
               key: const Key('empty_view'),
               textAlign: TextAlign.center,

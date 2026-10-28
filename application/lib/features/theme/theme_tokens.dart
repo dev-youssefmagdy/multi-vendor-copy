@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
 /// Design tokens derived from bootstrap colors with safe defaults.
 class ThemeTokens {
@@ -68,6 +69,17 @@ class ThemeTokens {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      }),
+      snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius))),
+      bottomSheetTheme: const BottomSheetThemeData(
+          showDragHandle: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20)))),
       scaffoldBackgroundColor: background,
       cardTheme: CardThemeData(
           shape: RoundedRectangleBorder(

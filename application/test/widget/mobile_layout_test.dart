@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:application/app/router.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:application/themes/shared/chrome.dart';
 import '../support/mocks.dart';
 
 void main() {
+  test('bottom nav keys parse from settings with safe fallback', () {
+    expect(AppBottomNav.parseKeys(['home', 'offers', 'cart', 'bogus']), ['home', 'offers', 'cart']);
+    expect(AppBottomNav.parseKeys(null), ['home', 'categories', 'cart', 'favorites', 'account']);
+  });
+
   for (final w in [320.0, 375.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
       testWidgets('home/listing/product/cart have no overflow at ${w.toInt()}dp, text x$scale', (t) async {

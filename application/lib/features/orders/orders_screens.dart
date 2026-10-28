@@ -329,8 +329,9 @@ class TrackingScreen extends ConsumerWidget {
             child: AsyncBody<Tracking>(ref.watch(trackingProvider(uuid)),
                 onRetry: () => ref.invalidate(trackingProvider(uuid)),
                 data: (t) => Builder(builder: (context) {
-                  final s = SkinScope.of(context);
-                  return ListView(padding: const EdgeInsets.all(16), children: [
+                  return RefreshIndicator(
+                      onRefresh: () async => ref.invalidate(trackingProvider(uuid)),
+                      child: ListView(physics: const AlwaysScrollableScrollPhysics(), padding: const EdgeInsets.all(16), children: [
                     Row(children: [
                       Expanded(child: Text('#$uuid', style: const TextStyle(fontWeight: FontWeight.w800))),
                       StatusChip(t.status),
@@ -342,14 +343,10 @@ class TrackingScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     if (t.timeline.isEmpty)
                       Text(context.tr('No updates yet'), key: const Key('no_timeline')),
-                    for (final e in t.timeline)
-                      ListTile(
-                        key: Key('event_${e.at}'),
-                        leading: Icon(Icons.circle, size: 14, color: s.primary),
-                        title: Text(e.title ?? statusLabel(e.status)),
-                        subtitle: Text([if (e.description != null) e.description!, (e.at ?? '').replaceFirst('T', ' ').split('.').first].join('\n')),
-                      ),
-                  ]);
+                    for (var i = 0; i < t.timeline.length; i++)
+                      _TimelineStep(t.timeline[i],
+                          first: i == 0, last: i == t.timeline.length - 1),
+                  ]));
                 }))),
       );
 }
@@ -390,3 +387,45 @@ class _InvoiceState extends ConsumerState<InvoiceScreen> {
 
 /// Route helper for deep links like `.../orders/:uuid`.
 void goOrder(BuildContext c, String uuid) => c.push('/orders/$uuid');
+
+/// One node of the vertical order timeline (latest event highlighted).
+class _TimelineStep extends StatelessWidget {
+  const _TimelineStep(this.e, {required this.first, required this.last});
+  final dynamic e;
+  final bool first, last;
+  @override
+  Widget build(BuildContext context) {
+    final s = SkinScope.of(context);
+    final when = ((e.at ?? '') as String).replaceFirst('T', ' ').split('.').first;
+    return IntrinsicHeight(
+      key: Key('event_${e.at}'),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        SizedBox(
+          width: 32,
+          child: Column(children: [
+            Container(
+                width: 2, height: 6, color: first ? Colors.transparent : s.border),
+            Container(
+                width: first ? 16 : 12,
+                height: first ? 16 : 12,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: first ? s.primary : s.border)),
+            Expanded(child: Container(width: 2, color: last ? Colors.transparent : s.border)),
+          ]),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16, left: 8),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(e.title ?? statusLabel(e.status),
+                  style: TextStyle(
+                      color: s.text, fontWeight: first ? FontWeight.w800 : FontWeight.w600)),
+              if (e.description != null) Text(e.description as String, style: TextStyle(color: s.text)),
+              Text(when, style: TextStyle(color: s.subtitleAA, fontSize: 12)),
+            ]),
+          ),
+        ),
+      ]),
+    );
+  }
+}

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../core/errors/app_exception.dart';
 import '../../core/l10n/strings.dart';
+import '../../design/design.dart';
 import '../shop/commerce_providers.dart';
 import '../shop/widgets/shop_widgets.dart';
 
@@ -78,22 +79,23 @@ class _LoginState extends ConsumerState<LoginScreen> with _FormState {
       body: Form(
         key: _key,
         child: ListView(padding: const EdgeInsets.all(24), children: [
-          TextFormField(
-              key: const Key('login_email'),
+          AppTextField(
+              fieldKey: const Key('login_email'),
               controller: _email,
               keyboardType: TextInputType.emailAddress,
               autofillHints: const [AutofillHints.email],
-              decoration: InputDecoration(
-                  labelText: context.tr('Email'), errorText: fieldErrors['email']),
+              label: context.tr('Email'),
+              errorText: fieldErrors['email'],
               validator: (v) => (v == null || !v.contains('@')) ? context.tr('Enter a valid email') : null),
           const SizedBox(height: 12),
-          TextFormField(
-              key: const Key('login_password'),
+          AppTextField(
+              fieldKey: const Key('login_password'),
               controller: _pass,
-              obscureText: true,
+              password: true,
+              textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.password],
-              decoration: InputDecoration(
-                  labelText: context.tr('Password'), errorText: fieldErrors['password']),
+              label: context.tr('Password'),
+              errorText: fieldErrors['password'],
               validator: (v) => (v == null || v.isEmpty) ? context.tr('Required') : null),
           if (error != null)
             Padding(
@@ -173,16 +175,21 @@ class _RegisterState extends ConsumerState<RegisterScreen> with _FormState {
   @override
   Widget build(BuildContext context) {
     Widget f(String k, String label, TextEditingController c,
-            {bool obscure = false, TextInputType? type, String? Function(String?)? v, String? errKey}) =>
+            {bool obscure = false,
+            TextInputType? type,
+            String? Function(String?)? v,
+            String? errKey,
+            List<String>? hints}) =>
         Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: TextFormField(
-                key: Key(k),
+            child: AppTextField(
+                fieldKey: Key(k),
                 controller: c,
-                obscureText: obscure,
+                password: obscure,
                 keyboardType: type,
-                decoration: InputDecoration(
-                    labelText: context.tr(label), errorText: fieldErrors[errKey ?? '']),
+                autofillHints: hints,
+                label: context.tr(label),
+                errorText: fieldErrors[errKey ?? ''],
                 validator: v));
     String? req(String? v) => (v == null || v.trim().isEmpty) ? context.tr('Required') : null;
     return ShopScaffold(
@@ -190,14 +197,16 @@ class _RegisterState extends ConsumerState<RegisterScreen> with _FormState {
       body: Form(
         key: _key,
         child: ListView(padding: const EdgeInsets.all(24), children: [
-          f('reg_name', 'Name', _name, v: req, errKey: 'name'),
+          f('reg_name', 'Name', _name, v: req, errKey: 'name', hints: const [AutofillHints.name]),
           f('reg_email', 'Email', _email,
               type: TextInputType.emailAddress,
+              hints: const [AutofillHints.email],
               errKey: 'email',
               v: (v) => (v == null || !v.contains('@')) ? context.tr('Enter a valid email') : null),
-          f('reg_phone', 'Phone', _phone, type: TextInputType.phone, errKey: 'phone'),
+          f('reg_phone', 'Phone', _phone, type: TextInputType.phone, errKey: 'phone', hints: const [AutofillHints.telephoneNumber]),
           f('reg_password', 'Password', _pass,
               obscure: true,
+              hints: const [AutofillHints.newPassword],
               errKey: 'password',
               v: (v) => (v == null || v.length < 8) ? context.tr('At least 8 characters') : null),
           f('reg_confirm', 'Confirm password', _conf,
