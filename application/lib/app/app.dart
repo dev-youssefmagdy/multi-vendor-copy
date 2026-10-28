@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'connectivity_banner.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/shop/commerce_providers.dart';
@@ -56,7 +57,7 @@ class _MobileAppState extends ConsumerState<MobileApp> {
         final mq = MediaQuery.of(context);
         return MediaQuery(
             data: mq.copyWith(textScaler: mq.textScaler.clamp(maxScaleFactor: 2.0)),
-            child: child ?? const SizedBox.shrink());
+            child: ConnectivityBanner(child: child ?? const SizedBox.shrink()));
       },
       locale: ref.watch(appLocaleProvider),
       supportedLocales: const [Locale('en'), Locale('ar'), Locale('he'), Locale('fa'), Locale('ur')],
