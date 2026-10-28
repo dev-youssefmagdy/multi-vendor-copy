@@ -30,7 +30,10 @@ One Flutter app (`application/`) serves every tenant. It re-implements the store
    support links, store-listing links, force-update min version, maintenance flag) stored in tenant DB table
    `mobile_app_settings` (key/value json). Separate page "App Themes" (`/admin/store/mobile-themes`) to pick
    app theme + home variant (only built-in themes; custom excluded) → table `mobile_app_theme` (theme_slug, variant_key).
-   Mobile theme is INDEPENDENT of web storefront theme.
+   Mobile theme is INDEPENDENT of web storefront theme: the app reuses the SAME theme designs/styles (same
+   ecommet/elora/souqify variants, pixel-faithful to the blade), but the tenant's app selection (theme + variant) is stored
+   separately from the web selection, so web and app may use different variants. Never read web `TenantHomeVariant` for the app;
+   default the app selection to the web one only when no app selection exists yet.
 5. **Bootstrap endpoint** `GET /api/mobile/v1/bootstrap` returns: tenant, settings, theme slug, variant key, resolved
    section list (ordered, visible, with per-section config/data keys), colors, locales, currencies, feature flags,
    `config_version` (ETag). Flutter renders sections via a **section-widget registry** (no remote code).
