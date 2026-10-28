@@ -224,13 +224,13 @@ class CountdownChip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.symmetric(horizontal: Space.x3, vertical: Space.x1),
       decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
+      child: FittedBox(fit: BoxFit.scaleDown, child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(Icons.timer_outlined, size: 14, color: Contrast.on(color)),
         const SizedBox(width: Space.x1),
         DefaultTextStyle.merge(
             style: TextStyle(color: Contrast.on(color), fontWeight: TypeScale.medium, fontSize: TypeScale.caption),
             child: child),
-      ]));
+      ])));
 }
 
 /// Debounce helper for search/suggestions.
@@ -244,4 +244,38 @@ class Debouncer {
   }
 
   void dispose() => _t?.cancel();
+}
+
+/// Horizontal snap scrolling: settles on item boundaries ([extent] = item + gap).
+class SnapPhysics extends ScrollPhysics {
+  const SnapPhysics({required this.extent, super.parent});
+  final double extent;
+  @override
+  SnapPhysics applyTo(ScrollPhysics? ancestor) => SnapPhysics(extent: extent, parent: buildParent(ancestor));
+
+  double _target(ScrollMetrics m, double velocity) {
+    var page = m.pixels / extent;
+    if (velocity > 300) {
+      page = page.ceilToDouble();
+    } else if (velocity < -300) {
+      page = page.floorToDouble();
+    } else {
+      page = page.roundToDouble();
+    }
+    return (page * extent).clamp(m.minScrollExtent, m.maxScrollExtent);
+  }
+
+  @override
+  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+    if ((velocity <= 0 && position.pixels <= position.minScrollExtent) ||
+        (velocity >= 0 && position.pixels >= position.maxScrollExtent)) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    final target = _target(position, velocity);
+    if ((target - position.pixels).abs() < 0.5) return null;
+    return ScrollSpringSimulation(spring, position.pixels, target, velocity, tolerance: toleranceFor(position));
+  }
+
+  @override
+  bool get allowImplicitScrolling => false;
 }

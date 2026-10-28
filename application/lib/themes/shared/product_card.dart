@@ -1,3 +1,4 @@
+import '../../design/design.dart';
 import 'package:flutter/material.dart';
 import 'models.dart';
 import 'primitives.dart';
@@ -140,6 +141,7 @@ class ProductRow extends StatelessWidget {
       height: h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        physics: SnapPhysics(extent: s.cardWidth + 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         itemCount: products.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),

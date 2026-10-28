@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../design/design.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/home/home_providers.dart';
 import 'models.dart';
@@ -34,9 +35,10 @@ class HeroBannerCarousel extends StatefulWidget {
 }
 
 class _HeroState extends State<HeroBannerCarousel> {
-  final _ctl = PageController();
+  final _ctl = PageController(viewportFraction: 0.94);
   int _i = 0;
   Timer? _auto;
+  bool _touching = false;
 
   @override
   void initState() {
@@ -44,7 +46,7 @@ class _HeroState extends State<HeroBannerCarousel> {
     final n = mapList(widget.section['banners']).length;
     if (n > 1) {
       _auto = Timer.periodic(const Duration(seconds: 5), (_) {
-        if (!mounted || !_ctl.hasClients) return;
+        if (!mounted || !_ctl.hasClients || _touching) return;
         _ctl.animateToPage((_i + 1) % n,
             duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
       });
@@ -85,7 +87,11 @@ class _HeroState extends State<HeroBannerCarousel> {
     final pager = SizedBox(
       height: s.heroHeight,
       child: Stack(children: [
-        PageView.builder(
+        Listener(
+          onPointerDown: (_) => _touching = true,
+          onPointerUp: (_) => _touching = false,
+          onPointerCancel: (_) => _touching = false,
+          child: PageView.builder(
           key: const Key('hero_pager'),
           controller: _ctl,
           itemCount: banners.length,
@@ -95,9 +101,11 @@ class _HeroState extends State<HeroBannerCarousel> {
             final title = b['title'] as String?;
             final sub = b['subtitle'] as String?;
             final btn = b['button_text'] as String?;
-            return GestureDetector(
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: GestureDetector(
               onTap: () => SkinScope.open(context, b['link'] as String?),
-              child: Stack(fit: StackFit.expand, children: [
+              child: ClipRRect(borderRadius: BorderRadius.circular(overlay ? s.radius : 0), child: Stack(fit: StackFit.expand, children: [
                 NetImage(b['image'] as String?),
                 if (overlay && (title != null || sub != null))
                   DecoratedBox(
@@ -147,10 +155,10 @@ class _HeroState extends State<HeroBannerCarousel> {
                                             color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)))),
                         ]),
                   ),
-              ]),
+              ]))),
             );
           },
-        ),
+        )),
         if (!s.heroDotsBelow && banners.length > 1)
           Positioned(left: 0, right: 0, bottom: 8, child: dots),
       ]),
@@ -312,14 +320,14 @@ class CategoryPills extends StatelessWidget {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                      color: i < 0 ? s.text : Colors.white,
+                      color: i < 0 ? s.text : s.surface,
                       border: Border.all(color: s.border),
                       borderRadius: BorderRadius.circular(20)),
                   child: Text(i < 0 ? 'All' : cats[i].name,
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: i < 0 ? Colors.white : s.text)),
+                          color: i < 0 ? s.background : s.text)),
                 ),
               ),
             ),
@@ -458,12 +466,10 @@ class FlashSaleStrip extends StatelessWidget {
                 style: TextStyle(
                     color: s.text, fontWeight: FontWeight.w600, fontSize: 13)),
             const SizedBox(height: 4),
-            Countdown(flash['ends_at'] as String?,
-                style: TextStyle(
-                    color: s.primary,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 16,
-                    letterSpacing: 2)),
+            CountdownChip(
+                color: s.primary,
+                child: Countdown(flash['ends_at'] as String?,
+                    style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1))),
             if (coupon != null)
               Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -502,12 +508,14 @@ class FlashDealsRail extends StatelessWidget {
         child: Row(children: [
           Icon(Icons.bolt, color: s.primary),
           const SizedBox(width: 4),
-          Text('FLASH DEALS',
+          Flexible(child: Text('FLASH DEALS',
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  color: s.primary, fontWeight: FontWeight.w900, fontSize: 15, letterSpacing: 0.5)),
-          const Spacer(),
-          Countdown(flash['ends_at'] as String?,
-              style: TextStyle(color: s.text, fontSize: 11, fontWeight: FontWeight.w700)),
+                  color: s.primary, fontWeight: FontWeight.w900, fontSize: 15, letterSpacing: 0.5))),
+          const SizedBox(width: 8),
+          CountdownChip(
+              color: s.primary,
+              child: Countdown(flash['ends_at'] as String?)),
         ]),
       ),
       ProductRow(products, badge: null),

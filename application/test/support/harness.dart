@@ -6,6 +6,9 @@ import 'package:application/core/network/connectivity_service.dart';
 import 'package:application/core/storage/key_value_store.dart';
 import 'package:application/features/auth/auth_repository.dart';
 import 'package:application/features/deeplink/deep_link_service.dart';
+import 'package:application/features/shop/commerce_models.dart';
+import 'package:application/features/shop/commerce_providers.dart';
+import 'package:application/features/shop/shop_repository.dart';
 import 'package:application/features/tenant/mock_tenant_repository.dart';
 import 'package:application/features/tenant/tenant_models.dart';
 import 'package:application/features/tenant/tenant_repository.dart';
@@ -53,9 +56,10 @@ class Harness {
 
   static List<Override> overrides(SharedPreferences prefs, InMemorySecureStore s,
           MockTenantRepository r, FakeDeepLinkSource l,
-          {bool includeAuth = true}) =>
+          {bool includeAuth = true, bool includeShop = true}) =>
       [
         sharedPreferencesProvider.overrideWithValue(prefs),
+        if (includeShop) shopRepositoryProvider.overrideWithValue(_NoShop()),
         secureStoreProvider.overrideWithValue(s),
         tenantRepositoryProvider.overrideWithValue(r as TenantRepository),
         deepLinkSourceProvider.overrideWithValue(l),
@@ -64,4 +68,12 @@ class Harness {
           authRepositoryProvider.overrideWith((ref) =>
               MockAuthRepository(ref.watch(tokenVaultProvider))),
       ];
+}
+
+/// Default shop for tests that do not care about the catalog (no network).
+class _NoShop implements ShopRepository {
+  @override
+  Future<List<CategoryNode>> categories() async => <CategoryNode>[];
+  @override
+  dynamic noSuchMethod(Invocation i) => throw UnimplementedError('${i.memberName}');
 }

@@ -84,7 +84,7 @@ void main() {
     addTearDown(t.view.resetDevicePixelRatio);
     final shop = FakeShop(count: 80);
     final c = ProviderContainer(overrides: [
-      ...Harness.overrides(h.prefs, h.secure, h.repo, h.links),
+      ...Harness.overrides(h.prefs, h.secure, h.repo, h.links, includeShop: false),
       shopRepositoryProvider.overrideWithValue(shop),
     ]);
     await t.pumpWidget(UncontrolledProviderScope(container: c, child: const MobileApp()));

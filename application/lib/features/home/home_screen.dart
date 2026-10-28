@@ -6,7 +6,8 @@ import '../../themes/shared/chrome.dart';
 import '../../themes/shared/skin.dart';
 import '../tenant/tenant_models.dart';
 import '../theme/theme_registry.dart';
-import '../shop/commerce_providers.dart' show cartCountProvider;
+import '../shop/commerce_models.dart' show CategoryNode;
+import '../shop/commerce_providers.dart' show cartCountProvider, categoriesProvider;
 import '../shop/widgets/shop_widgets.dart' show openRoute, ConnectedBottomNav;
 import 'home_providers.dart';
 
@@ -70,6 +71,12 @@ class HomeScreen extends ConsumerWidget {
                       logoUrl: config?.logoUrl,
                       cartCount: ref.watch(cartCountProvider),
                       showFavorites: config?.feature('favorites', fallback: true) ?? true),
+                  SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _ChipsHeader(
+                          skin: skin,
+                          cats: ref.watch(categoriesProvider).maybeWhen(
+                              data: (c) => c, orElse: () => const []))),
                   SliverList.list(children: [
                     for (final sec in sections)
                       _SectionLoader(key: ValueKey('section_${sec.key}'), sectionKey: sec.key, theme: theme),
@@ -108,4 +115,41 @@ class _SectionLoader extends ConsumerWidget {
       error: (_, _) => const SizedBox.shrink(), // a failing section never breaks home
     );
   }
+}
+
+/// Pinned category chips row under the app bar (collapses to nothing when
+/// there are no categories).
+class _ChipsHeader extends SliverPersistentHeaderDelegate {
+  _ChipsHeader({required this.skin, required this.cats});
+  final ThemeSkin skin;
+  final List<CategoryNode> cats;
+  @override
+  double get minExtent => cats.isEmpty ? 0 : 52;
+  @override
+  double get maxExtent => minExtent;
+  @override
+  Widget build(BuildContext context, double shrink, bool overlaps) {
+    if (cats.isEmpty) return const SizedBox.shrink();
+    return Material(
+      color: skin.surface,
+      elevation: overlaps ? 2 : 0,
+      child: ListView(
+        key: const Key('pinned_chips'),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter, vertical: Space.x2),
+        children: [
+          for (final c in cats)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: Space.x2),
+              child: ActionChip(
+                  label: Text(c.name),
+                  onPressed: () => openRoute(context, '/category/${c.slug}')),
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(_ChipsHeader old) => old.cats != cats || old.skin != skin;
 }

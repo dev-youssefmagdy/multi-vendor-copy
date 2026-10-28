@@ -458,7 +458,7 @@ class Shop {
     final account = FakeAccount();
     final base = await Harness.create();
     final container = ProviderContainer(retry: (_, _) => null, overrides: [
-      ...Harness.overrides(base.prefs, base.secure, base.repo, base.links, includeAuth: false),
+      ...Harness.overrides(base.prefs, base.secure, base.repo, base.links, includeAuth: false, includeShop: false),
       authRepositoryProvider.overrideWith((ref) => ScriptedAuth(ref.watch(tokenVaultProvider))),
       shopRepositoryProvider.overrideWithValue(fakeShop),
       cartRepositoryProvider.overrideWithValue(cart),

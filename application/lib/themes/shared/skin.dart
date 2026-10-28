@@ -76,8 +76,10 @@ class ThemeSkin {
   Color get primaryAA => Contrast.ensureAA(primary, background);
   double get touch => kMinTouch;
 
-  Color get border => const Color(0xFFE7E7E7);
-  Color get muted => const Color(0xFFF5F5F5);
+  bool get isDark => background.computeLuminance() < 0.2;
+  Color get surface => isDark ? Color.alphaBlend(Colors.white.withValues(alpha: 0.06), background) : Colors.white;
+  Color get border => isDark ? const Color(0xFF3A3A3A) : const Color(0xFFE7E7E7);
+  Color get muted => isDark ? const Color(0xFF262626) : const Color(0xFFF5F5F5);
 
   /// Variant defaults (blade/CSS) overlaid with bootstrap colors.
   factory ThemeSkin.resolve(
