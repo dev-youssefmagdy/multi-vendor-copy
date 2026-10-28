@@ -64,6 +64,9 @@ Route::middleware([
 
     // ─── Storefront (public) ─────────────────────────────────────────────────
 
+    // Mobile app landing fallback (standalone view; not part of any storefront theme).
+    Route::get('/app', \App\Http\Controllers\Mobile\AppLandingController::class)->name('tenant.app-landing');
+
     Route::get('/robots.txt', RobotsController::class)->middleware('tenant.storefront.context')->name('tenant.robots');
     Route::get('/sitemap.xml', SitemapController::class)->middleware('tenant.storefront.context')->name('tenant.sitemap');
 

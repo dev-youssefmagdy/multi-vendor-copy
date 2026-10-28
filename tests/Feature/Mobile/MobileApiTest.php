@@ -120,4 +120,28 @@ class MobileApiTest extends TestCase
         config(['mobile.android_package' => 'com.x.app', 'mobile.android_sha256' => 'AA:BB', 'mobile.ios_app_id' => 'T.com.x']);
         $this->getJson('/.well-known/assetlinks.json')->assertOk()->assertJsonPath('0.target.package_name', 'com.x.app');
     }
+
+    public function test_well_known_files_content_and_empty_when_unconfigured(): void
+    {
+        config(['mobile.android_package' => 'com.x.app', 'mobile.android_sha256' => 'AA:BB, CC:DD', 'mobile.ios_app_id' => 'TEAM123.com.x.app']);
+        $this->getJson('/.well-known/assetlinks.json')->assertOk()
+            ->assertJsonPath('0.target.sha256_cert_fingerprints', ['AA:BB', 'CC:DD'])
+            ->assertJsonPath('0.relation.0', 'delegate_permission/common.handle_all_urls');
+        $this->getJson('/.well-known/apple-app-site-association')->assertOk()
+            ->assertJsonPath('applinks.details.0.appIDs.0', 'TEAM123.com.x.app');
+        $this->getJson('/apple-app-site-association')->assertOk();
+
+        config(['mobile.android_package' => null, 'mobile.android_sha256' => null, 'mobile.ios_app_id' => null]);
+        $this->getJson('/.well-known/assetlinks.json')->assertOk()->assertExactJson([]);
+        $this->getJson('/.well-known/apple-app-site-association')->assertOk()->assertJsonPath('applinks.details', []);
+    }
+
+    public function test_tenant_app_landing_preserves_path_and_store_identity(): void
+    {
+        config(['mobile.deep_link_scheme' => 'storeapp']);
+        $r = $this->get('http://'.$this->tenantHost.'/app?path=/products/shoe');
+        $r->assertOk()->assertSee('storeapp://'.$this->tenantHost.'/products/shoe', false)->assertSee('Open in app');
+        $this->get('http://'.$this->tenantHost.'/app?path=//evil.com')->assertOk()
+            ->assertDontSee('//evil.com', false);
+    }
 }

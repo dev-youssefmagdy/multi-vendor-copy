@@ -8,4 +8,7 @@ return [
     'ios_app_id' => env('MOBILE_IOS_APP_ID'),
     // Custom scheme the payment success/cancel pages redirect to (WebView intercepts it).
     'deep_link_scheme' => env('MOBILE_DEEP_LINK_SCHEME', 'storeapp'),
+    // Store listing URLs shown on the tenant /app landing page (optional; button hidden when empty).
+    'play_store_url' => env('MOBILE_PLAY_STORE_URL'),
+    'app_store_url' => env('MOBILE_APP_STORE_URL'),
 ];
