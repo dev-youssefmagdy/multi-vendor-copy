@@ -90,6 +90,17 @@ class MobileApiTest extends TestCase
         $this->assertContains('hero_banners', MobileSectionCatalog::allowedKeys('souqify', 'v1'));
     }
 
+    public function test_bootstrap_exposes_splash_branding(): void
+    {
+        $this->tenant->run(function () {
+            \App\Models\Tenant\MobileAppSetting::query()->updateOrCreate(['key' => 'app_name'], ['value' => 'Shop App']);
+            \App\Models\Tenant\MobileAppSetting::query()->updateOrCreate(['key' => 'splash'], ['value' => 'https://x.test/s.png']);
+        });
+        $res = $this->getJson('/api/mobile/v1/bootstrap', $this->h())->assertOk();
+        $res->assertJsonPath('data.branding.app_name', 'Shop App');
+        $res->assertJsonPath('data.branding.splash_image_url', 'https://x.test/s.png');
+    }
+
     public function test_auth_flow_and_cross_tenant_token_rejected(): void
     {
         $reg = $this->postJson('/api/mobile/v1/auth/register', [

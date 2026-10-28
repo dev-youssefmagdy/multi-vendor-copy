@@ -145,7 +145,11 @@ class MobileBootstrapBuilder
             ],
             'sections' => $sections,
             'allowed_section_keys' => MobileSectionCatalog::allowedMap(),
-            'branding' => ['logo' => $logo],
+            'branding' => [
+                'logo' => $logo,
+                'splash_image_url' => ($settings['splash'] ?? null) ?: null,
+                'app_name' => ($settings['app_name'] ?? null) ?: $this->repo->storeName(),
+            ],
             'social_links' => $this->repo->socialLinks()->map(fn ($l) => [
                 'icon' => $l->icon instanceof \BackedEnum ? $l->icon->value : $l->icon,
                 'url' => $l->url,
