@@ -64,7 +64,7 @@ class CatalogController extends Controller
         return response()->json(['product' => $this->transformProduct($product, detailed: true)]);
     }
 
-    private function filters(Request $request): array
+    protected function filters(Request $request): array
     {
         return [
             'keyword' => (string) $request->query('keyword', ''),
@@ -79,12 +79,12 @@ class CatalogController extends Controller
         ];
     }
 
-    private function perPage(Request $request): int
+    protected function perPage(Request $request): int
     {
         return max(1, min(60, (int) $request->query('per_page', 15)));
     }
 
-    private function transformPaginator(LengthAwarePaginator $paginator): array
+    protected function transformPaginator(LengthAwarePaginator $paginator): array
     {
         return [
             'data' => collect($paginator->items())->map(fn(Product $p) => $this->transformProduct($p))->values(),
@@ -97,7 +97,7 @@ class CatalogController extends Controller
         ];
     }
 
-    private function transformCategory(Category $category): array
+    protected function transformCategory(Category $category): array
     {
         return [
             'id' => $category->id,
@@ -108,7 +108,7 @@ class CatalogController extends Controller
         ];
     }
 
-    private function transformProduct(Product $product, bool $detailed = false): array
+    protected function transformProduct(Product $product, bool $detailed = false): array
     {
         $pricing = $product->storefrontPricing();
 

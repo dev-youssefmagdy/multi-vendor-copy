@@ -11,6 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
+        then: function (): void {
+            \Illuminate\Support\Facades\Route::prefix('api/mobile/v1')
+                ->name('mobile.')
+                ->group(base_path('routes/mobile.php'));
+            \Illuminate\Support\Facades\Route::middleware('web')
+                ->group(function (): void {
+                    \Illuminate\Support\Facades\Route::get('/.well-known/assetlinks.json', [\App\Http\Controllers\Mobile\WellKnownController::class, 'assetLinks']);
+                    \Illuminate\Support\Facades\Route::get('/.well-known/apple-app-site-association', [\App\Http\Controllers\Mobile\WellKnownController::class, 'appleAssociation']);
+                    \Illuminate\Support\Facades\Route::get('/apple-app-site-association', [\App\Http\Controllers\Mobile\WellKnownController::class, 'appleAssociation']);
+                });
+        },
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
         $schedule->command('subscriptions:send-renewal-reminders --days=7')->dailyAt('08:00');
@@ -30,6 +41,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.tour' => \App\Http\Middleware\EnsureTenantTourSeen::class,
             'identify.tenant.theme' => \App\Http\Middleware\IdentifyTenantTheme::class,
             'blade.theme.home' => \App\Http\Middleware\ServeBladeThemeHome::class,
+            'mobile.tenant' => \App\Http\Middleware\ResolveMobileTenant::class,
+            'mobile.auth' => \App\Http\Middleware\AuthenticateMobileToken::class,
             'tenant.api.token' => \App\Http\Middleware\IdentifyTenantByApiToken::class,
             'store.launch.gate' => \App\Http\Middleware\StoreLaunchGate::class,
             'track.affiliate' => \App\Http\Middleware\TrackAffiliateReferral::class,
