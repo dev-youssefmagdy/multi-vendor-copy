@@ -1,69 +1,78 @@
-import '../../design/fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
+import '../theme/theme_tokens.dart';
 
-class SplashScreen extends StatelessWidget {
+/// Neutral platform name shown on the first launch (no store yet).
+const platformSplashName = 'Store App';
+
+/// Branded splash: shows the cached store logo/name/colour from the stored
+/// bootstrap while startup resolves; neutral platform mark otherwise.
+class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
   @override
-  Widget build(BuildContext context) => const Scaffold(
-      body: Center(child: CircularProgressIndicator(key: Key('splash'))));
-}
-
-class StoreEntryScreen extends ConsumerStatefulWidget {
-  const StoreEntryScreen({super.key});
-  @override
-  ConsumerState<StoreEntryScreen> createState() => _StoreEntryState();
-}
-
-class _StoreEntryState extends ConsumerState<StoreEntryScreen> {
-  final _ctl = TextEditingController();
-  @override
-  void dispose() {
-    _ctl.dispose();
-    super.dispose();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tenant = ref.watch(tenantControllerProvider.select((s) => s.brandingTenant));
+    final cfg = tenant == null ? null : ref.read(tenantStorageProvider).loadConfig(tenant.id);
+    final name = cfg?.displayName ?? tenant?.name;
+    final image = cfg?.splashImageUrl ?? cfg?.logoUrl ?? tenant?.logo;
+    final primary = ThemeTokens.parseColor(cfg?.colors['primary']);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        child: Center(
+          key: ValueKey(tenant?.id ?? 'neutral'),
+          child: Semantics(
+            label: name ?? platformSplashName,
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              _SplashMark(url: image, fallbackColor: primary),
+              if (name != null) ...[
+                const SizedBox(height: 16),
+                Text(name,
+                    key: const Key('splash_name'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge),
+              ],
+              const SizedBox(height: 24),
+              SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                      key: const Key('splash'),
+                      strokeWidth: 2.5,
+                      color: primary ?? (dark ? Colors.white70 : const Color(0xFF374763)))),
+            ]),
+          ),
+        ),
+      ),
+    );
   }
+}
 
-  void _submit() =>
-      ref.read(tenantControllerProvider.notifier).submitInput(_ctl.text);
-
+class _SplashMark extends StatelessWidget {
+  const _SplashMark({this.url, this.fallbackColor});
+  final String? url;
+  final Color? fallbackColor;
   @override
   Widget build(BuildContext context) {
-    final message = ref.watch(tenantControllerProvider.select((s) => s.message));
-    final recents = ref.read(tenantStorageProvider).loadRecent();
-    return Scaffold(
-      appBar: AppBar(title: const Text('Find your store')),
-      body: SafeArea(
-        child: ListView(padding: const EdgeInsets.all(16), children: [
-          AppTextField(
-            fieldKey: const Key('store_input'),
-            controller: _ctl,
-            keyboardType: TextInputType.url,
-            autocorrect: false,
-            textInputAction: TextInputAction.go,
-            onSubmitted: (_) => _submit(),
-            label: 'Store URL or store code',
-            errorText: message,
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-              key: const Key('store_submit'),
-              onPressed: _submit,
-              child: const Text('Continue')),
-          if (recents.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            Text('Recent stores', style: Theme.of(context).textTheme.titleMedium),
-            for (final t in recents)
-              ListTile(
-                key: Key('recent_${t.id}'),
-                title: Text(t.name),
-                subtitle: Text(t.domain),
-                onTap: () =>
-                    ref.read(tenantControllerProvider.notifier).selectRecent(t),
-              ),
-          ],
-        ]),
-      ),
+    final neutral = Container(
+      key: const Key('splash_neutral_mark'),
+      width: 96,
+      height: 96,
+      decoration: BoxDecoration(
+          color: fallbackColor ?? const Color(0xFF374763),
+          borderRadius: BorderRadius.circular(22)),
+      child: const Icon(Icons.storefront_outlined, color: Colors.white, size: 48),
+    );
+    if (url == null) return neutral;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 200, maxHeight: 120),
+      child: Image.network(url!,
+          key: const Key('splash_image'),
+          fit: BoxFit.contain,
+          excludeFromSemantics: true,
+          errorBuilder: (_, _, _) => neutral),
     );
   }
 }

@@ -137,6 +137,7 @@ class TenantConfig {
     this.sections = const [],
     this.allowedSectionKeys = const {},
     this.logoUrl,
+    this.splashImageUrl,
     this.socialLinks = const [],
     this.footer = const {},
     this.features = const {},
@@ -164,6 +165,7 @@ class TenantConfig {
   /// theme slug -> variant key -> allowed section keys.
   final Map<String, Map<String, List<String>>> allowedSectionKeys;
   final String? logoUrl;
+  final String? splashImageUrl;
   final List<Map<String, dynamic>> socialLinks;
   final Map<String, dynamic> footer;
   final Map<String, dynamic> features;
@@ -188,7 +190,10 @@ class TenantConfig {
     final settings = _map(j['settings']);
     final theme = _map(j['theme']);
     final status = _map(j['status']);
-    final logo = _map(j['branding'])['logo'];
+    final branding = _map(j['branding']);
+    final logo = branding['logo'];
+    final splashUrl = branding['splash_image_url'];
+    final brandName = branding['app_name'];
     final allowed = <String, Map<String, List<String>>>{};
     _map(j['allowed_section_keys']).forEach((slug, variants) {
       allowed[slug] = {
@@ -196,7 +201,9 @@ class TenantConfig {
           e.key: [for (final k in (e.value as List? ?? const [])) '$k']
       };
     });
-    final appName = settings['app_name'];
+    final appName = (settings['app_name'] is String && (settings['app_name'] as String).isNotEmpty)
+        ? settings['app_name']
+        : brandName;
     return TenantConfig(
       tenantName: _map(j['tenant'])['name'] as String?,
       appName: appName is String && appName.isNotEmpty ? appName : null,
@@ -211,6 +218,7 @@ class TenantConfig {
       logoUrl: logo is Map
           ? (logo['image_url'] ?? logo['url']) as String?
           : (logo is String ? logo : null),
+      splashImageUrl: splashUrl is String && splashUrl.isNotEmpty ? splashUrl : null,
       socialLinks: _maps(j['social_links']),
       footer: _map(j['footer']),
       features: _map(j['features']),
@@ -237,7 +245,9 @@ class TenantConfig {
         'sections': [for (final s in sections) s.toJson()],
         'allowed_section_keys': allowedSectionKeys,
         'branding': {
-          'logo': {'image_url': logoUrl}
+          'logo': {'image_url': logoUrl},
+          'splash_image_url': splashImageUrl,
+          'app_name': appName,
         },
         'social_links': socialLinks,
         'footer': footer,

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Single platform placeholder name; tenant branding is applied in-app. -->
+    <string name="app_name">Store App</string>
+</resources>

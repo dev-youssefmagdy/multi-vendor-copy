@@ -82,7 +82,12 @@ class TenantController extends Notifier<TenantState> {
     // Switch workflow step 1: stop all work for the previous tenant.
     ref.read(apiClientProvider).cancelAll();
     session.tenant = null;
-    state = TenantState(phase: StartupPhase.booting, pendingLocation: pending);
+    final known = stored ?? storage.loadActiveTenant();
+    state = TenantState(
+        phase: StartupPhase.booting,
+        pendingLocation: pending,
+        brandingTenant:
+            (known != null && host != null && known.domain == host) ? known : null);
 
     final res = ref.read(resolutionServiceProvider);
     ResolveResult r;

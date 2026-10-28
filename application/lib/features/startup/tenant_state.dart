@@ -10,6 +10,7 @@ class TenantState {
     this.fromCache = false,
     this.pendingLocation,
     this.message,
+    this.brandingTenant,
   });
   final StartupPhase phase;
   final Tenant? tenant;
@@ -19,6 +20,10 @@ class TenantState {
   final bool fromCache;
   final String? pendingLocation;
   final String? message;
+
+  /// Store whose cached branding the splash may show while booting. Only set
+  /// when the store being opened is known to be this one (no wrong-store flash).
+  final Tenant? brandingTenant;
 
   TenantState copyWith({
     StartupPhase? phase,
@@ -37,5 +42,6 @@ class TenantState {
         pendingLocation:
             clearPending ? null : (pendingLocation ?? this.pendingLocation),
         message: message ?? this.message,
+        brandingTenant: brandingTenant,
       );
 }
