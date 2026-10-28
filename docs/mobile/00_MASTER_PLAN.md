@@ -57,6 +57,7 @@ One Flutter app (`application/`) serves every tenant. It re-implements the store
 | P4 | `P4_flutter_screens.md` | all commerce screens (shared logic, themed skins) |
 | P5 | `P5_flutter_themes.md` | every theme × variant home layout, header/footer, section widgets |
 | P6 | `P6_platform_linking.md` | Android/iOS config, well-known, landing fallback, docs |
+| P8 | `P8_mobile_design_pass.md` | mobile-native design system + flow polish across ALL screens/sections (runs before P7) |
 | P7 | `P7_qa_security.md` | analyze/test, isolation review, matrix coverage check, final report |
 
 Token-saving rules for all agents: read only files named in your prompt; use grep before reading; never re-read the
