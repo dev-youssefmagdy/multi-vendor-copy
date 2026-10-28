@@ -155,6 +155,42 @@ class _CartBodyState extends ConsumerState<_CartBody> {
     );
   }
 
+  Future<void> _couponSheet() async {
+    final skin = SkinScope.of(context);
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => SkinScope(
+        skin: skin,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(ctx).viewInsets.bottom),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            AppTextField(
+                fieldKey: const Key('coupon_field'),
+                controller: _coupon,
+                label: context.tr('Coupon code'),
+                textInputAction: TextInputAction.done),
+            const SizedBox(height: Space.x3),
+            SkinButton(
+                key: const Key('coupon_apply'),
+                label: context.tr('Apply'),
+                onPressed: () async {
+                  final code = _coupon.text.trim();
+                  if (code.isEmpty) return;
+                  try {
+                    await ref.read(cartProvider.notifier).applyCoupon(code);
+                    _coupon.clear();
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  } on AppException catch (e) {
+                    if (ctx.mounted) showError(ctx, e);
+                  }
+                }),
+          ]),
+        ),
+      ),
+    );
+  }
+
   Widget _couponBox(CartData cart, ThemeSkin s) {
     if (cart.couponCode != null) {
       return Container(
@@ -185,33 +221,14 @@ class _CartBodyState extends ConsumerState<_CartBody> {
         ),
       );
     }
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            key: const Key('coupon_field'),
-            controller: _coupon,
-            decoration: InputDecoration(
-              labelText: context.tr('Coupon code'),
-              isDense: true,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        SkinButton(
-          key: const Key('coupon_apply'),
-          label: context.tr('Apply'),
-          expand: false,
-          onPressed: () {
-            final code = _coupon.text.trim();
-            if (code.isEmpty) return;
-            _run(() async {
-              await ref.read(cartProvider.notifier).applyCoupon(code);
-              _coupon.clear();
-            });
-          },
-        ),
-      ],
+    return ListTile(
+      key: const Key('coupon_open'),
+      contentPadding: EdgeInsets.zero,
+      minTileHeight: kMinTouch,
+      leading: Icon(Icons.sell_outlined, color: s.primaryAA),
+      title: Text(context.tr('Have a coupon?')),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: _couponSheet,
     );
   }
 }

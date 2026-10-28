@@ -28,6 +28,7 @@ class _CheckoutBody extends ConsumerStatefulWidget {
 
 class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
   bool _started = false;
+  int _step = 0;
 
   Future<void> _start(List<Map<String, dynamic>> addresses) async {
     _started = true;
@@ -103,6 +104,67 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
     }
   }
 
+  Future<void> _pickAddress(List<Map<String, dynamic>> addresses) async {
+    final skin = SkinScope.of(context);
+    final id = await showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => SkinScope(
+        skin: skin,
+        child: SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (final a in addresses)
+                ListTile(
+                  key: Key('address_${a['id']}'),
+                  minTileHeight: kMinTouch,
+                  leading: Icon(
+                    (a['id'] as num?)?.toInt() == ref.read(checkoutProvider).addressId
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
+                  ),
+                  title: Text('${a['full_name'] ?? ''}'),
+                  subtitle: Text([a['address_line_1'], a['city'], a['country']].where((e) => e != null).join(', ')),
+                  onTap: () => Navigator.pop(ctx, (a['id'] as num).toInt()),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (id == null || !mounted) return;
+    final a = addresses.firstWhere((e) => (e['id'] as num).toInt() == id);
+    ref.read(checkoutProvider.notifier).selectAddress(id, (a['country_id'] as num?)?.toInt());
+  }
+
+  Future<void> _pickGateway() async {
+    final skin = SkinScope.of(context);
+    final st = ref.read(checkoutProvider);
+    final g = await showModalBottomSheet<Gateway>(
+      context: context,
+      builder: (ctx) => SkinScope(
+        skin: skin,
+        child: SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (final g in st.gateways)
+                ListTile(
+                  key: Key('gateway_${g.code}'),
+                  minTileHeight: kMinTouch,
+                  leading: Icon(g == st.gateway ? Icons.radio_button_checked : Icons.radio_button_off),
+                  title: Text(g.isCod ? context.tr('Cash on delivery') : g.name),
+                  onTap: () => Navigator.pop(ctx, g),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (g != null && mounted) ref.read(checkoutProvider.notifier).selectGateway(g);
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
@@ -129,6 +191,15 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
           );
         }
         final q = st.quote;
+        final addr = addresses
+            .where((e) => (e['id'] as num?)?.toInt() == st.addressId)
+            .firstOrNull;
+        final sym = ref.watch(currencySymbolProvider);
+        final canNext = _step == 0
+            ? st.addressId != null
+            : _step == 1
+            ? st.gateway != null
+            : false;
         return Column(
           children: [
             Expanded(
@@ -136,10 +207,14 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   _Steps(
+                    current: _step,
+                    onTap: (i) {
+                      if (i < _step) setState(() => _step = i);
+                    },
                     done: [
-                      st.addressId != null,
-                      st.gateway != null,
-                      q != null && !st.loading,
+                      st.addressId != null && _step > 0,
+                      st.gateway != null && _step > 1,
+                      q != null && !st.loading && _step > 2,
                     ],
                     labels: [
                       context.tr('Address'),
@@ -148,116 +223,135 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
                     ],
                   ),
                   const SizedBox(height: Space.x4),
-                  _h('1  ${context.tr('Shipping address')}', s),
-                  RadioGroup<int>(
-                    groupValue: st.addressId,
-                    onChanged: (v) {
-                      if (v == null || st.placing) return;
-                      final a = addresses.firstWhere(
-                        (e) => (e['id'] as num).toInt() == v,
-                      );
-                      ref
-                          .read(checkoutProvider.notifier)
-                          .selectAddress(v, (a['country_id'] as num?)?.toInt());
-                    },
-                    child: Column(
-                      children: [
-                        for (final a in addresses)
-                          RadioListTile<int>(
-                            key: Key('address_${a['id']}'),
-                            value: (a['id'] as num).toInt(),
-                            title: Text('${a['full_name'] ?? ''}'),
-                            subtitle: Text(
-                              [
-                                a['address_line_1'],
-                                a['city'],
-                                a['country'],
-                              ].where((e) => e != null).join(', '),
-                            ),
-                          ),
-                      ],
+                  if (_step == 0) ...[
+                    _h(context.tr('Shipping address'), s),
+                    _PickCard(
+                      key: const Key('address_card'),
+                      icon: Icons.location_on_outlined,
+                      title: '${addr?['full_name'] ?? ''}',
+                      subtitle: [addr?['address_line_1'], addr?['city'], addr?['country']]
+                          .where((e) => e != null)
+                          .join(', '),
+                      action: context.tr('Change'),
+                      onTap: st.placing ? null : () => _pickAddress(addresses),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () => openRoute(context, '/account/addresses'),
-                    child: Text(context.tr('Manage addresses')),
-                  ),
-                  const SizedBox(height: 8),
-                  _h('2  ${context.tr('Payment method')}', s),
-                  if (st.gateways.isEmpty && !st.loading)
-                    Text(context.tr('No payment methods available')),
-                  RadioGroup<Gateway>(
-                    groupValue: st.gateway,
-                    onChanged: (v) {
-                      if (v != null && !st.placing) {
-                        ref.read(checkoutProvider.notifier).selectGateway(v);
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        for (final g in st.gateways)
-                          RadioListTile<Gateway>(
-                            key: Key('gateway_${g.code}'),
-                            value: g,
-                            title: Text(
-                              g.isCod ? context.tr('Cash on delivery') : g.name,
-                            ),
-                          ),
-                      ],
+                    TextButton(
+                      onPressed: () => openRoute(context, '/account/addresses'),
+                      child: Text(context.tr('Manage addresses')),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  _h('3  ${context.tr('Review order')}', s),
-                  if (st.loading && q == null)
-                    const LoadingView()
-                  else if (q != null) ...[
-                    Totals(q),
-                    if (q.shipping != null && !q.shipping!.available)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          q.shipping!.message ??
-                              context.tr(
-                                'Shipping is not available to this address',
-                              ),
+                  ],
+                  if (_step == 1) ...[
+                    _h(context.tr('Payment method'), s),
+                    if (st.gateways.isEmpty && !st.loading)
+                      Text(context.tr('No payment methods available')),
+                    if (st.gateway != null)
+                      _PickCard(
+                        key: const Key('gateway_card'),
+                        icon: Icons.payment_outlined,
+                        title: st.gateway!.isCod
+                            ? context.tr('Cash on delivery')
+                            : st.gateway!.name,
+                        subtitle: '',
+                        action: context.tr('Change'),
+                        onTap: st.placing ? null : _pickGateway,
+                      ),
+                    const SizedBox(height: Space.x2),
+                    if (q != null) ...[
+                      _h(context.tr('Shipping'), s),
+                      if (q.shipping != null && q.shipping!.available)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.local_shipping_outlined),
+                          title: Text(context.tr('Shipping')),
+                          trailing: Price(q.shipping!.amount),
+                        ),
+                      if (q.shipping != null && !q.shipping!.available)
+                        Text(
+                          q.shipping!.message ?? context.tr('Shipping is not available to this address'),
                           key: const Key('shipping_unavailable'),
                           style: TextStyle(color: s.error),
                         ),
-                      ),
-                    if (q.hasUnavailable)
-                      Text(
-                        context.tr(
-                          'Some items are out of stock. Update your cart.',
+                    ],
+                  ],
+                  if (_step == 2) ...[
+                    _h(context.tr('Review order'), s),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.location_on_outlined),
+                      title: Text('${addr?['full_name'] ?? ''}'),
+                      subtitle: Text([addr?['address_line_1'], addr?['city']].where((e) => e != null).join(', ')),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.payment_outlined),
+                      title: Text(st.gateway == null
+                          ? ''
+                          : (st.gateway!.isCod ? context.tr('Cash on delivery') : st.gateway!.name)),
+                    ),
+                    if (st.loading && q == null)
+                      const LoadingView()
+                    else if (q != null) ...[
+                      Totals(q),
+                      if (q.shipping != null && !q.shipping!.available)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            q.shipping!.message ?? context.tr('Shipping is not available to this address'),
+                            key: const Key('shipping_unavailable'),
+                            style: TextStyle(color: s.error),
+                          ),
                         ),
-                        style: TextStyle(color: s.error),
-                      ),
+                      if (q.hasUnavailable)
+                        Text(
+                          context.tr('Some items are out of stock. Update your cart.'),
+                          style: TextStyle(color: s.error),
+                        ),
+                    ],
                   ],
                   if (st.error != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        st.error!,
-                        key: const Key('checkout_error'),
-                        style: TextStyle(color: s.error),
-                      ),
+                      child: Text(st.error!, key: const Key('checkout_error'), style: TextStyle(color: s.error)),
                     ),
                 ],
               ),
             ),
             Material(
               elevation: Elevation.sheet,
-              color: Colors.white,
+              color: s.surface,
               child: SafeArea(
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: SkinButton(
-                    key: const Key('place_order'),
-                    label: q == null
-                        ? context.tr('Place order')
-                        : '${context.tr('Place order')} · ${formatPrice(ref.watch(currencySymbolProvider), q.grandTotal)}',
-                    busy: st.placing,
-                    onPressed: st.canPlace ? () => _place(addresses) : null,
+                  child: Row(
+                    children: [
+                      if (_step > 0)
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(end: Space.x2),
+                          child: IconButton(
+                            key: const Key('step_back'),
+                            tooltip: context.tr('Back'),
+                            onPressed: st.placing ? null : () => setState(() => _step--),
+                            icon: const Icon(Icons.arrow_back),
+                          ),
+                        ),
+                      Expanded(
+                        child: _step < 2
+                            ? SkinButton(
+                                key: const Key('step_next'),
+                                label: context.tr('Continue'),
+                                onPressed: canNext ? () => setState(() => _step++) : null,
+                              )
+                            : SkinButton(
+                                key: const Key('place_order'),
+                                label: q == null
+                                    ? context.tr('Place order')
+                                    : '${context.tr('Place order')} · ${formatPrice(sym, q.grandTotal)}',
+                                busy: st.placing,
+                                onPressed: st.canPlace ? () => _place(addresses) : null,
+                              ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -281,48 +375,68 @@ class _CheckoutBodyState extends ConsumerState<_CheckoutBody> {
   );
 }
 
+/// Selected-value card with a "Change" action (opens a bottom-sheet picker).
+class _PickCard extends StatelessWidget {
+  const _PickCard({super.key, required this.icon, required this.title, required this.subtitle, required this.action, this.onTap});
+  final IconData icon;
+  final String title, subtitle, action;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) {
+    final s = SkinScope.of(context);
+    return Card(
+      elevation: 0,
+      color: s.surface,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: s.border), borderRadius: BorderRadius.circular(s.radius)),
+      child: ListTile(
+        minTileHeight: kMinTouch + Space.x4,
+        leading: Icon(icon, color: s.primaryAA),
+        title: Text(title),
+        subtitle: subtitle.isEmpty ? null : Text(subtitle),
+        trailing: TextButton(onPressed: onTap, child: Text(action)),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
 /// Three-step progress indicator (address -> payment -> review).
 class _Steps extends StatelessWidget {
-  const _Steps({required this.done, required this.labels});
+  const _Steps({required this.done, required this.labels, required this.current, required this.onTap});
   final List<bool> done;
   final List<String> labels;
+  final int current;
+  final ValueChanged<int> onTap;
   @override
   Widget build(BuildContext context) {
     final s = SkinScope.of(context);
     return Semantics(
       label: 'Checkout steps',
-      child: Row(
-        children: [
-          for (var i = 0; i < labels.length; i++) ...[
-            if (i > 0)
-              Expanded(
-                child: Divider(
-                  color: done[i - 1] ? s.primary : s.border,
-                  thickness: 2,
-                ),
-              ),
-            Column(
-              children: [
-                CircleAvatar(
+      child: Row(children: [
+        for (var i = 0; i < labels.length; i++) ...[
+          if (i > 0) Expanded(child: Divider(color: done[i - 1] ? s.primary : s.border, thickness: 2)),
+          InkWell(
+            key: Key('step_$i'),
+            onTap: () => onTap(i),
+            child: Column(children: [
+              CircleAvatar(
                   radius: 14,
-                  backgroundColor: done[i] ? s.primary : s.muted,
+                  backgroundColor: done[i] || i == current ? s.primary : s.muted,
                   child: done[i]
                       ? Icon(Icons.check, size: 16, color: s.onPrimary)
-                      : Text(
-                          '${i + 1}',
-                          style: TextStyle(color: s.text, fontSize: 12),
-                        ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  labels[i],
-                  style: TextStyle(fontSize: TypeScale.caption, color: s.text),
-                ),
-              ],
-            ),
-          ],
+                      : Text('${i + 1}',
+                          style: TextStyle(color: i == current ? s.onPrimary : s.text, fontSize: 12))),
+              const SizedBox(height: 2),
+              Text(labels[i],
+                  style: TextStyle(
+                      fontSize: TypeScale.caption,
+                      fontWeight: i == current ? FontWeight.w800 : FontWeight.w400,
+                      color: s.text)),
+            ]),
+          ),
         ],
-      ),
+      ]),
     );
   }
 }

@@ -14,6 +14,13 @@ Future<void> addFromProduct(WidgetTester t, Shop s, String slug) async {
   await t.pumpAndSettle();
 }
 
+Future<void> toReview(WidgetTester t) async {
+  for (var i = 0; i < 2; i++) {
+    await t.tap(find.byKey(const Key('step_next')));
+    await t.pumpAndSettle();
+  }
+}
+
 void main() {
   testWidgets('guest: browse -> product -> cart (device cart), checkout asks to sign in', (t) async {
     final s = await Shop.create();
@@ -60,7 +67,8 @@ void main() {
     await t.pumpAndSettle();
     // quote requested for the default address
     expect(s.checkout.quoteCalls.last, {'address_id': 3, 'country_id': 1});
-    expect(find.byKey(const Key('place_order')), findsOneWidget);
+    expect(find.byKey(const Key('step_next')), findsOneWidget);
+    await toReview(t);
     await t.tap(find.byKey(const Key('place_order')));
     await t.pumpAndSettle();
     final body = s.checkout.placedBodies.single;
@@ -78,6 +86,7 @@ void main() {
     await addFromProduct(t, s, 'p3');
     await s.go(t, '/checkout');
     final firstKey = s.checkout.idemKeys;
+    await toReview(t);
     await t.tap(find.byKey(const Key('place_order')));
     await t.pumpAndSettle();
     expect(find.byKey(const Key('price_changed_dialog')), findsOneWidget);
@@ -100,6 +109,7 @@ void main() {
     await s.launch(t);
     await addFromProduct(t, s, 'p3');
     await s.go(t, '/checkout');
+    await toReview(t);
     await t.tap(find.byKey(const Key('place_order')));
     await t.pumpAndSettle();
     expect(find.byKey(const Key('checkout_error')), findsOneWidget);
@@ -116,6 +126,7 @@ void main() {
     await s.launch(t);
     await addFromProduct(t, s, 'p3');
     await s.go(t, '/checkout');
+    await toReview(t);
     expect(find.byKey(const Key('shipping_unavailable')), findsOneWidget);
     final btn = t.widget<FilledButton>(find.descendant(
         of: find.byKey(const Key('place_order')), matching: find.byType(FilledButton)));
@@ -128,6 +139,8 @@ void main() {
     await s.launch(t);
     await addFromProduct(t, s, 'p3');
     await s.go(t, '/cart');
+    await t.tap(find.byKey(const Key('coupon_open')));
+    await t.pumpAndSettle();
     await t.enterText(find.byKey(const Key('coupon_field')), 'BAD');
     await t.tap(find.byKey(const Key('coupon_apply')));
     await t.pumpAndSettle();
@@ -139,7 +152,7 @@ void main() {
     expect(find.byKey(const Key('coupon_applied')), findsOneWidget);
     await t.tap(find.byKey(const Key('coupon_remove')));
     await t.pumpAndSettle();
-    expect(find.byKey(const Key('coupon_field')), findsOneWidget);
+    expect(find.byKey(const Key('coupon_open')), findsOneWidget);
   });
 
   testWidgets('empty cart and cart load error states', (t) async {
@@ -184,7 +197,13 @@ void main() {
     await s.launch(t);
     await addFromProduct(t, s, 'p3');
     await s.go(t, '/checkout');
+    await t.tap(find.byKey(const Key('step_next')));
+    await t.pumpAndSettle();
+    await t.tap(find.byKey(const Key('gateway_card')));
+    await t.pumpAndSettle();
     await t.tap(find.byKey(const Key('gateway_stripe')));
+    await t.pumpAndSettle();
+    await t.tap(find.byKey(const Key('step_next')));
     await t.pumpAndSettle();
     await t.tap(find.byKey(const Key('place_order')));
     await t.pumpAndSettle();
