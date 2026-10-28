@@ -192,25 +192,34 @@ class _ProductBodyState extends ConsumerState<_ProductBody> {
                 ),
               ],
               if (_hasVariants) ...[
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final v in d.variants)
-                      ChoiceChip(
-                        key: Key('variant_${v.id}'),
-                        label: Text(v.title),
-                        selected: _variant?.id == v.id,
-                        selectedColor: s.primary.withValues(alpha: 0.15),
-                        onSelected: v.available
-                            ? (_) => setState(() => _variant = v)
-                            : null,
-                      ),
-                  ],
+            const SizedBox(height: 16),
+            Text(context.tr('Options'),
+                style: TextStyle(color: s.text, fontWeight: FontWeight.w700)),
+            const SizedBox(height: Space.x2),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final v in d.variants)
+                Semantics(
+                  label: v.available ? v.title : '${v.title}, ${context.tr('Out of stock')}',
+                  child: ChoiceChip(
+                      key: Key('variant_${v.id}'),
+                      label: Text(v.title,
+                          style: v.available
+                              ? null
+                              : const TextStyle(decoration: TextDecoration.lineThrough)),
+                      avatar: v.available ? null : const Icon(Icons.block, size: 14),
+                      selected: _variant?.id == v.id,
+                      selectedColor: s.primary.withValues(alpha: 0.15),
+                      showCheckmark: true,
+                      onSelected: v.available
+                          ? (_) {
+                              Haptics.tap();
+                              setState(() => _variant = v);
+                            }
+                          : null),
                 ),
-              ],
-              if (!_canBuy)
+            ]),
+          ],
+          if (!_canBuy)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
