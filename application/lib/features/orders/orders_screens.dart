@@ -92,22 +92,39 @@ class _OrdersState extends ConsumerState<OrdersScreen> {
                   : RefreshIndicator(
                       onRefresh: () async => ref.invalidate(ordersProvider('')),
                       child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: list.length,
                         separatorBuilder: (_, _) => const Divider(height: 1),
                         itemBuilder: (_, i) {
                           final o = list[i];
-                          return ListTile(
+                          return InkWell(
                             key: Key('order_${o.uuid}'),
-                            title: Text('#${o.uuid.length > 8 ? o.uuid.substring(0, 8) : o.uuid}'),
-                            subtitle: Text((o.createdAt ?? '').split('T').first),
-                            trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Price(o.grandTotal, style: const TextStyle(fontWeight: FontWeight.w800)),
-                                  StatusChip(o.status),
-                                ]),
                             onTap: () => openRoute(context, '/orders/${o.uuid}'),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(minHeight: 72),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Row(children: [
+                                  Expanded(
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      Text('#${o.uuid.length > 8 ? o.uuid.substring(0, 8) : o.uuid}',
+                                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                                      Text((o.createdAt ?? '').split('T').first,
+                                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                                    ]),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Price(o.grandTotal, style: const TextStyle(fontWeight: FontWeight.w800)),
+                                        const SizedBox(height: 4),
+                                        StatusChip(o.status),
+                                      ]),
+                                ]),
+                              ),
+                            ),
                           );
                         },
                       ),

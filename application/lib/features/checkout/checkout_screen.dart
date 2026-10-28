@@ -415,8 +415,8 @@ class _Steps extends StatelessWidget {
       label: 'Checkout steps',
       child: Row(children: [
         for (var i = 0; i < labels.length; i++) ...[
-          if (i > 0) Expanded(child: Divider(color: done[i - 1] ? s.primary : s.border, thickness: 2)),
-          InkWell(
+          if (i > 0) SizedBox(width: 16, child: Divider(color: done[i - 1] ? s.primary : s.border, thickness: 2)),
+          Expanded(child: InkWell(
             key: Key('step_$i'),
             onTap: () => onTap(i),
             child: Column(children: [
@@ -428,13 +428,15 @@ class _Steps extends StatelessWidget {
                       : Text('${i + 1}',
                           style: TextStyle(color: i == current ? s.onPrimary : s.text, fontSize: 12))),
               const SizedBox(height: 2),
-              Text(labels[i],
-                  style: TextStyle(
-                      fontSize: TypeScale.caption,
-                      fontWeight: i == current ? FontWeight.w800 : FontWeight.w400,
-                      color: s.text)),
+              FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(labels[i],
+                      style: TextStyle(
+                          fontSize: TypeScale.caption,
+                          fontWeight: i == current ? FontWeight.w800 : FontWeight.w400,
+                          color: s.text))),
             ]),
-          ),
+          )),
         ],
       ]),
     );
