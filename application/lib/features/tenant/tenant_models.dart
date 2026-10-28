@@ -67,83 +67,188 @@ class ResolveResult {
   }
 }
 
-/// Parsed `GET /bootstrap` payload (tolerant of missing keys).
+class HomeSection {
+  const HomeSection(
+      {required this.key, this.widget, this.source, this.dataEndpoint});
+  final String key;
+  final String? widget;
+  final String? source;
+  final String? dataEndpoint;
+
+  factory HomeSection.fromJson(Map<String, dynamic> j) => HomeSection(
+        key: '${j['key']}',
+        widget: j['widget'] as String?,
+        source: j['source'] as String?,
+        dataEndpoint: j['data_endpoint'] as String?,
+      );
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'widget': widget,
+        'source': source,
+        'data_endpoint': dataEndpoint,
+      };
+}
+
+class LocaleInfo {
+  const LocaleInfo(
+      {required this.code, this.name, this.rtl = false, this.isDefault = false});
+  final String code;
+  final String? name;
+  final bool rtl;
+  final bool isDefault;
+  factory LocaleInfo.fromJson(Map<String, dynamic> j) => LocaleInfo(
+      code: '${j['code']}',
+      name: j['name'] as String?,
+      rtl: j['rtl'] == true,
+      isDefault: j['default'] == true);
+  Map<String, dynamic> toJson() =>
+      {'code': code, 'name': name, 'rtl': rtl, 'default': isDefault};
+}
+
+class CurrencyInfo {
+  const CurrencyInfo(
+      {required this.code, this.symbol, this.rate = 1, this.isDefault = false});
+  final String code;
+  final String? symbol;
+  final double rate;
+  final bool isDefault;
+  factory CurrencyInfo.fromJson(Map<String, dynamic> j) => CurrencyInfo(
+      code: '${j['code']}',
+      symbol: j['symbol'] as String?,
+      rate: (j['rate'] as num?)?.toDouble() ?? 1,
+      isDefault: j['default'] == true);
+  Map<String, dynamic> toJson() => {
+        'code': code,
+        'symbol': symbol,
+        'rate': rate,
+        'default': isDefault
+      };
+}
+
+/// Parsed `GET /bootstrap` `data` (real backend shape; tolerant of gaps).
 class TenantConfig {
   const TenantConfig({
+    this.tenantName,
     this.appName,
     this.themeSlug = 'default',
     this.variantKey = 'default',
+    this.variantName,
     this.colors = const {},
     this.sections = const [],
+    this.allowedSectionKeys = const {},
+    this.logoUrl,
+    this.socialLinks = const [],
+    this.footer = const {},
     this.features = const {},
+    this.settings = const {},
     this.locales = const [],
     this.currencies = const [],
     this.maintenance = false,
-    this.minVersion,
+    this.updateRequired = false,
+    this.minAppVersion,
     this.configVersion,
-    this.raw = const {},
   });
 
+  final String? tenantName;
   final String? appName;
   final String themeSlug;
   final String variantKey;
+  final String? variantName;
+
+  /// Normalised tokens: primary, secondary, bg_main, text_primary, ...
   final Map<String, String> colors;
-  final List<Map<String, dynamic>> sections;
+
+  /// Ordered, visible, already filtered by the server.
+  final List<HomeSection> sections;
+
+  /// theme slug -> variant key -> allowed section keys.
+  final Map<String, Map<String, List<String>>> allowedSectionKeys;
+  final String? logoUrl;
+  final List<Map<String, dynamic>> socialLinks;
+  final Map<String, dynamic> footer;
   final Map<String, dynamic> features;
-  final List<String> locales;
-  final List<String> currencies;
+  final Map<String, dynamic> settings;
+  final List<LocaleInfo> locales;
+  final List<CurrencyInfo> currencies;
   final bool maintenance;
-  final String? minVersion;
+  final bool updateRequired;
+  final String? minAppVersion;
   final String? configVersion;
-  final Map<String, dynamic> raw;
+
+  String? get displayName => appName ?? tenantName;
+  bool feature(String k, {bool fallback = false}) =>
+      features[k] is bool ? features[k] as bool : fallback;
 
   static Map<String, dynamic> _map(Object? v) =>
       v is Map ? Map<String, dynamic>.from(v) : <String, dynamic>{};
+  static List<Map<String, dynamic>> _maps(Object? v) =>
+      [for (final e in (v as List? ?? const [])) if (e is Map) Map<String, dynamic>.from(e)];
 
   factory TenantConfig.fromJson(Map<String, dynamic> j) {
     final settings = _map(j['settings']);
     final theme = _map(j['theme']);
-    final feats = j['features'];
+    final status = _map(j['status']);
+    final logo = _map(j['branding'])['logo'];
+    final allowed = <String, Map<String, List<String>>>{};
+    _map(j['allowed_section_keys']).forEach((slug, variants) {
+      allowed[slug] = {
+        for (final e in _map(variants).entries)
+          e.key: [for (final k in (e.value as List? ?? const [])) '$k']
+      };
+    });
+    final appName = settings['app_name'];
     return TenantConfig(
-      appName: (settings['app_name'] ?? _map(j['tenant'])['name']) as String?,
-      themeSlug: '${theme['slug'] ?? j['theme_slug'] ?? 'default'}',
-      variantKey: '${theme['variant'] ?? j['variant_key'] ?? 'default'}',
-      colors: _map(j['colors']).map((k, v) => MapEntry(k, '$v')),
-      sections: [
-        for (final s in (j['sections'] as List? ?? const []))
-          if (s is Map) Map<String, dynamic>.from(s)
-      ],
-      features: feats is List
-          ? {for (final f in feats) '$f': true}
-          : _map(feats),
-      locales: [for (final l in (j['locales'] as List? ?? const [])) '$l'],
-      currencies: [
-        for (final c in (j['currencies'] as List? ?? const []))
-          c is Map ? '${c['code']}' : '$c'
-      ],
-      maintenance: settings['maintenance'] == true || j['maintenance'] == true,
-      minVersion: (settings['min_version'] ?? settings['force_update_min_version'])
-          as String?,
+      tenantName: _map(j['tenant'])['name'] as String?,
+      appName: appName is String && appName.isNotEmpty ? appName : null,
+      themeSlug: '${theme['slug'] ?? 'default'}',
+      variantKey: '${theme['variant_key'] ?? 'default'}',
+      variantName: theme['variant_name'] as String?,
+      colors: {
+        for (final e in _map(theme['colors']).entries) e.key: '${e.value}'
+      },
+      sections: _maps(j['sections']).map(HomeSection.fromJson).toList(),
+      allowedSectionKeys: allowed,
+      logoUrl: logo is Map
+          ? (logo['image_url'] ?? logo['url']) as String?
+          : (logo is String ? logo : null),
+      socialLinks: _maps(j['social_links']),
+      footer: _map(j['footer']),
+      features: _map(j['features']),
+      settings: settings,
+      locales: _maps(j['locales']).map(LocaleInfo.fromJson).toList(),
+      currencies: _maps(j['currencies']).map(CurrencyInfo.fromJson).toList(),
+      maintenance: status['maintenance'] == true,
+      updateRequired: status['update_required'] == true,
+      minAppVersion: status['min_app_version']?.toString(),
       configVersion: j['config_version']?.toString(),
-      raw: j,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        ...raw,
-        'settings': {
-          ...TenantConfig._map(raw['settings']),
-          'app_name': ?appName,
-          'maintenance': maintenance,
-          'min_version': ?minVersion,
-        },
-        'theme': {'slug': themeSlug, 'variant': variantKey},
-        'colors': colors,
-        'sections': sections,
+        'tenant': {'name': tenantName},
+        'settings': {...settings, 'app_name': ?appName},
         'features': features,
-        'locales': locales,
-        'currencies': currencies,
-        'config_version': ?configVersion,
+        'theme': {
+          'slug': themeSlug,
+          'variant_key': variantKey,
+          'variant_name': variantName,
+          'colors': colors,
+        },
+        'sections': [for (final s in sections) s.toJson()],
+        'allowed_section_keys': allowedSectionKeys,
+        'branding': {
+          'logo': {'image_url': logoUrl}
+        },
+        'social_links': socialLinks,
+        'footer': footer,
+        'locales': [for (final l in locales) l.toJson()],
+        'currencies': [for (final c in currencies) c.toJson()],
+        'status': {
+          'maintenance': maintenance,
+          'update_required': updateRequired,
+          'min_app_version': minAppVersion,
+        },
+        'config_version': configVersion,
       };
 }
 

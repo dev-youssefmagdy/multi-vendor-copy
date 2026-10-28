@@ -23,29 +23,11 @@ void main() {
         TenantStatus.suspended);
   });
 
-  test('TenantConfig tolerant parsing', () {
-    final c = TenantConfig.fromJson({
-      'settings': {'app_name': 'X', 'maintenance': true},
-      'theme': {'slug': 'souqify', 'variant': 'v3'},
-      'colors': {'primary': '#112233'},
-      'features': ['wishlist'],
-      'currencies': [
-        {'code': 'USD'}
-      ],
-      'sections': [
-        {'key': 'hero'}
-      ],
-      'config_version': 5,
-    });
-    expect(c.appName, 'X');
-    expect(c.themeSlug, 'souqify');
-    expect(c.variantKey, 'v3');
-    expect(c.features['wishlist'], true);
-    expect(c.currencies, ['USD']);
-    expect(c.maintenance, isTrue);
-    expect(c.configVersion, '5');
-    final empty = TenantConfig.fromJson({});
-    expect(empty.themeSlug, 'default');
+  test('TenantConfig tolerant of empty payload', () {
+    final c = TenantConfig.fromJson({});
+    expect(c.themeSlug, 'default');
+    expect(c.sections, isEmpty);
+    expect(c.maintenance, isFalse);
   });
 
   test('Theme tokens: parsing and safe defaults', () {

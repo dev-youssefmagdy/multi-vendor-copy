@@ -28,6 +28,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           path: TenantGuard.suspended,
           builder: (_, _) => const SuspendedTenantScreen()),
       GoRoute(path: TenantGuard.offline, builder: (_, _) => const OfflineScreen()),
+      GoRoute(
+          path: TenantGuard.maintenance,
+          builder: (_, _) => const MaintenanceScreen()),
+      GoRoute(
+          path: TenantGuard.updateRequired,
+          builder: (_, _) => const UpdateRequiredScreen()),
       GoRoute(path: TenantGuard.home, builder: (_, _) => const HomeScreen()),
       GoRoute(
           path: '/product/:id',

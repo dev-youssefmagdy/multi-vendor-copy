@@ -4,6 +4,7 @@ import '../../core/errors/app_exception.dart';
 import '../../core/network/api_client.dart';
 import '../deeplink/url_normalizer.dart';
 import '../tenant/tenant_models.dart';
+import 'version.dart';
 import 'tenant_state.dart';
 
 /// Owns the active tenant + startup flow:
@@ -118,16 +119,33 @@ class TenantController extends Notifier<TenantState> {
       final cfg = storage.loadConfig(stored.id);
       if (cfg != null) {
         _activate(stored);
-        state = TenantState(
-            phase: StartupPhase.ready,
-            tenant: stored,
-            config: cfg,
-            fromCache: true,
-            pendingLocation: pending);
+        state = _ready(stored, cfg, pending, fromCache: true);
         return;
       }
     }
     state = const TenantState(phase: StartupPhase.offline);
+  }
+
+  /// Maintenance / forced-update gate; null when the config may be used.
+  StartupPhase? _gate(TenantConfig c) {
+    if (c.maintenance) return StartupPhase.maintenance;
+    final min = c.minAppVersion;
+    final cur = ref.read(appConfigProvider).appVersion;
+    if (c.updateRequired || (min != null && compareVersions(cur, min) < 0)) {
+      return StartupPhase.updateRequired;
+    }
+    return null;
+  }
+
+  TenantState _ready(Tenant t, TenantConfig cfg, String? pending,
+      {bool fromCache = false}) {
+    final g = _gate(cfg);
+    return TenantState(
+        phase: g ?? StartupPhase.ready,
+        tenant: t,
+        config: cfg,
+        fromCache: fromCache,
+        pendingLocation: pending);
   }
 
   void _activate(Tenant t) {
@@ -152,20 +170,11 @@ class TenantController extends Notifier<TenantState> {
       }
       if (!b.notModified) await storage.saveConfig(t.id, cfg, b.etag);
       await storage.saveActiveTenant(t);
-      state = TenantState(
-          phase: StartupPhase.ready,
-          tenant: t,
-          config: cfg,
-          pendingLocation: pending);
+      state = _ready(t, cfg, pending);
     } on NetworkException {
       if (cached != null) {
         await storage.saveActiveTenant(t);
-        state = TenantState(
-            phase: StartupPhase.ready,
-            tenant: t,
-            config: cached,
-            fromCache: true,
-            pendingLocation: pending);
+        state = _ready(t, cached, pending, fromCache: true);
       } else {
         ref.read(apiSessionProvider).tenant = null;
         state = const TenantState(phase: StartupPhase.offline);

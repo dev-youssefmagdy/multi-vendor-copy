@@ -1,0 +1,1 @@
+{"success":true,"data":{"token":"12|secretsecret","refresh_token":"12|refreshsecret","expires_at":"2026-12-01T10:00:00+00:00","customer":{"id":5,"name":"Jane","email":"jane@example.com","phone":""}}}

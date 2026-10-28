@@ -1,0 +1,1 @@
+{"success":true,"data":{"tenant_id":"acme","domain":"acme.example.com","name":"Acme Store","logo":"https://acme.example.com/storage/logo.png","status":"active","api_base":"https://platform.example.com/api/mobile/v1"}}

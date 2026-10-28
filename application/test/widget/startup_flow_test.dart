@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:application/app/app.dart';
+import 'package:application/features/tenant/tenant_models.dart';
 import '../support/harness.dart';
 
 Future<void> pumpApp(WidgetTester t, Harness h) async {
@@ -65,7 +66,7 @@ void main() {
       'app:active_tenant': 'a1',
       'tenant:a1:tenant':
           '{"tenant_id":"a1","domain":"shop-a.example.com","name":"Shop A","status":"active"}',
-      'tenant:a1:bootstrap': '{"theme_slug":"souqify","variant_key":"v1"}',
+      'tenant:a1:bootstrap': '{"theme":{"slug":"souqify","variant_key":"v1"}}',
     });
     h.repo.offline = true;
     await pumpApp(t, h);
@@ -77,5 +78,19 @@ void main() {
         initialLink: Uri.parse('https://shop-b.example.com/product/77'));
     await pumpApp(t, h);
     expect(find.text('Product 77'), findsWidgets);
+  });
+
+  testWidgets('maintenance and update-required screens', (t) async {
+    final h = await Harness.create();
+    h.repo.configs['a1'] = const TenantConfig(maintenance: true);
+    await pumpApp(t, h);
+    await t.enterText(find.byKey(const Key('store_input')), 'shop-a.example.com');
+    await t.tap(find.byKey(const Key('store_submit')));
+    await t.pumpAndSettle();
+    expect(find.text('Under maintenance'), findsOneWidget);
+    h.repo.configs['a1'] = const TenantConfig(updateRequired: true);
+    await t.tap(find.byKey(const Key('retry')));
+    await t.pumpAndSettle();
+    expect(find.text('Update required'), findsOneWidget);
   });
 }

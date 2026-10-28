@@ -1,0 +1,18 @@
+{"success":true,"data":{
+ "tenant":{"id":"acme","name":"Acme Store"},
+ "settings":{"app_name":"Acme App","maintenance":false,"min_app_version":"1.0.0"},
+ "features":{"favorites":true,"returns":true,"offers":true,"guest_cart":false},
+ "theme":{"slug":"elora","variant_key":"v2","variant_name":"Elora 2",
+  "colors":{"primary":"#C0392B","secondary":"#2C3E50","bg_main":"#FFFFFF","text_primary":"#111111","text_subtitle":"#777777"}},
+ "sections":[
+  {"key":"hero","widget":"hero_slider","source":"banners","data_endpoint":"/api/mobile/v1/home/sections/hero"},
+  {"key":"categories","widget":"category_grid","source":"categories","data_endpoint":"/api/mobile/v1/home/sections/categories"}],
+ "allowed_section_keys":{"elora":{"v1":["hero","categories"],"v2":["hero","categories","new_arrivals"]}},
+ "branding":{"logo":{"image_url":"https://acme.example.com/storage/logo.png"}},
+ "social_links":[{"icon":"facebook","url":"https://facebook.com/acme"}],
+ "footer":{"text":"About us","copyright":"(c) Acme"},
+ "locales":[{"code":"en","name":"English","rtl":false,"default":true},{"code":"ar","name":"العربية","rtl":true,"default":false}],
+ "currencies":[{"code":"USD","symbol":"$","rate":1.0,"default":true},{"code":"EUR","symbol":"€","rate":0.92,"default":false}],
+ "pages":[{"slug":"about","title":"About"}],
+ "status":{"maintenance":false,"update_required":false,"min_app_version":"1.0.0"},
+ "config_version":"a1b2c3d4e5f60718"}}

@@ -2,9 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:application/app/providers.dart';
 import 'package:application/features/startup/tenant_state.dart';
 import 'package:application/features/tenant/tenant_guard.dart';
+import 'package:application/features/tenant/tenant_models.dart';
 import '../support/harness.dart';
 
 void main() {
+  gateTests();
   test('first launch -> needsStore', () async {
     final h = await Harness.create();
     await h.container.read(tenantControllerProvider.notifier).start();
@@ -139,5 +141,21 @@ void main() {
     expect(r(StartupPhase.ready, '/splash'), '/home');
     expect(r(StartupPhase.ready, '/store-entry'), '/home');
     expect(r(StartupPhase.ready, '/product/1?x=1'), isNull);
+  });
+}
+
+void gateTests() {
+  test('maintenance and update_required gate startup', () async {
+    final h = await Harness.create();
+    h.repo.configs['a1'] = const TenantConfig(maintenance: true);
+    final c = h.container.read(tenantControllerProvider.notifier);
+    await c.submitInput('shop-a.example.com');
+    expect(h.container.read(tenantControllerProvider).phase, StartupPhase.maintenance);
+    h.repo.configs['a1'] = const TenantConfig(updateRequired: true);
+    await c.submitInput('shop-a.example.com');
+    expect(h.container.read(tenantControllerProvider).phase, StartupPhase.updateRequired);
+    h.repo.configs['a1'] = const TenantConfig(minAppVersion: '9.0.0');
+    await c.submitInput('shop-a.example.com');
+    expect(h.container.read(tenantControllerProvider).phase, StartupPhase.updateRequired);
   });
 }

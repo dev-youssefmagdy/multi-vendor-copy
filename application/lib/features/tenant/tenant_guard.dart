@@ -9,6 +9,8 @@ class TenantGuard {
   static const invalid = '/invalid';
   static const suspended = '/suspended';
   static const offline = '/offline';
+  static const maintenance = '/maintenance';
+  static const updateRequired = '/update-required';
   static const home = '/home';
 
   static String? redirect(TenantState s, String location) {
@@ -25,8 +27,12 @@ class TenantGuard {
         return force(suspended);
       case StartupPhase.offline:
         return force(offline);
+      case StartupPhase.maintenance:
+        return force(maintenance);
+      case StartupPhase.updateRequired:
+        return force(updateRequired);
       case StartupPhase.ready:
-        const gates = {splash, storeEntry, invalid, suspended, offline};
+        const gates = {splash, storeEntry, invalid, suspended, offline, maintenance, updateRequired};
         return gates.contains(path) ? home : null;
     }
   }

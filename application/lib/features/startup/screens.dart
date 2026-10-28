@@ -151,6 +151,41 @@ class OfflineScreen extends ConsumerWidget {
       );
 }
 
+class MaintenanceScreen extends ConsumerWidget {
+  const MaintenanceScreen({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => _StatusScreen(
+        icon: Icons.construction,
+        title: 'Under maintenance',
+        body: 'The store is being updated. Please try again shortly.',
+        actions: [
+          FilledButton(
+              key: const Key('retry'),
+              onPressed: ref.read(tenantControllerProvider.notifier).retry,
+              child: const Text('Retry')),
+          TextButton(
+              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+              child: const Text('Change store')),
+        ],
+      );
+}
+
+class UpdateRequiredScreen extends ConsumerWidget {
+  const UpdateRequiredScreen({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => _StatusScreen(
+        icon: Icons.system_update,
+        title: 'Update required',
+        body: 'Please update the app to continue.',
+        actions: [
+          TextButton(
+              key: const Key('change_store'),
+              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+              child: const Text('Change store')),
+        ],
+      );
+}
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   @override
@@ -158,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
     final s = ref.watch(tenantControllerProvider);
     final theme = ref.watch(resolvedThemeProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(s.config?.appName ?? s.tenant?.name ?? 'Store')),
+      appBar: AppBar(title: Text(s.config?.displayName ?? s.tenant?.name ?? 'Store')),
       body: Center(
           child: Text(
               '${theme.definition.slug}/${theme.variantKey}'

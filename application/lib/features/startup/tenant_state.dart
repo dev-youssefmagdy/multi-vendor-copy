@@ -1,6 +1,6 @@
 import '../tenant/tenant_models.dart';
 
-enum StartupPhase { booting, needsStore, ready, invalid, suspended, offline }
+enum StartupPhase { booting, needsStore, ready, invalid, suspended, offline, maintenance, updateRequired }
 
 class TenantState {
   const TenantState({
