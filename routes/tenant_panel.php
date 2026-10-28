@@ -80,6 +80,7 @@ use App\Http\Controllers\Tenant\Panel\Store\PageBuilderController;
 use App\Http\Controllers\Tenant\Panel\Store\PageFormController;
 use App\Http\Controllers\Tenant\Panel\Store\PagesController;
 use App\Http\Controllers\Tenant\Panel\Store\SocialLinkController;
+use App\Http\Controllers\Tenant\Panel\Store\MobileAppController;
 use App\Http\Controllers\Tenant\Panel\Store\ThemesController;
 use App\Http\Controllers\Tenant\Panel\Support\HelpController;
 use App\Http\Controllers\Tenant\Panel\Support\NotificationsController;
@@ -607,6 +608,15 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::put('/themes/{theme}/country-variants', [ThemesController::class, 'updateCountryVariants'])
                 ->whereNumber('theme')
                 ->name('themes.country-variants.update');
+        });
+
+        Route::middleware('tenant.permission:store.mobile-app.manage')->group(function () {
+            Route::get('/mobile-app', [MobileAppController::class, 'index'])->name('mobile-app');
+            Route::put('/mobile-app', [MobileAppController::class, 'save'])->name('mobile-app.save');
+            Route::post('/mobile-app/validate', [MobileAppController::class, 'validateSave'])->name('mobile-app.validate');
+            Route::get('/mobile-themes', [MobileAppController::class, 'themes'])->name('mobile-themes');
+            Route::post('/mobile-themes/{themeSlug}/{variantKey}/activate', [MobileAppController::class, 'activate'])->name('mobile-themes.activate');
+            Route::put('/mobile-themes/colors', [MobileAppController::class, 'saveColors'])->name('mobile-themes.colors');
         });
 
         Route::middleware('tenant.permission:store.pages.manage')->group(function () {

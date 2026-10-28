@@ -57,6 +57,12 @@ class HelpController extends PanelController
                 'category' => 'Storefront',
                 'view' => 'tenant.pages.support.help.articles.themes',
             ],
+            'mobile-app' => [
+                'title' => 'Mobile App',
+                'icon' => 'grid',
+                'category' => 'Storefront',
+                'view' => 'tenant.pages.support.help.articles.mobile-app',
+            ],
             'page-builder' => [
                 'title' => 'Page Builder',
                 'icon' => 'grid',

@@ -53,6 +53,7 @@ class AdminRole extends Model
             'finance.billing.view' => 'View billing',
             'finance.vendor-purchases.view' => 'View vendor purchases (buy from central)',
             'store.themes.manage' => 'Manage themes',
+            'store.mobile-app.manage' => 'Manage mobile app and app themes',
             'store.page-builder.manage' => 'Manage page builder',
             'store.home-variants.manage' => 'Manage home page variants',
             'store.pages.manage' => 'Manage pages',
