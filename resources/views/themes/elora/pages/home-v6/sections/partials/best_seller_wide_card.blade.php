@@ -17,9 +17,9 @@
           >{{ $p['badge'] ?? '' }}</span
         >
       </div>
-      <button type="button" aria-label="{{ __('Add to cart') }}" class="flex items-center justify-center w-[36px] h-[28px] lg:w-auto lg:h-[48px] lg:px-[12px] rounded-[10px] lg:rounded-[17px]" style="background: var(--color-bg-main)">
+      <x-elora.card-cart-btn :p="$p" class="flex items-center justify-center w-[36px] h-[28px] lg:w-auto lg:h-[48px] lg:px-[12px] rounded-[10px] lg:rounded-[17px]" style="background: var(--color-bg-main)">
         <img src="{{ asset('elora-2/assets/icons/cart-add-blue.svg') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[15px] lg:size-[26px]" alt="" />
-      </button>
+      </x-elora.card-cart-btn>
     </div>
   </div>
   <div class="flex-1 min-w-0 flex flex-col justify-between p-[4px] lg:p-[7px]">

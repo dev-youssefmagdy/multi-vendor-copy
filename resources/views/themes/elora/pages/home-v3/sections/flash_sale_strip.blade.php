@@ -32,7 +32,7 @@
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? '-' . (int) round((float) $pricing['discount_percentage']) . '%' : '',
-              'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
+              ...$product->storefrontCartData($symbol, $rate),
               'favData' => $favData,
           ];
       });

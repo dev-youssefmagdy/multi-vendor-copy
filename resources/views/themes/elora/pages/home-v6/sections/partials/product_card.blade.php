@@ -28,14 +28,11 @@
         >
   
       </div>
-      <button
-        type="button"
-        aria-label="{{ __('Add to cart') }}"
+      <x-elora.card-cart-btn :p="$p"
         class="flex items-center justify-center w-[48.18px] h-[38.04px] px-[10.14px] py-[3.38px] lg:w-[82.66px] lg:h-[65.26px] lg:px-[17.4px] lg:py-[5.8px] rounded-[13.5249px] lg:rounded-[23.2033px] transition-transform duration-150 ease active:scale-95"
-        style="background: var(--color-bg-main)"
-      >
+        style="background: var(--color-bg-main)">
         <img src="{{ asset('elora-2/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[20.29px] lg:size-[34.8px]" />
-      </button>
+      </x-elora.card-cart-btn>
     </div>
   </div>
   <div class="flex-1 flex flex-col gap-[5.38px] lg:gap-[9.23px] items-start p-[5.38px] lg:p-[9.23px] w-full min-h-0">

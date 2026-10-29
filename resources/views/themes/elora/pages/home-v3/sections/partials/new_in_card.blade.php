@@ -16,9 +16,9 @@
       @if (!empty($p['sold']))
       <span class="absolute top-0 end-0 text-[8px] lg:text-[11px] font-normal tracking-[0.3px] lg:tracking-[0.4px] px-[4px] py-[2px] lg:px-[5px] lg:py-[3px] rounded-es-[5px] lg:rounded-es-[6px] whitespace-nowrap" style="background:#FFD428; color:#242424">{{ $p['sold'] }}% {{ __('Sold') }}</span>
       @endif
-      <div aria-hidden="true" class="absolute bottom-[4px] end-[4px] flex items-center justify-center w-[29px] h-[23px] lg:w-[51px] lg:h-[41px] bg-[#FDFDFD] rounded-[8px] lg:rounded-[14px] shadow-sm">
+      <x-elora.card-cart-btn :p="$p" class="absolute bottom-[4px] end-[4px] flex items-center justify-center w-[29px] h-[23px] lg:w-[51px] lg:h-[41px] bg-[#FDFDFD] rounded-[8px] lg:rounded-[14px] shadow-sm">
         <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[12px] lg:size-[22px]" />
-      </div>
+      </x-elora.card-cart-btn>
     </div>
     <div class="flex-1 flex flex-col gap-[2px] lg:gap-[4px] p-[6px] lg:p-[10px] min-w-0 justify-center overflow-hidden">
       <div class="flex items-center justify-between gap-[4px] lg:gap-[8px] w-full min-w-0">

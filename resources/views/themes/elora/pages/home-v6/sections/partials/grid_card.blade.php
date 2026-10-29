@@ -14,9 +14,9 @@
         <svg class="size-[20px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     </div>
-    <div class="bg-[var(--color-bg-main)] flex h-[40px] items-center justify-center px-[10px] py-[4px] relative rounded-[16px] shrink-0 w-[50px]">
+    <x-elora.card-cart-btn :p="$p" class="bg-[var(--color-bg-main)] flex h-[40px] items-center justify-center px-[10px] py-[4px] relative rounded-[16px] shrink-0 w-[50px]">
       <img src="{{ asset('elora-2/assets/icons/cart.svg') }}" alt="{{ __('Add to cart') }}" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[20px]" />
-    </div>
+    </x-elora.card-cart-btn>
   </div>
   <div class="flex flex-col gap-[6px] items-start p-[8px] relative shrink-0 w-full">
     <div class="flex flex-col gap-[4px] items-start tracking-[0.5px] w-full">

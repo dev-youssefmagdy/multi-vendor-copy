@@ -537,6 +537,34 @@ class Product extends Model
     }
 
     /**
+     * Data the storefront card cart buttons need (same rules as the default Elora card):
+     * out-of-stock products are disabled, products with several active variants open the
+     * variant picker modal, everything else is added straight to the cart.
+     *
+     * @return array{id:int,nameJs:string,hasMultipleVariants:bool,variantModalData:?array,isOutOfStock:bool}
+     */
+    public function storefrontCartData(string $symbol = '$', float $rate = 1.0): array
+    {
+        $activeVariants = $this->variants->where('active', true)->values();
+        $hasMultipleVariants = $activeVariants->count() > 1;
+
+        return [
+            'id' => $this->id,
+            'nameJs' => (string) ($this->translationValue('name') ?? $this->slug),
+            'hasMultipleVariants' => $hasMultipleVariants,
+            'variantModalData' => $hasMultipleVariants
+                ? $activeVariants->map(fn ($v) => [
+                    'id' => $v->id,
+                    'label' => $v->centralVariant?->title ?? __('Variant #:id', ['id' => $v->id]),
+                    'price' => $symbol . number_format((float) $this->storefrontPricing($v)['current_price'] * $rate, 2),
+                    'inStock' => (int) $v->stock > 0,
+                ])->values()->all()
+                : null,
+            'isOutOfStock' => $this->stockStatus() === 'out_of_stock',
+        ];
+    }
+
+    /**
      * 'out_of_stock' when every variant (or the product itself, if it has no
      * variants) has zero stock; 'partial' when only some variants are
      * depleted; otherwise 'in_stock'.
