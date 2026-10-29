@@ -61,7 +61,7 @@ pa queue:work --queue=translations
 
 
 cd application
-flutter run --dart-define=PLATFORM_API_BASE=https://PLATFORM
+flutter run --dart-define=PLATFORM_API_BASE=https://zazo.nogrgr.com
 
 
 /admin/store/mobile-themes

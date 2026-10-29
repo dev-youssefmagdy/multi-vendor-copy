@@ -19,6 +19,19 @@ class TenantController extends Notifier<TenantState> {
     if (link != null) {
       return _enter(host: link.host, pending: link.location);
     }
+    // When PLATFORM_API_BASE is itself a store domain, open that store
+    // directly (no URL / store-code entry).
+    final baseHost = Uri.tryParse(ref.read(appConfigProvider).platformApiBase)?.host;
+    if (baseHost != null && baseHost.isNotEmpty) {
+      var isStore = false;
+      try {
+        final r = await ref.read(resolutionServiceProvider).resolveHost(baseHost);
+        isStore = r.status == TenantStatus.active;
+      } catch (_) {
+        // Not a store domain / unreachable: fall through to the stored flow.
+      }
+      if (isStore) return _enter(host: baseHost);
+    }
     final stored = ref.read(tenantStorageProvider).loadActiveTenant();
     if (stored != null) {
       return _enter(host: stored.domain, stored: stored);
