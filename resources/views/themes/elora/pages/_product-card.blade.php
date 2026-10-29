@@ -202,10 +202,9 @@
 
         {{-- Stars + average + count --}}
         <div class="flex items-center gap-2">
-            <div class="stars">
+            <div class="flex items-center" style="gap:2px">
                 @for ($i = 1; $i <= 5; $i++)
-                    <div class="star {{ $i <= $fullStars ? 'filled' : 'empty' }}">
-                    </div>
+                    <span style="display:inline-block;width:9px;height:9px;background:{{ $i <= $fullStars ? '#ffe100' : '#d5d5d5' }};clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span>
                 @endfor
             </div>
             <span class="text-[11px] text-[#ADADAD] tracking-[0.5px]">({{ $rating > 0 ? number_format($rating, 1) : '0' }})</span>
