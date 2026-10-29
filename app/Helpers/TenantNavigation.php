@@ -46,8 +46,8 @@ class TenantNavigation
                         'icon' => 'pages',
                         'children' => [
                             ['label' => 'Themes', 'route' => 'tenant.store.themes', 'permission' => 'store.themes.manage'],
-                            ['label' => 'Mobile App', 'route' => 'tenant.store.mobile-app', 'permission' => 'store.mobile-app.manage'],
-                            ['label' => 'App Themes', 'route' => 'tenant.store.mobile-themes', 'permission' => 'store.mobile-app.manage'],
+                            // ['label' => 'Mobile App', 'route' => 'tenant.store.mobile-app', 'permission' => 'store.mobile-app.manage'],
+                            // ['label' => 'App Themes', 'route' => 'tenant.store.mobile-themes', 'permission' => 'store.mobile-app.manage'],
                             ['label' => 'Page Builder', 'route' => 'tenant.store.page-builder', 'permission' => 'store.page-builder.manage'],
                             ['label' => 'Pages', 'route' => 'tenant.store.pages', 'permission' => 'store.pages.manage'],
                             ['label' => 'Appearance', 'route' => 'tenant.store.appearance', 'permission' => 'store.appearance.manage'],
