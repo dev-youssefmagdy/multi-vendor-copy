@@ -284,7 +284,6 @@
         >
           <img src="{{ asset('elora-4/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
           <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
-            <span class="block text-[var(--color-text-faint)]">{{ __('Welcome') }}</span>
             <span class="block" style="color: var(--color-black-alt)"
               >{{ __('Sign in / Register') }}</span
             >

@@ -124,7 +124,7 @@
                         <path d="M20.5901 22C20.5901 18.13 16.7402 15 12.0002 15C7.26015 15 3.41016 18.13 3.41016 22"
                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <span class="text-xs text-gray-500 hidden lg:block leading-tight">{{ __('Welcome') }}<br><span
+                    <span class="text-xs text-gray-500 hidden lg:block leading-tight"><span
                             class="font-medium text-charcoal">{{ __('Sign in / Register') }}</span></span>
                 </a>
             @endauth
