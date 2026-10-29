@@ -69,6 +69,43 @@ $pageBase = $category
                     </div>
                 </details>
 
+                {{-- ── VARIANT FILTERS (one section per variation: Color, Size…) ── --}}
+                @foreach ($variantGroups as $group)
+                @php $groupOpen = collect($group['options'])->pluck('id')->intersect($options)->isNotEmpty(); @endphp
+                <details class="border-b border-[#F0F0F0] py-4" wire:key="variation-{{ $group['id'] }}" {{ $groupOpen ? 'open' : '' }}>
+                    <summary class="flex flex-row justify-between items-center cursor-pointer select-none">
+                        <span class="font-medium text-[16px] leading-[20px] text-[#0A0A0A]">{{ $group['name'] }}</span>
+                        <svg class="chevron w-4 h-4 shrink-0" fill="none" stroke="#0A0A0A" viewBox="0 0 24 24"
+                            stroke-width="1.33">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    @if (count($group['options']) > 10)
+                    <input type="search" autocomplete="off" placeholder="{{ __('Search (:name)', ['name' => $group['name']]) }}"
+                        aria-label="{{ __('Search (:name)', ['name' => $group['name']]) }}"
+                        oninput="var q=this.value.trim().toLowerCase();this.nextElementSibling.querySelectorAll('[data-opt-name]').forEach(function(l){l.style.display=l.dataset.optName.indexOf(q)===-1?'none':''})"
+                        class="mt-3 w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
+                    @endif
+                    <div class="mt-3 flex flex-col gap-2 max-h-[220px] overflow-y-auto pe-1">
+                        @foreach ($group['options'] as $opt)
+                        <label class="flex items-center gap-2 cursor-pointer" wire:key="option-{{ $opt['id'] }}"
+                            data-opt-name="{{ \Illuminate\Support\Str::lower($opt['name']) }}">
+                            <input type="checkbox"
+                                {{ in_array($opt['id'], $options, true) ? 'checked' : '' }}
+                                wire:click="toggleOption({{ $opt['id'] }})"
+                                class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
+                            @if (!empty($opt['swatch']) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $opt['swatch']))
+                            <span class="w-3.5 h-3.5 rounded-full border border-[#D1D5DC] shrink-0"
+                                style="background: {{ $opt['swatch'] }}"></span>
+                            @endif
+                            <span class="text-[14px] tracking-[0.5px] text-[#171717] flex-1 truncate">{{ $opt['name'] }}</span>
+                            <span class="text-[12px] text-[#ADADAD]">({{ $opt['count'] }})</span>
+                        </label>
+                        @endforeach
+                    </div>
+                </details>
+                @endforeach
+
                 {{-- ── PROMOTIONAL ITEMS ── --}}
                 <details class="border-b border-[#F0F0F0] py-4" {{ ($sale || $productFlag) ? 'open' : '' }}>
                     <summary class="flex flex-row justify-between items-center cursor-pointer select-none">
@@ -391,6 +428,7 @@ $pageBase = $category
                     data-product-flag="{{ $productFlag }}"
                     data-sale="{{ $sale }}"
                     data-ratings="{{ $ratings }}"
+                    data-options="{{ implode(',', $options) }}"
                     data-min="{{ $min }}"
                     data-max="{{ $max }}"
                     class="w-full flex justify-center py-8">

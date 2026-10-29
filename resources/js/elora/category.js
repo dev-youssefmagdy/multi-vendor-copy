@@ -65,6 +65,7 @@
                 ratings:      d.ratings,
                 min:          d.min,
                 max:          d.max,
+                options:      d.options || '',
             });
 
             var slug = d.slug || '';

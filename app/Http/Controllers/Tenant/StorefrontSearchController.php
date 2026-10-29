@@ -148,6 +148,7 @@ class StorefrontSearchController extends Controller
             'ratings' => $request->query('ratings', ''),
             'min' => $request->query('min', ''),
             'max' => $request->query('max', ''),
+            'options' => array_filter(array_map('intval', explode(',', (string) $request->query('options', '')))),
         ];
 
         return $repo->paginatedProductsByCategory($slug ? $category : null, $filters, 15);

@@ -351,6 +351,110 @@ class StorefrontRepository
         }, boolean: 'and not');
     }
 
+    /**
+     * Variant-option filter: OR within one variation (Color: red OR blue), AND across
+     * variations (Color AND Size) — all satisfied by the same active variant.
+     *
+     * @param  array<int|string>  $optionIds  central variation_option ids
+     */
+    protected function applyVariantOptionFilter($query, array $optionIds): void
+    {
+        $optionIds = array_values(array_unique(array_filter(array_map('intval', $optionIds))));
+
+        if ($optionIds === []) {
+            return;
+        }
+
+        $byVariation = \App\Models\VariationOption::query()
+            ->whereIn('id', $optionIds)
+            ->get(['id', 'variation_id'])
+            ->groupBy('variation_id')
+            ->map(fn ($options) => $options->pluck('id')->map(fn ($id) => (int) $id)->all());
+
+        if ($byVariation->isEmpty()) {
+            return;
+        }
+
+        $query->whereHas('variants', function (Builder $variantQuery) use ($byVariation): void {
+            $variantQuery->where('active', true);
+
+            foreach ($byVariation as $ids) {
+                $variantQuery->where(function (Builder $group) use ($ids): void {
+                    foreach ($ids as $id) {
+                        $group->orWhereJsonContains('option_ids', $id);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Sidebar filter groups built from the active variants of the products in scope
+     * (the category + descendants, or the whole catalog): one group per variation
+     * (Color, Size…) with every option value used and its product count.
+     *
+     * @return list<array{id:int,name:string,options:list<array{id:int,name:string,swatch:?string,count:int}>}>
+     */
+    public function variantFilterGroups(?Category $category = null): array
+    {
+        $categoryIds = $category ? array_merge([$category->id], $this->categoryDescendantIds($category->id)) : null;
+
+        $productIds = Product::query()
+            ->where('active', true)
+            ->when($categoryIds, fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $categoryIds)))
+            ->pluck('id');
+
+        if ($productIds->isEmpty()) {
+            return [];
+        }
+
+        // option id => set of product ids using it
+        $productsByOption = [];
+        ProductVariant::query()
+            ->whereIn('product_id', $productIds)
+            ->where('active', true)
+            ->get(['product_id', 'option_ids'])
+            ->each(function ($variant) use (&$productsByOption): void {
+                foreach ((array) $variant->option_ids as $optionId) {
+                    $productsByOption[(int) $optionId][$variant->product_id] = true;
+                }
+            });
+
+        if ($productsByOption === []) {
+            return [];
+        }
+
+        $options = \App\Models\VariationOption::query()
+            ->with('variation')
+            ->whereIn('id', array_keys($productsByOption))
+            ->get();
+
+        return $options
+            ->filter(fn ($option) => $option->variation !== null)
+            ->groupBy('variation_id')
+            ->map(function ($group) use ($productsByOption): array {
+                $variation = $group->first()->variation;
+
+                return [
+                    'id' => (int) $variation->id,
+                    'name' => (string) ($variation->translationValue('name') ?? $variation->slug),
+                    'options' => $group
+                        ->map(fn ($option) => [
+                            'id' => (int) $option->id,
+                            'name' => (string) ($option->translationValue('name') ?? $option->external_id ?? $option->id),
+                            'swatch' => $option->swatch,
+                            'count' => count($productsByOption[$option->id] ?? []),
+                        ])
+                        ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+                        ->values()
+                        ->all(),
+                ];
+            })
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->all();
+    }
+
     protected function applyProductFilters($query, array $filters): Builder
     {
         $keyword = trim((string) ($filters['keyword'] ?? ''));
@@ -404,6 +508,8 @@ class StorefrontRepository
                     });
             });
         }
+
+        $this->applyVariantOptionFilter($query, $filters['options'] ?? []);
 
         if ($availability === 'in_stock') {
             $query->where(function (Builder $q): void {

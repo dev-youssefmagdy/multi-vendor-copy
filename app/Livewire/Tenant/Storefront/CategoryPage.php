@@ -42,6 +42,10 @@ class CategoryPage extends Component
     #[Url(except: '')]
     public string $max = '';
 
+    /** @var array<int, int|string> selected central variation_option ids */
+    #[Url(except: [])]
+    public array $options = [];
+
     public int $perPage = 15;
     public bool $hasMore = false;
 
@@ -69,6 +73,8 @@ class CategoryPage extends Component
         if (!in_array($this->ratings, ['1', '2', '3', '4', ''], true)) {
             $this->ratings = '';
         }
+
+        $this->options = array_values(array_unique(array_filter(array_map('intval', (array) $this->options))));
 
         $this->min = $this->normalizePrice($this->min);
         $this->max = $this->normalizePrice($this->max);
@@ -114,7 +120,7 @@ class CategoryPage extends Component
      */
     public function updating(string $property): void
     {
-        if (in_array($property, ['sort', 'availability', 'ratings', 'min', 'max', 'keyword', 'sale', 'productFlag', 'section'], true)) {
+        if (in_array($property, ['sort', 'availability', 'ratings', 'min', 'max', 'keyword', 'sale', 'productFlag', 'section', 'options'], true)) {
             $this->perPage = 15;
         }
     }
@@ -151,8 +157,18 @@ class CategoryPage extends Component
         $this->perPage = 15;
     }
 
+    /** Toggle a variant option value (Color: Red, Size: M…) in the sidebar. */
+    public function toggleOption(int $optionId): void
+    {
+        $this->options = in_array($optionId, $this->options, true)
+            ? array_values(array_diff($this->options, [$optionId]))
+            : array_values(array_merge($this->options, [$optionId]));
+        $this->perPage = 15;
+    }
+
     public function clearFilters(): void
     {
+        $this->options = [];
         $this->keyword = '';
         $this->sort = 'latest';
         $this->availability = '';
@@ -245,6 +261,7 @@ class CategoryPage extends Component
             'min' => $this->min,
             'max' => $this->max,
             'section' => $this->section,
+            'options' => $this->options,
         ], $this->perPage);
 
         $this->hasMore = $products->hasMorePages();
@@ -266,6 +283,8 @@ class CategoryPage extends Component
             'min' => $this->min,
             'max' => $this->max,
             'section' => $this->section,
+            'options' => $this->options,
+            'variantGroups' => $repo->variantFilterGroups($category),
             'hasMore' => $this->hasMore,
             'allCategories' => $allCategories,
             'sectionLabel' => $this->sectionLabel(),
