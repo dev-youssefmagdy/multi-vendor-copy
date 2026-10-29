@@ -56,7 +56,7 @@
       </a>
       <div class="flex flex-1 items-center gap-[8px]">
         <button type="button" id="desktopMenuBtn" onclick="event.stopPropagation(); document.getElementById('souqifyV6DeptMenu')?.classList.toggle('hidden')" class="flex items-center gap-[8px] h-[54px] px-[12px] rounded-[4px] shrink-0 cursor-pointer relative" style="background:var(--color-brand-pink)">
-          <img src="{{ asset('souqify-5/assets/icons/menu.svg') }}" alt="" class="size-[20px] invert" />
+          <img src="{{ asset('souqify-5/assets/icons/menu.svg') }}" alt="" class="size-[20px]" style="filter: brightness(0) invert(1)" />
           <span class="text-[14px] text-white tracking-[0.5px] whitespace-nowrap">{{ __('Shop By Categories') }}</span>
           <img src="{{ asset('souqify-5/assets/icons/arrow-down.svg') }}" alt="" class="size-[12px] invert" />
           <div id="souqifyV6DeptMenu"
