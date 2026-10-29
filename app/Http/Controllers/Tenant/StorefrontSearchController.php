@@ -65,7 +65,7 @@ class StorefrontSearchController extends Controller
     {
         $paginator = $this->paginatedCategoryProducts($request, $repo, $slug);
         $currentCurrency = $repo->currentCurrency();
-        $cards = $this->renderCards($paginator, 'themes.elora.pages._product-card', $currentCurrency);
+        $cards = $this->renderCards($paginator, 'themes.elora.pages._category-product-card', $currentCurrency);
 
         return response()->json([
             'has_more' => $paginator->hasMorePages(),
@@ -128,7 +128,7 @@ class StorefrontSearchController extends Controller
     {
         $paginator = $this->paginatedCategoryProducts($request, $repo, $slug);
         $currentCurrency = $repo->currentCurrency();
-        $cards = $this->renderCards($paginator, 'themes.elora.pages._product-card', $currentCurrency);
+        $cards = $this->renderCards($paginator, 'themes.elora.pages._category-product-card', $currentCurrency);
 
         return response()->json([
             'has_more' => $paginator->hasMorePages(),

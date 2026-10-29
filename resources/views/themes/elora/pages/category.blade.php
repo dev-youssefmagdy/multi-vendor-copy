@@ -377,7 +377,7 @@ $pageBase = $category
                 <div
                     class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] sm:grid-cols-[repeat(auto-fill,180px)] md:grid-cols-[repeat(auto-fill,210px)] justify-center lg:justify-start gap-[14px] w-full">
                     @foreach ($products as $product)
-                    @include('themes.elora.pages._product-card', ['product' => $product])
+                    @include('themes.elora.pages._category-product-card', ['product' => $product])
                     @endforeach
                 </div>
                 {{-- infinite-scroll sentinel --}}
