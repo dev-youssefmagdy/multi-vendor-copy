@@ -62,7 +62,16 @@
                 <a href="{{ storefront_see_all_url('recommended') }}"
                     class="text-white text-xs sm:text-sm hover:underline"><span class="inline-block rtl:rotate-180">←</span> {{ __('See all') }}</a>
                 <span class="text-white text-xs sm:text-sm hidden sm:block">
-                    {{ __('Free shipping when you purchase 1.2 kg') }}
+                    @php
+                        $__freeShipping = app(\App\Services\Tenant\FreeShippingBanner::class);
+                        $__freeGrams = $__freeShipping->thresholdGrams();
+                    @endphp
+                    {{-- Dynamic from the visitor country's free-shipping rate; fixed title when the country has none. --}}
+                    @if ($__freeGrams)
+                        {{ __('Free shipping when you purchase :weight', ['weight' => $__freeShipping->weightLabel($__freeGrams)]) }}
+                    @else
+                        {{ __('Free shipping when you purchase 1.2 kg') }}
+                    @endif
                 </span>
                 <div></div>
             </div>

@@ -64,11 +64,20 @@
         </div>
 
         @if ($products->count() > 0)
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-                @foreach ($products as $product)
-                    @include('themes.elora.pages._showcase-card', ['product' => $product, 'badgeText' => __('Best-Selling')])
-                @endforeach
-            </div>
+            @if ($isSearchRoute)
+                {{-- Search results use the same product card + grid as the categories page --}}
+                <div class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] sm:grid-cols-[repeat(auto-fill,180px)] md:grid-cols-[repeat(auto-fill,210px)] justify-center lg:justify-start gap-[14px] w-full">
+                    @foreach ($products as $product)
+                        @include('themes.elora.pages._category-product-card', ['product' => $product])
+                    @endforeach
+                </div>
+            @else
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+                    @foreach ($products as $product)
+                        @include('themes.elora.pages._showcase-card', ['product' => $product, 'badgeText' => __('Best-Selling')])
+                    @endforeach
+                </div>
+            @endif
             <div class="mt-8">
                 @include('themes.elora.pages._pagination', ['paginator' => $products])
             </div>

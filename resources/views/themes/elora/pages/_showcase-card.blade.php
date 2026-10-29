@@ -51,7 +51,7 @@ $badge optional ribbon arrow label (top-left of image)
 @endphp
 
 <a href="{{ route('tenant.storefront.product', $product->slug) }}"
-    class="product-card group bg-fill rounded-lg card-w block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
+    class="elora-showcase-card group bg-fill rounded-lg card-w block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
 
     <div class="relative card-img-h rounded-t-lg overflow-hidden">
         @if ($img)
@@ -109,9 +109,9 @@ $badge optional ribbon arrow label (top-left of image)
             {{ $product->centralProduct?->category?->name ?? '' }}
         </p>
 
-        <div class="stars mb-1.5">
+        <div class="flex items-center mb-1.5" style="gap:2px">
             @for ($i = 1; $i <= 5; $i++)
-                <div class="star {{ $i <= $fullStars ? 'filled' : 'empty' }}"></div>
+                <span style="display:inline-block;width:9px;height:9px;background:{{ $i <= $fullStars ? '#ffe100' : '#d5d5d5' }};clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"></span>
             @endfor
             <span class="text-xs text-gray3 ml-1">({{ $rating > 0 ? number_format($rating, 1) : '0' }})</span>
         </div>
