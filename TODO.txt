@@ -62,3 +62,7 @@ pa queue:work --queue=translations
 
 cd application
 flutter run --dart-define=PLATFORM_API_BASE=https://PLATFORM
+
+
+/admin/store/mobile-themes
+/admin/store/mobile-app

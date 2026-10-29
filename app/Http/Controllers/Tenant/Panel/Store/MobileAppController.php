@@ -37,6 +37,7 @@ final class MobileAppController extends PanelController
             'navItems' => self::NAV_ITEMS,
             'tenantCode' => (string) tenant('id'),
             'domain' => $domain,
+            'landingUrl' => $domain ? 'https://'.$domain.'/app' : null,
         ]);
     }
 
@@ -99,6 +100,7 @@ final class MobileAppController extends PanelController
             'name' => $v->name ?: strtoupper($v->theme_slug.' '.$v->key),
             'description' => $v->description,
             'preview' => $v->preview_image,
+            'colors' => $this->normaliseColors((array) $v->colors),
             'initials' => strtoupper(substr((string) ($v->name ?: $v->theme_slug), 0, 2)),
             'is_active' => $active && $active->theme_slug === $v->theme_slug && $active->variant_key === $v->key,
         ])->values()->all();
@@ -147,6 +149,25 @@ final class MobileAppController extends PanelController
         CacheVersion::bump('MobileApp');
 
         return $this->success('Color overrides saved.');
+    }
+
+    /** @return array<string,string> tokens (primary, secondary, ...) from raw "--color-x" variant colours */
+    private function normaliseColors(array $raw): array
+    {
+        $out = [];
+        foreach ($raw as $name => $hex) {
+            if (! is_string($hex) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) {
+                continue;
+            }
+            $token = str_replace('-', '_', (string) preg_replace('/^--(color-)?/', '', (string) $name));
+            $out[match ($token) {
+                'subtitle' => 'text_subtitle',
+                'black' => 'text_primary',
+                default => $token,
+            }] = $hex;
+        }
+
+        return $out;
     }
 
     private function rules(): array
