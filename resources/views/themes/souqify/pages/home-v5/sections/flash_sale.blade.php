@@ -508,6 +508,40 @@
             font-size: clamp(20px, 2.4331vw, 35.0373px);
         }
     }
+    /* ---------- RTL (Arabic): the whole section mirrors the English layout ----------
+       Geometry that is hard-coded to a physical side (corner radii, left/right
+       offsets, padding-left) is swapped here; the flex rows already follow `dir`.
+       The pattern is flipped horizontally (the "-180deg" mirror) and the lightning
+       glyph is mirrored so it leans the same way against the title. */
+    [dir="rtl"] .sqv5-flash { direction: rtl; text-align: start; }
+    [dir="rtl"] .sqv5-flash__panel { border-radius: 170px 0 210px 0; }
+    /* The flip also mirrors the image's own corner clipping, so it gets the LTR radius:
+       after scaleX(-1) it lines up with the mirrored panel (otherwise the image bleeds
+       past the cut corners as a dark patch). */
+    [dir="rtl"] .sqv5-flash__pattern { transform: scaleX(-1); border-radius: 0 170px 0 210px; }
+    [dir="rtl"] .sqv5-flash__badge--bottom { left: auto; right: 10px; }
+    [dir="rtl"] .sqv5-flash__badge--top { right: auto; left: 10px; }
+    [dir="rtl"] .sqv5-flash__badge img,
+    [dir="rtl"] .sqv5-flash__title img { transform: scaleX(-1); }
+    [dir="rtl"] .sqv5-flash__ribbon { left: auto; right: 0; }
+    [dir="rtl"] .sqv5-flash__cart { left: auto; right: 61%; }
+
+    @media (min-width: 1024px) {
+        [dir="rtl"] .sqv5-flash__panel { border-radius: 200px 0 200px 0; }
+        [dir="rtl"] .sqv5-flash__pattern { border-radius: 0 200px 0 200px; }
+        [dir="rtl"] .sqv5-flash__badge--bottom {
+            left: auto;
+            right: clamp(8px, 0.83vw, 12px);
+        }
+        [dir="rtl"] .sqv5-flash__bar {
+            padding-left: 0;
+            padding-right: clamp(200px, 20vw, 288px);
+        }
+        [dir="rtl"] .sqv5-flash__cta {
+            left: auto;
+            right: clamp(40px, 3.4vw, 49px);
+        }
+    }
 </style>
 
 <!-- ============ FLASH SALE ============ -->
