@@ -58,3 +58,7 @@ pa products:backfill-country-ids
 php artisan tenants:run tenant:permission-seed
 
 pa queue:work --queue=translations
+
+
+cd application
+flutter run --dart-define=PLATFORM_API_BASE=https://PLATFORM
