@@ -43,6 +43,11 @@
     <code>/admin/settings/email-templates</code>. Hard-coded mailables live under <code>app/Mail/</code> and use Blade
     templates under <code>resources/views/emails/</code>.</p>
 
+<h3>Social login (Google / Apple)</h3>
+<p>Credentials are stored (secrets encrypted) in the central <code>app_settings</code> table and edited at
+    <code>/admin/settings/social-login</code>; <code>.env</code> / <code>config/services.php</code> are not used. Resolved by
+    <code>App\Services\Auth\SocialLoginConfig</code>. The page lists the step-by-step Google Cloud and Apple Developer setup.</p>
+
 <h3>Tenancy</h3>
 <p>See the <em>Multi-Tenancy</em> section. The library is <code>stancl/tenancy</code>.</p>
 

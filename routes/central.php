@@ -50,6 +50,7 @@ use App\Livewire\Admin\Setting\AddEditCurrency;
 use App\Livewire\Admin\Setting\AddEditEmailTemplate;
 use App\Livewire\Admin\Setting\CurrenciesPage;
 use App\Livewire\Admin\Setting\EmailConfigurationPage;
+use App\Livewire\Admin\Setting\SocialLoginPage;
 use App\Livewire\Admin\Setting\EmailTemplatesPage;
 use App\Livewire\Admin\Setting\GeneralSettingsPage;
 use App\Livewire\Admin\Setting\HomeVariantsPage;
@@ -431,6 +432,7 @@ Route::group([
         Route::get('/email-templates/create', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.create');
         Route::get('/email-templates/{emailTemplate}/edit', AddEditEmailTemplate::class)->middleware('admin.permission:settings.email-templates.manage')->name('email-templates.edit');
         Route::get('/email-configuration', EmailConfigurationPage::class)->middleware('admin.permission:settings.email-configuration.manage')->name('email-configuration');
+        Route::get('/social-login', SocialLoginPage::class)->middleware('admin.permission:settings.social-login.manage')->name('social-login');
         Route::get('/currencies', CurrenciesPage::class)->middleware('admin.permission:settings.currencies.view,settings.currencies.manage')->name('currencies');
         Route::get('/currencies/create', AddEditCurrency::class)->middleware('admin.permission:settings.currencies.manage')->name('currencies.create');
         Route::get('/currencies/{currency}/edit', AddEditCurrency::class)->middleware('admin.permission:settings.currencies.manage')->name('currencies.edit');

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Laravel\Socialite\Facades\Socialite;
+use App\Services\Auth\SocialLoginConfig;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 class StorefrontSocialAuthController extends Controller
@@ -35,34 +35,26 @@ class StorefrontSocialAuthController extends Controller
 
     public function redirectToGoogle(): RedirectResponse
     {
-        return Socialite::driver('google')
-            ->redirectUrl(route('tenant.storefront.social.google.callback'))
-            ->redirect();
+        return app(SocialLoginConfig::class)->driver('google', route('tenant.storefront.social.google.callback'))->redirect();
     }
 
     public function handleGoogleCallback(): RedirectResponse
     {
-        $socialUser = Socialite::driver('google')
-            ->redirectUrl(route('tenant.storefront.social.google.callback'))
-            ->user();
+        $socialUser = app(SocialLoginConfig::class)->driver('google', route('tenant.storefront.social.google.callback'))->user();
 
         return $this->loginOrRegister('google', $socialUser);
     }
 
     public function redirectToApple(): RedirectResponse
     {
-        return Socialite::driver('apple')
-            ->redirectUrl(route('tenant.storefront.social.apple.callback'))
-            ->stateless()
-            ->redirect();
+        return app(SocialLoginConfig::class)->driver('apple', route('tenant.storefront.social.apple.callback'))
+            ->stateless()->redirect();
     }
 
     public function handleAppleCallback(): RedirectResponse
     {
-        $socialUser = Socialite::driver('apple')
-            ->redirectUrl(route('tenant.storefront.social.apple.callback'))
-            ->stateless()
-            ->user();
+        $socialUser = app(SocialLoginConfig::class)->driver('apple', route('tenant.storefront.social.apple.callback'))
+            ->stateless()->user();
 
         return $this->loginOrRegister('apple', $socialUser);
     }

@@ -80,6 +80,7 @@ class AdminPermissions
             'settings.payment-gateway-limits.manage' => 'Manage payment gateway limits',
             'settings.email-templates.manage' => 'Manage email templates',
             'settings.email-configuration.manage' => 'Manage email configuration',
+            'settings.social-login.manage' => 'Manage Google / Apple sign-in',
             'settings.currencies.view' => 'View currencies',
             'settings.currencies.manage' => 'Manage currencies',
             'settings.languages.view' => 'View languages',

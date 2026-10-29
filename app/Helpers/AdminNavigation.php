@@ -229,6 +229,7 @@ class AdminNavigation
                             ['label' => 'Payment Gateway Limits', 'route' => 'admin.settings.payment-gateway-limits', 'permission' => 'settings.payment-gateway-limits.manage'],
                             ['label' => 'Email Templates', 'route' => 'admin.settings.email-templates', 'permission' => 'settings.email-templates.manage'],
                             ['label' => 'Email Configuration', 'route' => 'admin.settings.email-configuration', 'permission' => 'settings.email-configuration.manage'],
+                            ['label' => 'Social Login', 'route' => 'admin.settings.social-login', 'permission' => 'settings.social-login.manage'],
                             ['label' => 'Currencies', 'route' => 'admin.settings.currencies', 'permission' => 'settings.currencies.view'],
                             ['label' => 'Languages', 'route' => 'admin.settings.languages', 'permission' => 'settings.languages.view'],
                             ['label' => 'Translation Key Access', 'route' => 'admin.settings.translation-key-access', 'permission' => 'settings.languages.manage'],

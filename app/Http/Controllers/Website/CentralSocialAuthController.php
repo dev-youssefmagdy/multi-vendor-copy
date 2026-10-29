@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Laravel\Socialite\Facades\Socialite;
+use App\Services\Auth\SocialLoginConfig;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 class CentralSocialAuthController extends Controller
@@ -28,16 +28,12 @@ class CentralSocialAuthController extends Controller
     {
         $this->stashIntent($request, $intent);
 
-        return Socialite::driver('google')
-            ->redirectUrl(route('website.social.google.callback'))
-            ->redirect();
+        return app(SocialLoginConfig::class)->driver('google', route('website.social.google.callback'))->redirect();
     }
 
     public function handleGoogleCallback(): \Illuminate\Http\Response|RedirectResponse
     {
-        $socialUser = Socialite::driver('google')
-            ->redirectUrl(route('website.social.google.callback'))
-            ->user();
+        $socialUser = app(SocialLoginConfig::class)->driver('google', route('website.social.google.callback'))->user();
 
         return $this->handle($socialUser, 'google');
     }
@@ -46,18 +42,14 @@ class CentralSocialAuthController extends Controller
     {
         $this->stashIntent($request, $intent);
 
-        return Socialite::driver('apple')
-            ->redirectUrl(route('website.social.apple.callback'))
-            ->stateless()
-            ->redirect();
+        return app(SocialLoginConfig::class)->driver('apple', route('website.social.apple.callback'))
+            ->stateless()->redirect();
     }
 
     public function handleAppleCallback(): \Illuminate\Http\Response|RedirectResponse
     {
-        $socialUser = Socialite::driver('apple')
-            ->redirectUrl(route('website.social.apple.callback'))
-            ->stateless()
-            ->user();
+        $socialUser = app(SocialLoginConfig::class)->driver('apple', route('website.social.apple.callback'))
+            ->stateless()->user();
 
         return $this->handle($socialUser, 'apple');
     }
