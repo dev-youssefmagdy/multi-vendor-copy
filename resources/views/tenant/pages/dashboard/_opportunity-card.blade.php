@@ -30,7 +30,7 @@
 
     <div class="db-opp-body">
         <div class="db-opp-tags">
-            <span class="db-tag is-blue">{{ $opp['category'] }}</span>
+            <span class="db-tag is-blue">{{ \Illuminate\Support\Str::words($opp['category'], 2, '...') }}</span>
             <span class="db-tag is-orange"><i></i>{{ $opp['trend'] }}</span>
             <span class="db-tag is-green"><i></i>{{ $opp['competition'] }}</span>
         </div>

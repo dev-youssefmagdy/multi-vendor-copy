@@ -561,12 +561,14 @@
 
 .db-opp-tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px 24px;
+    flex-wrap: nowrap;
+    gap: 8px;
 }
 
 .db-tag {
     display: inline-flex;
+    min-width: 0;
+    white-space: nowrap;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
@@ -575,7 +577,7 @@
     line-height: 1.5;
 }
 
-.db-tag i { width: 16px; height: 16px; border-radius: 50%; background: currentColor; }
+.db-tag i { width: 16px; height: 16px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 .db-tag.is-blue { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
 .db-tag.is-orange { background: rgba(253, 111, 4, 0.1); color: #FD6F04; }
 .db-tag.is-green { background: rgba(3, 170, 0, 0.1); color: #03AA00; }
