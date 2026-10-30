@@ -112,6 +112,13 @@ body {
    one spaceBetween gap (18px) — must be kept in sync with the card's own
    height or Grid allocates far more space per row than the card needs,
    leaving a large empty gap above/below each card. */
+@media (max-width: 1023px) {
+  /* small breathing room on all four sides so the cards' shadow/edges aren't
+     flush against (or clipped by) the swiper's overflow:hidden box. */
+  .trending-swiper {
+    padding: 6px;
+  }
+}
 .trending-swiper .swiper-wrapper {
   height: 354px; /* mobile card = Souqify flash card: p-3 + 144px image = 168px */
 }
