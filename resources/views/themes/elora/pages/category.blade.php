@@ -92,7 +92,7 @@ $pageBase = $category
                             data-opt-name="{{ \Illuminate\Support\Str::lower($opt['name']) }}">
                             <input type="checkbox"
                                 {{ in_array($opt['id'], $options, true) ? 'checked' : '' }}
-                                wire:click="toggleOption({{ $opt['id'] }})"
+                                wire:click="toggleOption({{ $opt['id'] }})" data-f="option" data-v="{{ $opt['id'] }}"
                                 class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             @if (!empty($opt['swatch']) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $opt['swatch']))
                             <span class="w-3.5 h-3.5 rounded-full border border-[#D1D5DC] shrink-0"
@@ -120,21 +120,21 @@ $pageBase = $category
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $sale === 'on_sale' ? 'checked' : '' }}
-                                wire:click="toggleSale('on_sale')"
+                                wire:click="toggleSale('on_sale')" data-f="sale" data-v="on_sale"
                                 class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('On sale') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $sale === 'flash_sale' ? 'checked' : '' }}
-                                wire:click="toggleSale('flash_sale')"
+                                wire:click="toggleSale('flash_sale')" data-f="sale" data-v="flash_sale"
                                 class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Flash Sale') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $productFlag === 'featured' ? 'checked' : '' }}
-                                wire:click="toggleProductFlag('featured')"
+                                wire:click="toggleProductFlag('featured')" data-f="flag" data-v="featured"
                                 class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Featured') }}</span>
                         </label>
@@ -151,10 +151,10 @@ $pageBase = $category
                         </svg>
                     </summary>
                     <div class="mt-3 flex gap-2">
-                        <input type="number" wire:model.lazy="min" min="0" step="0.01" value="{{ $min }}"
+                        <input type="number" wire:model.lazy="min" data-f="min" min="0" step="0.01" value="{{ $min }}"
                             placeholder="{{ __('Min') }}"
                             class="w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
-                        <input type="number" wire:model.lazy="max" min="0" step="0.01" value="{{ $max }}"
+                        <input type="number" wire:model.lazy="max" data-f="max" min="0" step="0.01" value="{{ $max }}"
                             placeholder="{{ __('Max') }}"
                             class="w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
                     </div>
@@ -175,7 +175,7 @@ $pageBase = $category
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="ratings_sidebar" value="{{ $star }}"
                                 {{ $ratings == $star ? 'checked' : '' }}
-                                wire:click="toggleRatings('{{ $star }}')"
+                                wire:click="toggleRatings('{{ $star }}')" data-f="ratings" data-v="{{ $star }}"
                                 class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="flex items-center gap-0.5">
                                 @for($i = 1; $i <= 5; $i++) <svg class="w-[10px] h-[10px]"
@@ -191,7 +191,7 @@ $pageBase = $category
                         @if($ratings)
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="ratings_sidebar" value="" checked
-                                wire:click="$set('ratings', '')"
+                                wire:click="$set('ratings', '')" data-f="ratings" data-v=""
                                 class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[13px] text-[#ADADAD]">{{ __('Any rating') }}</span>
                         </label>
@@ -213,21 +213,21 @@ $pageBase = $category
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="in_stock"
                                 {{ $availability === 'in_stock' ? 'checked' : '' }}
-                                wire:click="$set('availability', 'in_stock')"
+                                wire:click="$set('availability', 'in_stock')" data-f="availability" data-v="in_stock"
                                 class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('In Stock') }}</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="out_of_stock"
                                 {{ $availability === 'out_of_stock' ? 'checked' : '' }}
-                                wire:click="$set('availability', 'out_of_stock')"
+                                wire:click="$set('availability', 'out_of_stock')" data-f="availability" data-v="out_of_stock"
                                 class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[14px] tracking-[0.5px] text-[#171717]">{{ __('Out of Stock') }}</span>
                         </label>
                         @if($availability)
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="" checked
-                                wire:click="$set('availability', '')"
+                                wire:click="$set('availability', '')" data-f="availability" data-v=""
                                 class="w-4 h-4 accent-[var(--color-primary)]">
                             <span class="text-[13px] text-[#ADADAD]">{{ __('All') }}</span>
                         </label>
@@ -237,7 +237,7 @@ $pageBase = $category
 
                 {{-- Apply (close drawer on mobile) + Reset --}}
                 <div class="pt-4 pb-2 flex flex-col gap-2">
-                    <button type="button" onclick="toggleMobileFilters()"
+                    <button type="button" onclick="eloraApplyMobileFilters()"
                         class="w-full h-10 rounded-full bg-[var(--color-primary)] text-white text-[14px] font-medium hover:opacity-90 transition lg:hidden">
                         {{ __('Apply filters') }}
                     </button>

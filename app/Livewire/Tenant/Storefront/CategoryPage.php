@@ -166,6 +166,19 @@ class CategoryPage extends Component
         $this->perPage = 15;
     }
 
+    /** Apply every sidebar filter in one request (mobile "Apply filters" button). */
+    public function applyFilters(array $f): void
+    {
+        $this->options = array_values(array_map('intval', $f['options'] ?? []));
+        $this->sale = in_array($f['sale'] ?? '', ['on_sale', 'flash_sale'], true) ? $f['sale'] : '';
+        $this->productFlag = ($f['flag'] ?? '') === 'featured' ? 'featured' : '';
+        $this->ratings = in_array((string) ($f['ratings'] ?? ''), ['1', '2', '3', '4'], true) ? (string) $f['ratings'] : '';
+        $this->availability = in_array($f['availability'] ?? '', ['in_stock', 'out_of_stock'], true) ? $f['availability'] : '';
+        $this->min = is_numeric($f['min'] ?? '') ? (string) $f['min'] : '';
+        $this->max = is_numeric($f['max'] ?? '') ? (string) $f['max'] : '';
+        $this->perPage = 15;
+    }
+
     public function clearFilters(): void
     {
         $this->options = [];

@@ -2552,7 +2552,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C5OZbzi-.css",
+    "file": "assets/app-L2jLVdqr.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2603,7 +2603,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-CnLDU1Jz.css",
+    "file": "assets/ecommet-BNqYmZJM.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2886,7 +2886,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DFp2Mhuy.css",
+    "file": "assets/souqify-Z3XOxlaa.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2895,7 +2895,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DzZgsaFV.css",
+    "file": "assets/app-BdAb2kcp.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3098,7 +3098,7 @@
     "isEntry": true
   },
   "resources/js/elora/category.js": {
-    "file": "assets/category-CjoeuIFC.js",
+    "file": "assets/category-P52GECBX.js",
     "name": "category",
     "src": "resources/js/elora/category.js",
     "isEntry": true

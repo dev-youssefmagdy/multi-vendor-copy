@@ -114,3 +114,47 @@
     // Re-initialize after each Livewire reactive update (filter/sort changes morph the DOM)
     document.addEventListener('livewire:updated', initInfiniteScroll);
 })();
+
+// Mobile (< lg): sidebar filters are staged only — clicking a control must not
+// hit Livewire. The "Apply filters" button reads every [data-f] control and
+// sends them in one applyFilters() call. Desktop keeps live wire:click filtering.
+(function () {
+    var mobile = function () { return window.innerWidth < 1024; };
+
+    // Capture phase on document runs before Livewire's own listeners on the
+    // controls; stopping propagation keeps the request from firing while the
+    // native checkbox/radio toggle (default action) still happens.
+    ['click', 'change'].forEach(function (type) {
+        document.addEventListener(type, function (e) {
+            var t = e.target;
+            if (!mobile() || !t.closest || !t.closest('#mobile-filter-drawer')) return;
+            if (t.matches('input[data-f]')) {
+                // on_sale / flash_sale are mutually exclusive (server toggles do the same)
+                if (type === 'click' && t.dataset.f === 'sale' && t.checked) {
+                    document.querySelectorAll('#mobile-filter-drawer input[data-f="sale"]').forEach(function (o) {
+                        if (o !== t) o.checked = false;
+                    });
+                }
+                e.stopPropagation();
+            }
+        }, true);
+    });
+
+    window.eloraApplyMobileFilters = function () {
+        var drawer = document.getElementById('mobile-filter-drawer');
+        var root = drawer && drawer.closest('[wire\\:id]');
+        var lw = root && window.Livewire && window.Livewire.find(root.getAttribute('wire:id'));
+        if (!lw) { window.toggleMobileFilters(); return; }
+
+        var f = { options: [], sale: '', flag: '', ratings: '', availability: '', min: '', max: '' };
+        drawer.querySelectorAll('input[data-f]').forEach(function (el) {
+            var k = el.dataset.f;
+            if (k === 'min' || k === 'max') { f[k] = el.value; return; }
+            if (!el.checked) return;
+            if (k === 'option') f.options.push(parseInt(el.dataset.v, 10));
+            else f[k] = el.dataset.v;
+        });
+        lw.call('applyFilters', f);
+        window.toggleMobileFilters();
+    };
+})();
