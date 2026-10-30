@@ -135,7 +135,7 @@
                                     <div
                                         class="flex-1 flex flex-col justify-between py-1 h-full min-h-[95px] lg:min-h-[130px] min-w-0">
                                         <div class="flex justify-between items-start relative">
-                                            <div class="pr-6 lg:pr-8">
+                                            <div class="pe-6 lg:pe-8">
                                                 <a href="{{ $productUrl }}"
                                                     class="text-[#242424] text-[12px] lg:text-[13.5px] font-[400] leading-[1.3] lg:leading-[1.4] tracking-tight line-clamp-2 block hover:text-black transition">
                                                     {{ $productName }}
@@ -158,10 +158,12 @@
 
                                             {{-- Remove Button --}}
                                             <button onclick="storefrontConfirmRemoveItem(this, {{ \Illuminate\Support\Js::from($key) }})"
-                                                class="item-remove text-[#999] hover:text-[#333] transition absolute top-0 right-0"
+                                                class="item-remove hover:opacity-80 transition absolute top-0 end-0" style="color:#dc2626"
                                                 type="button" aria-label="{{ __('Remove item') }}">
-                                                <img loading="lazy" src="{{ asset('ecommet/assets/images/home/trash.png') }}" alt="{{ __('Trash') }}"
-                                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px]">
+                                                <svg class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
                                         </div>
 

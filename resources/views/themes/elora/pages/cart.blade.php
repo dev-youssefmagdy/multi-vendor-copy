@@ -223,7 +223,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                 </div>
                                                 {{-- Trash icon --}}
                                                 <button onclick="storefrontConfirmRemoveItem(this, {{ \Illuminate\Support\Js::from($key) }})"
-                                                    class="item-remove shrink-0 text-[#ADADAD] hover:text-[#333] transition"
+                                                    class="item-remove shrink-0 hover:opacity-80 transition" style="color:#dc2626"
                                                     type="button" aria-label="{{ __('Remove item') }}">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
