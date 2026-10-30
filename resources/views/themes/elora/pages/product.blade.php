@@ -218,7 +218,7 @@
                             @foreach($mediaItems as $idx => $item)
                                 @if($item['type'] === 'video')
                                     <div class="swiper-slide flex items-center justify-center bg-[#E6E6E6]">
-                                                <video autoplay controls class="w-full h-full object-contain"
+                                                <video autoplay controls class="elora-gallery-video w-full h-full object-contain"
                                     src="{{ $item['src'] }}" @if(!empty($item['poster'])) poster="{{ $item['poster'] }}"
                                     @endif muted loop playsinline preload="none"></video>
                                     </div>

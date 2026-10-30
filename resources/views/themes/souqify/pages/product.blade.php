@@ -1237,123 +1237,6 @@
 </div>
 
 <script>
-    // ── Fixed corner video popup (picture-in-picture) ────────────────────────
-    var sqPipModal = null;
-    var sqPipVideo = null;
-    var sqPipDismissed = false;
-
-    function sqDestroyPip(userDismissed) {
-        if (sqPipModal && sqPipModal.parentNode) {
-            if (sqPipVideo) { sqPipVideo.pause(); sqPipVideo = null; }
-            sqPipModal.style.opacity = '0';
-            sqPipModal.style.transform = 'translateY(-16px)';
-            var m = sqPipModal;
-            setTimeout(function () { if (m.parentNode) m.parentNode.removeChild(m); }, 300);
-            sqPipModal = null;
-        }
-        if (userDismissed) {
-            sqPipDismissed = true;
-        }
-    }
-
-    function sqShowPip(src, poster) {
-        if (sqPipDismissed) return;
-        if (sqPipModal) {
-            // update source if different
-            if (sqPipVideo && sqPipVideo.getAttribute('data-src') !== src) {
-                sqPipVideo.setAttribute('data-src', src);
-                sqPipVideo.src = src;
-                if (poster) sqPipVideo.poster = poster;
-                sqPipVideo.load();
-                sqPipVideo.play().catch(function () {});
-            }
-            return;
-        }
-
-        var modal = document.createElement('div');
-        modal.style.cssText = [
-            'position:fixed',
-            'top:80px',
-            'right:12px',
-            'width:200px',
-            'height:260px',
-            'border-radius:18px',
-            'overflow:hidden',
-            'background:#111',
-            'box-shadow:0 8px 32px rgba(0,0,0,0.55)',
-            'border:1.5px solid rgba(255,255,255,0.22)',
-            'z-index:9999',
-            'transform:translateY(-16px)',
-            'opacity:0',
-            'transition:opacity 0.3s ease,transform 0.3s ease',
-        ].join(';');
-
-        var closeBtn = document.createElement('button');
-        closeBtn.innerHTML = '&times;';
-        closeBtn.setAttribute('aria-label', (typeof window.trans === 'function') ? window.trans('Close video') : 'Close video');
-        closeBtn.style.cssText = [
-            'position:absolute',
-            'top:6px',
-            'right:8px',
-            'z-index:10',
-            'color:#fff',
-            'font-size:18px',
-            'font-weight:700',
-            'line-height:1',
-            'background:rgba(0,0,0,0.5)',
-            'border:none',
-            'border-radius:50%',
-            'width:24px',
-            'height:24px',
-            'display:flex',
-            'align-items:center',
-            'justify-content:center',
-            'cursor:pointer',
-            'padding:0',
-        ].join(';');
-        closeBtn.onclick = function () { sqDestroyPip(true); };
-
-        var vid = document.createElement('video');
-        vid.src = src;
-        vid.setAttribute('data-src', src);
-        if (poster) vid.poster = poster;
-        vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-        vid.autoplay = true;
-        vid.muted = true;
-        vid.loop = true;
-        vid.playsInline = true;
-        vid.setAttribute('playsinline', '');
-
-        modal.appendChild(vid);
-        modal.appendChild(closeBtn);
-        document.body.appendChild(modal);
-        sqPipModal = modal;
-        sqPipVideo = vid;
-
-        requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-                modal.style.opacity = '1';
-                modal.style.transform = 'translateY(0)';
-            });
-        });
-        vid.play().catch(function () {});
-    }
-
-    function sqCheckSlideForVideo(activeIndex) {
-        var videoEl = document.querySelector('.sq-main-slide .sq-gallery-video');
-        if (!videoEl) return;
-        var videoSlide = videoEl.closest('.sq-main-slide');
-        var isActiveVideo = Number(videoSlide.dataset.slideIdx) === activeIndex;
-        if (!isActiveVideo) {
-            var src = videoEl.src || videoEl.getAttribute('src') || '';
-            var poster = videoEl.poster || videoEl.getAttribute('poster') || '';
-            sqShowPip(src, poster);
-        } else {
-            sqPipDismissed = false;
-            sqDestroyPip();
-        }
-    }
-    // ─────────────────────────────────────────────────────────────────────────
     // ── Plain-JS product gallery (no Swiper) ──────────────────────────────────
 
     window.sqActiveMediaIndex = 0;
@@ -1393,7 +1276,6 @@
         });
 
         window.sqActiveMediaIndex = index;
-        sqCheckSlideForVideo(index);
     }
 
     // Jump the main gallery to a given media index (used on variant select/hover)
@@ -1435,8 +1317,31 @@
         }, { passive: true });
     })();
 
-    sqCheckSlideForVideo(0);
     window.sqGalleryReady = true;
+
+    // Floating video popup: shown while the gallery is scrolled out of view
+    // (shared helper from resources/js/storefront/video-pip.js, loaded as a module).
+    (function mountSqVideoPip(attempt) {
+        var videoEl = document.querySelector('.sq-main-slide .sq-gallery-video');
+        if (!videoEl) return;
+        if (!window.StorefrontVideoPip) {
+            if (attempt < 60) setTimeout(function () { mountSqVideoPip(attempt + 1); }, 50);
+            return;
+        }
+        var videoIdx = Number(videoEl.closest('.sq-main-slide').dataset.slideIdx);
+        window.StorefrontVideoPip.mount({
+            anchor: document.querySelector('.sq-gallery-stage'),
+            video: {
+                src: videoEl.getAttribute('src') || videoEl.src,
+                poster: videoEl.getAttribute('poster') || '',
+            },
+            goToVideo: function () { window.sqGoToMediaIndex(videoIdx); },
+            getGalleryVideo: function () { return videoEl; },
+            pauseGalleryVideo: function () { videoEl.pause(); },
+            closeLabel: (typeof window.trans === 'function') ? window.trans('Close video') : 'Close video',
+            box: { top: '80px', bottom: 'auto', width: '200px', height: '260px' },
+        });
+    })(0);
 </script>
 
 <script>

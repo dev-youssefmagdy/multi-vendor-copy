@@ -1,3 +1,4 @@
+import { mountVideoPip } from '../storefront/video-pip';
 
 (function () {
     'use strict';
@@ -35,101 +36,12 @@
         let slideTimer = null;
         let isPaused = false;
         let activeVideo = null;
-        let mobileFixedModal = null;
-        const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
 
         function stopActiveVideo() {
             if (activeVideo) {
                 try { activeVideo.pause(); } catch { }
                 activeVideo = null;
             }
-        }
-
-        function destroyFixedModal() {
-            if (mobileFixedModal && mobileFixedModal.parentNode) {
-                mobileFixedModal.parentNode.removeChild(mobileFixedModal);
-                mobileFixedModal = null;
-            }
-        }
-
-        function showFixedVideoModal(item) {
-            if (mobileFixedModal) return; // already shown
-
-            const modal = document.createElement('div');
-            modal.id = 'mantiFixedVideoModal';
-            modal.style.cssText = [
-                'position:fixed',
-                'bottom:90px',
-                'right:12px',
-                'width:140px',
-                'height:190px',
-                'border-radius:16px',
-                'overflow:hidden',
-                'background:#111',
-                'box-shadow:0 8px 32px rgba(0,0,0,0.45)',
-                'border:1.5px solid rgba(255,255,255,0.18)',
-                'z-index:9999',
-                'display:flex',
-                'flex-direction:column',
-                'transform:translateY(20px)',
-                'opacity:0',
-                'transition:opacity 0.3s ease,transform 0.3s ease',
-            ].join(';');
-
-            // Close button
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '&times;';
-            closeBtn.style.cssText = [
-                'position:absolute',
-                'top:6px',
-                'right:8px',
-                'z-index:10',
-                'color:#fff',
-                'font-size:18px',
-                'font-weight:700',
-                'line-height:1',
-                'background:rgba(0,0,0,0.5)',
-                'border:none',
-                'border-radius:50%',
-                'width:24px',
-                'height:24px',
-                'display:flex',
-                'align-items:center',
-                'justify-content:center',
-                'cursor:pointer',
-                'padding:0',
-            ].join(';');
-            closeBtn.setAttribute('aria-label', window.trans('Close video'));
-            closeBtn.onclick = () => {
-                stopActiveVideo();
-                destroyFixedModal();
-            };
-
-            const vid = document.createElement('video');
-            vid.src = item.src;
-            if (item.poster) vid.poster = item.poster;
-            vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-            vid.autoplay = true;
-            vid.muted = true;
-            vid.loop = true;
-            vid.playsInline = true;
-            vid.setAttribute('playsinline', '');
-
-            modal.appendChild(vid);
-            modal.appendChild(closeBtn);
-            document.body.appendChild(modal);
-            mobileFixedModal = modal;
-            activeVideo = vid;
-
-            // Animate in
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    modal.style.opacity = '1';
-                    modal.style.transform = 'translateY(0)';
-                });
-            });
-
-            vid.play().catch(() => { });
         }
 
         function renderImage(item) {
@@ -147,39 +59,20 @@
 
         function renderVideo(item) {
             stage.innerHTML = '';
-
-            if (isMobile()) {
-                // Mobile: keep slider showing poster image; video plays in fixed modal
-                const poster = item.poster || '';
-                const bg = document.createElement('div');
-                bg.className = 'w-full h-full min-h-[320px] flex items-center justify-center bg-[#f5f5f5]';
-                if (poster) {
-                    const img = document.createElement('img');
-                    img.src = poster;
-                    img.alt = window.trans('Product');
-                    img.className = 'w-full h-full max-h-[420px] object-contain';
-                    bg.appendChild(img);
-                } else {
-                    bg.innerHTML = '<div class="w-12 h-12 rounded-full bg-black/20 flex items-center justify-center"><svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg></div>';
-                }
-                stage.appendChild(bg);
-                showFixedVideoModal(item);
-            } else {
-                // Desktop: full-stage video
-                stopActiveVideo();
-                const vid = document.createElement('video');
-                vid.src = item.src;
-                vid.className = 'w-full h-full max-h-[500px] object-contain';
-                vid.autoplay = true;
-                vid.muted = true;
-                vid.loop = true;
-                vid.controls = true;
-                vid.playsInline = true;
-                vid.setAttribute('playsinline', '');
-                stage.appendChild(vid);
-                activeVideo = vid;
-                vid.play().catch(() => { });
-            }
+            stopActiveVideo();
+            const vid = document.createElement('video');
+            vid.src = item.src;
+            if (item.poster) vid.poster = item.poster;
+            vid.className = 'w-full h-full max-h-[500px] object-contain';
+            vid.autoplay = true;
+            vid.muted = true;
+            vid.loop = true;
+            vid.controls = true;
+            vid.playsInline = true;
+            vid.setAttribute('playsinline', '');
+            stage.appendChild(vid);
+            activeVideo = vid;
+            vid.play().catch(() => { });
         }
 
         function showIndex(idx) {
@@ -214,16 +107,17 @@
         showIndex(0);
         restartInterval();
 
-        // On mobile: show fixed video modal only after document fully loads
-        if (isMobile()) {
-            const firstVideo = mediaItems.find(m => m.type === 'video');
-            if (firstVideo) {
-                if (document.readyState === 'complete') {
-                    showFixedVideoModal(firstVideo);
-                } else {
-                    window.addEventListener('load', () => showFixedVideoModal(firstVideo), { once: true });
-                }
-            }
+        // Floating video popup: shown while the gallery is scrolled out of view.
+        const firstVideoIdx = mediaItems.findIndex(m => m.type === 'video');
+        if (firstVideoIdx !== -1) {
+            mountVideoPip({
+                anchor: root,
+                video: mediaItems[firstVideoIdx],
+                goToVideo: () => { showIndex(firstVideoIdx); restartInterval(); },
+                getGalleryVideo: () => (activeVideo && stage.contains(activeVideo) ? activeVideo : null),
+                pauseGalleryVideo: () => { if (activeVideo) { try { activeVideo.pause(); } catch { } } },
+                closeLabel: window.trans('Close video'),
+            });
         }
 
         // Nav buttons
@@ -274,17 +168,6 @@
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) { isPaused = true; if (slideTimer) clearInterval(slideTimer); }
             else { isPaused = false; restartInterval(); }
-        });
-
-        // Re-render on mobile/desktop switch
-        window.matchMedia('(max-width: 1023px)').addEventListener('change', () => {
-            stopActiveVideo();
-            destroyFixedModal();
-            showIndex(currentIdx);
-            if (isMobile()) {
-                const firstVideo = mediaItems.find(m => m.type === 'video');
-                if (firstVideo) setTimeout(() => showFixedVideoModal(firstVideo), 300);
-            }
         });
     }
 

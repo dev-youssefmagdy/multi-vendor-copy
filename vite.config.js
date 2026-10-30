@@ -41,6 +41,7 @@ export default defineConfig({
                 'resources/css/souqify-v2.css',
                 'resources/js/app.js',
                 'resources/js/storefront-cart.js',
+                'resources/js/storefront/video-pip.js',
                 'resources/js/image-search.js',
                 'resources/js/elora.js',
                 'resources/js/elora/cart.js',

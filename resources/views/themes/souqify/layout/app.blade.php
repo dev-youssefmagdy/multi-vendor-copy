@@ -208,6 +208,7 @@
     @endif
     @livewireScripts
     @include('themes.souqify.layout.' . $scriptsKey)
+    @vite('resources/js/storefront/video-pip.js')
     @stack('scripts')
     @include('storefront.partials.home-reveal')
 

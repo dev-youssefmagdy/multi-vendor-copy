@@ -3020,10 +3020,14 @@
     "isEntry": true
   },
   "resources/js/ecommet/product.js": {
-    "file": "assets/product-DxE_lOVe.js",
+    "file": "assets/product-BUOcEBM4.js",
     "name": "product",
     "src": "resources/js/ecommet/product.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "resources/js/storefront/video-pip.js",
+      "resources/js/storefront/video-pip.js"
+    ]
   },
   "resources/js/elora-v2-carousels.js": {
     "file": "assets/elora-v2-carousels-BGyDedk9.js",
@@ -3182,10 +3186,14 @@
     "isEntry": true
   },
   "resources/js/elora/product.js": {
-    "file": "assets/product-EoVP4oJN.js",
+    "file": "assets/product-Dh0W-18Z.js",
     "name": "product",
     "src": "resources/js/elora/product.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "resources/js/storefront/video-pip.js",
+      "resources/js/storefront/video-pip.js"
+    ]
   },
   "resources/js/image-search.js": {
     "file": "assets/image-search-DNTHDBOX.js",
@@ -3225,6 +3233,12 @@
     "imports": [
       "_phone-input-MZvB0ZqG.js"
     ]
+  },
+  "resources/js/storefront/video-pip.js": {
+    "file": "assets/video-pip-Bd1g_Bgl.js",
+    "name": "video-pip",
+    "src": "resources/js/storefront/video-pip.js",
+    "isEntry": true
   },
   "resources/js/tenant/app.js": {
     "file": "assets/app-1cED2yIN.js",
