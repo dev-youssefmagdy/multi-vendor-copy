@@ -3,16 +3,65 @@ import intlTelInputUtils from "intl-tel-input/utils";
 import "intl-tel-input/styles";
 
 const instances = new WeakMap();
-const GEO_IP_ENDPOINT = "https://ipapi.co/json/";
+const GEO_CACHE_KEY = "phone-input:country";
+
+// Each provider resolves to an ISO2 code or throws; they're tried in order so
+// one blocked / rate-limited service (ipapi.co's free tier often is) doesn't
+// leave every "add" form defaulting to the US.
+const GEO_PROVIDERS = [
+    async () => (await (await fetch("https://ipapi.co/json/")).json()).country_code,
+    async () => (await (await fetch("https://ipwho.is/")).json()).country_code,
+    async () => {
+        const text = await (await fetch("https://www.cloudflare.com/cdn-cgi/trace")).text();
+        return /^loc=([A-Z]{2})$/m.exec(text)?.[1];
+    },
+];
+
+function localeCountry() {
+    const langs = navigator.languages?.length ? navigator.languages : [navigator.language];
+    for (const lang of langs) {
+        const region = /^[a-z]{2,3}[-_]([A-Za-z]{2})\b/.exec(lang || "")?.[1];
+        if (region) {
+            return region;
+        }
+    }
+    return null;
+}
 
 async function lookupCountry() {
     try {
-        const response = await fetch(GEO_IP_ENDPOINT);
-        const data = await response.json();
-        return (data && data.country_code ? data.country_code : "us").toLowerCase();
+        const cached = sessionStorage.getItem(GEO_CACHE_KEY);
+        if (cached) {
+            return cached;
+        }
     } catch {
-        return "us";
+        // storage unavailable — carry on without the cache
     }
+
+    let code = null;
+    for (const provider of GEO_PROVIDERS) {
+        try {
+            const result = await provider();
+            if (typeof result === "string" && /^[A-Za-z]{2}$/.test(result)) {
+                code = result;
+                break;
+            }
+        } catch {
+            // try the next provider
+        }
+    }
+
+    const iso2 = (code || localeCountry() || "us").toLowerCase();
+
+    if (code) {
+        try {
+            sessionStorage.setItem(GEO_CACHE_KEY, iso2);
+        } catch {
+            // ignore
+        }
+    }
+
+    return iso2;
 }
 
 function ensureErrorSlot(input) {
