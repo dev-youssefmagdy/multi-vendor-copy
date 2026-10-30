@@ -207,7 +207,6 @@
                         </button>
                     </form>
                 </div>
-                <x-image-search-modal id="storefront-image-search-modal" :action="route('tenant.storefront.search.image')" />
 
                 {{-- Right controls: locale, auth, cart --}}
                 <div class="flex items-center gap-3 xl:gap-5 shrink-0">
@@ -328,6 +327,9 @@
         </div>
 
     </header>
+
+    {{-- Outside the responsive header bars so it stays visible at every breakpoint --}}
+    <x-image-search-modal id="storefront-image-search-modal" :action="route('tenant.storefront.search.image')" />
 
     {{-- ── Mobile Menu Drawer ─────────────────────────────────────────────────── --}}
     <div id="mobileMenuOverlay"
