@@ -82,7 +82,7 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
 @endphp
 
 <a href="{{ route('tenant.storefront.product', $product->slug) }}"
-    class="group flex flex-col items-center w-full max-w-[210px] justify-self-center mx-auto bg-white rounded-[8px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+    class="group flex flex-col items-center w-full max-w-[210px] max-[424px]:[zoom:0.88] max-[374px]:[zoom:0.8] max-[339px]:[zoom:0.7] justify-self-center mx-auto bg-white rounded-[8px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
     style="border: 0.4px solid #E8E8E8;">
 
     {{-- Image area: #F6F6F6 bg, rounded top, same size as elora (h-48 / sm:h-52, max 210px wide) --}}
