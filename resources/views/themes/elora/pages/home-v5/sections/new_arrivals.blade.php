@@ -102,7 +102,7 @@
         <div class="swiper card-swiper newin-swiper !ps-[16px] lg:!ps-[56px]">
           <div class="swiper-wrapper" id="newInWrapper">
             @foreach ($newInCards as $p)
-              <div class="swiper-slide h-auto !w-[280px] lg:!w-[517px]" wire:key="newin-v5-{{ $p['id'] }}">
+              <div class="swiper-slide h-auto !w-[calc(100vw-32px)] lg:!w-[517px]" wire:key="newin-v5-{{ $p['id'] }}">
                 @include('themes.elora.pages.home-v5.sections.partials.wide_card', ['p' => $p])
               </div>
             @endforeach
