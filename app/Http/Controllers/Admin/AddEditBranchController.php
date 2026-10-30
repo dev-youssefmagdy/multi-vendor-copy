@@ -104,7 +104,7 @@ class AddEditBranchController extends Controller
                 'max:120',
                 Rule::unique('branches', 'code')->ignore($branch?->id),
             ],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+[\d\s\-()]{7,}$/'],
             'email' => ['nullable', 'email', 'max:120'],
             'address' => ['nullable', 'string', 'max:500'],
             'city' => ['nullable', 'string', 'max:100'],
@@ -124,6 +124,8 @@ class AddEditBranchController extends Controller
             'shippingZones.*.rates.*.max_weight' => ['nullable', 'numeric', 'min:0'],
             'shippingZones.*.rates.*.price' => ['required', 'numeric', 'min:0'],
             'shippingZones.*.rates.*.is_active' => ['boolean'],
+        ], [
+            'phone.regex' => 'Enter the phone number with its country code (e.g. +20 10 0000 0000).',
         ])->validate();
 
         $savedBranch = app(BranchService::class)->save([

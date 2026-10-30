@@ -123,12 +123,42 @@ function syncLivewireProperty(input, value) {
 
 const syncing = new WeakSet();
 
+function fullNumber(input, iti) {
+    let full = iti.getNumber();
+
+    // getNumber() returns "" until the utils bundle has loaded; build the
+    // international number from the selected dial code so the country code
+    // is never dropped.
+    if (!full) {
+        const dial = iti.getSelectedCountryData()?.dialCode;
+        const digits = input.value.replace(/\D/g, "").replace(/^0+/, "");
+        if (dial && digits) {
+            full = input.value.trim().startsWith("+") ? `+${digits}` : `+${dial}${digits}`;
+        }
+    }
+
+    return full || "";
+}
+
+// Plain (non-Livewire) forms submit the visible input's value, which
+// intl-tel-input keeps as national digits when separateDialCode is on (it
+// strips any dial code written back into the field). So those forms get a
+// hidden input carrying the real field name and the full +<code><number>.
+const hiddenInputs = new WeakMap();
+
 function syncFullNumber(input, iti) {
+    const hidden = hiddenInputs.get(input);
+
+    if (hidden) {
+        hidden.value = input.value.trim() ? fullNumber(input, iti) : "";
+        return;
+    }
+
     if (!input.value.trim()) {
         return;
     }
 
-    const full = iti.getNumber();
+    const full = fullNumber(input, iti);
 
     if (full && full !== input.value) {
         syncing.add(input);
@@ -138,8 +168,8 @@ function syncFullNumber(input, iti) {
         syncing.delete(input);
     }
 
-    // Always use iti.getNumber() so the E.164 value (with country code) is
-    // sent to Livewire, not the national-only digits ITI displays in the field.
+    // Always use the E.164 value (with country code) for Livewire, not the
+    // national-only digits ITI displays in the field.
     syncLivewireProperty(input, full || input.value);
 }
 
@@ -210,6 +240,21 @@ export function initPhoneInputs(root = document) {
         });
 
         instances.set(input, iti);
+
+        if (
+            form &&
+            input.name &&
+            !input.hasAttribute("wire-event") &&
+            !Array.from(input.attributes).some((a) => a.name.startsWith("wire:model"))
+        ) {
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = input.name;
+            hidden.value = input.value.trim();
+            input.removeAttribute("name");
+            input.insertAdjacentElement("afterend", hidden);
+            hiddenInputs.set(input, hidden);
+        }
 
         if (input.value && input.value.trim() !== "") {
             const currentVal = input.value.trim();
