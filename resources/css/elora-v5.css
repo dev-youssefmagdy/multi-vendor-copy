@@ -113,7 +113,7 @@ body {
    height or Grid allocates far more space per row than the card needs,
    leaving a large empty gap above/below each card. */
 .trending-swiper .swiper-wrapper {
-  height: 198px;
+  height: 354px; /* mobile card = Souqify flash card: p-3 + 144px image = 168px */
 }
 @media (min-width: 1024px) {
   .trending-swiper .swiper-wrapper {

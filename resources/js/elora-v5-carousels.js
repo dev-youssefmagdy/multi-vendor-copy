@@ -61,7 +61,7 @@ function mountTrending() {
     const wrapper = document.getElementById("trendingWrapper");
     if (!wrapper) return;
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: 1.25,
+        slidesPerView: 1,
         spaceBetween: 18,
         grid: { rows: 2, fill: "row" },
         slidesOffsetAfter: 16,
