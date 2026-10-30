@@ -157,7 +157,7 @@
                                             </div>
 
                                             {{-- Remove Button --}}
-                                            <button wire:click="removeFromCart('{{ $key }}')"
+                                            <button onclick="storefrontConfirmRemoveItem(this, {{ \Illuminate\Support\Js::from($key) }})"
                                                 class="item-remove text-[#999] hover:text-[#333] transition absolute top-0 right-0"
                                                 type="button" aria-label="{{ __('Remove item') }}">
                                                 <img loading="lazy" src="{{ asset('ecommet/assets/images/home/trash.png') }}" alt="{{ __('Trash') }}"
@@ -458,5 +458,6 @@
 </main>
 
 @push('scripts')
+    @include('storefront.partials.confirm-remove-cart-item')
 @vite('resources/js/ecommet/cart.js')
 @endpush

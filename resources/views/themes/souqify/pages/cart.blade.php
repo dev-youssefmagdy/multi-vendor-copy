@@ -134,7 +134,7 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <button wire:click="removeFromCart('{{ $item['key'] }}')"
+                                <button onclick="storefrontConfirmRemoveItem(this, {{ \Illuminate\Support\Js::from($item['key']) }})"
                                     class="flex items-center gap-1.5 text-neutral-400 hover:text-red-600 transition text-xs sm:text-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -495,3 +495,7 @@
         }
     </script>
 </div>
+
+@push('scripts')
+    @include('storefront.partials.confirm-remove-cart-item')
+@endpush

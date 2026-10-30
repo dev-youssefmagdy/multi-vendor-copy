@@ -222,7 +222,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                     @endif
                                                 </div>
                                                 {{-- Trash icon --}}
-                                                <button wire:click="removeFromCart('{{ $key }}')"
+                                                <button onclick="storefrontConfirmRemoveItem(this, {{ \Illuminate\Support\Js::from($key) }})"
                                                     class="item-remove shrink-0 text-[#ADADAD] hover:text-[#333] transition"
                                                     type="button" aria-label="{{ __('Remove item') }}">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -538,5 +538,6 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 </main>
 
 @push('scripts')
+    @include('storefront.partials.confirm-remove-cart-item')
 @vite('resources/js/elora/cart.js')
 @endpush
