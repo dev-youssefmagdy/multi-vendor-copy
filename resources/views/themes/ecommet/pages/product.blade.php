@@ -273,8 +273,9 @@
                     </a>
                 </div>
 
+                <div class="flex flex-col gap-3">
                 @if($shippingThreshold > 0)
-                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5 mb-4">
+                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5">
                     <p id="ecommet-shipping-message" class="text-[13px] text-[#242424] font-medium mb-2">
                         @if ($remainingForFreeShipping <= 0)
                             {{ __("You've reached free shipping!") }}
@@ -361,6 +362,7 @@
                     @endif
                 </div>
                 @endif
+                </div>
             </div>
         </div>
 
