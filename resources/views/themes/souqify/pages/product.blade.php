@@ -590,7 +590,7 @@
                 @endif
 
                 <!-- Add to cart + qty -->
-                <div
+                <div data-mobile-buybar
                     class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0  flex items-center gap-3">
                     <button type="button" id="sq-add-to-cart-btn" onclick="sqAddToCart()" @if(!$isInStock) disabled @endif
                         class="flex-1 h-14 {{ $isInStock ? 'bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)]' : 'bg-neutral-400 cursor-not-allowed' }} text-white rounded-lg flex items-center justify-center gap-2 transition font-medium text-base">
@@ -1745,4 +1745,7 @@
     }
 @endphp
 <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
+@push('scripts')
+    @include('storefront.partials.mobile-buybar-offset')
 @endpush
