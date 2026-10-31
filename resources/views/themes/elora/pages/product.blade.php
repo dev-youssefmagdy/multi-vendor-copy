@@ -80,7 +80,7 @@
             $isLoggedIn = auth()->guard('storefront')->check();
         @endphp
         <!-- Mobile Header -->
-        <div class="sm:hidden mt-2 mb-4 flex items-center gap-3">
+        <div class="sm:hidden mt-6 mb-4 flex items-center gap-3">
             <!-- Back Button -->
             <button class="w-12 h-12 flex justify-center items-center rounded-full border hover:bg-gray-200"
                     aria-label="{{ __('Back') }}" onclick="window.location.href='{{ url('/') }}'">
