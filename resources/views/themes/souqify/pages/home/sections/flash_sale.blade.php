@@ -167,7 +167,7 @@
                 $hTotal = $hSoldCount + $hStock;
                 $hSoldPct = $hTotal > 0 ? (int) round($hSoldCount / $hTotal * 100) : 0;
                 @endphp
-                <div class="lg:col-span-3 bg-white rounded-2xl p-5 flex flex-col cursor-pointer"
+                <div class="lg:col-span-3 lg:self-start bg-white rounded-2xl p-5 flex flex-col cursor-pointer"
                     onclick="sqNavigateToProduct(event, '{{ route('tenant.storefront.product', $flashHero->slug) }}')">
                     <div
                         class="relative bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl h-56 sm:h-72 mb-4 overflow-hidden">
@@ -219,6 +219,7 @@
                             <div class="bg-orange-600 text-white p-2 rounded-lg text-lg font-bold sq-fss2">57</div>
                         </div>
                     </div>
+                </div>
                 </div>
                 @else
                 <div class="lg:col-span-3 bg-white rounded-2xl p-5 flex flex-col">
