@@ -4,6 +4,10 @@
     $selectedPayment = $data['payment']['method'];
 @endphp
 <div>
+@unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+@endunless
+
     <!-- mobile screen header -->
     <div class="flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-4 shadow-md lg:hidden">
         <button class="w-12 h-12 flex justify-center items-center rounded-full border hover:bg-gray-200"
@@ -499,7 +503,7 @@
 
                         <!-- Pay button -->
                         <div
-                            class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0">
+                            data-mobile-buybar class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0">
                             @if (!$hasAddresses)
                                 <p class="text-red-600 text-sm font-medium text-center mb-3">
                                     {{ __('Please add a shipping address before placing your order.') }}
@@ -840,4 +844,8 @@
             window.bootPhoneInputs();
         });
     </script>
+@endpush
+
+@push('scripts')
+    @include('storefront.partials.mobile-buybar-offset')
 @endpush

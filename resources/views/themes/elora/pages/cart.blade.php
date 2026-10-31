@@ -12,6 +12,9 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 @endphp
 
 <main class="flex-grow bg-white pt-3 lg:pt-6 pb-14 w-full" data-cart-rate="{{ $rate }}">
+@unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    <div class="-mt-3 sm:mt-0">@include('themes.elora.partials.mobile-home-header', ['tight' => true])</div>
+@endunless
     <div class="max-w-[1280px] mx-auto px-4 lg:px-8">
         <h1 class="text-[24px] font-bold text-[#242424] mb-8 lg:hidden">{{ __('My Cart') }}</h1>
 
@@ -309,7 +312,7 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 
                     {{-- Mobile CTA --}}
                     <div
-                        class="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px] sm:h-auto">
+                        data-mobile-buybar class="lg:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-3">
                         {{-- Grand Total --}}
                         <div class="">
                             <p class="text-[14px] mb-2 text-[#8F8F8F]">{{ __('Total') }}</p>
@@ -540,4 +543,8 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
 @push('scripts')
     @include('storefront.partials.confirm-remove-cart-item')
 @vite('resources/js/elora/cart.js')
+@endpush
+
+@push('scripts')
+    @include('storefront.partials.mobile-buybar-offset')
 @endpush

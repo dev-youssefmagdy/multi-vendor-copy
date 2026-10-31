@@ -9,6 +9,10 @@
 @endphp
 
 <div>
+@unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+@endunless
+
     <!-- =========== BREADCRUMB =========== -->
     <div class="hidden lg:block max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <nav class="flex items-center gap-2 text-sm text-neutral-500">
@@ -230,7 +234,7 @@
 
                     <!-- Checkout button -->
                     <div
-                        class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0 flex flex-col gap-3">
+                        data-mobile-buybar class="fixed lg:relative bottom-0 left-0 lg:bottom-auto lg:left-auto w-screen lg:w-auto z-50 lg:z-0 bg-white lg:bg-auto py-4 px-2 lg:p-0 flex flex-col gap-3">
                         <a href="{{ route('tenant.storefront.checkout') }}"
                             class="h-14 bg-[color:var(--sq-primary)] hover:bg-[color:var(--sq-primary-hover)] text-white rounded-lg font-medium text-base flex items-center justify-center gap-2 transition">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -498,4 +502,8 @@
 
 @push('scripts')
     @include('storefront.partials.confirm-remove-cart-item')
+@endpush
+
+@push('scripts')
+    @include('storefront.partials.mobile-buybar-offset')
 @endpush

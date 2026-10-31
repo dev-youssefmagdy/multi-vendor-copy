@@ -21,6 +21,10 @@
     if (nav && window.ResizeObserver) new ResizeObserver(place).observe(nav);
     window.addEventListener('resize', place);
     document.addEventListener('livewire:navigated', place);
+    // Livewire morphs can drop the inline offset, so re-apply after each update.
+    document.addEventListener('livewire:init', function () {
+        Livewire.hook('commit', function (ctx) { ctx.succeed(function () { requestAnimationFrame(place); }); });
+    });
     place();
 })();
 </script>

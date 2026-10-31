@@ -82,6 +82,8 @@
 
 .cart-nav {
     /* flex: 1.1 1 0; */
+    /* keep the cart button its full size; the pill next to it is what shrinks */
+    flex: 0 0 auto;
     min-width: 0;
 }
 
@@ -132,4 +134,9 @@
 
 [dir="rtl"] #sideMenu.open .menu-panel {
     transform: translateX(0) !important;
+}
+
+/* the pill must be able to shrink so the cart button next to it is never clipped */
+.mobile-bottom-nav > div {
+    min-width: 0;
 }

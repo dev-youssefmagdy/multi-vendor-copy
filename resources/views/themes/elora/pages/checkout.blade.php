@@ -1,6 +1,9 @@
 @section('pageData','checkout')
 
 <main class="flex-grow bg-white pb-[160px] sm:pb-20">
+@unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    <div class="sm:mt-0">@include('themes.elora.partials.mobile-home-header', ['tight' => true])</div>
+@endunless
     <div class="max-w-[1280px] mx-auto px-5 sm:px-8 mt-3 md:mt-6">
         <h1 class="text-[24px] font-bold text-[#242424] mb-8 lg:hidden">{{ __('Check out') }}</h1>
         {{-- ── Breadcrumb ──────────────────────────────────────────────────── --}}
@@ -299,7 +302,7 @@
 
                     {{-- Mobile pay button --}}
                     <div
-                        class="sm:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-2 h-[152px]">
+                        data-mobile-buybar class="sm:hidden fixed bottom-0 left-0 right-0 z-30 px-4 flex gap-4 items-start justify-center bg-white py-3">
                         @if (!$hasAddresses)
                             <p class="text-red-600 text-xs font-medium text-center w-full mb-1">
                                 {{ __('Please add a shipping address before placing your order.') }}
@@ -914,4 +917,8 @@
             window.bootPhoneInputs();
         });
     </script>
+@endpush
+
+@push('scripts')
+    @include('storefront.partials.mobile-buybar-offset')
 @endpush
