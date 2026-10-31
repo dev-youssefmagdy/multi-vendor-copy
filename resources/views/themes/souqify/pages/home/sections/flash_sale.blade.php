@@ -112,10 +112,15 @@
                                     {{ $fName }}
                                 </h4>
                             </a>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                                <span class="text-red-500 font-bold text-base">{{ $symbol }}{{ $fSell }}</span>
+                            @php
+                            $fIntDigits = strlen(preg_replace('/\D/', '', explode('.', $fSell)[0]));
+                            $fSellSize = $fIntDigits >= 6 ? 'text-[11px] min-[360px]:text-xs' : ($fIntDigits >= 5 ? 'text-xs min-[360px]:text-sm' : 'text-sm min-[360px]:text-base');
+                            $fRealSize = $fIntDigits >= 5 ? 'text-[9px] min-[360px]:text-[10px]' : 'text-[10px] min-[360px]:text-xs';
+                            @endphp
+                            <div class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-1.5">
+                                <span class="text-red-500 font-bold {{ $fSellSize }}">{{ $symbol }}{{ $fSell }}</span>
                                 @if ($fReal)
-                                <span class="text-gray-400 text-xs line-through">{{ $symbol }}{{ $fReal }}</span>
+                                <span class="text-gray-400 {{ $fRealSize }} line-through">{{ $symbol }}{{ $fReal }}</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-0.5 mb-2">
@@ -317,10 +322,15 @@
                                     {{ $fName }}
                                 </h4>
                             </a>
-                            <div class="flex items-center gap-1.5 mb-1.5">
-                                <span class="text-red-500 font-bold text-base">{{ $symbol }}{{ $fSell }}</span>
+                            @php
+                            $fIntDigits = strlen(preg_replace('/\D/', '', explode('.', $fSell)[0]));
+                            $fSellSize = $fIntDigits >= 6 ? 'text-[11px] min-[360px]:text-xs' : ($fIntDigits >= 5 ? 'text-xs min-[360px]:text-sm' : 'text-sm min-[360px]:text-base');
+                            $fRealSize = $fIntDigits >= 5 ? 'text-[9px] min-[360px]:text-[10px]' : 'text-[10px] min-[360px]:text-xs';
+                            @endphp
+                            <div class="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-1.5">
+                                <span class="text-red-500 font-bold {{ $fSellSize }}">{{ $symbol }}{{ $fSell }}</span>
                                 @if ($fReal)
-                                <span class="text-gray-400 text-xs line-through">{{ $symbol }}{{ $fReal }}</span>
+                                <span class="text-gray-400 {{ $fRealSize }} line-through">{{ $symbol }}{{ $fReal }}</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-0.5 mb-2">
