@@ -1,3 +1,7 @@
+@php
+  $__eloraRtl = (($currentLanguage?->direction?->value ?? null) === 'rtl') || in_array($currentLanguage?->code ?? app()->getLocale(), ['ar', 'he', 'fa']);
+  $__eloraCamFlip = $__eloraRtl ? 'transform: scaleX(-1)' : '';
+@endphp
     <!-- ============ NAVBAR ============ -->
     <header>
       <!-- Mobile: greeting bar -->
@@ -7,22 +11,40 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-[7px]">
+            @php $__eloraAvatar = auth('storefront')->check() ? auth('storefront')->user()->avatar : null; @endphp
+            @if ($__eloraAvatar)
             <img
-              src="{{ asset('elora-2/assets/icons/avatar.png') }}"
+              src="{{ $__eloraAvatar }}"
               alt=""
-              class="size-[44px] rounded-full object-cover"
+              class="size-[44px] rounded-full object-cover shrink-0"
             />
+            @else
+            <div
+              class="size-[44px] rounded-full shrink-0 flex items-center justify-center bg-white"
+            >
+              <img
+                src="{{ asset('elora-2/assets/icons/user.svg') }}"
+                alt=""
+                class="size-[22px] opacity-60"
+              />
+            </div>
+            @endif
             <div class="flex flex-col gap-[3px]">
+              @auth('storefront')
               <p
                 class="font-medium text-[18px]"
                 style="color: var(--color-text-primary)"
               >
-                @auth('storefront')
-                  {{ __('Hi, :name 👋', ['name' => auth('storefront')->user()->name]) }}
-                @else
-                  {{ __('Welcome 👋') }}
-                @endauth
+                {{ __('Hi, :name 👋', ['name' => auth('storefront')->user()->name]) }}
               </p>
+              @else
+              <a
+                href="{{ route('tenant.storefront.login') }}"
+                class="font-medium text-[18px]"
+                style="color: var(--color-text-primary)"
+                >{{ __('Login / Register') }}</a
+              >
+              @endauth
               <div class="flex items-center gap-[4px]">
                 <span
                   class="font-medium text-[12px] tracking-[0.5px]"
@@ -85,7 +107,7 @@
           />
           <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
             data-image-search-trigger="storefront-image-search-modal-v6">
-            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" />
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" style="{{ $__eloraCamFlip }}" />
           </button>
         </form>
       </div>
@@ -129,7 +151,7 @@
           />
           <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
             data-image-search-trigger="storefront-image-search-modal-v6">
-            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[22px] w-[30px]" />
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[22px] w-[30px]" style="{{ $__eloraCamFlip }}" />
           </button>
         </form>
         <x-image-search-modal id="storefront-image-search-modal-v6" :action="route('tenant.storefront.search.image')" />

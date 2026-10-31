@@ -1,3 +1,7 @@
+@php
+  $__eloraRtl = (($currentLanguage?->direction?->value ?? null) === 'rtl') || in_array($currentLanguage?->code ?? app()->getLocale(), ['ar', 'he', 'fa']);
+  $__eloraCamFlip = $__eloraRtl ? 'transform: scaleX(-1)' : '';
+@endphp
     <header>
       <div class="hidden">
         <livewire:tenant.storefront.layout.locale-switcher />
@@ -94,6 +98,7 @@
                 src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
                 alt=""
                 class="h-[18px] w-[24.75px]"
+                style="{{ $__eloraCamFlip }}"
               />
             </button>
           </form>
@@ -146,6 +151,7 @@
               src="{{ asset('elora-5/assets/icons/icon-camera.svg') }}"
               alt=""
               class="h-[22px] w-[30px]"
+                style="{{ $__eloraCamFlip }}"
             />
           </button>
         </form>
