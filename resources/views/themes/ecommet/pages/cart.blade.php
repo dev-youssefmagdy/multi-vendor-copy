@@ -67,8 +67,7 @@
                     <div class="flex flex-col gap-0 mb-8">
                         <div class="flex items-center justify-between pb-4 border-b border-[#eaeaea]">
                             <label class="flex items-center gap-2 lg:gap-3 cursor-pointer">
-                                <input type="checkbox" id="cartSelectAll" checked
-                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer flex items-center justify-center relative before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] lg:before:w-[5px] before:h-[9px] lg:before:h-[11px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:-mt-0.5">
+                                <span class="relative inline-flex shrink-0"><input type="checkbox" id="cartSelectAll" checked class="peer w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer"><svg class="pointer-events-none absolute inset-0 hidden peer-checked:block text-white w-full h-full p-[3px]" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                 <span class="text-[14px] font-[500] text-[#242424]"
                                     id="cartSelectionLabel">{{ __('Select all (:count)', ['count' => $itemCount]) }}</span>
                             </label>
@@ -112,9 +111,7 @@
 
                                     {{-- Checkbox --}}
                                     <div class="flex items-center shrink-0">
-                                        <input type="checkbox"
-                                            class="cart-line-checkbox w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer flex items-center justify-center relative before:content-[''] before:absolute before:hidden checked:before:block before:w-[4px] lg:before:w-[5px] before:h-[9px] lg:before:h-[11px] before:border-r-2 before:border-b-2 before:border-white before:transform before:rotate-45 before:-mt-0.5"
-                                            checked>
+                                        <span class="relative inline-flex shrink-0"><input type="checkbox" class="cart-line-checkbox peer w-[18px] h-[18px] lg:w-[20px] lg:h-[20px] rounded-[3px] appearance-none bg-white border border-[#ccc] checked:bg-[#242424] checked:border-[#242424] cursor-pointer" checked><svg class="pointer-events-none absolute inset-0 hidden peer-checked:block text-white w-full h-full p-[3px]" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                                     </div>
 
                                     {{-- Product Image --}}
