@@ -223,7 +223,7 @@
                         </div>
                         <!-- Pagination -->
                         <div
-                            class="swiper-pagination absolute !right-0 bottom-0 !left-auto bg-black text-white w-fit rounded-ss-xl px-2 sm:hidden"></div>
+                            class="swiper-pagination absolute !right-0 bottom-0 !left-auto bg-black text-white w-fit rounded-ss-xl px-2 hidden"></div>
                     </div>
                     <!-- Navigation buttons -->
                     <div class="swiper-button-prev w-10 h-10 rounded-full bg-white -translate-x-5 rtl:translate-x-5 drop-shadow-2xl">

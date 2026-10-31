@@ -64,7 +64,7 @@
                     </a>
                     <div class="flex flex-col gap-[3px] min-w-0">
                         <a href="{{ route('tenant.storefront.login') }}">
-                            <span class="text-white text-lg font-medium leading-[23px] truncate" style="font-family:'Outfit',sans-serif;">{{ __('Guest') }}</span>
+                            <span class="text-white text-lg font-medium leading-[23px] truncate" style="font-family:'Outfit',sans-serif;">{{ __('Login / Register') }}</span>
                         </a>
                         <!-- Subtitle: opens currency & country selector -->
                         <button type="button"
@@ -86,7 +86,16 @@
                 </div>
                 @endauth
 
-                <!-- Right: notification/bell button -->
+                <!-- Right: cart + notification/bell buttons -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('My Cart') }}"
+                    class="relative w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                        <path d="M3.71 5.4H18.924C20.302 5.4 21.297 6.67 20.919 7.948L19.265 13.548C19.01 14.408 18.196 15 17.27 15H8.112C7.185 15 6.37 14.407 6.116 13.548L3.71 5.4ZM3.71 5.4L3 3M16.5 21C16.8978 21 17.2794 20.842 17.5607 20.5607C17.842 20.2794 18 19.8978 18 19.5C18 19.1022 17.842 18.7206 17.5607 18.4393C17.2794 18.158 16.8978 18 16.5 18C16.1022 18 15.7206 18.158 15.4393 18.4393C15.158 18.7206 15 19.1022 15 19.5C15 19.8978 15.158 20.2794 15.4393 20.5607C15.7206 20.842 16.1022 21 16.5 21ZM8.5 21C8.89782 21 9.27936 20.842 9.56066 20.5607C9.84196 20.2794 10 19.8978 10 19.5C10 19.1022 9.84196 18.7206 9.56066 18.4393C9.27936 18.158 8.89782 18 8.5 18C8.10218 18 7.72064 18.158 7.43934 18.4393C7.15804 18.7206 7 19.1022 7 19.5C7 19.8978 7.15804 20.2794 7.43934 20.5607C7.72064 20.842 8.10218 21 8.5 21Z"
+                            stroke="#F56323" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="elora-cart-badge absolute -top-1 -right-1 bg-[#F56323] text-white text-[10px] font-bold rounded-full min-w-4 h-4 flex items-center justify-center px-1 leading-none {{ ($cartCount ?? 0) > 0 ? '' : 'hidden' }}">{{ $cartCount ?? 0 }}</span>
+                </a>
                 <a href="{{ route('tenant.storefront.favorites') }}"
                     class="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
                     <!-- Bell icon -->
@@ -97,6 +106,7 @@
                             stroke="#F56323" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </a>
+                </div>
             </div>
 
             <!-- Search bar — translates down to overlap the section below -->
@@ -115,14 +125,19 @@
                             placeholder="{{ __('Search...') }}" autocomplete="off"
                             class="bg-transparent flex-1 text-base text-[#8F8F8F] placeholder-[#8F8F8F] min-w-0 outline-none font-normal"
                             style="font-family:'Outfit',sans-serif;" />
-                        <!-- Camera / scan icon with left border divider -->
-                        <div class="flex items-center justify-end pl-1.5 border-l border-[#8F8F8F]">
-{{--                            <svg class="w-5 h-[18px] text-[#171717]" viewBox="0 0 24 24" fill="currentColor">--}}
-{{--                                <path d="M12 8.5c-2.485 0-4.5 2.015-4.5 4.5s2.015 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.015-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H4V6h4.05l1.83-2h4.24l1.83 2H20v14z"/>--}}
-{{--                            </svg>--}}
-                        </div>
+                        <!-- Camera / image search -->
+                        <button type="button" aria-label="{{ __('Search by Image') }}"
+                            class="flex items-center justify-end ps-1.5 border-s border-[#8F8F8F] flex-shrink-0"
+                            data-image-search-trigger="storefront-image-search-modal-mobile-home">
+                            <svg class="w-5 h-5 text-[#171717]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                                <circle cx="12" cy="13" r="3.2" />
+                            </svg>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <x-image-search-modal id="storefront-image-search-modal-mobile-home" :action="route('tenant.storefront.search.image')" />

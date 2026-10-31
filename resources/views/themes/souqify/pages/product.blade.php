@@ -216,7 +216,7 @@
                         @endforeach
                         <!-- Pagination -->
                         <div
-                            class="sq-main-dots absolute end-0 bottom-0 bg-black text-white w-fit rounded-ss-xl px-2 py-1.5 flex items-center gap-1.5 z-10 sm:hidden">
+                            class="sq-main-dots absolute end-0 bottom-0 bg-black text-white w-fit rounded-ss-xl px-2 py-1.5 items-center gap-1.5 z-10 hidden">
                             @foreach($mediaItems as $idx => $item)
                             <button type="button" data-dot-idx="{{ $idx }}"
                                 class="sq-dot w-1.5 h-1.5 rounded-full transition-colors {{ $idx === 0 ? 'bg-white' : 'bg-white/40' }}"
