@@ -250,7 +250,7 @@
     </div>
 
     <!-- Mobile search -->
-    <div class="translate-y-1/2 relative z-50 drop-shadow-2xl px-4 sm:px-6 lg:hidden">
+    <div class="{{ (request()->is('/') || request()->routeIs('preview')) ? 'translate-y-1/2' : 'mb-3' }} relative z-50 drop-shadow-2xl px-4 sm:px-6 lg:hidden">
         <form action="{{ route('tenant.storefront.search') }}" method="GET"
             data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}">
             <div class="souqify-search-inner flex items-center bg-white rounded-full px-3 sm:px-5 py-2 gap-2 h-14">

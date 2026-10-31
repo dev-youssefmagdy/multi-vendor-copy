@@ -59,7 +59,7 @@
          untransformed bottom edge, i.e. exactly its midpoint once shifted). --}}
     <form action="{{ route('tenant.storefront.search') }}" method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-        class="relative z-30 translate-y-1/2 flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke); background:var(--color-bg-main)">
+        class="relative z-30 {{ (request()->is('/') || request()->routeIs('preview')) ? 'translate-y-1/2' : 'mb-3' }} flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke); background:var(--color-bg-main)">
       <button type="submit"><img src="{{ asset('souqify-3/assets/icons/icon-search-mobile.svg') }}" class="size-[18px] opacity-70" alt="" /></button>
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color:var(--color-text-placeholder)" />
       <button type="button" data-image-search-trigger="storefront-image-search-modal-v4-mobile" aria-label="{{ __('Search by Image') }}">
