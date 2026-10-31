@@ -38,7 +38,6 @@
               @auth('storefront')
                 Hi, {{ auth('storefront')->user()->name }} &#128075;
               @else
-                Hi, {{ __('Guest') }} &#128075;
               @endauth
             </p>
             <div class="flex items-center gap-[4px]">

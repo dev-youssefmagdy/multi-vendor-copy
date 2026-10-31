@@ -30,7 +30,6 @@
             @auth('storefront')
               {{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋
             @else
-              {{ __('Hi, :name', ['name' => __('Guest')]) }} 👋
             @endauth
           </p>
           @auth('storefront')
