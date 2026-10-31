@@ -67,6 +67,10 @@
 @endpush
 
 <div>
+@unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+@endunless
+
     <!-- =========== BREADCRUMB =========== -->
     <div class="bg-white border-b border-neutral-200 hidden lg:block">
         <div
@@ -90,10 +94,10 @@
     </div>
 
     <!-- =========== PRODUCT HERO (gallery + info) =========== -->
-    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-6 lg:py-10">
 
         <!-- Mobile Header -->
-        <div class="lg:hidden mt-8 mb-4 flex items-center gap-3">
+        <div class="lg:hidden mt-2 mb-4 flex items-center gap-3">
             <!-- Back Button -->
             <button class="w-12 h-12 flex justify-center items-center rounded-full border hover:bg-gray-200"
                 aria-label="{{ __('Back') }}" onclick="window.location.href='{{ url('/') }}'">
@@ -123,20 +127,6 @@
                     </div>
                 </form>
             </div> --}}
-            <!-- cart icon -->
-            <a href="{{ route('tenant.storefront.cart') }}"
-                class="flex items-center justify-center transition-colors rounded-full w-12 h-12 border hover:bg-gray-200">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none">
-                    <path
-                        d="M3.71 5.4H18.924C20.302 5.4 21.297 6.67 20.919 7.948L19.265 13.548C19.01 14.408 18.196 15 17.27 15H8.112C7.185 15 6.37 14.407 6.116 13.548L3.71 5.4ZM3.71 5.4L3 3M16.5 21C16.8978 21 17.2794 20.842 17.5607 20.5607C17.842 20.2794 18 19.8978 18 19.5C18 19.1022 17.842 18.7206 17.5607 18.4393C17.2794 18.158 16.8978 18 16.5 18C16.1022 18 15.7206 18.158 15.4393 18.4393C15.158 18.7206 15 19.1022 15 19.5C15 19.8978 15.158 20.2794 15.4393 20.5607C15.7206 20.842 16.1022 21 16.5 21ZM8.5 21C8.89782 21 9.27936 20.842 9.56066 20.5607C9.84196 20.2794 10 19.8978 10 19.5C10 19.1022 9.84196 18.7206 9.56066 18.4393C9.27936 18.158 8.89782 18 8.5 18C8.10218 18 7.72064 18.158 7.43934 18.4393C7.15804 18.7206 7 19.1022 7 19.5C7 19.8978 7.15804 20.2794 7.43934 20.5607C7.72064 20.842 8.10218 21 8.5 21Z"
-                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <div class="{{ $cartCount > 0 ? '' : 'hidden lg:block' }}">
-                    <span id="elora-cart-badge"
-                        class=" text-red-500 text-[10px] rounded-full w-full h-[18px] flex items-center justify-center font-semibold leading-none {{ $cartCount > 0 ? '' : 'hidden' }}">{{ $cartCount }}</span>
-                    <span class="text-xs hidden lg:block">{{ __('Cart') }}</span>
-                </div>
-            </a>
             <!-- Favorite -->
             <a href="{{ route('tenant.storefront.favorites') }}"
                 class="flex items-center justify-center transition-colors rounded-full w-12 h-12 border hover:bg-gray-200"
