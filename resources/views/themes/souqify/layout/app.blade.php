@@ -153,6 +153,16 @@
                 transform: rotate(360deg)
             }
         }
+        /* icon-camera.svg bakes a "|" divider into its left edge, which in RTL lands on
+           the outer side of the field. Clip that one and draw the divider with a
+           border on the camera's right (the input side) so it is kept, not dropped. */
+        [dir="rtl"] button:has(> img[src*="icon-camera.svg"]) {
+            border-right: 1px solid var(--color-gray, #8F8F8F);
+            padding: 2px 8px 2px 0
+        }
+        [dir="rtl"] button > img[src*="icon-camera.svg"] {
+            clip-path: inset(0 0 0 3px)
+        }
     </style>
 
     @php

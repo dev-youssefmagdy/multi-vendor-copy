@@ -97,7 +97,7 @@
     <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-6 lg:py-10">
 
         <!-- Mobile Header -->
-        <div class="lg:hidden mt-2 mb-4 flex items-center gap-3">
+        <div class="lg:hidden mt-8 mb-5 flex items-center gap-3">
             <!-- Back Button -->
             <button class="w-12 h-12 flex justify-center items-center rounded-full border hover:bg-gray-200"
                 aria-label="{{ __('Back') }}" onclick="window.location.href='{{ url('/') }}'">
