@@ -627,8 +627,9 @@ function showCartToast(itemName = 'Item', qty = 1, type = 'success') {
         toast: true,
         position: 'top-end',
         icon: type,
-        title: type === 'success' ? 'Added to cart!' : itemName,
-        text: type === 'success' ? `${itemName} ×${qty}` : undefined,
+        title: type === 'success'
+            ? ((typeof window.trans === 'function') ? window.trans('Product added to cart successfully.') : 'Product added to cart successfully.')
+            : itemName,
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
@@ -1079,11 +1080,10 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('livewire:init', function () {
     Livewire.on('storefront-cart-added', function (event) {
         var payload = (Array.isArray(event) ? event[0] : event) || {};
-        var itemName = payload.itemName;
         var qty = Number(payload.qty || 1);
-        var message = itemName
-            ? (qty > 1 ? qty + ' × ' + itemName : itemName) + ' added to your cart.'
-            : 'Item added to your cart successfully.';
+        var message = (typeof window.trans === 'function')
+            ? window.trans('Product added to cart successfully.')
+            : 'Product added to cart successfully.';
 
         showStorefrontToast(message, 'success');
 

@@ -589,11 +589,10 @@ tailwind.config = {
 document.addEventListener('livewire:init', function () {
     Livewire.on('storefront-cart-added', function (event) {
         var payload = (Array.isArray(event) ? event[0] : event) || {};
-        var itemName = payload.itemName;
         var qty = Number(payload.qty || 1);
-        var message = itemName
-            ? (qty > 1 ? qty + ' × ' + itemName : itemName) + ' added to your cart.'
-            : 'Item added to your cart successfully.';
+        var message = (typeof window.trans === 'function')
+            ? window.trans('Product added to cart successfully.')
+            : 'Product added to cart successfully.';
 
         showStorefrontToast(message, 'success');
 

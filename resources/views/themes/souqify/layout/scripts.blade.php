@@ -411,15 +411,8 @@
     document.addEventListener('livewire:init', function () {
         Livewire.on('storefront-cart-added', function (event) {
             var payload = (Array.isArray(event) ? event[0] : event) || {};
-            var itemName = payload.itemName;
             var qty = Number(payload.qty || 1);
-            var message = itemName
-                ? qty > 1
-                    ? @js(__(':count × :item added to your cart.', ['count' => '__COUNT__', 'item' => '__ITEM__']))
-                        .replace('__COUNT__', qty)
-                        .replace('__ITEM__', itemName)
-                    : @js(__(':item added to your cart.', ['item' => '__ITEM__'])).replace('__ITEM__', itemName)
-                : @js(__('Item added to your cart successfully.'));
+            var message = @js(__('Product added to cart successfully.'));
 
             showStorefrontToast(message, 'success');
 
