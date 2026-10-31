@@ -134,10 +134,8 @@
                     {{ $product->translationValue('name') ?? $product->slug }}
                 </h1>
 
-                {{-- Sold / rating row --}}
+                {{-- Rating row --}}
                 <div class="flex flex-wrap items-center gap-2.5 text-[12px] text-[#666] mb-4">
-                    <span class="font-bold text-[#222] bg-gray-100 px-2 py-0.5 rounded-md">{{ __(':count sold', ['count' => $soldCount]) }}</span>
-                    <span class="w-[3px] h-[3px] rounded-full bg-[#ccc]"></span>
                     <div class="flex items-center gap-1.5">
                         <span class="font-medium text-[#888]">{{ __('Rating:') }}</span>
                         <span class="text-[#222] font-semibold">{{ $avgRating }}</span>
