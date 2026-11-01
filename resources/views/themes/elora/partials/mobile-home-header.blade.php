@@ -4,7 +4,7 @@
     $currency = $currentCurrency ?? null;
 @endphp
     <!--========= mobile header ==========  -->
-    <div class="sm:hidden {{ ($tight ?? false) ? 'mb-8' : 'mb-14' }}" style="background: linear-gradient(89.62deg, #C94F1A 0.07%, #F56323 57.6%, #BA3800 100%);">
+    <div class="sm:hidden {{ ($tight ?? false) ? 'mb-8' : 'mb-8' }}" style="background: linear-gradient(89.62deg, #C94F1A 0.07%, #F56323 57.6%, #BA3800 100%);">
         <div class="px-4 pt-3 pb-0 flex flex-col gap-3">
             <!-- User info row -->
             <div class="flex items-center justify-between">

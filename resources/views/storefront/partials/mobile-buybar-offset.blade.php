@@ -3,7 +3,7 @@
 (function () {
     function place() {
         var bar = document.querySelector('[data-mobile-buybar]');
-        if (!bar) return;
+        if (!bar) { document.body.style.paddingBottom = ''; return; }
         var nav = document.querySelector('#mobileBottomNav, .mobile-tabbar, nav.fixed[class*="bottom-0"]');
         var navH = nav && getComputedStyle(nav).display !== 'none' && getComputedStyle(nav).position === 'fixed' ? nav.offsetHeight : 0;
         if (navH) {

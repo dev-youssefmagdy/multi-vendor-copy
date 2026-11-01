@@ -2,7 +2,8 @@
     $socialLinksByIcon = (isset($socialLinks) ? $socialLinks : collect())->keyBy(fn($link) => $link->icon?->name);
 @endphp
 <!-- ============ FOOTER ============ -->
-<footer style="background: var(--color-footer-bg)">
+@include('storefront.partials.mobile-tabbar-offset', ['height' => 64])
+<footer style="background: var(--color-footer-bg)" class="pb-[16px] lg:pb-0">
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">

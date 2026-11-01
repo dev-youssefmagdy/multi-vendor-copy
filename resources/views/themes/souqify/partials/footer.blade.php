@@ -6,7 +6,8 @@ $shopCategories = ($categories ?? collect())->take(6);
 @endphp
 
 <!-- =========== FOOTER =========== -->
-<footer class="bg-slate-950 text-white pt-12 pb-24 lg:pb-0">
+@include('storefront.partials.mobile-tabbar-offset', ['height' => 80])
+<footer class="bg-slate-950 text-white pt-12">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-8">
             <!-- Brand col -->
@@ -171,4 +172,3 @@ $shopCategories = ($categories ?? collect())->take(6);
         </div>
     </div>
 </footer>
-<div class="mt-20 lg:hidden"></div>

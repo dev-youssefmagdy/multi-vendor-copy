@@ -99,6 +99,7 @@
 @endphp
 
 <!-- ============ FEATURED STRIP ============ -->
+<style>@media (max-width:1023px){.sqv2-trust{margin-top:-16px}}</style>
 <section class="sqv2-trust" wire:ignore>
   <div class="swiper trust-swiper sqv2-trust__viewport">
     <div class="swiper-wrapper">

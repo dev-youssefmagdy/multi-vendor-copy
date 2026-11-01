@@ -1,6 +1,6 @@
     <!-- =========== TRUST BAR =========== -->
     <section
-        class="bg-gradient-to-r from-[#002562] via-[#144AA6] to-[#003387] md:from-transparent md:via-transparent md:to-transparent md:bg-[#FFB00A] mt-8 lg:mt-12">
+        class="bg-gradient-to-r from-[#002562] via-[#144AA6] to-[#003387] md:from-transparent md:via-transparent md:to-transparent md:bg-[#FFB00A] mt-0 lg:mt-12">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 lg:gap-8 text-white md:text-black">
             <div class="flex items-center md:justify-between gap-4 lg:gap-6 overflow-x-auto py-4 sm:py-5">
                 <div class="flex items-center gap-3">

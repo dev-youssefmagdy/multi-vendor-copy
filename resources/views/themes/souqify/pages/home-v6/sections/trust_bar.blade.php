@@ -134,6 +134,7 @@
 @endphp
 
 <!-- ============ FEATURED STRIP ============ -->
+<style>@media (max-width:1023px){.sqv6-trust{margin-top:-16px}}</style>
 <section class="sqv6-trust" wire:ignore>
   <div class="swiper trust-swiper sqv6-trust__viewport">
     <div class="swiper-wrapper">

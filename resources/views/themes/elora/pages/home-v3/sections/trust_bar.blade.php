@@ -1,5 +1,6 @@
+    <style>@media (max-width:1023px){.elora-v3-trust{margin-top:-16px}}</style>
     <section
-      class="overflow-x-auto no-scrollbar"
+      class="elora-v3-trust overflow-x-auto no-scrollbar"
       style="background: var(--color-brand-pink)"
     >
       <div

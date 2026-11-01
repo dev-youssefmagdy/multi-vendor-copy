@@ -2,7 +2,8 @@
     $socialLinksByIcon = (isset($socialLinks) ? $socialLinks : collect())->keyBy(fn($link) => $link->icon?->name);
 @endphp
 <!-- ============ FOOTER ============ -->
-<footer style="background:var(--color-footer-bg)">
+@include('storefront.partials.mobile-tabbar-offset', ['height' => 80])
+<footer style="background:var(--color-footer-bg)" class="pb-[16px] lg:pb-0">
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">
@@ -82,11 +83,6 @@
 
 {{-- This footer only renders when v2 is the active variant, so scoping to
      plain `body` here is safe - it never leaks into another edition's pages. --}}
-<style>
-  @media (max-width: 1023.98px) {
-    body { padding-bottom: 80px; }
-  }
-</style>
 
 <!-- ============ MOBILE BOTTOM NAV ============ -->
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between h-[80px] px-[16px] gap-[19px] border-t-2 bg-white" style="border-color:var(--color-gray)">
