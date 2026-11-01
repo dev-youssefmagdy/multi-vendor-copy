@@ -123,10 +123,7 @@
                     <section class="mb-10">
                         <label class="flex items-center gap-2.5 cursor-pointer w-max">
                             <input wire:model.live="data.billing.same_as_shipping" type="checkbox"
-                                class="w-3.5 h-3.5 appearance-none border border-[#ccc] rounded-[2px] checked:bg-black checked:border-black cursor-pointer relative
-                                       before:content-[''] before:absolute before:hidden checked:before:block
-                                       before:w-[4px] before:h-[8px] before:border-r-[1.5px] before:border-b-[1.5px]
-                                       before:border-white before:transform before:rotate-45 before:left-[4px] before:top-[1px]">
+                                class="ec-checkbox">
                             <span class="text-[11px] text-[#888] font-medium tracking-wide">{{ __('Billing address is same as shipping') }}</span>
                         </label>
 

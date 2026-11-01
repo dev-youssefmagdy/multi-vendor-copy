@@ -126,3 +126,22 @@ body.loaded {
 .desc-readmore-btn:hover {
     text-decoration: underline;
 }
+
+/* Square checkbox with a drawn tick (checkout "billing same as shipping") */
+.ec-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    background: #fff center / 10px 10px no-repeat;
+    cursor: pointer;
+}
+
+.ec-checkbox:checked {
+    background-color: #000;
+    border-color: #000;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 5.2 4 7.6 8.5 2.6'/%3E%3C/svg%3E");
+}
