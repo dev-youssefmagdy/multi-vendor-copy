@@ -2117,9 +2117,9 @@ html, body {
         word-break: break-word;
     }
 
-    /* add bottom padding for mobile bottom nav */
+    /* add bottom padding for mobile bottom nav (88px bar + 16px clearance) */
     body[data-page="index"] footer {
-        padding-bottom: 70px;
+        padding-bottom: 104px;
     }
 }
 

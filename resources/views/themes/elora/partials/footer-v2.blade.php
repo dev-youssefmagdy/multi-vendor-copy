@@ -136,7 +136,7 @@
      Figma Frame 1984080008: 80px bar, 16px gutters, holding a 64px white pill
      (radius 129, 0 0 20px rgba(0,0,0,.08)). Home/Favorites sit left, Orders/Profile
      right, and an 81px purple My Cart disc rises 28px above the pill's top edge. --}}
-<div class="lg:hidden h-[80px]" aria-hidden="true"></div>
+<div class="lg:hidden" style="height:96px" aria-hidden="true"></div>
 <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 flex items-center h-[80px] px-[16px]" aria-label="{{ __('Primary') }}">
   <div class="relative flex-1 min-w-0 flex items-center justify-between h-[64px] px-[16px] rounded-[129px]" style="background: var(--color-bg-main, #FDFDFD); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08)">
     <div class="flex items-center gap-[16px]">

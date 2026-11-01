@@ -2,6 +2,11 @@
 {{-- Edit this file directly to change header/footer markup --}}
 {{-- Tenant-specific data via tenant() helper only --}}
 <!-- ===== FOOTER ===== -->
+<style>
+  @media (max-width: 639px) {
+    body footer, body[data-page="index"] footer { padding-bottom: 104px !important; }
+  }
+</style>
 <footer class="text-white" style="background:#111827">
 
     {{-- ── Main grid ─────────────────────────────────────────────────────────── --}}
