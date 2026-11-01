@@ -95,6 +95,11 @@ class CentralCatalogTenantSyncService
         $this->syncAllTenants(['settings']);
     }
 
+    public function syncLabels(): void
+    {
+        $this->syncAllTenants(['labels']);
+    }
+
     public function syncFlashSales(): void
     {
         $this->syncAllTenants(['flash-sales']);

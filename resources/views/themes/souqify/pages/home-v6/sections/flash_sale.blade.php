@@ -34,7 +34,7 @@
             'url' => $__url,
             'image' => $__img,
             'tag' => '🔥 ' . __('Trending Now'),
-            'stock' => __('Only 5 left - Hurry up'),
+            'labels' => $product->cardLabels(),
             'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

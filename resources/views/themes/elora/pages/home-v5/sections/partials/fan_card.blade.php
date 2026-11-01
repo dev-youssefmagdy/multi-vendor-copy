@@ -94,19 +94,9 @@
       </div>
     </div>
     <div class="fan-delivery-block flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start w-full">
-      @if (!empty($p['left']))
-        {{-- Low-stock urgency replaces the routine delivery line rather than stacking below it —
-             every card-size spec's delivery/stock wrapper is only ever tall enough for one row. --}}
-        <div class="fan-stock-row flex gap-[6.25px] lg:gap-[9.77px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="fan-stock-icon size-[18.75px] lg:size-[19.53px] shrink-0" />
-          <p class="fan-stock-text font-medium text-[12.5px] leading-[16px] lg:text-[14.65px] lg:leading-[18px] whitespace-nowrap" style="color:{{ $stockColor }}">{{ $p['left'] }}</p>
-        </div>
-      @else
-        <div class="fan-delivery-row flex gap-[3.93px] lg:gap-[7.77px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
-          <p class="fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" style="color:{{ $deliveredColor }}">{{ $p['stock'] ?: ($p['delivery'] ?? __('Delivered by 24 March')) }}</p>
-        </div>
-      @endif
+        <div class="fan-delivery-row flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[3.93px] lg:gap-[7.77px] fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" :style="'color:' . ($deliveredColor)" icon-class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
+</div>
     </div>
   </div>
 </a>

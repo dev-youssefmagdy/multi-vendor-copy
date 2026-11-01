@@ -96,6 +96,14 @@ class Product extends Model
         return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
     }
 
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductLabel::class, 'product_label_product')
+            ->withTimestamps()
+            ->orderBy('product_labels.sort_order')
+            ->orderBy('product_labels.id');
+    }
+
     /**
      * Countries this product is explicitly targeted at.
      * An empty relation means "no country preference" — the product is

@@ -31,6 +31,7 @@
             'discountBg' => $chip['bg'],
             'discountColor' => $chip['color'],
             'outOfStock' => $__outOfStock,
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,
@@ -45,7 +46,6 @@
             // Design-only fields with no backing data yet.
             'weight' => null,
             'badge' => '🔥 ' . __('Trending Now'),
-            'stock' => __('Only 5 left - Hurry up'),
         ];
     });
 

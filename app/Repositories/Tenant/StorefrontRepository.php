@@ -212,6 +212,7 @@ class StorefrontRepository
             'translations.language',
             'files',
             'badges',
+            'labels',
             'rates',
             'centralProduct' => fn($query) => $query->with([
                 'files',

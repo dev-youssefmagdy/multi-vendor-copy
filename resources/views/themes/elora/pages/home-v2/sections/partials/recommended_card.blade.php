@@ -131,23 +131,7 @@
         @endif
       </div>
 
-      @if (!empty($p['stockLeft']))
-        <div class="flex flex-row items-center gap-[4px] w-full min-w-0">
-          <img src="{{ asset('elora-1/assets/icons/cart-x.svg') }}" alt="" class="block lg:hidden shrink-0 w-[12px] h-[12px]" />
-          <img src="{{ asset('elora-1/assets/icons/cart-x-green.svg') }}" alt="" class="hidden lg:block shrink-0 size-[16px]" />
-          <p
-            class="truncate whitespace-nowrap font-medium text-[8px] lg:text-[12px] leading-[10px] lg:leading-[15px] text-[var(--color-error)] lg:text-[var(--color-success)]"
-          >{{ $p['stockLeft'] }}</p>
-        </div>
-      @elseif (!empty($p['delivered']))
-        <div class="flex flex-row items-center gap-[4px] w-full min-w-0">
-          <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="block lg:hidden shrink-0 w-[12px] h-[12px]" />
-          <img src="{{ asset('elora-1/assets/icons/truck-delivery-green.svg') }}" alt="" class="hidden lg:block shrink-0 size-[18px]" />
-          <p
-            class="truncate whitespace-nowrap font-medium text-[8px] lg:text-[12px] leading-[10px] lg:leading-[15px] text-[var(--color-error)] lg:text-[var(--color-success)]"
-          >{{ $p['delivered'] }}</p>
-        </div>
-      @endif
+      <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="w-full gap-[4px] font-medium text-[8px] lg:text-[12px] leading-[10px] lg:leading-[15px] text-[var(--color-success)]" style="" icon-class="w-[12px] h-[12px] lg:size-[18px] shrink-0" />
     </div>
   </div>
 </a>

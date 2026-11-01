@@ -26,6 +26,7 @@
             'sold' => $product->orders_count ?? null,
             'stock' => $variant?->quantity,
             'outOfStock' => $product->stockStatus() === 'out_of_stock',
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,

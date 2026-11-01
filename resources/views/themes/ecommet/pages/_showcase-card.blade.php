@@ -124,6 +124,7 @@
         @if($displayShipping !== null)
             <p class="text-xs text-gray-500 mt-0.5">{{ $displayShipping }}</p>
         @endif
+        <x-storefront.product-labels :labels="$product->cardLabels()" tag="div" class="gap-1 text-xs text-gray-500 mt-0.5" icon-class="w-3 h-3 shrink-0" />
 
         {{-- Stars + badge + cart --}}
         <div class="flex flex-row items-center justify-between w-full">

@@ -32,7 +32,7 @@
             // Design-only fields with no backing data yet.
             'weight' => null,
             'badge' => '🔥 ' . __('Trending Now'),
-            'stock' => __('Only 5 left - Hurry up'),
+            'labels' => $product->cardLabels(),
         ];
     });
 @endphp

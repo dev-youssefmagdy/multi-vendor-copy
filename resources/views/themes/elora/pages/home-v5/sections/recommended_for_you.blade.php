@@ -58,6 +58,7 @@
               'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
               'stock' => '',
               'delivery' => __('Delivered by') . ' ' . $deliveryDate,
+              'labels' => $product->cardLabels(),
               'favData' => $favData,
               'isOutOfStock' => $isOutOfStock,
               'hasMultipleVariants' => $hasMultipleVariants,

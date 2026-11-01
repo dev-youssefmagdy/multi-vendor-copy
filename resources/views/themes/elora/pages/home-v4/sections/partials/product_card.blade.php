@@ -66,10 +66,9 @@
     </div>
 
     {{-- Delivery estimate --}}
-    <div class="flex gap-[3.81px] lg:gap-[8.17px] items-center w-full min-w-0">
-      <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="size-[11.42px] lg:size-[24.51px] shrink-0" />
-      <p class="font-medium text-[7.62px] leading-[10px] lg:text-[16.34px] lg:leading-[21px] truncate" style="color:var(--color-success)">{{ __('Delivered by') }} {{ $__deliveryDate }}</p>
-    </div>
+    <div class="flex w-full min-w-0 flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[3.81px] lg:gap-[8.17px] font-medium text-[7.62px] leading-[10px] lg:text-[16.34px] lg:leading-[21px] truncate" style="color:var(--color-success)" icon-class="size-[11.42px] lg:size-[24.51px] shrink-0" />
+</div>
 
   </div>
 </a>

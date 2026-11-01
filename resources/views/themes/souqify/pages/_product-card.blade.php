@@ -106,6 +106,7 @@
 
     // Stock
     $isOutOfStock = $product->stockStatus() === 'out_of_stock';
+    $__labels = $product->cardLabels();
 @endphp
 
 {{-- bigProductCard design --}}
@@ -188,18 +189,10 @@
                     {{ __('Out of Stock') }}
                 </span>
             </div>
-        @else
+        @elseif (!empty($__labels))
             <div
-                class="absolute bottom-0 left-0 {{ $tagBg }} text-white text-[11px] px-3 py-2 rounded-tr-2xl flex items-center gap-1 leading-tight whitespace-nowrap">
-                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1" />
-                </svg>
-                <span>{{ __('Fast delivery') }}</span>
-                <span>·</span>
-                <span>{{ $tagText }}</span>
+                class="absolute bottom-0 left-0 {{ $tagBg }} text-white text-[11px] px-3 py-2 rounded-tr-2xl flex items-center gap-x-2 leading-tight whitespace-nowrap max-w-full">
+                <x-storefront.product-labels :labels="$__labels" tag="span" class="gap-1" icon-class="w-3 h-3 shrink-0" />
             </div>
         @endif
 

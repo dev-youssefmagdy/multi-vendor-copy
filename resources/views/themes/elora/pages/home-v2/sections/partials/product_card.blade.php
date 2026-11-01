@@ -68,13 +68,8 @@
         @endif
       </div>
     </div>
-    @if (!empty($p['delivered']))
-      <div class="flex flex-col gap-[4px] items-start w-full">
-        <div class="flex gap-[4px] items-center w-full">
-          <img src="{{ asset('elora-1/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px]" />
-          <p class="font-medium text-[var(--color-success)] text-[12px] whitespace-nowrap">{{ $p['delivered'] }}</p>
-        </div>
-      </div>
-    @endif
+    <div class="flex flex-col gap-[4px] items-start w-full">
+      <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="w-full gap-[4px] font-medium text-[12px]" style="color: var(--color-success)" icon-class="size-[18px] shrink-0" />
+    </div>
   </div>
 </a>

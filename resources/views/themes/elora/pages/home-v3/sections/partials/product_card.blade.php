@@ -65,10 +65,9 @@
       </div>
     </div>
     <div class="flex flex-col gap-[4px] items-start w-full">
-      <div class="flex gap-[4px] items-center w-full">
-        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px]" />
-        <p class="font-medium text-[12px] whitespace-nowrap" style="color:{{ $p['urgency'] ?? 'var(--color-success)' }}">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</p>
-      </div>
+      <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] font-medium text-[12px] whitespace-nowrap" :style="'color:' . ($p['urgency'] ?? 'var(--color-success)')" icon-class="size-[18px] shrink-0" />
+</div>
     </div>
   </div>
 </a>

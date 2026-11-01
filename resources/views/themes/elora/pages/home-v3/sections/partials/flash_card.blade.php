@@ -25,6 +25,7 @@
           <p class="text-[9px] lg:text-[14px] line-through" style="color:var(--color-text-faint-alt)">{{ $p['oldPrice'] }}</p>
         @endif
       </div>
+    <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] text-[8px] lg:text-[12px] font-medium" style="color:#2AAF2F" icon-class="size-[10px] lg:size-[14px] shrink-0" />
     </div>
   </a>
 </div>

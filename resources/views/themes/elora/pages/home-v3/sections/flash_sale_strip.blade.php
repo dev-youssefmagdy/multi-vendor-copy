@@ -33,6 +33,7 @@
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? '-' . (int) round((float) $pricing['discount_percentage']) . '%' : '',
               ...$product->storefrontCartData($symbol, $rate),
+              'labels' => $product->cardLabels(),
               'favData' => $favData,
           ];
       });

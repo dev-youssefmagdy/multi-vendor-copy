@@ -27,6 +27,7 @@
           return [
               'url' => route('tenant.storefront.product', $product->slug),
               ...$product->storefrontCartData($symbol, $rate),
+              'labels' => $product->cardLabels(),
               'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),

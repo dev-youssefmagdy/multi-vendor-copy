@@ -5,11 +5,10 @@
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover rounded-t-[8px] group-hover:scale-105 transition-transform duration-300" />
         @endif
-        @if (!empty($p['delivery']))
+        @if (!empty($p['labels']))
             <span class="delivery-ribbon absolute left-0 bottom-0 rtl:left-auto rtl:right-0 flex items-center gap-[6px] px-[6px] py-[3px] rounded-tr-[10px]">
-                <img src="{{ asset('souqify-5/assets/icons/truck-delivery.svg') }}" alt="" class="size-[13px]" />
-                <span class="text-[9px] font-medium whitespace-nowrap" style="color:var(--color-black)">{{ $p['delivery'] }}</span>
-            </span>
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="span" :limit="1" class="gap-[4px] text-[9px] font-medium whitespace-nowrap" style="color:var(--color-black)" icon-class="w-3 h-3 shrink-0" />
+</span>
         @endif
         @if (!empty($p['badge']))
             <span class="absolute left-0 top-0 rtl:left-auto rtl:right-0 flex items-center gap-[4px] px-[8px] py-[4px] rounded-br-[12px]" style="background:var(--color-brand-pink)">

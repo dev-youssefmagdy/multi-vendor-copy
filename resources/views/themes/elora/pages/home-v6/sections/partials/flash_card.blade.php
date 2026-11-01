@@ -47,10 +47,11 @@
         <p class="text-[8px] lg:text-[12px]" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
       @endif
     </div>
-    <div class="mt-auto flex items-center gap-[4px] lg:hidden">
-      <img src="{{ asset('elora-2/assets/icons/truck-delivery.svg') }}" alt="" class="size-[12px]" />
-      <p class="font-medium text-[8px] whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by :date', ['date' => '24 March']) }}</p>
-    </div>
-    <p class="hidden lg:block mt-auto text-[11px] font-medium" style="color:var(--color-success)">{{ __('Delivered by :date', ['date' => '24 March']) }}</p>
+    <div class="mt-auto flex lg:hidden flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] font-medium text-[8px] whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[12px] shrink-0" />
+</div>
+    <div class="hidden lg:flex mt-auto flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] text-[11px] font-medium" style="color:var(--color-success)" icon-class="size-[14px] shrink-0" />
+</div>
   </div>
 </a>

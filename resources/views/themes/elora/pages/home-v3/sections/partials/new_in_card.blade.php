@@ -44,10 +44,9 @@
           <p class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#FF522C">{{ $p['discount'] }}</p>
         @endif
       </div>
-      <div class="hidden lg:flex items-center gap-[6px] w-full min-w-0">
-        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[17px] shrink-0" />
-        <span class="font-medium text-[11px] truncate" style="color:#2AAF2F">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</span>
-      </div>
+      <div class="hidden lg:flex w-full min-w-0 flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[6px] font-medium text-[11px] truncate" style="color:#2AAF2F" icon-class="size-[17px] shrink-0" />
+</div>
     </div>
   </a>
 </div>

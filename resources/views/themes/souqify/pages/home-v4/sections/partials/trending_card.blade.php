@@ -68,10 +68,11 @@
     </div>
 
     <div class="sqv4-trend-card__status">
-      <div class="sqv4-trend-card__statusrow">
-        <img src="{{ asset('souqify-3/assets/icons/icon-truck-delivery-green.svg') }}" alt="" class="sqv4-trend-card__truck" />
-        <span class="sqv4-trend-card__statustext">{{ $p['delivery'] }}</span>
-      </div>
+      @if (!empty($p['labels']))
+<div class="sqv4-trend-card__statusrow flex-col !items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] sqv4-trend-card__statustext" icon-class="w-3 h-3 shrink-0" />
+</div>
+@endif
     </div>
   </div>
 </div>

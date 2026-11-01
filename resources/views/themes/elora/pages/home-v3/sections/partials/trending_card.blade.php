@@ -57,10 +57,9 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-[7px] w-full">
-        <img src="{{ asset('elora-3/assets/icons/truck-delivery.svg') }}" alt="" class="size-[18px] shrink-0" />
-        <span class="font-medium text-[15px] whitespace-nowrap" style="color:#2AAF2F">{{ __('Delivered by') }} {{ now()->addDays(3)->translatedFormat('d F') }}</span>
-      </div>
+      <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[7px] font-medium text-[15px] whitespace-nowrap" style="color:#2AAF2F" icon-class="size-[18px] shrink-0" />
+</div>
     </div>
   </a>
 </div>

@@ -10,6 +10,7 @@ use App\Models\Country;
 use App\Models\Language;
 use App\Models\Product;
 use App\Models\ProductBadge;
+use App\Models\ProductLabel;
 use App\Models\ProductTenantAssignment;
 use App\Models\ShippingZone;
 use App\Models\Tenant;
@@ -51,6 +52,7 @@ class AddEditProduct extends Component
     public array $categoryIds = [];
     public array $shippingZoneIds = [];
     public array $badgeIds = [];
+    public array $labelIds = [];
     public array $translations = [];
     public string $activeLocale = 'en';
 
@@ -128,6 +130,7 @@ class AddEditProduct extends Component
         $this->assignedCountryIds = $loaded->countries()->pluck('countries.id')->map(fn ($id) => (int) $id)->all();
         $this->allCountries = $this->assignedCountryIds === [];
         $this->badgeIds = $loaded->badges->pluck('id')->all();
+        $this->labelIds = $loaded->labels->pluck('id')->map(fn($id) => (string) $id)->all();
 
         $this->translations = array_replace_recursive(
             $this->translations,
@@ -333,6 +336,8 @@ class AddEditProduct extends Component
         ], $existingProduct);
 
         $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+        // Before syncProduct(): the per-tenant product push mirrors these assignments.
+        $product->labels()->sync(array_map('intval', array_filter((array) $this->labelIds, filled(...))));
 
         // Country targeting — empty pivot means "no preference / available everywhere".
         // Synced before the tenant push so syncProductToTenant() denormalizes the new list.
@@ -344,7 +349,7 @@ class AddEditProduct extends Component
         $product->load('countries');
 
         $tenantSyncService->syncProduct($product);
-        $tenantSyncService->syncAllTenants(['badges']);
+        $tenantSyncService->syncAllTenants(['badges', 'labels']);
 
         // ── Tenant Assignments ──────────────────────────────────────────────
         $previousAssignedTenantIds = ProductTenantAssignment::where('product_id', $product->id)
@@ -426,6 +431,8 @@ class AddEditProduct extends Component
             'assignedCountryIds' => ['array'],
             'assignedCountryIds.*' => ['integer', 'exists:countries,id'],
             'badgeIds' => ['array'],
+            'labelIds' => ['array'],
+            'labelIds.*' => ['integer', 'exists:product_labels,id'],
             'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'assignedTenantIds' => ['array'],
             'assignedTenantIds.*' => ['string', 'exists:tenants,id'],
@@ -470,6 +477,7 @@ class AddEditProduct extends Component
             'categoryIds' => 'categories',
             'shippingZoneIds' => 'shipping zones',
             'badgeIds' => 'badges',
+            'labelIds' => 'labels',
             'primaryImage' => 'primary image',
         ];
     }
@@ -578,6 +586,7 @@ class AddEditProduct extends Component
             'existingGallery' => $existingGallery,
             'tenants' => Tenant::query()->orderBy('data->name')->get(),
             'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
+            'labels' => ProductLabel::query()->active()->ordered()->get(),
         ]);
     }
 }

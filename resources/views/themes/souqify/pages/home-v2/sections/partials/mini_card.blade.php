@@ -34,5 +34,6 @@
         <p class="text-[10px] lg:text-[11px]" style="color:var(--color-secondary)">{{ $p['discount'] }}</p>
       @endif
     </div>
+    <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] text-[10px] font-medium" style="color:var(--color-brand-purple)" icon-class="size-[11px] shrink-0" />
   </div>
 </div>

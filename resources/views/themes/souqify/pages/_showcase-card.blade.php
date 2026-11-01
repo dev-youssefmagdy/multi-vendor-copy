@@ -127,6 +127,8 @@ Vars: $product (Product model), $badgeText (optional)
         @endif
     </div>
 
+    <x-storefront.product-labels :labels="$product->cardLabels()" tag="div" class="gap-1 mb-3 text-xs text-neutral-500" icon-class="w-3 h-3 shrink-0" />
+
     {{-- Actions --}}
     <div class="flex items-center gap-2">
         @if ($product->stockStatus() === 'out_of_stock')

@@ -306,11 +306,10 @@
         </div>
 
         <div class="sqv5-new__meta">
-            @if (!empty($p['delivery']))
-                <span class="sqv5-new__metarow">
-                    <img src="{{ asset('souqify-4/assets/icons/newin-truck.svg') }}" alt="" />
-                    <span>{{ $p['delivery'] }}</span>
-                </span>
+            @if (!empty($p['labels']))
+                <span class="sqv5-new__metarow flex-col !items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] " icon-class="w-3 h-3 shrink-0" />
+</span>
             @endif
         </div>
     </div>

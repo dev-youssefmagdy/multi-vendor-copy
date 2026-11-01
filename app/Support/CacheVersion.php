@@ -23,7 +23,7 @@ class CacheVersion
     /** Every tag the storefront caches are keyed on (see bumpStorefront()). */
     public const STOREFRONT_TAGS = [
         'Banner', 'Category', 'Currency', 'File', 'FlashSale', 'Language', 'Order', 'OrderItem',
-        'Product', 'ProductBadge', 'ProductVariant', 'Setting', 'SocialLink', 'TenantHomeVariant',
+        'Product', 'ProductBadge', 'ProductLabel', 'ProductVariant', 'Setting', 'SocialLink', 'TenantHomeVariant',
         'TenantPageSection', 'TenantThemeColor', 'Theme', 'Translation',
     ];
 

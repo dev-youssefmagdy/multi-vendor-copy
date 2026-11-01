@@ -162,6 +162,34 @@ class Product extends Model
         return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
     }
 
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductLabel::class, 'product_label_product')
+            ->withTimestamps()
+            ->orderBy('product_labels.sort_order')
+            ->orderBy('product_labels.id');
+    }
+
+    /**
+     * Active labels for storefront cards: [['icon' => inner svg|null, 'text' => resolved], ...].
+     * Reads the eager-loaded `labels` relation when present (see StorefrontRepository).
+     */
+    public function cardLabels(): array
+    {
+        $stock = (int) ($this->centralProduct?->variants?->isNotEmpty()
+            ? $this->centralProduct->variants->sum('stock')
+            : ($this->centralProduct?->stock ?? $this->stock ?? 0));
+
+        return $this->labels
+            ->where('active', true)
+            ->map(fn(ProductLabel $label) => [
+                'icon' => \App\Support\ProductLabelIcons::svg($label->icon),
+                'text' => $label->resolveText($stock),
+            ])
+            ->values()
+            ->all();
+    }
+
     public function rates(): HasMany
     {
         return $this->hasMany(ProductRate::class);
@@ -524,6 +552,7 @@ class Product extends Model
             'slug' => $this->slug,
             'url' => route('tenant.storefront.product', $this->slug),
             'favData' => $favData,
+            'labels' => $this->cardLabels(),
             'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? asset('elora-4/assets/images/product-placeholder.svg'),
             'name' => $this->translationValue('name') ?? $this->slug,
             'weight' => $weightLabel,

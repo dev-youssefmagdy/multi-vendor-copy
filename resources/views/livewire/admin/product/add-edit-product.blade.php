@@ -587,6 +587,21 @@
                 @endif
             </x-card-collapse>
 
+            {{-- ── Labels ───────────────────────────────────────────────────── --}}
+            <x-card-collapse title="Labels" description="Icon + text labels shown on this product's storefront cards, such as Fast delivery." :start-open="true">
+                @if ($labels->isEmpty())
+                    <div class="notice-muted">No labels available yet. <a href="{{ route('admin.labels.create') }}">Create one</a>.</div>
+                @else
+                    <x-select multiple searchable wire:model.defer="labelIds" placeholder="Search and select labels">
+                        @foreach ($labels as $label)
+                            <option value="{{ $label->id }}">{{ $label->text }}</option>
+                        @endforeach
+                    </x-select>
+                    @error('labelIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                    @error('labelIds.*') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                @endif
+            </x-card-collapse>
+
             {{-- ── Country Targeting ────────────────────────────────────────── --}}
             <x-card-collapse title="Country Targeting" description="Choose which countries this product is aimed at. It stays visible everywhere — targeted countries simply rank it higher on their storefront." :start-open="true">
                 @if ($countries->isEmpty())

@@ -76,6 +76,7 @@
               'stock' => '',
               'left' => $showLowStock ? __('Only :count left', ['count' => $stockQty]) : '',
               'delivery' => __('Delivered by') . ' ' . $deliveryDate,
+              'labels' => $product->cardLabels(),
               'favData' => $favData,
               'isOutOfStock' => $isOutOfStock,
               'hasMultipleVariants' => $hasMultipleVariants,

@@ -34,6 +34,7 @@ class AdminNavigation
                             ['label' => 'Products List', 'route' => 'admin.products.index', 'permission' => 'catalog.products.view'],
                             ['label' => 'Categories List', 'route' => 'admin.categories.index', 'permission' => 'catalog.categories.view'],
                             ['label' => 'Variations List', 'route' => 'admin.variations.index', 'permission' => 'catalog.variations.view'],
+                            ['label' => 'Product Labels', 'route' => 'admin.labels.index', 'permission' => 'catalog.labels.view'],
                             ['label' => 'New In Products', 'route' => 'admin.badges.new-in', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Best Selling Products', 'route' => 'admin.badges.best-selling', 'permission' => 'catalog.badges.manage'],
                             ['label' => 'Featured Products', 'route' => 'admin.badges.featured', 'permission' => 'catalog.badges.manage'],
@@ -340,6 +341,15 @@ class AdminNavigation
                         'admin.variations.edit' => 'Edit Variation',
                     ],
                     'default' => 'Variations List',
+                ],
+                'admin.labels.' => [
+                    'section' => 'Commerce',
+                    'group' => 'Product Management',
+                    'labels' => [
+                        'admin.labels.create' => 'Add Label',
+                        'admin.labels.edit' => 'Edit Label',
+                    ],
+                    'default' => 'Product Labels',
                 ],
                 'admin.badges.' => [
                     'section' => 'Commerce',

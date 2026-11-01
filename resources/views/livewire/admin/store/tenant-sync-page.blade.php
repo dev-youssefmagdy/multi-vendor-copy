@@ -97,6 +97,13 @@
                             'glow'     => 'card-glow-cyan',
                             'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />',
                         ],
+                        'labels' => [
+                            'label'    => 'Product Labels',
+                            'desc'     => 'Icon + text labels and their product assignments.',
+                            'dot'      => 'dot-green',
+                            'glow'     => 'card-glow-green',
+                            'icon'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5a1.99 1.99 0 011.41.59l7 7a2 2 0 010 2.82l-5 5a2 2 0 01-2.82 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />',
+                        ],
                         'badges.new-in' => [
                             'label'    => 'New-In Badge',
                             'desc'     => 'Products marked as new arrivals.',

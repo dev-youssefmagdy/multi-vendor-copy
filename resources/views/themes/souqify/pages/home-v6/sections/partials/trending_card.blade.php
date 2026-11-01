@@ -43,5 +43,6 @@
                 <span class="text-[11px]" style="color:var(--color-brand-pink)">{{ $p['discount'] }}</span>
             @endif
         </div>
+    <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] text-[10px] font-medium" style="color:var(--color-brand-pink)" icon-class="size-[12px] shrink-0" />
     </div>
 </div>

@@ -52,9 +52,8 @@
         @endif
       </div>
     </div>
-    <div class="flex gap-1 lg:gap-[4.24px] items-center w-full">
-      <img src="{{ asset('elora-2/assets/icons/truck-delivery.svg') }}" alt="" class="size-[12px] lg:size-[20.23px]" />
-      <p class="font-medium text-[8px] lg:text-[13.49px] leading-[10px] lg:leading-[17px] text-end whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by :date', ['date' => $__deliveredDate]) }}</p>
-    </div>
+    <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-1 lg:gap-[4.24px] font-medium text-[8px] lg:text-[13.49px] leading-[10px] lg:leading-[17px] text-end whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[12px] lg:size-[20.23px] shrink-0" />
+</div>
   </div>
 </a>

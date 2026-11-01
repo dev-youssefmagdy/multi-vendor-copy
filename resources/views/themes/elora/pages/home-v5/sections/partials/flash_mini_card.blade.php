@@ -51,16 +51,9 @@
       </div>
     </div>
     <div class="flex flex-col gap-[2px] lg:gap-[4.72px] items-start w-full">
-      <div class="flex gap-[4px] lg:gap-[7.51px] items-center w-full">
-        <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="size-[11px] lg:size-[22.54px] shrink-0" />
-        <p class="font-medium text-[9px] lg:text-[15.03px] lg:leading-[19px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['delivery'] ?? __('Delivered by 24 March') }}</p>
-      </div>
-      @if (!empty($p['left']))
-        <div class="flex gap-[5px] lg:gap-[9.44px] items-center">
-          <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="size-[10px] lg:size-[18.89px] shrink-0" />
-          <p class="font-medium text-[8px] lg:text-[14.17px] lg:leading-[18px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['left'] }}</p>
-        </div>
-      @endif
+      <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] lg:gap-[7.51px] font-medium text-[9px] lg:text-[15.03px] lg:leading-[19px] whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[11px] lg:size-[22.54px] shrink-0" />
+</div>
     </div>
   </div>
 </a>

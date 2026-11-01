@@ -162,6 +162,8 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
             </span>
         </div>
 
+        <x-storefront.product-labels :labels="$product->cardLabels()" tag="div" class="gap-1 text-[12px] text-gray-500" icon-class="w-3 h-3 shrink-0" />
+
         {{-- Stars + badge + cart --}}
         <div class="flex flex-row items-center justify-between w-full">
 

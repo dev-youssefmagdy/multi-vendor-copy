@@ -101,10 +101,9 @@
       </div>
 
       {{-- Delivery estimate --}}
-      <div class="flash-card-delivery-row">
-        <img src="{{ asset('elora-4/assets/icons/truck-delivery.svg') }}" alt="" class="flash-card-delivery-icon" />
-        <span class="flash-card-delivery-text">{{ __('Delivered by') }} {{ $__deliveryDate }}</span>
-      </div>
+      <div class="flex flash-card-delivery-row flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="flash-card-delivery-text" icon-class="flash-card-delivery-icon shrink-0" />
+</div>
 
     </div>
 

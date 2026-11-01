@@ -77,19 +77,9 @@
       </div>
     </div>
     <div class="flex flex-col gap-[2.51px] lg:gap-[4.31px] items-start w-full">
-      @if (!empty($p['stock']))
-        {{-- Low-stock urgency replaces the routine delivery line rather than stacking below it —
-             the spec's delivery/stock wrapper (10.69px tall) is only ever tall enough for one row. --}}
-        <div class="flex gap-[5.03px] lg:gap-[8.61px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/cart-x.svg') }}" alt="" class="size-[10.06px] lg:size-[17.23px] shrink-0" />
-          <p class="font-medium text-[7.54px] lg:text-[12.92px] leading-[10px] lg:leading-[16px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['stock'] }}</p>
-        </div>
-      @else
-        <div class="flex gap-[4px] lg:gap-[6.85px] items-center w-full">
-          <img src="{{ asset('elora-5/assets/icons/icon-truck-small.svg') }}" alt="" class="size-[12px] lg:size-[20.56px] shrink-0" />
-          <p class="font-medium text-[8px] lg:text-[13.70px] leading-[10px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)">{{ $p['delivery'] ?? __('Delivered by 24 March') }}</p>
-        </div>
-      @endif
+        <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] lg:gap-[6.85px] font-medium text-[8px] lg:text-[13.70px] leading-[10px] lg:leading-[17px] whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[12px] lg:size-[20.56px] shrink-0" />
+</div>
     </div>
   </div>
 </a>

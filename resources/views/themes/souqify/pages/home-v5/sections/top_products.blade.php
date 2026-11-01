@@ -25,7 +25,6 @@
             'image' => $__img,
             'tag' => '🔥 ' . __('Trending Now'),
             'cartIcon' => 'trending-cart-purple.svg',
-            'stock' => __('Only 5 left - Hurry up'),
             'name' => $__name,
             'weight' => $variant?->weight_grams ? $variant->weight_grams . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
@@ -35,6 +34,7 @@
             'discountBg' => $chip['bg'],
             'discountColor' => $chip['color'],
             'outOfStock' => $product->stockStatus() === 'out_of_stock',
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,

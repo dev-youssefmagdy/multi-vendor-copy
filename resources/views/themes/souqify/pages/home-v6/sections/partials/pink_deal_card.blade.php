@@ -277,11 +277,10 @@
         @if (!empty($p['tag']))
             <span class="sqv6-deal__tag"><span class="sqv6-deal__tag-text">{{ $p['tag'] }}</span></span>
         @endif
-        @if (!empty($p['stock']))
+        @if (!empty($p['labels']))
             <span class="sqv6-deal__ribbon">
-                <img src="{{ asset('souqify-5/assets/icons/cart-x.svg') }}" alt="" />
-                <span class="sqv6-deal__ribbon-text">{{ $p['stock'] }}</span>
-            </span>
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="span" :limit="1" class="gap-[4px] sqv6-deal__ribbon-text" icon-class="w-3 h-3 shrink-0" />
+</span>
         @endif
 
         @if (!empty($p['outOfStock']))

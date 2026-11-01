@@ -22,6 +22,7 @@
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
             'outOfStock' => $__outOfStock,
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,
@@ -37,8 +38,6 @@
             'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
             'progress' => 82.8,          // 190.79 / 230.41 in the comp
             'ordered' => __('5 ordered last 30 min'),
-            'delivery' => __('Delivered by 24 March'),
-            'stock' => __('Only 5 left'),
         ];
     });
 @endphp

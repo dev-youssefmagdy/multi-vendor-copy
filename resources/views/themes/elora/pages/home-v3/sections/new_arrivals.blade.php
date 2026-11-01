@@ -38,6 +38,7 @@
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
               'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 ? (int) round($sc / $st * 100) : null; })(),
               ...$product->storefrontCartData($symbol, $rate),
+              'labels' => $product->cardLabels(),
               'favData' => $favData,
           ];
       });

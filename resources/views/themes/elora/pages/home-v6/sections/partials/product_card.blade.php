@@ -1,6 +1,5 @@
 {{-- Expects $p: image, badge, badgeBg, badgeColor, name, weight, weightColor, desc, rating, price, priceColor, oldPrice, discount, stockColor, stockQty, url --}}
 @php
-  $__lowStock = isset($p['stockQty']) && $p['stockQty'] !== null && (int) $p['stockQty'] <= 5;
   $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F');
 @endphp
 <a
@@ -63,14 +62,8 @@
         @endif
       </div>
     </div>
-    <div class="mt-auto flex gap-[5.38px] lg:gap-[9.23px] items-center w-full">
-      @if ($__lowStock)
-        <img src="{{ asset('elora-2/assets/icons/cart-x-red.svg') }}" alt="" class="size-[16.14px] lg:size-[27.69px]" />
-        <p class="font-medium text-[10.7585px] lg:text-[18.4571px] leading-[14px] lg:leading-[23px] whitespace-nowrap" style="color:{{ $p['stockColor'] ?? 'var(--color-error)' }}">{{ __('Only :count left', ['count' => $p['stockQty']]) }}</p>
-      @else
-        <img src="{{ asset('elora-2/assets/icons/truck-delivery.svg') }}" alt="" class="size-[16.14px] lg:size-[27.69px]" />
-        <p class="font-medium text-[10.7585px] lg:text-[18.4571px] leading-[14px] lg:leading-[23px] whitespace-nowrap" style="color:var(--color-success)">{{ __('Delivered by :date', ['date' => $__deliveredDate]) }}</p>
-      @endif
+    <div class="mt-auto flex flex-col gap-[2px] items-start w-full">
+      <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[5.38px] lg:gap-[9.23px] font-medium text-[10.7585px] lg:text-[18.4571px] leading-[14px] lg:leading-[23px] whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[16.14px] lg:size-[27.69px] shrink-0" />
     </div>
   </div>
 </a>

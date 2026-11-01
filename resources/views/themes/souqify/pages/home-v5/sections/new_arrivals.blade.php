@@ -25,9 +25,8 @@
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
             'sold' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Sold') : null,
-            'delivery' => __('Delivered by') . ' ' . now()->addDays(5)->translatedFormat('j F'),
-            'stock' => __('Only 5 left'),
             'outOfStock' => $product->stockStatus() === 'out_of_stock',
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,

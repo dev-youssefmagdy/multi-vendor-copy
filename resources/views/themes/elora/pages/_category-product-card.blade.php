@@ -236,40 +236,8 @@
 
         {{-- Delivery estimate + low-stock warning --}}
         <div class="flex flex-col gap-0.5 mt-1 md:mt-0">
-            <div class="flex items-center gap-1">
-                {{-- Truck icon --}}
-                <svg width="11" height="9" viewBox="0 0 11 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M7.85352 8.35352C8.4058 8.35352 8.85352 7.9058 8.85352 7.35352C8.85352 6.80123 8.4058 6.35352 7.85352 6.35352C7.30123 6.35352 6.85352 6.80123 6.85352 7.35352C6.85352 7.9058 7.30123 8.35352 7.85352 8.35352Z"
-                        stroke="#2AAF2F" stroke-width="0.707143" />
-                    <path
-                        d="M2.85352 8.35352C3.4058 8.35352 3.85352 7.9058 3.85352 7.35352C3.85352 6.80123 3.4058 6.35352 2.85352 6.35352C2.30123 6.35352 1.85352 6.80123 1.85352 7.35352C1.85352 7.9058 2.30123 8.35352 2.85352 8.35352Z"
-                        stroke="#2AAF2F" stroke-width="0.707143" />
-                    <path
-                        d="M1.85352 7.33952C1.30502 7.31252 0.963516 7.23102 0.719516 6.98752C0.475516 6.74402 0.394516 6.40202 0.367516 5.85352M3.85352 7.35352H6.85352M8.85352 7.33952C9.40202 7.31252 9.74352 7.23102 9.98752 6.98752C10.3535 6.62102 10.3535 6.03202 10.3535 4.85352V3.85352H8.00352C7.63102 3.85352 7.44502 3.85352 7.29452 3.80452C7.14444 3.75575 7.00804 3.67216 6.89646 3.56058C6.78487 3.44899 6.70128 3.31259 6.65252 3.16252C6.60352 3.01202 6.60352 2.82602 6.60352 2.45352C6.60352 1.89502 6.60352 1.61602 6.53002 1.39002C6.45686 1.1649 6.33148 0.960298 6.16411 0.792926C5.99673 0.625554 5.79213 0.500167 5.56702 0.427016C5.34102 0.353516 5.06202 0.353516 4.50352 0.353516H0.353516M0.353516 2.35352H3.35352M0.353516 3.85352H2.35352"
-                        stroke="#2AAF2F" stroke-width="0.707143" stroke-linecap="round" stroke-linejoin="round" />
-                    <path
-                        d="M6.60352 1.35352H7.51402C8.24202 1.35352 8.60552 1.35352 8.90152 1.53052C9.19802 1.70702 9.37052 2.02752 9.71552 2.66852L10.3535 3.85352"
-                        stroke="#2AAF2F" stroke-width="0.707143" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-
-                <span class="text-[8px] md:text-xs font-medium text-[#2AAF2F] tracking-[0.5px]">
-                    {{ __('Delivered by') }} {{ $deliveryDate }}
-                </span>
-            </div>
-            @if ($showLowStock)
-                <div class="flex items-center gap-1">
-                    {{-- Box icon --}}
-                    <svg class="w-[15px] h-[15px] flex-shrink-0" fill="none" stroke="#2AAF2F" stroke-width="1.25"
-                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M20 7H4a1 1 0 00-1 1v11a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z" />
-                        <path d="M16 7V5a2 2 0 00-4 0v2M12 7V5a2 2 0 00-4 0v2" />
-                    </svg>
-                    <span class="text-[11px] sm:text-xs font-medium text-[#2AAF2F] tracking-[0.5px]">
-                        {{ __('Only :count left', ['count' => $stockQty]) }}
-                    </span>
-                </div>
-            @endif
+            <x-storefront.product-labels :labels="$product->cardLabels()" tag="div"
+                class="gap-1 text-[8px] md:text-xs font-medium text-[#2AAF2F] tracking-[0.5px]" icon-class="w-[11px] h-[11px] shrink-0" />
         </div>
 
     </div>

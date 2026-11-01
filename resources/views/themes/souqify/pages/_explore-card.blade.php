@@ -143,6 +143,7 @@
                 <p class="text-[#99A1AF] text-xs mt-0.5 w-full">{{ $displayShipping }}</p>
             @endif
         </div>
+        <x-storefront.product-labels :labels="$product->cardLabels()" tag="div" class="gap-1 mb-1 lg:mb-2 text-xs text-[#6A7282]" icon-class="w-3 h-3 shrink-0" />
         <!-- star rating -->
         <div class="items-center gap-0.5 mb-2 hidden lg:flex">
             @for ($i = 1; $i <= 5; $i++)

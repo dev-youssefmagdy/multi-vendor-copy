@@ -33,6 +33,7 @@ use App\Models\Tenant\Order as TenantOrder;
 use App\Models\Tenant\OrderItem as TenantOrderItem;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductBadge as TenantProductBadge;
+use App\Models\Tenant\ProductLabel as TenantProductLabel;
 use App\Models\Tenant\ProductVariant as TenantProductVariant;
 use App\Models\Tenant\Setting as TenantSetting;
 use App\Models\Tenant\SocialLink as TenantSocialLink;
@@ -176,6 +177,7 @@ class AppServiceProvider extends ServiceProvider
         TenantBanner::observe(CacheVersionObserver::class);
         TenantFlashSale::observe(CacheVersionObserver::class);
         TenantProductBadge::observe(CacheVersionObserver::class);
+        TenantProductLabel::observe(CacheVersionObserver::class);
         TenantSetting::observe(CacheVersionObserver::class);
         TenantCurrency::observe(CacheVersionObserver::class);
         TenantLanguage::observe(CacheVersionObserver::class);

@@ -44,6 +44,7 @@
               'isOutOfStock' => $product->stockStatus() === 'out_of_stock',
               'hasMultipleVariants' => $hasMultipleVariants,
               'variantModalData' => $variantModalData,
+              'labels' => $product->cardLabels(),
               'favData' => json_encode([
                   'slug' => $product->slug,
                   'name' => $productName,

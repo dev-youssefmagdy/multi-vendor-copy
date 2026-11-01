@@ -37,6 +37,8 @@ use App\Models\TenantCountry;
 use App\Models\Tenant\Coupon;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\ProductBadge;
+use App\Models\Tenant\ProductLabel;
+use App\Models\ProductLabel as CentralProductLabel;
 use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Theme;
@@ -61,6 +63,7 @@ class TenantCatalogSyncService
         'categories',
         'products',
         'badges',
+        'labels',
         'flash-sales',
         'coupons',
     ];
@@ -94,6 +97,7 @@ class TenantCatalogSyncService
                 'categories' => $this->syncCategories($tenant->category_ids ?? []),
                 'products' => $this->syncProducts($tenant->category_ids ?? []),
                 'badges' => $this->syncBadges(),
+                'labels' => $this->syncLabels(),
                 'flash-sales' => $this->syncFlashSales(),
                 'coupons' => $this->syncCoupons(),
             };
@@ -181,6 +185,7 @@ class TenantCatalogSyncService
             'categories' => $this->syncCategories($this->normalizeCategoryIds($tenant->category_ids)),
             'products' => $this->syncProducts($this->normalizeCategoryIds($tenant->category_ids)),
             'badges' => $this->syncBadges(),
+            'labels' => $this->syncLabels(),
             'flash-sales' => $this->syncFlashSales(),
             'coupons' => $this->syncCoupons(),
             default => throw new InvalidArgumentException("Unsupported sync section: {$section}"),
@@ -1518,6 +1523,8 @@ class TenantCatalogSyncService
             Category::query()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->all()
         );
 
+        $this->syncProductLabels($centralProduct, $tenantProduct);
+
         if ($isNewProduct) {
             $hasPaidTranslation = Language::query()
                 ->where('is_active', true)
@@ -1582,7 +1589,7 @@ class TenantCatalogSyncService
         }
 
         // Category pivot sync, translations and the variant delete skip model events.
-        CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category']);
+        CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category', 'ProductLabel']);
 
         $this->central(fn() => ProductTenantAssignment::query()
             ->where('product_id', $centralProduct->id)
@@ -1802,6 +1809,79 @@ class TenantCatalogSyncService
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         return $centralBadges->count();
+    }
+
+    /** Mirror every central label and its product assignments into the tenant DB. */
+    protected function syncLabels(): int
+    {
+        $centralLabels = $this->central(fn() => CentralProductLabel::query()->ordered()->get());
+
+        $centralPivotRows = $this->central(
+            fn() => \DB::table('product_label_product')
+                ->whereIn('product_label_id', $centralLabels->pluck('id'))
+                ->get()
+        );
+
+        $tenantProductIds = Product::withoutGlobalScope('centralVisible')
+            ->whereNotNull('central_product_id')
+            ->pluck('id', 'central_product_id');
+
+        $now = now();
+
+        foreach ($centralLabels as $centralLabel) {
+            $tenantLabel = $this->upsertTenantLabel($centralLabel);
+
+            $rows = [];
+            foreach ($centralPivotRows->where('product_label_id', $centralLabel->id) as $row) {
+                $tenantProductId = $tenantProductIds[$row->product_id] ?? null;
+                if ($tenantProductId) {
+                    $rows[] = [
+                        'product_label_id' => $tenantLabel->id,
+                        'product_id' => $tenantProductId,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+            }
+
+            \DB::table('product_label_product')->where('product_label_id', $tenantLabel->id)->delete();
+            foreach (array_chunk($rows, 500) as $chunk) {
+                \DB::table('product_label_product')->insert($chunk);
+            }
+        }
+
+        ProductLabel::query()
+            ->whereNotIn('central_product_label_id', $centralLabels->pluck('id'))
+            ->delete();
+
+        // Raw pivot writes and the stale delete skip model events.
+        CacheVersion::bumpMany(['ProductLabel', 'Product']);
+
+        return $centralLabels->count();
+    }
+
+    /** Re-point one tenant product at the labels its central product carries. */
+    protected function syncProductLabels(CentralProduct $centralProduct, Product $tenantProduct): void
+    {
+        $labelIds = [];
+        foreach ($centralProduct->labels()->get() as $centralLabel) {
+            $labelIds[] = $this->upsertTenantLabel($centralLabel)->id;
+        }
+
+        $tenantProduct->labels()->sync($labelIds);
+    }
+
+    protected function upsertTenantLabel(CentralProductLabel $centralLabel): ProductLabel
+    {
+        return ProductLabel::query()->updateOrCreate(
+            ['central_product_label_id' => $centralLabel->id],
+            [
+                'text' => $centralLabel->text,
+                'icon' => $centralLabel->icon,
+                'active' => $centralLabel->active,
+                'sort_order' => $centralLabel->sort_order,
+            ]
+        );
     }
 
     protected function syncCoupons(): int

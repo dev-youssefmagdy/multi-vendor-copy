@@ -63,5 +63,6 @@
         </div>
       @endif
     </div>
+    <x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[4px] text-[10px] lg:text-[12px] font-medium" style="color:var(--color-brand-purple)" icon-class="size-[12px] shrink-0" />
   </div>
 </div>

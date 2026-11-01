@@ -63,6 +63,7 @@
               'alt' => $index % 3 === 0,
               'stock' => '',
               'delivery' => __('Delivered by') . ' ' . $deliveryDate,
+              'labels' => $product->cardLabels(),
               'favData' => $favData,
               'isOutOfStock' => $isOutOfStock,
               'hasMultipleVariants' => $hasMultipleVariants,

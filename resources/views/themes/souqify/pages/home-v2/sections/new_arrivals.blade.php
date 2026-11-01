@@ -29,8 +29,7 @@
             'price' => $symbol . number_format($__sellPrice, 2),
             'oldPrice' => $__oldPrice !== null ? $symbol . number_format($__oldPrice, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
-            'delivery' => __('Delivered by 24 March'),
-            'stock' => __('Only 5 left'),
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,

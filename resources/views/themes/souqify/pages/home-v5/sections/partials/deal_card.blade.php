@@ -16,11 +16,10 @@
         @if (!empty($p['tag']))
             <span class="sqv5-deal__tag"><span class="sqv5-deal__tag-text">{{ $p['tag'] }}</span></span>
         @endif
-        @if (!empty($p['stock']))
+        @if (!empty($p['labels']))
             <span class="sqv5-deal__ribbon">
-                <img src="{{ asset('souqify-4/assets/icons/trending-cartx.svg') }}" alt="" />
-                <span class="sqv5-deal__ribbon-text">{{ $p['stock'] }}</span>
-            </span>
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="span" :limit="1" class="gap-[4px] sqv5-deal__ribbon-text" icon-class="w-3 h-3 shrink-0" />
+</span>
         @endif
 
         <span class="sqv5-deal__cart" role="button" aria-label="{{ __('Add to cart') }}"

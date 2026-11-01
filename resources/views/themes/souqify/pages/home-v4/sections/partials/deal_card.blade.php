@@ -28,10 +28,11 @@
       <img src="{{ asset('souqify-3/assets/icons/' . ($cartIcon ?? 'icon-cart-purple.svg')) }}" alt="" />
     </span>
 
-    <span class="sqv4-deal__ribbon">
-      <img src="{{ asset('souqify-3/assets/icons/icon-cart-x.svg') }}" alt="" class="sqv4-deal__ribbon-icon" />
-      <span class="sqv4-deal__ribbon-text">{{ $p['stock'] }}</span>
-    </span>
+    @if (!empty($p['labels']))
+<span class="sqv4-deal__ribbon">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="span" :limit="1" class="gap-[4px] sqv4-deal__ribbon-text" icon-class="w-3 h-3 shrink-0" />
+</span>
+@endif
   </div>
 
   <div class="sqv4-deal__body">

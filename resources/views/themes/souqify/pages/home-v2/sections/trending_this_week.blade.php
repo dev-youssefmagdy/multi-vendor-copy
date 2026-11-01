@@ -25,7 +25,6 @@
             'url' => $__url,
             'image' => $__img,
             'tag' => '🔥 ' . __('Trending Now'),
-            'stock' => __('Only 5 left - Hurry up'),
             'name' => $__name,
             'weight' => $variant?->weight ? $variant->weight . 'g' : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
@@ -34,6 +33,7 @@
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('off') : null,
             'discountBg' => $chip['bg'],
             'discountColor' => $chip['color'],
+            'labels' => $product->cardLabels(),
             'favData' => json_encode([
                 'slug' => $product->slug,
                 'name' => $__name,

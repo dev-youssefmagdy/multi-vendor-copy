@@ -39,6 +39,8 @@ use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
 use App\Http\Controllers\Admin\TenantImpersonateController;
 use App\Http\Controllers\Admin\BadgeProductsController;
+use App\Livewire\Admin\Label\AddEditLabel;
+use App\Livewire\Admin\Label\LabelsList;
 use App\Http\Controllers\Admin\ProductController;
 use App\Livewire\Admin\Product\AddEditProduct;
 use App\Livewire\Admin\Product\ProductEditRequestsList;
@@ -265,6 +267,12 @@ Route::group([
         Route::get('/', VariationsList::class)->middleware('admin.permission:catalog.variations.view,catalog.variations.manage')->name('index');
         Route::get('/create', AddEditVariation::class)->middleware('admin.permission:catalog.variations.manage')->name('create');
         Route::get('/{variation}/edit', AddEditVariation::class)->middleware('admin.permission:catalog.variations.manage')->name('edit');
+    });
+
+    Route::prefix('labels')->name('labels.')->group(function () {
+        Route::get('/', LabelsList::class)->middleware('admin.permission:catalog.labels.view,catalog.labels.manage')->name('index');
+        Route::get('/create', AddEditLabel::class)->middleware('admin.permission:catalog.labels.manage')->name('create');
+        Route::get('/{label}/edit', AddEditLabel::class)->middleware('admin.permission:catalog.labels.manage')->name('edit');
     });
 
     Route::prefix('badges')->name('badges.')->middleware('admin.permission:catalog.badges.manage')->group(function () {

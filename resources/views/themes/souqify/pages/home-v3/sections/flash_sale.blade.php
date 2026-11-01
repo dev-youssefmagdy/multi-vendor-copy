@@ -25,8 +25,7 @@
             'weight' => null,
             'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
             'badge' => '🔥 ' . __('Trending Now'),
-            'delivery' => __('Delivered by 24 March'),
-            'stock' => __('Only 5 left'),
+            'labels' => $product->cardLabels(),
             'ribbonStock' => __('Only 5 left - Hurry up'),
         ];
     });
