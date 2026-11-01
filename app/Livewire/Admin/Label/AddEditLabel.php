@@ -52,6 +52,13 @@ class AddEditLabel extends Component
             'productIds.*' => ['integer', 'exists:products,id'],
         ]);
 
+        // One label per product: reject products that already carry a different label.
+        $taken = $this->takenProductIds();
+        if (array_intersect(array_map('intval', $validated['productIds'] ?? []), $taken)) {
+            $this->addError('productIds', 'Some selected products already have another label.');
+            return null;
+        }
+
         $label = ProductLabel::query()->updateOrCreate(['id' => $this->labelId], [
             'text' => trim($validated['text']),
             'icon' => $validated['icon'] ?: null,
@@ -68,12 +75,20 @@ class AddEditLabel extends Component
         return redirect()->route('admin.labels.edit', $label);
     }
 
+    /** @return array<int, int> products already assigned to a label other than this one */
+    protected function takenProductIds(): array
+    {
+        return \DB::table('product_label_product')
+            ->when($this->labelId, fn($q) => $q->where('product_label_id', '!=', $this->labelId))
+            ->pluck('product_id')->map(fn($id) => (int) $id)->all();
+    }
+
     public function render()
     {
         return view('livewire.admin.label.add-edit-label', [
             'pageTitle' => $this->labelId ? 'Edit Label' : 'Add Label',
             'icons' => ProductLabelIcons::all(),
-            'products' => Product::query()->with('translations.language')->orderBy('id')->get(),
+            'products' => Product::query()->with('translations.language')->whereNotIn('id', $this->takenProductIds())->orderBy('id')->get(),
         ]);
     }
 }

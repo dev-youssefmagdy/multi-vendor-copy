@@ -6,9 +6,9 @@
       class     — classes on each label wrapper (the card's own "label row" typography/colour)
       iconClass — classes on the <svg> (size)
       style     — inline style on each label wrapper (e.g. "color:var(--color-success)")
-      limit     — max labels to render (null = all)
+      limit     — max labels to render (default 1: a card shows a single label)
 --}}
-@props(['labels' => [], 'tag' => 'p', 'class' => '', 'iconClass' => 'w-3 h-3 shrink-0', 'style' => null, 'limit' => null])
+@props(['labels' => [], 'tag' => 'p', 'class' => '', 'iconClass' => 'w-3 h-3 shrink-0', 'style' => null, 'limit' => 1])
 
 @foreach (array_slice((array) $labels, 0, $limit) as $label)
     <{{ $tag }} class="product-label flex items-center min-w-0 {{ $class }}" @if ($style) style="{{ $style }}" @endif>

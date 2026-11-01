@@ -588,17 +588,17 @@
             </x-card-collapse>
 
             {{-- ── Labels ───────────────────────────────────────────────────── --}}
-            <x-card-collapse title="Labels" description="Icon + text labels shown on this product's storefront cards, such as Fast delivery." :start-open="true">
+            <x-card-collapse title="Labels" description="One icon + text label shown on this product's storefront cards, such as Fast delivery." :start-open="true">
                 @if ($labels->isEmpty())
                     <div class="notice-muted">No labels available yet. <a href="{{ route('admin.labels.create') }}">Create one</a>.</div>
                 @else
-                    <x-select multiple searchable wire:model.defer="labelIds" placeholder="Search and select labels">
+                    <x-select searchable wire:model.defer="labelId" placeholder="No label">
+                        <option value="">No label</option>
                         @foreach ($labels as $label)
                             <option value="{{ $label->id }}">{{ $label->text }}</option>
                         @endforeach
                     </x-select>
-                    @error('labelIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
-                    @error('labelIds.*') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
+                    @error('labelId') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
                 @endif
             </x-card-collapse>
 

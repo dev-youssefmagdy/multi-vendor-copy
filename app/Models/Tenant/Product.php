@@ -182,6 +182,7 @@ class Product extends Model
 
         return $this->labels
             ->where('active', true)
+            ->take(1) // a product shows a single label
             ->map(fn(ProductLabel $label) => [
                 'icon' => \App\Support\ProductLabelIcons::svg($label->icon),
                 'text' => $label->resolveText($stock),

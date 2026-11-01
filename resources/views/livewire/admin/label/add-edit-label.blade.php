@@ -53,7 +53,7 @@
         </div>
       </x-card-collapse>
 
-      <x-card-collapse class="form-card" title="Products" description="Products that show this label on their cards. The same assignment can be made from each product's edit page." :start-open="true">
+      <x-card-collapse class="form-card" title="Products" description="Products that show this label on their cards. Only products without a label are listed (one label per product). The same assignment can be made from each product's edit page." :start-open="true">
         <x-select multiple searchable wire:model.defer="productIds" placeholder="Search and select products">
           @foreach ($products as $product)
             <option value="{{ $product->id }}">{{ $product->translationValue('name') ?? $product->slug }}</option>

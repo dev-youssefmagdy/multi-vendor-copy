@@ -52,7 +52,8 @@ class AddEditProduct extends Component
     public array $categoryIds = [];
     public array $shippingZoneIds = [];
     public array $badgeIds = [];
-    public array $labelIds = [];
+    /** A product carries at most one label. */
+    public string $labelId = '';
     public array $translations = [];
     public string $activeLocale = 'en';
 
@@ -130,7 +131,7 @@ class AddEditProduct extends Component
         $this->assignedCountryIds = $loaded->countries()->pluck('countries.id')->map(fn ($id) => (int) $id)->all();
         $this->allCountries = $this->assignedCountryIds === [];
         $this->badgeIds = $loaded->badges->pluck('id')->all();
-        $this->labelIds = $loaded->labels->pluck('id')->map(fn($id) => (string) $id)->all();
+        $this->labelId = (string) ($loaded->labels->first()?->id ?? '');
 
         $this->translations = array_replace_recursive(
             $this->translations,
@@ -337,7 +338,7 @@ class AddEditProduct extends Component
 
         $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
         // Before syncProduct(): the per-tenant product push mirrors these assignments.
-        $product->labels()->sync(array_map('intval', array_filter((array) $this->labelIds, filled(...))));
+        $product->labels()->sync(filled($this->labelId) ? [(int) $this->labelId] : []);
 
         // Country targeting — empty pivot means "no preference / available everywhere".
         // Synced before the tenant push so syncProductToTenant() denormalizes the new list.
@@ -431,8 +432,7 @@ class AddEditProduct extends Component
             'assignedCountryIds' => ['array'],
             'assignedCountryIds.*' => ['integer', 'exists:countries,id'],
             'badgeIds' => ['array'],
-            'labelIds' => ['array'],
-            'labelIds.*' => ['integer', 'exists:product_labels,id'],
+            'labelId' => ['nullable', 'integer', 'exists:product_labels,id'],
             'badgeIds.*' => ['integer', 'exists:product_badges,id'],
             'assignedTenantIds' => ['array'],
             'assignedTenantIds.*' => ['string', 'exists:tenants,id'],
@@ -477,7 +477,7 @@ class AddEditProduct extends Component
             'categoryIds' => 'categories',
             'shippingZoneIds' => 'shipping zones',
             'badgeIds' => 'badges',
-            'labelIds' => 'labels',
+            'labelId' => 'label',
             'primaryImage' => 'primary image',
         ];
     }

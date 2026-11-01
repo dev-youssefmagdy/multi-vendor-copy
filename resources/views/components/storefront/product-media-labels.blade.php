@@ -3,10 +3,10 @@
       labels — $product->cardLabels()
       bg     — bar background (theme colour)
       color  — text / icon colour
-      limit  — max labels (default 3)
+      limit  — max labels (default 1)
       class  — extra classes (e.g. "sm:hidden")
 --}}
-@props(['labels' => [], 'bg' => 'var(--color-primary)', 'color' => '#fff', 'limit' => 3, 'class' => ''])
+@props(['labels' => [], 'bg' => 'var(--color-primary)', 'color' => '#fff', 'limit' => 1, 'class' => ''])
 
 @if (!empty($labels))
     <div class="product-media-labels absolute bottom-0 start-0 z-10 flex max-w-[90%] flex-wrap items-center gap-y-1 rounded-se-xl px-3 py-2 lg:px-4 lg:py-2.5 {{ $class }}"
