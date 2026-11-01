@@ -1,6 +1,5 @@
     <!-- =========== RECOMMENDED PRODUCTS (infinite scroll) =========== -->
-    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16" id="sqRecommendedSection"
-        data-api-url="{{ route('tenant.storefront.products.json') }}">
+    <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16" id="sqRecommendedSection">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900">{{ __('Recommended Products') }}
             </h2>
@@ -14,15 +13,21 @@
             </a>
         </div>
 
-        <!-- Product grid populated by JS -->
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6"
-            id="sqRecommendedGrid"></div>
-
-        <!-- Scroll sentinel — hidden once all pages are loaded -->
-        <div id="sqRecommendedSentinel" class="w-full h-4 mt-4"></div>
-
-        <!-- Spinner -->
-        <div id="sqRecommendedLoader" class="hidden w-full justify-center py-8">
-            <div class="w-8 h-8 border-4 border-[var(--sq-primary)] border-t-transparent rounded-full animate-spin"></div>
+        {{-- Badge-first list (interaction-based fallback) — next page loads when the sentinel scrolls into view --}}
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6" id="sqRecommendedGrid">
+            @forelse (($recommendedProducts ?? collect()) as $product)
+                <div wire:key="recommended-{{ $product->id }}">
+                    @include('themes.souqify.pages._product-card', ['badge' => null])
+                </div>
+            @empty
+                <p class="text-sm text-slate-400 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>
+            @endforelse
         </div>
+
+        @if ($hasMoreRecommended ?? false)
+            <div wire:intersect="loadMoreRecommended" class="flex items-center justify-center py-6">
+                <div wire:loading wire:target="loadMoreRecommended"
+                    class="w-8 h-8 border-4 border-[var(--sq-primary)] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        @endif
     </section>
