@@ -2,8 +2,11 @@
     $socialLinksByIcon = (isset($socialLinks) ? $socialLinks : collect())->keyBy(fn($link) => $link->icon?->name);
 @endphp
 <!-- ============ FOOTER ============ -->
+@php $__tabHome = request()->routeIs('tenant.home', 'preview') || request()->is('/'); @endphp
+@if ($__tabHome)
 @include('storefront.partials.mobile-tabbar-offset', ['height' => 80])
-<footer style="background:var(--color-footer-bg)" class="pb-[16px] lg:pb-0">
+@endif
+<footer style="background:var(--color-footer-bg)" class="{{ $__tabHome ? 'pb-[16px] lg:pb-0' : 'pb-[76px] lg:pb-0' }}">
   <div class="px-[24px] lg:px-[56px] py-[40px] lg:py-[46px] flex flex-col lg:flex-row gap-[40px] lg:gap-[120px] max-w-[1440px] mx-auto">
     <div class="flex flex-col gap-[32px] lg:justify-between shrink-0">
       <div class="flex flex-col gap-[32px]">
@@ -80,6 +83,11 @@
     {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . ($storeName ?? 'Souqify') . '. ' . __('All Rights Reserved.')) }}
   </div>
 </footer>
+
+@unless ($__tabHome)
+<!-- Reserves the tab bar's height (8 + 56 + 16px) so it never covers the end of the page -->
+<div class="lg:hidden h-[80px]" aria-hidden="true"></div>
+@endunless
 
 <!-- ============ MOBILE FIXED BOTTOM TAB BAR ============ -->
 <nav class="mobile-tabbar lg:hidden fixed bottom-0 left-0 right-0 z-30 w-full max-w-[100vw] box-border flex items-center gap-[12px] px-[16px] pb-[16px] pt-[8px]" style="background:var(--color-bg-main)">
