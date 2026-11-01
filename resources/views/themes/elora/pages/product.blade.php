@@ -139,14 +139,6 @@
             </button>
         </div>
 
-        <!-- free shipping bar -->
-        <div class="hidden sm:block mb-4">
-            <x-storefront.free-shipping-progress
-                theme="elora"
-                :threshold="$shippingThreshold"
-                :weight="$shippingProgressWeight" />
-        </div>
-
         {{-- Breadcrumb --}}
         <nav aria-label="{{ __('Breadcrumb') }}" class="hidden lg:flex text-[12px] text-[#787878] mb-6 items-center gap-1 flex-wrap">
             <ol class="flex items-center gap-1 flex-wrap list-none p-0 m-0">
@@ -433,6 +425,12 @@
                 </div>
                 @endif
 
+                {{-- Free shipping bar (under return & refund policy) --}}
+                <x-storefront.free-shipping-progress
+                    theme="elora"
+                    :threshold="$shippingThreshold"
+                    :weight="$shippingProgressWeight" />
+
                 {{-- <!-- color variant selector -->
                 <div>
                     <h3 class="font-bold text-sm">Color: white</h3>
@@ -477,17 +475,6 @@
                         </li>
                     </ul>
                 </div>--}}
-
-
-                <!-- free shipping bar -->
-                <div class="sm:hidden -mx-6">
-                    <x-storefront.free-shipping-progress
-                        theme="elora"
-                        :threshold="$shippingThreshold"
-                        :weight="$shippingProgressWeight"
-                        id-suffix="-mobile"
-                        :bare="true" />
-                </div>
 
 
                 {{-- Variant selector --}}

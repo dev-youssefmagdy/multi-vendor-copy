@@ -272,21 +272,6 @@
                 </div>
 
                 <div class="flex flex-col gap-3">
-                @if($shippingThreshold > 0)
-                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5">
-                    <p id="ecommet-shipping-message" class="text-[13px] text-[#242424] font-medium mb-2">
-                        @if ($remainingForFreeShipping <= 0)
-                            {{ __("You've reached free shipping!") }}
-                        @else
-                            {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
-                        @endif
-                    </p>
-                    <div class="h-2 bg-[#f5e6c4] rounded-full overflow-hidden">
-                        <div id="ecommet-shipping-bar" class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
-                    </div>
-                </div>
-                @endif
-
                 <div class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5 flex gap-3 shadow-sm">
                     <div class="mt-0.5">
                         <svg class="w-5 h-5 text-[#d9a036]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -358,6 +343,21 @@
                     <p class="text-xs text-[#8a8a8a]">{{ $returnPolicy['conditions'] }}</p>
                     @endif
                     @endif
+                </div>
+                @endif
+
+                @if($shippingThreshold > 0)
+                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5">
+                    <p id="ecommet-shipping-message" class="text-[13px] text-[#242424] font-medium mb-2">
+                        @if ($remainingForFreeShipping <= 0)
+                            {{ __("You've reached free shipping!") }}
+                        @else
+                            {{ __('Add :weight more to qualify for free shipping', ['weight' => $remainingForFreeShipping >= 1000 ? number_format($remainingForFreeShipping / 1000, 2) . __('kg') : number_format($remainingForFreeShipping) . __('g')]) }}
+                        @endif
+                    </p>
+                    <div class="h-2 bg-[#f5e6c4] rounded-full overflow-hidden">
+                        <div id="ecommet-shipping-bar" class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
+                    </div>
                 </div>
                 @endif
                 </div>
