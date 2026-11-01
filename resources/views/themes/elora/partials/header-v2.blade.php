@@ -1,7 +1,7 @@
 <header>
     <!-- Mobile -->
     <div
-    class="lg:hidden relative flex items-center justify-between px-[18px] pt-[12px] pb-[27px] {{ request()->routeIs('tenant.storefront.cart', 'tenant.storefront.profile') ? 'mb-[43px]' : '' }}"
+    class="lg:hidden relative flex items-center justify-between px-[18px] pt-[12px] pb-[78px]"
     style="background: var(--color-text-primary)"
     >
     <div class="flex items-center gap-[12px]">
@@ -40,7 +40,7 @@
         action="{{ route('tenant.storefront.search') }}"
         method="GET"
         data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-        class="absolute left-[16px] right-[16px] -bottom-[27px] z-30"
+        class="absolute left-[16px] right-[16px] bottom-[12px] z-30"
     >
         <div
         class="elora-search-inner flex items-center justify-between gap-[8px] h-[54px] rounded-[32px] px-[12px] border"

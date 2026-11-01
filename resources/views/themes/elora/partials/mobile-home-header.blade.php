@@ -4,8 +4,8 @@
     $currency = $currentCurrency ?? null;
 @endphp
     <!--========= mobile header ==========  -->
-    <div class="sm:hidden {{ ($tight ?? false) ? 'mb-8' : 'mb-8' }}" style="background: linear-gradient(89.62deg, #C94F1A 0.07%, #F56323 57.6%, #BA3800 100%);">
-        <div class="px-4 pt-3 pb-0 flex flex-col gap-3">
+    <div class="sm:hidden {{ ($tight ?? false) ? 'mb-4' : '' }}" style="background: linear-gradient(89.62deg, #C94F1A 0.07%, #F56323 57.6%, #BA3800 100%);">
+        <div class="px-4 pt-3 pb-3 flex flex-col gap-3">
             <!-- User info row -->
             <div class="flex items-center justify-between">
                 <!-- Left: avatar + greeting -->
@@ -109,8 +109,8 @@
                 </div>
             </div>
 
-            <!-- Search bar — translates down to overlap the section below -->
-            <div class="translate-y-1/2 relative z-50 drop-shadow-2xl">
+            <!-- Search bar — sits fully inside the header -->
+            <div class="relative z-50">
                 <form action="{{ route('tenant.storefront.search') }}" method="GET"
                     data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}">
                     <div class="elora-search-inner flex items-center bg-[#F6F5F5] rounded-[32px] px-3 py-2 gap-2 h-14 border border-[#D4D4D4]"

@@ -7,7 +7,7 @@
 <header>
   <!-- Mobile top nav: gradient header + search -->
   <div class="lg:hidden">
-    <div class="topnav-gradient flex flex-col gap-[12px] pt-[14px] pb-[33px] px-[16px]">
+    <div class="topnav-gradient flex flex-col gap-[12px] pt-[14px] pb-[16px] px-[16px]">
       <div class="flex items-center justify-between">
         <a href="{{ route('tenant.home') }}">
           <x-storefront-logo :storeName="$storeName" class="h-[28px] w-auto" />
@@ -20,8 +20,7 @@
         </button>
         </div>
       </div>
-    </div>
-    <div class="px-[16px] -mt-[21px]">
+    <div>
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
           data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}">
         <div class="souqify-search-inner flex items-center h-[54px] rounded-[32px] px-[12px] gap-[8px] border" style="background:var(--color-surface); border-color:var(--color-stroke)">
@@ -35,6 +34,7 @@
         </div>
       </form>
       <x-image-search-modal id="storefront-image-search-modal-v2-mobile" :action="route('tenant.storefront.search.image')" />
+    </div>
     </div>
   </div>
 

@@ -11,6 +11,10 @@
 @endphp
 
 <div>
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
+
     <!-- =========== BREADCRUMB =========== -->
     <div class="bg-white border-b border-neutral-200">
         <div

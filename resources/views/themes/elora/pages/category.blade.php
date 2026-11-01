@@ -11,6 +11,10 @@ $pageBase = $category
 @endphp
 
 <main class="grow bg-white pb-14 w-full" style="min-height:calc(100vh - 99px)">
+    @php $__eloraMobileHeader = !in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true); @endphp
+    @if ($__eloraMobileHeader)
+        @include('themes.elora.partials.mobile-home-header', ['tight' => true])
+    @endif
 
     {{-- ── MOBILE FILTER BACKDROP ── --}}
     <div id="mobile-filter-backdrop"
@@ -256,7 +260,7 @@ $pageBase = $category
         ═══════════════════════════════════════════ --}}
         <div class="flex-1 flex flex-col gap-6 px-4 sm:px-6 pt-[19px] pb-10" style="min-width:0">
             <!-- ---- search field (mobile) ---- -->
-            <div class="sm:hidden">
+            <div class="sm:hidden {{ $__eloraMobileHeader ? 'hidden' : '' }}">
                 <form action="{{ route('tenant.storefront.search') }}" method="GET"
                     data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}">
                     <div class="elora-search-inner flex items-center bg-[#F6F5F5] rounded-[32px] px-3 py-2 gap-2 h-14 border border-[#D4D4D4]"

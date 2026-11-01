@@ -46,15 +46,18 @@
       </div>
       <div class="flex items-center gap-[10px] shrink-0">
         <button type="button" onclick="Livewire.dispatch('open-locale-modal')" aria-label="{{ __('Currency & Language') }}" class="flex items-center justify-center rounded-full shrink-0 cursor-pointer size-[40px]" style="border:1px solid var(--color-stroke)"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></button>
-        <a href="{{ route('tenant.storefront.search') }}" aria-label="{{ __('Search') }}" class="flex items-center justify-center rounded-full size-[40px] shrink-0" style="border:1px solid var(--color-stroke)">
-          <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        </a>
         <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="flex items-center justify-center rounded-full size-[40px] shrink-0 relative" style="border:1px solid var(--color-stroke)">
           <svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
           <span id="souqify-v5-mob-cart-badge" class="souqify-cart-badge absolute -top-[4px] -right-[4px] text-white text-[10px] rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-[3px] {{ $cartCount > 0 ? '' : 'hidden' }}" style="background:var(--color-primary)">{{ $cartCount }}</span>
         </a>
       </div>
     </div>
+    <form action="{{ route('tenant.storefront.search') }}" method="GET"
+        data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
+        class="souqify-search-inner mx-[16px] flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke); background:var(--color-surface)">
+      <button type="submit" aria-label="{{ __('Search') }}"><img src="{{ asset('souqify-3/assets/icons/icon-search-mobile.svg') }}" class="size-[18px] opacity-70" alt="" /></button>
+      <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" />
+    </form>
     <nav class="flex items-center gap-[4px] overflow-x-auto no-scrollbar px-[16px] border-b" style="border-color:var(--color-page-bg)">
       <a href="{{ route('tenant.home') }}" class="category-pill is-active shrink-0 px-[16px] py-[8px] text-[12px] tracking-[0.5px] relative" style="color:var(--color-primary)">{{ __('All') }}
         <span class="absolute left-[16px] right-[16px] -bottom-[1px] h-[2px] rounded-full" style="background:var(--color-primary)"></span>

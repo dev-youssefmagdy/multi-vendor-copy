@@ -12,7 +12,7 @@
          the teal/white boundary. Texture reuses flash-sale-texture-mobile.png (the
          same teal brand texture already blended soft-light elsewhere in this theme)
          rather than a new asset. --}}
-    <div class="sqv3-header-hero relative flex items-center justify-between px-[16px] pt-[16px] pb-[36px] overflow-hidden">
+    <div class="sqv3-header-hero relative flex items-center justify-between px-[16px] pt-[16px] pb-[72px] overflow-hidden">
       <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.png') }}" alt="" class="absolute inset-0 h-full w-full object-cover" style="mix-blend-mode: soft-light" />
       <a href="{{ route('tenant.home') }}" class="relative">
         <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
@@ -30,7 +30,7 @@
     <div style="background: var(--color-bg-main)">
       <form action="{{ route('tenant.storefront.search') }}" method="GET"
           data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}"
-          class="flex items-center gap-[8px] mx-[16px] -mt-[24px] mb-[16px] h-[48px] rounded-full px-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.15)]" style="background: var(--color-surface)">
+          class="flex items-center gap-[8px] relative z-10 mx-[16px] -mt-[56px] mb-[8px] h-[48px] rounded-full px-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.15)]" style="background: var(--color-surface)">
         <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
         <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color: var(--color-text-placeholder)" />
         <button type="button" data-image-search-trigger="storefront-image-search-modal-v3-mobile" aria-label="{{ __('Search by Image') }}">

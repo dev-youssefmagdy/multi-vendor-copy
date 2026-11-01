@@ -1,5 +1,5 @@
     <!--========= mobile header ==========  -->
-    <div class="lg:hidden text-white bg-gradient-to-r from-[#002562] via-[#144AA6] to-[#003387] {{ ($tight ?? false) ? 'mb-8' : 'pb-3' }} pt-6 px-4">
+    <div class="lg:hidden text-white bg-gradient-to-r from-[#002562] via-[#144AA6] to-[#003387] pb-3 {{ ($tight ?? false) ? 'mb-4' : '' }} pt-6 px-4">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <!-- Mobile menu toggle -->
@@ -37,7 +37,7 @@
             </div>
         </div>
         <!-- Mobile search -->
-        <div class="{{ ($tight ?? false) ? 'translate-y-1/2' : 'mt-3' }} relative z-50 drop-shadow-2xl px-4 sm:px-6 lg:hidden">
+        <div class="mt-3 relative z-50 px-4 sm:px-6 lg:hidden">
             <form action="{{ route('tenant.storefront.search') }}" method="GET"
                 data-autocomplete-url="{{ route('tenant.storefront.search.autocomplete') }}">
                 <div class="souqify-search-inner flex items-center bg-white rounded-full px-3 sm:px-5 py-2 gap-2 h-14">
