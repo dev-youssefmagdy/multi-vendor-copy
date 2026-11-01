@@ -46,6 +46,8 @@
                         data-media-items="{{ json_encode($mediaItems->values()->all()) }}"
                         class="flex-1 bg-white lg:bg-[#fbfbfb] lg:border lg:border-[#f0f0f0] lg:rounded-xl relative w-[500px] h-[500px] max-w-full overflow-hidden flex items-center justify-center p-0 touch-pan-y select-none mx-auto">
 
+                        <x-storefront.product-media-labels :labels="$product->cardLabels()" bg="var(--color-primary)" color="#fff" />
+
                         @if ($mediaItems->count() > 1)
                             <button type="button"
                                 class="absolute left-3 lg:left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 lg:w-11 lg:h-11 rounded-full bg-white/90 border border-[#e5e5e5] text-[#222] flex items-center justify-center shadow-sm hover:bg-white transition"

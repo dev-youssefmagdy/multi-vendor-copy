@@ -14,6 +14,7 @@ class ProductLabelIcons
     {
         return [
             'truck' => ['label' => 'Truck', 'svg' => '<path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/>'],
+            'package' => ['label' => 'Package (free shipping)', 'svg' => '<path d="m7.5 4.3 9 5.2M21 8v8l-9 5-9-5V8l9-5z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/>'],
             'bolt' => ['label' => 'Lightning', 'svg' => '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>'],
             'clock' => ['label' => 'Clock', 'svg' => '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'],
             'fire' => ['label' => 'Fire', 'svg' => '<path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-3 3 0-3-1-6-4-9 0 4-4 6-4 12 0 4 3 8 7 8z"/>'],

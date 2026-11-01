@@ -58,7 +58,10 @@ class ProductLabelsTest extends TestCase
         $this->assertSame([$a->id], $hot->products()->pluck('products.id')->all());
 
         $hot->update(['active' => false]);
-        $this->assertSame(['Fast delivery'], ProductLabel::query()->active()->ordered()->pluck('text')->all());
+        $this->assertSame(
+            ['Fast delivery'],
+            ProductLabel::query()->whereIn('id', [$fast->id, $hot->id])->active()->ordered()->pluck('text')->all()
+        );
     }
 
     public function test_icon_registry_exposes_markup_for_every_key_and_rejects_unknown(): void

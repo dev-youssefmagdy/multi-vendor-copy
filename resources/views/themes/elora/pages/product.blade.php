@@ -169,21 +169,8 @@
                         {{ __($badgeLabel) }}
                     </span>
                     @endif
-                    <!-- mobile screen bottom left badges -->
-                    @if($hasFreeShipping ?? false)
-                    <div
-                        class="flex items-center gap-2 sm:hidden ps-12 absolute bottom-0 left-0 z-10 bg-[#FFB00A] py-2 rounded-se-xl max-w-[80%] overflow-hidden">
-                        <span class="text-xs flex items-center gap-1">
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M7.652 0.153329C7.14102 -0.0511098 6.57098 -0.0511098 6.06 0.153329L0.987429 2.1819C0.695928 2.29859 0.446069 2.49993 0.27007 2.75996C0.0940715 3.01998 4.72448e-06 3.32677 9.56756e-08 3.64076V9.80761C-0.00010948 10.1217 0.093904 10.4286 0.26991 10.6888C0.445916 10.9489 0.695838 11.1503 0.987429 11.267L6.06057 13.2956C6.50011 13.4717 6.98557 13.4972 7.44114 13.3682C7.2197 13.1322 7.0257 12.8719 6.86286 12.5922C6.69717 12.5923 6.53295 12.5611 6.37886 12.5002L3.80171 11.4693L3.78571 11.463L1.30571 10.471C1.1733 10.418 1.05981 10.3265 0.979867 10.2083C0.89992 10.0902 0.857176 9.95083 0.857143 9.80819V3.64076C0.857143 3.59504 0.861524 3.5499 0.870286 3.50533L6.42743 5.72876V9.33219C6.58938 8.7272 6.88196 8.16506 7.28457 7.68533V5.72876L12.8423 3.5059C12.8507 3.54971 12.8549 3.59466 12.8549 3.64076V6.81219C13.1714 7.01219 13.4594 7.25219 13.712 7.52533V3.64133C13.712 3.32734 13.6179 3.02055 13.4419 2.76053C13.2659 2.5005 13.0161 2.29916 12.7246 2.18247L7.652 0.153329Z"
-                                    fill="#121212"/>
-                            </svg>
-                            <span class="whitespace-nowrap">{{ __('Free shipping') }}</span>
-                        </span>
-                    </div>
-                    @endif
+                    <!-- bottom left product labels -->
+                    <x-storefront.product-media-labels :labels="$product->cardLabels()" bg="#FFB00A" color="#121212" class="sm:hidden" />
                     <!-- product preview button -->
                     <button id="product-preview-button"
                             class="bg-white w-6 h-6 md:w-12 md:h-12 text-2xl rounded-full flex items-center justify-center absolute top-3 right-3 z-10">
