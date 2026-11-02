@@ -87,6 +87,9 @@
       /* Phones: the active Best Seller card was only ~158px wide; bump the whole fan up ~11%. */
       @media (max-width: 1023px) {
         .best-seller-slide { width: 176px; height: 266px; }
+        /* The centred (first) card stands out: neighbours are scaled to 86% by elora-v2-carousels.js,
+           so lift the active one to 115% (!important beats the inline transform the script writes). */
+        .best-seller-slide.swiper-slide-active { transform: scale(1.15) !important; position: relative; z-index: 5; }
       }
     </style>
     <section
