@@ -53,6 +53,18 @@ class OffersPage extends Component
         // latest/best-selling products that aren't actually discounted.
         $allFlashProducts = $flashSales->flatMap(fn($fs) => $fs->products)->unique('id')->values();
 
+        // The cards render each product's own badges/labels, images, variants and ratings.
+        \Illuminate\Database\Eloquent\Collection::make($allFlashProducts)->loadMissing([
+            'badges',
+            'labels',
+            'rates',
+            'files',
+            'translations.language',
+            'variants.centralVariant',
+            'centralProduct.files',
+            'centralProduct.variants',
+        ]);
+
         $flashDiscount = fn($product) => (float) optional($product->flashSales->first())->discount_percentage;
         $soldCount = fn($product) => (int) ($product->centralProduct?->sold_count ?? 0);
 
