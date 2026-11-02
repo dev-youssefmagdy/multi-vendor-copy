@@ -17,6 +17,8 @@ class ManufacturingRequest extends Model
         'product_id',
         'product_name',
         'description',
+        'reference_url',
+        'images',
         'quantity',
         'status',
         'admin_notes',
@@ -27,6 +29,7 @@ class ManufacturingRequest extends Model
         return [
             'status' => ManufacturingRequestStatus::class,
             'quantity' => 'integer',
+            'images' => 'array',
         ];
     }
 

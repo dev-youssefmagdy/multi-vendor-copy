@@ -117,12 +117,20 @@ final class ManufacturingController extends PanelController
     {
         $validated = $request->validated();
 
+        // PANELS-UPDATES-MANUFACTURING: images go to the tenant's own public disk (like product-request attachments).
+        $images = [];
+        foreach ($request->file('images', []) as $file) {
+            $images[] = $file->store('manufacturing-requests/'.tenant('id'), 'public');
+        }
+
         $manufacturingRequest = ManufacturingRequest::create([
             'tenant_id' => tenant('id'),
             'product_id' => $validated['linked_product_id'] ?? null,
             'product_name' => $validated['product_name'],
             'description' => $validated['description'] ?: null,
             'quantity' => $validated['quantity'],
+            'reference_url' => $validated['reference_url'] ?? null,
+            'images' => $images ?: null,
             'status' => ManufacturingRequestStatus::Pending->value,
         ]);
 

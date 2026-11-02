@@ -335,6 +335,8 @@ Route::group([
 
     Route::prefix('manufacturing')->name('manufacturing.')->group(function () {
         Route::get('/', ManufacturingRequestsList::class)->middleware('admin.permission:manufacturing.view,manufacturing.manage')->name('index');
+        // PANELS-UPDATES-MANUFACTURING: stream tenant-uploaded reference images.
+        Route::get('/{id}/file', [\App\Http\Controllers\Admin\ManufacturingRequestFileController::class, 'show'])->middleware('admin.permission:manufacturing.view')->whereNumber('id')->name('file');
         Route::get('/{id}', ManufacturingRequestDetail::class)->middleware('admin.permission:manufacturing.view')->name('show');
     });
 

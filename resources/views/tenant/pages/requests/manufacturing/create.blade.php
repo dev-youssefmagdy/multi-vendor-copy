@@ -8,6 +8,7 @@
         :action="route('tenant.manufacturing.store')"
         :validate="route('tenant.manufacturing.validate')"
         success="redirect"
+        files
     >
         <div class="rq-form-page">
             <div class="db-welcome fu d0">
@@ -26,6 +27,21 @@
                 <x-tenant::input type="number" name="quantity" label="Quantity" required min="1" max="99999" placeholder="0" />
 
                 <x-tenant::textarea name="description" label="Description" :rows="9" placeholder="Add any specifications, dimensions, materials, or special requirements..." />
+
+                {{-- PANELS-UPDATES-MANUFACTURING: a link to the product to manufacture + reference images. --}}
+                <x-tenant::input type="url" name="reference_url" label="Product link (optional)" placeholder="https://example.com/product/..." />
+
+                <div class="rq-files">
+                    <span class="field-label">Product images (optional)</span>
+                    <x-tenant::dropzone
+                        name="images"
+                        label="Drop images here or click to upload"
+                        sublabel="JPG, PNG, WEBP or GIF, max 5 images, 10 MB each"
+                        accept=".jpg,.jpeg,.png,.webp,.gif"
+                        max-files="5"
+                        max-kb="10240"
+                    />
+                </div>
 
                 {{-- Link to an existing product: search box + always-visible result list
                      (manufacturing-create.js, fed by tenant.manufacturing.products.search). --}}

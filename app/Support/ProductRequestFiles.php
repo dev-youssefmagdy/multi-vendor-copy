@@ -54,9 +54,9 @@ final class ProductRequestFiles
     }
 
     /** Absolute path of a tenant-uploaded attachment inside that tenant's storage, or null when unsafe/missing. */
-    public static function tenantFilePath(string $tenantId, string $path): ?string
+    public static function tenantFilePath(string $tenantId, string $path, string $folder = 'product-requests'): ?string
     {
-        if ($path === '' || str_contains($path, '..') || ! str_starts_with($path, "product-requests/{$tenantId}")) {
+        if ($path === '' || str_contains($path, '..') || ! str_starts_with($path, "{$folder}/{$tenantId}")) {
             return null;
         }
 

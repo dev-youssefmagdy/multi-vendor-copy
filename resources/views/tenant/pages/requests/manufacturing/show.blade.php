@@ -40,6 +40,17 @@
                 <dd class="entity-subtitle" style="white-space:pre-wrap;">{{ $request->description }}</dd>
             @endif
 
+            {{-- PANELS-UPDATES-MANUFACTURING: product link + reference images --}}
+            @if ($request->reference_url)
+                <dt class="entity-subtitle">Product link</dt>
+                <dd class="entity-subtitle"><a href="{{ $request->reference_url }}" target="_blank" rel="noopener noreferrer nofollow" style="word-break:break-all;">{{ $request->reference_url }}</a></dd>
+            @endif
+
+            @if (!empty($request->images))
+                <dt class="entity-subtitle" style="padding-top:4px;">Images</dt>
+                <dd>@include('livewire.partials.product-request-attachments', ['files' => \App\Support\ProductRequestFiles::forTenant($request->images, true)])</dd>
+            @endif
+
             @if ($request->admin_notes)
                 <dt class="entity-subtitle" style="padding-top:4px;">Admin Notes</dt>
                 <dd class="entity-subtitle" style="white-space:pre-wrap;background:var(--elevated);padding:8px 12px;border-radius:6px;">{{ $request->admin_notes }}</dd>
