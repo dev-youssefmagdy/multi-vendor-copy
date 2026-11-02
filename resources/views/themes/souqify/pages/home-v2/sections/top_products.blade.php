@@ -141,7 +141,7 @@
        + 2*11.27 for mobile-width, which is why the coefficient below isn't
        the Figma frames' own 251.7:401.64 ratio - that ratio ignores the
        fixed 22.54px the two gaps take out of the three-card stack. */
-    .sqv2-best__slide--deal { width: 50%; }
+    .sqv2-best__slide--deal { width: 60%; }
     .sqv2-best__slide--mobile { width: calc(101.512% - 28.6445px); }
     /* Frame 1984080244: three Mobile Cards, 11.27px apart. */
     .sqv2-best__col {
