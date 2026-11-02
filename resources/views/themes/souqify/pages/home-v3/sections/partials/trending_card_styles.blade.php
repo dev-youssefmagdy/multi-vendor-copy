@@ -305,10 +305,11 @@
         left: 6.55965px;
     }
 
-    /* Phones: the 496x156 comp scales down to a ~110px-tall strip with a tiny photo. */
+    /* Phones: one card per row; the photo is a square that keeps its aspect ratio and fits inside. */
     @media (max-width: 1023px) {
-        .sqv3-trend-card { align-items: stretch; min-height: 178px; }
-        .sqv3-trend-card__media { width: 46%; }
+        .sqv3-trend-card { align-items: flex-start; }
+        .sqv3-trend-card__media { width: 44%; aspect-ratio: 1 / 1; align-self: flex-start; background: #fff; }
+        .sqv3-trend-card__img { object-fit: contain; }
     }
 </style>
 @endonce

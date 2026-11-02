@@ -138,3 +138,20 @@
     <p class="sqv3-trend__empty">{{ __('No trending products yet.') }}</p>
   @endif
 </section>
+
+{{-- Phones show one card per row. public/souqify-2/carousels-v3.js mounts the row with 1.3 slides in view;
+     tighten it to 1 once Swiper is up (the file's own breakpoints still apply from 640px). --}}
+<script>
+(function () {
+    function fit() {
+        var el = document.querySelector('.trending-swiper.sqv3-trend__row');
+        if (!el || !el.swiper) return false;
+        if (window.innerWidth < 640) {
+            el.swiper.params.slidesPerView = 1;
+            el.swiper.update();
+        }
+        return true;
+    }
+    var tries = 0, t = setInterval(function () { if (fit() || ++tries > 40) clearInterval(t); }, 150);
+})();
+</script>
