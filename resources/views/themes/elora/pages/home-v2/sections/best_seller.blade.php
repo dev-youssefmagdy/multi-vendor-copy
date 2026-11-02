@@ -83,6 +83,12 @@
               ->concat($bestSellerProducts->slice(0, $bestSellerBuffer))
           : $bestSellerProducts;
     @endphp
+    <style>
+      /* Phones: the active Best Seller card was only ~158px wide; bump the whole fan up ~11%. */
+      @media (max-width: 1023px) {
+        .best-seller-slide { width: 176px; height: 266px; }
+      }
+    </style>
     <section
     wire:ignore
       class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[18px] lg:py-[32px] flex flex-col gap-0 overflow-hidden"
