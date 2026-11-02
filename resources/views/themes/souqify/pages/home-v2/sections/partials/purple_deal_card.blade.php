@@ -251,11 +251,11 @@
         left: 2.79cqw;
     }
     [dir="rtl"] .sqv2-deal__cart {
-        left: auto;
-        /* Exact mirror of `left: 73.75%` for a 23.75cqw-wide button: both terms
-           are relative to the container's inline-size, so this stays exact at
-           any card width (equivalent to ~2.5cqw from the edge). */
-        right: calc(26.25% - 23.75cqw);
+        right: auto;
+        /* Mirror of `left: 73.75%` for a 23.75cqw-wide button: LTR leaves ~2.5% to the RIGHT
+           edge, so RTL leaves the same gap from the LEFT edge (it used to anchor to `right`,
+           which kept the button on the right side). */
+        left: calc(26.25% - 23.75cqw);
     }
     [dir="rtl"] .sqv2-deal__ribbon {
         left: auto;
