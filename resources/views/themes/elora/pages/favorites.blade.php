@@ -108,7 +108,7 @@
                     `<span class="text-xs text-[#FF522C] tracking-[0.5px]">${item.discount}</span>` :
                     '';
 
-                return `<div class="fav-card group relative flex flex-col bg-[#FDFDFD] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-index="${idx}" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price || 0}" data-added="${item.added || 0}">
+                return `<div class="fav-card group relative cursor-pointer flex flex-col bg-[#FDFDFD] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-index="${idx}" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price || 0}" data-added="${item.added || 0}">
               <div class="relative overflow-hidden" style="height:183px">
                 ${img}
                 ${badge}
@@ -149,7 +149,8 @@
             let currentSearch = '';
 
             function render() {
-                let favs = getFavs();
+                const stored = getFavs();
+                let favs = stored;
                 const grid = document.getElementById('favGrid');
                 const empty = document.getElementById('emptyState');
                 const favNum = document.getElementById('favNum');
@@ -171,11 +172,47 @@
                     empty.classList.remove('hidden');
                     empty.classList.add('flex');
                 } else {
-                    grid.innerHTML = favs.map((item, i) => buildCard(item, i)).join('');
+                    // Buttons act on the stored list, so index each card by its stored position (not its sorted/filtered one)
+                    grid.innerHTML = favs.map(item => buildCard(item, stored.indexOf(item))).join('');
                     empty.classList.add('hidden');
                     empty.classList.remove('flex');
+                    applyStockState();
                 }
             }
+
+            // Out-of-stock (or no longer available) favorites get a disabled cart button and a label.
+            async function applyStockState() {
+                await ensureCartData(getFavs());
+                const stored = getFavs();
+                document.querySelectorAll('#favGrid .fav-card').forEach(card => {
+                    const item = stored[Number(card.dataset.index)];
+                    if (!item) return;
+                    const data = favCartData[item.slug];
+                    if (data && !data.isOutOfStock) return;
+                    const btn = card.querySelector('.add-cart-btn');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.removeAttribute('onclick');
+                        btn.title = @json(__('Out of stock'));
+                        btn.style.cssText += ';opacity:.45;cursor:not-allowed;pointer-events:none';
+                    }
+                    const media = card.querySelector('.relative.overflow-hidden');
+                    if (media && !media.querySelector('.fav-oos')) {
+                        const img = media.querySelector('img');
+                        if (img) img.style.filter = 'grayscale(1)';
+                        media.insertAdjacentHTML('beforeend', '<span class="fav-oos absolute bottom-3 left-3 text-xs px-2 py-1 rounded bg-black/70 text-white z-10">' + @json(__('Out of stock')) + '</span>');
+                    }
+                });
+            }
+
+            // Clicking a card (anywhere except its heart / cart buttons) opens the product page.
+            document.getElementById('favGrid').addEventListener('click', function (e) {
+                if (e.target.closest('button, a')) return;
+                const card = e.target.closest('.fav-card');
+                if (!card) return;
+                const item = getFavs()[Number(card.dataset.index)];
+                if (item && item.url) window.location.href = item.url;
+            });
 
             // ── public functions ──────────────────────────────────
             window.removeFavoriteByIndex = function (idx) {
@@ -185,19 +222,40 @@
                 render();
             };
 
-            window.addToCartItem = function (idx) {
-                const favs = getFavs();
-                const item = favs[idx];
-                if (!item) return;
-                // Dispatch a Livewire-compatible addToCart event if available
-                if (window.Livewire) {
-                    window.Livewire.dispatch('addToCart', {
-                        productId: item.id,
-                        qty: 1
-                    });
+            // Same flow as the home page cards: several variants open the picker, otherwise add straight away.
+            const favCartData = @json($favoriteCartData ?? []);
+            // Favorites live in localStorage, so fetch cart data for any product the server didn't preload.
+            async function ensureCartData(items) {
+                const missing = items.map(i => i.slug).filter(slug => slug && !(slug in favCartData));
+                if (!missing.length) return;
+                try {
+                    Object.assign(favCartData, (await @this.cartData([...new Set(missing)])) || {});
+                } catch (e) { console.error(e); }
+            }
+            async function addFavToCart(item, skipPicker) {
+                await ensureCartData([item]);
+                const data = favCartData[item.slug];
+                if (!data || data.isOutOfStock) {
+                    if (!skipPicker && typeof window.showStorefrontToast === 'function') {
+                        window.showStorefrontToast(@json(__('Sorry, this product is out of stock.')), 'error');
+                    }
+                    return false;
                 }
+                if (data.hasMultipleVariants) {
+                    if (skipPicker) return false;
+                    if (typeof openVariantModal === 'function') openVariantModal(data.id, data.nameJs, data.variantModalData);
+                    return true;
+                }
+                window.Livewire?.dispatch('add-to-cart-variant', { productId: data.id, variantId: null });
+                return true;
+            }
+
+            window.addToCartItem = function (idx) {
+                const item = getFavs()[idx];
+                if (!item) return;
+                addFavToCart(item, false);
                 // Show brief feedback on button
-                const btn = document.querySelectorAll('.add-cart-btn')[idx];
+                const btn = document.querySelector(`.fav-card[data-index="${idx}"] .add-cart-btn`);
                 if (btn) {
                     btn.style.background = "var(--color-primary)";
                     setTimeout(() => {
@@ -206,28 +264,24 @@
                 }
             };
 
-            window.addAllToCart = function () {
-                const favs = getFavs();
-                if (window.Livewire) {
-                    favs.forEach(item => {
-                        if (item.id) window.Livewire.dispatch('addToCart', {
-                            productId: item.id,
-                            qty: 1
-                        });
-                    });
-                }
+            // Variant products need a choice, so "add all" skips them rather than guessing.
+            window.addAllToCart = async function () {
+                const items = getFavs();
+                await ensureCartData(items);
+                items.forEach(item => addFavToCart(item, true));
             };
 
             window.sortFavorites = function (type) {
                 currentSort = type;
                 document.querySelectorAll('.sort-btn').forEach(btn => {
                     btn.classList.remove('bg-[var(--color-primary)]', 'text-white', 'border-[var(--color-primary)]', 'font-medium');
-                    btn.classList.add('text-[#555]', 'bg-white', 'border-[#E0E0E0]');
+                    btn.classList.add('text-[#555]', 'bg-white', 'border-[#E0E0E0]', 'hover:border-[var(--color-primary)]', 'hover:text-[var(--color-primary)]');
                 });
                 const active = document.getElementById('sort-' + type);
                 if (active) {
                     active.classList.add('bg-[var(--color-primary)]', 'text-white', 'border-[var(--color-primary)]', 'font-medium');
-                    active.classList.remove('text-[#555]', 'bg-white', 'border-[#E0E0E0]');
+                    // The hover colour would otherwise beat text-white and leave orange text on the orange pill
+                    active.classList.remove('text-[#555]', 'bg-white', 'border-[#E0E0E0]', 'hover:border-[var(--color-primary)]', 'hover:text-[var(--color-primary)]');
                 }
                 render();
             };
