@@ -28,7 +28,7 @@ $pageBase = $category
              LEFT FILTER SIDEBAR
         ═══════════════════════════════════════════ --}}
         <aside id="mobile-filter-drawer"
-            class="elora-filter-section flex flex-col shrink-0 overflow-y-auto w-screen sm:w-[259px] h-screen sm:h-[calc(100vh-108px)] border-e border-e-[#F0F0F0] shadow-xl fixed top-0 lg:sticky sm:top-[108px] p-8 pt-12 pe-6 z-50 bg-white transition-transform -translate-x-full lg:translate-x-0">
+            class="elora-filter-section flex flex-col shrink-0 overflow-y-auto w-screen sm:w-[259px] h-[100dvh] sm:h-[calc(100vh-108px)] border-e border-e-[#F0F0F0] shadow-xl fixed top-0 lg:sticky sm:top-[108px] p-8 pt-12 pe-6 pb-28 sm:pb-8 z-50 bg-white transition-transform -translate-x-full lg:translate-x-0">
             <span class="block lg:hidden absolute top-4 end-4 text-[24px] font-bold cursor-pointer"
                 onclick="toggleMobileFilters()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
