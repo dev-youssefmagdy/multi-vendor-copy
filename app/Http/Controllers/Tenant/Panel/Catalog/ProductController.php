@@ -188,6 +188,7 @@ final class ProductController extends PanelController
                 'central_product_variant_id' => $variant['central_product_variant_id'] ?? null,
                 'real_price' => $variant['real_price'] ?? 0,
                 'sell_price' => $variant['sell_price'] ?? 0,
+                'profit_margin' => $variant['profit_margin'] ?? null,
                 'active' => $variant['active'] ?? true,
             ])->all(),
             'default_locale' => $validated['active_locale'],
@@ -245,6 +246,10 @@ final class ProductController extends PanelController
                 'weight_grams' => $centralVariant['weight_grams'] ?? null,
                 'real_price' => number_format((float) $centralVariant['price'], 2, '.', ''),
                 'sell_price' => number_format((float) ($existing?->default_sell_price ?? $centralVariant['price']), 2, '.', ''),
+                // PANELS-UPDATES-VARIANT-MARGIN: margin (% over the central price) shown/edited next to the sell price
+                'profit_margin' => (float) $centralVariant['price'] > 0
+                    ? number_format(((float) ($existing?->default_sell_price ?? $centralVariant['price']) - (float) $centralVariant['price']) / (float) $centralVariant['price'] * 100, 2, '.', '')
+                    : '0.00',
                 'active' => (bool) ($existing?->active ?? true),
             ];
         })->all();

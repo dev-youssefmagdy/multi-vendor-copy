@@ -35,6 +35,8 @@ final class SaveProductRequest extends TenantFormRequest
             'variants.*.central_product_variant_id' => ['nullable', 'integer'],
             'variants.*.real_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.sell_price' => ['required', 'numeric', 'min:0'],
+            // PANELS-UPDATES-VARIANT-MARGIN: editable profit margin (% over the central price)
+            'variants.*.profit_margin' => ['nullable', 'numeric', 'min:0', 'max:100000'],
             'variants.*.active' => ['boolean'],
         ];
 

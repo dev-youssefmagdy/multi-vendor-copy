@@ -73,6 +73,49 @@
                     @include('tenant.pages.catalog.products._variants-table', ['variants' => $variants])
                 </div>
             </x-tenant::card-collapse>
+
+            {{-- PANELS-UPDATES-VARIANT-MARGIN: delegated handlers (the table is re-rendered via AJAX when the central
+                 product changes, so listeners live on the stable wrapper). margin% <-> sell price over the central price. --}}
+            <script>
+            (function () {
+                var body = document.querySelector('[data-variants-body]');
+                if (!body || body.dataset.marginBound) return;
+                body.dataset.marginBound = '1';
+
+                var round = function (n) { return Math.round(n * 100) / 100; };
+                var row = function (el) { return el.closest('tr'); };
+
+                function syncFromMargin(input) {
+                    var real = parseFloat(input.dataset.realPrice) || 0;
+                    var sell = row(input).querySelector('[data-sell-input]');
+                    var m = parseFloat(input.value);
+                    if (sell && !isNaN(m)) sell.value = round(real * (1 + m / 100)).toFixed(2);
+                }
+                function syncFromSell(input) {
+                    var real = parseFloat(input.dataset.realPrice) || 0;
+                    var margin = row(input).querySelector('[data-margin-input]');
+                    var s = parseFloat(input.value);
+                    if (margin && real > 0 && !isNaN(s)) margin.value = round((s - real) / real * 100).toFixed(2);
+                }
+
+                body.addEventListener('input', function (e) {
+                    if (e.target.matches('[data-margin-input]')) syncFromMargin(e.target);
+                    else if (e.target.matches('[data-sell-input]')) syncFromSell(e.target);
+                });
+
+                body.addEventListener('click', function (e) {
+                    var btn = e.target.closest('[data-bulk-margin-apply]');
+                    if (!btn) return;
+                    var value = parseFloat((body.querySelector('[data-bulk-margin-input]') || {}).value);
+                    if (isNaN(value) || value < 0) return;
+                    body.querySelectorAll('[data-margin-input]').forEach(function (input) {
+                        input.value = round(value).toFixed(2);
+                        syncFromMargin(input);
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                });
+            })();
+            </script>
         </div>
 
         <x-tenant::card-collapse title="Translations" subtitle="Storefront copy for each active tenant language.">

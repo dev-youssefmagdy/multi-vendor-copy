@@ -123,7 +123,7 @@ final class TenantPricingService
      * @param array<string, mixed>|null $existingProfit
      * @return array{prices: array<string, float>, default: float, profit: array<string, array<string, mixed>>}
      */
-    public function forCatalog(float $base, ?array $costs, ?array $existingProfit, float $tenantPct, ?float $overrideDefault = null): array
+    public function forCatalog(float $base, ?array $costs, ?array $existingProfit, float $tenantPct, ?float $overrideDefault = null, ?float $overrideMarginPct = null): array
     {
         $shipping = $this->shippingMap($costs);
         $keys = array_values(array_diff(
@@ -133,7 +133,10 @@ final class TenantPricingService
 
         $profit = $this->seedProfit($existingProfit, $keys, $tenantPct);
 
-        if ($overrideDefault !== null) {
+        if ($overrideMarginPct !== null) {
+            // PANELS-UPDATES-VARIANT-MARGIN: the vendor typed a profit margin (% of the central price) for the default row.
+            $profit['default'] = ['profit_type' => 'percentage', 'profit_value' => max(0.0, round($overrideMarginPct, 2))];
+        } elseif ($overrideDefault !== null) {
             $profit = $this->withDefaultOverride($base, $profit, $overrideDefault);
         }
 

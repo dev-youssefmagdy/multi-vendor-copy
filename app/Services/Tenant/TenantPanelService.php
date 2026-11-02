@@ -237,6 +237,7 @@ class TenantPanelService
                             $variant->profit,
                             is_numeric($submittedSellPrice) ? (float) $submittedSellPrice : null,
                             $variant->exists ? (float) $variant->default_sell_price : null,
+                            is_numeric($variantAttributes['profit_margin'] ?? null) ? (float) $variantAttributes['profit_margin'] : null,
                         );
 
                         $fill['sell_price'] = $result['prices'];
@@ -351,11 +352,20 @@ class TenantPanelService
         ?array $existingProfit,
         ?float $submittedDefault,
         ?float $storedDefault,
+        ?float $submittedMargin = null,
     ): array {
         $tenantPct = (float) (tenant('profit_percentage') ?? 0);
         $result = $pricing->forCatalog($base, $costs, $existingProfit, $tenantPct);
 
         $baseline = $storedDefault ?? $result['default'];
+
+        // PANELS-UPDATES-VARIANT-MARGIN: an edited profit margin wins over the (derived) sell price; otherwise a typed
+        // sell price pins a fixed profit as before.
+        $storedMargin = $base > 0 ? round(($baseline - $base) / $base * 100, 2) : 0.0;
+
+        if ($submittedMargin !== null && abs($submittedMargin - $storedMargin) >= 0.005) {
+            return $pricing->forCatalog($base, $costs, $existingProfit, $tenantPct, null, $submittedMargin);
+        }
 
         if ($submittedDefault !== null && abs($submittedDefault - $baseline) >= 0.005) {
             $result = $pricing->forCatalog($base, $costs, $existingProfit, $tenantPct, $submittedDefault);
