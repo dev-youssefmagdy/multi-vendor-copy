@@ -53,6 +53,27 @@ final class SaveProductRequest extends TenantFormRequest
         return $rules;
     }
 
+    /**
+     * PANELS-UPDATES-VARIANT-ACTIVE: single variants can be switched off, but a product must keep at least one
+     * active variant or it could not be bought.
+     */
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
+    {
+        $validator->after(function (\Illuminate\Validation\Validator $validator): void {
+            $variants = $this->input('variants');
+
+            if (!is_array($variants) || $variants === []) {
+                return;
+            }
+
+            $anyActive = collect($variants)->contains(fn ($variant) => filter_var($variant['active'] ?? true, FILTER_VALIDATE_BOOLEAN));
+
+            if (!$anyActive) {
+                $validator->errors()->add('variants.0.active', __('At least one variant must stay active.'));
+            }
+        });
+    }
+
     public function attributes(): array
     {
         return [

@@ -10,14 +10,13 @@
         </div>
         <button type="button" class="btn btn-secondary" data-bulk-margin-apply>Apply to all variants</button>
     </div>
-    <x-tenant::table :headers="['Variant', 'Main Price', 'Profit Margin', 'Sell Price', 'Status']" class="variants-table">
+    <x-tenant::table :headers="['Variant', 'Main Price', 'Profit Margin', 'Sell Price', 'Active']" class="variants-table">
         @foreach($variants as $index => $variant)
             <tr>
                 <td class="variants-table-variant-cell">
                     <input type="hidden" name="variants[{{ $index }}][id]" value="{{ $variant['id'] }}">
                     <input type="hidden" name="variants[{{ $index }}][central_product_variant_id]" value="{{ $variant['central_product_variant_id'] }}">
                     <input type="hidden" name="variants[{{ $index }}][real_price]" value="{{ $variant['real_price'] }}">
-                    <input type="hidden" name="variants[{{ $index }}][active]" value="{{ $variant['active'] ? 1 : 0 }}">
                     <div class="entity-row">
                         @if(!empty($variant['image_url']))
                             <img src="{{ $variant['image_url'] }}" alt="{{ $variant['title'] }}" class="entity-thumb" loading="lazy" width="44" height="44">
@@ -43,8 +42,13 @@
                         <x-tenant::input type="number" step="0.01" min="0" name="variants.{{ $index }}.sell_price" :value="$variant['sell_price']" data-sell-input data-real-price="{{ $variant['real_price'] }}" />
                     </div>
                 </td>
-                <td>
-                    <x-tenant::status-badge :status="$variant['status']" />
+                <td class="variants-table-active-cell">
+                    {{-- PANELS-UPDATES-VARIANT-ACTIVE: the vendor can switch single variants off (hidden from the storefront,
+                         kept through catalog syncs); central status is shown underneath when central itself disabled it. --}}
+                    <x-tenant::switch name="variants.{{ $index }}.active" :checked="$variant['active']" label="" aria-label="{{ __('Active') }}" />
+                    @if(strtolower((string) $variant['status']) !== 'active')
+                        <x-tenant::status-badge :status="$variant['status']" />
+                    @endif
                 </td>
             </tr>
         @endforeach
