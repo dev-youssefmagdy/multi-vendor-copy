@@ -51,8 +51,16 @@ $pageBase = $category
                     </summary>
                     <div class="flex flex-col gap-2">
                         @foreach ($allCategories as $rc)
-                        @php $isCat = $slug == null ? false : ($rc->id === $category->id); @endphp
-                        <a href="{{ route('tenant.storefront.category', $rc->slug) }}"
+                        @php
+                            $isCat = $slug == null ? false : ($rc->id === $category->id);
+                            // Keep the active price/rating/availability/sale filters when switching category.
+                            $keepFilters = array_filter([
+                                'min' => $min, 'max' => $max, 'ratings' => $ratings, 'availability' => $availability,
+                                'on_sale' => $sale, 'product_flag' => $productFlag,
+                                'sort' => $sort !== 'latest' ? $sort : '',
+                            ], fn ($v) => $v !== '' && $v !== null);
+                        @endphp
+                        <a href="{{ route('tenant.storefront.category', ['slug' => $rc->slug] + $keepFilters) }}"
                             class="flex items-center gap-2 group">
                             <span
                                 class="w-4 h-4 rounded-[4px] flex items-center justify-center shrink-0 shadow-sm transition
