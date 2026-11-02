@@ -666,6 +666,10 @@ body {
 .shop-by-category-swiper {
   height: 264px !important; /* 2 * 128px tile + 8px row gap */
 }
+/* One or two categories fit a single grid row: don't reserve the empty second row */
+.shop-by-category-swiper.is-single-row {
+  height: 128px !important;
+}
 @media (min-width: 1024px) {
   .shop-by-category-swiper {
     height: 128px !important;

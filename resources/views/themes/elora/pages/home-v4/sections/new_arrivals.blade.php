@@ -9,7 +9,7 @@
     @if (!empty($newInCards))
     <!-- ============ NEW IN ============ -->
     <section
-      class="pattern-newin mt-[64px] py-[24px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
+      class="pattern-newin mt-0 lg:mt-[64px] py-[12px] lg:py-[48px] flex flex-col gap-[16px] lg:gap-[34px]"
       wire:ignore
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
@@ -34,7 +34,7 @@
                       @include('themes.elora.pages.home-v4.sections.partials.product_card', ['p' => $left])
                     </div>
                     @if ($top || $bottom)
-                      <div class="shrink-0 lg:flex-1 lg:shrink lg:min-w-0 flex flex-col gap-[21px]">
+                      <div class="shrink-0 lg:flex-1 lg:shrink lg:min-w-0 flex flex-col gap-[8px] lg:gap-[21px]">
                         @if ($top)
                           <div class="flex-1 min-h-0">
                             @include('themes.elora.pages.home-v4.sections.partials.new_in_side_card', ['p' => $top])

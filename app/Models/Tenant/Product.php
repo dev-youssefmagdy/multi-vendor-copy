@@ -562,6 +562,7 @@ class Product extends Model
             'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? ' (+' . $ratingCount . ')' : ''),
             'sold' => $soldPct > 0 ? $soldPct . '% ' . __('Sold') : null,
+            'badge' => $this->badges->firstWhere('active', true)?->text ?? $this->badges->first()?->text,
             'isOutOfStock' => $this->stockStatus() === 'out_of_stock',
         ];
     }

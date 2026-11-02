@@ -26,7 +26,7 @@
       {{-- Carousel: mobile pages 2x2 (Swiper grid module, rows:2), desktop
            shows 6 slides per view in a single row. --}}
       <div class="relative w-full">
-        <div class="swiper shop-by-category-swiper">
+        <div class="swiper shop-by-category-swiper {{ $__sbcCategories->count() <= 2 ? 'is-single-row' : '' }}">
           <div class="swiper-wrapper" id="shopByCategoryWrapper">
             @foreach ($__sbcCategories as $i => $cat)
               @php $__tile = $__sbcTiles[$i % count($__sbcTiles)]; @endphp
