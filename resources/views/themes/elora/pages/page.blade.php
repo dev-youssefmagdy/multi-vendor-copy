@@ -17,5 +17,9 @@
         @else
             <p class="text-[#888] text-sm">{{ __('No content available.') }}</p>
         @endif
+        @if (($page->slug ?? null) === 'contact-us')
+            <livewire:tenant.storefront.support-request-form />
+        @endif
+
     </div>
 </main>
