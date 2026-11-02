@@ -15,6 +15,27 @@
     <div class="pm-page">
         @include('tenant.pages.catalog._module-nav', ['activeTab' => 'products'])
 
+        {{-- PANELS-UPDATES-NEW-PRODUCTS-SYNC: products the platform added after registration are not pushed automatically;
+             the tenant pulls them in from here (or the dashboard "New in products" section). --}}
+        <div class="pm-newbar fu d1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:12px 16px;border:1px solid var(--ds-border, #e5e7eb);border-radius:12px;background:var(--ds-surface, #fff)">
+            <p style="margin:0;font-size:14px">
+                @if(($pendingNewCount ?? 0) > 0)
+                    <strong>{{ $pendingNewCount }} new {{ \Illuminate\Support\Str::plural('product', $pendingNewCount) }}</strong> from the platform {{ $pendingNewCount === 1 ? 'is' : 'are' }} not in your store yet.
+                @else
+                    Your store is up to date with the platform catalog.
+                @endif
+            </p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <a href="{{ route('tenant.products.new') }}" class="btn btn-lg">New products</a>
+                @if(($pendingNewCount ?? 0) > 0)
+                    <form method="POST" action="{{ route('tenant.products.sync-new') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-lg">Sync new products ({{ $pendingNewCount }})</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+
         @if(!empty($imageSearchIds))
             <p class="pm-note fu d1">Showing products matching your image search.</p>
         @endif

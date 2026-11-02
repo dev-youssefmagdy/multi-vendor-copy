@@ -58,7 +58,8 @@ class ProductCategoryNotificationService
                     tenantId: (string) $tenantId,
                     type: 'product',
                     title: 'New Product Available',
-                    message: "A new product \"{$productName}\" has been added to your catalog categories.",
+                    // PANELS-UPDATES-NEW-PRODUCTS-SYNC: new central products are no longer pushed into the store; the tenant adds them.
+                    message: "A new product \"{$productName}\" is available for your categories. Add it to your store from New products.",
                     data: [
                         'product_id' => $product->id,
                         'product_name' => $productName,

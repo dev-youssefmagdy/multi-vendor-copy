@@ -2893,6 +2893,60 @@ class TenantPanelRepository
         return $products->map(fn (Product $p) => $this->buildOpportunityArray($p, $context[$p->id] ?? null))->all();
     }
 
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: central products this tenant has NOT synced yet (the catalog is only
+     * synced automatically once at registration; later additions wait for the tenant to add them).
+     */
+    public function pendingNewProductsCount(): int
+    {
+        return (int) app(\App\Services\Tenant\TenantCatalogSyncService::class)->pendingNewProductsQuery()->count();
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: paged list for the "New products" page.
+     */
+    public function pendingNewProducts(int $perPage = 12): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return app(\App\Services\Tenant\TenantCatalogSyncService::class)
+            ->pendingNewProductsQuery()
+            ->with(['translations.language', 'files'])
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: dashboard "New in products" cards = the newest central products the
+     * tenant does not have yet (id = CENTRAL product id, used by the "Add to my store" button).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function pendingNewProductCards(int $limit = 6): array
+    {
+        $pricing = app(\App\Services\Tenant\TenantPricingService::class);
+
+        return app(\App\Services\Tenant\TenantCatalogSyncService::class)
+            ->pendingNewProductsQuery()
+            ->with(['translations.language', 'files'])
+            ->limit($limit)
+            ->get()
+            ->map(fn ($product) => $this->pendingProductCard($product, $pricing))
+            ->all();
+    }
+
+    /** @return array<string, mixed> */
+    public function pendingProductCard($product, ?\App\Services\Tenant\TenantPricingService $pricing = null): array
+    {
+        $pricing ??= app(\App\Services\Tenant\TenantPricingService::class);
+
+        return [
+            'id' => $product->id,
+            'image' => $product->primary_image_url,
+            'title' => $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id),
+            'description' => Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140),
+            'cost' => '$'.number_format((float) $pricing->centralBasePrice($product), 2),
+        ];
+    }
+
     public function newInProductCards(int $limit = 6): array
     {
         $cards = $this->newInProducts($limit)->map(function (Product $product) {

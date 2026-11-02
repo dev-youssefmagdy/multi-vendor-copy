@@ -74,6 +74,19 @@ class TenantCatalogSyncService
 
     protected ?TenantPricingService $pricing = null;
 
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: a tenant only receives the central catalog automatically the FIRST
+     * time (registration, while it carries no central-linked product yet). After that, syncs only refresh
+     * the products the tenant already has (price, stock, content, visibility...). Brand-new central
+     * products stay un-synced until the tenant asks for them (dashboard "New in products" / Products page
+     * button) - those calls set $adoptNewProducts / $adoptProductIds for the duration of one run.
+     * Products an admin explicitly assigned to the tenant (ProductTenantAssignment) are always delivered.
+     */
+    protected bool $adoptNewProducts = false;
+
+    /** @var int[]|null central product ids the tenant explicitly asked to add (null = no explicit list) */
+    protected ?array $adoptProductIds = null;
+
     public function syncForTenant(Tenant $tenant, ?array $sections = null): array
     {
         $sections = $this->normalizeSections($sections);
@@ -876,6 +889,10 @@ class TenantCatalogSyncService
             ];
         });
 
+        // PANELS-UPDATES-NEW-PRODUCTS-SYNC: after the first sync, do not create rows for central products the
+        // tenant does not carry yet; keep refreshing the ones it has (+ any it explicitly asked for).
+        $catalogIds = $this->withoutUnrequestedNewProducts($catalogIds);
+
         $assignedFlip = array_flip($assignedIds);
         $allIds = array_merge($catalogIds, $assignedIds);
 
@@ -1455,6 +1472,117 @@ class TenantCatalogSyncService
         return is_array($decoded) ? $decoded : null;
     }
 
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: central ids the tenant already carries (any visibility).
+     *
+     * @return int[]
+     */
+    protected function tenantCentralProductIds(): array
+    {
+        return Product::withoutGlobalScope('centralVisible')
+            ->whereNotNull('central_product_id')
+            ->pluck('central_product_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: filters a central catalog id list down to what this run may write.
+     * First sync (tenant has no central-linked products) or an explicit "add everything" keeps the list as is.
+     *
+     * @param  int[]  $catalogIds
+     * @return int[]
+     */
+    protected function withoutUnrequestedNewProducts(array $catalogIds): array
+    {
+        if ($this->adoptNewProducts) {
+            return $catalogIds;
+        }
+
+        $carried = $this->tenantCentralProductIds();
+
+        if ($carried === []) {
+            return $catalogIds; // initial sync at registration
+        }
+
+        $allowed = array_flip(array_merge($carried, $this->adoptProductIds ?? []));
+
+        return array_values(array_filter($catalogIds, fn ($id) => isset($allowed[$id])));
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: whether a single product may be CREATED in this tenant by a push sync.
+     */
+    protected function mayCreateTenantProduct(CentralProduct $centralProduct, Tenant $tenant, bool $force): bool
+    {
+        if ($force || $this->adoptNewProducts || in_array($centralProduct->id, $this->adoptProductIds ?? [], true)) {
+            return true;
+        }
+
+        if ($this->tenantCentralProductIds() === []) {
+            return true; // initial sync
+        }
+
+        return (bool) $this->central(fn () => ProductTenantAssignment::query()
+            ->where('product_id', $centralProduct->id)
+            ->where('tenant_id', $tenant->id)
+            ->exists());
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: central products this tenant could still add (visible, not carried yet).
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<CentralProduct>
+     */
+    public function pendingNewProductsQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $carried = $this->tenantCentralProductIds();
+        $categoryIds = (array) (tenant()?->category_ids ?? []);
+
+        return $this->central(function () use ($carried, $categoryIds) {
+            $expanded = $categoryIds !== [] ? $this->expandCategoryIds($categoryIds) : [];
+
+            return CentralProduct::query()
+                ->when($carried !== [], fn ($q) => $q->whereNotIn('id', $carried))
+                ->when($expanded !== [], fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $expanded)))
+                ->orderByDesc('id');
+        });
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: tenant-initiated "sync new products". Adds the given central products
+     * (null = every pending one) without touching anything else the tenant customised.
+     *
+     * @param  int[]|null  $centralProductIds
+     * @return int number of products added
+     */
+    public function syncNewProductsForTenant(Tenant $tenant, ?array $centralProductIds = null): int
+    {
+        set_time_limit(0);
+        tenancy()->initialize($tenant);
+
+        $ids = $centralProductIds ?? $this->pendingNewProductsQuery()->pluck('id')->all();
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        $before = count($this->tenantCentralProductIds());
+
+        // Product by product (the same path the live push uses) so one bad product cannot block the rest and the
+        // tenant's existing catalog is not re-processed just to add a few new items.
+        foreach (array_chunk($ids, 50) as $chunk) {
+            $products = $this->central(fn () => CentralProduct::query()->whereIn('id', $chunk)->orderBy('id')->get());
+
+            foreach ($products as $product) {
+                try {
+                    $this->syncProductToTenant($product, $tenant, true);
+                } catch (\Throwable $e) {
+                    report($e);
+                    tenancy()->initialize($tenant);
+                }
+            }
+        }
+
+        return max(0, count($this->tenantCentralProductIds()) - $before);
+    }
+
     protected function notifyNewCatalogProducts(Tenant $tenant, array $productIds): void
     {
         $count = count($productIds);
@@ -1470,7 +1598,7 @@ class TenantCatalogSyncService
         );
     }
 
-    public function syncProductToTenant(CentralProduct $centralProduct, Tenant $tenant): void
+    public function syncProductToTenant(CentralProduct $centralProduct, Tenant $tenant, bool $force = false): void
     {
         $this->profitPercentage = max(0, (float) ($tenant->profit_percentage ?? 0));
 
@@ -1486,6 +1614,12 @@ class TenantCatalogSyncService
 
         $tenantProduct = Product::withoutGlobalScope('centralVisible')->firstOrNew(['central_product_id' => $centralProduct->id]);
         $isNewProduct = !$tenantProduct->exists;
+
+        // PANELS-UPDATES-NEW-PRODUCTS-SYNC: a push for a product the tenant does not carry yet must not create it
+        // (unless the tenant asked for it, an admin assigned it, or this is the tenant's first sync).
+        if ($isNewProduct && !$this->mayCreateTenantProduct($centralProduct, $tenant, $force)) {
+            return;
+        }
 
         $productCosts = $this->centralShippingCosts($centralProduct, $shippingCosts);
         $productPricing = $this->catalogPricing(

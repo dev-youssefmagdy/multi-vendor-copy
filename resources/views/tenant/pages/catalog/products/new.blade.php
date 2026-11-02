@@ -1,0 +1,88 @@
+@extends('tenant.layouts.app')
+
+{{-- PANELS-UPDATES-NEW-PRODUCTS-SYNC: central products added after registration are NOT synced automatically;
+     the tenant reviews them here and adds the ones (or all) they want. Updates to products they already have stay automatic. --}}
+@section('title', 'New products')
+
+@php
+    $page = $products->currentPage();
+    $lastPage = max(1, $products->lastPage());
+    $pages = collect(range(1, $lastPage))
+        ->filter(fn ($n) => $n === 1 || $n === $lastPage || abs($n - $page) <= 1)
+        ->values();
+@endphp
+
+@section('content')
+    <div class="pm-page">
+        @include('tenant.pages.catalog._module-nav', ['activeTab' => 'products'])
+
+        <div class="pm-newbar fu d1" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:8px 0 18px">
+            <div>
+                <h2 class="db-welcome-title" style="margin:0">New products from the platform</h2>
+                <p class="db-welcome-sub" style="margin:4px 0 0">
+                    {{ $pendingCount > 0
+                        ? $pendingCount.' new '.\Illuminate\Support\Str::plural('product', $pendingCount).' not added to your store yet. Products you already have keep updating automatically.'
+                        : 'You are up to date. New products added by the platform will appear here.' }}
+                </p>
+            </div>
+            @if($pendingCount > 0)
+                <form method="POST" action="{{ route('tenant.products.sync-new') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-lg">Sync all new products ({{ $pendingCount }})</button>
+                </form>
+            @endif
+        </div>
+
+        @if(empty($cards))
+            <div class="pm-empty fu d2">
+                <h3>No new products</h3>
+                <p>Everything the platform published is already in your store.</p>
+                <a href="{{ route('tenant.products.index') }}" class="btn btn-primary">Back to products</a>
+            </div>
+        @else
+            <div class="pm-grid fu d2">
+                @foreach($cards as $card)
+                    <article class="db-opp pm-card">
+                        <div class="db-opp-media" @if($card['image']) style="background-image:url('{{ $card['image'] }}')" @endif>
+                            <span class="db-opp-added" style="background:#7c3aed;color:#fff">New</span>
+                        </div>
+                        <div class="db-opp-body">
+                            <div>
+                                <h3 class="db-opp-title pm-card-title" title="{{ $card['title'] }}">{{ $card['title'] }}</h3>
+                                <p class="db-opp-desc pm-card-desc">{{ $card['description'] !== '' ? $card['description'] : 'No description yet.' }}</p>
+                            </div>
+                            <div class="db-opp-stats pm-card-stats">
+                                <div class="db-opp-stat is-dark is-half">
+                                    <span class="db-opp-stat-label">Platform price</span>
+                                    <strong>{{ $card['cost'] }}</strong>
+                                    <small>Before your profit margin</small>
+                                </div>
+                            </div>
+                            <form method="POST" action="{{ route('tenant.products.sync-new') }}">
+                                @csrf
+                                <input type="hidden" name="product_ids[]" value="{{ $card['id'] }}">
+                                <button type="submit" class="btn btn-primary btn-lg db-opp-cta" style="width:100%">Add to my store</button>
+                            </form>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @endif
+
+        @if($products->total() > 0)
+            <nav class="tc-pagination" aria-label="New products pages">
+                <p>Show <strong>{{ $products->count() }}</strong> of {{ $products->total() }} result</p>
+                <div class="tc-pages">
+                    @foreach($pages as $i => $n)
+                        @if($i > 0 && $n - $pages[$i - 1] > 1)<span class="tc-page-gap" aria-hidden="true">…</span>@endif
+                        @if($n === $page)
+                            <span class="tc-page-btn is-current" aria-current="page">{{ $n }}</span>
+                        @else
+                            <a href="{{ $products->url($n) }}" class="tc-page-btn">{{ $n }}</a>
+                        @endif
+                    @endforeach
+                </div>
+            </nav>
+        @endif
+    </div>
+@endsection

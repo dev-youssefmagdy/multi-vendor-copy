@@ -24,7 +24,9 @@ final class DashboardController extends PanelController
         $overview = $repository->dashboardOverview();
 
         $opportunities       = $repository->opportunityProductCards(6);
-        $newProducts         = $repository->newInProductCards(6);
+        // PANELS-UPDATES-NEW-PRODUCTS-SYNC: only central products the tenant has not added yet (no sample data).
+        $newProducts         = $repository->pendingNewProductCards(6);
+        $newProductsPending  = $repository->pendingNewProductsCount();
         $pendingPurchases    = $repository->pendingVendorPurchaseCount();
         $activeProductsCount = \App\Models\Tenant\Product::query()->where('active', true)->count();
 
@@ -109,6 +111,7 @@ final class DashboardController extends PanelController
             'topProductsRows' => $topProductsRows,
             'opportunities'       => $opportunities,
             'newProducts'         => $newProducts,
+            'newProductsPending'  => $newProductsPending,
             'pendingPurchases'    => $pendingPurchases,
             'activeProductsCount' => $activeProductsCount,
             'partnerData'         => $partnerData,

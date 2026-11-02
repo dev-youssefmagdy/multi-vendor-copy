@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
+use App\Services\Tenant\TenantCatalogSyncService;
 use App\Models\Tenant\Category;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\TableColumn;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
@@ -47,6 +49,7 @@ final class ProductsListController extends PanelController
                 ['label' => 'Featured', 'value' => $stats['featured'], 'format' => 'number', 'caption' => 'Homepage promoted products', 'dot' => 'dot-amber'],
             ]),
             'products' => $products,
+            'pendingNewCount' => $this->repo->pendingNewProductsCount(),
             'centralSnapshots' => $centralSnapshots,
             'imageSearchIds' => $imageIds,
             'categoryOptions' => $this->categoryOptions(),
@@ -63,6 +66,49 @@ final class ProductsListController extends PanelController
                 TableColumn::actions()->width('190px'),
             ],
         ]);
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: "New products" page = central products the tenant has not added yet.
+     */
+    public function newProducts(): View
+    {
+        $products = $this->repo->pendingNewProducts(12);
+
+        return view('tenant.pages.catalog.products.new', [
+            'products' => $products,
+            'cards' => $products->getCollection()->map(fn ($product) => $this->repo->pendingProductCard($product))->all(),
+            'pendingCount' => $products->total(),
+        ]);
+    }
+
+    /**
+     * PANELS-UPDATES-NEW-PRODUCTS-SYNC: tenant-triggered sync. `product_ids[]` adds those central products;
+     * no ids (the "Sync new products" button) adds every pending one. Existing products are never re-created
+     * and keep the tenant's own prices/profit.
+     */
+    public function syncNew(Request $request, TenantCatalogSyncService $sync): RedirectResponse
+    {
+        $ids = array_values(array_filter(array_map('intval', (array) $request->input('product_ids', []))));
+        $tenant = tenant();
+
+        // Never accept an id that is not actually pending (already carried, hidden or out of the tenant's categories).
+        $pendingIds = $sync->pendingNewProductsQuery()
+            ->when($ids !== [], fn ($q) => $q->whereIn('id', $ids))
+            ->limit(500)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        if ($pendingIds === []) {
+            return back()->with('status', 'Your catalog is already up to date.')->with('status_type', 'info');
+        }
+
+        $added = $sync->syncNewProductsForTenant($tenant, $pendingIds);
+
+        $message = $added === 1 ? '1 new product was added to your store.' : "{$added} new products were added to your store.";
+
+        return back()->with('status', $message)->with('status_type', 'success');
     }
 
     public function data(Request $request): JsonResponse

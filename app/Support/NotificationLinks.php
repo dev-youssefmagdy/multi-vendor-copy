@@ -67,6 +67,9 @@ class NotificationLinks
                 isset($data['ticket_id']) => self::route('tenant.support.show', ['ticketId' => $data['ticket_id']]),
                 isset($data['customer_id']) => self::route('tenant.customers.show', ['customerId' => $data['customer_id']]),
                 $type === 'product_request' && isset($data['request_id']) => self::route('tenant.product-requests.show', ['requestId' => $data['request_id']]),
+                // PANELS-UPDATES-NOTIFICATION-LINKS: product notifications open the product itself (edit page) when the
+                // tenant already carries it, otherwise the "New products" page where it can be added.
+                in_array($type, ['product', 'product_assigned'], true) && isset($data['product_id']) => self::tenantProduct((int) $data['product_id']),
                 $type === 'manufacturing' && isset($data['request_id']) => self::route('tenant.manufacturing.show', ['id' => $data['request_id']]),
                 $type === 'brand_request' && isset($data['request_id']) => self::route('tenant.brand-requests.show', ['id' => $data['request_id']]),
                 isset($data['order_number']) => self::tenantOrder((string) $data['order_number']),
@@ -87,6 +90,18 @@ class NotificationLinks
                 }),
             };
         });
+    }
+
+    /** `$centralProductId` is the CENTRAL product id carried by the notification payload. */
+    private static function tenantProduct(int $centralProductId): ?string
+    {
+        $id = \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
+            ->where('central_product_id', $centralProductId)
+            ->value('id');
+
+        return $id
+            ? self::route('tenant.products.edit', ['product' => $id])
+            : self::route('tenant.products.new');
     }
 
     private static function tenantOrder(string $uuid): ?string
