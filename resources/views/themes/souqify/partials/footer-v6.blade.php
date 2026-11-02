@@ -86,7 +86,7 @@
 
 @unless ($__tabHome)
 <!-- Reserves the tab bar's height (8 + 56 + 16px) so it never covers the end of the page -->
-<div class="lg:hidden h-[80px]" aria-hidden="true"></div>
+<div class="lg:hidden h-[80px]" style="background:var(--color-footer-bar)" aria-hidden="true"></div>
 @endunless
 
 <!-- ============ MOBILE FIXED BOTTOM TAB BAR ============ -->

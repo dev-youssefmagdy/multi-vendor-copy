@@ -139,4 +139,8 @@
     >
     {{ $footerCopyright ?? (__('Copyright ©') . date('Y') . ' ' . $storeName . '. ' . __('All Rights Reserved.')) }}
     </div>
+    {{-- Clears the fixed mobile tab bar (80px). Same colour as the copyright bar so no pale gap shows under the footer. --}}
+    @if (in_array($variant, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+    <div class="lg:hidden" style="height:80px;background: var(--ef-bar)" aria-hidden="true"></div>
+    @endif
 </footer>

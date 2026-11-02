@@ -16,7 +16,6 @@
      Figma Frame 1984080007: full-width 80px white bar, 24px gutters,
      0 0 20px rgba(0,0,0,.08) shadow. The active tab gets a navy 46x31 pill
      behind its icon; Deals stays navy as the promoted tab. --}}
-<div class="lg:hidden" style="height:96px" aria-hidden="true"></div>
 <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 flex items-center justify-between h-[80px] px-[24px]" style="background: var(--color-bg-main, #FDFDFD); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08)" aria-label="{{ __('Primary') }}">
   <a href="{{ route('tenant.home') }}" class="flex flex-col items-center gap-[4px] min-w-[34px]" style="color: {{ ($mobileNavActiveTab === 'home' ? 'var(--color-primary, #132092)' : 'var(--color-gray, #8F8F8F)') }}" {{ $mobileNavActiveTab === 'home' ? 'aria-current=page' : '' }}>
     <span class="relative flex items-center justify-center">

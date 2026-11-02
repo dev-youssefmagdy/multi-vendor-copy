@@ -81,7 +81,7 @@
             @break
         @case('v6') <!-- New In Edition || public/elora-2 -->
             @php
-                $bodyClass= 'bg-[var(--color-bg-main)] pb-[80px] lg:pb-0';
+                $bodyClass= 'bg-[var(--color-bg-main)]';
                 $headerKey = 'header-v6';
                 $footerKey = 'footer-v6';
                 $stylesKey = 'styles-v6';

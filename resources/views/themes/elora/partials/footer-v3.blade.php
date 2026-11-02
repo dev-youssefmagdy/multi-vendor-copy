@@ -13,7 +13,6 @@
     @endphp
 
     <!-- ============ MOBILE BOTTOM NAV ============ -->
-    <div class="lg:hidden" style="height:96px" aria-hidden="true"></div>
 <nav
       class="lg:hidden fixed bottom-0 inset-x-0 z-30 flex flex-row justify-between items-center px-[24px] h-[80px]"
       style="background: var(--color-bg-main); box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08)"
