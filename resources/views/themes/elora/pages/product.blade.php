@@ -586,7 +586,7 @@
                 </div>
                 <!-- mobile screen actions -->
                 <div data-mobile-buybar
-                    class="flex items-center gap-3 sm:hidden fixed bottom-0 left-0 right-0 pt-2 pb-6 px-4 bg-white border-t border-gray-200 z-50">
+                    class="flex items-center gap-3 sm:hidden fixed bottom-0 left-0 right-0 py-3 px-4 bg-white border-t border-gray-200 z-50">
                     <div
                         class="flex items-center justify-between sm:justify-start sm:gap-6 p-3 sm:p-0 bg-gray-50 sm:bg-transparent rounded-xl">
                         <div
