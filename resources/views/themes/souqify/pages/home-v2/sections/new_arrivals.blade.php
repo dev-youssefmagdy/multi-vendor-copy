@@ -44,7 +44,7 @@
         ];
     });
     // Figma stacks three Mobile Cards per column, 9.61px apart.
-    $__newInColumns = $__newInCards->chunk(3);
+    $__newInColumns = $__newInCards->chunk(2);
 @endphp
 
 {{-- Figma: Frame 1984080239 (1440 x 465.37) - the green wave over #8B03BD,
@@ -124,6 +124,20 @@
         width: 100%;
     }
     .sqv2-newin__col > * { width: 100%; }
+
+    /* Two cards per column, each as big as a Trending Now card on phones (~378x166). */
+    .sqv2-newin__col { gap: 12px; }
+    .sqv2-newin .sqv2-mob {
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(20, 0, 50, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .sqv2-newin .sqv2-mob__media { background: #fff; }
+    .sqv2-newin .sqv2-mob__img { object-fit: contain; }
+    @media (max-width: 639px) {
+        .sqv2-newin .sqv2-mob { aspect-ratio: 411.94 / 181; }
+        .sqv2-newin .sqv2-mob__media { flex: 0 0 43.9%; }       /* square: 181 / 411.94 */
+    }
     .sqv2-newin__empty {
         font-family: 'Outfit', sans-serif;
         font-size: 14px;

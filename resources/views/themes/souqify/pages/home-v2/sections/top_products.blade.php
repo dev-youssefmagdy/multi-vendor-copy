@@ -53,13 +53,13 @@
         ];
     });
 
-    // Figma alternates one Deal Card with a column of three Mobile Cards, so the
-    // products are grouped 1, 3, 1, 3 ... across the row.
+    // One Deal Card alternates with a column of two Mobile Cards (the comp had three,
+    // which made each card too small), so products are grouped 1, 2, 1, 2 ... across the row.
     $__bestGroups = [];
     $__buffer = $__bestSellerCards->all();
     $__i = 0;
     while (!empty($__buffer)) {
-        $__take = $__i % 2 === 0 ? 1 : 3;
+        $__take = $__i % 2 === 0 ? 1 : 2;
         $__bestGroups[] = ['type' => $__i % 2 === 0 ? 'deal' : 'mobile', 'items' => array_splice($__buffer, 0, $__take)];
         $__i++;
     }
@@ -152,6 +152,27 @@
         height: 100%;
     }
     .sqv2-best__col > * { width: 100%; }
+
+    /* Two cards per column. Phones: the column fills the row and each card is as big as a
+       Trending Now card (about 378x166 on a 425px screen) with a square photo. */
+    .sqv2-best__col { gap: 12px; }
+    .sqv2-best .sqv2-mob {
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(60, 20, 90, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .sqv2-best .sqv2-mob__media { background: #fff; }
+    .sqv2-best .sqv2-mob__img { object-fit: contain; }
+    @media (max-width: 639px) {
+        .sqv2-best__slide--mobile { width: 100%; }
+        .sqv2-best .sqv2-mob { aspect-ratio: 411.94 / 181; }
+        .sqv2-best .sqv2-mob__media { flex: 0 0 43.9%; }       /* square: 181 / 411.94 */
+    }
+    /* Wider screens: the two cards share the Deal Card's height instead of leaving a gap. */
+    @media (min-width: 640px) {
+        .sqv2-best__col > div { flex: 1 1 0; min-height: 0; display: flex; }
+        .sqv2-best .sqv2-mob { aspect-ratio: auto; height: 100%; }
+    }
 
     /* Frame 1984080197: the dot row. */
     .sqv2-best__dots {
