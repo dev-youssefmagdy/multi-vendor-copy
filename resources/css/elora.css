@@ -2022,7 +2022,8 @@ html, body {
     }
 
     body[data-page="index"] .hero-img {
-        max-height: 106px;
+        max-height: 240px;
+        min-height: 240px;
         border-radius: 0;
     }
 

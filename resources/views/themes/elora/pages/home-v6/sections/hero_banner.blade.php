@@ -17,7 +17,7 @@
             @endphp
             <div class="swiper-slide">
               <a href="{{ $banner->url ?? '#' }}"
-                class="relative flex flex-col items-center lg:items-start justify-end h-[254px] lg:h-[529px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
+                class="relative flex flex-col items-center lg:items-start justify-end h-[290px] lg:h-[529px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
               >
                 <img
                   src="{{ $__heroImgUrl }}"
@@ -67,7 +67,7 @@
             @foreach ($__heroFallbackTitles as $__i => $__title)
               <div class="swiper-slide">
                 <div
-                  class="relative flex flex-col items-center lg:items-start justify-end h-[254px] lg:h-[529px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
+                  class="relative flex flex-col items-center lg:items-start justify-end h-[290px] lg:h-[529px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
                 >
                   <img
                     src="{{ asset('elora-2/assets/images/hero-mobile.png') }}"

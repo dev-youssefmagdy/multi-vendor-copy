@@ -15,7 +15,7 @@
             @endphp
             <div class="swiper-slide">
               <a href="{{ $banner->url ?? '#' }}"
-                class="relative flex flex-col items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
+                class="relative flex flex-col items-start justify-end h-[260px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
               >
                 <img
                   src="{{ $imgUrl }}"
@@ -76,7 +76,7 @@
           @empty
             <div class="swiper-slide">
               <div
-                class="relative flex flex-col items-start justify-end h-[200px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
+                class="relative flex flex-col items-start justify-end h-[260px] lg:h-[524px] px-[20px] lg:px-[56px] py-[18px] lg:py-[32px] overflow-hidden"
               >
                 <img
                   src="{{ asset('elora-3/assets/images/hero-mobile.jpg') }}"

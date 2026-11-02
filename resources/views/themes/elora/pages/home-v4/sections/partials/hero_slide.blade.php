@@ -21,7 +21,7 @@
   │  Desktop: row, fixed h-[527px], items-center                        │
   └─────────────────────────────────────────────────────────────────────┘
 --}}
-<div class="relative flex items-center h-[210px] lg:h-[527px] overflow-hidden"
+<div class="relative flex items-center h-[260px] lg:h-[527px] overflow-hidden"
      style="background: var(--color-brand-orange-bright);">
 
   {{-- ═══════════════════════════════════════════════════════════════════
