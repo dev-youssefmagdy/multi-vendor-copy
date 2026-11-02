@@ -43,18 +43,16 @@
                     />
                 </div>
 
-                {{-- Link to an existing product: search box + always-visible result list
-                     (manufacturing-create.js, fed by tenant.manufacturing.products.search). --}}
+                {{-- Link to an existing product: search box + result list that only appears
+                     once the vendor types (manufacturing-create.js, fed by tenant.manufacturing.products.search). --}}
                 <div class="t-field rq-picker" data-field="linked_product_id" data-rq-picker data-url="{{ route('tenant.manufacturing.products.search') }}">
-                    <label for="rq-picker-search" class="field-label">Link to Existing Product (optional)</label>
+                    <label for="rq-picker-search" class="field-label">Similar product in our catalog (optional)</label>
                     <input type="hidden" name="linked_product_id" value="{{ old('linked_product_id') }}" data-rq-picker-value>
                     <label class="rq-picker-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
-                        <input type="search" id="rq-picker-search" placeholder="Search" autocomplete="off" data-rq-picker-input>
+                        <input type="search" id="rq-picker-search" placeholder="Type a product name to find a similar one…" autocomplete="off" data-rq-picker-input>
                     </label>
-                    <ul class="rq-picker-list" role="listbox" aria-label="Existing products" data-rq-picker-list>
-                        <li class="rq-picker-empty">Loading…</li>
-                    </ul>
+                    <ul class="rq-picker-list" role="listbox" aria-label="Existing products" data-rq-picker-list style="display:none"></ul>
                     <p class="field-error" data-error-for="linked_product_id" role="alert" hidden></p>
                 </div>
 

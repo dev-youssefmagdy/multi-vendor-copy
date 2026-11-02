@@ -1,5 +1,5 @@
 // Manufacturing request create page.
-// - "Link to Existing Product": search box + always-visible result list. Picking a
+// - Similar product: search box + result list that only shows once the vendor types. Picking a
 //   product sets the hidden linked_product_id (click again to unlink).
 // - Picking a product pre-fills Product Name, but only when it is currently empty
 //   (mirrors the old Livewire `selectProduct()` behaviour of not clobbering manual input).
@@ -75,12 +75,24 @@ if (form && picker) {
         }
     });
 
-    searchInput.addEventListener('input', debounce(() => load(searchInput.value.trim()), 250));
+    // PANELS-UPDATES-MANUFACTURING: the list stays hidden/empty until the vendor types something to search for.
+    const sync = () => {
+        const q = searchInput.value.trim();
+        if (q === '') {
+            requestId++;
+            list.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+        list.style.display = '';
+        load(q);
+    };
+    searchInput.addEventListener('input', debounce(sync, 250));
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
         }
     });
 
-    load();
+    sync();
 }
