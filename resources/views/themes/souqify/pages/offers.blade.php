@@ -64,9 +64,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             class="rounded-2xl w-[340px] h-[132px] object-cover">
                     </a>
                 @empty
-                    <div class="rounded-2xl shrink-0 w-[340px] h-[132px] bg-neutral-200"></div>
-                    <div class="rounded-2xl shrink-0 w-[340px] h-[132px] bg-neutral-200"></div>
-                    <div class="rounded-2xl shrink-0 w-[340px] h-[132px] bg-neutral-200"></div>
                 @endforelse
             </div>
         </div>
@@ -79,12 +76,11 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         alt="{{ $heroBanner->translationValue('title') ?? __('Offer') }}"
                         class="w-full rounded-xl object-cover h-[171px]">
                 </a>
-            @else
-                <div class="w-full rounded-xl bg-neutral-200 h-[171px]"></div>
             @endif
         </div>
 
         {{-- MEGA SALE --}}
+        @if ($megaSaleProducts->isNotEmpty())
         <div class="pt-6">
             <div class="flex items-center justify-between px-4 mb-3">
                 <span class="text-xl font-semibold text-[#001537]">{{ __('Mega Sale') }}</span>
@@ -222,6 +218,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
         {{-- MID-BANNER 1 --}}
         <div class="pt-6">
@@ -237,6 +234,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
         </div>
 
         {{-- SEASON SALE --}}
+        @if ($seasonSaleProducts->isNotEmpty())
         <div class="pt-6">
             <div class="flex items-center justify-between px-4 mb-3">
                 <span class="text-xl font-semibold text-[#001537]">{{ __('Season Sale') }}</span>
@@ -373,6 +371,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
         {{-- MID-BANNER 2 --}}
         <div class="pt-6">
@@ -389,6 +388,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
         </div>
 
         {{-- SUPER SALE --}}
+        @if ($superSaleProducts->isNotEmpty())
         <div class="pt-6 pb-8">
             <div class="flex items-center justify-between px-4 mb-3">
                 <span class="text-xl font-semibold text-[#001537]">{{ __('Super Sale') }}</span>
@@ -527,6 +527,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
     </div>{{-- end mobile wrapper --}}
 
@@ -542,10 +543,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         alt="{{ $banner->translationValue('title') ?? __('Offer') }}"
                         class="rounded-2xl w-full h-[200px] object-cover">
                 </a>
-            @empty
-                <div class="rounded-2xl w-full h-[200px] bg-neutral-200"></div>
-                <div class="rounded-2xl w-full h-[200px] bg-neutral-200"></div>
-                <div class="rounded-2xl w-full h-[200px] bg-neutral-200"></div>
+                @empty
             @endforelse
             {{-- Hero banner occupies 1 column --}}
             @if ($heroBanner && $heroBanner->image_path)
@@ -554,12 +552,11 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         alt="{{ $heroBanner->translationValue('title') ?? __('Offer') }}"
                         class="rounded-2xl w-full h-[200px] object-cover">
                 </a>
-            @else
-                <div class="rounded-2xl w-full h-[200px] bg-neutral-200"></div>
             @endif
         </div>
 
         {{-- DESKTOP: MEGA SALE --}}
+        @if ($megaSaleProducts->isNotEmpty())
         <div class="mb-8">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
@@ -692,6 +689,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
         {{-- DESKTOP: MID-BANNER 1 --}}
         <div class="mb-8">
@@ -707,6 +705,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
         </div>
 
         {{-- DESKTOP: SEASON SALE --}}
+        @if ($seasonSaleProducts->isNotEmpty())
         <div class="mb-8">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
@@ -851,6 +850,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
         {{-- DESKTOP: MID-BANNER 2 --}}
         <div class="mb-8">
@@ -867,6 +867,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
         </div>
 
         {{-- DESKTOP: SUPER SALE --}}
+        @if ($superSaleProducts->isNotEmpty())
         <div>
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
@@ -1012,6 +1013,7 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                 @endforelse
             </div>
         </div>
+        @endif
 
     </div>{{-- end desktop wrapper --}}
 
