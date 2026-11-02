@@ -13,7 +13,7 @@
         gap: 0.874cqw;                  /* 3.6 / 411.94 */
         width: 100%;
         /* A definite height: the media block is a percentage of the card. */
-        aspect-ratio: 411.94 / 108.05;
+        aspect-ratio: 411.94 / 138;
         background: #FDFDFD;
         border-radius: 7.20597px;
         overflow: hidden;
@@ -29,7 +29,7 @@
     .sqv2-mob__media {
         position: relative;
         display: block;
-        flex: 0 0 26.23%;               /* square: 108.05 / 411.94 */
+        flex: 0 0 33.5%;                /* square: 138 / 411.94 */
         align-self: stretch;
         background: var(--color-page-bg, #F3F3FE);
         overflow: hidden;
