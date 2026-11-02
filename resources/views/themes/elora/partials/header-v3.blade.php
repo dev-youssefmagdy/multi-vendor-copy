@@ -57,8 +57,13 @@
               style="color: var(--color-gray)"
             />
           </form>
+          <button type="button" aria-label="Search by image" class="shrink-0"
+              data-image-search-trigger="storefront-image-search-modal-v3">
+            <img src="{{ asset('elora-3/assets/icons/camera.svg') }}" alt="" class="size-[44px]" />
+          </button>
         </div>
       </div>
+      <x-image-search-modal id="storefront-image-search-modal-v3" :action="route('tenant.storefront.search.image')" />
 
       <!-- Desktop -->
       <div
@@ -101,6 +106,10 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-text-placeholder)"
           />
+          <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v3">
+            <img src="{{ asset('elora-3/assets/icons/camera.svg') }}" alt="" class="size-[22px]" />
+          </button>
         </form>
         <div class="flex items-center gap-[38px] shrink-0">
           <button type="button" class="flex items-center gap-[6px]" onclick="Livewire.dispatch('open-locale-modal')">

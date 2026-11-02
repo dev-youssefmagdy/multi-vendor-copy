@@ -105,6 +105,10 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-gray)"
           />
+          <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v6">
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[24px] w-[33px]" style="{{ $__eloraCamFlip }}" />
+          </button>
         </form>
       </div>
 
@@ -145,7 +149,12 @@
             class="bg-transparent outline-none text-[16px] w-full"
             style="color: var(--color-text-placeholder)"
           />
+          <button type="button" aria-label="{{ __('Search by Image') }}" class="shrink-0"
+            data-image-search-trigger="storefront-image-search-modal-v6">
+            <img src="{{ asset('elora-2/assets/icons/camera.svg') }}" alt="" class="h-[22px] w-[30px]" style="{{ $__eloraCamFlip }}" />
+          </button>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v6" :action="route('tenant.storefront.search.image')" />
         <div class="flex items-center gap-[38px] shrink-0">
           <livewire:tenant.storefront.layout.locale-switcher />
           <a

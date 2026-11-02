@@ -197,6 +197,14 @@
                             </svg>
                         </button>
                         {{-- Image search v1 — expandable to vector DB (pgvector, Pinecone, etc.). --}}
+                        <button type="button" data-image-search-trigger="storefront-image-search-modal"
+                            class="absolute end-1 top-1 bottom-1 w-8 h-8 rounded-full bg-white text-gray-darkest border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition"
+                            aria-label="{{ __('Search by Image') }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                                <circle cx="12" cy="13" r="3.2" />
+                            </svg>
+                        </button>
                     </form>
                 </div>
 
@@ -279,6 +287,14 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0" />
                             </svg>
                         </button>
+                        <button type="button" data-image-search-trigger="storefront-image-search-modal"
+                            class="absolute end-2 inset-y-0 my-auto w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-900 transition"
+                            aria-label="{{ __('Search by Image') }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                                <circle cx="12" cy="13" r="3.2" />
+                            </svg>
+                        </button>
                     </form>
                 </div>
 
@@ -313,6 +329,7 @@
     </header>
 
     {{-- Outside the responsive header bars so it stays visible at every breakpoint --}}
+    <x-image-search-modal id="storefront-image-search-modal" :action="route('tenant.storefront.search.image')" />
 
     {{-- ── Mobile Menu Drawer ─────────────────────────────────────────────────── --}}
     <div id="mobileMenuOverlay"

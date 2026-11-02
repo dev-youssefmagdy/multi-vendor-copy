@@ -62,7 +62,11 @@
         class="relative z-30 mb-3 flex items-center gap-[8px] h-[48px] rounded-[28px] px-[14px] border" style="border-color:var(--color-stroke); background:var(--color-bg-main)">
       <button type="submit"><img src="{{ asset('souqify-3/assets/icons/icon-search-mobile.svg') }}" class="size-[18px] opacity-70" alt="" /></button>
       <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color:var(--color-text-placeholder)" />
+      <button type="button" data-image-search-trigger="storefront-image-search-modal-v4-mobile" aria-label="{{ __('Search by Image') }}">
+        <img src="{{ asset('souqify-3/assets/icons/icon-camera.svg') }}" class="h-[20px] w-[27.5px]" alt="" />
+      </button>
     </form>
+    <x-image-search-modal id="storefront-image-search-modal-v4-mobile" :action="route('tenant.storefront.search.image')" />
   </div>
 
   <!-- Desktop: utility bar + main bar -->
@@ -121,8 +125,12 @@
           <div class="flex flex-1 items-center gap-[8px] pl-[16px]">
             <button type="submit"><img src="{{ asset('souqify-3/assets/icons/icon-search.svg') }}" class="size-[20px] opacity-70" alt="" /></button>
             <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[15px] w-full" style="color:var(--color-text-placeholder)" />
+            <button type="button" data-image-search-trigger="storefront-image-search-modal-v4" aria-label="{{ __('Search by Image') }}">
+              <img src="{{ asset('souqify-3/assets/icons/icon-camera.svg') }}" class="h-[20px] w-[27.5px] opacity-70" alt="" />
+            </button>
           </div>
         </form>
+        <x-image-search-modal id="storefront-image-search-modal-v4" :action="route('tenant.storefront.search.image')" />
       </div>
       <div class="flex items-center gap-[32px] shrink-0">
         <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[8px] cursor-pointer" aria-label="{{ __('Cart') }}">
