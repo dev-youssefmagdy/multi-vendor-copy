@@ -95,14 +95,11 @@
     @push('scripts')
     <script>
         (function () {
-            const FAV_KEY = 'souqify_favorites';
             let currentSort = 'recent';
             let currentSearch = '';
 
-            function getFavs() {
-                try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }
-            }
-            function saveFavs(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
+            function getFavs() { return window.StorefrontFavorites.get(); }
+            function saveFavs(list) { window.StorefrontFavorites.save(list); }
 
             function buildCard(item, idx) {
                 const img = item.image
@@ -171,8 +168,8 @@
 
             document.addEventListener('DOMContentLoaded', render);
             document.addEventListener('livewire:navigated', render);
-            window.addEventListener('souqify-favorites-changed', render);
-            render();
+            window.addEventListener('storefront-favorites-changed', render);
+            if (document.readyState !== 'loading') render();
         })();
     </script>
     @endpush

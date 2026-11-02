@@ -48,6 +48,18 @@
 
                         <x-storefront.product-media-labels :labels="$product->cardLabels()" bg="var(--color-primary)" color="#fff" />
 
+                        {{-- Favorite / heart button – top-right (shared StorefrontFavorites store) --}}
+                        <button type="button" data-fav-slug="{{ $product->slug }}" data-fav='{{ $product->storefrontFavData($currentCurrency ?? null) }}' aria-pressed="false"
+                            aria-label="{{ __('Add to favorites') }}"
+                            onclick="ecommetToggleFavorite(this)"
+                            class="ecommet-fav-btn absolute top-3 right-3 lg:top-4 lg:right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center z-20 transition-transform hover:scale-110"
+                            style="box-shadow:0 2px 6px rgba(0,0,0,.15)">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#242424" stroke-width="1.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z" />
+                            </svg>
+                        </button>
+
                         @if ($mediaItems->count() > 1)
                             <button type="button"
                                 class="absolute left-3 lg:left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 lg:w-11 lg:h-11 rounded-full bg-white/90 border border-[#e5e5e5] text-[#222] flex items-center justify-center shadow-sm hover:bg-white transition"
@@ -74,17 +86,6 @@
                                      fetchpriority="high"
                                      class="object-contain w-[500px] h-[500px] max-w-full max-h-full">
                             @endif
-                        </div>
-
-                        {{-- Dot indicators --}}
-                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-                            @foreach ($mediaItems as $idx => $item)
-                                <button type="button"
-                                    class="w-2.5 h-2.5 rounded-full transition {{ $idx === 0 ? 'bg-[#222]' : 'bg-[#d1d5db]' }}"
-                                    data-media-dot="{{ $idx }}"
-                                    aria-label="{{ $item['type'] === 'video' ? __('Video') : __('Image :index', ['index' => $idx + 1]) }}">
-                                </button>
-                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -427,6 +428,8 @@
 @endphp
 <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
+
+@include($this->pageView('_favorite-script'))
 
 @push('scripts')
 @vite('resources/js/ecommet/product.js')

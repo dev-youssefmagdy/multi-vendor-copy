@@ -1,4 +1,5 @@
 import { initPhoneInputs } from "./phone-input";
+import "./storefront-favorites";
 
 function bootPhoneInputs() {
     initPhoneInputs(document);

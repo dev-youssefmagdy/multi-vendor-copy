@@ -608,14 +608,11 @@
 <script>
     // ── Wishlist ──────────────────────────────────────────────────────────────
     (function () {
-        const FAV_KEY = 'souqify_favorites';
         let currentSort = 'recent';
         let currentSearch = '';
 
-        function getFavs() {
-            try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }
-        }
-        function saveFavs(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
+        function getFavs() { return window.StorefrontFavorites.get(); }
+        function saveFavs(list) { window.StorefrontFavorites.save(list); }
 
         function buildCard(item, idx) {
             const img = item.image
@@ -673,14 +670,14 @@
             const favs = getFavs();
             favs.splice(idx, 1);
             saveFavs(favs);
-            renderWishlist();
+            if (document.readyState !== 'loading') renderWishlist();
             window.dispatchEvent(new CustomEvent('storefront-toast', { detail: { type: 'info', message: '{{ __('Removed from favorites') }}' } }));
         };
         window.souqifyFavSearch = function (val) { currentSearch = (val || '').toLowerCase(); renderWishlist(); };
         window.souqifyFavSort = function (val) { currentSort = val; renderWishlist(); };
 
         document.addEventListener('livewire:navigated', renderWishlist);
-        window.addEventListener('souqify-favorites-changed', renderWishlist);
+        window.addEventListener('storefront-favorites-changed', renderWishlist);
         Livewire.hook('commit', ({ succeed }) => { succeed(() => { setTimeout(renderWishlist, 50); }); });
         renderWishlist();
     })();

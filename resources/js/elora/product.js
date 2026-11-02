@@ -381,18 +381,12 @@ window.eloraOpenDeliveryModal = function () {
 
 
         (function () {
-            var STORAGE_KEY = 'elora_favorites';
-
-            function getFavs() {
-                try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
+            function btnData(btn) {
+                try { return JSON.parse(btn.getAttribute('data-fav') || '{}'); } catch (e) { return {}; }
             }
 
-            function saveFavs(favs) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
-            }
-
-            function isFavorited(productId) {
-                return getFavs().some(function (f) { return String(f.id) === String(productId); });
+            function isFavorited(btn) {
+                return window.StorefrontFavorites.has(btnData(btn));
             }
 
             function syncHeartUI(favorited) {
@@ -417,32 +411,16 @@ window.eloraOpenDeliveryModal = function () {
                     return;
                 }
 
-                var productId = btn.getAttribute('data-product-id');
-                var favs      = getFavs();
-                var idx       = favs.findIndex(function (f) { return String(f.id) === String(productId); });
+                var data = btnData(btn);
+                if (!data.slug && data.id == null) return;
 
-                if (idx !== -1) {
-                    // Already favorited → remove
-                    favs.splice(idx, 1);
-                    saveFavs(favs);
-                    syncHeartUI(false);
-                    if (typeof showStorefrontToast === 'function') {
-                        showStorefrontToast(window.__eloraProductConfig && window.__eloraProductConfig.textRemovedFav || window.trans('Removed from favorites.'), 'info');
-                    }
-                } else {
-                    // Not favorited → add
-                    try {
-                        var data = JSON.parse(btn.getAttribute('data-fav') || '{}');
-                        data.added = Math.floor(Date.now() / 1000);
-                        favs.unshift(data);
-                        saveFavs(favs);
-                        syncHeartUI(true);
-                        if (typeof showStorefrontToast === 'function') {
-                            showStorefrontToast(window.__eloraProductConfig && window.__eloraProductConfig.textAddedFav || window.trans('Added to favorites!'), 'success');
-                        }
-                    } catch (e) {
-                        console.error('eloraProductHeartToggle: failed to parse fav data', e);
-                    }
+                var adding = window.StorefrontFavorites.toggle(data);
+                syncHeartUI(adding);
+                if (typeof showStorefrontToast === 'function') {
+                    var cfg = window.__eloraProductConfig || {};
+                    showStorefrontToast(adding
+                        ? (cfg.textAddedFav || window.trans('Added to favorites!'))
+                        : (cfg.textRemovedFav || window.trans('Removed from favorites.')), adding ? 'success' : 'info');
                 }
             };
 
@@ -450,15 +428,13 @@ window.eloraOpenDeliveryModal = function () {
             document.addEventListener('DOMContentLoaded', function () {
                 var btn = document.querySelector('[data-fav-btn]');
                 if (!btn) return;
-                var productId = btn.getAttribute('data-product-id');
-                syncHeartUI(isFavorited(productId));
+                syncHeartUI(isFavorited(btn));
             });
 
             // Re-sync after Livewire navigations
             document.addEventListener('livewire:navigated', function () {
                 var btn = document.querySelector('[data-fav-btn]');
                 if (!btn) return;
-                var productId = btn.getAttribute('data-product-id');
-                syncHeartUI(isFavorited(productId));
+                syncHeartUI(isFavorited(btn));
             });
         })();

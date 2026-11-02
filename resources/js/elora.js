@@ -347,7 +347,6 @@ tailwind.config = {
 // Shared by every elora home variant / card. Any `button[data-fav]` heart is
 // toggled by eloraHeartToggle(); the product page has its own ([data-fav-btn]).
 (function () {
-    const FAV_KEY = 'elora_favorites';
     const ACTIVE_COLOR = '#FF4D00';
     const FILLED_HEART = 'data:image/svg+xml;utf8,' + encodeURIComponent(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="' + ACTIVE_COLOR + '" stroke="' + ACTIVE_COLOR + '" stroke-width="1.5" stroke-linejoin="round">' +
@@ -355,12 +354,6 @@ tailwind.config = {
     );
     const HEART_SELECTOR = 'button[data-fav]:not([data-fav-btn]):not(.souqify-fav-btn)';
 
-    function getFavs() {
-        try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; }
-    }
-    function saveFavs(favs) {
-        localStorage.setItem(FAV_KEY, JSON.stringify(favs));
-    }
     function slugOf(btn) {
         try { return JSON.parse(btn.dataset.fav || '{}').slug || null; } catch { return null; }
     }
@@ -401,17 +394,7 @@ tailwind.config = {
         try { data = JSON.parse(btn.dataset.fav || '{}'); } catch { return; }
         if (!data.slug) return;
 
-        var favs = getFavs();
-        var idx = favs.findIndex(function (f) { return f.slug === data.slug; });
-        var adding = idx < 0;
-
-        if (adding) {
-            data.added = Math.floor(Date.now() / 1000);
-            favs.unshift(data);
-        } else {
-            favs.splice(idx, 1);
-        }
-        saveFavs(favs);
+        var adding = window.StorefrontFavorites.toggle(data);
 
         // Sync all buttons for this product on the page
         document.querySelectorAll(HEART_SELECTOR).forEach(function (b) {
@@ -424,7 +407,7 @@ tailwind.config = {
     window.eloraV4ToggleFavorite = window.eloraHeartToggle;
 
     function markFavoritedProducts() {
-        var slugs = new Set(getFavs().map(function (f) { return f.slug; }));
+        var slugs = new Set(window.StorefrontFavorites.get().map(function (f) { return f.slug; }));
         document.querySelectorAll(HEART_SELECTOR).forEach(function (btn) {
             applyHeartState(btn, slugs.has(slugOf(btn)));
         });

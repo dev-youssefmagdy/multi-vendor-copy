@@ -88,20 +88,9 @@
 @push('scripts')
     <script>
         (function () {
-            const STORAGE_KEY = 'elora_favorites';
-
-            // ── helpers ──────────────────────────────────────────
-            function getFavs() {
-                try {
-                    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                } catch {
-                    return [];
-                }
-            }
-
-            function saveFavs(favs) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
-            }
+            // ── helpers (shared store: resources/js/storefront-favorites.js) ──
+            function getFavs() { return window.StorefrontFavorites.get(); }
+            function saveFavs(favs) { window.StorefrontFavorites.save(favs); }
 
             // ── build card HTML ───────────────────────────────────
             function buildCard(item, idx) {
@@ -248,12 +237,13 @@
                 render();
             };
 
-            // Initial render
-            render();
+            // Initial render (the shared store loads with the deferred module bundle)
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+            else render();
 
             // Listen for favorites changes from other tabs
             window.addEventListener('storage', function (e) {
-                if (e.key === STORAGE_KEY) render();
+                if (e.key === 'storefront_favorites') render();
             });
         })();
     </script>

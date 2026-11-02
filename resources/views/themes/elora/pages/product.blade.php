@@ -65,6 +65,7 @@
         @php
             $favData = json_encode([
                 'id'        => $product->id,
+                'slug'      => $product->slug,
                 'name'      => $product->translationValue('name') ?? $product->slug,
                 'image'     => $mediaItems->first()['src'] ?? null,
                 'url'       => url()->current(),
