@@ -17,9 +17,9 @@
           >
             <img src="{{ asset('elora-4/assets/icons/menu.svg') }}" alt="" class="size-[16px]" />
           </button>
-          @auth('storefront')
+          @if (auth('storefront')->check() && auth('storefront')->user()->avatar)
           <img
-            src="{{ auth('storefront')->user()->avatar_url ?? asset('elora-4/assets/images/avatar-user.png') }}"
+            src="{{ auth('storefront')->user()->avatar }}"
             alt=""
             class="size-[44px] rounded-full object-cover shrink-0"
           />
@@ -29,14 +29,14 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0" />
             </svg>
           </div>
-          @endauth
+          @endif
           <div class="flex flex-col gap-[3px] min-w-0">
             <p
               class="font-medium text-[18px] truncate"
               style="color: var(--color-text-primary)"
             >
               @auth('storefront')
-                Hi, {{ auth('storefront')->user()->name }} &#128075;
+                Hi, {{ auth('storefront')->user()->full_name }} &#128075;
               @else
               @endauth
             </p>
@@ -271,7 +271,7 @@
           <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
             <span class="block text-[var(--color-text-faint)]">{{ __('Welcome') }}</span>
             <span class="block" style="color: var(--color-black-alt)"
-              >{{ auth('storefront')->user()->name }}</span
+              >{{ auth('storefront')->user()->full_name }}</span
             >
           </span>
         </a>
@@ -388,7 +388,7 @@
       <span
         class="text-[14px] tracking-[0.5px]"
         style="color: var(--color-black-alt)"
-        >{{ auth('storefront')->user()->name }}</span
+        >{{ auth('storefront')->user()->full_name }}</span
       >
     </a>
     @else

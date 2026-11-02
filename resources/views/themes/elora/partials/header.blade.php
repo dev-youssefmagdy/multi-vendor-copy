@@ -112,7 +112,7 @@
                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <span
-                        class="text-xs text-gray-500 hidden lg:block leading-tight">{{ auth('storefront')->user()->name }}</span>
+                        class="text-xs text-gray-500 hidden lg:block leading-tight">{{ auth('storefront')->user()->full_name }}</span>
                 </a>
             @else
                 <a href="{{ route('tenant.storefront.login') }}"

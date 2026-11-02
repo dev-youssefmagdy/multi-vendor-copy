@@ -35,7 +35,7 @@
                 class="font-medium text-[18px]"
                 style="color: var(--color-text-primary)"
               >
-                {{ __('Hi, :name 👋', ['name' => auth('storefront')->user()->name]) }}
+                {{ __('Hi, :name 👋', ['name' => auth('storefront')->user()->full_name]) }}
               </p>
               @else
               <a
@@ -201,7 +201,7 @@
                   >{{ __('Welcome') }}</span
                 >
                 <span class="block" style="color: var(--color-black-alt)"
-                  >{{ auth('storefront')->user()->name }}</span
+                  >{{ auth('storefront')->user()->full_name }}</span
                 >
               </span>
             </a>
@@ -318,7 +318,7 @@
             <span
               class="text-[14px] tracking-[0.5px]"
               style="color: var(--color-black-alt)"
-              >{{ auth('storefront')->user()->name }}</span
+              >{{ auth('storefront')->user()->full_name }}</span
             >
           </a>
         @else

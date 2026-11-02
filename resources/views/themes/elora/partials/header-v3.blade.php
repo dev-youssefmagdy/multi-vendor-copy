@@ -181,7 +181,7 @@
                   >{{ __('Welcome') }}</span
                 >
                 <span class="block" style="color: var(--color-black-alt)"
-                  >{{ auth('storefront')->user()->name }}</span
+                  >{{ auth('storefront')->user()->full_name }}</span
                 >
               </span>
             </a>
@@ -296,7 +296,7 @@
             <span
               class="text-[14px] tracking-[0.5px]"
               style="color: var(--color-black-alt)"
-              >{{ auth('storefront')->user()->name }}</span
+              >{{ auth('storefront')->user()->full_name }}</span
             >
           </a>
         @else

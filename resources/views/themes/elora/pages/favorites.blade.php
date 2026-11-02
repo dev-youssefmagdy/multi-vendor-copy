@@ -67,7 +67,7 @@
         </div>
 
         {{-- Favorites grid --}}
-        <div class="fav-grid flex flex-wrap gap-6" id="favGrid"></div>
+        <div class="fav-grid grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] sm:gap-6" id="favGrid"></div>
 
         {{-- Empty state --}}
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-24 text-center">
