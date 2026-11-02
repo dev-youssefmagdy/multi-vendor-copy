@@ -11,3 +11,9 @@
         rel="stylesheet"
         />
     @vite('resources/css/elora-v2.css')
+
+    {{-- elora-v2.css (a built asset) pins .bottom-overlay (the add-to-cart button) with a physical `right`; mirror it in RTL. --}}
+    <style>
+        @media screen and (max-width: 767px) { [dir="rtl"] .bottom-overlay { right: auto; left: 3.77px; } }
+        @media screen and (min-width: 768px) { [dir="rtl"] .bottom-overlay { right: auto; left: 5.5px; } }
+    </style>
