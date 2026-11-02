@@ -8,8 +8,8 @@
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
         </div>
         @if (!empty($p['badge']))
-        <div class="flex h-[14.69px] lg:h-[31.51px] items-center justify-center p-[3.15px] lg:p-[6.75px] relative rounded-bl-[4.2px] lg:rounded-bl-[9px] rounded-tr-[4.2px] lg:rounded-tr-[9px] shrink-0 min-w-[37.29px] lg:min-w-[80.5px] px-[4px]" style="background:var(--color-accent-yellow)">
-          <p class="font-normal text-[7.34px] leading-[9px] lg:text-[15.75px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['badge'] }}</p>
+        <div class="flex h-[19px] lg:h-[34px] items-center justify-center p-[3.15px] lg:p-[6.75px] relative rounded-bl-[4.2px] lg:rounded-bl-[9px] rounded-tr-[4.2px] lg:rounded-tr-[9px] shrink-0 min-w-[37.29px] lg:min-w-[80.5px] px-[4px]" style="background:var(--color-accent-yellow)">
+          <p class="font-normal text-[10.5px] leading-[13px] lg:text-[17px] lg:leading-[20px] tracking-[0.26px] lg:tracking-[0.56px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['badge'] }}</p>
         </div>
         @endif
       </div>

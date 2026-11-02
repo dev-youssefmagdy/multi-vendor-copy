@@ -24,22 +24,6 @@
         class="grid grid-cols-2 lg:grid-cols-6 gap-[12px] lg:gap-[24px]"
       >
         @forelse ($recommendedCards as $p)
-          @php
-            $__badgeCycle = $loop->index % 3;
-            if ($__badgeCycle === 0) {
-                $p['badgeText'] = __('New In');
-                $p['badgeBg'] = 'var(--color-badge-purple)';
-                $p['badgeColor'] = '#FFFFFF';
-            } elseif ($__badgeCycle === 1) {
-                $p['badgeText'] = !empty($p['discount']) ? $p['discount'] : __('30% OFF');
-                $p['badgeBg'] = 'var(--color-error)';
-                $p['badgeColor'] = '#FFFFFF';
-            } else {
-                $p['badgeText'] = $p['sold'] ?? __('Sold');
-                $p['badgeBg'] = 'var(--color-accent-yellow)';
-                $p['badgeColor'] = 'var(--color-black)';
-            }
-          @endphp
           <div class="h-full" wire:key="recommended-{{ $p['id'] }}">
             @include('themes.elora.pages.home-v4.sections.partials.recommended_card', ['p' => $p])
           </div>

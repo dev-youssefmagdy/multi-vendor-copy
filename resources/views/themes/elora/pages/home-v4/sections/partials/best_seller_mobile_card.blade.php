@@ -12,12 +12,14 @@
   <div class="relative w-full h-[142.03px] shrink-0 overflow-hidden rounded-t-[6.21px]">
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
 
+    @if (!empty($p['badge']))
     <span
-      class="absolute top-0 end-0 flex items-center justify-center px-[4.08px] h-[19.05px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
+      class="absolute top-0 end-0 flex items-center justify-center px-[5px] h-[22px] rounded-tr-[5.44px] rounded-bl-[5.44px]"
       style="background: var(--color-accent-yellow)"
     >
-      <p class="font-normal text-[9.52px] leading-[12px] tracking-[0.34px] whitespace-nowrap" style="color: var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</p>
+      <p class="font-normal text-[11.5px] leading-[14px] tracking-[0.34px] whitespace-nowrap" style="color: var(--color-black)">{{ $p['badge'] }}</p>
     </span>
+    @endif
 
     <button
       type="button"

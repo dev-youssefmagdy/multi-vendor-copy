@@ -9,7 +9,7 @@
       <svg class="size-[12.57px] lg:size-[26.97px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
     </button>
     @if (!empty($p['badge']))
-    <span class="absolute top-0 end-0 flex items-center justify-center text-[7.71px] leading-[10px] lg:text-[16.55px] lg:leading-[21px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] max-w-[70%] truncate whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>
+    <span class="absolute top-0 end-0 flex items-center justify-center text-[10.5px] leading-[13px] lg:text-[17.5px] lg:leading-[22px] font-normal px-[3.31px] lg:px-[7.09px] py-[3.31px] lg:py-[7.09px] rounded-bl-[4.41px] lg:rounded-bl-[9.46px] rounded-tr-[4.41px] lg:rounded-tr-[9.46px] tracking-[0.28px] lg:tracking-[0.59px] max-w-[70%] truncate whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>
     @endif
     @if (!empty($p['isOutOfStock']))
 <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>

@@ -1,4 +1,4 @@
-{{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, sold (optional badge text) --}}
+{{-- Expects $p: image, name, weight, desc, rating, price, oldPrice, discount, url, badge (optional badge text) --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] lg:rounded-[8px] h-full shadow-[var(--shadow-card-lg)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="flex flex-col gap-[5px] lg:gap-[8px] aspect-square items-end justify-end px-[4px] lg:px-[6px] py-[3px] lg:py-[5px] relative shrink-0 w-full">
@@ -7,9 +7,11 @@
         <div class="absolute left-1/2 -translate-x-1/2 h-full rounded-t-[5px] lg:rounded-t-[8px] top-0 w-full overflow-hidden">
           <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
         </div>
-        <div class="flex h-[15px] lg:h-[28px] items-center justify-center p-[3px] lg:p-[6px] relative rounded-bl-[4px] lg:rounded-bl-[8px] rounded-tr-[4px] lg:rounded-tr-[8px] shrink-0 lg:w-[71px]" style="background:{{ $p['badgeBg'] ?? 'var(--color-accent-yellow)' }}">
-          <p class="font-normal text-[8px] lg:text-[14px] lg:leading-[18px] tracking-[0.3px] lg:tracking-[0.5px] whitespace-nowrap" style="color:{{ $p['badgeColor'] ?? 'var(--color-black)' }}">{{ $p['badgeText'] ?? ($p['sold'] ?? '') }}</p>
+        @if (!empty($p['badge']))
+        <div class="flex h-[20px] lg:h-[32px] items-center justify-center p-[3px] lg:p-[6px] relative rounded-bl-[4px] lg:rounded-bl-[8px] rounded-tr-[4px] lg:rounded-tr-[8px] shrink-0 lg:min-w-[71px] px-[4px]" style="background:var(--color-accent-yellow)">
+          <p class="font-normal text-[11px] leading-[14px] lg:text-[16px] lg:leading-[20px] tracking-[0.3px] lg:tracking-[0.5px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['badge'] }}</p>
         </div>
+        @endif
       </div>
       <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
         data-fav='{{ $p['favData'] ?? '{}' }}'

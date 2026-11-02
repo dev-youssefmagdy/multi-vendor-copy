@@ -8,9 +8,11 @@
           <div class="absolute left-1/2 -translate-x-1/2 h-[167.33px] rounded-t-[7.31px] top-0 w-full overflow-hidden">
             <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
           </div>
-          <div class="flex h-[22.44px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">
-            <p class="font-normal text-[11.22px] leading-[14px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['sold'] ?? __('Sold') }}</p>
+          @if (!empty($p['badge']))
+          <div class="flex h-[26px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">
+            <p class="font-normal text-[13.5px] leading-[17px] tracking-[0.4px] whitespace-nowrap" style="color:var(--color-black)">{{ $p['badge'] }}</p>
           </div>
+          @endif
         </div>
         <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
           data-fav='{{ $p['favData'] ?? '{}' }}'
