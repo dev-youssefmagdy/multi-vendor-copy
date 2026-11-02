@@ -68,6 +68,7 @@
 
         {{-- Favorites grid --}}
         <div class="fav-grid grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] sm:gap-6" id="favGrid"></div>
+        <div id="favPager"></div>
 
         {{-- Empty state --}}
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-24 text-center">
@@ -88,6 +89,8 @@
 @push('scripts')
     <script>
         (function () {
+            @include('components.storefront.favorites-pager-js')
+
             // ── helpers (shared store: resources/js/storefront-favorites.js) ──
             function getFavs() { return window.StorefrontFavorites.get(); }
             function saveFavs(favs) { window.StorefrontFavorites.save(favs); }
@@ -146,6 +149,7 @@
             // ── render ────────────────────────────────────────────
             let currentSort = 'recent';
             let currentSearch = '';
+            let currentPage = 1;
 
             function render() {
                 const stored = getFavs();
@@ -153,6 +157,7 @@
                 const grid = document.getElementById('favGrid');
                 const empty = document.getElementById('emptyState');
                 const favNum = document.getElementById('favNum');
+                const pager = document.getElementById('favPager');
 
                 // filter
                 if (currentSearch) {
@@ -168,15 +173,25 @@
 
                 if (favs.length === 0) {
                     grid.innerHTML = '';
+                    pager.innerHTML = '';
                     empty.classList.remove('hidden');
                     empty.classList.add('flex');
                 } else {
                     // Buttons act on the stored list, so index each card by its stored position (not its sorted/filtered one)
-                    grid.innerHTML = favs.map(item => buildCard(item, stored.indexOf(item))).join('');
+                    const paged = window.StorefrontPager.slice(favs, currentPage);
+                    currentPage = paged.page;
+                    grid.innerHTML = paged.items.map(item => buildCard(item, stored.indexOf(item))).join('');
+                    window.StorefrontPager.render(pager, paged, goToPage);
                     empty.classList.add('hidden');
                     empty.classList.remove('flex');
                     applyStockState();
                 }
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                render();
+                document.getElementById('favGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             // Out-of-stock (or no longer available) favorites get a disabled cart button and a label.
@@ -281,7 +296,7 @@
             };
 
             window.sortFavorites = function (type) {
-                currentSort = type;
+                currentSort = type; currentPage = 1;
                 document.querySelectorAll('.sort-btn').forEach(btn => {
                     btn.classList.remove('bg-[var(--color-primary)]', 'text-white', 'border-[var(--color-primary)]', 'font-medium');
                     btn.classList.add('text-[#555]', 'bg-white', 'border-[#E0E0E0]', 'hover:border-[var(--color-primary)]', 'hover:text-[var(--color-primary)]');
@@ -296,7 +311,7 @@
             };
 
             window.filterFavorites = function () {
-                currentSearch = (document.getElementById('favSearch').value || '').toLowerCase();
+                currentSearch = (document.getElementById('favSearch').value || '').toLowerCase(); currentPage = 1;
                 render();
             };
 

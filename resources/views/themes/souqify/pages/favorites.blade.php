@@ -54,6 +54,7 @@
                 id="souqify-fav-grid"
                 class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4"
             ></div>
+            <div id="souqify-fav-pager"></div>
 
             <div
                 id="souqify-fav-empty"
@@ -95,8 +96,11 @@
     @push('scripts')
     <script>
         (function () {
+@include('components.storefront.favorites-pager-js')
+
             let currentSort = 'recent';
             let currentSearch = '';
+            let currentPage = 1;
 
             function getFavs() { return window.StorefrontFavorites.get(); }
             function saveFavs(list) { window.StorefrontFavorites.save(list); }
@@ -134,7 +138,8 @@
             }
 
             function render() {
-                let favs = getFavs();
+                const stored = getFavs();
+                let favs = [...stored];
                 if (currentSearch) {
                     favs = favs.filter(f => (f.name || '').toLowerCase().includes(currentSearch));
                 }
@@ -145,15 +150,27 @@
                 const grid = document.getElementById('souqify-fav-grid');
                 const empty = document.getElementById('souqify-fav-empty');
                 const count = document.getElementById('souqify-fav-count');
+                const pager = document.getElementById('souqify-fav-pager');
                 if (!grid) return;
                 count.textContent = favs.length;
                 if (favs.length === 0) {
                     grid.innerHTML = '';
+                    pager.innerHTML = '';
                     empty.classList.remove('hidden');
                 } else {
-                    grid.innerHTML = favs.map((item, i) => buildCard(item, i)).join('');
+                    const paged = window.StorefrontPager.slice(favs, currentPage);
+                    currentPage = paged.page;
+                    // Remove acts on the stored list, so index each card by its stored position
+                    grid.innerHTML = paged.items.map(item => buildCard(item, stored.indexOf(item))).join('');
+                    window.StorefrontPager.render(pager, paged, goToPage, 'var(--sq-primary)');
                     empty.classList.add('hidden');
                 }
+            }
+
+            function goToPage(page) {
+                currentPage = page;
+                render();
+                document.getElementById('souqify-fav-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             window.souqifyRemoveFav = function (idx) {
@@ -163,8 +180,8 @@
                 render();
                 window.dispatchEvent(new CustomEvent('storefront-toast', { detail: { type: 'info', message: '{{ __('Removed from favorites') }}' } }));
             };
-            window.souqifyFavSearch = function (val) { currentSearch = (val || '').toLowerCase(); render(); };
-            window.souqifyFavSort = function (val) { currentSort = val; render(); };
+            window.souqifyFavSearch = function (val) { currentSearch = (val || '').toLowerCase(); currentPage = 1; render(); };
+            window.souqifyFavSort = function (val) { currentSort = val; currentPage = 1; render(); };
 
             document.addEventListener('DOMContentLoaded', render);
             document.addEventListener('livewire:navigated', render);

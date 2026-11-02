@@ -453,6 +453,7 @@
 
                     <div id="souqify-fav-grid"
                         class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
+                    <div id="souqify-fav-pager"></div>
 
                     <div id="souqify-fav-empty"
                         class="hidden bg-white border border-neutral-200 rounded-2xl py-16 text-center">
@@ -608,8 +609,11 @@
 <script>
     // ── Wishlist ──────────────────────────────────────────────────────────────
     (function () {
+@include('components.storefront.favorites-pager-js')
+
         let currentSort = 'recent';
         let currentSearch = '';
+        let currentPage = 1;
 
         function getFavs() { return window.StorefrontFavorites.get(); }
         function saveFavs(list) { window.StorefrontFavorites.save(list); }
@@ -650,8 +654,10 @@
             const grid = document.getElementById('souqify-fav-grid');
             const empty = document.getElementById('souqify-fav-empty');
             const count = document.getElementById('souqify-fav-count');
+            const pager = document.getElementById('souqify-fav-pager');
             if (!grid) return;
-            let favs = getFavs();
+            const stored = getFavs();
+            let favs = [...stored];
             if (currentSearch) favs = favs.filter(f => (f.name || '').toLowerCase().includes(currentSearch));
             if (currentSort === 'price-asc') favs.sort((a, b) => (a.price || 0) - (b.price || 0));
             if (currentSort === 'price-desc') favs.sort((a, b) => (b.price || 0) - (a.price || 0));
@@ -659,11 +665,22 @@
             if (count) count.textContent = favs.length;
             if (favs.length === 0) {
                 grid.innerHTML = '';
+                if (pager) pager.innerHTML = '';
                 empty.classList.remove('hidden');
             } else {
-                grid.innerHTML = favs.map((item, i) => buildCard(item, i)).join('');
+                const paged = window.StorefrontPager.slice(favs, currentPage);
+                currentPage = paged.page;
+                // Remove acts on the stored list, so index each card by its stored position
+                grid.innerHTML = paged.items.map(item => buildCard(item, stored.indexOf(item))).join('');
+                window.StorefrontPager.render(pager, paged, goToPage, 'var(--sq-primary)');
                 empty.classList.add('hidden');
             }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderWishlist();
+            document.getElementById('souqify-fav-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         window.souqifyRemoveFav = function (idx) {
@@ -673,8 +690,8 @@
             if (document.readyState !== 'loading') renderWishlist();
             window.dispatchEvent(new CustomEvent('storefront-toast', { detail: { type: 'info', message: '{{ __('Removed from favorites') }}' } }));
         };
-        window.souqifyFavSearch = function (val) { currentSearch = (val || '').toLowerCase(); renderWishlist(); };
-        window.souqifyFavSort = function (val) { currentSort = val; renderWishlist(); };
+        window.souqifyFavSearch = function (val) { currentSearch = (val || '').toLowerCase(); currentPage = 1; renderWishlist(); };
+        window.souqifyFavSort = function (val) { currentSort = val; currentPage = 1; renderWishlist(); };
 
         document.addEventListener('livewire:navigated', renderWishlist);
         window.addEventListener('storefront-favorites-changed', renderWishlist);
