@@ -51,7 +51,7 @@ $badge optional ribbon arrow label (top-left of image)
 @endphp
 
 <a href="{{ route('tenant.storefront.product', $product->slug) }}"
-    class="elora-showcase-card group bg-fill rounded-lg card-w block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
+    class="elora-showcase-card group bg-fill rounded-lg border border-[#E5E5E5] card-w block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg">
 
     <div class="relative card-img-h rounded-t-lg overflow-hidden">
         @if ($img)
