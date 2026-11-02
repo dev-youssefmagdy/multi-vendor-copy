@@ -777,7 +777,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg></button>
                 <button onclick="scrollCarousel('collection', 1)"
-                    class="w-10 h-10 rounded-full bg-[color:var(--sq-primary)] text-white flex items-center justify-center hover:bg-[color:var(--sq-primary-hover)] transition"
+                    class="w-10 h-10 rounded-full bg-white border border-neutral-300 hover:border-[color:var(--sq-primary)] hover:text-[color:var(--sq-primary)] flex items-center justify-center transition"
                     aria-label="{{ __('Next') }}"><svg class="w-4 h-4" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
