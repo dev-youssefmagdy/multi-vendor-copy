@@ -247,9 +247,10 @@
         left: 2.79cqw;
     }
     [dir="rtl"] .sqv5-deal__cart {
-        left: auto;
-        /* Exact mirror of `left: 73.75%` for a 23.75cqw-wide button. */
-        right: calc(26.25% - 23.75cqw);
+        right: auto;
+        /* Mirror of `left: 73.75%` for a 23.75cqw-wide button: the same ~2.5% gap, but from the LEFT edge
+           (the old `right: calc(...)` kept the button on the right in RTL). */
+        left: calc(26.25% - 23.75cqw);
     }
     [dir="rtl"] .sqv5-deal__ribbon {
         left: auto;

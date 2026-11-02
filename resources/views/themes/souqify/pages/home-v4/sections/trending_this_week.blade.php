@@ -367,6 +367,12 @@
         line-height: 1.2647;            /* 14 / 11.0698 */
     }
 
+    /* RTL: the cart button sat on the physical right in both directions; mirror it. */
+    [dir="rtl"] .sqv4-trend-card__cart {
+        right: auto;
+        left: 5.53492px;
+    }
+
     @media (min-width: 1024px) {
         .sqv4-trend {
             /* 24px 56px padding, 24px gap */
