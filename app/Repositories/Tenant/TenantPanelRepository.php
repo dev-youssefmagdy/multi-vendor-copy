@@ -199,7 +199,14 @@ class TenantPanelRepository
             fn ($id) => filled($id)
         ));
 
+        // PANELS-UPDATES-PRODUCTS-SALES: units sold per product (same definition the storefront's best-selling
+        // sort uses: order_items.qty, resolved through the variant when the line has no product id).
+        $salesSql = '(SELECT COALESCE(SUM(oi.qty), 0) FROM order_items oi LEFT JOIN product_variants pv ON pv.id = oi.product_variant_id WHERE COALESCE(oi.product_id, pv.product_id) = products.id)';
+        $sort = (string) ($filters['sort'] ?? '');
+
         return Product::query()
+            ->select('products.*')
+            ->selectRaw($salesSql.' as sales_count')
             ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
@@ -218,7 +225,14 @@ class TenantPanelRepository
                 $query->whereIn('central_product_id', $imageSearchIds);
                 $ids = implode(',', array_map('intval', $imageSearchIds));
                 $query->orderByRaw("FIELD(central_product_id, {$ids})");
-            }, fn ($query) => $query->orderBy('order_number'));
+            }, fn ($query) => match ($sort) {
+                // PANELS-UPDATES-PRODUCTS-SALES: sort by sales count / price (ties keep the store's own order).
+                'sales_desc' => $query->orderByRaw($salesSql.' desc')->orderBy('order_number'),
+                'sales_asc' => $query->orderByRaw($salesSql.' asc')->orderBy('order_number'),
+                'price_asc' => $query->orderBy('default_price')->orderBy('order_number'),
+                'price_desc' => $query->orderByDesc('default_price')->orderBy('order_number'),
+                default => $query->orderBy('order_number'),
+            });
     }
 
     /**

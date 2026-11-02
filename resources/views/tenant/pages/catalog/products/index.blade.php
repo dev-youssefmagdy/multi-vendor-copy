@@ -25,7 +25,18 @@
                     Your store is up to date with the platform catalog.
                 @endif
             </p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                {{-- PANELS-UPDATES-PRODUCTS-SALES: sort the product cards by sales count or price --}}
+                <form method="GET" action="{{ route('tenant.products.index') }}" style="margin:0">
+                    @foreach(request()->except(['sort', 'page']) as $k => $v)
+                        @if(is_scalar($v))<input type="hidden" name="{{ $k }}" value="{{ $v }}">@endif
+                    @endforeach
+                    <select name="sort" onchange="this.form.submit()" aria-label="Sort products" style="height:44px;border-radius:12px;padding:0 12px;border:1px solid var(--ds-border, #e5e7eb);background:var(--ds-surface, #fff);color:inherit">
+                        @foreach(['' => 'Default order', 'sales_desc' => 'Most sold', 'sales_asc' => 'Least sold', 'price_asc' => 'Price: low to high', 'price_desc' => 'Price: high to low'] as $value => $label)
+                            <option value="{{ $value }}" @selected(request('sort', '') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </form>
                 <a href="{{ route('tenant.products.new') }}" class="btn btn-lg">New products</a>
                 @if(($pendingNewCount ?? 0) > 0)
                     <form method="POST" action="{{ route('tenant.products.sync-new') }}">

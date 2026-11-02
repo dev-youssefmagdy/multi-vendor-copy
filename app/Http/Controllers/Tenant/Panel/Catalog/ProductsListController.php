@@ -37,6 +37,7 @@ final class ProductsListController extends PanelController
             'stock' => $request->query('stock', ''),
             'category' => $request->query('category'),
             'image_ids' => $imageIds,
+            'sort' => $request->query('sort'),
         ])->paginate(12)->withQueryString();
         $centralSnapshots = $this->repo->centralProductSnapshots(
             $products->getCollection()->pluck('central_product_id')->filter()->unique()->values()->all()

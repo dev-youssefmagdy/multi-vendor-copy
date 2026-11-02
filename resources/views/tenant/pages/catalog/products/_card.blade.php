@@ -31,6 +31,10 @@
             <span class="pm-card-initial" aria-hidden="true">{{ strtoupper(mb_substr($label, 0, 1)) }}</span>
         @endunless
         @if($added)<span class="db-opp-added">Already added</span>@endif
+        {{-- PANELS-UPDATES-PRODUCTS-SALES: units sold, shown on every product card --}}
+        <span class="pm-sales" title="Units sold" style="position:absolute;inset-inline-start:12px;top:12px;background:rgba(0,0,0,.72);color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;line-height:1.4">
+            {{ number_format((int) ($product->sales_count ?? 0)) }} sold
+        </span>
         @if($belowMarket)
             <span class="db-opp-cheaper">
                 <small>Cheaper than market by</small>
