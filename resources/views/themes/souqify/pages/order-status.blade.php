@@ -171,7 +171,7 @@
                                     @if ($subInfo)
                                         <p class="text-xs text-zinc-500 font-['Outfit'] tracking-wide">{{ $subInfo }}</p>
                                     @endif
-                                    <p class="text-xs text-zinc-500 font-['Outfit']">{{ $fmt($item->price) }} &times; {{ $item->qty }} = {{ $fmt($item->sub_total + $item->fixed_shipping) }}</p>
+                                    <p class="text-xs text-zinc-500 font-['Outfit']">{{ $fmt(($item->sub_total + $item->fixed_shipping) / max(1, (int) $item->qty)) }} &times; {{ $item->qty }} = {{ $fmt($item->sub_total + $item->fixed_shipping) }}</p>
                                     @if ((float) $item->discount > 0)
                                         <p class="text-xs text-red-600 font-['Outfit']">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
                                     @endif

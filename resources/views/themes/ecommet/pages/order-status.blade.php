@@ -133,7 +133,7 @@
                                 <div class="flex items-center gap-3 mt-1 text-[12px] text-gray-medium">
                                     <span>{{ __('Qty: :qty', ['qty' => $item->qty]) }}</span>
                                     <span>×</span>
-                                    <span class="font-medium text-[#242424]">{{ $fmt($item->price) }}</span>
+                                    <span class="font-medium text-[#242424]">{{ $fmt(($item->sub_total + $item->fixed_shipping) / max(1, (int) $item->qty)) }}</span>
                                 </div>
                                 @if ((float) $item->discount > 0)
                                     <p class="text-[11px] text-gray-medium mt-1">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>

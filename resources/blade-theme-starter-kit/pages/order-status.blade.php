@@ -25,11 +25,11 @@
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
             <span>
                 {{ $item->product?->translationValue('name') ?? 'Product' }} × {{ $item->qty }}
-                ({{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->price, 2) }} each{{ (float) $item->discount > 0 ? ', discount -' . number_format($item->discount, 2) : '' }})
+                ({{ $currentCurrency?->symbol ?? '$' }}{{ number_format(($item->sub_total + $item->fixed_shipping) / max(1, (int) $item->qty) * (float) ($currentCurrency?->conversion_rate ?? 1), 2) }} each{{ (float) $item->discount > 0 ? ', discount -' . number_format($item->discount * (float) ($currentCurrency?->conversion_rate ?? 1), 2) : '' }})
                 {{-- Optional: "Request Return" / return status / "Return after delivery" --}}
                 @include('livewire.tenant.storefront.partials.return-item-action')
             </span>
-            <span>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->grand_total, 2) }}</span>
+            <span>{{ $currentCurrency?->symbol ?? '$' }}{{ number_format($item->grand_total * (float) ($currentCurrency?->conversion_rate ?? 1), 2) }}</span>
         </div>
     @endforeach
 

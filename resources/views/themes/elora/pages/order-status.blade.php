@@ -146,7 +146,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                                         @if ($orderedVariantTitle)
                                         <p class="text-sm text-[#808080] leading-5">{{ $orderedVariantTitle }}</p>
                                         @endif
-                                        <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }} &times; {{ $fmt($item->price) }}</p>
+                                        <p class="text-sm text-[#808080] leading-5">{{ __('Qty:') }} {{ $item->qty }} &times; {{ $fmt(($item->sub_total + $item->fixed_shipping) / max(1, (int) $item->qty)) }}</p>
                                         <p class="text-sm text-[#808080] leading-5">{{ __('Subtotal') }}: {{ $fmt($item->sub_total + $item->fixed_shipping) }}</p>
                                         @if ((float) $item->discount > 0)
                                         <p class="text-sm text-red-500 leading-5">{{ __('Flash-sale discount') }}: -{{ $fmt($item->discount) }}</p>
