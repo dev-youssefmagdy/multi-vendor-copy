@@ -131,6 +131,19 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
             </div>
         @endif
 
+        {{-- Favorite / heart button – top-right (server-backed: /favorites/toggle) --}}
+        <button type="button" data-fav-product="{{ $product->id }}" aria-pressed="false"
+            aria-label="{{ __('Add to favorites') }}"
+            onclick="event.preventDefault(); event.stopPropagation(); ecommetToggleFavorite(this)"
+            class="ecommet-fav-btn absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center z-20 transition-transform hover:scale-110"
+            style="box-shadow:0 2px 6px rgba(0,0,0,.15)">
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="#242424" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z" />
+            </svg>
+        </button>
+
         {{-- Out of stock overlay --}}
         @if ($isOutOfStock)
             <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
@@ -252,6 +265,65 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
                 img.setAttribute('data-slider-idx', String(idx));
                 img.src = imgs[idx];
             };
+        })();
+    </script>
+@endonce
+
+@once
+    <script>
+        (function () {
+            if (window.__ecommetFavInit) return;
+            window.__ecommetFavInit = true;
+            var ACTIVE = '#de1709';
+            var loggedIn = @json(auth('storefront')->check());
+            var toggleUrl = @json(route('tenant.storefront.favorites.toggle'));
+            var idsUrl = @json(route('tenant.storefront.favorites.ids'));
+            var loginUrl = @json(route('tenant.storefront.login'));
+            var csrf = function () { var m = document.querySelector('meta[name="csrf-token"]'); return m ? m.content : ''; };
+            var t = function (s) { return typeof window.trans === 'function' ? window.trans(s) : s; };
+            var toast = function (m, type) { if (typeof window.showStorefrontToast === 'function') window.showStorefrontToast(t(m), type); };
+
+            function paint(id, active) {
+                document.querySelectorAll('[data-fav-product="' + id + '"]').forEach(function (b) {
+                    b.setAttribute('aria-pressed', active ? 'true' : 'false');
+                    var svg = b.querySelector('svg'), path = svg && svg.querySelector('path');
+                    if (svg) { svg.setAttribute('stroke', active ? ACTIVE : '#242424'); }
+                    if (path) { path.setAttribute('fill', active ? ACTIVE : 'none'); }
+                });
+            }
+
+            window.ecommetToggleFavorite = function (btn) {
+                var id = btn.getAttribute('data-fav-product');
+                if (!loggedIn) {
+                    toast('Please log in to add favorites.', 'info');
+                    window.location.href = loginUrl;
+                    return;
+                }
+                if (btn.dataset.busy) return;
+                btn.dataset.busy = '1';
+                fetch(toggleUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf() },
+                    body: JSON.stringify({ product_id: Number(id) })
+                }).then(function (r) { return r.json(); }).then(function (d) {
+                    if (!d.success) { toast(d.message || 'Something went wrong.', 'error'); return; }
+                    paint(id, d.favorited);
+                    toast(d.favorited ? 'Added to favorites!' : 'Removed from favorites.', d.favorited ? 'success' : 'info');
+                }).catch(function () { toast('Something went wrong.', 'error'); })
+                  .finally(function () { delete btn.dataset.busy; });
+            };
+
+            function markFavorites() {
+                if (!loggedIn || !document.querySelector('[data-fav-product]')) return;
+                fetch(idsUrl, { headers: { 'Accept': 'application/json' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) { (d.ids || []).forEach(function (id) { paint(id, true); }); })
+                    .catch(function () {});
+            }
+            document.addEventListener('DOMContentLoaded', markFavorites);
+            document.addEventListener('livewire:navigated', markFavorites);
+            document.addEventListener('livewire:updated', markFavorites);
+            markFavorites();
         })();
     </script>
 @endonce
