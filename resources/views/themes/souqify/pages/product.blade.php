@@ -391,28 +391,6 @@
                 </script>
                 @endif
 
-                <!-- Shipping countries -->
-                @if($shippingCountries->isNotEmpty())
-                <div class="border border-neutral-200 rounded-xl p-3 lg:p-4 flex flex-col gap-2">
-                    <div class="flex items-center gap-2 text-sm font-medium text-neutral-700">
-                        <svg class="w-4 h-4 text-[color:var(--sq-primary)] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
-                        </svg>
-                        <span>{{ __('Ships to') }}</span>
-                    </div>
-                    <div class="flex flex-wrap gap-1.5">
-                        @foreach($shippingCountries as $country)
-                        <span class="inline-flex items-center gap-1 bg-neutral-100 text-neutral-700 text-xs px-2 py-1 rounded-full">
-                            @if($country->flag_emoji)
-                            <span>{{ $country->flag_emoji }}</span>
-                            @endif
-                            {{ $country->name }}
-                        </span>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
 
                 {{-- Return & refund policy --}}
                 @if(isset($returnPolicy))
