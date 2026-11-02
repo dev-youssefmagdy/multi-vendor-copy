@@ -98,12 +98,7 @@
     /* Phones: New In uses the same card as Trending Now (full row, square fitted photo);
        from 640px the original deal card is kept. */
     .sqv3-newin__wide { display: none; }
-    @media (max-width: 639px) {
-        .sqv3-newin__row { padding-inline-end: 16px; box-sizing: border-box; }
-        /* Taller New In cards: bigger square photo (52% of the card) and a 214px minimum height. */
-        .sqv3-newin .sqv3-trend-card { min-height: 214px; align-items: center; }
-        .sqv3-newin .sqv3-trend-card__media { width: 52%; align-self: center; }
-    }
+    @media (max-width: 639px) { .sqv3-newin__row { padding-inline-end: 16px; box-sizing: border-box; } }
     @media (min-width: 640px) {
         .sqv3-newin__phone { display: none; }
         .sqv3-newin__wide { display: block; }
