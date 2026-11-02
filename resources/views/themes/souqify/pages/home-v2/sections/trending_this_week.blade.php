@@ -104,8 +104,8 @@
        auto slide with no width blows the card up to the full row. */
     .sqv2-trend__slide {
         height: auto;
-        /* Phones show two whole cards and a sliver of the third. */
-        width: calc((100% - 2 * 12px) / 2.25);
+        /* Phones show one whole card and most of the next (was 2.25 cards: too small). */
+        width: calc((100% - 1 * 12px) / 1.7);
     }
 
     .sqv2-trend__empty {
@@ -170,8 +170,8 @@
     }
 
     var sw = new Swiper(el, {
-      // Two whole cards plus a sliver of the third.
-      slidesPerView: 2.25,
+      // One whole card plus most of the next.
+      slidesPerView: 1.7,
       spaceBetween: 12,
       breakpoints: {
         640: { slidesPerView: 2.5, spaceBetween: 16 },
