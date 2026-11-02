@@ -242,6 +242,24 @@
         right: auto;
         left: 0.92cqw;
     }
+
+    /* Phones, Best Seller / New In: the card is ~378px wide, so the comp's cqw sizes read tiny
+       (name ~13px, rating ~9px). Scale the text up about 35%. */
+    @media (max-width: 639px) {
+        .sqv2-best .sqv2-mob__name, .sqv2-newin .sqv2-mob__name { font-size: 4.8cqw; }
+        .sqv2-best .sqv2-mob__weight, .sqv2-newin .sqv2-mob__weight,
+        .sqv2-best .sqv2-mob__sub, .sqv2-newin .sqv2-mob__sub { font-size: 3.8cqw; }
+        .sqv2-best .sqv2-mob__rating-text, .sqv2-newin .sqv2-mob__rating-text { font-size: 3.3cqw; }
+        .sqv2-best .sqv2-mob__stars, .sqv2-newin .sqv2-mob__stars { width: 16.5cqw; height: 2.6cqw; }
+        .sqv2-best .sqv2-mob__price, .sqv2-newin .sqv2-mob__price { font-size: 5.2cqw; }
+        .sqv2-best .sqv2-mob__old, .sqv2-newin .sqv2-mob__old { font-size: 3.5cqw; }
+        .sqv2-best .sqv2-mob__off, .sqv2-newin .sqv2-mob__off { font-size: 3.3cqw; }
+        .sqv2-best .sqv2-mob__metarow span, .sqv2-newin .sqv2-mob__metarow span,
+        .sqv2-best .sqv2-mob__metarow .product-label, .sqv2-newin .sqv2-mob__metarow .product-label { font-size: 3.4cqw; }
+        .sqv2-best .sqv2-mob__metarow img, .sqv2-newin .sqv2-mob__metarow img,
+        .sqv2-best .sqv2-mob__metarow svg, .sqv2-newin .sqv2-mob__metarow svg { width: 4.4cqw; height: 4.4cqw; }
+        .sqv2-best .sqv2-mob__sale, .sqv2-newin .sqv2-mob__sale { font-size: 3.2cqw; }
+    }
 </style>
 @endonce
 
