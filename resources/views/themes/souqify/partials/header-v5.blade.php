@@ -28,7 +28,7 @@
         <div class="flex flex-col gap-[2px] min-w-0">
           <p class="font-medium text-[16px] truncate" style="color:var(--color-text-primary)">
             @auth('storefront')
-              {{ __('Hi, :name', ['name' => auth('storefront')->user()->name]) }} 👋
+              {{ __('Hi, :name', ['name' => auth('storefront')->user()->full_name]) }} 👋
             @else
             @endauth
           </p>

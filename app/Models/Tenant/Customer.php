@@ -41,6 +41,6 @@ class Customer extends Authenticatable
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(CustomerAddress::class)->orderByDesc('is_default')->orderBy('created_at');
+        return $this->hasMany(CustomerAddress::class)->orderByDesc('is_default')->orderBy('created_at')->orderBy('id');
     }
 }
