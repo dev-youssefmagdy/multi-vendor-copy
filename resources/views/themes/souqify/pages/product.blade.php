@@ -300,15 +300,6 @@
                         {{ __('Only :count left', ['count' => $stockValue]) }}
                         </span>
                         @endif
-                        <span id="sq-weight-badge" class="flex lg:text-xl items-center gap-1.5 text-[#FF570F] font-medium {{ $weightDisplay ? '' : 'hidden' }}">
-                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M12.3715 0C9.88209 0 7.84267 2.03943 7.84267 4.52887C7.84267 5.95446 8.51222 7.2316 9.55138 8.06359H5.30209L0 23.9698H24.7431L19.441 8.06359H15.1917C16.2308 7.2316 16.9004 5.95446 16.9004 4.52887C16.9004 2.03943 14.861 0 12.3715 0ZM12.3715 1.98828C13.7864 1.98828 14.9121 3.11398 14.9121 4.52887C14.9121 5.94375 13.7864 7.06945 12.3715 7.06945C10.9566 7.06945 9.83095 5.94375 9.83095 4.52887C9.83095 3.11398 10.9566 1.98828 12.3715 1.98828ZM7.83079 13.1972H9.1287V15.0343L10.9995 13.1972H12.5064L10.0827 15.5803L12.7558 18.23H11.1311L9.1287 16.2479V18.23H7.83079V13.1972ZM14.4548 14.3703C14.7177 14.3703 14.9491 14.4219 15.1492 14.5253C15.3491 14.6286 15.5323 14.7916 15.6987 15.0141V14.4546H16.9122V17.8491C16.9122 18.4559 16.7201 18.9188 16.3357 19.238C15.9537 19.5593 15.3986 19.72 14.6704 19.7199C14.4346 19.7199 14.2065 19.702 13.9861 19.666C13.7607 19.6288 13.5386 19.5736 13.322 19.5009V18.5603C13.5334 18.6817 13.7401 18.7716 13.9423 18.8301C14.1446 18.8908 14.3481 18.9211 14.5526 18.9211C14.9481 18.9211 15.238 18.8346 15.4222 18.6615C15.6065 18.4885 15.6987 18.2178 15.6987 17.8492V17.5896C15.5324 17.8098 15.3492 17.9716 15.1492 18.075C14.9492 18.1783 14.7177 18.23 14.4548 18.2301C13.994 18.2301 13.6131 18.0492 13.312 17.6874C13.0109 17.3233 12.8603 16.8604 12.8603 16.2986C12.8603 15.7344 13.0109 15.2726 13.312 14.9131C13.6131 14.5513 13.994 14.3703 14.4548 14.3703ZM14.9031 15.24C14.6536 15.24 14.4592 15.3321 14.3199 15.5164C14.1806 15.7007 14.1109 15.9615 14.1109 16.2986C14.1109 16.6446 14.1783 16.9075 14.3131 17.0872C14.448 17.2648 14.6447 17.3536 14.9031 17.3536C15.1548 17.3536 15.3503 17.2614 15.4897 17.0771C15.629 16.8929 15.6987 16.6333 15.6986 16.2985C15.6986 15.9614 15.629 15.7007 15.4896 15.5164C15.3503 15.3321 15.1548 15.24 14.9031 15.24H14.9031Z"
-                                    fill="#FF570F" />
-                            </svg>
-                            <span id="sq-weight-badge-text">{{ $weightDisplay }}</span>
-                        </span>
                 </div>
 
                 @if($product->translationValue('description'))
@@ -455,7 +446,7 @@
                     theme="souqify"
                     :threshold="$shippingThreshold"
                     :weight="$shippingProgressWeight"
-                    :item-weight="$weightGrams" />
+/>
 
                 <!-- features badges -->
                 <!-- <div class="grid grid-cols-4 gap-3 items-center">
@@ -609,12 +600,6 @@
                                     <dd class="font-medium">{{ $central->sku }}</dd>
                                 </div>
                                 @endif
-                                @if($weightDisplay)
-                                <div class="flex justify-between border-b border-neutral-100 pb-2">
-                                    <dt class="text-neutral-500">{{ __('Weight') }}</dt>
-                                    <dd class="font-medium">{{ $weightDisplay }}</dd>
-                                </div>
-                                @endif
                                 @foreach($variants as $v)
                                 @if($v->display_label)
                                 <div class="flex justify-between border-b border-neutral-100 pb-2">
@@ -624,7 +609,7 @@
                                 @endif
                                 @endforeach
                                 @if(
-                                !$central?->sku && !$weightDisplay &&
+                                !$central?->sku &&
                                 $variants->every(fn($v) => blank($v->display_label))
                                 )
                                 <div class="col-span-2 text-neutral-500">{{ __('No specifications available.') }}</div>
@@ -1519,13 +1504,7 @@
         SQ_UNIT_PRICE = parseFloat(data.displaySell);
         sqUpdateAddToCartTotal();
 
-        const weightBadge = document.getElementById('sq-weight-badge');
-        const weightBadgeText = document.getElementById('sq-weight-badge-text');
-        if (weightBadge) weightBadge.classList.toggle('hidden', !data.weightDisplay);
-        if (weightBadgeText) weightBadgeText.textContent = data.weightDisplay ?? '';
 
-        const itemWeightEl = document.getElementById('sq-item-weight');
-        if (itemWeightEl) itemWeightEl.textContent = sqFormatWeight(data.weightGrams) + '.';
 
         if (data.mediaIndex !== null && data.mediaIndex !== undefined && window.sqGoToMediaIndex) {
             window.sqGoToMediaIndex(data.mediaIndex);

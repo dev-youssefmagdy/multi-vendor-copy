@@ -75,7 +75,7 @@
                 'badge'     => $badgeLabel,
                 'rating'    => $avgRating,
                 'reviews'   => $reviewCount,
-                'weight'    => $weightDisplay,
+                'weight'    => null,
                 'added'     => now()->timestamp,
             ]);
             $isLoggedIn = auth()->guard('storefront')->check();
@@ -305,7 +305,6 @@
                     </p>
                     <p class="text-[#8F8F8F] text-base">(+{{ $reviewCount }})</p>
 
-                    <p id="elora-weight-display" class="text-[var(--color-primary)] text-base">{{ $weightDisplay }}</p>
                     @if ($pricing['is_flash_sale'] && ($pricing['flash_sale']?->end_date ?? null))
                         <p class="text-sm bg-[var(--color-primary)] rounded-3xl p-1 flex items-center gap-1 text-white">
                             <svg width="16"
@@ -1586,9 +1585,6 @@ We are committed to maintaining transparency and reducing permission requests wi
                 if (btn) btn.disabled = !data.isInStock;
             });
 
-            // Update weight
-            const weightEl = document.getElementById('elora-weight-display');
-            if (weightEl) weightEl.textContent = data.weightDisplay ?? '';
 
             // Jump the main gallery to this variant's image, if it has one
             if (data.mediaIndex !== null && data.mediaIndex !== undefined && window.eloraGoToMediaIndex) {

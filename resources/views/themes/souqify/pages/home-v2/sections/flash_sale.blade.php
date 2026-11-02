@@ -23,7 +23,7 @@
             'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
             'tag' => '🔥 ' . __('Trending Now'),
             'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'weight' => null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,

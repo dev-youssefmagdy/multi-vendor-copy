@@ -27,7 +27,7 @@
             'url' => $__url,
             'image' => $__img,
             'name' => $__name,
-            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'weight' => null,
             'subtitle' => \Illuminate\Support\Str::limit(strip_tags($product->translationValue('short_description') ?? $product->translationValue('description') ?? ''), 34) ?: null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),

@@ -60,14 +60,6 @@
     $fullStars = (int) round($rating);
     $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
 
-    // Weight
-    $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;
-    $weightLabel = null;
-    if ($weightGrams) {
-        $weightLabel = $weightGrams >= 1000
-            ? number_format($weightGrams / 1000, 1) . __('kg')
-            : $weightGrams . __('g');
-    }
 
     // Stock
     $centralProd = $product->centralProduct;
@@ -187,19 +179,13 @@
     {{-- ── Info area ───────────────────────────────────────────────────────── --}}
     <div class="p-2 flex flex-col gap-0.5 lg:gap-2">
 
-        {{-- Title + weight --}}
+        {{-- Title --}}
         <div>
             <div class="flex items-start justify-between gap-1 mb-0.5">
                 <span
                     class="text-sm md:text-base font-medium text-[#171717] leading-tight tracking-[0.5px] line-clamp-1">
                     {{ $product->translationValue('name') ?? $product->slug }}
                 </span>
-                @if ($weightLabel)
-                    <span
-                        class="text-xs sm:text-sm text-[var(--color-primary)] font-normal flex-shrink-0 tracking-[0.5px] leading-tight pt-0.5">
-                        {{ $weightLabel }}
-                    </span>
-                @endif
             </div>
             {{-- Category / subtitle --}}
             <p class="text-xs sm:text-sm text-[#ADADAD] truncate tracking-[0.5px] leading-tight">

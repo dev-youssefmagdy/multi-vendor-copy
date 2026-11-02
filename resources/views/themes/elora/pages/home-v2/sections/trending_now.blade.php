@@ -29,7 +29,7 @@
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($productName, 30),
               'fullName' => $productName,
-              'weight' => $weightLabel,
+              'weight' => null,
               'desc' => $product->centralProduct?->category?->name ?? __('Premium cotton blend'),
               'badge' => __('Trending'),
               'badgeBg' => 'var(--color-accent-yellow)',

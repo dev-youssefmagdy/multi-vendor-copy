@@ -2,7 +2,6 @@
     'theme',
     'threshold',
     'weight',
-    'itemWeight' => null,
     'idSuffix' => '',
     'bare' => false,
 ])
@@ -55,17 +54,10 @@
                         @endif
                     </p>
                 </div>
-                <p id="sq-shipping-ratio{{ $idSuffix }}" class="text-xs text-[#8F8F8F] hidden lg:block">{{ $weightLabel($weight) }}/{{ $weightLabel($threshold) }}</p>
             </div>
             <div class="h-[10px] bg-[#D9D9D9] rounded-full">
                 <span id="sq-shipping-bar{{ $idSuffix }}" class="rounded-full h-full bg-[#FF570F] block" style="width: {{ $pct }}%"></span>
             </div>
-            @if($itemWeight !== null)
-                <p class="text-[10px] lg:text-xs text-[#8F8F8F]">{{ __('This item weighs') }} <span id="sq-item-weight{{ $idSuffix }}" class="font-semibold">{{ $weightLabel($itemWeight) }}.</span>
-                    {{ __('free shipping threshold:') }} <span class="font-semibold">{{ $weightLabel($threshold) }}</span>
-                    {{ __('combined order weight.') }}
-                </p>
-            @endif
         </div>
     @endif
 @endif

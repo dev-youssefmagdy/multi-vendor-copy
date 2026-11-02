@@ -37,7 +37,7 @@
               'badgeText' => 'var(--color-white)',
               'name' => \Illuminate\Support\Str::limit($productName, 30),
               'fullName' => $productName,
-              'weight' => $weightLabel,
+              'weight' => null,
               'desc' => $product->centralProduct?->category?->name ?? __('Premium cotton blend'),
               'rating' => $rating,
               'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

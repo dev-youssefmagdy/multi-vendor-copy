@@ -23,7 +23,7 @@
             'image' => $__img,
             'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
             'name' => $__name,
-            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'weight' => null,
             'subtitle' => $product->centralProduct?->category?->translationValue('name') ?? '',
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice, 2),

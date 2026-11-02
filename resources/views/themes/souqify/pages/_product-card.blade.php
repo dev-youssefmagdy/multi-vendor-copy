@@ -47,14 +47,6 @@
     $fullStars = (int) round($rating);
     $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
 
-    // Weight
-    $weightGrams = $product->centralProduct?->weight_grams ?? $product?->weight_grams ?? null;
-    $weightLabel = null;
-    if ($weightGrams) {
-        $weightLabel = $weightGrams >= 1000
-            ? number_format($weightGrams / 1000, 1) . __('kg')
-            : $weightGrams . __('g');
-    }
 
     // Stock
     $centralProd = $product->centralProduct;
@@ -213,9 +205,6 @@
             <h3 class="text-zinc-900 text-sm sm:text-base font-medium line-clamp-1 leading-snug">{{ $productName }}</h3>
             @if ($brand)
                 <span class="text-orange-600 text-xs font-medium shrink-0 line-clamp-1 max-w-[80px]">{{ $brand }}</span>
-            @endif
-            @if ($weightLabel)
-                <span class="text-orange-600 text-xs font-medium shrink-0 line-clamp-1">{{ $weightLabel }}</span>
             @endif
         </div>
 

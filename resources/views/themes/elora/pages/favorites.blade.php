@@ -122,7 +122,6 @@
               <div class="p-3 flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
                   <span class="text-base font-medium text-[#171717] tracking-[0.5px] truncate max-w-[140px]">${item.name || ''}</span>
-                  ${item.weight ? `<span class="text-sm text-[var(--color-primary)] font-normal tracking-[0.5px] flex-shrink-0 ml-1">${item.weight}</span>` : ''}
                 </div>
                 ${item.description ? `<p class="text-sm text-[#ADADAD] tracking-[0.5px] truncate">${item.description}</p>` : ''}
                 <div class="flex items-center gap-1">${stars}<span class="text-xs text-[#ADADAD] ml-1 tracking-[0.5px]">${item.rating || ''} ${item.reviews ? '(+' + item.reviews + ')' : ''}</span></div>

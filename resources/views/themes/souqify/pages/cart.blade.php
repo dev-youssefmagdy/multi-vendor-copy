@@ -79,7 +79,6 @@
                             ?? $itemProduct->centralProduct?->primary_image_url
                             ?? $itemProduct->primary_image_url
                             ?? null;
-                        $itemWeight = (int) ($itemProduct->centralProduct?->weight_grams ?? $itemProduct?->weight_grams ?? 0);
                         $itemPrice = number_format($item['subtotal'] * $rate, 2);
                     @endphp
                     <div class="bg-white rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-6 items-stretch">
@@ -97,11 +96,6 @@
                                     </h3>
                                     @if ($itemMeta)
                                         <p class="text-xs sm:text-sm text-neutral-400 mt-1">{{ $itemMeta }}</p>
-                                    @endif
-                                    @if ($itemWeight > 0)
-                                        <p class="text-base sm:text-xl font-medium text-slate-900 mt-2 sm:mt-3">
-                                            {{ $itemWeight }}g
-                                        </p>
                                     @endif
                                     @if($item['is_out_of_stock'] ?? false)
                                         <div class="text-red-600 text-xs font-semibold mt-1 flex items-center gap-1">

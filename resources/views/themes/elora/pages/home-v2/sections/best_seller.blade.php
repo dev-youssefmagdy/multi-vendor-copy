@@ -40,7 +40,7 @@
               'badgeText' => $hasDiscount ? 'var(--color-white)' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($productName, 30),
               'fullName' => $productName,
-              'weight' => $weightLabel,
+              'weight' => null,
               'desc' => $product->centralProduct?->category?->name ?? __('Premium cotton blend'),
               'ratingLabel' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format($sellPrice * $rate, 2),

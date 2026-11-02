@@ -242,7 +242,6 @@
                             $reviewCount = (int) ($product->reviews_count ?? 0);
                             $productName = $product->translationValue('name') ?? $product->slug;
                             $productUrl = route('tenant.storefront.product', $product->slug);
-                            $weight = $product->centralProduct?->weight ?? null;
                             $favData = json_encode([
                                 'id' => $product->id,
                                 'name' => $productName,
@@ -283,17 +282,6 @@
                                     </span>
                                 @endif
 
-                                <!-- Top-right: weight badge -->
-                                @if ($weight)
-                                    <span
-                                        class="absolute top-0 right-0 bg-[color:var(--sq-primary)] text-white text-xs font-medium px-2 py-1 rounded-bl-lg flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
-                                        </svg>
-                                        {{ $weight }}g
-                                    </span>
-                                @endif
 
                                 <!-- Bottom-left: trending tag -->
                                 <div

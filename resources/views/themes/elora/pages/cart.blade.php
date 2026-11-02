@@ -162,10 +162,6 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                             $displaySubtotal = number_format($subtotal * $rate, 2);
                             $originalPrice = number_format($price * $rate, 2);
 
-                            $variantWeight = (int) ($variant?->centralVariant?->weight_grams ?? 0);
-                            $weightGrams = $variantWeight > 0
-                            ? $variantWeight
-                            : (int) ($product->centralProduct->weight_grams ?? $product->weight_grams ?? 0);
                             $productDescription = $product->translationValue('description') ?? null;
                             $hasDiscount = $item['has_discount'] ?? false;
                             $isFlashSale = $item['is_flash_sale'] ?? false;
@@ -214,9 +210,6 @@ $displayFinal = number_format($cartFinalTotal * $rate, 2);
                                                 <div class="flex-1 min-w-0 flex flex-col gap-2">
                                                     <div class="flex justify-between items-center gap-2">
                                                         <a href="{{ $productUrl }}" class="text-[#171717] text-xs sm:text-base font-normal font-['Outfit'] line-clamp-1 flex-1 min-w-0">{{ $productName }}</a>
-                                                        @if($weightGrams > 0)
-                                                        <span class="text-[var(--color-primary)] text-xs sm:text-base font-normal font-['Outfit'] whitespace-nowrap shrink-0">{{ $weightGrams }}g</span>
-                                                        @endif
                                                     </div>
                                                     @if($variantTitle)
                                                     <div class="flex gap-6">

@@ -18,7 +18,7 @@
             'url' => $__url,
             'image' => $__img,
             'name' => $__name,
-            'weight' => $variant?->weight_grams ? $variant->weight_grams . 'g' : null,
+            'weight' => null,
             'subtitle' => \Illuminate\Support\Str::limit(strip_tags($product->translationValue('short_description') ?? $product->translationValue('description') ?? ''), 34) ?: null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice * $rate, 2),

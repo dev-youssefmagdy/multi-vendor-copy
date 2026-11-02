@@ -33,7 +33,7 @@
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
               'badgeText' => 'var(--color-white)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => $weightLabel,
+              'weight' => null,
               'desc' => $product->centralProduct?->category?->name ?? '',
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),

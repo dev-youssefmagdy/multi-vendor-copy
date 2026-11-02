@@ -31,7 +31,7 @@
               'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
               'image' => $img,
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
+              'weight' => null,
               'desc' => \Illuminate\Support\Str::limit(strip_tags((string) ($product->translationValue('description') ?? '')), 40) ?: null,
               'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% OFF' : __('Trending'),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',

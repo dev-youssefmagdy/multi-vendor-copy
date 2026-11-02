@@ -102,8 +102,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? ($product?->weight_grams ?? null);
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -184,10 +182,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-1.5">
                                 <a href="{{ $pUrl }}"
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5 bg-[#712AE2]">
                                 <span
@@ -260,8 +254,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? null;
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -341,10 +333,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-1.5">
                                 <a href="{{ $pUrl }}"
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5 bg-[#FFB00A]">
                                 <span
@@ -419,8 +407,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? ($product?->weight_grams ?? null);
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -500,10 +486,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-1.5">
                                 <a href="{{ $pUrl }}"
                                     class="text-[11px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 text-[color:var(--sq-primary)] text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-0.5 flex items-center justify-between mb-1.5"
                                 style="background: linear-gradient(91.49deg, var(--sq-primary-deep) 14.29%, var(--sq-primary-hover) 39.73%, var(--sq-primary-deep) 58.01%, var(--sq-primary) 77.97%, var(--sq-primary-deep) 91.14%);">
@@ -602,8 +584,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? ($product?->weight_grams ?? null);
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -672,10 +652,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2 bg-[#712AE2]">
                                 <span
@@ -755,8 +731,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? ($product?->weight_grams ?? null);
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -836,10 +810,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2 bg-[#FFB00A]">
                                 <span
@@ -922,8 +892,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                         $img = $product->centralProduct?->primary_image_url ?? ($product->primary_image_url ?? null);
                         $rating = round((float) ($product->average_rating ?? 0));
                         $rateCount = $product->relationLoaded('rates') ? $product->rates->count() : 0;
-                        $wg = $product->centralProduct?->weight_grams ?? ($product?->weight_grams ?? null);
-                        $wLabel = $wg ? ($wg >= 1000 ? number_format($wg / 1000, 1) . __('kg') : $wg . __('g')) : null;
                         $pName = $product->translationValue('name') ?? $product->slug;
                         $pUrl = route('tenant.storefront.product', $product->slug);
                         $discBg = match ($product->id % 2) {
@@ -1003,10 +971,6 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
                             <div class="flex items-start justify-between gap-1 mb-2">
                                 <a href="{{ $pUrl }}"
                                     class="text-[13px] font-medium text-[#001537] leading-tight line-clamp-2 flex-1 hover:text-[color:var(--sq-primary)] transition">{{ $pName }}</a>
-                                @if ($wLabel)
-                                    <span
-                                        class="shrink-0 bg-[color:var(--sq-primary)] text-white text-[8px] font-semibold rounded px-1 py-0.5">{{ $wLabel }}</span>
-                                @endif
                             </div>
                             <div class="rounded px-2 py-1 flex items-center justify-between mb-2"
                                 style="background: linear-gradient(91.49deg, var(--sq-primary-deep) 14.29%, var(--sq-primary-hover) 39.73%, var(--sq-primary-deep) 58.01%, var(--sq-primary) 77.97%, var(--sq-primary-deep) 91.14%);">

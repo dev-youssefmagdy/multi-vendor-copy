@@ -29,7 +29,7 @@
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-yellow)',
               'badgeColor' => $hasDiscount ? 'var(--color-white)' : 'var(--color-black)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
-              'weight' => $weightGrams > 0 ? $weightGrams . 'g' : '',
+              'weight' => null,
               'desc' => \Illuminate\Support\Str::limit(strip_tags((string) ($product->translationValue('description') ?? '')), 40) ?: null,
               'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),

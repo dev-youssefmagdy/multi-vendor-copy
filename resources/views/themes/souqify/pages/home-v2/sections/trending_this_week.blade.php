@@ -26,7 +26,7 @@
             'image' => $__img,
             'tag' => '🔥 ' . __('Trending Now'),
             'name' => $__name,
-            'weight' => $variant?->weight ? $variant->weight . 'g' : null,
+            'weight' => null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),
             'price' => $symbol . number_format($__sellPrice, 2),
             'oldPrice' => $__oldPrice !== null ? $symbol . number_format($__oldPrice, 2) : null,
