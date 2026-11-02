@@ -19,7 +19,7 @@
     ][$size] ?? 'sm:max-w-md';
 @endphp
 
-<div id="{{ $id }}" class="modal-shell t-modal fixed inset-0 z-50 overflow-y-auto" data-tenant-modal
+<div id="{{ $id }}" class="modal-shell t-modal fixed inset-0 z-50 overflow-y-auto" style="z-index:70" data-tenant-modal
     @if($static) data-static="1" @endif
     @if($autoOpen) data-auto-open="1" @endif
     role="dialog" aria-modal="true" aria-labelledby="{{ $id }}-title"
