@@ -579,15 +579,59 @@ class StorefrontRepository
             $currencyRate = 1.0;
         }
 
-        if (is_numeric($minPrice)) {
-            $query->whereRaw($this->effectivePriceExpression() . ' >= ?', [(float) $minPrice / $currencyRate]);
-        }
+        if (is_numeric($minPrice) || is_numeric($maxPrice)) {
+            // The shopper's min/max is compared with the price the card shows
+            // (price + fixed shipping, flash sale applied), so it is resolved through
+            // Product::storefrontPricing() instead of re-deriving it in SQL.
+            $ids = $this->productIdsWithinDisplayedPrice(
+                (clone $query)->reorder()->select('products.id')->distinct(),
+                is_numeric($minPrice) ? (float) $minPrice : null,
+                is_numeric($maxPrice) ? (float) $maxPrice : null,
+                $currencyRate,
+            );
 
-        if (is_numeric($maxPrice)) {
-            $query->whereRaw($this->effectivePriceExpression() . ' <= ?', [(float) $maxPrice / $currencyRate]);
+            $query->whereIn('products.id', $ids === [] ? [0] : $ids);
         }
 
         return $query;
+    }
+
+    /**
+     * Ids from $candidates whose displayed price (in the shopper's currency) lies in [$min, $max].
+     *
+     * @return array<int, int>
+     */
+    protected function productIdsWithinDisplayedPrice($candidates, ?float $min, ?float $max, float $currencyRate): array
+    {
+        $memoKey = 'price-filter|' . md5($candidates->toSql() . json_encode($candidates->getBindings())
+            . "|{$min}|{$max}|{$currencyRate}|" . (int) $this->customerCountryId());
+
+        return $this->requestMemo($memoKey, function () use ($candidates, $min, $max, $currencyRate): array {
+            $ids = [];
+
+            foreach ($candidates->pluck('products.id')->unique()->chunk(200) as $chunk) {
+                Product::query()
+                    ->whereIn('products.id', $chunk->all())
+                    ->with([
+                        'variants',
+                        'variants.centralVariant',
+                        'centralProduct' => fn($q) => $q->with('shippingZones.rates'),
+                        'flashSales' => fn($q) => $q->activeWindow()->forCountry($this->customerCountryId())->orderByDesc('discount_percentage'),
+                    ])
+                    ->get()
+                    ->each(function (Product $product) use (&$ids, $min, $max, $currencyRate): void {
+                        $product->variants->each(fn($variant) => $variant->setRelation('product', $product));
+
+                        $displayed = round((float) $product->storefrontPricing()['current_price'] * $currencyRate, 2);
+
+                        if (($min === null || $displayed >= $min) && ($max === null || $displayed <= $max)) {
+                            $ids[] = (int) $product->id;
+                        }
+                    });
+            }
+
+            return $ids;
+        });
     }
 
     /**
