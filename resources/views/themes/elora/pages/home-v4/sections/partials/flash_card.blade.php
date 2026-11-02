@@ -9,6 +9,13 @@
   $p keys: id, url, favData, image, name, weight, price, oldPrice, discount, rating
 --}}
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
+@once
+{{-- elora-v4.css anchors .flash-card-cart with a physical `right`; mirror it in RTL (CSS is built, so override here). --}}
+<style>
+    [dir="rtl"] .flash-card-cart { right: auto; left: 6px; }
+    @media (min-width: 1024px) { [dir="rtl"] .flash-card-cart { left: 8px; } }
+</style>
+@endonce
 <div class="flash-card-wrap">
   <a href="{{ $p['url'] ?? '#' }}"
      class="flash-card"
