@@ -53,7 +53,7 @@
     @endphp
     <section  wire:ignore class="py-5 md:hidden bg-gradient-to-r from-[#C94F1A] via-[#F56323] to-[#BA3800] mt-6 relative">
         <h2 class="text-white font-bold text-lg mb-2 text-center">{{ __('Buy together') }}</h2>
-        <div class="flex items-center justify-center gap-1 px-7 relative z-20">
+        <div class="flex flex-col items-stretch justify-center gap-2.5 px-7 relative z-20">
             @foreach ($btProducts as $btProduct)
             @php
                 $btVariant = $btProduct->variants->firstWhere('active', true) ?? $btProduct->variants->first();
@@ -73,27 +73,29 @@
                 $btUrl = route('tenant.storefront.product', $btProduct->slug);
             @endphp
             <!-- product card -->
-            <a href="{{ $btUrl }}"  class="group flex bg-white rounded-lg overflow-hidden flex-1 h-[60px] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md" style="text-decoration:none">
+            <a href="{{ $btUrl }}"  class="group flex items-center gap-3 bg-white rounded-xl overflow-hidden p-2.5 h-[104px] shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-md" style="text-decoration:none">
                 <!-- image -->
-                <div class="relative w-2/5">
+                <div class="relative shrink-0 w-[84px] h-full rounded-lg overflow-hidden bg-gray-50">
                     @if ($btImg)
-                    <img loading="lazy" src="{{ $btImg }}" alt="{{ $btName }}" class="w-full h-full object-cover rounded transition-transform duration-300 group-hover:scale-105">
+                    <img loading="lazy" src="{{ $btImg }}" alt="{{ $btName }}" class="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-105">
                     @else
                     <div class="w-full h-full flex items-center justify-center bg-gray-100 text-2xl rounded">🛍️</div>
                     @endif
                 </div>
                 <!-- info body -->
-                <div class="flex flex-col justify-center gap-[2px] p-1 flex-1">
-                    <h3 class="text-xs font-bold text-gray-800 line-clamp-1">{{ $btName }}</h3>
-                    @if ($btWeightLabel)
-                    <p class="text-main text-xs">{{ $btWeightLabel }}</p>
-                    @endif
-                    <p class="text-xs font-bold">{{ $btDisplaySell }}
-                        @if ($btHasDiscount && $btDiscountPct > 0)
-                        <span class="text-main text-[6px]">{{ $btDiscountPct }}{{ __('% off') }}</span>
+                <div class="flex flex-col justify-center gap-1 flex-1 min-w-0 leading-snug">
+                    <h3 class="text-[13px] font-semibold text-gray-900 line-clamp-2">{{ $btName }}</h3>
+                    <div class="flex items-center gap-2">
+                        @if ($btWeightLabel)
+                        <p class="text-gray-500 text-xs">{{ $btWeightLabel }}</p>
                         @endif
-                    </p>
-                    @if ($btRating > 0)
+                        <p class="text-sm font-bold text-gray-900">{{ $btDisplaySell }}
+                            @if ($btHasDiscount && $btDiscountPct > 0)
+                            <span class="text-main text-[10px] font-semibold ms-1">{{ $btDiscountPct }}{{ __('% off') }}</span>
+                            @endif
+                        </p>
+                    </div>
+                    @if (false && $btRating > 0)
                     <div class="flex gap-1 items-center">
                         <svg width="11" height="11" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -105,15 +107,6 @@
                     @endif
                 </div>
             </a>
-            @if (!$loop->last)
-            <span>
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M8.66667 5.33333H5.33333V8.66667C5.33333 8.84348 5.26309 9.01305 5.13807 9.13807C5.01305 9.2631 4.84348 9.33333 4.66667 9.33333C4.48986 9.33333 4.32029 9.2631 4.19526 9.13807C4.07024 9.01305 4 8.84348 4 8.66667V5.33333H0.666667C0.489856 5.33333 0.320287 5.2631 0.195262 5.13807C0.070238 5.01305 0 4.84348 0 4.66667C0 4.48986 0.070238 4.32029 0.195262 4.19526C0.320287 4.07024 0.489856 4 0.666667 4H4V0.666667C4 0.489856 4.07024 0.320286 4.19526 0.195262C4.32029 0.0702377 4.48986 0 4.66667 0C4.84348 0 5.01305 0.0702377 5.13807 0.195262C5.26309 0.320286 5.33333 0.489856 5.33333 0.666667V4H8.66667C8.84348 4 9.01305 4.07024 9.13807 4.19526C9.2631 4.32029 9.33333 4.48986 9.33333 4.66667C9.33333 4.84348 9.2631 5.01305 9.13807 5.13807C9.01305 5.2631 8.84348 5.33333 8.66667 5.33333Z"
-                        fill="#FDFDFD" />
-                </svg>
-            </span>
-            @endif
             @endforeach
         </div>
         <p
