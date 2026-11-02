@@ -31,8 +31,6 @@
             'discountColor' => $chip['color'],
             // Design-only fields with no backing data yet.
             'weight' => null,
-            'desc' => \Illuminate\Support\Str::limit($product->translationValue('short_description') ?? '', 30),
-            'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
             'badge' => '🔥 ' . __('Trending Now'),
             'labels' => $product->cardLabels(),
         ];
@@ -95,14 +93,6 @@
     .sqv3-newin__slide {
         height: auto;
     }
-    /* Phones: New In uses the same card as Trending Now (full row, square fitted photo);
-       from 640px the original deal card is kept. */
-    .sqv3-newin__wide { display: none; }
-    @media (max-width: 639px) { .sqv3-newin__row { padding-inline-end: 16px; box-sizing: border-box; } }
-    @media (min-width: 640px) {
-        .sqv3-newin__phone { display: none; }
-        .sqv3-newin__wide { display: block; }
-    }
     .sqv3-newin__empty {
         font-family: 'Outfit', sans-serif;
         font-size: 14px;
@@ -131,7 +121,6 @@
 </style>
 
 @include('themes.souqify.pages.home-v3.sections.partials.deal_card_styles')
-@include('themes.souqify.pages.home-v3.sections.partials.trending_card_styles')
 
 <!-- ============ NEW IN ============ -->
 <section class="sqv3-newin" wire:ignore>
@@ -145,8 +134,7 @@
       <div id="newInWrapper" class="swiper-wrapper">
         @foreach ($__newInCards as $p)
           <div class="swiper-slide sqv3-newin__slide" wire:key="new-in-v3-{{ $p['id'] }}">
-            <div class="sqv3-newin__phone">@include('themes.souqify.pages.home-v3.sections.partials.trending_card', ['p' => $p])</div>
-            <div class="sqv3-newin__wide">@include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])</div>
+            @include('themes.souqify.pages.home-v3.sections.partials.deal_card', ['p' => $p])
           </div>
         @endforeach
       </div>
@@ -155,19 +143,3 @@
     <p class="sqv3-newin__empty">{{ __('No new arrivals yet.') }}</p>
   @endif
 </section>
-
-{{-- Phones show one card per row; carousels-v3.js mounts this row at 2.15 slides in view. --}}
-<script>
-(function () {
-    function fit() {
-        var el = document.querySelector('.newin-swiper.sqv3-newin__row');
-        if (!el || !el.swiper) return false;
-        if (window.innerWidth < 640) {
-            el.swiper.params.slidesPerView = 1;
-            el.swiper.update();
-        }
-        return true;
-    }
-    var tries = 0, t = setInterval(function () { if (fit() || ++tries > 40) clearInterval(t); }, 150);
-})();
-</script>
