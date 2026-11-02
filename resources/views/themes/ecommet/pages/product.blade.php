@@ -330,7 +330,8 @@
                 @endif
 
                 @if($shippingThreshold > 0)
-                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5">
+                <div id="ecommet-shipping-widget" class="bg-[#fffdf7] border border-[#f5e6c4] rounded-2xl p-4 sm:p-5 flex items-center gap-3">
+                    <div class="flex-1 min-w-0">
                     <p id="ecommet-shipping-message" class="text-[13px] text-[#242424] font-medium mb-2">
                         @if ($remainingForFreeShipping <= 0)
                             {{ __("You've reached free shipping!") }}
@@ -341,6 +342,8 @@
                     <div class="h-2 bg-[#f5e6c4] rounded-full overflow-hidden">
                         <div id="ecommet-shipping-bar" class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ $shippingPct }}%"></div>
                     </div>
+                    </div>
+                    <x-storefront.free-shipping-icon :size="44" color="var(--color-primary)" />
                 </div>
                 @endif
                 </div>

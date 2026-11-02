@@ -46,19 +46,20 @@
                     {{-- Free Shipping Banner --}}
                     @if($shippingThreshold > 0)
                     <div class="mb-4 lg:mb-10 block p-1 lg:p-0">
-                        <div class="bg-[#ffe8e6] w-full text-[#222] rounded-md px-4 py-3 shipping-modal-trigger cursor-pointer">
-                            <div class="flex items-center gap-2 text-[12px] lg:text-[13px] font-medium mb-2">
-                                <img loading="lazy" src="{{ asset('ecommet/assets/images/home/group-cart.png') }}" alt="{{ __('Shipping') }}"
-                                    class="w-[18px] h-[18px] lg:w-[20px] lg:h-[20px]">
-                                @if ($cartWeight >= $shippingThreshold)
-                                    <span>{{ __("You've reached free shipping!") }}</span>
-                                @else
-                                    <span>{{ __('Add :weight more to unlock free shipping', ['weight' => number_format($shippingThreshold - $cartWeight) . __('g')]) }}</span>
-                                @endif
+                        <div class="bg-[#ffe8e6] w-full text-[#222] rounded-md px-4 py-3 shipping-modal-trigger cursor-pointer flex items-center gap-3">
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[12px] lg:text-[13px] font-medium mb-2">
+                                    @if ($cartWeight >= $shippingThreshold)
+                                        <span>{{ __("You've reached free shipping!") }}</span>
+                                    @else
+                                        <span>{{ __('Add :weight more to unlock free shipping', ['weight' => number_format($shippingThreshold - $cartWeight) . __('g')]) }}</span>
+                                    @endif
+                                </div>
+                                <div class="h-2 bg-white/70 rounded-full overflow-hidden">
+                                    <div class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ min(100, (int) round($cartWeight / $shippingThreshold * 100)) }}%"></div>
+                                </div>
                             </div>
-                            <div class="h-2 bg-white/70 rounded-full overflow-hidden">
-                                <div class="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" style="width: {{ min(100, (int) round($cartWeight / $shippingThreshold * 100)) }}%"></div>
-                            </div>
+                            <x-storefront.free-shipping-icon :size="40" color="var(--color-primary)" />
                         </div>
                     </div>
                     @endif
