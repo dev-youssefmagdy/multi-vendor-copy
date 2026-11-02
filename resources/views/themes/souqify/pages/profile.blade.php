@@ -620,7 +620,7 @@
 
         function buildCard(item, idx) {
             const img = item.image
-                ? `<img loading="lazy" src="${item.image}" alt="" class="w-full h-full object-contain p-4">`
+                ? `<img loading="lazy" src="${item.image}" alt="" class="w-full h-full object-cover">`
                 : `<div class="w-full h-full flex items-center justify-center text-5xl text-neutral-400">🛍️</div>`;
             const old = item.old_price
                 ? `<span class="text-xs text-neutral-400 line-through">$${parseFloat(item.old_price).toFixed(2)}</span>`
