@@ -264,11 +264,21 @@
                 }
             };
 
-            // Variant products need a choice, so "add all" skips them rather than guessing.
+            // One request adds every available favorite; variant products take their first in-stock variant.
             window.addAllToCart = async function () {
                 const items = getFavs();
                 await ensureCartData(items);
-                items.forEach(item => addFavToCart(item, true));
+                const ids = [...new Set(items
+                    .map(item => favCartData[item.slug])
+                    .filter(data => data && !data.isOutOfStock)
+                    .map(data => data.id))];
+                if (!ids.length) {
+                    if (typeof window.showStorefrontToast === 'function') {
+                        window.showStorefrontToast(@json(__('Sorry, this product is out of stock.')), 'error');
+                    }
+                    return;
+                }
+                window.Livewire?.dispatch('add-many-to-cart', { productIds: ids });
             };
 
             window.sortFavorites = function (type) {

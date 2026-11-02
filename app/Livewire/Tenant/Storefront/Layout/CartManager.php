@@ -15,9 +15,57 @@ class CartManager extends Component
     #[On('add-to-cart-variant')]
     public function addWithVariant(int $productId, ?int $variantId = null): void
     {
+        $error = $this->addLine($productId, $variantId);
+        if ($error !== null) {
+            if ($error !== '') {
+                $this->dispatch('storefront-toast', message: $error, type: 'error');
+            }
+            return;
+        }
+
+        $this->dispatch('cartUpdated');
+        $this->dispatch('storefront-cart-added');
+    }
+
+    /**
+     * Adds one unit of each product (e.g. "Add all to cart" on favorites). Products with variants
+     * use their first in-stock active variant (first active one if none are in stock).
+     *
+     * @param  int[]  $productIds
+     */
+    #[On('add-many-to-cart')]
+    public function addMany(array $productIds): void
+    {
+        $added = 0;
+        $firstError = null;
+
+        foreach (array_unique(array_map('intval', $productIds)) as $productId) {
+            $error = $this->addLine($productId, null, true);
+            if ($error === null) {
+                $added++;
+            } elseif ($error !== '') {
+                $firstError ??= $error;
+            }
+        }
+
+        if ($firstError !== null) {
+            $this->dispatch('storefront-toast', message: $firstError, type: 'error');
+        }
+
+        if ($added > 0) {
+            $this->dispatch('cartUpdated');
+            $this->dispatch('storefront-cart-added');
+        }
+    }
+
+    /**
+     * @return string|null null = added, '' = skipped silently (unknown product), otherwise the stock error
+     */
+    private function addLine(int $productId, ?int $variantId, bool $preferInStock = false): ?string
+    {
         $product = Product::with(['variants', 'centralProduct'])->where('active', true)->find($productId);
         if (!$product) {
-            return;
+            return '';
         }
 
         $activeVariants = $product->variants->where('active', true);
@@ -31,7 +79,8 @@ class CartManager extends Component
                 $variantId = $variant?->id;
             }
         } else {
-            $variant = $activeVariants->first();
+            $variant = ($preferInStock ? $activeVariants->first(fn ($v) => (int) $v->stock > 0) : null)
+                ?? $activeVariants->first();
             $variantId = $variant?->id;
         }
 
@@ -45,8 +94,7 @@ class CartManager extends Component
 
         $stockError = $this->checkProductStock($product, $variant, 1, $existingQty);
         if ($stockError !== null) {
-            $this->dispatch('storefront-toast', message: $stockError, type: 'error');
-            return;
+            return $stockError;
         }
 
         if (isset($cart[$key])) {
@@ -61,8 +109,8 @@ class CartManager extends Component
 
         session(['storefront_cart' => $cart]);
         app(\App\Services\UserInteractionTracker::class)->trackCart($productId);
-        $this->dispatch('cartUpdated');
-        $this->dispatch('storefront-cart-added');
+
+        return null;
     }
 
     public function render()
