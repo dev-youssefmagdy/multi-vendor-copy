@@ -94,7 +94,7 @@
   @php
     $__tabs = [
       ['route' => 'tenant.home', 'match' => ['tenant.home'], 'icon' => 'nav-home.svg', 'label' => __('Home')],
-      ['route' => 'tenant.storefront.best-selling', 'match' => ['tenant.storefront.best-selling'], 'icon' => 'nav-orders.svg', 'label' => __('Best-Selling')],
+      ['route' => 'tenant.storefront.best-selling', 'match' => ['tenant.storefront.best-selling'], 'dir' => 'souqify-4', 'icon' => 'navbtm-package.svg', 'label' => __('Best-Selling')], // souqify-5/nav-orders.svg is the same box drawn upside-down
       ['route' => 'tenant.storefront.category', 'match' => ['tenant.storefront.category', 'tenant.storefront.offers'], 'icon' => 'nav-deals.svg', 'label' => __('Deals')],
       ['route' => 'tenant.storefront.favorites', 'match' => ['tenant.storefront.favorites'], 'icon' => 'nav-wishlist.svg', 'label' => __('Wishlist')],
     ];
@@ -105,12 +105,12 @@
       @if ($__on)
         <a href="{{ route($__tab['route']) }}" data-mobile-tab class="mobile-tab is-active-tab flex items-center gap-[6px] min-w-0">
           <span class="flex items-center justify-center size-[30px] rounded-tr-[10px] rounded-bl-[10px]" style="background:var(--color-brand-pink)">
-            <img src="{{ asset('souqify-5/assets/icons/' . $__tab['icon']) }}" alt="" class="w-[16px] h-[16px] object-contain" @if ($__tab["icon"] !== "nav-home.svg") style="filter:brightness(0) invert(1)" @endif />
+            <img src="{{ asset(($__tab['dir'] ?? 'souqify-5') . '/assets/icons/' . $__tab['icon']) }}" alt="" class="w-[16px] h-[16px] object-contain" @if ($__tab["icon"] !== "nav-home.svg") style="filter:brightness(0) invert(1)" @endif />
           </span>
           <span class="text-[13px] truncate" style="color:var(--color-brand-pink)">{{ $__tab['label'] }}</span>
         </a>
       @else
-        <a href="{{ route($__tab['route']) }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/' . $__tab['icon']) }}" alt="{{ $__tab['label'] }}" class="w-[22px] h-[22px] object-contain" @if ($__tab["icon"] === "nav-home.svg") style="filter:brightness(0);opacity:.55" @endif /></a>
+        <a href="{{ route($__tab['route']) }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset(($__tab['dir'] ?? 'souqify-5') . '/assets/icons/' . $__tab['icon']) }}" alt="{{ $__tab['label'] }}" class="w-[22px] h-[22px] object-contain" @if ($__tab["icon"] === "nav-home.svg") style="filter:brightness(0);opacity:.55" @endif /></a>
       @endif
     @endforeach
   </div>
