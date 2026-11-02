@@ -304,5 +304,11 @@
         right: auto;
         left: 6.55965px;
     }
+
+    /* Phones: the 496x156 comp scales down to a ~110px-tall strip with a tiny photo. */
+    @media (max-width: 1023px) {
+        .sqv3-trend-card { align-items: stretch; min-height: 178px; }
+        .sqv3-trend-card__media { width: 46%; }
+    }
 </style>
 @endonce

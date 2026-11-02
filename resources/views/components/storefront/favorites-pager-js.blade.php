@@ -2,7 +2,8 @@
      Raw JS, include it inside an existing <script>. The favorites list lives in localStorage
      (StorefrontFavorites), so it is paged in the browser rather than by a Laravel paginator. --}}
 window.StorefrontPager = window.StorefrontPager || {
-    size: 12,
+    // 8 per page on phones (4 rows of the 2-column grid), 10 on desktop: small lists still get a pager.
+    get size() { return window.innerWidth >= 1024 ? 10 : 8; },
 
     /** Returns the requested page of `list` plus the clamped page number and page count. */
     slice(list, page) {
