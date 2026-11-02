@@ -91,16 +91,28 @@
 
 <!-- ============ MOBILE FIXED BOTTOM TAB BAR ============ -->
 <nav class="mobile-tabbar lg:hidden fixed bottom-0 left-0 right-0 z-30 w-full max-w-[100vw] box-border flex items-center gap-[12px] px-[16px] pb-[16px] pt-[8px]" style="background:var(--color-bg-main)">
+  @php
+    $__tabs = [
+      ['route' => 'tenant.home', 'match' => ['tenant.home'], 'icon' => 'nav-home.svg', 'label' => __('Home')],
+      ['route' => 'tenant.storefront.best-selling', 'match' => ['tenant.storefront.best-selling'], 'icon' => 'nav-orders.svg', 'label' => __('Best-Selling')],
+      ['route' => 'tenant.storefront.category', 'match' => ['tenant.storefront.category', 'tenant.storefront.offers'], 'icon' => 'nav-deals.svg', 'label' => __('Deals')],
+      ['route' => 'tenant.storefront.favorites', 'match' => ['tenant.storefront.favorites'], 'icon' => 'nav-wishlist.svg', 'label' => __('Wishlist')],
+    ];
+  @endphp
   <div class="bg-white flex flex-1 min-w-0 items-center justify-between gap-[8px] h-[56px] px-[14px] rounded-full overflow-hidden" style="box-shadow:var(--shadow-card)">
-    <a href="{{ route('tenant.home') }}" data-mobile-tab class="mobile-tab {{ request()->routeIs('tenant.home') ? 'is-active-tab' : '' }} flex items-center gap-[6px] min-w-0">
-      <span class="flex items-center justify-center size-[30px] rounded-tr-[10px] rounded-bl-[10px]" style="background:var(--color-brand-pink)">
-        <img src="{{ asset('souqify-5/assets/icons/nav-home.svg') }}" alt="" class="size-[16px]" />
-      </span>
-      <span class="text-[13px] truncate" style="color:var(--color-brand-pink)">{{ __('Home') }}</span>
-    </a>
-    <a href="{{ route('tenant.storefront.best-selling') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-orders.svg') }}" alt="{{ __('Orders') }}" class="size-[22px]" /></a>
-    <a href="{{ route('tenant.storefront.category') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-deals.svg') }}" alt="{{ __('Deals') }}" class="size-[22px]" /></a>
-    <a href="{{ route('tenant.storefront.favorites') }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/nav-wishlist.svg') }}" alt="{{ __('Wishlist') }}" class="size-[22px]" /></a>
+    @foreach ($__tabs as $__tab)
+      @php $__on = request()->routeIs(...$__tab['match']); @endphp
+      @if ($__on)
+        <a href="{{ route($__tab['route']) }}" data-mobile-tab class="mobile-tab is-active-tab flex items-center gap-[6px] min-w-0">
+          <span class="flex items-center justify-center size-[30px] rounded-tr-[10px] rounded-bl-[10px]" style="background:var(--color-brand-pink)">
+            <img src="{{ asset('souqify-5/assets/icons/' . $__tab['icon']) }}" alt="" class="w-[16px] h-[16px] object-contain" @if ($__tab["icon"] !== "nav-home.svg") style="filter:brightness(0) invert(1)" @endif />
+          </span>
+          <span class="text-[13px] truncate" style="color:var(--color-brand-pink)">{{ $__tab['label'] }}</span>
+        </a>
+      @else
+        <a href="{{ route($__tab['route']) }}" data-mobile-tab class="mobile-tab flex items-center justify-center"><img src="{{ asset('souqify-5/assets/icons/' . $__tab['icon']) }}" alt="{{ $__tab['label'] }}" class="w-[22px] h-[22px] object-contain" @if ($__tab["icon"] === "nav-home.svg") style="filter:brightness(0);opacity:.55" @endif /></a>
+      @endif
+    @endforeach
   </div>
   <a href="{{ route('tenant.storefront.cart') }}" aria-label="{{ __('Cart') }}" class="relative flex items-center justify-center size-[56px] rounded-full shrink-0" style="background:var(--color-black-alt)">
     <img src="{{ asset('souqify-5/assets/icons/nav-cart.svg') }}" alt="" class="size-[24px]" />
