@@ -118,7 +118,7 @@
                 <button class="fav-btn absolute top-2.5 left-2.5 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10" onclick="removeFavoriteByIndex(${idx})" title="{{ __('Remove from favorites') }}">
                   <svg class="w-4 h-4" fill="var(--color-primary)" stroke="var(--color-primary)" stroke-width="1" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </button>
-                <button class="add-cart-btn absolute bottom-3 right-3 w-10 h-10 bg-[#FDFDFD] rounded-2xl flex items-center justify-center shadow-md hover:bg-[var(--color-primary)] transition-colors z-10" onclick="addToCartItem(${idx})">
+                <button class="add-cart-btn absolute bottom-3 end-3 w-10 h-10 bg-[#FDFDFD] rounded-2xl flex items-center justify-center shadow-md hover:bg-[var(--color-primary)] transition-colors z-10" onclick="addToCartItem(${idx})">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                 </button>
               </div>

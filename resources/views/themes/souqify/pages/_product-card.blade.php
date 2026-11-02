@@ -164,7 +164,7 @@
         @else
             <button wire:click="addToCart({{ $product->id }})" wire:loading.attr="disabled"
                 wire:target="addToCart({{ $product->id }})"
-                class="absolute bottom-3 right-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-[color:var(--sq-primary)] hover:text-white transition group/cart"
+                class="absolute bottom-3 end-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-[color:var(--sq-primary)] hover:text-white transition group/cart"
                 aria-label="{{ __('Add to cart') }}">
                 <svg class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path

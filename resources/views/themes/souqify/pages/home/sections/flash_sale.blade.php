@@ -78,7 +78,7 @@
                             @endif
                             @if ($prod->stockStatus() === 'out_of_stock')
 <button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
-                                class="opacity-50 cursor-not-allowed absolute bottom-1 right-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
+                                class="opacity-50 cursor-not-allowed absolute bottom-1 end-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
                                 aria-label="{{ __('Out of Stock') }}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -90,7 +90,7 @@
                             </button>
 @else
 <button wire:click="addToCart({{ $prod->id }})"
-                                class="absolute bottom-1 right-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
+                                class="absolute bottom-1 end-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -288,7 +288,7 @@
                             @endif
                             @if ($prod->stockStatus() === 'out_of_stock')
 <button disabled aria-disabled="true" onclick="event.preventDefault(); event.stopPropagation()"
-                                class="opacity-50 cursor-not-allowed absolute bottom-1 right-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
+                                class="opacity-50 cursor-not-allowed absolute bottom-1 end-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
                                 aria-label="{{ __('Out of Stock') }}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -300,7 +300,7 @@
                             </button>
 @else
 <button wire:click="addToCart({{ $prod->id }})"
-                                class="absolute bottom-1 right-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
+                                class="absolute bottom-1 end-1 w-8 h-8 bg-white rounded-md flex items-center justify-center transition text-lg font-bold"
                                 aria-label="{{ __('Add to cart') }}">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
