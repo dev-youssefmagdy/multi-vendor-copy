@@ -126,18 +126,9 @@
                             class="bg-transparent flex-1 text-base text-[#8F8F8F] placeholder-[#8F8F8F] min-w-0 outline-none font-normal"
                             style="font-family:'Outfit',sans-serif;" />
                         <!-- Camera / image search -->
-                        <button type="button" aria-label="{{ __('Search by Image') }}"
-                            class="flex items-center justify-end ps-1.5 border-s border-[#8F8F8F] flex-shrink-0"
-                            data-image-search-trigger="storefront-image-search-modal-mobile-home">
-                            <svg class="w-5 h-5 text-[#171717]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
-                                <circle cx="12" cy="13" r="3.2" />
-                            </svg>
-                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <x-image-search-modal id="storefront-image-search-modal-mobile-home" :action="route('tenant.storefront.search.image')" />

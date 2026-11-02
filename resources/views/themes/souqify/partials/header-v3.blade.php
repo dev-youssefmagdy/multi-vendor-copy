@@ -33,16 +33,7 @@
           class="flex items-center gap-[8px] relative z-10 mx-[16px] -mt-[56px] mb-[8px] h-[48px] rounded-full px-[16px] shadow-[0_4px_16px_rgba(0,0,0,0.15)]" style="background: var(--color-surface)">
         <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[18px] opacity-70" /></button>
         <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search...') }}" class="bg-transparent outline-none text-[14px] w-full" style="color: var(--color-text-placeholder)" />
-        <button type="button" data-image-search-trigger="storefront-image-search-modal-v3-mobile" aria-label="{{ __('Search by Image') }}">
-          {{-- icon-camera.svg already draws its own divider line at the left edge
-               of its 33x24 viewBox, and it's preserveAspectRatio="none" - a
-               square size-[] box stretches it unevenly and thickens that line
-               on top of it looking doubled. Sizing to the icon's own 33:24
-               ratio keeps that single built-in line correct. --}}
-          <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="w-[25px] h-[18px] opacity-70" />
-        </button>
       </form>
-      <x-image-search-modal id="storefront-image-search-modal-v3-mobile" :action="route('tenant.storefront.search.image')" />
       <!-- Category filter pills -->
       <div class="category-pill-row flex items-center gap-[24px] px-[16px] pb-[12px] overflow-x-auto no-scrollbar">
         <a href="{{ route('tenant.home') }}" data-category-pill
@@ -135,12 +126,8 @@
         <div class="flex flex-1 items-center gap-[8px] pl-[24px]">
           <button type="submit"><img src="{{ asset('souqify-2/assets/icons/icon-search.svg') }}" alt="" class="size-[22px] opacity-70" /></button>
           <input type="text" name="q" value="{{ request('q') }}" autocomplete="off" placeholder="{{ __('Search for premium tech, fashion, or home...') }}" class="bg-transparent outline-none text-[16px] w-full" style="color: var(--color-text-placeholder)" />
-          <button type="button" data-image-search-trigger="storefront-image-search-modal-v3" aria-label="{{ __('Search by Image') }}">
-            <img src="{{ asset('souqify-2/assets/icons/icon-camera.svg') }}" alt="" class="h-[20px] w-[27.5px] opacity-70" />
-          </button>
         </div>
       </form>
-      <x-image-search-modal id="storefront-image-search-modal-v3" :action="route('tenant.storefront.search.image')" />
     </div>
     <div class="flex items-center gap-[38px] shrink-0">
       <a href="{{ route('tenant.storefront.cart') }}" class="flex items-center gap-[8px] cursor-pointer" aria-label="{{ __('Cart') }}">

@@ -99,7 +99,6 @@
     @include('tenant.pages.catalog.products._modals.share')
     @include('tenant.pages.catalog.products._modals.price-list')
 
-    <x-tenant::image-search-modal :action="route('tenant.products.image-search')" />
 @endsection
 
 @push('tenant-vite')

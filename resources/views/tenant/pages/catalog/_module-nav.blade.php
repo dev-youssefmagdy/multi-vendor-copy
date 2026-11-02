@@ -34,11 +34,7 @@
         <form class="pm-search" method="GET" action="{{ route('tenant.products.index') }}" role="search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
             <input type="search" name="search" value="{{ request('search') }}" placeholder="Search" aria-label="Search products">
-            @if(($activeTab ?? '') === 'products')
-                <button type="button" class="pm-search-camera" data-image-search-open="tenant-image-search-modal" title="Search by image" aria-label="Search by image">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h1l1.2-1.6A2 2 0 0 1 9.8 3.6h4.4a2 2 0 0 1 1.6.8L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/><circle cx="12" cy="13" r="3.2"/></svg>
-                </button>
-            @endif
+            {{-- PANELS-UPDATES-REMOVE-IMAGE-SEARCH: image search was removed from the merchant side --}}
         </form>
     </div>
 

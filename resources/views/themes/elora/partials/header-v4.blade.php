@@ -106,13 +106,6 @@
             style="color: var(--color-gray)"
           />
         </div>
-        <button type="button" data-image-search-trigger="storefront-image-search-modal-v4" aria-label="{{ __('Search by Image') }}" class="shrink-0">
-          <img
-            src="{{ asset('elora-4/assets/icons/icon-camera.svg') }}"
-            alt=""
-            class="size-[44px]"
-          />
-        </button>
       </form>
     </div>
 
@@ -154,7 +147,6 @@
       </div>
     @endif
 
-    <x-image-search-modal id="storefront-image-search-modal-v4" :action="route('tenant.storefront.search.image')" />
 
     <!-- Desktop -->
     <div
@@ -191,13 +183,6 @@
           placeholder="{{ __('Search...') }}"
           class="bg-transparent outline-none text-[16px] text-[var(--color-text-placeholder)] w-full"
         />
-        <button type="button" data-image-search-trigger="storefront-image-search-modal-v4" aria-label="{{ __('Search by Image') }}" class="shrink-0">
-          <img
-            src="{{ asset('elora-4/assets/icons/icon-camera.svg') }}"
-            alt=""
-            class="size-[22px]"
-          />
-        </button>
       </form>
       <div class="flex items-center gap-[38px] shrink-0">
         <button
