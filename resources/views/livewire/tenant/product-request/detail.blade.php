@@ -5,7 +5,7 @@
         <h1 class="D page-title">{{ $request['title'] }}</h1>
         <span class="badge {{ $request['status_badge'] }}">{{ $request['status_label'] }}</span>
       </div>
-      <p class="page-copy">Request #{{ $request['id'] }} &middot; Submitted {{ $request['created_at'] }}</p>
+      <p class="page-copy">Request {{ $request['code'] }} &middot; Submitted {{ $request['created_at'] }}</p>
       @if (!empty($request['product_url']))
         <a href="{{ $request['product_url'] }}" target="_blank" rel="noopener"
            class="badge badge-secondary" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none;">
@@ -42,6 +42,13 @@
   </div>
   @endif
 
+  @if (!empty($request['attachments']))
+    <div class="card fu d1" style="padding:16px 20px;">
+      <p class="panel-title" style="margin-bottom:8px;">Request attachments</p>
+      @include('livewire.partials.product-request-attachments', ['files' => $request['attachments']])
+    </div>
+  @endif
+
   <div class="card fu d2" style="padding:24px;">
     <div class="stack-gap" style="gap:16px;">
       @foreach ($request['messages'] as $msg)
@@ -55,12 +62,7 @@
             <div style="font-size:13.5px;line-height:1.55;white-space:pre-wrap;">{{ $msg['body'] }}</div>
             @if (!empty($msg['attachments']))
               <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;">
-                @foreach ($msg['attachments'] as $path)
-                  <a href="{{ asset('storage/' . $path) }}" target="_blank"
-                     style="font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,0.15);text-decoration:none;color:inherit;">
-                    &#128206; {{ basename($path) }}
-                  </a>
-                @endforeach
+                @include('livewire.partials.product-request-attachments', ['files' => $msg['attachments']])
               </div>
             @endif
           </div>

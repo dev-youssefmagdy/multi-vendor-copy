@@ -7,6 +7,7 @@ use App\Events\ProductRequestMessageSent;
 use App\Livewire\Tenant\Base\TenantPage;
 use App\Livewire\Tenant\Concerns\InteractsWithTenantUi;
 use App\Models\ProductRequest;
+use App\Support\ProductRequestFiles;
 use App\Models\ProductRequestMessage;
 use App\Services\AdminNotificationService;
 use Livewire\WithFileUploads;
@@ -116,10 +117,13 @@ class RequestDetail extends TenantPage
     {
         return [
             'id'                => $r->id,
+            'code'              => $r->code,
             'title'             => $r->title,
             'description'       => $r->description,
             'product_url'       => $r->product_url,
-            'attachments'       => $r->attachments ?? [],
+            // PANELS-UPDATES-PRODUCT-REQUESTS: the tenant's own uploads live in its tenant storage (tenant_asset),
+            // so they never resolved through asset('storage/...').
+            'attachments'       => ProductRequestFiles::forTenant($r->attachments ?? [], true),
             'status'            => $r->status->value,
             'status_label'      => $r->status->label(),
             'status_badge'      => $r->status->badgeClass(),
@@ -133,7 +137,7 @@ class RequestDetail extends TenantPage
                 'sender_type' => $m->sender_type,
                 'sender_name' => $m->sender_name,
                 'body'        => $m->body,
-                'attachments' => $m->attachments ?? [],
+                'attachments' => ProductRequestFiles::forTenant($m->attachments ?? [], $m->sender_type === 'tenant'),
                 'sent_at'     => $m->created_at->format('M d, Y H:i'),
                 'is_mine'     => $m->sender_type === 'tenant',
             ])->all(),

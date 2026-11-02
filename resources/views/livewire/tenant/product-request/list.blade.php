@@ -91,7 +91,7 @@
                 <span class="badge badge-amber" style="margin-left:6px;">New Reply</span>
               @endif
             </div>
-            <div class="entity-subtitle">#{{ $req->id }} &middot; Submitted {{ $req->created_at->diffForHumans() }}</div>
+            <div class="entity-subtitle">{{ $req->code }} &middot; Submitted {{ $req->created_at->diffForHumans() }}</div>
           </td>
           <td><span class="{{ $req->status->badgeClass() }}">{{ $req->status->label() }}</span></td>
           <td><span class="entity-subtitle">{{ $req->last_reply_at?->diffForHumans() ?? '—' }}</span></td>

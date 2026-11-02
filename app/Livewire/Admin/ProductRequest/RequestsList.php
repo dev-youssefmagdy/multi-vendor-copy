@@ -27,23 +27,21 @@ class RequestsList extends ListPage
             'badge' => 'Catalog',
             'description' => 'Product addition requests submitted by tenants.',
             'tableTitle' => 'Requests',
-            'headers' => ['Request', 'Tenant', 'Status', 'Priority', 'Last Update', 'Actions'],
+            // PANELS-UPDATES-PRODUCT-REQUESTS: readable store name instead of the tenant UUID.
+            'headers' => ['Request', 'Store', 'Status', 'Priority', 'Last Update', 'Actions'],
         ];
     }
 
     protected function pageData(): array
     {
-        $query = ProductRequest::query();
-
-        if ($this->search !== '') {
-            $query->where(function ($q) {
-                $q->where('title', 'like', "%{$this->search}%")
-                    ->orWhere('tenant_id', 'like', "%{$this->search}%");
-            });
-        }
+        // PANELS-UPDATES-PRODUCT-REQUESTS: search by code (PR-00042), title, description, tenant id or STORE NAME;
+        // archived requests are hidden unless the Archived filter is selected.
+        $query = ProductRequest::query()->with('tenant')->search($this->search);
 
         if ($this->statusFilter !== '') {
             $query->where('status', $this->statusFilter);
+        } else {
+            $query->where('status', '!=', ProductRequestStatus::Archived->value);
         }
 
         $records = $query->orderByDesc('admin_has_unread')->orderByDesc('last_reply_at')->paginate(20);
@@ -59,7 +57,7 @@ class RequestsList extends ListPage
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Title or tenant ID'],
+                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Code, title or store name'],
                 ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All Statuses'] + $statusOptions],
             ],
             'statisticsGridClass' => 'g-stats3',
@@ -72,17 +70,32 @@ class RequestsList extends ListPage
                 '<div class="entity-title">'
                     . e($r->title)
                     . ($r->admin_has_unread ? ' <span class="badge badge-amber">New</span>' : '')
-                    . '</div><div class="entity-subtitle">#' . $r->id . ' &middot; ' . e(Str::limit($r->description, 60)) . '</div>',
-                e($r->tenant_id),
+                    . '</div><div class="entity-subtitle">' . e($r->code) . ' &middot; ' . e(Str::limit($r->description, 60)) . '</div>',
+                '<div class="entity-title">' . e($r->storeName()) . '</div><div class="entity-subtitle">' . e(Str::limit($r->tenant_id, 13, '…')) . '</div>',
                 '<span class="badge ' . $r->status->badgeClass() . '">' . e($r->status->label()) . '</span>',
                 '<span class="badge badge-secondary">' . e(ucfirst($r->priority)) . '</span>',
                 $r->last_reply_at ? e($r->last_reply_at->diffForHumans()) : '—',
-                '<a href="' . route('admin.product-requests.show', $r->id) . '" class="link-btn">View</a>',
+                '<a href="' . route('admin.product-requests.show', $r->id) . '" class="link-btn">View</a>'
+                    . (in_array($r->status, [ProductRequestStatus::Completed, ProductRequestStatus::Rejected], true)
+                        ? ' <button type="button" class="link-btn" wire:click="archive(' . $r->id . ')" wire:confirm="Archive this finished request?">Archive</button>'
+                        : ''),
             ])->all(),
             'records' => $records,
             'tableDescription' => $records->total() . ' product requests matched the current filters.',
             'emptyCopy' => 'No product requests matched the current search and filter combination.',
         ]);
+    }
+
+    /** PANELS-UPDATES-PRODUCT-REQUESTS: move a finished (completed / rejected) request out of the active list. */
+    public function archive(int $id): void
+    {
+        $this->authorizePermission('catalog.product-requests.manage');
+
+        $request = ProductRequest::find($id);
+
+        if ($request && in_array($request->status, [ProductRequestStatus::Completed, ProductRequestStatus::Rejected], true)) {
+            $request->update(['status' => ProductRequestStatus::Archived->value, 'admin_has_unread' => false]);
+        }
     }
 
     public function updatedSearch(): void

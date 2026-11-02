@@ -5,7 +5,7 @@
         <h1 class="D page-title">{{ $request['title'] }}</h1>
         <span class="badge {{ $request['status_badge'] }}">{{ $request['status_label'] }}</span>
       </div>
-      <p class="page-copy">Request #{{ $request['id'] }} from tenant <strong>{{ $request['tenant_id'] }}</strong> &middot; {{ $request['created_at'] }}</p>
+      <p class="page-copy">Request <strong>{{ $request['code'] }}</strong> from store <strong>{{ $request['store_name'] }}</strong> <span style="opacity:.6;font-size:12px">({{ $request['tenant_id'] }})</span> &middot; {{ $request['created_at'] }}</p>
       @if (!empty($request['product_url']))
         <a href="{{ $request['product_url'] }}" target="_blank" rel="noopener"
            class="badge badge-secondary" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none;">
@@ -29,9 +29,7 @@
         <div class="card fu d1" style="padding:16px 20px;">
           <p class="panel-title" style="margin-bottom:8px;">Request Attachments</p>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            @foreach ($request['attachments'] as $path)
-              <a href="{{ asset('storage/' . $path) }}" target="_blank" class="badge badge-secondary">&#128206; {{ basename($path) }}</a>
-            @endforeach
+            @include('livewire.partials.product-request-attachments', ['files' => $request['attachments']])
           </div>
         </div>
       @endif
@@ -49,12 +47,7 @@
                 <div style="font-size:13.5px;line-height:1.55;white-space:pre-wrap;">{{ $msg['body'] }}</div>
                 @if (!empty($msg['attachments']))
                   <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;">
-                    @foreach ($msg['attachments'] as $path)
-                      <a href="{{ asset('storage/' . $path) }}" target="_blank"
-                         style="font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,0.15);text-decoration:none;color:inherit;">
-                        &#128206; {{ basename($path) }}
-                      </a>
-                    @endforeach
+                    @include('livewire.partials.product-request-attachments', ['files' => $msg['attachments']])
                   </div>
                 @endif
               </div>

@@ -10,6 +10,7 @@ use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
 use App\Models\ProductRequest;
 use App\Models\ProductRequestMessage;
 use App\Services\TenantNotificationService;
+use App\Support\ProductRequestFiles;
 use Livewire\WithFileUploads;
 
 class RequestDetail extends AdminPage
@@ -115,6 +116,14 @@ class RequestDetail extends AdminPage
         $newStatus = ProductRequestStatus::from($this->statusSelection);
         $req->update(['status' => $newStatus->value, 'priority' => $this->priority]);
 
+        // PANELS-UPDATES-PRODUCT-REQUESTS: archiving is housekeeping, the tenant is not notified about it.
+        if ($newStatus === ProductRequestStatus::Archived) {
+            $this->request = $this->presentRequest($req->fresh('messages'));
+            $this->toast('Request archived.');
+
+            return;
+        }
+
         $notificationService->notifyById(
             $req->tenant_id,
             'product_request',
@@ -155,11 +164,14 @@ class RequestDetail extends AdminPage
     {
         return [
             'id' => $r->id,
+            'code' => $r->code,
+            'store_name' => $r->storeName(),
             'tenant_id' => $r->tenant_id,
             'title' => $r->title,
             'description' => $r->description,
             'product_url' => $r->product_url,
-            'attachments' => $r->attachments ?? [],
+            // PANELS-UPDATES-PRODUCT-REQUESTS: [url, name, image] triples so the view can show real image previews.
+            'attachments' => ProductRequestFiles::forAdmin($r, $r->attachments ?? [], true),
             'status' => $r->status->value,
             'status_label' => $r->status->label(),
             'status_badge' => $r->status->badgeClass(),
@@ -172,7 +184,7 @@ class RequestDetail extends AdminPage
                 'sender_type' => $m->sender_type,
                 'sender_name' => $m->sender_name,
                 'body' => $m->body,
-                'attachments' => $m->attachments ?? [],
+                'attachments' => ProductRequestFiles::forAdmin($r, $m->attachments ?? [], $m->sender_type === 'tenant'),
                 'sent_at' => $m->created_at->format('M d, Y H:i'),
                 'is_mine' => $m->sender_type === 'admin',
             ])->all(),

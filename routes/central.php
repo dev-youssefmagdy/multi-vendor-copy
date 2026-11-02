@@ -497,6 +497,11 @@ Route::group([
         Route::get('/', \App\Livewire\Admin\ProductRequest\RequestsList::class)
              ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
              ->name('index');
+        // PANELS-UPDATES-PRODUCT-REQUESTS: stream tenant-uploaded attachments (image previews / downloads).
+        Route::get('/{requestId}/file', [\App\Http\Controllers\Admin\ProductRequestFileController::class, 'show'])
+             ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
+             ->whereNumber('requestId')
+             ->name('file');
         Route::get('/{requestId}', \App\Livewire\Admin\ProductRequest\RequestDetail::class)
              ->middleware('admin.permission:catalog.product-requests.view,catalog.product-requests.manage')
              ->name('show');

@@ -34,7 +34,8 @@ class RequestsList extends TenantPage
 
         $records = tenancy()->central(function () use ($tenantId) {
             return ProductRequest::forTenant($tenantId)
-                ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
+                // PANELS-UPDATES-PRODUCT-REQUESTS: archived requests only appear when the Archived filter is chosen.
+                ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter), fn($q) => $q->where('status', '!=', ProductRequestStatus::Archived->value))
                 ->orderByDesc('last_reply_at')
                 ->paginate(15);
         });
