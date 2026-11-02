@@ -234,15 +234,15 @@
                     <thead>
                         <tr>
                             <th>Image</th>
-                            <th>Title</th>
-                            <th>SKU</th>
-                            <th>Factory</th>
-                            <th>Date Added</th>
-                            <th>Price</th>
-                            <th>Weight (g)</th>
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Title', 'key' => 'title', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'SKU', 'key' => 'sku', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Factory', 'key' => 'factory', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Date Added', 'key' => 'created_at', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Price', 'key' => 'price', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Weight (g)', 'key' => 'weight', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
                             <th>Categories</th>
-                            <th>Stock</th>
-                            <th>Status</th>
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Stock', 'key' => 'stock', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
+                            @include('livewire.admin.partials.sortable-th', ['label' => 'Status', 'key' => 'status', 'sortKey' => $sortKey, 'sortDir' => $sortDir])
                             <th>Countries</th>
                             <th class="ta-r">Actions</th>
                         </tr>

@@ -3,10 +3,12 @@
 namespace App\Livewire\Admin\Base;
 
 use App\Livewire\Admin\Concerns\HasCsvExport;
+use App\Livewire\Admin\Concerns\SortsTable;
 
 abstract class ListPage extends AdminPage
 {
     use HasCsvExport;
+    use SortsTable; // PANELS-UPDATES-TABLE-SORTING
 
     protected bool $exportable = false;
 
@@ -28,6 +30,9 @@ abstract class ListPage extends AdminPage
             'tableTitle' => 'Records Table',
             'tableDescription' => 'This section will host the final Livewire table implementation.',
             'headers' => ['Name', 'Status', 'Updated At', 'Actions'],
+            'sortable' => $this->sortableColumns(),
+            'sortKey' => $this->sortKey,
+            'sortDir' => $this->sortDir,
             'statistics' => [
                 ['label' => 'Total Records', 'value' => '0', 'caption' => 'Ready for central metrics', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
                 ['label' => 'Active Records', 'value' => '0', 'caption' => 'Backed by enum-driven statuses', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],

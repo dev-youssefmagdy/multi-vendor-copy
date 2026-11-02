@@ -20,6 +20,12 @@ class RequestsList extends ListPage
         $this->authorizeAnyPermission(['catalog.product-requests.view', 'catalog.product-requests.manage']);
     }
 
+    /** @return array<string, string> header label => sort key */
+    protected function sortableColumns(): array
+    {
+        return ['Request' => 'title', 'Store' => 'store', 'Status' => 'status', 'Priority' => 'priority', 'Last Update' => 'updated'];
+    }
+
     protected function pageMeta(): array
     {
         return [
@@ -44,7 +50,16 @@ class RequestsList extends ListPage
             $query->where('status', '!=', ProductRequestStatus::Archived->value);
         }
 
-        $records = $query->orderByDesc('admin_has_unread')->orderByDesc('last_reply_at')->paginate(20);
+        // PANELS-UPDATES-TABLE-SORTING: header sorting; without one the default order (unread first, newest reply) applies.
+        $sorted = $this->applySort($query, [
+            'title' => 'title',
+            'store' => fn ($q, $dir) => $q->orderBy(\App\Models\Tenant::query()->select('data->name')->whereColumn('tenants.id', 'product_requests.tenant_id')->limit(1), $dir),
+            'status' => 'status',
+            'priority' => 'priority',
+            'updated' => 'last_reply_at',
+        ]);
+
+        $records = ($sorted ? $query->orderByDesc('id') : $query->orderByDesc('admin_has_unread')->orderByDesc('last_reply_at'))->paginate(20);
 
         $statusOptions = ProductRequestStatus::options();
 

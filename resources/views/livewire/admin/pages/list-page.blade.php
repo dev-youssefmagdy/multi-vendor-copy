@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <x-table :headers="$headers">
+        <x-table :headers="$headers" :sortable="$sortable ?? []" :sort-key="$sortKey ?? ''" :sort-dir="$sortDir ?? 'desc'">
             @forelse ($rows as $index => $row)
                 <tr @if($rowClasses[$index] ?? null) class="{{ $rowClasses[$index] }}" @endif>
                     @foreach ($row as $cell)

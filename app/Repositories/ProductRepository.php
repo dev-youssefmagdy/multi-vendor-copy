@@ -41,8 +41,40 @@ class ProductRepository
             ->when(!empty($filters['image_search_ids'] ?? null), function ($query) use ($filters) {
                 $query->whereIn('id', $filters['image_search_ids']);
             })
-            ->orderBy('order_number')
+            ->tap(fn ($query) => $this->applyListSort($query, $filters['sort'] ?? null, $filters['dir'] ?? 'desc'))
             ->paginate($perPage);
+    }
+
+    /**
+     * PANELS-UPDATES-TABLE-SORTING: header sort for the central products list. Falls back to the curated
+     * order_number sequence; the key is whitelisted here (the Livewire page validates it as well).
+     */
+    protected function applyListSort(Builder $query, ?string $key, string $direction): void
+    {
+        $direction = $direction === 'asc' ? 'asc' : 'desc';
+
+        $title = fn () => \Illuminate\Support\Facades\DB::table('translations')
+            ->select('value')
+            ->whereColumn('translations.translatable_id', 'products.id')
+            ->where('translations.translatable_type', (new Product())->getMorphClass())
+            ->where('translations.field', 'name')
+            ->limit(1);
+
+        match ($key) {
+            'title' => $query->orderBy($title(), $direction),
+            'sku' => $query->orderBy('sku', $direction),
+            'factory' => $query->orderBy('factory', $direction),
+            'created_at' => $query->orderBy('created_at', $direction),
+            'price' => $query->orderByRaw('COALESCE(sale_price, base_price) '.$direction),
+            'weight' => $query->orderBy('weight_grams', $direction),
+            'stock' => $query->orderBy('stock', $direction),
+            'status' => $query->orderBy('status', $direction),
+            default => $query->orderBy('order_number'),
+        };
+
+        if ($key !== null && $key !== '') {
+            $query->orderBy('order_number');
+        }
     }
 
     /**

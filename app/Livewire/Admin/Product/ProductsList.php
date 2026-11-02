@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Product;
 use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
 use App\Livewire\Admin\Concerns\AuthorizesAdminPermissions;
+use App\Livewire\Admin\Concerns\SortsTable;
 use App\Models\Category;
 use App\Models\FixedShippingCost;
 use App\Models\ProductTenantAssignment;
@@ -18,6 +19,7 @@ use Livewire\WithPagination;
 class ProductsList extends Component
 {
     use AuthorizesAdminPermissions;
+    use SortsTable; // PANELS-UPDATES-TABLE-SORTING
     use WithPagination;
 
     public string $search = '';
@@ -157,6 +159,15 @@ class ProductsList extends Component
         $this->priceListRows = [];
     }
 
+    /** @return array<string, string> header label => sort key (whitelisted again in ProductRepository) */
+    protected function sortableColumns(): array
+    {
+        return [
+            'Title' => 'title', 'SKU' => 'sku', 'Factory' => 'factory', 'Date Added' => 'created_at',
+            'Price' => 'price', 'Weight (g)' => 'weight', 'Stock' => 'stock', 'Status' => 'status',
+        ];
+    }
+
     public function render(ProductRepository $products)
     {
         $stats = $products->stats();
@@ -168,6 +179,8 @@ class ProductsList extends Component
             'stock' => $this->stockFilter,
             'show_deleted' => $this->showDeleted,
             'image_search_ids' => $this->imageSearchIds,
+            'sort' => $this->activeSortKey(),
+            'dir' => $this->sortDir,
         ]);
 
         return view('livewire.admin.product.products-list', [
@@ -177,6 +190,8 @@ class ProductsList extends Component
             'statusOptions' => ProductStatus::cases(),
             'deliveryScopes' => DeliveryScope::cases(),
             'canManageProducts' => $this->hasPermission('catalog.products.manage'),
+            'sortKey' => $this->sortKey,
+            'sortDir' => $this->sortDir,
             'imageSearchIds' => $this->imageSearchIds,
             'imageSearchActive' => $this->imageSearchActive,
             'priceListOpen' => $this->priceListOpen,

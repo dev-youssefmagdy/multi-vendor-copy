@@ -19,6 +19,12 @@ class TicketsList extends ListPage
         $this->authorizeAnyPermission(['support.tickets.view', 'support.tickets.manage']);
     }
 
+    /** @return array<string, string> header label => sort key */
+    protected function sortableColumns(): array
+    {
+        return ['Subject' => 'subject', 'Tenant' => 'tenant', 'Priority' => 'priority', 'Status' => 'status', 'Last Reply' => 'reply'];
+    }
+
     protected function pageMeta(): array
     {
         return [
@@ -49,7 +55,12 @@ class TicketsList extends ListPage
             $query->where('priority', $this->priorityFilter);
         }
 
-        $records = $query->orderByDesc('last_reply_at')->orderByDesc('id')->paginate(15);
+        // PANELS-UPDATES-TABLE-SORTING
+        $sorted = $this->applySort($query, [
+            'subject' => 'subject', 'tenant' => fn ($q, $dir) => $q->orderBy(\App\Models\Tenant::query()->select('data->name')->whereColumn('tenants.id', 'support_tickets.tenant_id')->limit(1), $dir),
+            'priority' => 'priority', 'status' => 'status', 'reply' => 'last_reply_at',
+        ]);
+        $records = ($sorted ? $query->orderByDesc('id') : $query->orderByDesc('last_reply_at')->orderByDesc('id'))->paginate(15);
 
         $statusOptions = SupportTicket::statusOptions();
         $priorityOptions = SupportTicket::priorityOptions();

@@ -27,6 +27,12 @@ class ManufacturingRequestsList extends ListPage
     public string $selectedCurrentStatus = '';
     public string $selectedCurrentStatusClass = '';
 
+    /** @return array<string, string> header label => sort key */
+    protected function sortableColumns(): array
+    {
+        return ['Request' => 'id', 'Tenant' => 'tenant', 'Product' => 'product', 'Qty' => 'qty', 'Status' => 'status', 'Submitted' => 'submitted'];
+    }
+
     protected function pageMeta(): array
     {
         return [
@@ -47,7 +53,11 @@ class ManufacturingRequestsList extends ListPage
             ->when(filled($this->search), fn($q) => $q->where('product_name', 'like', "%{$this->search}%"))
             ->when(filled($this->statusFilter), fn($q) => $q->where('status', $this->statusFilter))
             ->when(filled($this->tenantFilter), fn($q) => $q->where('tenant_id', $this->tenantFilter))
-            ->latest()
+            // PANELS-UPDATES-TABLE-SORTING
+            ->tap(fn ($q) => $this->applySort($q, [
+                'id' => 'id', 'tenant' => fn ($q, $dir) => $q->orderBy(\App\Models\Tenant::query()->select('data->name')->whereColumn('tenants.id', 'manufacturing_requests.tenant_id')->limit(1), $dir),
+                'product' => 'product_name', 'qty' => 'quantity', 'status' => 'status', 'submitted' => 'created_at',
+            ]) ?: $q->latest())
             ->paginate(15);
 
         $tenants = Tenant::query()->orderBy('data->name')->get(['id', 'data->name as name']);
