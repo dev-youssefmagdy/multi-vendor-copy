@@ -229,6 +229,24 @@
         color: #2AAF2F;
         white-space: nowrap;
     }
+    /* Dynamic product labels (icon + text): one colour for both, so the icon always matches the text. */
+    .sqv5-new__metarow .product-label {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 500;
+        font-size: 2.333cqw;
+        line-height: 1.238;
+        color: #2AAF2F;
+        white-space: nowrap;
+    }
+    .sqv5-new__metarow .product-label svg { width: 3.498cqw; height: 3.498cqw; color: inherit; }
+
+    /* Phones: same size as the Modern Edition Trending Now card (~378x166 on a 425px screen)
+       instead of the flat 554x145 comp: taller card, square photo. */
+    @media (max-width: 1023px) {
+        .sqv5-new { aspect-ratio: 554 / 243; }
+        .sqv5-new__media { flex: 0 0 43.86%; }   /* square: 243 / 554 */
+        .sqv5-newin__row { padding-inline: 16px; box-sizing: border-box; }   /* same 378px card width as Trending Now */
+    }
 
     /* RTL: mirror the corner-pinned sale/heart/cart positions. */
     [dir="rtl"] .sqv5-new__sale {
