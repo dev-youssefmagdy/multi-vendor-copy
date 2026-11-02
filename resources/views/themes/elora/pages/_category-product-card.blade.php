@@ -96,7 +96,7 @@
 @endphp
 
 <a href="{{ $favUrl }}"
-    class="category-product-card group bg-fill rounded-lg card-w block w-full max-w-[210px] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+    class="category-product-card group bg-fill rounded-lg border border-[#E5E5E5] card-w block w-full max-w-[210px] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
     style="text-decoration:none">
 
     {{-- ── Image area ─────────────────────────────────────────────────────── --}}
