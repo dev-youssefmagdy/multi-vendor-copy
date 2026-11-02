@@ -100,8 +100,10 @@
     .sqv4-trend-card {
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
+        align-items: stretch;
         padding: 0;
+        /* Phones: the 463x205 comp scales down to ~120px tall, which made the photo tiny. */
+        min-height: 178px;
         width: 100%;
         background: #FDFDFD;
         border-radius: 8.80556px;
@@ -115,8 +117,8 @@
     .sqv4-trend-card__media {
         position: relative;
         display: block;
-        /* 193.72 / 463.76 */
-        width: 41.77%;
+        /* Phones: 46% (the comp's 193.72 / 463.76 = 41.77% is kept from 1024px up). */
+        width: 46%;
         flex: none;
         align-self: stretch;
         background: var(--color-card-image-bg);
@@ -378,7 +380,9 @@
         .sqv4-trend__seeall {
             font-size: clamp(15px, 1.389vw, 20px);
         }
+        .sqv4-trend-card__media { width: 41.77%; }
         .sqv4-trend-card {
+            min-height: 0;
             /* 205.46 tall; width comes from Swiper's slidesPerView (1328 / 463.76
                = 2.86 cards across the padded row, matching the comp). */
             height: clamp(146px, 14.268vw, 205.46px);
