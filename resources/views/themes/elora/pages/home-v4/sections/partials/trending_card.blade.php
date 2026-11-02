@@ -27,7 +27,6 @@
       <div class="flex flex-col gap-[2.51px] lg:gap-[4.24px] w-full">
         <div class="flex items-center justify-between gap-[1.26px] lg:gap-[2.12px] w-full">
           <p class="font-medium text-[12px] leading-[15px] lg:text-[23.6px] lg:leading-[30px] tracking-[0.31px] lg:tracking-[0.53px] truncate min-w-0" style="color:var(--color-text-primary)">{{ $p['name'] }}</p>
-          <p class="text-[10px] leading-[16px] lg:text-[25.29px] lg:leading-[26px] tracking-[0.31px] lg:tracking-[0.53px] lg:text-center shrink-0 whitespace-nowrap" style="color:#CD0032">{{ $p['weight'] ?? __(':n g', ['n' => 250]) }}</p>
         </div>
         <p class="text-[10px] leading-[13px] lg:text-[20.23px] lg:leading-[25px] tracking-[0.31px] lg:tracking-[0.53px] truncate" style="color:var(--color-text-subtitle)">{{ $p['desc'] ?? __('Premium quality') }}</p>
       </div>

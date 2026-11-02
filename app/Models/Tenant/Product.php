@@ -528,11 +528,6 @@ class Product extends Model
         $soldTotal = $soldCount + $stockLeft;
         $soldPct = $soldTotal > 0 ? (int) round($soldCount / $soldTotal * 100) : 0;
 
-        $weightGrams = $this->centralProduct?->weight_grams ?? $this->weight_grams ?? null;
-        $weightLabel = $weightGrams
-            ? ($weightGrams >= 1000 ? number_format($weightGrams / 1000, 1) . __('kg') : $weightGrams . __('g'))
-            : null;
-
         $rating = (float) ($this->average_rating ?? 0);
         $ratingCount = $this->relationLoaded('rates') ? $this->rates->count() : $this->rates()->count();
 
@@ -556,7 +551,7 @@ class Product extends Model
             'labels' => $this->cardLabels(),
             'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? asset('elora-4/assets/images/product-placeholder.svg'),
             'name' => $this->translationValue('name') ?? $this->slug,
-            'weight' => $weightLabel,
+            'weight' => null, // product weight is not shown on storefront cards
             'price' => $symbol . number_format($sellPrice * $rate, 2),
             'oldPrice' => $hasDiscount && $realPrice !== null ? $symbol . number_format($realPrice * $rate, 2) : null,
             'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,

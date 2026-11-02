@@ -285,6 +285,14 @@ class ProductPage extends Component
                 ->values();
         }
 
+        // The visitor's current country (session choice, else detected) and whether this
+        // product ships there; the Souqify product page shows just that answer.
+        $currentCountry = $customerCountryId
+            ? \App\Models\Country::query()->find($customerCountryId)
+            : app(CountryDetectorService::class)->detect(request());
+        $shipsToCurrentCountry = $currentCountry !== null && $shippingCountries->contains('id', $currentCountry->id);
+        $isDigitalProduct = $central && $central->delivery_scope === DeliveryScope::Digital;
+
         // If the visitor's detected country is among the shippable countries,
         // show only that one; otherwise fall back to the full list.
         $detectedCountry = app(CountryDetectorService::class)->detect(request());
@@ -446,6 +454,9 @@ class ProductPage extends Component
             'deliveryMinDays' => $shippingEstimate['base_days'],
             'deliveryMaxDays' => $shippingEstimate['max_days'],
             'shippingCountries' => $shippingCountries,
+            'currentCountry' => $currentCountry,
+            'shipsToCurrentCountry' => $shipsToCurrentCountry,
+            'isDigitalProduct' => $isDigitalProduct,
             // Reviews modal
             'showReviewsModal' => $this->showReviewsModal,
             'allReviews' => $allReviews,

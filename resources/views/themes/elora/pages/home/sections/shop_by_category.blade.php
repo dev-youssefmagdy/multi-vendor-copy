@@ -64,10 +64,6 @@
                 $btDisplaySell = $symbol . number_format($btSellPrice * $rate, 2);
                 $btImg = $btProduct->centralProduct?->primary_image_url ?? $btProduct->primary_image_url ?? null;
                 $btName = $btProduct->translationValue('name') ?? $btProduct->slug;
-                $btWeightGrams = $btProduct->centralProduct?->weight_grams ?? $btProduct?->weight_grams ?? null;
-                $btWeightLabel = $btWeightGrams
-                    ? ($btWeightGrams >= 1000 ? number_format($btWeightGrams / 1000, 1) . __('kg') : $btWeightGrams . __('g'))
-                    : null;
                 $btRating = round((float) ($btProduct->average_rating ?? 0), 1);
                 $btRatingCount = $btProduct->relationLoaded('rates') ? $btProduct->rates->count() : 0;
                 $btUrl = route('tenant.storefront.product', $btProduct->slug);
@@ -86,9 +82,6 @@
                 <div class="flex flex-col justify-center gap-1 flex-1 min-w-0 leading-snug">
                     <h3 class="text-[13px] font-semibold text-gray-900 line-clamp-2">{{ $btName }}</h3>
                     <div class="flex items-center gap-2">
-                        @if ($btWeightLabel)
-                        <p class="text-gray-500 text-xs">{{ $btWeightLabel }}</p>
-                        @endif
                         <p class="text-sm font-bold text-gray-900">{{ $btDisplaySell }}
                             @if ($btHasDiscount && $btDiscountPct > 0)
                             <span class="text-main text-[10px] font-semibold ms-1">{{ $btDiscountPct }}{{ __('% off') }}</span>
