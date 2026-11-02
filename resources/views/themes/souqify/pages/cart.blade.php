@@ -2,9 +2,6 @@
     $currency = $currentCurrency ?? null;
     $symbol = data_get($currency, 'symbol', '$');
     $rate = (float) data_get($currency, 'conversion_rate', 1.0);
-    $shippingPct = $shippingThreshold > 0
-        ? min(100, (int) round($cartWeight / $shippingThreshold * 100))
-        : 0;
     $weightLabel = fn (int $g) => $g >= 1000 ? number_format($g / 1000, 2) . __('kg') : $g . __('g');
 @endphp
 
@@ -36,31 +33,7 @@
             </button>
             <h1 class="text-[24px] font-bold text-[#242424]">{{ __('My Cart') }}</h1>
         </div>
-        @if($shippingThreshold > 0)
-        <div class="relative h-12 bg-zinc-300 rounded-full overflow-hidden">
-            <div class="absolute inset-y-0 left-0 bg-orange-600 rounded-full transition-all"
-                style="width: {{ $shippingPct }}%"></div>
-            <div class="relative z-10 h-full flex items-center justify-between px-5 sm:px-7 text-base font-medium">
-                <span class="text-white">{{ $cartWeight }} {{ __('g') }}</span>
-                <div class="flex items-center gap-2 text-white">
-                    {{-- <span class="hidden sm:inline">( {{ $cartWeight }} g )</span> --}}
-                    @if ($cartWeight >= $shippingThreshold)
-                        <span class="">{{ __('Free Shipping!') }}</span>
-                    @else
-                        <span class="hidden sm:inline">{{ number_format($shippingThreshold - $cartWeight) }}{{ __('g') }}
-                            {{ __('to free shipping') }}</span>
-                    @endif
-                    <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                    </svg>
-                </div>
-                <span class="text-neutral-500">{{ number_format($shippingThreshold, 0) }} {{ __('g') }}</span>
-            </div>
-        </div>
-        @endif
+        <x-storefront.free-shipping-progress theme="souqify" :threshold="$shippingThreshold" :weight="$cartWeight" />
     </div>
 
     <!-- =========== CART CONTENT =========== -->
