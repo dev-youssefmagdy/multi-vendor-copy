@@ -51,6 +51,9 @@
 @endphp
 
 <div>
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
     <main class="bg-zinc-100 pt-6 pb-16 w-full">
         <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
 

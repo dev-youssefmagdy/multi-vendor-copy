@@ -5,6 +5,9 @@
 @endphp
 
 <main class="bg-zinc-100 min-h-screen">
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
             <div class="bg-gradient-to-r from-[color:var(--sq-primary)] to-[color:var(--sq-primary-hover)] text-white px-8 py-6">

@@ -81,6 +81,9 @@ $progressPct = $currentIdx > 0 ? round(($currentIdx / 3) * 100) : 0;
 @endphp
 
 <div>
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
     {{-- ══════════════════════════════════════════════════════════════════════
     MOBILE LAYOUT (hidden on lg+)
     ══════════════════════════════════════════════════════════════════════════ --}}

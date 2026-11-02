@@ -4,6 +4,9 @@
 @endphp
 
 <main class="bg-zinc-100 pt-8 pb-16 w-full">
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Breadcrumb / heading -->

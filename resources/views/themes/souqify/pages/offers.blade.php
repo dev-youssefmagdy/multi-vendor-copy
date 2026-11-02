@@ -37,6 +37,9 @@ $seasonMaxDiscountPct = $seasonSaleProducts->reduce(function ($max, $product) {
 @endphp
 
 <main class="bg-[#F1F1F1] w-full" style="font-family: 'Outfit', sans-serif;">
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        @include('themes.souqify.partials.mobile-home-header', ['tight' => true])
+    @endunless
 
     <!-- ===== PAGE HEADER ===== -->
     <div class="sticky lg:static top-0 z-30 bg-white border-b border-neutral-100 px-4 lg:px-8 py-3 lg:py-5">
