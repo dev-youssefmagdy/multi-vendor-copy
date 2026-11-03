@@ -40,7 +40,7 @@
     $fullStars = (int) round((float) ($product->average_rating ?? 0));
     $productUrl = $product->slug ? route('tenant.storefront.product', $product->slug) : 'javascript:void(0)';
     // ── Ribbon badge (top-left of image, from $badge param) and pill badge (below stars)
-    $ribbonBadge = $badge ?? null;
+    $ribbonBadge = $product->cardBadgeText();
 
     $pillBadge = $badgeText ?? $product->cardBadgeText()
         ?? null;
@@ -141,7 +141,7 @@
                     <span class="text-[10px] text-gray-400 ml-1">({{ $fullStars > 0 ? number_format($product->average_rating, 1) : '0' }})</span>
                 </div>
 
-                @if ($pillBadge)
+                @if ($pillBadge && $pillBadge !== $ribbonBadge)
                     <div class="inline-flex items-center gap-[4px] px-[6px] rounded-full h-[17px] whitespace-nowrap"
                         style="background: {{ $pillBgColor }};">
                         {{-- star icon matching Figma pill --}}
