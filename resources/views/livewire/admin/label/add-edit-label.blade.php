@@ -4,7 +4,7 @@
       <div>
         <div class="eyebrow">Central Catalog</div>
         <h1 class="D page-title">{{ $pageTitle }}</h1>
-        <p class="page-copy">A label is an icon and a short text. Every theme renders it in its own product-card label style.</p>
+        <p class="page-copy">A label is an icon and a short text. Every theme renders it in its own product-card label style. Assign labels to products from each product's edit page.</p>
       </div>
       <div class="page-actions" style="flex-shrink:0">
         <a href="{{ route('admin.labels.index') }}" class="btn btn-secondary">Back to Labels</a>
@@ -74,16 +74,6 @@
             </x-select>
           </div>
         </div>
-      </x-card-collapse>
-
-      <x-card-collapse class="form-card" title="Products" description="Products that show this label on their cards. Only products without a label are listed (one label per product). The same assignment can be made from each product's edit page." :start-open="true">
-        <x-select multiple searchable wire:model.defer="productIds" placeholder="Search and select products">
-          @foreach ($products as $product)
-            <option value="{{ $product->id }}">{{ $product->translationValue('name') ?? $product->slug }}</option>
-          @endforeach
-        </x-select>
-        @error('productIds') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
-        @error('productIds.*') <p class="field-error" style="margin-top:8px">{{ $message }}</p> @enderror
       </x-card-collapse>
     </div>
   </form>
