@@ -47,7 +47,7 @@
     @endphp
     <!-- ============ FLASH SALE ============ -->
     <section
-      class="flash-sale-stripes py-[24px] flex flex-col gap-[24px]" wire:ignore
+      class="flash-sale-stripes py-[24px] lg:py-[40px] flex flex-col gap-[24px] lg:gap-[32px]" wire:ignore
     >
       <div class="flex items-center justify-between px-[16px] lg:px-[56px]">
         <div class="flex items-center gap-2 lg:gap-3.25">
@@ -69,7 +69,7 @@
         >
       </div>
 
-      <div class="swiper flash-swiper w-full ps-[16px]! lg:ps-[56px]!">
+      <div class="swiper flash-swiper w-full ps-[16px]! lg:ps-[56px]! lg:pe-[56px]!">
         <div class="swiper-wrapper" id="flashGrid">
           @foreach ($flashCards as $p)
             <div class="swiper-slide">

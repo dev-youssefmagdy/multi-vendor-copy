@@ -58,12 +58,17 @@ function mountCategories() {
 function mountFlashGrid() {
     const grid = document.getElementById("flashGrid");
     if (!grid) return;
-    return new Swiper(grid.closest(".swiper"), {
+    const el = grid.closest(".swiper");
+    // Desktop only: use as many rows as the products actually fill (max 3) so
+    // a short list doesn't leave an empty band under the cards.
+    const deskRows = Math.max(1, Math.min(3, Math.ceil(grid.children.length / 3)));
+    el.style.setProperty("--flash-rows", deskRows);
+    return new Swiper(el, {
         slidesPerView: 1.5,
         spaceBetween: 12,
         grid: { rows: 3, fill: "row" },
         breakpoints: {
-            1024: { slidesPerView: 3 },
+            1024: { slidesPerView: 3, spaceBetween: 16, grid: { rows: deskRows, fill: "row" } },
         },
     });
 }
