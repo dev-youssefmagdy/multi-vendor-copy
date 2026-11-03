@@ -39,6 +39,10 @@ class CentralCatalogSyncObserver
             return;
         }
 
+        if ($model instanceof Product && $model->wasChanged('primary_image_url')) {
+            EmbedProductImagesJob::dispatch($model->id);
+        }
+
         if ($model->wasChanged('weight_grams')) {
             if ($model instanceof Product) {
                 info("Dispatching SyncCentralProductWeightToTenantsJob for central product #{$model->id}");

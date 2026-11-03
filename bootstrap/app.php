@@ -28,6 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('subscriptions:send-renewal-reminders --days=7')->dailyAt('08:00');
         // Safety net for any image saved in a non-AVIF format, then quarantine files no database row references.
         $schedule->command('images:convert-avif')->dailyAt('02:00')->withoutOverlapping()->runInBackground();
+        // After the AVIF pass: queue embeddings for products that have none yet (new, or failed earlier). Runs on the default queue.
+        $schedule->command('image-search:backfill')->dailyAt('02:30')->withoutOverlapping();
         $schedule->command('storage:clean-orphans --delete')->dailyAt('03:00')->withoutOverlapping()->runInBackground();
     })
     ->withMiddleware(function (Middleware $middleware): void {
