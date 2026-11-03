@@ -219,7 +219,7 @@ body {
 .flash-card-img-wrap {
   position: relative;
   flex-shrink: 0;
-  width: 100px;
+  width: 120px;
   height: 100%;
   overflow: hidden;
 }
@@ -402,11 +402,11 @@ body {
   }
 
   .flash-card-img-wrap {
-    width: 204.17px;
+    width: 148.51px;
   }
 
   .flash-card-img {
-    inset: 5.19px 6.23px;
+    inset: 6px;
   }
 
   .flash-card-badge {

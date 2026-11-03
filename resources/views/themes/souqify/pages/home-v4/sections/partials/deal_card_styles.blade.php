@@ -24,7 +24,8 @@
         position: relative;
         width: 100%;
         /* 261.85 / 366.14 of the card's height */
-        flex: 0 0 71.52%;
+        flex: 0 0 auto;
+        aspect-ratio: 1 / 1;      /* product image is always a square */
         background: #F3F3FE;
         overflow: hidden;
     }

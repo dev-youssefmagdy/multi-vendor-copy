@@ -119,7 +119,6 @@
 
     /* Square, uncropped photo: 289.73 / 472.89 of the card height equals the
        card width. */
-    .sqv6-newin .sqv6-deal__media { flex-basis: 61.27%; }
     .sqv6-newin .sqv6-deal__img { object-fit: contain; }
     @media (min-width: 1024px) {
         .sqv6-newin {

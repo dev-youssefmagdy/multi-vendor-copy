@@ -22,9 +22,8 @@
     .sqv3-trend-card__media {
         position: relative;
         display: block;
-        /* 215.51 / 496.21 */
-        width: 43.43%;
         flex: none;
+        aspect-ratio: 1 / 1;           /* product image is always a square */
         align-self: stretch;
         background: var(--color-card-image-bg);
         border-radius: 8.7462px 8.7462px 0px 0px;
@@ -241,6 +240,7 @@
     }
 
     @media (min-width: 1024px) {
+        .sqv3-trend-card__media { height: 100%; align-self: auto; }
         .sqv3-trend-card {
             /* 156.48 tall; width comes from Swiper's slidesPerView (1328 / 496.21
                = 2.68 columns across the padded row, matching the comp). */

@@ -31,7 +31,8 @@
     .sqv6-mob__media {
         position: relative;
         display: block;
-        flex: 0 0 43.44%;               /* 215.06 / 495.09 */
+        flex: none;
+        aspect-ratio: 1 / 1;           /* product image is always a square */
         align-self: stretch;
         background: #F3F3FE;
         overflow: hidden;

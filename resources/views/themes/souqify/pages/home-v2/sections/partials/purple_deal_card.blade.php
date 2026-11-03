@@ -31,7 +31,8 @@
         display: block;
         width: 100%;
         /* 270.36 / 377.33 */
-        flex: 0 0 62.6%;  /* square: 236.19 / 377.33 */
+        flex: 0 0 auto;
+        aspect-ratio: 1 / 1;      /* product image is always a square */
         background: #F3F3FE;
         overflow: hidden;
     }

@@ -7,7 +7,7 @@
   style="background: var(--color-bg-main); font-family: var(--font-family-base)"
 >
   {{-- Media --}}
-  <div class="relative w-full h-[137.69px] lg:h-[284.6px] shrink-0">
+  <div class="relative w-full aspect-square shrink-0">
     <img
       src="{{ $p['image'] }}"
       alt="{{ $p['name'] }}"

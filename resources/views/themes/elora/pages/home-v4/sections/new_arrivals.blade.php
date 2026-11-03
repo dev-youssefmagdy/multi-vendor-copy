@@ -30,7 +30,7 @@
               @if ($left)
                 <div class="swiper-slide h-auto lg:w-[898.26px]!">
                   <div class="flex gap-[16px] h-full">
-                    <div class="shrink-0 w-[126.08px] h-[190.43px] lg:w-[270.45px] lg:h-auto">
+                    <div class="shrink-0 w-[126.08px] h-[207px] lg:w-[270.45px] lg:h-auto">
                       @include('themes.elora.pages.home-v4.sections.partials.product_card', ['p' => $left])
                     </div>
                     @if ($top || $bottom)

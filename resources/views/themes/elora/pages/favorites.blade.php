@@ -112,7 +112,7 @@
                     '';
 
                 return `<div class="fav-card group relative cursor-pointer flex flex-col bg-[#FDFDFD] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-index="${idx}" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price || 0}" data-added="${item.added || 0}">
-              <div class="relative overflow-hidden" style="height:183px">
+              <div class="relative overflow-hidden aspect-square">
                 ${img}
                 ${badge}
                 <button class="fav-btn absolute top-2.5 left-2.5 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10" onclick="removeFavoriteByIndex(${idx})" title="{{ __('Remove from favorites') }}">

@@ -9,7 +9,7 @@
   class="group relative flex flex-col items-start w-full h-full rounded-[7.41px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]"
   style="background: var(--color-bg-main); text-decoration:none"
 >
-  <div class="relative w-full h-[142.03px] shrink-0 overflow-hidden rounded-t-[6.21px]">
+  <div class="relative w-full aspect-square shrink-0 overflow-hidden rounded-t-[6.21px]">
     <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
 
     @if (!empty($p['badge']))

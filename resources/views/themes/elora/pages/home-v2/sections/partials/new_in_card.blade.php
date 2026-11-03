@@ -12,7 +12,7 @@
     style="background: var(--color-bg-main); font-family: 'Outfit', sans-serif"
   >
     {{-- Media --}}
-    <div class="relative flex flex-col justify-end items-end p-[3.14px] md:p-[5px_6px] gap-[5.03px] md:gap-[8px] w-full h-[115.03px] md:h-[183px] isolate box-border">
+    <div class="relative flex flex-col justify-end items-end p-[3.14px] md:p-[5px_6px] gap-[5.03px] md:gap-[8px] w-full aspect-square isolate box-border">
       <img
         src="{{ $p['image'] }}"
         alt="{{ $p['name'] }}"

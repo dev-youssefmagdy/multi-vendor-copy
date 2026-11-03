@@ -166,7 +166,6 @@
     @media (max-width: 639px) {
         .sqv2-best__slide--mobile { width: 100%; }
         .sqv2-best .sqv2-mob { aspect-ratio: 411.94 / 181; }
-        .sqv2-best .sqv2-mob__media { flex: 0 0 43.9%; }       /* square: 181 / 411.94 */
     }
     /* Wider screens: the two cards share the Deal Card's height instead of leaving a gap. */
     @media (min-width: 640px) {

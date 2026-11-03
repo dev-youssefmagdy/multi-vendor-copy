@@ -87,7 +87,7 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
 
     {{-- Image area: #F6F6F6 bg, rounded top, same size as elora (h-48 / sm:h-52, max 210px wide) --}}
     <div
-        class="w-full h-48 sm:h-52 bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
+        class="w-full aspect-square bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
 
         @if ($img)
             <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"

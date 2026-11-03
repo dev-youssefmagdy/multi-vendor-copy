@@ -31,7 +31,8 @@
     .sqv5-new__media {
         position: relative;
         display: block;
-        flex: 0 0 26.23%;               /* square: 145.31 / 554 (= card height) */
+        flex: none;
+        aspect-ratio: 1 / 1;           /* product image is always a square */
         align-self: stretch;
         background: #F3F3FE;
         overflow: hidden;
@@ -244,7 +245,6 @@
        instead of the flat 554x145 comp: taller card, square photo. */
     @media (max-width: 1023px) {
         .sqv5-new { aspect-ratio: 554 / 243; }
-        .sqv5-new__media { flex: 0 0 43.86%; }   /* square: 243 / 554 */
         .sqv5-newin__row { padding-inline: 16px; box-sizing: border-box; }   /* same 378px card width as Trending Now */
     }
 

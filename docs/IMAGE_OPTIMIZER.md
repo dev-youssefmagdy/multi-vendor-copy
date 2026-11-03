@@ -22,3 +22,11 @@ All raster images stored by the app (central panel, tenant panel, storefront upl
 - Originals are deleted after the DB update unless `--keep-originals`. Always `--dry-run` first and back up storage.
 - After the central pass run `php artisan tenants:sync-data --all` so synced catalog rows pick up the new paths.
 - Not covered: static theme assets under `public/` and the seeders/default content that reference them.
+
+## Orphan cleanup
+`php artisan storage:clean-orphans [tenant] [--central-only|--tenants-only] [--min-age=48] [--exclude=dir] [--delete] [--purge]`
+
+- Reports public-disk files that no database column references (central + each tenant). Report-only unless `--delete`.
+- `--delete` moves them to `storage/app/orphan-trash/<timestamp>/<scope>/…` (restorable); `--purge` unlinks permanently.
+- Skips files newer than `--min-age` hours, dotfiles, `livewire-tmp`, `orphan-trash`.
+- Scheduled daily (bootstrap/app.php): 02:00 `images:convert-avif`, 03:00 `storage:clean-orphans --delete`. Empty `orphan-trash` periodically after verifying.

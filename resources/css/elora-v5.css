@@ -187,13 +187,13 @@ body {
    position tables (in JS) expect. */
 .fan-slide-base {
   width: 206.23px;
-  height: 312.52px;
+  height: 339.05px;
   transform-origin: top left;
 }
 @media (min-width: 1024px) {
   .fan-slide-base {
     width: 256.37px;
-    height: 388.49px;
+    height: 421.47px;
   }
 }
 

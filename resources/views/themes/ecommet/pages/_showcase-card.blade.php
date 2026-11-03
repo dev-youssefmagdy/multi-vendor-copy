@@ -59,10 +59,10 @@
 
     {{-- Image area --}}
     <div
-        class="w-full h-[136px] bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
+        class="w-full aspect-square bg-[#f6f6f6] rounded-t-[8px] flex items-center justify-center overflow-hidden shrink-0 relative">
         @if ($image)
             <img loading="lazy" src="{{ $image }}" alt="{{ $product->translationValue('name') }}"
-                class="object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 @if($sliderJson) data-slider='{{ $sliderJson }}' @endif>
         @else
             <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

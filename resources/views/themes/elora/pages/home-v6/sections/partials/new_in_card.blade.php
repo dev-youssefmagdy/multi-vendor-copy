@@ -2,9 +2,9 @@
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a
   href="{{ $p['url'] ?? '#' }}"
-  class="group relative flex flex-col items-start w-[192.01px] h-[290px] lg:w-[282.43px] lg:h-[426.58px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow,transform] duration-300 ease-out hover:scale-[1.02]"
+  class="group relative flex flex-col items-start w-[192.01px] h-[315.25px] lg:w-[282.43px] lg:h-[463.7px] bg-[var(--color-bg-main)] overflow-hidden no-underline rounded-[8.69876px] lg:rounded-[12.7955px] shadow-[0px_20.5907px_68.555px_rgba(0,0,0,0.16)] lg:shadow-[0px_30.2881px_100.842px_rgba(0,0,0,0.16)] transition-[width,height,border-radius,box-shadow,transform] duration-300 ease-out hover:scale-[1.02]"
 >
-  <div class="relative w-full h-[166.77px] lg:h-[245.31px] shrink-0">
+  <div class="relative w-full aspect-square shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     @if (!empty($p['isOutOfStock']))
     <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>

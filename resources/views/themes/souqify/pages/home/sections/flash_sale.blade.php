@@ -60,7 +60,7 @@
                     @endphp
                     <div class="bg-white rounded-xl p-3 flex gap-3 items-start hover:shadow-md transition cursor-pointer"
                         onclick="sqNavigateToProduct(event, '{{ route('tenant.storefront.product', $prod->slug) }}')">
-                        <div class="relative w-36 sm:w-44 product-img-bg rounded-md overflow-hidden shrink-0">
+                        <div class="relative w-36 sm:w-44 aspect-square product-img-bg rounded-md overflow-hidden shrink-0">
                             @if ($fImg)
                             <a href="{{ route('tenant.storefront.product', $prod->slug) }}">
                                 <img loading="lazy" src="{{ $fImg }}" alt="{{ $fName }}" class="w-full h-full object-cover" />
@@ -175,7 +175,7 @@
                 <div class="lg:col-span-3 lg:self-start bg-white rounded-2xl p-5 flex flex-col cursor-pointer"
                     onclick="sqNavigateToProduct(event, '{{ route('tenant.storefront.product', $flashHero->slug) }}')">
                     <div
-                        class="relative bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl h-56 sm:h-72 mb-4 overflow-hidden">
+                        class="relative bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl w-full max-w-[420px] mx-auto aspect-square mb-4 overflow-hidden">
                         <span
                             class="absolute top-3 left-3 z-10 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded">{{ __('HOT') }}</span>
                         @if ($hImg)
@@ -229,7 +229,7 @@
                 @else
                 <div class="lg:col-span-3 bg-white rounded-2xl p-5 flex flex-col">
                     <div
-                        class="relative bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl h-56 sm:h-72 mb-4 overflow-hidden">
+                        class="relative bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl w-full max-w-[420px] mx-auto aspect-square mb-4 overflow-hidden">
                         <span
                             class="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded">{{ __('HOT') }}</span>
                         <img loading="lazy" src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=600&q=80"
@@ -270,7 +270,7 @@
                     @endphp
                     <div class="bg-white rounded-xl p-3 flex gap-3 items-start hover:shadow-md transition cursor-pointer"
                         onclick="sqNavigateToProduct(event, '{{ route('tenant.storefront.product', $prod->slug) }}')">
-                        <div class="relative w-36 sm:w-44 product-img-bg rounded-md overflow-hidden shrink-0">
+                        <div class="relative w-36 sm:w-44 aspect-square product-img-bg rounded-md overflow-hidden shrink-0">
                             @if ($fImg)
                             <a href="{{ route('tenant.storefront.product', $prod->slug) }}">
                                 <img loading="lazy" src="{{ $fImg }}" alt="{{ $fName }}" class="w-full h-full object-cover" />

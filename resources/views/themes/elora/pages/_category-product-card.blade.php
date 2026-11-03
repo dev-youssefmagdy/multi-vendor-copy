@@ -100,7 +100,7 @@
     style="text-decoration:none">
 
     {{-- ── Image area ─────────────────────────────────────────────────────── --}}
-    <div class="relative rounded-t-lg overflow-hidden h-48 sm:h-52">
+    <div class="relative rounded-t-lg overflow-hidden aspect-square">
 
         @if ($img)
             <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"

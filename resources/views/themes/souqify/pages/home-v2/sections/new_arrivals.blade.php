@@ -136,7 +136,6 @@
     .sqv2-newin .sqv2-mob__img { object-fit: contain; }
     @media (max-width: 639px) {
         .sqv2-newin .sqv2-mob { aspect-ratio: 411.94 / 181; }
-        .sqv2-newin .sqv2-mob__media { flex: 0 0 43.9%; }       /* square: 181 / 411.94 */
     }
     .sqv2-newin__empty {
         font-family: 'Outfit', sans-serif;

@@ -1,7 +1,7 @@
 {{-- Expects $p: name, weight, desc, badge, badgeBg, badgeColor, progress, ordered, rating, price, oldPrice, discount, image, url --}}
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="group flex h-auto bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.1143px] shadow-sm overflow-hidden no-underline transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
-  <div class="relative w-[41.77%] shrink-0">
+  <div class="relative w-[41.77%] aspect-square self-start shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     @if (!empty($p['isOutOfStock']))
     <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>

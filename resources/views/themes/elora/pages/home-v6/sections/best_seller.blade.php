@@ -63,7 +63,7 @@
             @foreach ($bestSellerGroups as $group)
               @php [$full, $small1, $small2, $wide] = $group; @endphp
               <div class="swiper-slide h-auto">
-                <div class="flex gap-[12px] h-[269px] lg:h-[461.49px]">
+                <div class="flex gap-[12px] h-[292px] lg:h-[500.64px]">
                   <div>
                     @include('themes.elora.pages.home-v6.sections.partials.product_card', ['p' => $full + ['cardClass' => 'rounded-[8px] lg:rounded-[14px] shadow-[0px_4px_21.34px_rgba(0,0,0,0.25)] lg:shadow-[0px_6.84px_36.61px_rgba(0,0,0,0.25)]']])
                   </div>

@@ -1,6 +1,6 @@
 {{-- Recommended For You grid card — shorter image band than product_card, no badge/delivery rows. Expects $p: image, name, weight, weightColor, rating, price, priceColor, oldPrice, discount, url --}}
 <a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex flex-col items-start rounded-[6px] shadow-[var(--shadow-card)] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
-  <div class="flex flex-col gap-[8px] h-[160px] lg:h-[227px] items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
+  <div class="flex flex-col gap-[8px] aspect-square items-end justify-end px-[6px] py-[5px] relative shrink-0 w-full">
     <div class="absolute flex gap-[8px] aspect-square items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] h-full items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-full rounded-t-[6px] top-0 w-full overflow-hidden">

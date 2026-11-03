@@ -117,10 +117,10 @@
     .sqv4-trend-card__media {
         position: relative;
         display: block;
-        /* Phones: 46% (the comp's 193.72 / 463.76 = 41.77% is kept from 1024px up). */
-        width: 46%;
         flex: none;
-        align-self: stretch;
+        width: 46%;
+        aspect-ratio: 1 / 1;           /* product image is always a square */
+        align-self: flex-start;
         background: var(--color-card-image-bg);
         border-radius: 7.37989px 7.37989px 0px 0px;
         overflow: hidden;
@@ -386,7 +386,7 @@
         .sqv4-trend__seeall {
             font-size: clamp(15px, 1.389vw, 20px);
         }
-        .sqv4-trend-card__media { width: 41.77%; }
+        .sqv4-trend-card__media { width: auto; height: 100%; align-self: auto; }
         .sqv4-trend-card {
             min-height: 0;
             /* 205.46 tall; width comes from Swiper's slidesPerView (1328 / 463.76

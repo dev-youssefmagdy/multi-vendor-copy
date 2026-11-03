@@ -29,7 +29,8 @@
     .sqv2-mob__media {
         position: relative;
         display: block;
-        flex: 0 0 33.5%;                /* square: 138 / 411.94 */
+        flex: none;
+        aspect-ratio: 1 / 1;           /* product image is always a square */
         align-self: stretch;
         background: var(--color-page-bg, #F3F3FE);
         overflow: hidden;

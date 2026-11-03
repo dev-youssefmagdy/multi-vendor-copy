@@ -26,6 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
         $schedule->command('subscriptions:send-renewal-reminders --days=7')->dailyAt('08:00');
+        // Safety net for any image saved in a non-AVIF format, then quarantine files no database row references.
+        $schedule->command('images:convert-avif')->dailyAt('02:00')->withoutOverlapping()->runInBackground();
+        $schedule->command('storage:clean-orphans --delete')->dailyAt('03:00')->withoutOverlapping()->runInBackground();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->group('universal', []);

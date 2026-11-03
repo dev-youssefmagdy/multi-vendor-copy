@@ -2,10 +2,10 @@
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <div class="swiper-slide h-auto !w-[192.65px]">
   <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col items-start rounded-[8.73px] shadow-[var(--shadow-card-lg)] transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="background:var(--color-bg-main); text-decoration:none">
-    <div class="flex flex-col gap-[7.31px] h-[167.33px] items-end justify-end px-[5.49px] py-[4.57px] relative shrink-0 w-full">
-      <div class="absolute flex gap-[7.31px] h-[167.33px] items-start left-0 p-[5.49px] top-0 w-full">
-        <div class="absolute flex flex-col gap-[7.31px] h-[167.33px] items-end left-0 top-0 w-full">
-          <div class="absolute left-1/2 -translate-x-1/2 h-[167.33px] rounded-t-[7.31px] top-0 w-full overflow-hidden">
+    <div class="flex flex-col gap-[7.31px] aspect-square items-end justify-end px-[5.49px] py-[4.57px] relative shrink-0 w-full">
+      <div class="absolute flex gap-[7.31px] h-full items-start left-0 p-[5.49px] top-0 w-full">
+        <div class="absolute flex flex-col gap-[7.31px] h-full items-end left-0 top-0 w-full">
+          <div class="absolute left-1/2 -translate-x-1/2 h-full rounded-t-[7.31px] top-0 w-full overflow-hidden">
             <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
           </div>
           @if (!empty($p['badge']))

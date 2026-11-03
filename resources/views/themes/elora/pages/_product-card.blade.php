@@ -95,11 +95,11 @@
     style="text-decoration:none">
 
     {{-- ── Image area ─────────────────────────────────────────────────────── --}}
-    <div class="relative rounded-t-lg overflow-hidden h-48 sm:h-52">
+    <div class="relative rounded-t-lg overflow-hidden aspect-square">
 
         @if ($img)
             <img loading="lazy" src="{{ $img }}" alt="{{ $product->translationValue('name') }}"
-                class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" @if($sliderJson) data-slider='{{ $sliderJson }}' @endif />
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" @if($sliderJson) data-slider='{{ $sliderJson }}' @endif />
         @else
             <div class="w-full h-full flex items-center justify-center bg-gray-100 text-5xl">🛍️</div>
         @endif

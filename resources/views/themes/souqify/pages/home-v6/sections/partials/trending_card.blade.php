@@ -1,7 +1,7 @@
 {{-- Card markup ported from public/souqify-5/carousels.js renderTrendingCard(). $p keys:
      id, url, image, name (Str::limit'd), weight, desc, rating, price, oldPrice, discount --}}
 <div class="flex h-full rounded-[10px] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg" style="background:var(--color-bg-main); box-shadow:var(--shadow-card)">
-    <a href="{{ $p['url'] }}" class="group relative w-[124px] shrink-0 block" style="background:var(--color-surface)">
+    <a href="{{ $p['url'] }}" class="group relative w-[124px] aspect-square self-start shrink-0 block" style="background:var(--color-surface)">
         @if ($p['image'])
             <img loading="lazy" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
         @endif
