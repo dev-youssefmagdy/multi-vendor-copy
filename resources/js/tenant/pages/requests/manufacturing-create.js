@@ -1,8 +1,7 @@
 // Manufacturing request create page.
 // - Similar product: search box + result list that only shows once the vendor types. Picking a
 //   product sets the hidden linked_product_id (click again to unlink).
-// - Picking a product pre-fills Product Name, but only when it is currently empty
-//   (mirrors the old Livewire `selectProduct()` behaviour of not clobbering manual input).
+// - Picking a product fills Product Name on every pick, but never overwrites a name the vendor typed.
 import '@tenant-css/pages/dashboard.css';
 import '@tenant-css/pages/orders.css';
 import { get } from '../../core/http.js';
@@ -17,6 +16,7 @@ if (form && picker) {
     const list = picker.querySelector('[data-rq-picker-list]');
     const productNameInput = form.querySelector('[name="product_name"]');
     let requestId = 0;
+    let autoFilledName = '';
 
     const message = (text) => {
         list.innerHTML = '';
@@ -70,8 +70,15 @@ if (form && picker) {
         valueInput.value = selected ? '' : item.dataset.id;
         item.setAttribute('aria-selected', String(!selected));
 
-        if (!selected && productNameInput && productNameInput.value.trim() === '') {
-            productNameInput.value = item.textContent.trim();
+        // PANELS-UPDATES-MANUFACTURING: the name follows every pick (and is cleared on un-pick), but only while it is
+        // empty or still holds the name we filled in ourselves: text the vendor typed is never overwritten.
+        if (productNameInput) {
+            const current = productNameInput.value.trim();
+            if (current === '' || current === autoFilledName) {
+                autoFilledName = selected ? '' : item.textContent.trim();
+                productNameInput.value = autoFilledName;
+                productNameInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         }
     });
 
