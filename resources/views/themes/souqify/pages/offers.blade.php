@@ -22,7 +22,7 @@
 
     // Tag shown on the card: the product's own badge, otherwise its real flash-sale discount.
     $tagFor = function ($product) use ($discountOf) {
-        $badge = $product->badges->where('active', true)->first()?->text;
+        $badge = $product->cardBadgeText();
         if (filled($badge)) {
             return $badge;
         }

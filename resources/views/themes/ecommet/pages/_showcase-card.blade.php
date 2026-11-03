@@ -42,8 +42,7 @@
     // ── Ribbon badge (top-left of image, from $badge param) and pill badge (below stars)
     $ribbonBadge = $badge ?? null;
 
-    $pillBadge = $badgeText ?? $product->badges->firstWhere('active', true)?->text
-        ?? $product->badges->first()?->text
+    $pillBadge = $badgeText ?? $product->cardBadgeText()
         ?? null;
     if (!$pillBadge && $pricing['is_flash_sale']) {
         $pillBadge = __('Flash Sale');

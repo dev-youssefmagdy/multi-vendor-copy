@@ -41,8 +41,7 @@ $badge optional string ribbon label e.g. 'Best-Selling', 'New In'
     $ribbonBadge = $badge ?? null;
 
     // ── Pill badge (below stars, from product badges) ───────────────────────
-    $pillBadge = $product->badges->firstWhere('active', true)?->text
-        ?? $product->badges->first()?->text
+    $pillBadge = $product->cardBadgeText()
         ?? null;
 
     if (!$pillBadge && $pricing['is_flash_sale']) {

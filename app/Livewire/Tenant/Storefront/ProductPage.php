@@ -179,7 +179,7 @@ class ProductPage extends Component
         $discountPct = (int) round((float) ($pricing['discount_percentage'] ?? 0));
         $displaySell = number_format($sellPrice * $rate, 2);
         $displayReal = $hasDiscount && $realPrice !== null ? number_format($realPrice * $rate, 2) : null;
-        $badgeLabel = $product->badges->firstWhere('active', true)?->text ?? $product->badges->first()?->text ?? ($pricing['is_flash_sale'] ? __('Flash Sale') : null) ?? __('New In');
+        $badgeLabel = $product->cardBadgeText() ?? ($pricing['is_flash_sale'] ? __('Flash Sale') : null) ?? __('New In');
 
         // Stock
         $central = $product->centralProduct ?? null;

@@ -560,10 +560,7 @@ class Product extends Model
         $discountPct = $hasDiscount ? (int) round((float) $pricing['discount_percentage']) : 0;
         $realPrice = $pricing['original_price'];
 
-        $soldCount = (int) ($this->centralProduct?->sold_count ?? 0);
-        $stockLeft = (int) ($this->stock ?? 0);
-        $soldTotal = $soldCount + $stockLeft;
-        $soldPct = $soldTotal > 0 ? (int) round($soldCount / $soldTotal * 100) : 0;
+        $soldPct = (int) $this->soldPercent();
 
         $rating = (float) ($this->average_rating ?? 0);
         $ratingCount = $this->relationLoaded('rates') ? $this->rates->count() : $this->rates()->count();
@@ -594,7 +591,7 @@ class Product extends Model
             'discount' => $hasDiscount ? $discountPct . '% ' . __('Off') : null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? ' (+' . $ratingCount . ')' : ''),
             'sold' => $soldPct > 0 ? $soldPct . '% ' . __('Sold') : null,
-            'badge' => $this->badges->firstWhere('active', true)?->text ?? $this->badges->first()?->text,
+            'badge' => $this->cardBadgeText(),
             'isOutOfStock' => $this->stockStatus() === 'out_of_stock',
         ];
     }
