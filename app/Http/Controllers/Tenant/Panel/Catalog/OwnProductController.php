@@ -152,7 +152,7 @@ final class OwnProductController extends PanelController
         // new file simply deletes the existing one.
         if ($request->hasFile('primary_image')) {
             $file = $request->file('primary_image');
-            $path = $file->store('product-images', 'public');
+            $path = \App\Support\ImageOptimizer::store($file, 'product-images');
             $savedProduct->files()->where('key', 'like', 'primary_%')->delete();
             $savedProduct->files()->create([
                 'key' => 'primary_original',
@@ -180,7 +180,7 @@ final class OwnProductController extends PanelController
             }
             $mime = $file->getMimeType();
             $fileType = Str::startsWith($mime, 'video/') ? FileType::Video->value : FileType::Image->value;
-            $path = $file->store(sprintf('product-images/%s/gallery', $savedProduct->getKey()), 'public');
+            $path = \App\Support\ImageOptimizer::store($file, sprintf('product-images/%s/gallery', $savedProduct->getKey()));
             $savedProduct->files()->create([
                 'key' => 'gallery',
                 'path' => $path,

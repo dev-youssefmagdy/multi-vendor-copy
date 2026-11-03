@@ -204,7 +204,7 @@ class AffiliatesListPage extends ListPage
         }
 
         $attachmentPath = $this->payoutAttachment
-            ? Storage::disk('public')->url($this->payoutAttachment->store('affiliate-payouts', 'public'))
+            ? Storage::disk('public')->url(\App\Support\ImageOptimizer::store($this->payoutAttachment, 'affiliate-payouts'))
             : null;
 
         try {

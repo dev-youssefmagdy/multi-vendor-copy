@@ -24,7 +24,7 @@ final class BrandRequestService
 
         $storedPaths = [];
         foreach ($files as $file) {
-            $storedPaths[] = $file->store("brand-requests/{$tenantId}", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "brand-requests/{$tenantId}");
         }
 
         $brandRequest = BrandRequest::create([

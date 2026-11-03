@@ -1664,7 +1664,7 @@ class ReturnRequestService
 
     protected function storeMedia(ReturnRequest $returnRequest, UploadedFile $file, string $type): ReturnRequestMedia
     {
-        $path = $file->store('return-evidence', 'public');
+        $path = \App\Support\ImageOptimizer::store($file, 'return-evidence');
 
         // Store the full tenant_asset() URL so ReturnRequestMedia::url() works
         // regardless of which tenant's storage the file was written to.

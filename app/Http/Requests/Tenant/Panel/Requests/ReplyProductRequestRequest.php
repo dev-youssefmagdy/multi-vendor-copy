@@ -13,7 +13,7 @@ final class ReplyProductRequestRequest extends TenantFormRequest
         return [
             'reply' => ['required', 'string', 'min:2', 'max:5000'],
             'attachments' => ['array', 'max:5'],
-            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif,pdf,doc,docx'],
         ];
     }
 

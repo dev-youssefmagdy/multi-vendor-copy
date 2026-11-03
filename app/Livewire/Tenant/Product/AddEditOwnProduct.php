@@ -257,7 +257,7 @@ class AddEditOwnProduct extends Component
             : null);
 
         if ($this->imageFile) {
-            $path = $this->imageFile->store('product-images', 'public');
+            $path = \App\Support\ImageOptimizer::store($this->imageFile, 'product-images');
             $product->images()->create(['path' => $path, 'order_number' => 0]);
         }
 

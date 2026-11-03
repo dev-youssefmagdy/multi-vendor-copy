@@ -65,7 +65,7 @@ final class MobileAppController extends PanelController
 
         foreach (['logo', 'splash'] as $file) {
             if ($request->hasFile($file)) {
-                $values[$file] = tenant_asset($request->file($file)->store('mobile', 'public'));
+                $values[$file] = tenant_asset(\App\Support\ImageOptimizer::store($request->file($file), 'mobile'));
             }
         }
 

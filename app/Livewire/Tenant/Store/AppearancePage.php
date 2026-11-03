@@ -329,10 +329,10 @@ class AppearancePage extends TenantPage
         ]);
 
         if ($this->logoUploadAr) {
-            $this->logoPathAr = tenant_asset($this->logoUploadAr->store('appearances/logos', 'public'));
+            $this->logoPathAr = tenant_asset(\App\Support\ImageOptimizer::store($this->logoUploadAr, 'appearances/logos'));
         }
         if ($this->logoUploadEn) {
-            $this->logoPathEn = tenant_asset($this->logoUploadEn->store('appearances/logos', 'public'));
+            $this->logoPathEn = tenant_asset(\App\Support\ImageOptimizer::store($this->logoUploadEn, 'appearances/logos'));
         }
 
         $service->saveAppearanceSettings([

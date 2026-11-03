@@ -145,10 +145,10 @@ final class AppearanceController extends PanelController
         $logoPathEn = null;
 
         if ($request->hasFile('logo_upload_ar')) {
-            $logoPathAr = tenant_asset($request->file('logo_upload_ar')->store('appearances/logos', 'public'));
+            $logoPathAr = tenant_asset(\App\Support\ImageOptimizer::store($request->file('logo_upload_ar'), 'appearances/logos'));
         }
         if ($request->hasFile('logo_upload_en')) {
-            $logoPathEn = tenant_asset($request->file('logo_upload_en')->store('appearances/logos', 'public'));
+            $logoPathEn = tenant_asset(\App\Support\ImageOptimizer::store($request->file('logo_upload_en'), 'appearances/logos'));
         }
 
         $current = $this->repo->appearanceSettings();
@@ -218,14 +218,14 @@ final class AppearanceController extends PanelController
         if ($request->boolean('remove_promo_banner_image')) {
             $imageUrl = '';
         } elseif ($request->hasFile('promo_banner_image')) {
-            $imageUrl = tenant_asset($request->file('promo_banner_image')->store('appearances/banners', 'public'));
+            $imageUrl = tenant_asset(\App\Support\ImageOptimizer::store($request->file('promo_banner_image'), 'appearances/banners'));
         }
 
         $mobileImageUrl = $current['promo_banner_mobile_image_url'] ?? '';
         if ($request->boolean('remove_promo_banner_mobile_image')) {
             $mobileImageUrl = '';
         } elseif ($request->hasFile('promo_banner_mobile_image')) {
-            $mobileImageUrl = tenant_asset($request->file('promo_banner_mobile_image')->store('appearances/banners', 'public'));
+            $mobileImageUrl = tenant_asset(\App\Support\ImageOptimizer::store($request->file('promo_banner_mobile_image'), 'appearances/banners'));
         }
 
         $this->service->savePromoBannerSettings([
@@ -269,10 +269,10 @@ final class AppearanceController extends PanelController
         $footerLogoPathEn = null;
 
         if ($request->hasFile('footer_logo_upload_ar')) {
-            $footerLogoPathAr = tenant_asset($request->file('footer_logo_upload_ar')->store('appearances/logos', 'public'));
+            $footerLogoPathAr = tenant_asset(\App\Support\ImageOptimizer::store($request->file('footer_logo_upload_ar'), 'appearances/logos'));
         }
         if ($request->hasFile('footer_logo_upload_en')) {
-            $footerLogoPathEn = tenant_asset($request->file('footer_logo_upload_en')->store('appearances/logos', 'public'));
+            $footerLogoPathEn = tenant_asset(\App\Support\ImageOptimizer::store($request->file('footer_logo_upload_en'), 'appearances/logos'));
         }
 
         $validated = $request->validated();

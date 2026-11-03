@@ -72,7 +72,7 @@ class AddEditBlogPost extends Component
             'blogCategoryId' => ['nullable', 'integer', 'exists:blog_categories,id'],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'publishedAt' => ['nullable', 'date'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:2048'],
         ];
 
         foreach (Language::query()->where('is_active', true)->get() as $language) {

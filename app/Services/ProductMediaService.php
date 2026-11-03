@@ -29,7 +29,7 @@ class ProductMediaService
         $originalExtension = strtolower($uploadedFile->getClientOriginalExtension() ?: 'jpg');
         $originalName = Str::uuid()->toString();
 
-        $originalPath = Storage::disk($disk)->putFileAs($directory, $uploadedFile, sprintf('%s-original.%s', $originalName, $originalExtension));
+        $originalPath = \App\Support\ImageOptimizer::storeAs($uploadedFile, $directory, $originalName . '-original', $disk);
 
         $product->files()->create([
             'key' => 'primary_original',
@@ -45,8 +45,8 @@ class ProductMediaService
 
         foreach (self::DERIVATIVES as $key => $maxDimension) {
             $image = $manager->read($uploadedFile->getRealPath())->scaleDown(width: $maxDimension, height: $maxDimension);
-            $encoded = $image->toJpeg(82);
-            $path = sprintf('%s/%s-%s.jpg', $directory, $originalName, Str::after($key, 'primary_'));
+            $encoded = $image->toAvif(\App\Support\ImageOptimizer::QUALITY);
+            $path = sprintf('%s/%s-%s.avif', $directory, $originalName, Str::after($key, 'primary_'));
 
             Storage::disk($disk)->put($path, (string) $encoded);
 
@@ -55,8 +55,8 @@ class ProductMediaService
                 'path' => $path,
                 'storage_type' => $disk,
                 'file_type' => FileType::Image,
-                'mime_type' => 'image/jpeg',
-                'extension' => 'jpg',
+                'mime_type' => 'image/avif',
+                'extension' => 'avif',
                 'size' => Storage::disk($disk)->size($path),
             ]);
         }
@@ -84,7 +84,9 @@ class ProductMediaService
             ->where('key', 'gallery')
             ->max('sort_order');
 
-        $originalPath = Storage::disk($disk)->putFileAs($directory, $uploadedFile, sprintf('%s.%s', $originalName, $originalExtension));
+        $originalPath = $fileType === FileType::Image
+            ? \App\Support\ImageOptimizer::storeAs($uploadedFile, $directory, $originalName, $disk)
+            : Storage::disk($disk)->putFileAs($directory, $uploadedFile, sprintf('%s.%s', $originalName, $originalExtension));
 
         $product->files()->create([
             'key' => 'gallery',
@@ -100,8 +102,8 @@ class ProductMediaService
         if ($fileType === FileType::Image) {
             $manager = new ImageManager(new Driver());
             $image = $manager->read($uploadedFile->getRealPath())->scaleDown(width: 480, height: 480);
-            $encoded = $image->toJpeg(82);
-            $thumbPath = sprintf('%s/%s-thumb.jpg', $directory, $originalName);
+            $encoded = $image->toAvif(\App\Support\ImageOptimizer::QUALITY);
+            $thumbPath = sprintf('%s/%s-thumb.avif', $directory, $originalName);
 
             Storage::disk($disk)->put($thumbPath, (string) $encoded);
 
@@ -110,8 +112,8 @@ class ProductMediaService
                 'path' => $thumbPath,
                 'storage_type' => $disk,
                 'file_type' => FileType::Image,
-                'mime_type' => 'image/jpeg',
-                'extension' => 'jpg',
+                'mime_type' => 'image/avif',
+                'extension' => 'avif',
                 'size' => Storage::disk($disk)->size($thumbPath),
                 'sort_order' => $nextSortOrder,
             ]);
@@ -168,11 +170,7 @@ class ProductMediaService
         $originalExtension = strtolower($uploadedFile->getClientOriginalExtension() ?: 'jpg');
         $originalName = Str::uuid()->toString();
 
-        $originalPath = Storage::disk($disk)->putFileAs(
-            $directory,
-            $uploadedFile,
-            sprintf('%s.%s', $originalName, $originalExtension)
-        );
+        $originalPath = \App\Support\ImageOptimizer::storeAs($uploadedFile, $directory, $originalName, $disk);
 
         $variant->files()->create([
             'key' => 'variant_thumb',

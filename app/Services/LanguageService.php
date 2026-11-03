@@ -75,8 +75,8 @@ class LanguageService
 
                 $manager = new ImageManager(new Driver());
                 $image = $manager->read($attributes['image']->getRealPath())->scaleDown(width: 800, height: 800);
-                $encoded = $image->toPng();
-                $path = sprintf('%s/%s.png', $directory, $filename);
+                $encoded = $image->toAvif(\App\Support\ImageOptimizer::QUALITY);
+                $path = sprintf('%s/%s.avif', $directory, $filename);
 
                 Storage::disk($disk)->put($path, (string) $encoded);
 
@@ -87,8 +87,8 @@ class LanguageService
                     'path' => $path,
                     'storage_type' => $disk,
                     'file_type' => FileType::Image,
-                    'mime_type' => 'image/png',
-                    'extension' => 'png',
+                    'mime_type' => 'image/avif',
+                    'extension' => 'avif',
                     'size' => Storage::disk($disk)->size($path),
                 ]);
 

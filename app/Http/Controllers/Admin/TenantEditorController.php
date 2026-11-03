@@ -135,7 +135,7 @@ class TenantEditorController extends Controller
 
         if ($tenant && $request->hasFile('logoUpload')) {
             tenancy()->initialize($saved);
-            $path    = $request->file('logoUpload')->store('appearances/logos', 'public');
+            $path    = \App\Support\ImageOptimizer::store($request->file('logoUpload'), 'appearances/logos');
             $logoUrl = tenant_asset($path);
             app(TenantPanelService::class)->saveAppearanceSettings([
                 'logo_mode'    => 'image',

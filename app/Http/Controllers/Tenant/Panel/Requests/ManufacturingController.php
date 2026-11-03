@@ -120,7 +120,7 @@ final class ManufacturingController extends PanelController
         // PANELS-UPDATES-MANUFACTURING: images go to the tenant's own public disk (like product-request attachments).
         $images = [];
         foreach ($request->file('images', []) as $file) {
-            $images[] = $file->store('manufacturing-requests/'.tenant('id'), 'public');
+            $images[] = \App\Support\ImageOptimizer::store($file, 'manufacturing-requests/'.tenant('id'));
         }
 
         $manufacturingRequest = ManufacturingRequest::create([

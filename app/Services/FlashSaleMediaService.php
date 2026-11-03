@@ -24,9 +24,9 @@ class FlashSaleMediaService
         $manager = new ImageManager(new Driver());
         $encoded = $manager->read($uploadedFile->getRealPath())
             ->scaleDown(width: 1600, height: 600)
-            ->toJpeg(85);
+            ->toAvif(\App\Support\ImageOptimizer::QUALITY);
 
-        $path = sprintf('%s/%s-banner.jpg', $directory, $name);
+        $path = sprintf('%s/%s-banner.avif', $directory, $name);
         Storage::disk($disk)->put($path, (string) $encoded);
 
         $flashSale->files()->create([
@@ -34,8 +34,8 @@ class FlashSaleMediaService
             'path' => $path,
             'storage_type' => $disk,
             'file_type' => FileType::Image,
-            'mime_type' => 'image/jpeg',
-            'extension' => 'jpg',
+            'mime_type' => 'image/avif',
+            'extension' => 'avif',
             'size' => Storage::disk($disk)->size($path),
         ]);
 

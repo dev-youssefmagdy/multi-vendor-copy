@@ -71,9 +71,9 @@ class BlogPostService
 
                 $manager = new ImageManager(new Driver());
                 $image = $manager->read($attributes['image']->getRealPath())->scaleDown(width: 1200, height: 800);
-                $encoded = $image->toPng();
+                $encoded = $image->toAvif(\App\Support\ImageOptimizer::QUALITY);
                 $filename = Str::uuid()->toString();
-                $path = sprintf('%s/%s.png', $directory, $filename);
+                $path = sprintf('%s/%s.avif', $directory, $filename);
 
                 Storage::disk($disk)->put($path, (string) $encoded);
 
@@ -82,8 +82,8 @@ class BlogPostService
                     'path' => $path,
                     'storage_type' => $disk,
                     'file_type' => FileType::Image,
-                    'mime_type' => 'image/png',
-                    'extension' => 'png',
+                    'mime_type' => 'image/avif',
+                    'extension' => 'avif',
                     'size' => Storage::disk($disk)->size($path),
                 ]);
             }

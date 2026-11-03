@@ -279,7 +279,7 @@ class TenantPanelService
                     // Handle image upload (UploadedFile) — store and set thumbnail_path.
                     $image = $variantAttributes['image'] ?? null;
                     if ($image instanceof \Illuminate\Http\UploadedFile) {
-                        $path = $image->store('product-variants', 'public');
+                        $path = \App\Support\ImageOptimizer::store($image, 'product-variants');
                         $fill['thumbnail_path'] = $path;
                     } elseif (($variantAttributes['remove_image'] ?? false) === true) {
                         $fill['thumbnail_path'] = null;
@@ -876,7 +876,7 @@ class TenantPanelService
      */
     public function storeComplianceDocument(\Illuminate\Http\UploadedFile $file): string
     {
-        return tenant_asset($file->store('compliance-documents', 'public'));
+        return tenant_asset(\App\Support\ImageOptimizer::store($file, 'compliance-documents'));
     }
 
     /** Marks the setup-progress "default pages reviewed" step, called whenever a tenant saves a storefront page. */

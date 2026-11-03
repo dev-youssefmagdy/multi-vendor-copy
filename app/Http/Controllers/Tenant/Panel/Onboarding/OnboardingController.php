@@ -66,10 +66,10 @@ final class OnboardingController extends PanelController
         $logoPathEn = null;
 
         if ($request->hasFile('logo_upload_ar')) {
-            $logoPathAr = tenant_asset($request->file('logo_upload_ar')->store('appearances/logos', 'public'));
+            $logoPathAr = tenant_asset(\App\Support\ImageOptimizer::store($request->file('logo_upload_ar'), 'appearances/logos'));
         }
         if ($request->hasFile('logo_upload_en')) {
-            $logoPathEn = tenant_asset($request->file('logo_upload_en')->store('appearances/logos', 'public'));
+            $logoPathEn = tenant_asset(\App\Support\ImageOptimizer::store($request->file('logo_upload_en'), 'appearances/logos'));
         }
 
         $current = $this->service->logoSettings();

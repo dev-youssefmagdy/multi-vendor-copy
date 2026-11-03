@@ -57,7 +57,7 @@ final class SaveOwnProductRequest extends TenantFormRequest
             'primary_image' => ['nullable', 'image', 'max:4096'],
             'remove_primary_image' => ['boolean'],
             'gallery_files' => ['array'],
-            'gallery_files.*' => ['nullable', 'mimes:jpg,jpeg,png,gif,webp,mp4,webm,mov', 'max:51200'],
+            'gallery_files.*' => ['nullable', 'mimes:jpg,jpeg,png,gif,webp,avif,mp4,webm,mov', 'max:51200'],
             'remove_gallery_ids' => ['array'],
             'remove_gallery_ids.*' => ['nullable', 'integer'],
             'gallery_order' => ['nullable', 'string'],

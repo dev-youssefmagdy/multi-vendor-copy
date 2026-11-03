@@ -108,7 +108,7 @@ final class BannerController extends PanelController
 
         $imagePath = $banner?->image_path;
         if ($request->hasFile('banner_image')) {
-            $imagePath = $request->file('banner_image')->store('appearances/banners', 'public');
+            $imagePath = \App\Support\ImageOptimizer::store($request->file('banner_image'), 'appearances/banners');
             $imagePath = tenant_asset($imagePath);
         }
 

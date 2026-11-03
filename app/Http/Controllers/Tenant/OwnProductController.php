@@ -130,7 +130,7 @@ class OwnProductController extends Controller
         // new file simply deletes the existing one.
         if ($request->hasFile('primary_image')) {
             $file = $request->file('primary_image');
-            $path = $file->store('product-images', 'public');
+            $path = \App\Support\ImageOptimizer::store($file, 'product-images');
             $savedProduct->files()->where('key', 'like', 'primary_%')->delete();
             $savedProduct->files()->create([
                 'key'          => 'primary_original',
@@ -156,7 +156,7 @@ class OwnProductController extends Controller
             if (!$file instanceof UploadedFile) continue;
             $mime     = $file->getMimeType();
             $fileType = Str::startsWith($mime, 'video/') ? FileType::Video->value : FileType::Image->value;
-            $path     = $file->store(sprintf('product-images/%s/gallery', $savedProduct->getKey()), 'public');
+            $path     = \App\Support\ImageOptimizer::store($file, sprintf('product-images/%s/gallery', $savedProduct->getKey()));
             $savedProduct->files()->create([
                 'key'          => 'gallery',
                 'path'         => $path,
@@ -248,7 +248,7 @@ class OwnProductController extends Controller
             'badge_ids.*'          => ['integer', 'exists:product_badges,id'],
             'primary_image'        => ['nullable', 'image', 'max:4096'],
             'gallery_files'        => ['array'],
-            'gallery_files.*'      => ['nullable', 'mimes:jpg,jpeg,png,gif,webp,mp4,webm,mov', 'max:51200'],
+            'gallery_files.*'      => ['nullable', 'mimes:jpg,jpeg,png,gif,webp,avif,mp4,webm,mov', 'max:51200'],
             'remove_gallery_ids'   => ['array'],
             'remove_gallery_ids.*' => ['nullable', 'integer'],
             'variants'                          => ['array'],

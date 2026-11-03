@@ -760,10 +760,10 @@ class NeozenaCatalogImporter
                 }
 
                 $image = $manager->read($sourceBinary)->scaleDown(width: $maxDimension, height: $maxDimension);
-                $encoded = $image->toJpeg(82);
+                $encoded = $image->toAvif(\App\Support\ImageOptimizer::QUALITY);
                 unset($image);
                 $suffix = Str::contains($key, '_') ? Str::after($key, '_') : $key;
-                $path = sprintf('%s/%s-%s.jpg', $directory, $basename, $suffix);
+                $path = sprintf('%s/%s-%s.avif', $directory, $basename, $suffix);
 
                 $storage->put($path, (string) $encoded);
                 unset($encoded);
@@ -774,8 +774,8 @@ class NeozenaCatalogImporter
                     'path' => $path,
                     'storage_type' => $disk,
                     'file_type' => FileType::Image->value,
-                    'mime_type' => 'image/jpeg',
-                    'extension' => 'jpg',
+                    'mime_type' => 'image/avif',
+                    'extension' => 'avif',
                     'size' => $storage->size($path),
                 ]);
             }
@@ -802,10 +802,15 @@ class NeozenaCatalogImporter
             $mime = $response->header('Content-Type') ?: null;
             $size = strlen($contents);
             $directory = sprintf('%s/%s', Str::plural(class_basename($model)), $model->getKey());
-            $filename = sprintf('%s.%s', Str::uuid(), $extension);
-            $path = sprintf('%s/%s', strtolower($directory), $filename);
+            $basename = sprintf('%s/%s', strtolower($directory), Str::uuid());
 
-            Storage::disk(FileStorageType::Public->value)->put($path, $contents);
+            if (($fileType ?? FileType::Image) === FileType::Image) {
+                [$path, $avifMime, $extension, $size] = \App\Support\ImageOptimizer::putBinary($contents, $basename, $extension);
+                $mime = $avifMime ?? $mime;
+            } else {
+                $path = $basename . '.' . $extension;
+                Storage::disk(FileStorageType::Public->value)->put($path, $contents);
+            }
             unset($contents);
 
             return $model->files()->create([

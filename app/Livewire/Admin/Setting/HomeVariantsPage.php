@@ -201,7 +201,7 @@ class HomeVariantsPage extends AdminPage
         }
 
         if ($this->previewImageFile) {
-            $path = $this->previewImageFile->store('home-variants/previews', 'public');
+            $path = \App\Support\ImageOptimizer::store($this->previewImageFile, 'home-variants/previews');
             $variant->update(['preview_image' => Storage::url($path)]);
         }
 

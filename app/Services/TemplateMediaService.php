@@ -20,12 +20,12 @@ class TemplateMediaService
 
         $disk      = FileStorageType::Public->value;
         $directory = sprintf('templates/%s', $template->getKey());
-        $path      = sprintf('%s/%s-preview.jpg', $directory, Str::uuid()->toString());
+        $path      = sprintf('%s/%s-preview.avif', $directory, Str::uuid()->toString());
 
         $manager = new ImageManager(new Driver());
         $encoded = $manager->read($uploadedFile->getRealPath())
             ->scaleDown(width: 1200, height: 800)
-            ->toJpeg(85);
+            ->toAvif(\App\Support\ImageOptimizer::QUALITY);
 
         Storage::disk($disk)->put($path, (string) $encoded);
 
@@ -36,8 +36,8 @@ class TemplateMediaService
             'path'         => $path,
             'storage_type' => $disk,
             'file_type'    => FileType::Image,
-            'mime_type'    => 'image/jpeg',
-            'extension'    => 'jpg',
+            'mime_type'    => 'image/avif',
+            'extension'    => 'avif',
             'size'         => Storage::disk($disk)->size($path),
         ]);
 

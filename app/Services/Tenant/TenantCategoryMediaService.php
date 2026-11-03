@@ -24,9 +24,9 @@ class TenantCategoryMediaService
         $manager = new ImageManager(new Driver());
         $encoded = $manager->read($uploadedFile->getRealPath())
             ->scaleDown(width: 600, height: 600)
-            ->toJpeg(85);
+            ->toAvif(\App\Support\ImageOptimizer::QUALITY);
 
-        $path = sprintf('%s/%s-thumb.jpg', $directory, $name);
+        $path = sprintf('%s/%s-thumb.avif', $directory, $name);
         Storage::disk($disk)->put($path, (string) $encoded);
 
         $category->files()->create([
@@ -34,8 +34,8 @@ class TenantCategoryMediaService
             'path'         => $path,
             'storage_type' => $disk,
             'file_type'    => FileType::Image,
-            'mime_type'    => 'image/jpeg',
-            'extension'    => 'jpg',
+            'mime_type'    => 'image/avif',
+            'extension'    => 'avif',
             'size'         => Storage::disk($disk)->size($path),
         ]);
     }

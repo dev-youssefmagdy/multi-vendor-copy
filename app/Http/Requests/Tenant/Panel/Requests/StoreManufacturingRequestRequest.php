@@ -18,7 +18,7 @@ final class StoreManufacturingRequestRequest extends TenantFormRequest
             // PANELS-UPDATES-MANUFACTURING: reference link + images of the product to manufacture
             'reference_url' => ['nullable', 'url', 'max:2000'],
             'images' => ['array', 'max:5'],
-            'images.*' => ['image', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
+            'images.*' => ['image', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif'],
         ];
     }
 

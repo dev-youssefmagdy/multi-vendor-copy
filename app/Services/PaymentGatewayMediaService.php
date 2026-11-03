@@ -20,12 +20,12 @@ class PaymentGatewayMediaService
 
         $disk      = FileStorageType::Public->value;
         $directory = sprintf('payment-gateways/%s', $gateway->getKey());
-        $path      = sprintf('%s/%s-logo.png', $directory, Str::uuid()->toString());
+        $path      = sprintf('%s/%s-logo.avif', $directory, Str::uuid()->toString());
 
         $manager = new ImageManager(new Driver());
         $encoded = $manager->read($uploadedFile->getRealPath())
             ->scaleDown(width: 400, height: 400)
-            ->toPng();
+            ->toAvif(\App\Support\ImageOptimizer::QUALITY);
 
         Storage::disk($disk)->put($path, (string) $encoded);
 
@@ -36,8 +36,8 @@ class PaymentGatewayMediaService
             'path'         => $path,
             'storage_type' => $disk,
             'file_type'    => FileType::Image,
-            'mime_type'    => 'image/png',
-            'extension'    => 'png',
+            'mime_type'    => 'image/avif',
+            'extension'    => 'avif',
             'size'         => Storage::disk($disk)->size($path),
         ]);
 

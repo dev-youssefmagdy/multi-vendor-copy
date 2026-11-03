@@ -50,7 +50,7 @@ class RequestDetail extends AdminPage
         $this->validate([
             'reply' => ['required', 'string', 'min:2', 'max:5000'],
             'replyFiles' => ['array', 'max:5'],
-            'replyFiles.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx'],
+            'replyFiles.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif,pdf,doc,docx'],
         ]);
 
         $req = ProductRequest::find($this->requestId);
@@ -60,7 +60,7 @@ class RequestDetail extends AdminPage
 
         $storedPaths = [];
         foreach ($this->replyFiles as $file) {
-            $storedPaths[] = $file->store("product-requests/{$req->tenant_id}/messages", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "product-requests/{$req->tenant_id}/messages");
         }
 
         ProductRequestMessage::create([

@@ -114,8 +114,7 @@ class LogoGeneratorService
             throw new \RuntimeException('Logo generation returned invalid base64 data.');
         }
 
-        $filename = 'appearances/logos/ai_' . Str::uuid() . '.png';
-        Storage::disk('public')->put($filename, $imageData);
+        [$filename] = \App\Support\ImageOptimizer::putBinary($imageData, 'appearances/logos/ai_' . Str::uuid(), 'png');
 
         $this->incrementUsedCount();
 

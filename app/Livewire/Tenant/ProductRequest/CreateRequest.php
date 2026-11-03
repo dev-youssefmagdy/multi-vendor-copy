@@ -46,7 +46,7 @@ class CreateRequest extends ContentPage
             'description' => ['required', 'string', 'min:20', 'max:8000'],
             'productUrl'  => ['nullable', 'url', 'max:2000'],
             'files'       => ['array', 'max:5'],
-            'files.*'     => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip'],
+            'files.*'     => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif,pdf,doc,docx,xls,xlsx,zip'],
         ];
     }
 
@@ -61,7 +61,7 @@ class CreateRequest extends ContentPage
 
         $storedPaths = [];
         foreach ($this->files as $file) {
-            $storedPaths[] = $file->store("product-requests/{$tenantId}", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "product-requests/{$tenantId}");
         }
 
         $request = tenancy()->central(function () use ($validated, $tenantId, $senderName, $storedPaths) {

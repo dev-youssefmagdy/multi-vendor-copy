@@ -97,7 +97,7 @@ class AddEditThemePart extends TenantPage
         // Handle image upload (tenant-scoped storage).
         $imagePath = $this->imagePath;
         if ($this->imageUpload) {
-            $stored = $this->imageUpload->store('template-parts/images', 'public');
+            $stored = \App\Support\ImageOptimizer::store($this->imageUpload, 'template-parts/images');
             $imagePath = tenant_asset($stored);
         } elseif ($this->imagePath === null) {
             $imagePath = null;

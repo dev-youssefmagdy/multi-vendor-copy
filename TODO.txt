@@ -66,3 +66,9 @@ flutter run --dart-define=PLATFORM_API_BASE=https://zazo.nogrgr.com
 
 /admin/store/mobile-themes
 /admin/store/mobile-app
+
+
+Back up storage first, because originals are deleted after the database update unless you pass --keep-originals.
+Run php artisan images:convert-avif --dry-run first (or --tenants-only --dry-run for tenants), then the real pass.
+Run php artisan tenants:sync-data --all afterwards so synced catalog rows pick up the new paths.
+Static theme images under public/ and seeders that reference them are not converted. Say if you want those included.

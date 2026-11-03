@@ -17,7 +17,7 @@ class FileUploadController extends Controller
             'file' => ['required'],
         ]);
 
-        $path = $request->file('file')->storeAs('uploads', $request->file('file')->getClientOriginalName(), 'public');
+        $path = \App\Support\ImageOptimizer::store($request->file('file'), 'uploads');
 
         return response()->json([
             'path' => $path,

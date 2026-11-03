@@ -112,7 +112,7 @@ class DefaultBannersListPage extends AdminPage
             : null;
 
         if ($this->bannerImage) {
-            $imagePath = $this->bannerImage->store('default-banners', 'public');
+            $imagePath = \App\Support\ImageOptimizer::store($this->bannerImage, 'default-banners');
             $imagePath = Storage::disk('public')->url($imagePath);
         }
 

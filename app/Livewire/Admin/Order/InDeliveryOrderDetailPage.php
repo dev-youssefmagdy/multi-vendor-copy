@@ -155,7 +155,7 @@ class InDeliveryOrderDetailPage extends AdminPage
     public function uploadAttachment(): void
     {
         $this->validate([
-            'attachmentFile' => 'required|file|max:5120|mimes:jpg,jpeg,png,gif,webp,pdf,xlsx,xls,csv,doc,docx,mp4,mov,avi,mkv,webm,wmv,flv',
+            'attachmentFile' => 'required|file|max:5120|mimes:jpg,jpeg,png,gif,webp,avif,pdf,xlsx,xls,csv,doc,docx,mp4,mov,avi,mkv,webm,wmv,flv',
         ]);
 
         $file = $this->attachmentFile;

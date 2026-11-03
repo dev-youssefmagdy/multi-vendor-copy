@@ -67,6 +67,15 @@ class File extends Model
                 $file->path = Storage::disk($file->disk())
                     ->putFile($fullPath, $uploadedFile);
             } elseif (is_string($file->path)) {
+                // Paths written by App\Support\ImageOptimizer are AVIF whatever the upload's original type was.
+                if (strtolower(pathinfo($file->path, PATHINFO_EXTENSION)) === 'avif') {
+                    $file->mime_type = 'image/avif';
+                    $file->extension = 'avif';
+                    $file->file_type = FileType::Image;
+                    if (Storage::disk($file->disk())->exists($file->path)) {
+                        $file->size = Storage::disk($file->disk())->size($file->path);
+                    }
+                }
                 $file->extension ??= pathinfo($file->path, PATHINFO_EXTENSION) ?: null;
                 $file->file_type ??= static::inferFileType($file->mime_type, $file->extension);
             }
@@ -89,7 +98,7 @@ class File extends Model
         $mimeType = strtolower((string) $mimeType);
         $extension = strtolower((string) $extension);
 
-        if (str_starts_with($mimeType, 'image/') || in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'], true)) {
+        if (str_starts_with($mimeType, 'image/') || in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg'], true)) {
             return FileType::Image;
         }
 

@@ -122,15 +122,15 @@ class GeneralSettingsPage extends ContentPage
 
         try {
             if ($this->headerLogoUpload) {
-                $this->headerLogoPath = Storage::disk('public')->url($this->headerLogoUpload->store('settings/logos', 'public'));
+                $this->headerLogoPath = Storage::disk('public')->url(\App\Support\ImageOptimizer::store($this->headerLogoUpload, 'settings/logos'));
             }
 
             if ($this->footerLogoUpload) {
-                $this->footerLogoPath = Storage::disk('public')->url($this->footerLogoUpload->store('settings/logos', 'public'));
+                $this->footerLogoPath = Storage::disk('public')->url(\App\Support\ImageOptimizer::store($this->footerLogoUpload, 'settings/logos'));
             }
 
             if ($this->faviconUpload) {
-                $this->faviconPath = Storage::disk('public')->url($this->faviconUpload->store('settings/favicons', 'public'));
+                $this->faviconPath = Storage::disk('public')->url(\App\Support\ImageOptimizer::store($this->faviconUpload, 'settings/favicons'));
             }
 
             if ($validated['defaultLanguage']) {

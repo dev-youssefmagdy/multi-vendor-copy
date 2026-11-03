@@ -44,7 +44,7 @@ class RequestDetail extends TenantPage
         $this->validate([
             'reply'        => ['required', 'string', 'min:2', 'max:5000'],
             'replyFiles'   => ['array', 'max:5'],
-            'replyFiles.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx'],
+            'replyFiles.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif,pdf,doc,docx'],
         ]);
 
         $tenantId   = tenant()->getTenantKey();
@@ -55,7 +55,7 @@ class RequestDetail extends TenantPage
 
         $storedPaths = [];
         foreach ($this->replyFiles as $file) {
-            $storedPaths[] = $file->store("product-requests/{$tenantId}/messages", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "product-requests/{$tenantId}/messages");
         }
 
         $req = tenancy()->central(function () use ($tenantId, $senderName, $body, $storedPaths) {

@@ -42,7 +42,7 @@ class CreateBrandRequest extends TenantPage
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'min:20', 'max:8000'],
             'files' => ['array', 'max:5'],
-            'files.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip'],
+            'files.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,avif,gif,pdf,doc,docx,xls,xlsx,zip'],
         ];
     }
 
@@ -54,7 +54,7 @@ class CreateBrandRequest extends TenantPage
 
         $storedPaths = [];
         foreach ($this->files as $file) {
-            $storedPaths[] = $file->store("brand-requests/{$tenantId}", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "brand-requests/{$tenantId}");
         }
 
         BrandRequest::create([

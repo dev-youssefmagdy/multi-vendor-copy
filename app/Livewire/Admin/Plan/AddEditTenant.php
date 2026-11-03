@@ -245,7 +245,7 @@ class AddEditTenant extends Component
         // Handle logo upload (edit only – tenant DB must exist before writing settings)
         if ($this->tenantId && $this->logoUpload) {
             tenancy()->initialize($tenant);
-            $path = $this->logoUpload->store('appearances/logos', 'public');
+            $path = \App\Support\ImageOptimizer::store($this->logoUpload, 'appearances/logos');
             $logoUrl = tenant_asset($path);
             app(TenantPanelService::class)->saveAppearanceSettings([
                 'logo_mode' => 'image',

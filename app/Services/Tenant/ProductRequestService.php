@@ -36,7 +36,7 @@ final class ProductRequestService
     ): ProductRequest {
         $storedPaths = [];
         foreach ($files as $file) {
-            $storedPaths[] = $file->store("product-requests/{$tenantId}", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "product-requests/{$tenantId}");
         }
 
         $request = tenancy()->central(function () use ($tenantId, $senderName, $title, $description, $productUrl, $storedPaths) {
@@ -102,7 +102,7 @@ final class ProductRequestService
     ): ProductRequest|string|null {
         $storedPaths = [];
         foreach ($files as $file) {
-            $storedPaths[] = $file->store("product-requests/{$tenantId}/messages", 'public');
+            $storedPaths[] = \App\Support\ImageOptimizer::store($file, "product-requests/{$tenantId}/messages");
         }
 
         $result = tenancy()->central(function () use ($requestId, $tenantId, $senderName, $body, $storedPaths) {
