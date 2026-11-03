@@ -11,9 +11,8 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
-    <x-tenant::tabs mode="hash" :active="$activeTab" :tabs="[
+    <x-tenant::tabs mode="hash" :active="$activeTab === 'colors' ? 'general' : $activeTab" :tabs="[
         'general' => 'General',
-        'colors' => 'Colors',
         'social_links' => 'Social Links',
         'top_header_links' => 'Top Header Links',
         'promo_banner' => 'Promo Banner',
@@ -55,7 +54,8 @@
             </x-tenant::form>
         </x-tenant::tab-panel>
 
-        {{-- ─────────────────────────────── COLORS ─────────────────────────────── --}}
+        {{-- ─────────────────────────────── COLORS (hidden: not used; remove @if(false) to bring it back) ─────────────────────────────── --}}
+        @if (false)
         <x-tenant::tab-panel key="colors" :active="$activeTab === 'colors'">
             <div class="page-stack">
                 @forelse($colorThemes as $themeId => $themeSection)
@@ -123,6 +123,7 @@
                 @endforelse
             </div>
         </x-tenant::tab-panel>
+        @endif
 
         {{-- ────────────────────────────── SOCIAL LINKS ────────────────────────────── --}}
         <x-tenant::tab-panel key="social_links" :active="$activeTab === 'social_links'">
