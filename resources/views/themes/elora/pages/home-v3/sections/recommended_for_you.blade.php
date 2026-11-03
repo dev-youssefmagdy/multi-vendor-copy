@@ -21,7 +21,7 @@
               'rating' => $rating,
               'image' => $img,
               'url' => route('tenant.storefront.product', $product->slug),
-              'badge' => null,
+              'badge' => $product->cardBadgeText(),
               'added' => time(),
           ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
@@ -29,7 +29,7 @@
               'id' => $product->id,
               'url' => route('tenant.storefront.product', $product->slug),
               'image' => $img,
-              'badge' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : __('New In'),
+              'badge' => $product->cardBadgeText(),
               'badgeBg' => $hasDiscount ? 'var(--color-primary)' : 'var(--color-accent-purple)',
               'badgeText' => 'var(--color-white)',
               'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
@@ -39,7 +39,7 @@
               'price' => $symbol . number_format((float) $pricing['current_price'] * $rate, 2),
               'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : '',
               'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : '',
-              'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 ? (int) round($sc / $st * 100) : null; })(),
+              'sold' => $product->soldPercent(),
               ...$product->storefrontCartData($symbol, $rate),
               'labels' => $product->cardLabels(),
               'favData' => $favData,
