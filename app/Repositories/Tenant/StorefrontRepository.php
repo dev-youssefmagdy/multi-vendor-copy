@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Tenant;
 
+use App\Support\ThemeDesign\ThemeFonts;
+use App\Support\ThemeDesign\ThemeTokenCatalog;
 use App\Services\Tenant\Checkout\OrderComposer;
 use App\Support\OrderPricing;
 use App\Models\Tenant\Banner;
@@ -1231,6 +1233,54 @@ class StorefrontRepository
                 $override = $override ? (is_array($override) ? $override : json_decode($override, true)) : [];
 
                 return array_merge($defaults, $override ?: []);
+            },
+        );
+    }
+
+
+    /**
+     * Font keys (see ThemeFonts) the storefront renders with: the home variant's defaults overlaid with the
+     * tenant's choice (country-specific first, then tenant-wide), one per text direction.
+     *
+     * @return array{ltr: string, rtl: string}
+     */
+    public function resolvedThemeFonts(): array
+    {
+        if (\array_key_exists('resolved_theme_fonts', $this->memo)) {
+            return $this->memo['resolved_theme_fonts'];
+        }
+
+        $theme = $this->currentTheme();
+        $variant = $this->currentHomeVariant();
+        $fallback = ['ltr' => ThemeFonts::DEFAULT_LTR, 'rtl' => ThemeFonts::DEFAULT_RTL];
+
+        if (!$theme || !$variant) {
+            return $this->memo['resolved_theme_fonts'] = $fallback;
+        }
+
+        $country = $this->detectedCountry();
+
+        return $this->memo['resolved_theme_fonts'] = $this->cacheRemember(
+            'resolved_theme_fonts_' . $theme->id . '_' . $variant->id . '_' . ($country?->id ?? 'default'),
+            ['TenantThemeColor', 'HomeVariant', 'TenantHomeVariant'],
+            function () use ($theme, $variant, $country) {
+                $defaults = ThemeTokenCatalog::defaultFonts($theme->slug, $variant->key);
+
+                $override = null;
+                if ($country) {
+                    $override = TenantThemeColor::query()
+                        ->where('theme_id', $theme->id)->where('home_variant_id', $variant->id)
+                        ->where('country_id', $country->id)->value('fonts');
+                }
+                $override ??= TenantThemeColor::query()
+                    ->where('theme_id', $theme->id)->where('home_variant_id', $variant->id)
+                    ->whereNull('country_id')->value('fonts');
+                $override = is_array($override) ? $override : (array) json_decode((string) $override, true);
+
+                return [
+                    'ltr' => ThemeFonts::isValid('ltr', $override['ltr'] ?? null) ? $override['ltr'] : $defaults['ltr'],
+                    'rtl' => ThemeFonts::isValid('rtl', $override['rtl'] ?? null) ? $override['rtl'] : $defaults['rtl'],
+                ];
             },
         );
     }

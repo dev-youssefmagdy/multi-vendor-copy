@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Tenant;
 
+use App\Support\ThemeDesign\ThemeFonts;
+use App\Support\ThemeDesign\ThemeTokenCatalog;
 use App\Enums\ActivationStatus;
 use App\Enums\BrandRequestStatus;
 use App\Enums\OrderShippingStatus;
@@ -2004,10 +2006,17 @@ class TenantPanelRepository
     }
 
     /**
-     * One entry per tenant theme, each holding one entry per home variant with
-     * customizable colors. Shape: [theme_id => ['name' => ..., 'slug' => ...,
-     * 'is_active' => bool, 'variants' => [variant_id => ['key' => 'v2', 'name' => 'Purple Edition',
-     * 'is_active' => bool, 'defaults' => [...], 'values' => [...]]]]].
+     * One entry per tenant theme, each holding one entry per active home variant. Colors and fonts come from
+     * the design-token catalog (ThemeTokenCatalog): every token a variant can change, grouped, labelled and
+     * described, with the tenant's saved overrides layered on top.
+     *
+     * Shape: [theme_id => ['name', 'slug', 'is_active', 'variants' => [variant_id => [
+     *     'key', 'name', 'description', 'is_active',
+     *     'defaults' => [token => hex], 'values' => [token => hex],
+     *     'groups' => [group => [token => ['label', 'description', 'areas', 'default']]],
+     *     'roles' => [preview role => token] (drives the live preview),
+     *     'fonts' => ['defaults' => ['ltr', 'rtl'], 'values' => ['ltr', 'rtl']],
+     * ]]]]
      */
     public function appearanceColorThemes(): array
     {
@@ -2035,20 +2044,43 @@ class TenantPanelRepository
 
             $variantSections = [];
             foreach ($variants as $variant) {
-                $defaults = (array) ($variant->colors ?? []);
-                if (empty($defaults)) {
+                $catalog = ThemeTokenCatalog::forVariant($theme->slug, $variant->key);
+                if (! $catalog || empty($catalog['tokens'])) {
                     continue;
                 }
 
-                $override = (array) ($overrides->get($variant->id)?->colors ?? []);
+                $defaults = ThemeTokenCatalog::defaults($theme->slug, $variant->key);
+                $override = $overrides->get($variant->id);
+                $savedColors = array_intersect_key((array) ($override?->colors ?? []), $defaults);
+                $savedFonts = (array) ($override?->fonts ?? []);
+                $defaultFonts = ThemeTokenCatalog::defaultFonts($theme->slug, $variant->key);
+
+                $groups = [];
+                foreach (ThemeTokenCatalog::groups() as $group) {
+                    foreach ($catalog['tokens'] as $name => $token) {
+                        if ($token['group'] === $group) {
+                            $groups[$group][$name] = $token;
+                        }
+                    }
+                }
 
                 $variantSections[$variant->id] = [
                     'key' => $variant->key,
-                    'name' => $variant->name,
+                    'name' => $catalog['name'] ?? $variant->name,
+                    'description' => $catalog['description'] ?? '',
                     'is_active' => $activeTheme && $activeTheme->id === $theme->id
                         && $activeVariant && $activeVariant->id === $variant->id,
                     'defaults' => $defaults,
-                    'values' => array_merge($defaults, $override),
+                    'values' => array_merge($defaults, $savedColors),
+                    'groups' => $groups,
+                    'roles' => (array) ($catalog['roles'] ?? []),
+                    'fonts' => [
+                        'defaults' => $defaultFonts,
+                        'values' => [
+                            'ltr' => ThemeFonts::isValid('ltr', $savedFonts['ltr'] ?? null) ? $savedFonts['ltr'] : $defaultFonts['ltr'],
+                            'rtl' => ThemeFonts::isValid('rtl', $savedFonts['rtl'] ?? null) ? $savedFonts['rtl'] : $defaultFonts['rtl'],
+                        ],
+                    ],
                 ];
             }
 
@@ -2097,20 +2129,35 @@ class TenantPanelRepository
         return $scheme.'://'.$centralDomain.'/preview?'.http_build_query($query);
     }
 
-    /** Default color values for one theme's home variant (used to build dynamic validation rules and for the reset action). */
+    /** Catalog default color values for one theme's home variant (used for validation, diffing on save and the reset action). */
     public function themeVariantColorDefaults(int $themeId, int $variantId): array
+    {
+        [$theme, $variant] = $this->themeAndVariant($themeId, $variantId);
+
+        return $theme && $variant ? ThemeTokenCatalog::defaults($theme->slug, $variant->key) : [];
+    }
+
+    /** @return array{ltr: string, rtl: string} */
+    public function themeVariantFontDefaults(int $themeId, int $variantId): array
+    {
+        [$theme, $variant] = $this->themeAndVariant($themeId, $variantId);
+
+        return $theme && $variant
+            ? ThemeTokenCatalog::defaultFonts($theme->slug, $variant->key)
+            : ['ltr' => ThemeFonts::DEFAULT_LTR, 'rtl' => ThemeFonts::DEFAULT_RTL];
+    }
+
+    /** @return array{0: Theme|null, 1: HomeVariant|null} */
+    private function themeAndVariant(int $themeId, int $variantId): array
     {
         $theme = Theme::query()->find($themeId);
         if (! $theme) {
-            return [];
+            return [null, null];
         }
 
-        $variant = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))
-            ->where('id', $variantId)
-            ->first()
-        );
+        $variant = tenancy()->central(fn () => HomeVariant::forTheme(strtolower($theme->slug))->where('id', $variantId)->first());
 
-        return (array) ($variant?->colors ?? []);
+        return [$theme, $variant];
     }
 
     public function appearanceSettings(): array

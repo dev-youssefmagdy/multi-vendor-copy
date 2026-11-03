@@ -927,19 +927,25 @@ class TenantPanelService
     }
 
     /**
-     * Save the tenant's color overrides for one home variant of a theme,
-     * optionally scoped to a country. Only non-empty values are stored —
-     * clearing a field removes that key so it falls back to the variant's
-     * default.
+     * Save the tenant's design overrides (colors and fonts) for one home variant of a theme, optionally
+     * scoped to a country. Callers pass only the values that differ from the catalog default; empty values
+     * are dropped so clearing a field falls back to the default.
+     *
+     * @param array<string, string>      $colors CSS custom property => hex
+     * @param array{ltr?: string, rtl?: string}|null $fonts font keys per direction (null = leave unchanged)
      */
-    public function saveThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId, array $colors): TenantThemeColor
+    public function saveThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId, array $colors, ?array $fonts = null): TenantThemeColor
     {
         $colors = array_filter($colors, fn($value) => filled($value));
 
-        return TenantThemeColor::query()->updateOrCreate(
-            ['theme_id' => $themeId, 'home_variant_id' => $homeVariantId, 'country_id' => $countryId],
-            ['colors' => $colors]
-        );
+        $row = TenantThemeColor::query()->firstOrNew(['theme_id' => $themeId, 'home_variant_id' => $homeVariantId, 'country_id' => $countryId]);
+        $row->colors = $colors;
+        if ($fonts !== null) {
+            $row->fonts = array_filter($fonts, fn($value) => filled($value)) ?: null;
+        }
+        $row->save();
+
+        return $row;
     }
 
     public function resetThemeColors(int $themeId, ?int $homeVariantId, ?int $countryId): void

@@ -1,0 +1,4233 @@
+{
+ "groups": [
+  "Brand & accents",
+  "Header & top bar",
+  "Text",
+  "Backgrounds & surfaces",
+  "Borders & lines",
+  "Status, prices & badges",
+  "Flash sale",
+  "Hero banner",
+  "Footer",
+  "Sections & decorations",
+  "Neutrals"
+ ],
+ "variants": {
+  "ecommet-v1": {
+   "theme": "ecommet",
+   "variant": "v1",
+   "name": "Ecommet — Default",
+   "description": "Classic red-and-white marketplace look with a dark navigation header. Brand colors are baked into utility styles, so the list below is the set of colors the theme exposes.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-brand",
+    "brand-alt": "--color-secondary",
+    "text": "--color-gray-darkest",
+    "text-muted": "--color-gray-medium",
+    "page-bg": "--color-gray-lightest",
+    "surface": "--color-white",
+    "border": "--color-gray-lighter",
+    "success": "--color-success",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-brand": {
+     "label": "Brand color (red)",
+     "group": "Brand & accents",
+     "description": "Ecommet brand red: the header bar, flash sale, cart and order highlights, call-to-action buttons, tags and badges.",
+     "default": "#de1709",
+     "uses": 33,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Flash sale",
+      "Cart"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#000000",
+     "uses": 183,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Product cards"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1315,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Categories"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2e",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Trust / features bar",
+      "Shared components",
+      "Orders"
+     ]
+    },
+    "--color-purple": {
+     "label": "Purple",
+     "group": "Brand & accents",
+     "description": "Purple used for special labels and accents.",
+     "default": "#61167f",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-gray-darkest": {
+     "label": "Grey (darkest)",
+     "group": "Neutrals",
+     "description": "Very dark grey used for headings and strong labels.",
+     "default": "#232323",
+     "uses": 214,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Login & registration",
+      "Cart"
+     ]
+    },
+    "--color-gray-dark": {
+     "label": "Grey (dark)",
+     "group": "Neutrals",
+     "description": "Dark grey used for body text and icons.",
+     "default": "#292d32",
+     "uses": 25,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Categories"
+     ]
+    },
+    "--color-gray-medium": {
+     "label": "Grey (medium)",
+     "group": "Neutrals",
+     "description": "Medium grey used for muted text and placeholders.",
+     "default": "#7f7f7f",
+     "uses": 90,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Orders",
+      "Cart"
+     ]
+    },
+    "--color-gray-light": {
+     "label": "Grey (light)",
+     "group": "Neutrals",
+     "description": "Light grey used for borders and disabled states.",
+     "default": "#c4c4c4",
+     "uses": 98,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Categories"
+     ]
+    },
+    "--color-gray-lighter": {
+     "label": "Grey (lighter)",
+     "group": "Neutrals",
+     "description": "Lighter grey used for subtle borders and separators.",
+     "default": "#e7e7e7",
+     "uses": 5,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-gray-lightest": {
+     "label": "Grey (lightest)",
+     "group": "Neutrals",
+     "description": "Lightest grey used for page and row backgrounds.",
+     "default": "#f5f5f5",
+     "uses": 22,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Categories"
+     ]
+    },
+    "--color-sale-light": {
+     "label": "Sale (light)",
+     "group": "Status, prices & badges",
+     "description": "Very light red used behind sale notices.",
+     "default": "#ffecea",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-yellow-light": {
+     "label": "Yellow (light)",
+     "group": "Brand & accents",
+     "description": "Soft yellow used for notices and highlighted rows.",
+     "default": "#fdff9f",
+     "uses": 147,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Cart",
+      "Categories"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop accent (dark)",
+     "group": "Brand & accents",
+     "description": "Dark accent for buttons, progress bars and highlights on the product, cart and checkout pages.",
+     "default": "#111827",
+     "uses": 147,
+     "areas": [
+      "Global styles",
+      "Shared components",
+      "Cart",
+      "Orders"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Shop accent (grey)",
+     "group": "Brand & accents",
+     "description": "Secondary accent for subtle highlights.",
+     "default": "#4b5563",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "elora-v1": {
+   "theme": "elora",
+   "variant": "v1",
+   "name": "Elora — Default",
+   "description": "Light, clean storefront with an orange accent. The primary/secondary colors drive buttons, links and highlights.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-main",
+    "text": "--color-ink",
+    "text-muted": "--color-gray-3",
+    "page-bg": "--color-bg",
+    "surface": "--color-fill"
+   },
+   "tokens": {
+    "--color-main": {
+     "label": "Brand color (orange)",
+     "group": "Brand & accents",
+     "description": "Elora brand orange: active category and tab highlights, header accents and small call-to-action states.",
+     "default": "#ff4d00",
+     "uses": 31,
+     "areas": [
+      "Categories",
+      "Tabbed products",
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop accent (dark)",
+     "group": "Brand & accents",
+     "description": "Dark accent for buttons, checkboxes, progress bars and highlights on the product, cart and category pages.",
+     "default": "#111827",
+     "uses": 164,
+     "areas": [
+      "Orders",
+      "Shared components",
+      "Favorites",
+      "Product page"
+     ]
+    },
+    "--color-main-light": {
+     "label": "Brand color (light)",
+     "group": "Brand & accents",
+     "description": "Soft tint of the brand color used for borders and highlights in the tabbed products section.",
+     "default": "#ffac88",
+     "uses": 3,
+     "areas": [
+      "Tabbed products"
+     ]
+    },
+    "--color-ink": {
+     "label": "Text & icons (ink)",
+     "group": "Text",
+     "description": "Dark text and icon color on the product, cart, checkout and account pages.",
+     "default": "#171717",
+     "uses": 47,
+     "areas": [
+      "Checkout",
+      "Product page",
+      "Cart",
+      "Account / profile"
+     ]
+    },
+    "--color-charcoal": {
+     "label": "Text (charcoal)",
+     "group": "Text",
+     "description": "Charcoal text used in the header, category cards and the hero banner.",
+     "default": "#242424",
+     "uses": 22,
+     "areas": [
+      "Header & navigation",
+      "Categories",
+      "Global styles",
+      "Hero banner"
+     ]
+    },
+    "--color-gray-3": {
+     "label": "Text (grey 3)",
+     "group": "Text",
+     "description": "Light grey hint text on product cards.",
+     "default": "#adadad",
+     "uses": 3,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-fill": {
+     "label": "Card background",
+     "group": "Backgrounds & surfaces",
+     "description": "Background of product cards and category cards.",
+     "default": "#fdfdfd",
+     "uses": 9,
+     "areas": [
+      "Product cards",
+      "Categories"
+     ]
+    },
+    "--color-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey background on the product page and header.",
+     "default": "#f6f5f5",
+     "uses": 2,
+     "areas": [
+      "Product page",
+      "Header & navigation"
+     ]
+    }
+   }
+  },
+  "elora-v2": {
+   "theme": "elora",
+   "variant": "v2",
+   "name": "Elora — Purple Edition",
+   "description": "Purple-gradient edition with rounded cards and a vibrant flash sale block.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#ff4d00",
+     "uses": 186,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Shared components",
+      "Favorites"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 221,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Checkout",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1033,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Categories",
+      "Cart"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 9,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Flash sale",
+      "New In"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 32,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "New In",
+      "Product cards"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 40,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Footer"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 24,
+     "areas": [
+      "Global styles",
+      "Recommended for you",
+      "Flash sale",
+      "New In"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 6,
+     "areas": [
+      "Footer",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 7,
+     "areas": [
+      "Global styles",
+      "Hero banner",
+      "New In",
+      "Recommended for you"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 14,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 9,
+     "areas": [
+      "Global styles",
+      "Shared components",
+      "Flash sale",
+      "New In"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Recommended for you"
+     ]
+    },
+    "--color-accent-purple": {
+     "label": "Accent purple",
+     "group": "Brand & accents",
+     "description": "Purple accent used on category chips, trending labels and small highlights.",
+     "default": "#8a38f5",
+     "uses": 55,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Trending now",
+      "Flash sale"
+     ]
+    },
+    "--color-accent-purple-dark": {
+     "label": "Accent purple (dark)",
+     "group": "Brand & accents",
+     "description": "Dark purple shade of the accent used for gradients and pressed states.",
+     "default": "#51218f",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-accent-purple-light": {
+     "label": "Accent purple (light)",
+     "group": "Brand & accents",
+     "description": "Light purple shade of the accent used for soft backgrounds.",
+     "default": "#b57dff",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 19,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "Hero banner",
+      "Recommended for you"
+     ]
+    },
+    "--color-badge-purple": {
+     "label": "Badge purple",
+     "group": "Status, prices & badges",
+     "description": "Background of purple badges and tags.",
+     "default": "#9d00ff",
+     "uses": 9,
+     "areas": [
+      "Footer",
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 5,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 21,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Categories",
+      "Buttons"
+     ]
+    },
+    "--color-yellow-bright": {
+     "label": "Yellow (bright)",
+     "group": "Brand & accents",
+     "description": "Bright yellow used on best-seller and New In stickers.",
+     "default": "#ffe100",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "New In"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 8,
+     "areas": [
+      "Global styles",
+      "Trust / features bar"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 5,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-hero-placeholder": {
+     "label": "Hero placeholder",
+     "group": "Hero banner",
+     "description": "Placeholder tint shown while hero images load.",
+     "default": "#c3accf",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Hero banner"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "elora-v3": {
+   "theme": "elora",
+   "variant": "v3",
+   "name": "Elora — Fresh Edition",
+   "description": "Fresh pink/coral accents with a yellow features bar and wide New In cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "tajawal"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "hero-sub": "--color-hero-subtitle",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#ff4d00",
+     "uses": 168,
+     "areas": [
+      "Orders",
+      "Shared components",
+      "Favorites",
+      "Product page"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 183,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Checkout",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1067,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Categories",
+      "Cart"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 14,
+     "areas": [
+      "Global styles",
+      "New In",
+      "Footer",
+      "Product cards"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 62,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Categories"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Recommended for you"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 7,
+     "areas": [
+      "Footer",
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 14,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 24,
+     "areas": [
+      "Global styles",
+      "Shared components",
+      "New In",
+      "Product cards"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 16,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-purple": {
+     "label": "Accent purple",
+     "group": "Brand & accents",
+     "description": "Purple accent used on category chips, trending labels and small highlights.",
+     "default": "#8a38f5",
+     "uses": 13,
+     "areas": [
+      "Global styles",
+      "Recommended for you"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 22,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 24,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Flash sale"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-hero-placeholder": {
+     "label": "Hero placeholder",
+     "group": "Hero banner",
+     "description": "Placeholder tint shown while hero images load.",
+     "default": "#c3accf",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Hero banner"
+     ]
+    },
+    "--color-brand-pink": {
+     "label": "Brand color (Pink)",
+     "group": "Brand & accents",
+     "description": "The Pink edition brand color: header, buttons, hero, flash sale, footer accents and prices.",
+     "default": "#fe3a6a",
+     "uses": 49,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "Footer",
+      "Hero banner"
+     ]
+    },
+    "--color-badge-green": {
+     "label": "Badge green",
+     "group": "Status, prices & badges",
+     "description": "Background of green badges.",
+     "default": "#019842",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-progress-track": {
+     "label": "Progress bar track",
+     "group": "Borders & lines",
+     "description": "Empty track behind progress bars.",
+     "default": "#d9d9d9",
+     "uses": 2,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-progress-fill": {
+     "label": "Progress bar fill",
+     "group": "Status, prices & badges",
+     "description": "Filled part of stock/sold progress bars on product cards.",
+     "default": "#e40307",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-text-slate": {
+     "label": "Text (slate)",
+     "group": "Text",
+     "description": "Slate text for secondary labels.",
+     "default": "#555555",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-text-faint-alt": {
+     "label": "Text (faint, alt)",
+     "group": "Text",
+     "description": "Alternative faint text color.",
+     "default": "#999999",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-hero-subtitle": {
+     "label": "Hero subtitle",
+     "group": "Hero banner",
+     "description": "Sub-text of the hero banner.",
+     "default": "#fffc",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Hero banner"
+     ]
+    },
+    "--color-hero-dot-inactive": {
+     "label": "Hero dots (inactive)",
+     "group": "Hero banner",
+     "description": "Inactive pagination dots under the hero banner.",
+     "default": "#ffffff80",
+     "uses": 2,
+     "areas": [
+      "Hero banner"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "elora-v4": {
+   "theme": "elora",
+   "variant": "v4",
+   "name": "Elora — Bold Edition",
+   "description": "High-contrast edition with bold orange accents and large product cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "almarai"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "hero-sub": "--color-hero-subtitle",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#ff4d00",
+     "uses": 165,
+     "areas": [
+      "Orders",
+      "Shared components",
+      "Favorites",
+      "Product page"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 216,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Checkout",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1037,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Categories",
+      "Cart"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "New In",
+      "Product cards"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 40,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Footer",
+      "New In"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 39,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Best sellers",
+      "Recommended for you"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 34,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Recommended for you",
+      "New In"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 6,
+     "areas": [
+      "Footer",
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 8,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Hero banner",
+      "Header & navigation"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 14,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Shared components",
+      "New In"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-purple": {
+     "label": "Accent purple",
+     "group": "Brand & accents",
+     "description": "Purple accent used on category chips, trending labels and small highlights.",
+     "default": "#8a38f5",
+     "uses": 1,
+     "areas": [
+      "Recommended for you"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "New In",
+      "Product cards"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 12,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 16,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Trending now"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-brand-orange": {
+     "label": "Brand color (Orange)",
+     "group": "Brand & accents",
+     "description": "The Orange edition brand color: header, buttons, flash sale panel, footer accents.",
+     "default": "#fb7701",
+     "uses": 48,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "Footer",
+      "Header & navigation"
+     ]
+    },
+    "--color-brand-orange-bright": {
+     "label": "Brand orange (bright)",
+     "group": "Brand & accents",
+     "description": "Brighter orange used for sale panels, badges and hover highlights.",
+     "default": "#ff6a00",
+     "uses": 29,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "Trending now",
+      "Header & navigation"
+     ]
+    },
+    "--color-badge-pink": {
+     "label": "Badge pink",
+     "group": "Status, prices & badges",
+     "description": "Background of pink badges and tags.",
+     "default": "#fe3a6a",
+     "uses": 6,
+     "areas": [
+      "Best sellers",
+      "Global styles"
+     ]
+    },
+    "--color-progress-red": {
+     "label": "Progress bar (red)",
+     "group": "Status, prices & badges",
+     "description": "Filled part of the red urgency progress bars (best sellers).",
+     "default": "#e40307",
+     "uses": 6,
+     "areas": [
+      "Best sellers",
+      "Global styles"
+     ]
+    },
+    "--color-tile-outerwear": {
+     "label": "Category tile: Outerwear",
+     "group": "Sections & decorations",
+     "description": "Placeholder tile color for the Outerwear category.",
+     "default": "#d95f2b",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-tile-footwear": {
+     "label": "Category tile: Footwear",
+     "group": "Sections & decorations",
+     "description": "Placeholder tile color for the Footwear category.",
+     "default": "#2c7a6e",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-tile-bags": {
+     "label": "Category tile: Bags",
+     "group": "Sections & decorations",
+     "description": "Placeholder tile color for the Bags category.",
+     "default": "#e8a838",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-tile-watches": {
+     "label": "Category tile: Watches",
+     "group": "Sections & decorations",
+     "description": "Placeholder tile color for the Watches category.",
+     "default": "#2c1a0e",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-hero-subtitle": {
+     "label": "Hero subtitle",
+     "group": "Hero banner",
+     "description": "Sub-text of the hero banner.",
+     "default": "#fffc",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Hero banner"
+     ]
+    },
+    "--color-icon-chip-bg": {
+     "label": "Icon chip background",
+     "group": "Sections & decorations",
+     "description": "Translucent chip behind small icons.",
+     "default": "#ffffff40",
+     "uses": 1,
+     "areas": [
+      "Categories"
+     ]
+    },
+    "--color-greeting-muted": {
+     "label": "Greeting text",
+     "group": "Header & top bar",
+     "description": "\"Hello, ...\" greeting text in the header.",
+     "default": "#777777",
+     "uses": 3,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "elora-v5": {
+   "theme": "elora",
+   "variant": "v5",
+   "name": "Elora — Minimal Edition",
+   "description": "Minimal blue edition with a gold New In section and compact wide cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "ibm_plex_ar"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-black-alt",
+    "text-muted": "--color-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-bg-main",
+    "border": "--color-stroke",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "price": "--color-price-blue",
+    "discount": "--color-yellow",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#132092",
+     "uses": 211,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Shared components",
+      "Favorites"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#121212",
+     "uses": 221,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Checkout",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1029,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Categories",
+      "Cart"
+     ]
+    },
+    "--color-price-blue": {
+     "label": "Price color (blue)",
+     "group": "Status, prices & badges",
+     "description": "Price text and progress accents on product cards.",
+     "default": "#0018e8",
+     "uses": 21,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Flash sale",
+      "Trending now"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#242424",
+     "uses": 26,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Flash sale"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 23,
+     "areas": [
+      "Global styles",
+      "Footer",
+      "Product cards",
+      "Flash sale"
+     ]
+    },
+    "--color-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 22,
+     "areas": [
+      "Product cards",
+      "Global styles",
+      "Flash sale",
+      "Trending now"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Footer",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Trust / features bar",
+      "Product cards",
+      "Header & navigation"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Flash sale",
+      "Trending now"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Shared components",
+      "Flash sale"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-yellow": {
+     "label": "Yellow highlight",
+     "group": "Brand & accents",
+     "description": "Yellow used on discount chips, sold labels and highlight stickers on product cards.",
+     "default": "#ffd428",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Flash sale",
+      "Trending now"
+     ]
+    },
+    "--color-badge-orange": {
+     "label": "Badge orange",
+     "group": "Status, prices & badges",
+     "description": "Background of orange badges and weight tags.",
+     "default": "#ff4d00",
+     "uses": 8,
+     "areas": [
+      "Product cards",
+      "Global styles"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 28,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Categories"
+     ]
+    },
+    "--color-newin-gold": {
+     "label": "New In section background",
+     "group": "Backgrounds & surfaces",
+     "description": "Gold/yellow background of the New In section.",
+     "default": "#d7ad43",
+     "uses": 2,
+     "areas": [
+      "New In"
+     ]
+    },
+    "--color-flash-rainbow-pink": {
+     "label": "Flash sale rainbow 1",
+     "group": "Flash sale",
+     "description": "1st band of the flash sale rainbow decoration.",
+     "default": "#fa6a6f",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-flash-rainbow-orange": {
+     "label": "Flash sale rainbow 2",
+     "group": "Flash sale",
+     "description": "2nd band of the flash sale rainbow decoration.",
+     "default": "#fa9a6d",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-flash-rainbow-yellow": {
+     "label": "Flash sale rainbow 3",
+     "group": "Flash sale",
+     "description": "3rd band of the flash sale rainbow decoration.",
+     "default": "#f9cf64",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-flash-rainbow-teal": {
+     "label": "Flash sale rainbow 4",
+     "group": "Flash sale",
+     "description": "4th band of the flash sale rainbow decoration.",
+     "default": "#429fa0",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-flash-rainbow-purple": {
+     "label": "Flash sale rainbow 5",
+     "group": "Flash sale",
+     "description": "5th band of the flash sale rainbow decoration.",
+     "default": "#6d77b0",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "elora-v6": {
+   "theme": "elora",
+   "variant": "v6",
+   "name": "Elora — New In Edition",
+   "description": "Edition that highlights new arrivals with orange accents.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "readex_pro"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#ff4d00",
+     "uses": 214,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Shared components",
+      "Favorites"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 196,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Checkout",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 1051,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Categories",
+      "Cart"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Product cards",
+      "Flash sale"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 33,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Best sellers",
+      "Flash sale"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 58,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Best sellers"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 36,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Product cards",
+      "Flash sale"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 5,
+     "areas": [
+      "Hero banner",
+      "Global styles",
+      "Product cards",
+      "Header & navigation"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 14,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Flash sale",
+      "Product cards"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 14,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 19,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Flash sale",
+      "New In"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 24,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Categories",
+      "Buttons"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-accent-green": {
+     "label": "Accent green",
+     "group": "Brand & accents",
+     "description": "Green accent used on categories, flash sale and success highlights.",
+     "default": "#019842",
+     "uses": 78,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Flash sale",
+      "Header & navigation"
+     ]
+    },
+    "--color-section-cream": {
+     "label": "Section background (cream)",
+     "group": "Backgrounds & surfaces",
+     "description": "Cream background used by highlighted sections such as New In.",
+     "default": "#f6e89c",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "New In"
+     ]
+    },
+    "--color-progress-track": {
+     "label": "Progress bar track",
+     "group": "Borders & lines",
+     "description": "Empty track behind progress bars.",
+     "default": "#d9d9d9",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Trending now"
+     ]
+    },
+    "--color-text-secondary-dark": {
+     "label": "Text (secondary, dark)",
+     "group": "Text",
+     "description": "Darker secondary text.",
+     "default": "#373737",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Best sellers"
+     ]
+    },
+    "--color-text-location-muted": {
+     "label": "Text (location, muted)",
+     "group": "Header & top bar",
+     "description": "Delivery location text in the header.",
+     "default": "#777777",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-flash-stripe": {
+     "label": "Flash sale stripes",
+     "group": "Flash sale",
+     "description": "Diagonal stripe pattern over the flash sale background.",
+     "default": "#ffffff14",
+     "uses": 4,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "souqify-v1": {
+   "theme": "souqify",
+   "variant": "v1",
+   "name": "Souqify — Default",
+   "description": "Neutral dark default edition. The primary color drives buttons, header and highlights.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-primary"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color of this edition: header, buttons, links, badges, progress bars and active states across the whole store.",
+     "default": "#111827",
+     "uses": 46,
+     "areas": [
+      "Shared components",
+      "Global styles",
+      "Cart",
+      "Favorites"
+     ]
+    }
+   }
+  },
+  "souqify-v2": {
+   "theme": "souqify",
+   "variant": "v2",
+   "name": "Souqify — Purple Edition",
+   "description": "Purple brand edition with a gradient header and mini product cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-brand-purple",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "topbar-bg": "--color-utility-bar-bg",
+    "topbar-text": "--color-utility-text",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "discount": "--color-badge-discount-orange",
+    "success": "--color-success",
+    "error": "--color-error",
+    "flash-bg": "--color-flash-sale-bg",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-brand-purple": {
+     "label": "Brand color (Purple)",
+     "group": "Brand & accents",
+     "description": "The Purple edition brand color: header bar, buttons, hero, tags and active states.",
+     "default": "#8b03bd",
+     "uses": 61,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Hero banner"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 64,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Header & navigation",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 991,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Product page",
+      "Cart"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop pages accent",
+     "group": "Brand & accents",
+     "description": "Accent used on the cart, favorites, orders and other shared shop pages and components. The edition's main brand color is a separate color.",
+     "default": "#ff4d00",
+     "uses": 47,
+     "areas": [
+      "Shared components",
+      "Global styles",
+      "Cart",
+      "Favorites"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 20,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 32,
+     "areas": [
+      "Global styles",
+      "Hero banner",
+      "Product cards",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 9,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Recommended for you"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 19,
+     "areas": [
+      "Global styles",
+      "Footer",
+      "Header & navigation",
+      "Product cards"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 5,
+     "areas": [
+      "Global styles",
+      "Hero banner",
+      "Header & navigation"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 9,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Shared components"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 7,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-purple": {
+     "label": "Accent purple",
+     "group": "Brand & accents",
+     "description": "Purple accent used on category chips, trending labels and small highlights.",
+     "default": "#8a38f5",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Categories"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 7,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Flash sale",
+      "Trust / features bar"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 21,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Product cards",
+      "Buttons"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 8,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Explore products",
+      "Recommended for you"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 3,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-accent-purple-bright": {
+     "label": "Accent purple (bright)",
+     "group": "Brand & accents",
+     "description": "Bright purple used on the footer and highlight accents.",
+     "default": "#ae01ed",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Footer"
+     ]
+    },
+    "--color-utility-bar-bg": {
+     "label": "Utility bar background",
+     "group": "Header & top bar",
+     "description": "Background of the utility bar (language, currency, store links).",
+     "default": "#101010",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-utility-text": {
+     "label": "Utility bar text",
+     "group": "Header & top bar",
+     "description": "Text in the utility bar.",
+     "default": "#d1d5dc",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-secondary": {
+     "label": "Text (secondary)",
+     "group": "Text",
+     "description": "Secondary text such as descriptions and meta lines.",
+     "default": "#464646",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-card-bg-soft": {
+     "label": "Card background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft tinted background inside product cards.",
+     "default": "#f3f3fe",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-text-heading-alt": {
+     "label": "Text (headings, alt)",
+     "group": "Text",
+     "description": "Alternative heading color on tinted cards.",
+     "default": "#191b23",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-badge-discount-yellow": {
+     "label": "Discount badge (yellow)",
+     "group": "Status, prices & badges",
+     "description": "Background of yellow discount chips.",
+     "default": "#ffb00a",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-badge-discount-orange": {
+     "label": "Discount badge (orange)",
+     "group": "Status, prices & badges",
+     "description": "Background of orange discount chips (e.g. 10% off).",
+     "default": "#ff570f",
+     "uses": 7,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-urgency-red-1": {
+     "label": "Urgency red (1)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of urgency labels (start).",
+     "default": "#ac0202",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-urgency-red-2": {
+     "label": "Urgency red (2)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of urgency labels (middle).",
+     "default": "#e30000",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-urgency-red-3": {
+     "label": "Urgency red (3)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of urgency labels (end).",
+     "default": "#9e0000",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-dot-active": {
+     "label": "Carousel dot (active)",
+     "group": "Sections & decorations",
+     "description": "Active pagination dot of carousels.",
+     "default": "#ffdb4c",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-dot-inactive": {
+     "label": "Carousel dot (inactive)",
+     "group": "Sections & decorations",
+     "description": "Inactive pagination dots of carousels.",
+     "default": "#f0f0f0",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-bestseller-grad-1": {
+     "label": "Best sellers gradient 1",
+     "group": "Sections & decorations",
+     "description": "1st color of the best sellers section gradient.",
+     "default": "#ff6eff",
+     "uses": 1,
+     "areas": [
+      "Best sellers"
+     ]
+    },
+    "--color-bestseller-grad-2": {
+     "label": "Best sellers gradient 2",
+     "group": "Sections & decorations",
+     "description": "2nd color of the best sellers section gradient.",
+     "default": "#9ad7ff",
+     "uses": 1,
+     "areas": [
+      "Best sellers"
+     ]
+    },
+    "--color-bestseller-grad-3": {
+     "label": "Best sellers gradient 3",
+     "group": "Sections & decorations",
+     "description": "3rd color of the best sellers section gradient.",
+     "default": "#9d8dff",
+     "uses": 1,
+     "areas": [
+      "Best sellers"
+     ]
+    },
+    "--color-flash-sale-bg": {
+     "label": "Flash sale background",
+     "group": "Flash sale",
+     "description": "Background of the flash sale section.",
+     "default": "#000000",
+     "uses": 6,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-topnav-grad-dark": {
+     "label": "Header gradient (dark end)",
+     "group": "Header & top bar",
+     "description": "Dark end of the header gradient.",
+     "default": "#571f6b",
+     "uses": 2,
+     "areas": [
+      "Header & navigation"
+     ]
+    },
+    "--color-topnav-wordmark": {
+     "label": "Header logo text",
+     "group": "Header & top bar",
+     "description": "Store-name wordmark color in the header.",
+     "default": "#f1f1f1",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "souqify-v3": {
+   "theme": "souqify",
+   "variant": "v3",
+   "name": "Souqify — Modern Edition",
+   "description": "Modern teal edition with a clean header and compact deal cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "tajawal"
+   },
+   "roles": {
+    "brand": "--color-souqify-teal",
+    "brand-alt": "--color-accent-yellow",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "topbar-bg": "--color-navbar-dark",
+    "topbar-text": "--color-navbar-muted",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-souqify-teal": {
+     "label": "Brand color (Teal)",
+     "group": "Brand & accents",
+     "description": "The Modern edition brand color: header bar, buttons, hero, section titles and active states.",
+     "default": "#199387",
+     "uses": 101,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Hero banner",
+      "Footer"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 73,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Header & navigation",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 989,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Product page",
+      "Cart"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop pages accent",
+     "group": "Brand & accents",
+     "description": "Accent used on the cart, favorites, orders and other shared shop pages and components. The edition's main brand color is a separate color.",
+     "default": "#ff4d00",
+     "uses": 48,
+     "areas": [
+      "Shared components",
+      "Global styles",
+      "Cart",
+      "Favorites"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 7,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Recommended for you"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 8,
+     "areas": [
+      "Global styles",
+      "Mobile bar",
+      "Footer",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 2,
+     "areas": [
+      "Hero banner",
+      "Product cards"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 7,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Shared components"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 10,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 8,
+     "areas": [
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 26,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Product cards"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Categories",
+      "Explore products",
+      "New In"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 3,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-souqify-orange": {
+     "label": "Orange accent",
+     "group": "Brand & accents",
+     "description": "Orange accent used for sale badges and call-to-action highlights.",
+     "default": "#ff570f",
+     "uses": 10,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-amber": {
+     "label": "Accent amber",
+     "group": "Brand & accents",
+     "description": "Amber accent used for ratings, badges and warning highlights.",
+     "default": "#ffb00a",
+     "uses": 8,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-navbar-dark": {
+     "label": "Navigation bar (dark)",
+     "group": "Header & top bar",
+     "description": "Dark navigation / category bar background.",
+     "default": "#101010",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-navbar-muted": {
+     "label": "Navigation text (muted)",
+     "group": "Header & top bar",
+     "description": "Muted text and icons in the navigation bar.",
+     "default": "#d1d5dc",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-navbar-category": {
+     "label": "Text (menu categories)",
+     "group": "Header & top bar",
+     "description": "Category links in the main navigation bar.",
+     "default": "#464646",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-card-title": {
+     "label": "Product title",
+     "group": "Text",
+     "description": "Product name on product cards.",
+     "default": "#191b23",
+     "uses": 3,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  },
+  "souqify-v4": {
+   "theme": "souqify",
+   "variant": "v4",
+   "name": "Souqify — Green Edition",
+   "description": "Green edition with bold hero and flash sale panels.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "almarai"
+   },
+   "roles": {
+    "brand": "--color-brand-green",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "topbar-bg": "--color-navbar-dark",
+    "topbar-text": "--color-navbar-muted",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-brand-green": {
+     "label": "Brand color (Green)",
+     "group": "Brand & accents",
+     "description": "The Green edition brand color: header bar, buttons, flash sale, hero and active states.",
+     "default": "#5a9b00",
+     "uses": 60,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Hero banner",
+      "Flash sale"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 57,
+     "areas": [
+      "Product cards",
+      "Global styles",
+      "Header & navigation",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 972,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Product page",
+      "Cart"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop pages accent",
+     "group": "Brand & accents",
+     "description": "Accent used on the cart, favorites, orders and other shared shop pages and components. The edition's main brand color is a separate color.",
+     "default": "#ff4d00",
+     "uses": 47,
+     "areas": [
+      "Shared components",
+      "Global styles",
+      "Cart",
+      "Favorites"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 18,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Hero banner",
+      "Footer"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 39,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Hero banner",
+      "Footer"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 4,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 18,
+     "areas": [
+      "Global styles",
+      "Footer",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Hero banner",
+      "Header & navigation"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Shared components"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 3,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 16,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Categories"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 13,
+     "areas": [
+      "Global styles",
+      "Footer",
+      "Categories",
+      "Explore products"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 2,
+     "areas": [
+      "Header & navigation"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 8,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-navbar-dark": {
+     "label": "Navigation bar (dark)",
+     "group": "Header & top bar",
+     "description": "Dark navigation / category bar background.",
+     "default": "#101010",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-navbar-muted": {
+     "label": "Navigation text (muted)",
+     "group": "Header & top bar",
+     "description": "Muted text and icons in the navigation bar.",
+     "default": "#d1d5dc",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-dim": {
+     "label": "Text (dim)",
+     "group": "Text",
+     "description": "Dimmed text in menus and secondary labels.",
+     "default": "#464646",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-badge-yellow": {
+     "label": "Badge yellow",
+     "group": "Status, prices & badges",
+     "description": "Background of yellow badges.",
+     "default": "#ffb00a",
+     "uses": 7,
+     "areas": [
+      "Global styles",
+      "Best sellers",
+      "Header & navigation"
+     ]
+    },
+    "--color-badge-orange": {
+     "label": "Badge orange",
+     "group": "Status, prices & badges",
+     "description": "Background of orange badges and weight tags.",
+     "default": "#ff570f",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-card-image-bg": {
+     "label": "Card image background",
+     "group": "Backgrounds & surfaces",
+     "description": "Background shown behind product images before they load or when transparent.",
+     "default": "#f3f3fe",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Flash sale",
+      "Trending now"
+     ]
+    }
+   }
+  },
+  "souqify-v5": {
+   "theme": "souqify",
+   "variant": "v5",
+   "name": "Souqify — Orange Edition",
+   "description": "Warm orange edition with a yellow features bar and patterned sections.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "readex_pro"
+   },
+   "roles": {
+    "brand": "--color-primary",
+    "brand-alt": "--color-secondary",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "topbar-bg": "--color-navbar-dark",
+    "topbar-text": "--color-topbar-muted",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "price": "--color-price-alt-blue",
+    "discount": "--color-discount-orange",
+    "success": "--color-success",
+    "error": "--color-error",
+    "flash-accent": "--color-flash-timer-blue",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-primary": {
+     "label": "Primary brand color",
+     "group": "Brand & accents",
+     "description": "Main brand color: primary buttons, links, active states, highlights and accents across the store.",
+     "default": "#ff4d00",
+     "uses": 104,
+     "areas": [
+      "Global styles",
+      "Shared components",
+      "Header & navigation",
+      "Hero banner"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 64,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Header & navigation",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 998,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Product page",
+      "Cart"
+     ]
+    },
+    "--color-secondary": {
+     "label": "Secondary brand color",
+     "group": "Brand & accents",
+     "description": "Supporting accent used next to the primary color: secondary buttons, highlights and small accents.",
+     "default": "#ff522c",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 5,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 46,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Categories",
+      "Hero banner"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 5,
+     "areas": [
+      "Global styles",
+      "Recommended for you"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 13,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 4,
+     "areas": [
+      "Header & navigation",
+      "Hero banner"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 9,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Shared components"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 9,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "New In",
+      "Trust / features bar"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 6,
+     "areas": [
+      "Header & navigation",
+      "Global styles",
+      "Flash sale"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 25,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Buttons",
+      "Product cards"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 11,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Categories",
+      "Explore products"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 3,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-navbar-dark": {
+     "label": "Navigation bar (dark)",
+     "group": "Header & top bar",
+     "description": "Dark navigation / category bar background.",
+     "default": "#101010",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-topbar-muted": {
+     "label": "Top bar (muted)",
+     "group": "Header & top bar",
+     "description": "Muted text in the top bar.",
+     "default": "#d1d5dc",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-flash-timer-blue": {
+     "label": "Flash sale timer",
+     "group": "Flash sale",
+     "description": "Countdown timer boxes of the flash sale.",
+     "default": "#0159ed",
+     "uses": 4,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-price-alt-blue": {
+     "label": "Price color (alt blue)",
+     "group": "Status, prices & badges",
+     "description": "Alternate price color used on dark/highlighted cards.",
+     "default": "#155dfc",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-progress-track": {
+     "label": "Progress bar track",
+     "group": "Borders & lines",
+     "description": "Empty track behind progress bars.",
+     "default": "#e5e7eb",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-desc-gray": {
+     "label": "Text (description)",
+     "group": "Text",
+     "description": "Product descriptions and short captions.",
+     "default": "#6a7282",
+     "uses": 2,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-strike-gray": {
+     "label": "Old price (strikethrough)",
+     "group": "Text",
+     "description": "Color of the crossed-out old price.",
+     "default": "#99a1af",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-navy-text": {
+     "label": "Text (navy)",
+     "group": "Text",
+     "description": "Navy text used in some titles and labels.",
+     "default": "#1e2939",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-charcoal-text": {
+     "label": "Text (charcoal)",
+     "group": "Text",
+     "description": "Charcoal text for titles on light cards.",
+     "default": "#191b23",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-ribbon-red-1": {
+     "label": "Ribbon red (1)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (start).",
+     "default": "#ac0202",
+     "uses": 1,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-ribbon-red-2": {
+     "label": "Ribbon red (2)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (middle).",
+     "default": "#e30000",
+     "uses": 1,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-ribbon-red-3": {
+     "label": "Ribbon red (3)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (end).",
+     "default": "#9e0000",
+     "uses": 1,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-discount-orange": {
+     "label": "Discount chip (orange)",
+     "group": "Status, prices & badges",
+     "description": "Orange discount percentage chip on cards.",
+     "default": "#ff570f",
+     "uses": 4,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-discount-yellow": {
+     "label": "Discount chip (yellow)",
+     "group": "Status, prices & badges",
+     "description": "Yellow discount percentage chip on cards.",
+     "default": "#ffb00a",
+     "uses": 5,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-weight-tag": {
+     "label": "Weight tag",
+     "group": "Status, prices & badges",
+     "description": "Product weight / size tag next to the product name.",
+     "default": "#ff4d00",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-card-bg-lavender": {
+     "label": "Card background (lavender)",
+     "group": "Backgrounds & surfaces",
+     "description": "Lavender tinted background behind card images.",
+     "default": "#f3f3fe",
+     "uses": 1,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-placeholder-icon": {
+     "label": "Placeholder icon",
+     "group": "Sections & decorations",
+     "description": "Icon color of empty-image placeholders.",
+     "default": "#c7c7c7",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    }
+   }
+  },
+  "souqify-v6": {
+   "theme": "souqify",
+   "variant": "v6",
+   "name": "Souqify — Pink Edition",
+   "description": "Pink edition with a scalloped best-seller section and rounded flash sale cards.",
+   "fonts": {
+    "ltr": "outfit",
+    "rtl": "cairo"
+   },
+   "roles": {
+    "brand": "--color-brand-pink",
+    "brand-alt": "--color-accent-yellow",
+    "text": "--color-text-primary",
+    "text-muted": "--color-text-subtitle",
+    "page-bg": "--color-page-bg",
+    "surface": "--color-surface",
+    "border": "--color-stroke",
+    "topbar-bg": "--color-topbar",
+    "topbar-text": "--color-topbar-text",
+    "footer-bg": "--color-footer-bg",
+    "footer-bar": "--color-footer-bar",
+    "footer-text": "--color-footer-text-muted",
+    "success": "--color-success",
+    "error": "--color-error",
+    "white": "--color-white",
+    "black": "--color-black"
+   },
+   "tokens": {
+    "--color-brand-pink": {
+     "label": "Brand color (Pink)",
+     "group": "Brand & accents",
+     "description": "The Pink edition brand color: header, buttons, hero, flash sale, footer accents and prices.",
+     "default": "#ff1a90",
+     "uses": 84,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Flash sale",
+      "Product cards"
+     ]
+    },
+    "--color-black": {
+     "label": "Black",
+     "group": "Neutrals",
+     "description": "Pure black used for strong text, icons and dark buttons.",
+     "default": "#242424",
+     "uses": 64,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Header & navigation",
+      "Orders"
+     ]
+    },
+    "--color-white": {
+     "label": "White",
+     "group": "Neutrals",
+     "description": "Pure white used for cards, text on dark backgrounds and icons.",
+     "default": "#ffffff",
+     "uses": 994,
+     "areas": [
+      "Global styles",
+      "Orders",
+      "Product page",
+      "Cart"
+     ]
+    },
+    "--color-primary": {
+     "label": "Shop pages accent",
+     "group": "Brand & accents",
+     "description": "Accent used on the cart, favorites, orders and other shared shop pages and components. The edition's main brand color is a separate color.",
+     "default": "#ff4d00",
+     "uses": 51,
+     "areas": [
+      "Shared components",
+      "Global styles",
+      "Cart",
+      "Favorites"
+     ]
+    },
+    "--color-bg-main": {
+     "label": "Page background (main)",
+     "group": "Backgrounds & surfaces",
+     "description": "Main background color of pages and white sections.",
+     "default": "#fdfdfd",
+     "uses": 13,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Trending now",
+      "Footer"
+     ]
+    },
+    "--color-text-primary": {
+     "label": "Text (primary)",
+     "group": "Text",
+     "description": "Main body and heading text color.",
+     "default": "#121212",
+     "uses": 24,
+     "areas": [
+      "Global styles",
+      "Hero banner",
+      "New In",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-subtitle": {
+     "label": "Text (subtitle)",
+     "group": "Text",
+     "description": "Subtitles, helper lines and captions.",
+     "default": "#adadad",
+     "uses": 9,
+     "areas": [
+      "Global styles",
+      "Trending now",
+      "Product cards",
+      "Recommended for you"
+     ]
+    },
+    "--color-gray": {
+     "label": "Grey",
+     "group": "Neutrals",
+     "description": "Mid grey used for secondary icons, captions and dividers.",
+     "default": "#8f8f8f",
+     "uses": 16,
+     "areas": [
+      "Global styles",
+      "New In",
+      "Product cards",
+      "Trending now"
+     ]
+    },
+    "--color-stroke": {
+     "label": "Border color",
+     "group": "Borders & lines",
+     "description": "Default border and divider color for cards, inputs and tables.",
+     "default": "#d4d4d4",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Hero banner",
+      "Header & navigation"
+     ]
+    },
+    "--color-black-alt": {
+     "label": "Black (soft)",
+     "group": "Neutrals",
+     "description": "Soft black used for headings and dark UI elements.",
+     "default": "#1b1b1b",
+     "uses": 14,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Trending now",
+      "Footer"
+     ]
+    },
+    "--color-success": {
+     "label": "Success / green",
+     "group": "Status, prices & badges",
+     "description": "Success messages, in-stock labels, delivery text and green confirmation icons.",
+     "default": "#2aaf2f",
+     "uses": 1,
+     "areas": [
+      "Shared components"
+     ]
+    },
+    "--color-error": {
+     "label": "Error / red",
+     "group": "Status, prices & badges",
+     "description": "Error messages, sale-red labels, out-of-stock and destructive actions.",
+     "default": "#de1709",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Product cards"
+     ]
+    },
+    "--color-accent-yellow": {
+     "label": "Accent yellow",
+     "group": "Brand & accents",
+     "description": "Yellow accent used on hero buttons, flash sale labels and highlights.",
+     "default": "#ffd428",
+     "uses": 3,
+     "areas": [
+      "Global styles",
+      "Product cards",
+      "Trust / features bar"
+     ]
+    },
+    "--color-surface": {
+     "label": "Surface",
+     "group": "Backgrounds & surfaces",
+     "description": "Panel and block backgrounds (menus, inputs, light cards).",
+     "default": "#f6f5f5",
+     "uses": 10,
+     "areas": [
+      "Header & navigation",
+      "Global styles",
+      "Product cards",
+      "Trending now"
+     ]
+    },
+    "--color-page-bg": {
+     "label": "Page background (soft)",
+     "group": "Backgrounds & surfaces",
+     "description": "Soft grey page background behind cards and sections.",
+     "default": "#f4f4f4",
+     "uses": 25,
+     "areas": [
+      "Global styles",
+      "Header & navigation",
+      "Explore products",
+      "Buttons"
+     ]
+    },
+    "--color-footer-bg": {
+     "label": "Footer background",
+     "group": "Footer",
+     "description": "Main footer background.",
+     "default": "#3b3b3b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-bar": {
+     "label": "Footer bottom bar",
+     "group": "Footer",
+     "description": "Bottom copyright bar of the footer.",
+     "default": "#242424",
+     "uses": 3,
+     "areas": [
+      "Footer",
+      "Global styles"
+     ]
+    },
+    "--color-footer-subbar": {
+     "label": "Footer sub bar",
+     "group": "Footer",
+     "description": "Secondary strip inside the footer.",
+     "default": "#5b5b5b",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-footer-text-muted": {
+     "label": "Footer text",
+     "group": "Footer",
+     "description": "Footer links and text.",
+     "default": "#f2f2f2",
+     "uses": 4,
+     "areas": [
+      "Global styles",
+      "Footer"
+     ]
+    },
+    "--color-text-muted": {
+     "label": "Text (muted)",
+     "group": "Text",
+     "description": "De-emphasised text: counts, hints, small captions.",
+     "default": "#636363",
+     "uses": 5,
+     "areas": [
+      "Categories",
+      "Explore products",
+      "Flash sale",
+      "Recommended for you"
+     ]
+    },
+    "--color-text-faint": {
+     "label": "Text (faint)",
+     "group": "Text",
+     "description": "Very light text such as placeholders and inactive labels.",
+     "default": "#4b4b4b",
+     "uses": 3,
+     "areas": [
+      "Header & navigation",
+      "Global styles"
+     ]
+    },
+    "--color-text-placeholder": {
+     "label": "Text (placeholder)",
+     "group": "Text",
+     "description": "Placeholder text inside inputs and the search box.",
+     "default": "#4c4c4c",
+     "uses": 6,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-topbar": {
+     "label": "Top bar background",
+     "group": "Header & top bar",
+     "description": "Background of the thin top bar above the header.",
+     "default": "#101010",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-topbar-text": {
+     "label": "Top bar text",
+     "group": "Header & top bar",
+     "description": "Text and icons in the top bar.",
+     "default": "#d1d5dc",
+     "uses": 12,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-text-heading": {
+     "label": "Text (headings)",
+     "group": "Text",
+     "description": "Section and product headings.",
+     "default": "#191b23",
+     "uses": 10,
+     "areas": [
+      "Global styles",
+      "Trending now",
+      "Product cards"
+     ]
+    },
+    "--color-text-slate": {
+     "label": "Text (slate)",
+     "group": "Text",
+     "description": "Slate text for secondary labels.",
+     "default": "#464646",
+     "uses": 2,
+     "areas": [
+      "Global styles",
+      "Header & navigation"
+     ]
+    },
+    "--color-card-image-bg": {
+     "label": "Card image background",
+     "group": "Backgrounds & surfaces",
+     "description": "Background shown behind product images before they load or when transparent.",
+     "default": "#f3f3fe",
+     "uses": 1,
+     "areas": [
+      "Flash sale"
+     ]
+    },
+    "--color-ribbon-red-1": {
+     "label": "Ribbon red (1)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (start).",
+     "default": "#ac0202",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-ribbon-red-2": {
+     "label": "Ribbon red (2)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (middle).",
+     "default": "#e30000",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-ribbon-red-3": {
+     "label": "Ribbon red (3)",
+     "group": "Sections & decorations",
+     "description": "Red gradient of delivery / urgency ribbons (end).",
+     "default": "#9e0000",
+     "uses": 1,
+     "areas": [
+      "Product cards"
+     ]
+    },
+    "--color-feature-text": {
+     "label": "Features bar text",
+     "group": "Text",
+     "description": "Titles in the trust / features bar.",
+     "default": "#070707",
+     "uses": 4,
+     "areas": [
+      "Global styles"
+     ]
+    },
+    "--color-feature-subtext": {
+     "label": "Features bar subtext",
+     "group": "Text",
+     "description": "Sub-lines in the trust / features bar.",
+     "default": "#444444",
+     "uses": 4,
+     "areas": [
+      "Global styles"
+     ]
+    }
+   }
+  }
+ }
+}

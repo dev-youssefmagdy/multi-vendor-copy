@@ -185,9 +185,19 @@ final class AppearanceController extends PanelController
 
         $values = array_merge($defaults, $request->validated('values', []));
 
-        $this->service->saveThemeColors($theme, $variant, null, $values);
+        // Store only what differs from the default, so future default changes still reach this tenant.
+        $changedColors = array_filter($values, fn ($value, $property) => strtolower((string) $value) !== strtolower((string) ($defaults[$property] ?? '')), ARRAY_FILTER_USE_BOTH);
 
-        return $this->success('Storefront colors saved successfully.');
+        $fontDefaults = $this->repo->themeVariantFontDefaults($theme, $variant);
+        $changedFonts = array_filter(
+            (array) $request->validated('fonts', []),
+            fn ($key, $direction) => filled($key) && $key !== ($fontDefaults[$direction] ?? null),
+            ARRAY_FILTER_USE_BOTH,
+        );
+
+        $this->service->saveThemeColors($theme, $variant, null, $changedColors, $changedFonts);
+
+        return $this->success('Storefront design saved successfully.');
     }
 
     public function validateColors(SaveColorsRequest $request, int $theme, int $variant): JsonResponse
@@ -204,7 +214,10 @@ final class AppearanceController extends PanelController
 
         $this->service->resetThemeColors($theme, $variant, null);
 
-        return $this->success('Storefront colors reset to the default.', ['defaults' => $defaults]);
+        return $this->success('Storefront colors and fonts reset to the default.', [
+            'defaults' => $defaults,
+            'fonts' => $this->repo->themeVariantFontDefaults($theme, $variant),
+        ]);
     }
 
     // ── Promo banner ──────────────────────────────────────────────────────

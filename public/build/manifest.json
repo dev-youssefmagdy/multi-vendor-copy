@@ -2546,7 +2546,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BZKVoq_H.css",
+    "file": "assets/app-vkxbFoZj.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
@@ -2853,7 +2853,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CtyNTLn9.css",
+    "file": "assets/souqify-b-dLnuF0.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2870,7 +2870,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-BZKVoq_H.css"
+      "assets/app-vkxbFoZj.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -4085,7 +4085,7 @@
     ]
   },
   "resources/js/tenant/pages/store/appearance.js": {
-    "file": "assets/appearance-v1VJJKEq.js",
+    "file": "assets/appearance-B-aUC5dY.js",
     "name": "appearance",
     "src": "resources/js/tenant/pages/store/appearance.js",
     "isEntry": true,
@@ -4101,7 +4101,7 @@
       "_forms-BAt7Ciw2.js"
     ],
     "css": [
-      "assets/appearance-DD0cOYdP.css"
+      "assets/appearance-DM5bK8i5.css"
     ]
   },
   "resources/js/tenant/pages/store/banners.js": {

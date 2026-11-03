@@ -11,8 +11,9 @@
         </x-slot:actions>
     </x-tenant::page-header>
 
-    <x-tenant::tabs mode="hash" :active="$activeTab === 'colors' ? 'general' : $activeTab" :tabs="[
+    <x-tenant::tabs mode="hash" :active="$activeTab" :tabs="[
         'general' => 'General',
+        'colors' => 'Colors & Fonts',
         'social_links' => 'Social Links',
         'top_header_links' => 'Top Header Links',
         'promo_banner' => 'Promo Banner',
@@ -54,10 +55,35 @@
             </x-tenant::form>
         </x-tenant::tab-panel>
 
-        {{-- ─────────────────────────────── COLORS (hidden: not used; remove @if(false) to bring it back) ─────────────────────────────── --}}
-        @if (false)
+        {{-- ─────────────────────────────── COLORS & FONTS ─────────────────────────────── --}}
         <x-tenant::tab-panel key="colors" :active="$activeTab === 'colors'">
+            @php
+                $ltrFonts = \App\Support\ThemeDesign\ThemeFonts::LTR;
+                $rtlFonts = \App\Support\ThemeDesign\ThemeFonts::RTL;
+                $previewFonts = collect([
+                    \App\Support\ThemeDesign\ThemeFonts::googleStylesheetUrl('ltr', array_keys($ltrFonts)),
+                    \App\Support\ThemeDesign\ThemeFonts::googleStylesheetUrl('rtl', array_keys($rtlFonts)),
+                ])->filter();
+            @endphp
+            @foreach($previewFonts as $previewFontUrl)
+                <link rel="stylesheet" href="{{ $previewFontUrl }}">
+            @endforeach
+
             <div class="page-stack">
+                <div class="card form-card t-design-intro">
+                    <h3 class="panel-title">Colors &amp; fonts per theme edition</h3>
+                    <p class="panel-copy">
+                        Each storefront theme comes in several editions. Every edition has its own set of colors and its own fonts,
+                        so a change only affects the edition you edit. Under each color you can read what it changes in the store.
+                        The active edition shows your changes right after you save; other editions keep their settings for when you switch.
+                        Use <strong>Reset to Default</strong> to return an edition to the design it shipped with.
+                    </p>
+                    <div class="t-design-legend">
+                        <span><strong>Fonts</strong> — one for left-to-right languages (English&hellip;) and one for right-to-left languages (Arabic&hellip;); only the font of the language being viewed is loaded.</span>
+                        <span><strong>Colors</strong> — grouped by where they appear (brand, header, text, backgrounds, status, flash sale, footer&hellip;).</span>
+                    </div>
+                </div>
+
                 @forelse($colorThemes as $themeId => $themeSection)
                     <details class="card form-card theme-color-group" @if($themeSection['is_active']) open @endif>
                         <summary class="panel-head mb-0 t-color-theme-summary">
@@ -68,45 +94,106 @@
                                         <span class="badge badge-cyan t-color-theme-badge">Active Theme</span>
                                     @endif
                                 </h3>
-                                <p class="panel-copy">{{ count($themeSection['variants']) }} variant(s) with customizable colors.</p>
+                                <p class="panel-copy">{{ count($themeSection['variants']) }} edition(s) &middot; each with its own colors and fonts.</p>
                             </div>
                         </summary>
 
                         <div class="page-stack t-color-variant-list">
                             @foreach($themeSection['variants'] as $variantId => $section)
-                                <x-tenant::form :id="'colors-form-'.$themeId.'-'.$variantId"
+                                @php $formId = 'colors-form-'.$themeId.'-'.$variantId; @endphp
+                                <x-tenant::form :id="$formId"
                                     :action="route('tenant.store.appearance.colors', [$themeId, $variantId])"
                                     method="PUT"
                                     :validate="route('tenant.store.appearance.colors.validate', [$themeId, $variantId])"
-                                    success="none">
+                                    data-design-form :data-roles="json_encode($section['roles'])">
                                     <section class="card form-card t-color-variant-card">
-                                        <div class="panel-head mb-5">
+                                        <div class="panel-head">
                                             <div>
                                                 <h4 class="panel-title t-color-variant-title">
                                                     {{ $section['name'] }}
                                                     @if($section['is_active'])
-                                                        <span class="badge badge-green t-color-theme-badge">Active Variant</span>
+                                                        <span class="badge badge-green t-color-theme-badge">Active Edition</span>
                                                     @endif
                                                 </h4>
-                                                <p class="panel-copy">Changes apply site-wide whenever this variant is active.</p>
+                                                <p class="panel-copy">{{ $section['description'] }}</p>
                                             </div>
-                                            <div class="flex gap-2">
+                                            <div class="panel-actions">
                                                 <button type="button" class="btn btn-secondary t-reset-colors-btn"
                                                     data-reset-colors-url="{{ route('tenant.store.appearance.colors.reset', [$themeId, $variantId]) }}"
-                                                    data-reset-colors-form="colors-form-{{ $themeId }}-{{ $variantId }}">Reset to Default</button>
-                                                <button type="submit" class="btn btn-primary">Save Colors</button>
+                                                    data-reset-colors-form="{{ $formId }}">Reset to Default</button>
+                                                <button type="submit" class="btn btn-primary">Save Colors &amp; Fonts</button>
                                             </div>
                                         </div>
 
-                                        <div class="form-grid form-grid-2">
-                                            @foreach($section['defaults'] as $property => $default)
-                                                <x-tenant::color
-                                                    :name="'values.'.$property"
-                                                    :label="\Illuminate\Support\Str::headline(str_replace('--color-', '', $property))"
-                                                    :value="$section['values'][$property] ?? $default"
-                                                    allow-transparent
-                                                />
+                                        <div class="t-design-layout">
+                                        <div class="t-design-main">
+                                        {{-- Fonts --}}
+                                        <div class="t-design-block">
+                                            <h5 class="t-design-block-title">Fonts</h5>
+                                            <p class="t-design-block-copy">Applied to every text of the storefront for this edition (menus, product cards, buttons, headings). The store-name text logo keeps the font chosen under General.</p>
+                                            <div class="form-grid form-grid-2">
+                                                @foreach(['ltr' => ['Left-to-right font', 'English, French and other Latin languages', $ltrFonts, 'The quick brown fox jumps over the lazy dog 0123456789'],
+                                                          'rtl' => ['Right-to-left font', 'Arabic and other right-to-left languages', $rtlFonts, 'نص تجريبي لمعاينة الخط المختار في المتجر ٠١٢٣٤٥٦٧٨٩']] as $dir => [$fontLabel, $fontHelp, $fontOptions, $sample])
+                                                    @php
+                                                        $current = $section['fonts']['values'][$dir];
+                                                        $default = $section['fonts']['defaults'][$dir];
+                                                    @endphp
+                                                    <div class="t-field" data-field="fonts.{{ $dir }}">
+                                                        <label class="field-label" for="{{ $formId }}-font-{{ $dir }}">{{ $fontLabel }}</label>
+                                                        <select class="field-control" id="{{ $formId }}-font-{{ $dir }}" name="fonts[{{ $dir }}]"
+                                                            data-font-select data-default="{{ $default }}">
+                                                            @foreach($fontOptions as $fontKey => $font)
+                                                                <option value="{{ $fontKey }}" data-stack="{{ $font[1] }}" @selected($current === $fontKey)>
+                                                                    {{ $font[0] }} — {{ $font[3] }}{{ $fontKey === $default ? ' (default)' : '' }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <p class="t-help">{{ $fontHelp }}. Default: {{ $fontOptions[$default][0] ?? $default }}.</p>
+                                                        <div class="t-font-preview" data-font-preview dir="{{ $dir }}" style="font-family: {{ $fontOptions[$current][1] ?? 'inherit' }}">{{ $sample }}</div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                        {{-- Colors --}}
+                                        <div class="t-design-block">
+                                            <div class="t-design-block-head">
+                                                <div>
+                                                    <h5 class="t-design-block-title">Colors <span class="t-design-count">{{ count($section['defaults']) }}</span></h5>
+                                                    <p class="t-design-block-copy">Every color this edition uses. Pick a color or type a hex code; use the small reset link to restore a single color.</p>
+                                                </div>
+                                                <input type="search" class="field-control t-design-search" placeholder="Search colors (e.g. header, footer, price)…" data-design-search autocomplete="off">
+                                            </div>
+
+                                            @foreach($section['groups'] as $groupName => $tokens)
+                                                <details class="t-design-group" open data-design-group>
+                                                    <summary><span>{{ $groupName }}</span> <span class="t-design-count">{{ count($tokens) }}</span></summary>
+                                                    @include('tenant.pages.store.appearance._design-group-preview', ['groupName' => $groupName, 'tokens' => $tokens, 'section' => $section])
+                                                    <div class="form-grid form-grid-2">
+                                                        @foreach($tokens as $property => $token)
+                                                            @php
+                                                                $help = $token['description'] . ($token['areas'] ? ' Affects: ' . implode(', ', $token['areas']) . '.' : '');
+                                                            @endphp
+                                                            <div class="t-design-token" data-design-token data-token="{{ $property }}" data-search="{{ strtolower($token['label'].' '.$token['description'].' '.implode(' ', $token['areas']).' '.$property.' '.$groupName) }}">
+                                                                <x-tenant::color
+                                                                    :name="'values.'.$property"
+                                                                    :label="$token['label']"
+                                                                    :value="$section['values'][$property] ?? $token['default']"
+                                                                    :help="$help"
+                                                                />
+                                                                <div class="t-design-token-meta">
+                                                                    <code>{{ $property }}</code>
+                                                                    <button type="button" class="t-link-btn" data-default-color="{{ $token['default'] }}">Default {{ $token['default'] }}</button>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </details>
                                             @endforeach
+                                            <p class="t-design-empty" data-design-empty hidden>No colors match your search.</p>
+                                        </div>
+                                        </div>
+                                        @include('tenant.pages.store.appearance._design-scene')
                                         </div>
                                     </section>
                                 </x-tenant::form>
@@ -116,14 +203,13 @@
                 @empty
                     <div class="card form-card">
                         <div class="empty-state">
-                            <div class="empty-state-title">No customizable colors yet</div>
-                            <p class="empty-state-copy">None of your storefront themes expose variants with color customization.</p>
+                            <div class="empty-state-title">No customizable design yet</div>
+                            <p class="empty-state-copy">None of your storefront themes expose editions with color and font customization.</p>
                         </div>
                     </div>
                 @endforelse
             </div>
         </x-tenant::tab-panel>
-        @endif
 
         {{-- ────────────────────────────── SOCIAL LINKS ────────────────────────────── --}}
         <x-tenant::tab-panel key="social_links" :active="$activeTab === 'social_links'">

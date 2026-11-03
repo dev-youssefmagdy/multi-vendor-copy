@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * variant; a null home_variant_id row applies to a theme with no variant
  * catalog. Mirrors TenantHomeVariant; keys in `colors` are CSS custom
  * property names (e.g. "--color-primary") and only overridden keys need to
- * be present — anything missing falls back to the HomeVariant's defaults.
+ * be present — anything missing falls back to the HomeVariant's defaults. `fonts` holds the chosen
+ * font keys per direction ({"ltr": "outfit", "rtl": "cairo"}; see ThemeFonts).
  */
 class TenantThemeColor extends Model
 {
@@ -23,12 +24,14 @@ class TenantThemeColor extends Model
         'home_variant_id',
         'country_id',
         'colors',
+        'fonts',
     ];
 
     protected function casts(): array
     {
         return [
             'colors' => 'array',
+            'fonts' => 'array',
         ];
     }
 
