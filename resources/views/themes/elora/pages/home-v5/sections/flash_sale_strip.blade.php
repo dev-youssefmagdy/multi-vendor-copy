@@ -55,7 +55,7 @@
               'rating' => $rating,
               'image' => $img,
               'url' => route('tenant.storefront.product', $product->slug),
-              'badge' => null,
+              'badge' => $product->cardBadgeText(),
               'added' => time(),
           ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
           $deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F');

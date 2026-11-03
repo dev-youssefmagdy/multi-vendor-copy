@@ -45,9 +45,11 @@
         <svg class="fan-heart-icon size-[19.64px] lg:size-[24.42px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
+    @if (!empty($__chip = ($p['badge'] ?? null) ?: ($p['discount'] ?? null) ?: ($p['sold'] ?? null)))
     <div class="fan-badge absolute top-0 end-0 flex items-center justify-center px-[5.17px] py-[5.17px] lg:px-[6.42px] lg:py-[6.42px] rounded-tl-[6.89px] rounded-br-[6.89px] lg:rounded-tl-[8.56px] lg:rounded-br-[8.56px] shrink-0" style="background:{{ !empty($p['alt']) ? 'var(--color-badge-orange)' : 'var(--color-yellow)' }}">
-      <p class="fan-badge-text font-normal text-[12.05px] leading-[15px] lg:text-[14.98px] lg:leading-[19px] tracking-[0.43px] lg:tracking-[0.54px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ !empty($p['discount']) ? $p['discount'] : (!empty($p['alt']) ? __('30% OFF') : ($p['sold'] ?? __('Sold'))) }}</p>
+      <p class="fan-badge-text font-normal text-[12.05px] leading-[15px] lg:text-[14.98px] lg:leading-[19px] tracking-[0.43px] lg:tracking-[0.54px] whitespace-nowrap" style="color:{{ !empty($p['alt']) ? '#fff' : 'var(--color-black-alt)' }}">{{ $__chip }}</p>
     </div>
+    @endif
     @if (!empty($p['isOutOfStock']))
       <div class="fan-cart-btn absolute bottom-[4.91px] end-[5.89px] lg:bottom-[7.32px] lg:end-[7.32px] flex items-center justify-center px-[11.78px] py-[3.93px] lg:px-[14.65px] lg:py-[4.88px] rounded-[15.71px] lg:rounded-[19.53px] shrink-0 w-[55.98px] h-[44.19px] lg:w-[69.59px] lg:h-[54.94px] bg-white shadow opacity-50 cursor-not-allowed">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="fan-cart-icon size-[23.57px] lg:size-[29.3px]" />

@@ -18,9 +18,11 @@
         <svg class="size-[13px] lg:size-[23.61px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
+    @if (!empty($__chip = ($p['badge'] ?? null) ?: ($p['discount'] ?? null) ?: ($p['sold'] ?? null)))
     <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[6.21px] rounded-tl-[6px] rounded-br-[6px] lg:rounded-tl-[8.28px] lg:rounded-br-[8.28px]" style="background:var(--color-yellow)">
-      <p class="font-normal text-[10px] lg:text-[14.49px] tracking-[0.3px] lg:tracking-[0.52px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : ($p['sold'] ?? __('Sold')) }}</p>
+      <p class="font-normal text-[10px] lg:text-[14.49px] tracking-[0.3px] lg:tracking-[0.52px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ $__chip }}</p>
     </div>
+    @endif
   </div>
   <div class="flex flex-1 flex-col gap-[4px] lg:gap-[7.51px] p-[8px] lg:p-[7.51px] items-start min-w-0 justify-center">
     <div class="flex flex-col gap-[4px] lg:gap-[4.72px] items-start w-full">

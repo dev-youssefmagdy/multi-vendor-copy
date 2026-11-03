@@ -20,9 +20,11 @@
         <svg class="size-[12.57px] lg:size-[22px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
+    @if (!empty($__chip = ($p['badge'] ?? null) ?: ($p['discount'] ?? null) ?: ($p['sold'] ?? null)))
     <div class="absolute top-0 end-0 flex items-center justify-center p-[3.31px] rounded-tl-[4.41px] rounded-br-[4.41px] shrink-0" style="background:var(--color-yellow)">
-      <p class="font-normal text-[7.71px] lg:text-[13px] leading-[10px] tracking-[0.28px] lg:tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : ($p['sold'] ?? __('Sold')) }}</p>
+      <p class="font-normal text-[7.71px] lg:text-[13px] leading-[10px] tracking-[0.28px] lg:tracking-[0.3px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ $__chip }}</p>
     </div>
+    @endif
     @if (!empty($p['isOutOfStock']))
       <div class="absolute bottom-[3.77px] end-[3.77px] flex items-center justify-center px-[7.54px] py-[2.51px] lg:px-[7px] lg:py-[7px] rounded-[10.06px] lg:rounded-full shrink-0 w-[35.83px] h-[28.29px] lg:size-[48px] bg-white shadow opacity-50 cursor-not-allowed">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="size-[15.09px] lg:size-[26px]" />

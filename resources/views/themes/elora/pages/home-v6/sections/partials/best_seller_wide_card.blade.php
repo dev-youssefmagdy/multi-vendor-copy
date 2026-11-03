@@ -1,7 +1,7 @@
 {{-- Best Seller composite slide's bottom wide card. Expects $p: image, badge, badgeBg, badgeColor, name, weight, desc, rating, price, oldPrice, discount, url --}}
 @php $__deliveredDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="group relative flex-1 flex gap-[3px] lg:gap-[5px] bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10px] overflow-hidden shadow-[var(--shadow-card)] no-underline transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
-  <div class="relative aspect-square h-full shrink-0">
+  <div class="relative w-[40%] aspect-square shrink-0">
     <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     @if (!empty($p['isOutOfStock']))
     <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>

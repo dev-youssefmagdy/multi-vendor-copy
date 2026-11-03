@@ -1,6 +1,6 @@
 {{-- Expects $p: name, weight, price, oldPrice, discount, rating, stock, ordered (optional), progress (optional) --}}
 <a href="{{ $p['url'] ?? '#' }}" class="group flex gap-0 h-full items-stretch rounded-[10px] lg:rounded-[9.82px] shadow-[var(--shadow-card-lg)] lg:shadow-none overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="background:var(--color-bg-main)">
-  <div class="relative shrink-0 aspect-square h-full">
+  <div class="relative shrink-0 w-[42%] lg:w-[41.78%] aspect-square">
     <div class="absolute inset-0 overflow-hidden">
       <img src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
 @if (!empty($p['isOutOfStock']))
@@ -20,9 +20,11 @@
         <svg class="size-[15px] lg:size-[20.57px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
     @endif
+    @if (!empty($__chip = ($p['badge'] ?? null) ?: ($p['discount'] ?? null) ?: ($p['sold'] ?? null)))
     <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[5.41px] rounded-tl-[6px] rounded-br-[6px] shrink-0" style="background:var(--color-yellow)">
-      <p class="font-normal text-[10px] lg:text-[12.62px] lg:leading-[16px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ !empty($p['discount']) ? $p['discount'] : ($p['sold'] ?? __('Sold')) }}</p>
+      <p class="font-normal text-[10px] lg:text-[12.62px] lg:leading-[16px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:var(--color-black-alt)">{{ $__chip }}</p>
     </div>
+    @endif
     @if (!empty($p['isOutOfStock']))
       <div class="absolute bottom-[6px] end-[6px] lg:bottom-[6.17px] lg:end-[6.17px] flex items-center justify-center p-[7px] lg:px-[12.34px] lg:py-[4.11px] rounded-full lg:rounded-[16.46px] shrink-0 size-[32px] lg:w-[58.64px] lg:h-[46.29px] bg-white shadow opacity-50 cursor-not-allowed">
         <img src="{{ asset('elora-5/assets/icons/icon-cart-card.svg') }}" alt="{{ __('Add to cart') }}" class="size-[16px] lg:size-[24.69px]" />
