@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Drivers\Gd\Driver as InterventionDriver;
+use Intervention\Image\Drivers\Imagick\Driver as InterventionDriver;
 use Intervention\Image\ImageManager as InterventionImageManager;
 
 class NeozenaCatalogImporter

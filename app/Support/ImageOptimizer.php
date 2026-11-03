@@ -5,7 +5,7 @@ namespace App\Support;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
 
 /**
@@ -25,6 +25,13 @@ class ImageOptimizer
         return in_array(strtolower((string) $extension), self::CONVERTIBLE, true);
     }
 
+    public static function avifSupported(): bool
+    {
+        static $supported = null;
+
+        return $supported ??= extension_loaded('imagick') && !empty(\Imagick::queryFormats('AVIF'));
+    }
+
     public static function manager(): ImageManager
     {
         return new ImageManager(new Driver());
@@ -33,6 +40,10 @@ class ImageOptimizer
     /** Encode image bytes/path to AVIF, optionally bounded to $maxDimension. Returns null if not convertible. */
     public static function encode(string $source, ?int $maxDimension = self::MAX_DIMENSION, int $quality = self::QUALITY, bool $isPath = true): ?string
     {
+        if (!self::avifSupported()) {
+            return null; // Imagick built without AVIF: fall back to storing the original file
+        }
+
         try {
             $bytes = $isPath ? (string) file_get_contents($source) : $source;
             if (self::isAnimatedGif($bytes)) {

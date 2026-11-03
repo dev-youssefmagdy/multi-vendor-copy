@@ -1,0 +1,10 @@
+.t-country-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.t-country-card {
+    display: block;
+    text-decoration: none;
+}
