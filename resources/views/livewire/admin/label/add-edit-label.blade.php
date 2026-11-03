@@ -15,14 +15,37 @@
     @if (session('status'))<div class="card section-gap notice-success">{{ session('status') }}</div>@endif
 
     <div class="grid gap-2">
-      <x-card-collapse class="form-card" title="Label" subtitle="Icon and text." :start-open="true">
-        <div class="form-grid">
-          <div>
-            <label class="field-label">Text</label>
-            <input type="text" class="field-control" wire:model.defer="text" maxlength="120" placeholder="Delivered by {delivery_date}">
-            <p class="field-hint">Tokens: <code>{stock}</code> (units left, capped at +99) and <code>{delivery_date}</code>.</p>
-            @error('text') <p class="field-error">{{ $message }}</p> @enderror
+      <x-card-collapse class="form-card" title="Label text" subtitle="Shown on product cards and product pages in the shopper's language. Tokens: {stock} (units left, capped at +99) and {delivery_date}." :start-open="true">
+        <div class="locale-tabs">
+          @foreach ($languages as $language)
+            <button type="button" class="locale-tab {{ $activeLocale === $language->code ? 'is-active' : '' }}" wire:click="setActiveLocale('{{ $language->code }}')">
+              <span>{{ strtoupper($language->code) }}</span>
+              <small>{{ $language->native_name ?: $language->name }}@if($language->is_default) · {{ __('Default') }}@endif</small>
+              @php $filled = $language->is_default ? filled($text) : filled($translations[$language->code] ?? ''); @endphp
+              <i title="{{ $filled ? 'Translated' : 'Missing' }}" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-inline-start:6px;background:{{ $filled ? 'var(--green, #22c55e)' : 'var(--amber, #f59e0b)' }}"></i>
+            </button>
+          @endforeach
+        </div>
+        @foreach ($languages as $language)
+          <div class="locale-panel {{ $activeLocale === $language->code ? 'is-active' : '' }}">
+            @if ($activeLocale === $language->code)
+              <label class="field-label">Text ({{ strtoupper($language->code) }})@if($language->is_default) *@endif</label>
+              @if ($language->is_default)
+                <input type="text" class="field-control" wire:model.defer="text" maxlength="120" placeholder="Delivered by {delivery_date}">
+                <p class="field-hint">Default language. Also used as the fallback when another language has no translation.</p>
+                @error('text') <p class="field-error">{{ $message }}</p> @enderror
+              @else
+                <input type="text" class="field-control" wire:model.defer="translations.{{ $language->code }}" maxlength="120" dir="auto" placeholder="{{ $text }}">
+                <p class="field-hint">Leave empty to fall back to the default language text.</p>
+                @error('translations.'.$language->code) <p class="field-error">{{ $message }}</p> @enderror
+              @endif
+            @endif
           </div>
+        @endforeach
+      </x-card-collapse>
+
+      <x-card-collapse class="form-card" title="Appearance" subtitle="Icon, order and status." :start-open="true">
+        <div class="form-grid">
           <div>
             <label class="field-label">Icon</label>
             <div style="display:flex;flex-wrap:wrap;gap:8px">

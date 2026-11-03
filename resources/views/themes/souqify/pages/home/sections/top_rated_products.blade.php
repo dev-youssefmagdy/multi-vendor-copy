@@ -15,7 +15,7 @@
             <div class="swiper-wrapper">
                 @forelse (($topRatedProducts->isEmpty() ? $paginatedProducts : $topRatedProducts)->take(5) as $product)
                 <div class="swiper-slide  w-[calc(50%-6px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
-                    @include('themes.souqify.pages._product-card', ['badge' => __('Top Rated')])
+                    @include('themes.souqify.pages._product-card', [])
                 </div>
                 @empty
                 <p class="col-span-full text-center text-neutral-400 py-6">{{ __('No products yet.') }}</p>

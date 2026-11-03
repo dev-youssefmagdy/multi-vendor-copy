@@ -54,9 +54,10 @@
         z-index: 1;
         display: flex;
         align-items: center;
-        width: 62.75cqw;                /* 200.79 / 319.97 */
+        width: fit-content;      /* hug the text; badge text is dynamic */
+        max-width: 85%;
         height: 10.83cqw;               /* 34.66 / 319.97 */
-        padding: 0 5cqw;                /* text starts at 16 */
+        padding: 0 4.5cqw;
         background: var(--sqv3-deal-accent, #199387);
         border-radius: 0px 0px 10cqw 0px;
         box-shadow: 2.39037px -1.19519px 3.58556px rgba(0, 0, 0, 0.25);
@@ -117,7 +118,8 @@
         flex-direction: row;
         align-items: center;
         gap: 1.25cqw;
-        width: 73cqw;
+        width: fit-content;             /* hug the (dynamic) label text */
+        max-width: 73cqw;
         height: 10cqw;
         padding: 1.25cqw 4.5cqw 1.25cqw 2.5cqw;
         background: linear-gradient(262.6deg, #AC0202 -2.08%, #E30000 44.54%, #9E0000 100%);

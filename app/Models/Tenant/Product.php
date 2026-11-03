@@ -191,6 +191,43 @@ class Product extends Model
             ->all();
     }
 
+    /**
+     * Storefront card badge text, read from the product's own (active) rows in
+     * `product_badges`. Returns null when the product has no active badge.
+     * Badge slugs ("new-in") are shown as headings ("New In") and translated.
+     */
+    public function cardBadgeText(string $prefix = ''): ?string
+    {
+        $badge = $this->badges->where('active', true)->first();
+
+        if (! $badge || trim((string) $badge->text) === '') {
+            return null;
+        }
+
+        $label = \Illuminate\Support\Str::headline($badge->text);
+
+        return $prefix . (__($label) !== $label ? __($label) : __($badge->text));
+    }
+
+    /** Units left, read from the central product (variants summed) like the card stock labels. */
+    public function availableStock(): int
+    {
+        $central = $this->centralProduct;
+
+        return (int) ($central?->variants?->isNotEmpty()
+            ? $central->variants->sum('stock')
+            : ($central?->stock ?? $this->stock ?? 0));
+    }
+
+    /** Percent of (sold + remaining) units already sold; null when nothing sold yet. */
+    public function soldPercent(): ?int
+    {
+        $sold = (int) ($this->centralProduct?->sold_count ?? 0);
+        $total = $sold + $this->availableStock();
+
+        return $sold > 0 && $total > 0 ? min(100, (int) round($sold / $total * 100)) : null;
+    }
+
     public function rates(): HasMany
     {
         return $this->hasMany(ProductRate::class);

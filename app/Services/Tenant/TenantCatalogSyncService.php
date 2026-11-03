@@ -2011,6 +2011,7 @@ class TenantCatalogSyncService
             ['central_product_label_id' => $centralLabel->id],
             [
                 'text' => $centralLabel->text,
+                'translations' => $centralLabel->translations,
                 'icon' => $centralLabel->icon,
                 'active' => $centralLabel->active,
                 'sort_order' => $centralLabel->sort_order,

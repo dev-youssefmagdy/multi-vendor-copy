@@ -56,9 +56,10 @@
         display: flex;
         align-items: center;
         /* 185.4 x 32 of the 289.73 card */
-        width: 63.99%;
+        width: fit-content;      /* hug the text; badge text is dynamic */
+        max-width: 85%;
         height: 11.04cqw;
-        padding: 0 5cqw;
+        padding: 0 4.5cqw;
         background: var(--sqv6-deal-accent, #FD1A8F);
         /* Square against the card edge, rounded on the trailing edge - the
            bottom-right corner rounder than the top-right. */
@@ -118,7 +119,7 @@
         display: flex;
         align-items: center;
         gap: 1.27cqw;
-        padding: 1.27cqw 8cqw 1.27cqw 2.55cqw;
+        padding: 1.27cqw 6cqw 1.27cqw 2.55cqw;
         max-width: 79%;
         background: linear-gradient(262.6deg, #AC0202 -2.08%, #E30000 44.54%, #9E0000 100%);
         border-radius: 0px 10.2cqw 0px 0px;
@@ -259,7 +260,7 @@
     [dir="rtl"] .sqv6-deal__ribbon {
         left: auto;
         right: 0;
-        padding: 1.27cqw 2.55cqw 1.27cqw 8cqw;
+        padding: 1.27cqw 2.55cqw 1.27cqw 6cqw;
         border-radius: 10.2cqw 0px 0px 0px;
     }
 </style>

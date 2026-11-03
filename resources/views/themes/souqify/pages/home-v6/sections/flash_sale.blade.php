@@ -33,7 +33,7 @@
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,
-            'tag' => '🔥 ' . __('Trending Now'),
+            'tag' => $product->cardBadgeText('🔥 '),
             'labels' => $product->cardLabels(),
             'name' => $__name,
             'weight' => null,

@@ -91,7 +91,7 @@
         display: flex;
         align-items: center;
         gap: 1.25cqw;
-        padding: 2.8254px 8cqw 2.8254px 5.65079px;
+        padding: 2.8254px 6cqw 2.8254px 5.65079px;
         max-width: 78%;
         background: linear-gradient(262.6deg, #AC0202 -2.08%, #E30000 44.54%, #9E0000 100%);
         border-radius: 0px 22.6032px 0px 0px;
@@ -118,9 +118,10 @@
         align-items: center;
         /* Rectangle 5956: 141.84 x 24.48, square against the card edge and
            fully rounded on its trailing edge. */
-        width: 62.75%;                  /* 141.84 / 226.03 */
+        width: fit-content;      /* hug the text; badge text is dynamic */
+        max-width: 85%;
         height: 10.83cqw;               /* 24.48 / 226.03 */
-        padding: 0 5cqw;                /* Mobile labes sits at left 11.3 */
+        padding: 0 4.5cqw;
         /* Each section may set --sqv5-deal-accent; the token is the default. */
         background: var(--sqv5-deal-accent, var(--color-primary));
         border-radius: 0 290px 999px 0;
@@ -256,7 +257,7 @@
     [dir="rtl"] .sqv5-deal__ribbon {
         left: auto;
         right: 0;
-        padding: 2.8254px 5.65079px 2.8254px 8cqw;
+        padding: 2.8254px 5.65079px 2.8254px 6cqw;
         border-radius: 22.6032px 0px 0px 0px;
     }
     [dir="rtl"] .sqv5-deal__tag {

@@ -56,9 +56,10 @@
         z-index: 2;
         display: flex;
         align-items: center;
-        width: 62.75%;
+        width: fit-content;      /* hug the text; badge text is dynamic */
+        max-width: 85%;
         height: 10.83cqw;
-        padding: 0 5cqw;
+        padding: 0 4.5cqw;
         background: var(--sqv2-deal-accent, #8B03BD);
         /* Square against the card edge and along the top, rounded only at the
            bottom-right. No shadow. */
@@ -119,7 +120,7 @@
         gap: 1.25cqw;
         /* Extra room after the text so the ribbon does not stop flush against
            it - the tail runs on past the label, per the comp. */
-        padding: 1.25cqw 8cqw 1.25cqw 2.5cqw;
+        padding: 1.25cqw 6cqw 1.25cqw 2.5cqw;
         max-width: 78%;
         background: linear-gradient(262.6deg, #AC0202 -2.08%, #E30000 44.54%, #9E0000 100%);
         border-radius: 0px 10cqw 0px 0px;
@@ -261,7 +262,7 @@
     [dir="rtl"] .sqv2-deal__ribbon {
         left: auto;
         right: 0;
-        padding: 1.25cqw 2.5cqw 1.25cqw 8cqw;
+        padding: 1.25cqw 2.5cqw 1.25cqw 6cqw;
         border-radius: 10cqw 0px 0px 0px;
     }
 </style>

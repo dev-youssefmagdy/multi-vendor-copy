@@ -64,10 +64,10 @@
     $productUrl = route('tenant.storefront.product', $product->slug);
 
     // Badge + tag
-    $badgeLabel = $badge ?? null;
+    $badgeLabel = $product->cardBadgeText();
     $tagBg = match (true) {
-        in_array($badgeLabel, ['Flash Sale', 'Hot Deal', 'Hot Deals']) => 'bg-gradient-to-br from-red-700 to-red-600',
-        $badgeLabel === 'New In' => 'bg-amber-500',
+        in_array($product->badges->where('active', true)->first()?->text, ['flash-sale', 'hot-deal', 'hot-deals']) => 'bg-gradient-to-br from-red-700 to-red-600',
+        in_array($product->badges->where('active', true)->first()?->text, ['new-in']) => 'bg-amber-500',
         default => 'bg-gradient-to-br from-red-700 to-red-600',
     };
     // $tagText = $showLowStock
@@ -141,7 +141,7 @@
 
         {{-- Wishlist --}}
         <button
-            class="souqify-fav-btn absolute top-3 right-3 z-10 w-9 h-9 bg-white rounded-full shadow flex items-center justify-center hover:text-red-500 transition"
+            class="souqify-fav-btn absolute top-3 end-3 z-10 w-9 h-9 bg-white rounded-full shadow flex items-center justify-center hover:text-red-500 transition"
             onclick="souqifyToggleFavorite(this)" data-slug="{{ $product->slug }}" data-fav='{{ $favData }}'
             aria-label="{{ __('Wishlist') }}">
             <svg class="fav-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,7 +153,7 @@
         {{-- Add to cart --}}
         @if ($isOutOfStock)
             <button type="button" disabled onclick="event.preventDefault()"
-                class="absolute bottom-3 right-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-neutral-200 text-neutral-400 rounded-lg shadow-md flex items-center justify-center cursor-not-allowed"
+                class="absolute bottom-3 end-3 z-10 w-8 h-8 sm:w-12 sm:h-12 bg-neutral-200 text-neutral-400 rounded-lg shadow-md flex items-center justify-center cursor-not-allowed"
                 aria-label="{{ __('Out of stock') }}">
                 <svg class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -183,20 +183,18 @@
             </div>
         @elseif (!empty($__labels))
             <div
-                class="absolute bottom-0 left-0 {{ $tagBg }} text-white text-[11px] px-3 py-2 rounded-tr-2xl flex items-center gap-x-2 leading-tight whitespace-nowrap max-w-full">
+                class="absolute bottom-0 start-0 {{ $tagBg }} text-white text-[11px] px-3 py-2 rounded-te-2xl flex items-center gap-x-2 leading-tight whitespace-nowrap max-w-[calc(100%-3.5rem)] sm:max-w-[calc(100%-4.5rem)] overflow-hidden">
                 <x-storefront.product-labels :labels="$__labels" tag="span" class="gap-1" icon-class="w-3 h-3 shrink-0" />
             </div>
         @endif
 
-        {{-- Trending badge --}}
-        <div
-            class="absolute top-0 left-0 {{ $isOutOfStock ? 'bg-neutral-700' : 'bg-[color:var(--sq-primary)]' }} text-white text-[10px] px-3 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
-            @if ($isOutOfStock)
-                {{ __('Out of Stock') }}
-            @else
-                🔥 {{ $badgeLabel ?? __('Trending') }}
-            @endif
-        </div>
+        {{-- Badge (from product_badges) --}}
+        @if ($isOutOfStock || $badgeLabel)
+            <div
+                class="absolute top-0 start-0 {{ $isOutOfStock ? 'bg-neutral-700' : 'bg-[color:var(--sq-primary)]' }} text-white text-[10px] px-3 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
+                {{ $isOutOfStock ? __('Out of Stock') : '🔥 ' . $badgeLabel }}
+            </div>
+        @endif
     </div>
 
     {{-- Body --}}

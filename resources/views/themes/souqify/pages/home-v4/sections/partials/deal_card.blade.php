@@ -12,7 +12,9 @@
       <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
     @endif
 
-    <span class="sqv4-deal__badge">{{ $p['badge'] }}</span>
+    @if (!empty($p['badge']))
+      <span class="sqv4-deal__badge">{{ $p['badge'] }}</span>
+    @endif
 
     <span class="sqv4-deal__heart" onclick="event.preventDefault(); event.stopPropagation(); souqifyToggleFavorite(this)" data-slug="{{ $p['slug'] ?? '' }}" data-fav='{{ $p['favData'] ?? '{}' }}'>
       <img src="{{ asset('souqify-3/assets/icons/icon-heart.svg') }}" alt="" />

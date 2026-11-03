@@ -21,7 +21,7 @@
             'labels' => $product->cardLabels(),
             'favData' => $product->storefrontFavData(['conversion_rate' => $rate]),
             'image' => $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? null,
-            'tag' => '🔥 ' . __('Trending Now'),
+            'tag' => $product->cardBadgeText('🔥 '),
             'name' => \Illuminate\Support\Str::limit($product->translationValue('name') ?? $product->slug, 30),
             'weight' => null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

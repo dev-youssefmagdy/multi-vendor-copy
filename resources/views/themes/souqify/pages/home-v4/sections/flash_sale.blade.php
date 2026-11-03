@@ -47,7 +47,7 @@
             ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
             // Design-only fields with no backing data yet.
             'weight' => null,
-            'badge' => '🔥 ' . __('Trending Now'),
+            'badge' => $product->cardBadgeText('🔥 '),
         ];
     });
 

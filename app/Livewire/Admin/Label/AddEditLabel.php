@@ -16,6 +16,9 @@ class AddEditLabel extends Component
 
     public ?int $labelId = null;
     public string $text = '';
+    /** @var array<string, string> locale code => translated text */
+    public array $translations = [];
+    public string $activeLocale = '';
     public string $icon = '';
     public bool $active = true;
     public int $sortOrder = 0;
@@ -33,10 +36,16 @@ class AddEditLabel extends Component
 
         $this->labelId = $label->id;
         $this->text = $label->text;
+        $this->translations = (array) $label->translations;
         $this->icon = (string) $label->icon;
         $this->active = $label->active;
         $this->sortOrder = $label->sort_order;
         $this->productIds = $label->products()->pluck('products.id')->map(fn($id) => (string) $id)->all();
+    }
+
+    public function setActiveLocale(string $locale): void
+    {
+        $this->activeLocale = $locale;
     }
 
     public function save(CentralCatalogTenantSyncService $sync): mixed
@@ -45,6 +54,8 @@ class AddEditLabel extends Component
 
         $validated = $this->validate([
             'text' => ['required', 'string', 'max:120'],
+            'translations' => ['array'],
+            'translations.*' => ['nullable', 'string', 'max:120'],
             'icon' => ['nullable', Rule::in(array_keys(ProductLabelIcons::all()))],
             'active' => ['boolean'],
             'sortOrder' => ['integer', 'min:0'],
@@ -61,6 +72,8 @@ class AddEditLabel extends Component
 
         $label = ProductLabel::query()->updateOrCreate(['id' => $this->labelId], [
             'text' => trim($validated['text']),
+            'translations' => collect($validated['translations'] ?? [])
+                ->map(fn($t) => trim((string) $t))->filter()->all() ?: null,
             'icon' => $validated['icon'] ?: null,
             'active' => $validated['active'],
             'sort_order' => $validated['sortOrder'],
@@ -85,8 +98,12 @@ class AddEditLabel extends Component
 
     public function render()
     {
+        $languages = \App\Models\Language::query()->where('is_active', true)->orderByDesc('is_default')->orderBy('sort_order')->get(['code', 'name', 'native_name', 'is_default']);
+        $this->activeLocale = $languages->contains('code', $this->activeLocale) ? $this->activeLocale : (string) $languages->first()?->code;
+
         return view('livewire.admin.label.add-edit-label', [
             'pageTitle' => $this->labelId ? 'Edit Label' : 'Add Label',
+            'languages' => $languages,
             'icons' => ProductLabelIcons::all(),
             'products' => Product::query()->with('translations.language')->whereNotIn('id', $this->takenProductIds())->orderBy('id')->get(),
         ]);

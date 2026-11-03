@@ -17,7 +17,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6" id="sqRecommendedGrid">
             @forelse (($recommendedProducts ?? collect()) as $product)
                 <div wire:key="recommended-{{ $product->id }}">
-                    @include('themes.souqify.pages._product-card', ['badge' => null])
+                    @include('themes.souqify.pages._product-card', [])
                 </div>
             @empty
                 <p class="text-sm text-slate-400 py-6 col-span-full">{{ __('No recommended products yet.') }}</p>

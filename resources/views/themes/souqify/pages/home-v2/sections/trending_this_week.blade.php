@@ -24,7 +24,7 @@
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,
-            'tag' => '🔥 ' . __('Trending Now'),
+            'tag' => $product->cardBadgeText('🔥 '),
             'name' => $__name,
             'weight' => null,
             'rating' => number_format($rating, 1) . ($ratingCount > 0 ? " (+{$ratingCount})" : ''),

@@ -21,7 +21,7 @@
             'oldPrice' => $hasDiscount && $pricing['original_price'] !== null ? $symbol . number_format((float) $pricing['original_price'] * $rate, 2) : null,
             'discount' => $hasDiscount ? (int) round((float) $pricing['discount_percentage']) . '% ' . __('Off') : null,
             'weight' => null,
-            'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
+            'sold' => ($__sp = $product->soldPercent()) ? $__sp . '% ' . __('Sold') : null,
             'labels' => $product->cardLabels(),
         ];
     });

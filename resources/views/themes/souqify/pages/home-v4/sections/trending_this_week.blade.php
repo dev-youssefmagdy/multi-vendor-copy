@@ -35,7 +35,7 @@
                 'added' => time(),
             ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
             'weight' => null,
-            'sold' => (function () use ($product) { $sc = (int) ($product->centralProduct?->sold_count ?? 0); $st = $sc + (int) ($product->stock ?? 0); return $st > 0 && $sc > 0 ? (int) round($sc / $st * 100) . '% ' . __('Sold') : null; })(),
+            'sold' => ($__sp = $product->soldPercent()) ? $__sp . '% ' . __('Sold') : null,
             'progress' => 82.8,          // 190.79 / 230.41 in the comp
             'ordered' => __('5 ordered last 30 min'),
         ];

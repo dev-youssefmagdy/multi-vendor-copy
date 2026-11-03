@@ -17,9 +17,7 @@
         $__url = route('tenant.storefront.product', $product->slug);
         $__sellPrice = round((float) $pricing['current_price'] * $rate, 2);
         $__oldPrice = $hasDiscount && $pricing['original_price'] !== null ? round((float) $pricing['original_price'] * $rate, 2) : null;
-        $__soldCount = (int) ($product->centralProduct?->sold_count ?? 0);
-        $__soldTotal = $__soldCount + (int) ($product->stock ?? 0);
-        $__soldPct = $__soldTotal > 0 ? (int) round($__soldCount / $__soldTotal * 100) : 0;
+        $__soldPct = (int) $product->soldPercent();
 
         return [
             'id' => $product->id,
@@ -27,7 +25,7 @@
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,
-            'tag' => '🔥 ' . __('Trending Now'),
+            'tag' => $product->cardBadgeText('🔥 '),
             'sold' => $__soldPct > 0 ? $__soldPct . '% ' . __('Sold') : null,
             'name' => $__name,
             'weight' => null,

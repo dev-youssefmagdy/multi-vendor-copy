@@ -32,7 +32,7 @@
                 'discountColor' => $chip['color'],
                 // Design-only fields with no backing data yet.
                 'weight' => null,
-                'badge' => '🔥 ' . __('Trending Now'),
+                'badge' => $product->cardBadgeText('🔥 '),
                 'labels' => $product->cardLabels(),
             ];
         });

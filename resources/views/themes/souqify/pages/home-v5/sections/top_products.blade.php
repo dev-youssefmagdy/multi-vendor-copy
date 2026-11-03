@@ -23,7 +23,7 @@
             'slug' => $product->slug,
             'url' => $__url,
             'image' => $__img,
-            'tag' => '🔥 ' . __('Trending Now'),
+            'tag' => $product->cardBadgeText('🔥 '),
             'cartIcon' => 'trending-cart-purple.svg',
             'name' => $__name,
             'weight' => null,

@@ -36,7 +36,7 @@
                         <div class="swiper-wrapper">
                             @forelse ($featuredProds->take(3) as $product)
                             <div class="swiper-slide  w-[calc(50%-6px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
-                                @include('themes.souqify.pages._product-card', ['badge' => __('Featured')])
+                                @include('themes.souqify.pages._product-card', [])
                             </div>
                             @empty
                             <p class="col-span-full text-center text-white/70 py-6">{{ __('No products yet.') }}</p>
@@ -47,7 +47,7 @@
                         <div class="swiper-wrapper">
                             @forelse ($featuredProds->skip(3)->take(3) as $product)
                             <div class="swiper-slide  w-[calc(50%-6px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
-                                @include('themes.souqify.pages._product-card', ['badge' => __('Featured')])
+                                @include('themes.souqify.pages._product-card', [])
                             </div>
                             @empty
                             <p class="col-span-full text-center text-white/70 py-6">{{ __('No products yet.') }}</p>
