@@ -19,9 +19,6 @@
 .elora-v3-root .newin-swiper {
     overflow: hidden;
 }
-.elora-v3-root .newin-swiper .swiper-wrapper {
-    height: 419px;
-}
 .elora-v3-root .card-swiper .swiper-wrapper {
     align-items: stretch;
 }

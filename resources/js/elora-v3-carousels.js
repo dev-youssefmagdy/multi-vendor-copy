@@ -70,21 +70,13 @@ function initCarousels() {
     bestSellerMq.addEventListener("change", syncBestSeller);
   }
 
-  // New In: real Swiper carousel using the Grid module — a fixed numeric
-  // slidesPerView (columns visible) x grid rows:3, so each "slide" is really one
-  // column and the view shows 3 stacked rows per column. Numeric slidesPerView
-  // is required for the Grid module's row math to work at all (fractional/auto
-  // slidesPerView leaves every slide with an identical, wrong row assignment).
-  // Mobile is a single column (1 x 3 rows), desktop is 3 columns x 3 rows.
+  // New In: one row of wide cards (same layout as the Minimal edition). Every slide has a
+  // fixed width in the Blade markup, so slidesPerView must stay "auto".
   const newInSwiper = document.getElementById("newInSwiper");
   if (newInSwiper) {
     new Swiper(newInSwiper, {
-      slidesPerView: 1,
+      slidesPerView: "auto",
       spaceBetween: 16,
-      grid: { rows: 3, fill: "row" },
-      breakpoints: {
-        1024: { slidesPerView: 3 },
-      },
     });
   }
 

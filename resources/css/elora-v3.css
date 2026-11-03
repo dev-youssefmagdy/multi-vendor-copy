@@ -92,25 +92,13 @@ body {
   overflow: visible;
   padding-bottom: 4px;
 }
-/* New In: real Swiper carousel using the Grid module — slidesPerView columns x
-   3 rows per view. The wrapper needs an explicit height for the Grid module's
-   per-slide height:calc(33.33%) math to resolve against (percentages need a
-   definite reference, not "auto"). Height tuned to the card's own natural
-   height x 3 rows + row gaps. */
+/* New In: single row of fixed-width wide cards (see the Blade slide width); no fixed wrapper height. */
 .newin-swiper {
   overflow: hidden;
   min-width: 0;
   max-width: 100%;
   margin-left: 0;
   margin-right: 0;
-}
-.newin-swiper .swiper-wrapper {
-  height: 302px;
-}
-@media (min-width: 1024px) {
-  .newin-swiper .swiper-wrapper {
-    height: 419px;
-  }
 }
 .card-swiper .swiper-wrapper {
   align-items: stretch;

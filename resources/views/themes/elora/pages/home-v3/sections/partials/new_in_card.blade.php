@@ -1,52 +1,85 @@
-{{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/sold/stockLeft optional --}}
-<div class="swiper-slide">
-  <a href="{{ $p['url'] ?? '#' }}" class="group bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
-    <div class="relative shrink-0 aspect-square h-full bg-[var(--color-page-bg)]">
-      <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
-      @if (!empty($p['isOutOfStock']))
-      <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
-      @endif
-      <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); eloraHeartToggle(this)"
-        data-fav="{{ $p['favData'] ?? '' }}"
+{{-- Fresh Edition New In card. Same layout/sizes as the Minimal Edition wide card (home-v5), Fresh colours. --}}
+<a href="{{ $p['url'] ?? '#' }}" class="group flex gap-0 h-full items-stretch rounded-[10px] lg:rounded-[9.82px] shadow-[var(--shadow-card-lg)] lg:shadow-none overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="background:#FDFDFD">
+  <div class="relative shrink-0 w-[42%] lg:w-[41.78%] aspect-square">
+    <div class="absolute inset-0 overflow-hidden">
+      <img loading="lazy" decoding="async" src="{{ $p['image'] ?? asset('elora-3/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+@if (!empty($p['isOutOfStock']))
+<div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
+@endif
+    </div>
+    @if (!empty($p['favData']))
+      <button type="button" aria-label="{{ __('Add to favorites') }}" onclick="event.preventDefault(); event.stopPropagation(); eloraHeartToggle(this)"
+        data-fav="{{ $p['favData'] }}"
         data-logged-in="{{ auth()->guard('storefront')->check() ? 'true' : 'false' }}"
         data-product-id="{{ $p['id'] ?? '' }}"
-        class="absolute top-[4px] start-[4px] bg-white cursor-pointer shadow-[0_2px_2px_rgba(0,0,0,0.15)] flex items-center justify-center p-[4px] lg:p-[6px] rounded-full size-[18px] lg:size-[29px]">
-        <svg class="size-[10px] lg:size-[18px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
+        class="absolute top-[6px] start-[6px] lg:top-[6.17px] lg:start-[6.17px] bg-white cursor-pointer shadow lg:shadow-[0_4.11px_4.11px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[8.23px] rounded-full shrink-0 size-[26px] lg:size-[32.92px]">
+        <svg class="size-[15px] lg:size-[20.57px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
       </button>
-      @if (!empty($__chip = ($p['badge'] ?? null) ?: (!empty($p['sold']) ? $p['sold'] . '% ' . __('Sold') : null)))
-      <span class="absolute top-0 end-0 text-[8px] lg:text-[11px] font-normal tracking-[0.3px] lg:tracking-[0.4px] px-[4px] py-[2px] lg:px-[5px] lg:py-[3px] rounded-es-[5px] lg:rounded-es-[6px] whitespace-nowrap" style="background:#FFD428; color:#242424">{{ $__chip }}</span>
-      @endif
-      <x-elora.card-cart-btn :p="$p" class="absolute bottom-[4px] end-[4px] flex items-center justify-center w-[29px] h-[23px] lg:w-[51px] lg:h-[41px] bg-[#FDFDFD] rounded-[8px] lg:rounded-[14px] shadow-sm">
-        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="" class="{{ !empty($p['isOutOfStock']) ? 'opacity-40 ' : '' }}size-[12px] lg:size-[22px]" />
-      </x-elora.card-cart-btn>
+    @else
+      <button type="button" aria-label="{{ __('Add to favorites') }}" class="absolute top-[6px] start-[6px] lg:top-[6.17px] lg:start-[6.17px] bg-white cursor-pointer shadow lg:shadow-[0_4.11px_4.11px_rgba(0,0,0,0.15)] flex items-center justify-center p-[6px] lg:p-[8.23px] rounded-full shrink-0 size-[26px] lg:size-[32.92px]">
+        <svg class="size-[15px] lg:size-[20.57px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
+      </button>
+    @endif
+    @if (!empty($__chip = ($p['badge'] ?? null) ?: ($p['discount'] ?? null) ?: ($p['sold'] ?? null)))
+    <div class="absolute top-0 end-0 flex items-center justify-center px-[8px] py-[4px] lg:p-[5.41px] rounded-tl-[6px] rounded-br-[6px] shrink-0" style="background:#FFD428">
+      <p class="font-normal text-[10px] lg:text-[12.62px] lg:leading-[16px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#242424">{{ $__chip }}</p>
     </div>
-    <div class="flex-1 flex flex-col gap-[2px] lg:gap-[4px] p-[6px] lg:p-[10px] min-w-0 justify-center overflow-hidden">
-      <div class="flex items-center justify-between gap-[4px] lg:gap-[8px] w-full min-w-0">
-        <p class="font-medium text-[11px] lg:text-[17px] tracking-[0.3px] lg:tracking-[0.45px] truncate min-w-0" style="color:#121212">{{ $p['name'] }}</p>
-        <p class="font-normal text-[9px] lg:text-[14px] tracking-[0.3px] lg:tracking-[0.45px] shrink-0" style="color:#CD0032">{{ $p['weight'] ?? '' }}</p>
+    @endif
+    @if (!empty($p['isOutOfStock']))
+      <div class="absolute bottom-[6px] end-[6px] lg:bottom-[6.17px] lg:end-[6.17px] flex items-center justify-center p-[7px] lg:px-[12.34px] lg:py-[4.11px] rounded-full lg:rounded-[16.46px] shrink-0 size-[32px] lg:w-[58.64px] lg:h-[46.29px] bg-white shadow opacity-50 cursor-not-allowed">
+        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="size-[16px] lg:size-[24.69px]" />
       </div>
-      <p class="font-normal text-[9px] lg:text-[14px] tracking-[0.3px] lg:tracking-[0.45px] min-w-0 w-full" style="color:#ADADAD">{{ $p['desc'] ?? __('Premium quality') }}</p>
+    @elseif (!empty($p['hasMultipleVariants']))
+      <button type="button"
+        onclick="event.preventDefault(); event.stopPropagation(); openVariantModal({{ $p['id'] ?? 'null' }}, {{ \Illuminate\Support\Js::from($p['nameJs'] ?? ($p['name'] ?? '')) }}, {{ \Illuminate\Support\Js::from($p['variantModalData'] ?? []) }})"
+        class="absolute bottom-[6px] end-[6px] lg:bottom-[6.17px] lg:end-[6.17px] flex items-center justify-center p-[7px] lg:px-[12.34px] lg:py-[4.11px] rounded-full lg:rounded-[16.46px] shrink-0 size-[32px] lg:w-[58.64px] lg:h-[46.29px] bg-white shadow">
+        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="size-[16px] lg:size-[24.69px]" />
+      </button>
+    @else
+      <button type="button" wire:click.prevent="addToCart({{ $p['id'] ?? 'null' }})" onclick="event.preventDefault(); event.stopPropagation()"
+        class="absolute bottom-[6px] end-[6px] lg:bottom-[6.17px] lg:end-[6.17px] flex items-center justify-center p-[7px] lg:px-[12.34px] lg:py-[4.11px] rounded-full lg:rounded-[16.46px] shrink-0 size-[32px] lg:w-[58.64px] lg:h-[46.29px] bg-white shadow">
+        <img src="{{ asset('elora-3/assets/icons/cart-add.svg') }}" alt="{{ __('Add to cart') }}" class="size-[16px] lg:size-[24.69px]" />
+      </button>
+    @endif
+  </div>
+  <div class="flex flex-1 flex-col gap-[6px] lg:gap-[13.09px] p-[10px] lg:px-[13.09px] lg:py-[6.55px] items-start min-w-0 justify-center">
+    <div class="flex flex-col gap-[3px] lg:gap-[4.11px] items-start w-full">
+      <div class="flex items-center justify-between gap-[6px] lg:gap-[2.06px] w-full whitespace-nowrap">
+        <p class="font-medium text-[14px] lg:text-[22.91px] lg:leading-[29px] lg:tracking-[0.51px] truncate" style="color:#121212">{{ $p['name'] }}</p>
+        <p class="font-normal text-[12px] lg:text-[24.55px] lg:leading-[26px] lg:tracking-[0.51px] shrink-0" style="color:#FE3A6A">{{ $p['weight'] }}</p>
+      </div>
+      <p class="font-normal text-[11px] lg:text-[19.64px] lg:leading-[25px] lg:tracking-[0.51px] w-full truncate" style="color:#ADADAD">{{ !empty($p['desc'] ?? $p['description'] ?? null) ? ($p['desc'] ?? $p['description']) : __('Premium cotton blend') }}</p>
+    </div>
+    <div class="flex flex-col gap-[2px] lg:gap-[1.64px] items-start w-full">
+      <div class="h-[6px] lg:h-[8.18px] w-full rounded-full" style="background:#D9D9D9">
+        <div class="h-full rounded-full" style="background:#FE3A6A; width:{{ $p['progress'] ?? 83 }}%"></div>
+      </div>
+      <p class="text-[10px] lg:text-[16.37px] lg:leading-[21px] lg:tracking-[0.51px]" style="color:#FE3A6A">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
+    </div>
+    <div class="flex flex-col gap-[2px] lg:gap-[4.11px] items-start">
       @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
-      <div class="flex gap-[4px] lg:gap-[7px] items-center">
+      <div class="flex gap-[5px] lg:gap-[8.23px] items-center">
         <div class="flex items-center gap-[1px]" style="height:8px">
           @for ($__i = 1; $__i <= 5; $__i++)
             <svg style="height:8px;width:8px" class="{{ $__i <= $__fs ? 'text-[#FFB00A]' : 'text-[#d1d5db]' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.169c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.37-2.447a1 1 0 00-1.176 0l-3.37 2.447c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.169a1 1 0 00.95-.69l1.286-3.967z"/></svg>
           @endfor
         </div>
-        <span class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#ADADAD">({{ $__rv }})</span>
+        <span class="text-[10px] lg:text-[19.64px] lg:leading-[25px] lg:tracking-[0.51px] whitespace-nowrap" style="color:#ADADAD">({{ $__rv }})</span>
       </div>
-      <div class="flex gap-[4px] lg:gap-[7px] items-end">
-        <p class="font-medium text-[11px] lg:text-[17px] whitespace-nowrap" style="color:#FE3A6A">{{ $p['price'] }}</p>
+      <div class="flex gap-[6px] lg:gap-[8.23px] items-end">
+        <p class="font-medium text-[14px] lg:text-[26.19px] lg:leading-[33px] whitespace-nowrap" style="color:#121212">{{ $p['price'] }}</p>
         @if (!empty($p['oldPrice']))
-          <p class="font-light text-[9px] lg:text-[13px] line-through whitespace-nowrap" style="color:#ADADAD">{{ $p['oldPrice'] }}</p>
+          <p class="font-light text-[10px] lg:text-[14.4px] lg:leading-[18px] line-through whitespace-nowrap" style="color:#ADADAD">{{ $p['oldPrice'] }}</p>
         @endif
         @if (!empty($p['discount']))
-          <p class="font-normal text-[9px] lg:text-[11px] tracking-[0.3px] lg:tracking-[0.45px] whitespace-nowrap" style="color:#FF522C">{{ $p['discount'] }}</p>
+          <p class="font-normal text-[10px] lg:text-[19.64px] lg:leading-[25px] lg:tracking-[0.51px] whitespace-nowrap" style="color:#FF522C">{{ $p['discount'] }}</p>
         @endif
       </div>
-      <div class="hidden lg:flex w-full min-w-0 flex-col items-start gap-[2px]">
-<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[6px] font-medium text-[11px] truncate" style="color:#2AAF2F" icon-class="size-[17px] shrink-0" />
+    </div>
+    <div class="flex flex-col gap-[3px] lg:gap-[4.11px] items-start w-full">
+      <div class="flex w-full flex-col items-start gap-[2px]">
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[5px] lg:gap-[6.55px] font-medium text-[10px] lg:text-[13.09px] lg:leading-[16px] whitespace-nowrap" style="color:var(--color-success)" icon-class="size-[13px] lg:size-[19.64px] shrink-0" />
 </div>
     </div>
-  </a>
-</div>
+  </div>
+</a>

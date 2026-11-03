@@ -66,7 +66,9 @@
         <div class="swiper card-swiper newin-swiper" id="newInSwiper">
           <div class="swiper-wrapper">
             @forelse ($newInCards as $p)
-              @include('themes.elora.pages.home-v3.sections.partials.new_in_card', ['p' => $p])
+              <div class="swiper-slide h-auto !w-[calc(100vw-32px)] lg:!w-[517px]" wire:key="newin-v3-{{ $p['id'] }}">
+                @include('themes.elora.pages.home-v3.sections.partials.new_in_card', ['p' => $p])
+              </div>
             @empty
               <p class="text-sm text-gray-500 py-6 w-full">{{ __('No new arrivals yet.') }}</p>
             @endforelse
