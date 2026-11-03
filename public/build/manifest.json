@@ -2552,7 +2552,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C6JZW-Rc.css",
+    "file": "assets/app-BSnvKiEK.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2603,7 +2603,7 @@
     ]
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-ab3bOabV.css",
+    "file": "assets/ecommet-CUcVbrzS.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2885,8 +2885,17 @@
     "src": "resources/css/souqify-v2.css",
     "isEntry": true
   },
+  "resources/css/souqify-variants.css": {
+    "file": "assets/souqify-variants-p_-gxwRR.css",
+    "name": "souqify-variants",
+    "names": [
+      "souqify-variants.css"
+    ],
+    "src": "resources/css/souqify-variants.css",
+    "isEntry": true
+  },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-D2Gkc1Op.css",
+    "file": "assets/souqify-DcO1QcoQ.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2895,7 +2904,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-BCxCWSYg.css",
+    "file": "assets/app-CXbIWRCu.css",
     "name": "app",
     "names": [
       "app.css"

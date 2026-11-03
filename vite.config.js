@@ -39,6 +39,7 @@ export default defineConfig({
                 'resources/css/ecommet.css',
                 'resources/css/souqify.css',
                 'resources/css/souqify-v2.css',
+                'resources/css/souqify-variants.css',
                 'resources/js/app.js',
                 'resources/js/storefront-cart.js',
                 'resources/js/storefront/video-pip.js',

@@ -2,6 +2,7 @@
 
 @if(request()->is('/') || request()->routeIs('preview'))
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    @include('themes.souqify.layout.swiper-loop-guard')
 
     <script src="{{ asset('souqify-5/interactions-v6.js') }}"></script>
     <script src="{{ asset('souqify-5/carousels-v6.js') }}"></script>

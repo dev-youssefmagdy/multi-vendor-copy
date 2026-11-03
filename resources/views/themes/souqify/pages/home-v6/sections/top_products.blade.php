@@ -78,7 +78,21 @@
         z-index: 0;
         pointer-events: none;
         overflow: hidden;
-        background: var(--color-brand-pink, #FF1A90);
+        background:
+            radial-gradient(ellipse 45.4% 52.3% at 81.8% 73.4%, rgba(196,0,92,0.41) 0%, rgba(196,0,92,0.23) 45%, rgba(196,0,92,0) 100%),
+            radial-gradient(ellipse 28.2% 84.5% at 82.1% 49.7%, rgba(161,0,66,0.31) 0%, rgba(161,0,66,0.17) 45%, rgba(161,0,66,0) 100%),
+            radial-gradient(ellipse 40.2% 71.3% at 52.2% 103.2%, rgba(176,0,80,0.30) 0%, rgba(176,0,80,0.17) 45%, rgba(176,0,80,0) 100%),
+            radial-gradient(ellipse 41.4% 61.5% at 40.9% 80.3%, rgba(143,0,60,0.31) 0%, rgba(143,0,60,0.17) 45%, rgba(143,0,60,0) 100%),
+            radial-gradient(ellipse 28.7% 56.3% at 91.7% 39.9%, rgba(196,0,92,0.38) 0%, rgba(196,0,92,0.21) 45%, rgba(196,0,92,0) 100%),
+            radial-gradient(ellipse 26.4% 59.2% at 47.5% 15.4%, rgba(161,0,66,0.40) 0%, rgba(161,0,66,0.22) 45%, rgba(161,0,66,0) 100%),
+            radial-gradient(ellipse 32.2% 62.1% at 104.0% 21.4%, rgba(176,0,80,0.33) 0%, rgba(176,0,80,0.18) 45%, rgba(176,0,80,0) 100%),
+            radial-gradient(ellipse 33.9% 58.1% at 29.4% 92.5%, rgba(143,0,60,0.43) 0%, rgba(143,0,60,0.24) 45%, rgba(143,0,60,0) 100%),
+            radial-gradient(ellipse 36.8% 56.9% at 84.0% 96.3%, rgba(255,61,159,0.30) 0%, rgba(255,61,159,0.17) 45%, rgba(255,61,159,0) 100%),
+            radial-gradient(ellipse 32.2% 48.3% at 53.2% 85.9%, rgba(255,87,171,0.35) 0%, rgba(255,87,171,0.19) 45%, rgba(255,87,171,0) 100%),
+            radial-gradient(ellipse 35.1% 48.3% at 94.8% 52.7%, rgba(255,46,155,0.35) 0%, rgba(255,46,155,0.19) 45%, rgba(255,46,155,0) 100%),
+            radial-gradient(ellipse 34.5% 52.3% at 94.4% 46.2%, rgba(255,61,159,0.37) 0%, rgba(255,61,159,0.20) 45%, rgba(255,61,159,0) 100%),
+            radial-gradient(ellipse 23.6% 73.0% at 73.9% 23.9%, rgba(255,87,171,0.35) 0%, rgba(255,87,171,0.19) 45%, rgba(255,87,171,0) 100%),
+            var(--color-brand-pink, #FF1A90);
         /* Two mask layers, unioned: the repeated dome over the top 26px, and a
            solid block for everything below it. round stretches the dome to a
            whole number of columns so none is cut at the right edge. */
@@ -97,35 +111,8 @@
         -webkit-mask-repeat: round, no-repeat;
         mask-repeat: round, no-repeat;
     }
-    /* Organic clouds: every blob is a soft ellipse under a heavy blur, so the
-       edges dissolve into one another and read as smoke rather than as a set of
-       circles. Three families - deep magenta shadow, mid pink, and cream/white
-       glow - are interleaved in the DOM so light and dark stay intertwined.
-       Positions are scattered, never mirrored left to right. */
-    .sqv6-best__blob {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(60px);
-        will-change: transform;
-    }
-    .sqv6-best__blob--s1 { left: 42.3%; top: 27.9%; width: 79%; height: 91%; background: #C4005C; opacity: 0.41; }
-    .sqv6-best__blob--s2 { left: 57.6%; top: -23.8%; width: 49%; height: 147%; background: #A10042; opacity: 0.31; }
-    .sqv6-best__blob--s3 { left: 17.2%; top: 41.2%; width: 70%; height: 124%; background: #B00050; opacity: 0.3; }
-    .sqv6-best__blob--s4 { left: 4.9%; top: 26.8%; width: 72%; height: 107%; background: #8F003C; opacity: 0.31; }
-    .sqv6-best__blob--s5 { left: 66.7%; top: -9.1%; width: 50%; height: 98%; background: #C4005C; opacity: 0.38; }
-    .sqv6-best__blob--s6 { left: 24.5%; top: -36.1%; width: 46%; height: 103%; background: #A10042; opacity: 0.4; }
-    .sqv6-best__blob--s7 { left: 76.0%; top: -32.6%; width: 56%; height: 108%; background: #B00050; opacity: 0.33; }
-    .sqv6-best__blob--s8 { left: -0.1%; top: 42.0%; width: 59%; height: 101%; background: #8F003C; opacity: 0.43; }
-    .sqv6-best__blob--p1 { left: 52.0%; top: 46.8%; width: 64%; height: 99%; background: #FF3D9F; opacity: 0.3; }
-    .sqv6-best__blob--p2 { left: 25.2%; top: 43.9%; width: 56%; height: 84%; background: #FF57AB; opacity: 0.35; }
-    .sqv6-best__blob--p3 { left: 64.3%; top: 10.7%; width: 61%; height: 84%; background: #FF2E9B; opacity: 0.35; }
-    .sqv6-best__blob--p4 { left: 64.4%; top: 0.7%; width: 60%; height: 91%; background: #FF3D9F; opacity: 0.37; }
-    .sqv6-best__blob--p5 { left: 53.4%; top: -39.6%; width: 41%; height: 127%; background: #FF57AB; opacity: 0.35; }
-
-    /* Wisps: the only light in the field - very thin, tilted trails at low
-       opacity, blurred just enough to stay soft. Sparse enough that the pink
-       stays saturated instead of turning pale. */
-    .sqv6-best__blob--w { display: none; }
+    /* The pink clouds are painted as static radial gradients on .sqv6-best__bg. They used to be 13
+       full-panel elements under filter: blur(60-90px) + will-change, which froze scrolling. */
     .sqv6-best__bg::after {
         content: '';
         position: absolute;
@@ -137,22 +124,6 @@
         transform: scaleX(-1);
         opacity: 0.8;
     }
-    .sqv6-best__blob--w1 { left: 32.5%; top: -38.3%; width: 3%; height: 165%; background: rgba(255,255,255,0.30); opacity: 0.56; transform: rotate(-36deg); }
-    .sqv6-best__blob--w2 { left: 79.0%; top: 13.3%; width: 3%; height: 113%; background: rgba(255,236,246,0.26); opacity: 0.9; transform: rotate(-26deg); }
-    .sqv6-best__blob--w3 { left: 62.2%; top: 4.6%; width: 4%; height: 137%; background: rgba(255,246,236,0.24); opacity: 0.66; transform: rotate(26deg); }
-    .sqv6-best__blob--w4 { left: 6.2%; top: -41.0%; width: 4%; height: 128%; background: rgba(255,255,255,0.30); opacity: 0.57; transform: rotate(-12deg); }
-    .sqv6-best__blob--w5 { left: 37.2%; top: -37.3%; width: 3%; height: 86%; background: rgba(255,236,246,0.26); opacity: 0.9; transform: rotate(36deg); }
-    .sqv6-best__blob--w6 { left: 72.0%; top: -55.4%; width: 4%; height: 133%; background: rgba(255,246,236,0.24); opacity: 0.73; transform: rotate(36deg); }
-    .sqv6-best__blob--w7 { left: 43.1%; top: -6.9%; width: 4%; height: 86%; background: rgba(255,255,255,0.30); opacity: 0.6; transform: rotate(26deg); }
-    .sqv6-best__blob--w8 { left: 81.4%; top: 16.7%; width: 2%; height: 102%; background: rgba(255,236,246,0.26); opacity: 0.59; transform: rotate(-26deg); }
-    .sqv6-best__blob--w9 { left: 31.3%; top: -22.9%; width: 3%; height: 140%; background: rgba(255,246,236,0.24); opacity: 0.68; transform: rotate(-36deg); }
-    .sqv6-best__blob--w10 { left: 79.4%; top: 15.4%; width: 5%; height: 126%; background: rgba(255,255,255,0.30); opacity: 0.76; transform: rotate(26deg); }
-    .sqv6-best__blob--w11 { left: 8.1%; top: -25.6%; width: 4%; height: 151%; background: rgba(255,236,246,0.26); opacity: 0.81; transform: rotate(18deg); }
-    .sqv6-best__blob--w12 { left: 34.1%; top: -53.4%; width: 3%; height: 140%; background: rgba(255,246,236,0.24); opacity: 0.83; transform: rotate(26deg); }
-    .sqv6-best__blob--w13 { left: 75.8%; top: -54.4%; width: 3%; height: 115%; background: rgba(255,255,255,0.30); opacity: 0.73; transform: rotate(12deg); }
-    .sqv6-best__blob--w14 { left: 0.3%; top: -52.5%; width: 3%; height: 103%; background: rgba(255,236,246,0.26); opacity: 0.56; transform: rotate(-12deg); }
-    .sqv6-best__blob--w15 { left: 87.0%; top: 20.8%; width: 3%; height: 87%; background: rgba(255,246,236,0.24); opacity: 0.7; transform: rotate(36deg); }
-    .sqv6-best__blob--w16 { left: 84.7%; top: 8.6%; width: 2%; height: 150%; background: rgba(255,255,255,0.30); opacity: 0.79; transform: rotate(-18deg); }
 
     /* A second, fainter smoke layer drawn OVER the cards, so the trails read as
        depth in front of the product row rather than only behind it. It never
@@ -172,16 +143,6 @@
         background-repeat: no-repeat;
         opacity: 0.85;
     }
-    .sqv6-best__smoke .sqv6-best__blob { display: none; }
-    .sqv6-best__blob--f1 { left: 69.7%; top: 22.7%; width: 4%; height: 128%; background: rgba(255,255,255,0.22); opacity: 0.6; transform: rotate(22deg); }
-    .sqv6-best__blob--f2 { left: 22.8%; top: 33.2%; width: 3%; height: 157%; background: rgba(255,255,255,0.22); opacity: 0.66; transform: rotate(14deg); }
-    .sqv6-best__blob--f3 { left: 13.4%; top: 19.4%; width: 2%; height: 131%; background: rgba(255,255,255,0.22); opacity: 0.45; transform: rotate(32deg); }
-    .sqv6-best__blob--f4 { left: 33.8%; top: 6.1%; width: 2%; height: 150%; background: rgba(255,255,255,0.22); opacity: 0.56; transform: rotate(14deg); }
-    .sqv6-best__blob--f5 { left: 52.8%; top: 27.1%; width: 4%; height: 121%; background: rgba(255,255,255,0.22); opacity: 0.61; transform: rotate(32deg); }
-    .sqv6-best__blob--f6 { left: -2.4%; top: 36.3%; width: 3%; height: 130%; background: rgba(255,255,255,0.22); opacity: 0.7; transform: rotate(14deg); }
-    .sqv6-best__blob--f7 { left: 30.7%; top: -9.5%; width: 4%; height: 159%; background: rgba(255,255,255,0.22); opacity: 0.5; transform: rotate(14deg); }
-    .sqv6-best__blob--f8 { left: 10.2%; top: -33.4%; width: 2%; height: 128%; background: rgba(255,255,255,0.22); opacity: 0.55; transform: rotate(14deg); }
-    .sqv6-best__blob--f9 { left: 93.1%; top: 18.6%; width: 4%; height: 116%; background: rgba(255,255,255,0.22); opacity: 0.41; transform: rotate(-14deg); }
 
     /* Frame 1984080018 */
     .sqv6-best__head {
@@ -285,7 +246,6 @@
             -webkit-mask-size: clamp(56px, 5.556vw, 80px) clamp(26px, 2.361vw, 34px), 100% calc(100% - clamp(26px, 2.361vw, 34px) + 1px);
             mask-size: clamp(56px, 5.556vw, 80px) clamp(26px, 2.361vw, 34px), 100% calc(100% - clamp(26px, 2.361vw, 34px) + 1px);
         }
-        .sqv6-best__blob { filter: blur(90px); }
 
         .sqv6-best__smoke { opacity: 0.7; }
         .sqv6-best__slide:nth-child(2n) { padding-top: clamp(14px, 1.597vw, 23px); }
@@ -297,35 +257,6 @@
 <!-- ============ BEST SELLER ============ -->
 <section class="sqv6-best" wire:ignore>
   <div class="sqv6-best__bg" aria-hidden="true">
-    <span class="sqv6-best__blob sqv6-best__blob--s1"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s2"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s3"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s4"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s5"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s6"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s7"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--s8"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--p1"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--p2"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--p3"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--p4"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--p5"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w1"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w2"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w3"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w4"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w5"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w6"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w7"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w8"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w9"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w10"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w11"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w12"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w13"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w14"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w15"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--w sqv6-best__blob--w16"></span>
   </div>
 
   <div class="sqv6-best__head">
@@ -347,14 +278,5 @@
     <p class="sqv6-best__empty">{{ __('No best sellers yet.') }}</p>
   @endif
   <div class="sqv6-best__smoke" aria-hidden="true">
-    <span class="sqv6-best__blob sqv6-best__blob--f1"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f2"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f3"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f4"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f5"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f6"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f7"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f8"></span>
-    <span class="sqv6-best__blob sqv6-best__blob--f9"></span>
   </div>
 </section>

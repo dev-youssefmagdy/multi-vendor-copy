@@ -49,7 +49,10 @@
         <meta name="twitter:image" content="{{ $ogImage }}" />
         <meta name="twitter:image:alt" content="{{ $title ?? $storeName ?? config('app.name') }}" />
     @endif
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        {{-- Variants load Swiper 11 in their own styles/scripts; loading 12 as well doubled the bundle. --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    @endunless
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     @switch($storefrontThemeVariant?->key)
@@ -131,7 +134,10 @@
     @stack('styles')
     @stack('head')
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    @unless (in_array($storefrontThemeVariant?->key, ['v2', 'v3', 'v4', 'v5', 'v6'], true))
+        <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+        @include('themes.souqify.layout.swiper-loop-guard')
+    @endunless
 </head>
 
 <body @stack('body-attrs') class="bg-zinc-100 text-slate-900 antialiased">
