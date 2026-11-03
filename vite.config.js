@@ -40,6 +40,7 @@ export default defineConfig({
                 'resources/css/souqify.css',
                 'resources/css/souqify-v2.css',
                 'resources/css/souqify-variants.css',
+                'resources/css/elora-variants.css',
                 'resources/js/app.js',
                 'resources/js/storefront-cart.js',
                 'resources/js/storefront/video-pip.js',

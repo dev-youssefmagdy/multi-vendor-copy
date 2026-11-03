@@ -171,8 +171,8 @@
 
 <!-- ============ BEST SELLER ============ -->
 <section class="sqv3-best" wire:ignore>
-  <img src="{{ asset('souqify-2/assets/images/best-seller-texture-mobile.png') }}" alt="" class="sqv3-best__texture lg:hidden" />
-  <img src="{{ asset('souqify-2/assets/images/best-seller-texture-desktop.png') }}" alt="" class="sqv3-best__texture hidden lg:block" />
+  <img src="{{ asset('souqify-2/assets/images/best-seller-texture-mobile.webp') }}" alt="" class="sqv3-best__texture lg:hidden" />
+  <img src="{{ asset('souqify-2/assets/images/best-seller-texture-desktop.webp') }}" alt="" class="sqv3-best__texture hidden lg:block" />
 
   <div class="sqv3-best__inner">
     <h2 class="sqv3-best__title">{{ __('Best Seller') }}</h2>

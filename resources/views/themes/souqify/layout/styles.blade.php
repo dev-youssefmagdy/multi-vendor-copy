@@ -3,26 +3,6 @@
 <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;600;700&display=swap"
     rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: {
-                    sans: ['Outfit', 'system-ui', 'sans-serif'],
-                    manrope: ['Manrope', 'sans-serif'],
-                },
-                colors: {
-                    brand: {
-                        blue: '#1d4ed8',
-                        amber: '#f59e0b',
-                        orange: '#ea580c',
-                    }
-                }
-            }
-        }
-    }
-</script>
 <style>
     html {
         scroll-behavior: smooth;

@@ -3,7 +3,7 @@
     @php
         $firstSale = $flashSales->first();
         // Same default the tenant panel assigns to flash sales saved without a banner.
-        $flashBannerSrc = $flashBanner ?: asset('elora/assets/images/flash-sales-banner.png');
+        $flashBannerSrc = $flashBanner ?: asset('elora/assets/images/flash-sales-banner.webp');
     @endphp
     <section  wire:ignore>
         <div class="w-full overflow-hidden">

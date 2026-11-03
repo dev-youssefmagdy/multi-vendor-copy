@@ -180,7 +180,7 @@
           <a href="{{ route('tenant.storefront.category', $category->slug) }}" class="swiper-slide sqv6-cats__tile" wire:key="cat-v6-{{ $category->id }}">
             <div class="sqv6-cats__art">
               <span class="sqv6-cats__arch" aria-hidden="true"></span>
-              <img src="{{ $__img }}" alt="{{ $__name }}" class="sqv6-cats__img" />
+              <img loading="lazy" decoding="async" src="{{ $__img }}" alt="{{ $__name }}" class="sqv6-cats__img" />
             </div>
             <p class="sqv6-cats__label">{{ $__name }}</p>
           </a>

@@ -44,14 +44,25 @@ final class OwnProductController extends PanelController
     private static function countryRows(): array
     {
         $tenantId = tenant()->getTenantKey();
+        $memoKey = 'own_product_country_rows.' . $tenantId;
 
-        return tenancy()->central(fn () => \App\Models\Country::query()
+        if (request()->attributes->has($memoKey)) {
+            return request()->attributes->get($memoKey);
+        }
+
+        // `id` is needed for the translated `name` (without it every country queried its
+        // translations with translatable_id IS NULL); both option lists share one fetch.
+        $rows = tenancy()->central(fn () => \App\Models\Country::query()
+            ->with('translations.language')
             ->whereIn('id', \App\Models\TenantCountry::where('tenant_id', $tenantId)->where('is_active', true)->pluck('country_id'))
             ->whereNotNull('iso2')
             ->orderBy('name')
-            ->get(['iso2', 'name', 'flag_emoji'])
+            ->get(['id', 'iso2', 'name', 'flag_emoji'])
             ->mapWithKeys(fn ($c) => [strtolower((string) $c->iso2) => ['name' => (string) $c->name, 'flag' => (string) ($c->flag_emoji ?? '')]])
             ->all());
+        request()->attributes->set($memoKey, $rows);
+
+        return $rows;
     }
 
     public function __construct(

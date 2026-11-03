@@ -4,7 +4,7 @@
 const PRODUCTS = {
   newIn: [
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "Best Seller",
       badgeBg: "var(--color-primary)",
       name: "Essential Hoodie",
@@ -40,7 +40,7 @@ const PRODUCTS = {
       discount: "20% Off",
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "New",
       badgeBg: "var(--color-accent-purple)",
       name: "Everyday Hoodie",
@@ -76,7 +76,7 @@ const PRODUCTS = {
       discount: null,
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "Sale",
       badgeBg: "var(--color-primary)",
       name: "Fleece Hoodie",
@@ -114,7 +114,7 @@ const PRODUCTS = {
       discount: null,
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "Sale",
       badgeBg: "var(--color-primary)",
       name: "Oversized Hoodie",
@@ -138,7 +138,7 @@ const PRODUCTS = {
       discount: null,
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "For You",
       badgeBg: "var(--color-accent-purple)",
       name: "Zip Hoodie",
@@ -174,7 +174,7 @@ const PRODUCTS = {
       discount: null,
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "For You",
       badgeBg: "var(--color-accent-purple)",
       name: "Pullover Hoodie",
@@ -200,7 +200,7 @@ const PRODUCTS = {
   ],
   bestSeller: [
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "Best Seller",
       badgeBg: "var(--color-primary)",
       name: "Essential Hoodie",
@@ -236,7 +236,7 @@ const PRODUCTS = {
       discount: "20% Off",
     },
     {
-      image: "assets/images/product-hoodie.png",
+      image: "assets/images/product-hoodie.webp",
       badge: "Best Seller",
       badgeBg: "var(--color-primary)",
       name: "Fleece Hoodie",
@@ -345,7 +345,7 @@ const TRENDING_PRODUCTS = [
     discount: "20% Off",
   },
   {
-    image: "assets/images/product-hoodie.png",
+    image: "assets/images/product-hoodie.webp",
     name: "Essential Hoodie",
     weight: "200g",
     badge: "Best Seller",
@@ -442,7 +442,7 @@ const FLASH_PRODUCTS = [
     deliveredColor: "var(--color-success)",
   },
   {
-    image: "assets/images/flash-hoodie.png",
+    image: "assets/images/flash-hoodie.webp",
     name: "Essential Hoodie",
     weight: "200g",
     price: "$89.00",

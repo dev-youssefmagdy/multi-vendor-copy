@@ -306,8 +306,8 @@
 
 <!-- ============ FLASH SALE ============ -->
 <section class="sqv3-flash" @if($__flashEnd) data-flash-end="{{ $__flashEnd->timestamp }}" @endif wire:ignore>
-  <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.png') }}" alt="" class="sqv3-flash__texture lg:hidden" />
-  <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-desktop.png') }}" alt="" class="sqv3-flash__texture hidden lg:block" />
+  <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.webp') }}" alt="" class="sqv3-flash__texture lg:hidden" />
+  <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-desktop.webp') }}" alt="" class="sqv3-flash__texture hidden lg:block" />
 
   <div class="sqv3-flash__inner">
     <div class="sqv3-flash__row">

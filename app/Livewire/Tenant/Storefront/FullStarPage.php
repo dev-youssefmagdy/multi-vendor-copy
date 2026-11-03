@@ -17,6 +17,14 @@ class FullStarPage extends Component
 
     public function mount(): void
     {
+        // Only some themes ship a full-star page; the others show the same 5-star
+        // products through their category listing instead of failing with a 500.
+        if (!view()->exists($this->pageView('full-star'))) {
+            $this->redirect(route('tenant.storefront.category', ['ratings' => 5]));
+
+            return;
+        }
+
         $this->search = trim((string) request('keyword', ''));
 
         $categoryId = request('category_id');
@@ -51,6 +59,10 @@ class FullStarPage extends Component
 
     public function render()
     {
+        if (!view()->exists($this->pageView('full-star'))) {
+            return '<div></div>'; // mount() already redirected to the category listing
+        }
+
         $repo = app(StorefrontRepository::class);
 
         $data = array_merge($this->sharedData(), [

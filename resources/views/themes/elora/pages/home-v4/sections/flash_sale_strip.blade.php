@@ -33,7 +33,7 @@
   aria-label="{{ __('Flash Sale') }}"
   data-flash-countdown="{{ $flashEndsAtIso }}"
 >
-  <img src="{{ asset('elora-4/assets/images/flash-sale-texture.png') }}" alt="" class="texture-overlay" aria-hidden="true" />
+  <img src="{{ asset('elora-4/assets/images/flash-sale-texture.webp') }}" alt="" class="texture-overlay" aria-hidden="true" />
 
   {{-- ══════════════════ DESKTOP ══════════════════ --}}
   <div class="relative hidden lg:flex lg:flex-row items-center gap-[32px] w-full">

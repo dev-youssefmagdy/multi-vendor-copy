@@ -3,7 +3,7 @@
   <a href="{{ $p['url'] ?? '#' }}" class="flex flex-row w-full h-full overflow-hidden">
     {{-- Media --}}
     <div class="card-media">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="product-image" />
+      <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="product-image" />
 @if (!empty($p['isOutOfStock']))
 <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[2] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
 @endif

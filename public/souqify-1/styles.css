@@ -209,7 +209,7 @@ body {
 }
 .stripe-bg-purple {
   background-color: var(--color-brand-purple);
-  background-image: url("assets/images/new-in.png");
+  background-image: url("assets/images/new-in.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

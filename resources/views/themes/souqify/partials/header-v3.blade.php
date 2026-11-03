@@ -13,7 +13,7 @@
          same teal brand texture already blended soft-light elsewhere in this theme)
          rather than a new asset. --}}
     <div class="sqv3-header-hero relative flex items-center justify-between px-[16px] pt-[16px] pb-[72px] overflow-hidden">
-      <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.png') }}" alt="" class="absolute inset-0 h-full w-full object-cover" style="mix-blend-mode: soft-light" />
+      <img src="{{ asset('souqify-2/assets/images/flash-sale-texture-mobile.webp') }}" alt="" class="absolute inset-0 h-full w-full object-cover" style="mix-blend-mode: soft-light" />
       <a href="{{ route('tenant.home') }}" class="relative">
         <x-storefront-logo :storeName="$storeName" class="h-[26px] w-auto" />
       </a>

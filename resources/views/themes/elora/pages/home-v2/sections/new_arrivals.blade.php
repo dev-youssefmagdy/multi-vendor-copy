@@ -3,7 +3,7 @@
           $variant = $product->variants->firstWhere('active', true) ?? $product->variants->first();
           $pricing = $product->storefrontPricing($variant);
           $hasDiscount = (bool) $pricing['has_discount'];
-          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-hoodie.png');
+          $img = $product->centralProduct?->primary_image_url ?? $product->primary_image_url ?? asset('elora-1/assets/images/product-hoodie.webp');
           $rating = (float) ($product->average_rating ?? 0);
           $ratingCount = $product->relationLoaded('rates') ? $product->rates->count() : $product->rates()->count();
           $weightGrams = $product->centralProduct?->weight_grams ?? $product->weight_grams ?? null;

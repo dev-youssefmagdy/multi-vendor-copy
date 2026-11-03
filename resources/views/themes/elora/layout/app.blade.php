@@ -103,6 +103,10 @@
     @include('storefront.partials.theme-color-overrides')
     @include('storefront.partials.tracking-scripts')
     @stack('head')
+    @if ($stylesKey === 'styles')
+        {{-- Precompiled Tailwind v3 (resources/tailwind-v3), kept last so it wins like the old runtime <style>. --}}
+        <link rel="stylesheet" href="{{ asset('css/tw3-elora.css') }}?v={{ @filemtime(public_path('css/tw3-elora.css')) }}" />
+    @endif
 </head>
 
 <body @stack('body-attrs') data-page="index" class="{{ $bodyClass }}">

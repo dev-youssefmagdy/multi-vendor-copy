@@ -12,7 +12,7 @@
               $img = $banner->image_path ?? null;
               $imgUrl = $img
                   ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/')))
-                  : asset('elora-5/assets/images/hero-desktop.png');
+                  : asset('elora-5/assets/images/hero-desktop.webp');
               $bannerTitle = $banner->translationValue('title') ?? $storeName;
               $bannerButtonText = $banner->translationValue('button_text');
             @endphp
@@ -70,7 +70,7 @@
                 class="relative flex items-center h-[290px] lg:h-[537px] overflow-hidden px-[18px] lg:px-[56px] py-[22px]"
               >
                 <img
-                  src="{{ asset('elora-5/assets/images/hero-desktop.png') }}"
+                  src="{{ asset('elora-5/assets/images/hero-desktop.webp') }}"
                   alt=""
                   class="absolute inset-0 h-full w-full object-cover"
                 />

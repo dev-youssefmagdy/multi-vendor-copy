@@ -3,7 +3,7 @@
 <div class="swiper-slide h-auto w-full lg:w-auto">
   <a href="{{ $p['url'] ?? '#' }}" class="group flex lg:items-center bg-[var(--color-bg-main)] rounded-[6px] lg:rounded-[10.11px] shadow-sm h-full lg:h-[236px] overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-[123.69px] lg:w-[236px] aspect-square self-start shrink-0">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       @if (!empty($p['badge']))
       <span class="absolute top-0 end-0 flex items-center justify-center text-[10.5px] leading-[13px] lg:text-[17px] font-normal px-[3.31px] lg:px-[8px] py-[3.31px] lg:py-[4px] rounded-bl-[4.41px] lg:rounded-bl-[8px] tracking-[0.28px] lg:tracking-normal w-[39.61px] lg:w-auto whitespace-nowrap" style="background:var(--color-accent-yellow); color:var(--color-black)">{{ $p['badge'] }}</span>
       @endif

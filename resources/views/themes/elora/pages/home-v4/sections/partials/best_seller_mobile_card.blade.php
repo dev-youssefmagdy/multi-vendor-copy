@@ -10,7 +10,7 @@
   style="background: var(--color-bg-main); text-decoration:none"
 >
   <div class="relative w-full aspect-square shrink-0 overflow-hidden rounded-t-[6.21px]">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
 
     @if (!empty($p['badge']))
     <span

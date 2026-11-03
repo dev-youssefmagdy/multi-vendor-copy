@@ -6,7 +6,7 @@
               $img = $banner->image_path ?? null;
               $imgUrl = $img
                   ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset('storage/' . ltrim($img, '/')))
-                  : asset('elora-1/assets/images/hero-desktop.png');
+                  : asset('elora-1/assets/images/hero-desktop.webp');
             @endphp
             <div class="swiper-slide">
               <a
@@ -65,13 +65,13 @@
                 class="relative flex flex-col items-start justify-end h-[280px] lg:h-[543px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
               >
                 <img
-                  src="{{ asset('elora-1/assets/images/hero-mobile.png') }}"
+                  src="{{ asset('elora-1/assets/images/hero-mobile.webp') }}"
                   alt=""
                   class="lg:hidden absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"
                 />
                 <img
-                  src="{{ asset('elora-1/assets/images/hero-desktop.png') }}"
+                  src="{{ asset('elora-1/assets/images/hero-desktop.webp') }}"
                   alt=""
                   class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                   style="background: var(--color-hero-placeholder)"

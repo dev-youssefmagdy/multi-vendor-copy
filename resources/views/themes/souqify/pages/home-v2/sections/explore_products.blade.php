@@ -175,7 +175,7 @@
                 $__name = \Illuminate\Support\Str::limit($category->translationValue('name') ?? $category->slug, 20);
               @endphp
               <a href="{{ route('tenant.storefront.category', $category->slug) }}" class="sqv2-shop__tile" wire:key="shopcat-v2-{{ $category->id }}">
-                <img src="{{ $__img }}" alt="{{ $__name }}" class="sqv2-shop__img" />
+                <img loading="lazy" decoding="async" src="{{ $__img }}" alt="{{ $__name }}" class="sqv2-shop__img" />
                 <span class="sqv2-shop__label">{{ $__name }}</span>
               </a>
             @endforeach

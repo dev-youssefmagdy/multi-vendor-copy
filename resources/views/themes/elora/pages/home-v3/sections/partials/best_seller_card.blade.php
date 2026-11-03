@@ -4,7 +4,7 @@
 <div class="swiper-slide h-auto lg:w-[309px]!">
   <a href="{{ $p['url'] ?? '#' }}" class="group flex flex-col bg-[#FDFDFD] rounded-[7.41px] lg:rounded-[14px] shadow-[0_0_22.65px_rgba(0,0,0,0.16)] lg:shadow-[0_0_43px_rgba(0,0,0,0.16)] h-full overflow-hidden transition-all duration-300 ease-out hover:shadow-xl hover:scale-[1.02]" style="text-decoration:none">
     <div class="relative w-full aspect-square shrink-0">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
       @if (!empty($p['isOutOfStock']))
       <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
       @endif

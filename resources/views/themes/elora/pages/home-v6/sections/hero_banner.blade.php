@@ -11,7 +11,7 @@
               $__heroImg = $banner->image_path ?? null;
               $__heroImgUrl = $__heroImg
                   ? (filter_var($__heroImg, FILTER_VALIDATE_URL) ? $__heroImg : asset('storage/' . ltrim($__heroImg, '/')))
-                  : asset('elora-2/assets/images/hero-desktop.png');
+                  : asset('elora-2/assets/images/hero-desktop.webp');
               $__heroTitle = $banner->translationValue('title') ?? $storeName;
               $__heroButtonText = $banner->translationValue('button_text') ?? __('Shop Now');
             @endphp
@@ -70,12 +70,12 @@
                   class="relative flex flex-col items-center lg:items-start justify-end h-[290px] lg:h-[529px] px-[18px] lg:px-[56px] py-[22px] overflow-hidden"
                 >
                   <img
-                    src="{{ asset('elora-2/assets/images/hero-mobile.png') }}"
+                    src="{{ asset('elora-2/assets/images/hero-mobile.webp') }}"
                     alt=""
                     class="lg:hidden absolute inset-0 h-full w-full object-cover"
                   />
                   <img
-                    src="{{ asset('elora-2/assets/images/hero-desktop.png') }}"
+                    src="{{ asset('elora-2/assets/images/hero-desktop.webp') }}"
                     alt=""
                     class="hidden lg:block absolute inset-0 h-full w-full object-cover"
                   />

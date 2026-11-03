@@ -7,7 +7,7 @@
   class="group relative flex flex-col items-start w-[177.51px] h-[292px] lg:w-[304.54px] lg:h-[500.64px] bg-[var(--color-bg-main)] overflow-hidden no-underline transition-[width,height,border-radius,transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl {{ $p['cardClass'] ?? 'rounded-[6px] shadow-[var(--shadow-card-lg)]' }}"
 >
   <div class="relative w-full aspect-square shrink-0">
-    <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    <img loading="lazy" decoding="async" src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     @if (!empty($p['isOutOfStock']))
     <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
     @endif

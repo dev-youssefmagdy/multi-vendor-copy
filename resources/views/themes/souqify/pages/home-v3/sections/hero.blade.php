@@ -91,7 +91,7 @@
       allowTouchMove: multi,
       speed: 600,
       autoplay: multi ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
-      pagination: multi ? { el: el.querySelector('.sqv3-hero-pagination'), clickable: true } : undefined,
+      pagination: multi ? { el: el.querySelector('.sqv3-hero-pagination'), clickable: true } : false, // false, not undefined: undefined wipes Swiper's pagination defaults and it throws "reading 'el'"
     });
   }
   if (document.readyState === 'loading') {

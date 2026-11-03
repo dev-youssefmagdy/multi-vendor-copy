@@ -1,4 +1,4 @@
-     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+@vite('resources/css/elora-variants.css')
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"

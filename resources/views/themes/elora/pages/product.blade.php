@@ -879,7 +879,7 @@
                 <div class="swiper product-slid-swiper w-full select-none">
                     <div class="swiper-wrapper">
                         @foreach ($slider['items'] as $sliderProduct)
-                            <div class="swiper-slide w-fit">
+                            <div class="swiper-slide !w-fit">
                                 @include($this->pageView('_product-card'), ['product' => $sliderProduct, 'badge' => null])
                             </div>
                         @endforeach

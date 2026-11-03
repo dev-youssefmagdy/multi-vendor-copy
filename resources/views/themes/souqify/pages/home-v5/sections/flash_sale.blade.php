@@ -552,7 +552,7 @@
   </span>
 
   <div class="sqv5-flash__panel">
-  <img src="{{ asset('souqify-4/assets/images/flash-bg-pattern.png') }}" alt="" class="sqv5-flash__pattern" />
+  <img src="{{ asset('souqify-4/assets/images/flash-bg-pattern.webp') }}" alt="" class="sqv5-flash__pattern" />
   <span class="sqv5-flash__shade"></span>
 
   <div class="sqv5-flash__body">

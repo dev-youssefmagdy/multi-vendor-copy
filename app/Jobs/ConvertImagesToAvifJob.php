@@ -52,6 +52,18 @@ class ConvertImagesToAvifJob implements ShouldQueue
             $scope = "tenant {$this->tenantId}";
         }
 
+        // Paths changed under the storefront caches (raw DB updates fire no model
+        // events): drop them, or cached pages keep pointing at the deleted originals.
+        // Central images are shown by every tenant, so a central run clears them all.
+        if (! $this->dryRun && ($this->filesConverted > 0 || $this->refsRewritten > 0)) {
+            if ($this->tenantId === null) {
+                \App\Support\CacheVersion::bumpMany(\App\Support\CacheVersion::GLOBAL_TAGS);
+                Tenant::query()->each(fn (Tenant $tenant) => $tenant->run(fn () => \App\Support\CacheVersion::bumpStorefront()));
+            } else {
+                Tenant::findOrFail($this->tenantId)->run(fn () => \App\Support\CacheVersion::bumpStorefront());
+            }
+        }
+
         Log::info(sprintf('images:convert-avif [%s]: %d files converted, %d database values rewritten, %.1f MB saved%s.',
             $scope, $this->filesConverted, $this->refsRewritten, $this->bytesSaved / 1048576, $this->dryRun ? ' (dry run)' : ''));
     }
@@ -125,7 +137,7 @@ class ConvertImagesToAvifJob implements ShouldQueue
             $updated = $value;
             foreach (array_unique($matches[0]) as $token) {
                 $relative = $this->relativeStoragePath($token);
-                $new = $relative ? $this->convert($relative, 'public', $originals) : null;
+                $new = $relative ? ($this->convert($relative, 'public', $originals) ?? $this->alreadyConverted($relative)) : null;
                 if (! $new) {
                     continue;
                 }
@@ -154,6 +166,24 @@ class ConvertImagesToAvifJob implements ShouldQueue
         }
 
         return $path !== '' && ! str_contains($path, '..') ? $path : null;
+    }
+
+    /**
+     * The .avif twin of a reference whose original is already gone: tenant copies of
+     * central URLs (synced product/variant thumbnails) still point at the deleted
+     * original after a central run, and the file lives on the central disk.
+     */
+    private function alreadyConverted(string $path): ?string
+    {
+        if (! ImageOptimizer::isConvertibleExtension(pathinfo($path, PATHINFO_EXTENSION))) {
+            return null;
+        }
+
+        $target = preg_replace('/\.[^.\/]+$/', '', $path) . '.avif';
+        $exists = Storage::disk('public')->exists($target)
+            || (tenancy()->initialized && tenancy()->central(fn () => Storage::disk('public')->exists($target)));
+
+        return $exists ? $target : null;
     }
 
     private function convert(string $path, string $disk, array &$originals): ?string

@@ -58,7 +58,7 @@
            public/souqify-1/styles.css, and v2 ships its CSS through Vite, so the
            path never resolves on the page. */
         background-color: var(--color-brand-purple, #8B03BD);
-        background-image: url('{{ asset('souqify-1/assets/images/new-in.png') }}');
+        background-image: url('{{ asset('souqify-1/assets/images/new-in.webp') }}');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;

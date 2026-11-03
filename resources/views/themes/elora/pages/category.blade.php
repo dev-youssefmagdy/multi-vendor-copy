@@ -92,28 +92,33 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    @if (count($group['options']) > 10)
-                    <input type="search" autocomplete="off" placeholder="{{ __('Search (:name)', ['name' => $group['name']]) }}"
-                        aria-label="{{ __('Search (:name)', ['name' => $group['name']]) }}"
-                        oninput="var q=this.value.trim().toLowerCase();this.nextElementSibling.querySelectorAll('[data-opt-name]').forEach(function(l){l.style.display=l.dataset.optName.indexOf(q)===-1?'none':''})"
-                        class="mt-3 w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
-                    @endif
-                    <div class="mt-3 flex flex-col gap-2 max-h-[220px] overflow-y-auto pe-1">
-                        @foreach ($group['options'] as $opt)
-                        <label class="flex items-center gap-2 cursor-pointer" wire:key="option-{{ $opt['id'] }}"
-                            data-opt-name="{{ \Illuminate\Support\Str::lower($opt['name']) }}">
-                            <input type="checkbox"
-                                {{ in_array($opt['id'], $options, true) ? 'checked' : '' }}
-                                wire:click="toggleOption({{ $opt['id'] }})" data-f="option" data-v="{{ $opt['id'] }}"
-                                class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
-                            @if (!empty($opt['swatch']) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $opt['swatch']))
-                            <span class="w-3.5 h-3.5 rounded-full border border-[#D1D5DC] shrink-0"
-                                style="background: {{ $opt['swatch'] }}"></span>
-                            @endif
-                            <span class="text-[14px] tracking-[0.5px] text-[#171717] flex-1 truncate">{{ $opt['name'] }}</span>
-                            <span class="text-[12px] text-[#ADADAD]">({{ $opt['count'] }})</span>
-                        </label>
-                        @endforeach
+                    {{-- Options render client-side from one JSON list: a store can have 1000+ colours,
+                         and 1000+ server-rendered checkboxes made this page ~1.3MB. Only the first 100
+                         matches are in the DOM; the search box filters the full list. --}}
+                    <div wire:key="vf-{{ $group['id'] }}-{{ md5(json_encode($options)) }}" x-data="{
+                            q: '',
+                            all: @js(collect($group['options'])->map(fn ($o) => [$o['id'], $o['name'], $o['count'], (!empty($o['swatch']) && preg_match('/^#[0-9a-fA-F]{3,8}$/', $o['swatch'])) ? $o['swatch'] : null])->values()),
+                            picked: @js(array_values(array_map('intval', $options))),
+                            get shown() { const q = this.q.trim().toLowerCase(); const list = q ? this.all.filter(o => String(o[1]).toLowerCase().includes(q)) : this.all; return list.slice(0, 100); },
+                        }">
+                        @if (count($group['options']) > 10)
+                        <input type="search" autocomplete="off" x-model="q" placeholder="{{ __('Search (:name)', ['name' => $group['name']]) }}"
+                            aria-label="{{ __('Search (:name)', ['name' => $group['name']]) }}"
+                            class="mt-3 w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
+                        @endif
+                        <div class="mt-3 flex flex-col gap-2 max-h-[220px] overflow-y-auto pe-1">
+                            <template x-for="o in shown" :key="o[0]">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" :checked="picked.includes(o[0])" @click="$wire.toggleOption(o[0])"
+                                        data-f="option" :data-v="o[0]" class="w-4 h-4 accent-[var(--color-primary)] rounded-[4px]">
+                                    <template x-if="o[3]">
+                                        <span class="w-3.5 h-3.5 rounded-full border border-[#D1D5DC] shrink-0" :style="'background:' + o[3]"></span>
+                                    </template>
+                                    <span class="text-[14px] tracking-[0.5px] text-[#171717] flex-1 truncate" x-text="o[1]"></span>
+                                    <span class="text-[12px] text-[#ADADAD]" x-text="'(' + o[2] + ')'"></span>
+                                </label>
+                            </template>
+                        </div>
                     </div>
                 </details>
                 @endforeach

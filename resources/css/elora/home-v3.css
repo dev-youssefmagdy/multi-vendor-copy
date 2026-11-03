@@ -166,7 +166,7 @@
 }
 .elora-v3-root .pattern-newin {
     background-color: var(--color-bg-main);
-    background-image: url("/elora-3/assets/images/pattern-newin.png");
+    background-image: url("/elora-3/assets/images/pattern-newin.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -176,7 +176,7 @@
     background-color: var(--color-brand-pink);
     background-image:
         linear-gradient(to bottom, transparent 55%, var(--color-brand-pink) 100%),
-        url("/elora-3/assets/images/pattern-bestseller.png");
+        url("/elora-3/assets/images/pattern-bestseller.webp");
     background-size:
         100% 100%,
         cover;

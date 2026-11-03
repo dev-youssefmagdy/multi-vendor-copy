@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Compiled Tailwind for Elora variants v2-v6 (replaces the in-browser @tailwindcss/browser compiler). */
+@source '../views/themes/elora/**/*.blade.php';
+@source '../views/components/**/*.blade.php';
+@source '../views/storefront/**/*.blade.php';
+@source '../views/livewire/tenant/storefront/**/*.blade.php';
+@source '../../public/elora-1/*.js';
+@source '../../public/elora-2/*.js';
+@source '../../public/elora-3/*.js';
+@source '../../public/elora-4/*.js';
+@source '../../public/elora-5/*.js';
+@source '../js/elora*.js';
+@source '../js/elora/**/*.js';

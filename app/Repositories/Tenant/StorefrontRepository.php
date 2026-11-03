@@ -426,7 +426,7 @@ class StorefrontRepository
         }
 
         $options = \App\Models\VariationOption::query()
-            ->with('variation')
+            ->with(['variation.translations.language', 'translations.language'])
             ->whereIn('id', array_keys($productsByOption))
             ->get();
 
@@ -765,6 +765,37 @@ class StorefrontRepository
      *
      * @return array{mode:string,image_url:?string,text:string,font_family:string,color:string,bg_color:string,shape:string}
      */
+    /**
+     * Google Fonts stylesheet for the fonts the text logos actually use (header and
+     * footer), or null when both logos are images. Storefronts used to load all 23
+     * logo font families render-blocking on every page.
+     */
+    public function logoFontsStylesheetUrl(): ?string
+    {
+        // Google Fonts spec per family (single-weight families must not ask for 700).
+        $specs = [
+            'Almarai' => 'Almarai:wght@400;700', 'Amiri' => 'Amiri:wght@400;700', 'Bebas Neue' => 'Bebas+Neue',
+            'Cairo' => 'Cairo:wght@400;700', 'Cormorant Garamond' => 'Cormorant+Garamond:wght@400;700', 'DM Sans' => 'DM+Sans:wght@400;700',
+            'IBM Plex Sans Arabic' => 'IBM+Plex+Sans+Arabic:wght@400;700', 'Inter' => 'Inter:wght@400;700', 'Lalezar' => 'Lalezar',
+            'Lemonada' => 'Lemonada:wght@400;700', 'Lora' => 'Lora:wght@400;700', 'Montserrat' => 'Montserrat:wght@400;700',
+            'Noto Sans Arabic' => 'Noto+Sans+Arabic:wght@400;700', 'Nunito' => 'Nunito:wght@400;700', 'Oswald' => 'Oswald:wght@400;700',
+            'Playfair Display' => 'Playfair+Display:wght@400;700', 'Poppins' => 'Poppins:wght@400;700', 'Raleway' => 'Raleway:wght@400;700',
+            'Readex Pro' => 'Readex+Pro:wght@400;700', 'Reem Kufi' => 'Reem+Kufi:wght@400;700', 'Scheherazade New' => 'Scheherazade+New:wght@400;700',
+            'Space Grotesk' => 'Space+Grotesk:wght@400;700', 'Tajawal' => 'Tajawal:wght@400;700',
+        ];
+
+        $families = [];
+        foreach ([$this->resolvedLogo(), $this->resolvedFooterLogo()] as $logo) {
+            if (($logo['mode'] ?? 'image') === 'text' && preg_match("/'([^']+)'/", (string) $logo['font_family'], $m) && isset($specs[$m[1]])) {
+                $families[$specs[$m[1]]] = true;
+            }
+        }
+
+        return $families === []
+            ? null
+            : 'https://fonts.googleapis.com/css2?family=' . implode('&family=', array_keys($families)) . '&display=swap';
+    }
+
     public function resolvedLogo(): array
     {
         $settings = $this->appearanceSettings();

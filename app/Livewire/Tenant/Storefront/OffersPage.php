@@ -12,6 +12,15 @@ class OffersPage extends Component
     use HasStorefrontLayout;
     use ChecksCartStock;
 
+    public function mount(): void
+    {
+        // Only some themes ship an offers page; the others list the same flash-sale
+        // products through their category listing instead of failing with a 500.
+        if (!view()->exists($this->pageView('offers'))) {
+            $this->redirect(route('tenant.storefront.category', ['section' => 'flash_sale']));
+        }
+    }
+
     public function addToCart(int $productId): void
     {
         $product = \App\Models\Tenant\Product::with(['variants', 'centralProduct'])
@@ -43,6 +52,10 @@ class OffersPage extends Component
 
     public function render()
     {
+        if (!view()->exists($this->pageView('offers'))) {
+            return '<div></div>'; // mount() already redirected to the category listing
+        }
+
         $repo = app(StorefrontRepository::class);
 
         $banners = $repo->activeBanners();

@@ -7,8 +7,9 @@
     {{-- Logo fonts (text-logo builder) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Bebas+Neue&family=Cairo:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Inter:wght@400;700&family=Lalezar&family=Lemonada:wght@400;700&family=Lora:wght@400;700&family=Montserrat:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Nunito:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&family=Readex+Pro:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Space+Grotesk:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+    @if ($__logoFonts = app(\App\Repositories\Tenant\StorefrontRepository::class)->logoFontsStylesheetUrl())
+    <link rel="stylesheet" href="{{ $__logoFonts }}">
+    @endif
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -138,6 +139,10 @@
         <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
         @include('themes.souqify.layout.swiper-loop-guard')
     @endunless
+    @if ($stylesKey === 'styles')
+        {{-- Precompiled Tailwind v3 (resources/tailwind-v3), kept last so it wins like the old runtime <style>. --}}
+        <link rel="stylesheet" href="{{ asset('css/tw3-souqify.css') }}?v={{ @filemtime(public_path('css/tw3-souqify.css')) }}" />
+    @endif
 </head>
 
 <body @stack('body-attrs') class="bg-zinc-100 text-slate-900 antialiased">

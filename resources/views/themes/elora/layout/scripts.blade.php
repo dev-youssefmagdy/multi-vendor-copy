@@ -1,5 +1,5 @@
 <script>
-    window.__i18n = @json(json_decode(file_get_contents(lang_path(app()->getLocale() . '.json')), true) ?? []);
+    window.__i18n = @json(\App\Support\StorefrontJsTranslations::forCurrentLocale());
     window.trans = function (key, replacements) {
         var str = (window.__i18n && Object.prototype.hasOwnProperty.call(window.__i18n, key)) ? window.__i18n[key] : key;
         if (replacements) {
@@ -10,7 +10,6 @@
         return str;
     };
 </script>
-<script src="{{ asset('tailwindcss.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 

@@ -81,7 +81,7 @@
       class="newin-bg py-[24px] lg:py-[38px] flex flex-col gap-[16px] lg:gap-[24px] mt-12"
     >
       <img
-        src="{{ asset('elora-5/assets/images/new-in-texture.png') }}"
+        src="{{ asset('elora-5/assets/images/new-in-texture.webp') }}"
         alt=""
         class="newin-texture"
       />

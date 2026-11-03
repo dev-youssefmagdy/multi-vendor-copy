@@ -4,7 +4,7 @@
     <div class="absolute flex gap-[8px] aspect-square items-start left-0 p-[6px] top-0 w-full">
       <div class="absolute flex flex-col gap-[8px] h-full items-end left-0 top-0 w-full">
         <div class="absolute left-1/2 -translate-x-1/2 h-full rounded-t-[6px] top-0 w-full overflow-hidden">
-          <img src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
+          <img loading="lazy" decoding="async" src="{{ !empty($p['image']) ? $p['image'] : asset('elora-2/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
           @if (!empty($p['isOutOfStock']))
           <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
           @endif

@@ -181,7 +181,7 @@
           @endphp
           <div class="swiper-slide" wire:key="shop-cat-v4-{{ $category->id }}">
             <a href="{{ route('tenant.storefront.category', $category->slug) }}" class="sqv4-shopcat__tile">
-              <img src="{{ $__img }}" alt="{{ $__name }}" class="sqv4-shopcat__img" />
+              <img loading="lazy" decoding="async" src="{{ $__img }}" alt="{{ $__name }}" class="sqv4-shopcat__img" />
               <span class="sqv4-shopcat__label">{{ $__name }}</span>
             </a>
           </div>

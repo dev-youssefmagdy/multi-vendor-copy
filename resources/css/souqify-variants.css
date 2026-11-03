@@ -3,6 +3,8 @@
 /* Compiled Tailwind for Souqify variants v2-v6 (replaces the in-browser @tailwindcss/browser compiler). */
 @source '../views/themes/souqify/**/*.blade.php';
 @source '../views/components/**/*.blade.php';
+@source '../views/storefront/**/*.blade.php';
+@source '../views/livewire/tenant/storefront/**/*.blade.php';
 @source '../../public/souqify-1/*.js';
 @source '../../public/souqify-2/*.js';
 @source '../../public/souqify-3/*.js';

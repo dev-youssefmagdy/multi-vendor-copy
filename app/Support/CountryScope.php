@@ -91,6 +91,10 @@ final class CountryScope
     {
         $options = [self::ALL => 'All countries'];
 
+        // `name` is a translated attribute: load every country's translations in one query
+        // instead of one per country (~200 queries on the banner/coupon/flash-sale forms).
+        \Illuminate\Database\Eloquent\Collection::make($countries)->loadMissing('translations.language');
+
         foreach ($countries as $country) {
             $options[$country->id] = trim(($country->flag_emoji ? $country->flag_emoji.' ' : '').$country->name);
         }

@@ -3,8 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "build": "vite build && npm run build:tw3",
+        "dev": "vite",
+        "build:tw3": "node resources/tailwind-v3/build.cjs"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
@@ -14,6 +15,7 @@
         "laravel-vite-plugin": "^3.0.0",
         "pusher-js": "^8.6.0",
         "tailwindcss": "^4.0.0",
+        "tailwindcss3": "npm:tailwindcss@^3.4.17",
         "vite": "^8.0.0"
     },
     "dependencies": {

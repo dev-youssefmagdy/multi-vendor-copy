@@ -2,7 +2,7 @@
 @php $__deliveryDate = \Carbon\Carbon::now()->addDays(3)->translatedFormat('d F'); @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="group bg-[var(--color-bg-main)] flex items-stretch gap-[3px] lg:gap-[6.44px] rounded-[6px] lg:rounded-[12.87px] h-full lg:h-[192.98px] w-[285.22px] lg:w-[611.81px] shadow-[var(--shadow-card-lg)] overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl" style="text-decoration:none">
   <div class="relative shrink-0 w-[123.69px] lg:w-[265.32px] aspect-square">
-    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+    <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
     <button type="button" onclick="event.preventDefault(); event.stopPropagation(); eloraV4ToggleFavorite(this)"
       data-fav='{{ $p['favData'] ?? '{}' }}'
       aria-label="{{ __('Add to favorites') }}" class="elora-v4-heart-btn absolute top-[5px] start-[5px] lg:top-[8px] lg:start-[8px] bg-white cursor-pointer shadow-[0px_2.51px_2.51px_rgba(0,0,0,0.15)] lg:shadow-[0px_5.39px_5.39px_rgba(0,0,0,0.15)] flex items-center justify-center p-[5.03px] lg:p-[10.79px] rounded-full size-[20.11px] lg:size-[43.15px]">

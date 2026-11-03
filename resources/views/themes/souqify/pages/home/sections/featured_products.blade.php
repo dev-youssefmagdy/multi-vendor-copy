@@ -17,7 +17,7 @@
 
     <!-- =========== FEATURED PRODUCTS (dark) =========== -->
     <section class="bg bg-cover bg-center bg-no-repeat"
-        style="background-image: linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.72)), url('/souqify/assets/images/featured.jpg');"
+        style="background-image: linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.72)), url('/souqify/assets/images/featured.webp');"
         wire:ignore>
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
             <div class="flex items-center justify-between mb-3">

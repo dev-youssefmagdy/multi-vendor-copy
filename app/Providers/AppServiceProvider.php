@@ -89,6 +89,10 @@ class AppServiceProvider extends ServiceProvider
         // Per-request cache of the tenant order policy (cancellation / refund / exchange rules).
         $this->app->scoped(OrderPolicyService::class);
 
+        // One shell composer per request: it is attached to every tenant.layouts.partials.*
+        // view, and a fresh instance per view re-ran its ~40 navigation/setup queries each time.
+        $this->app->scoped(ShellComposer::class);
+
         // Swap Laravel's default translator for one that resolves tenant DB
         // overrides (Settings > Translations) before falling back to the lang
         // files, so every __()/@lang() call across the storefront and tenant

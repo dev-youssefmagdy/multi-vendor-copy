@@ -6,7 +6,7 @@
       <div class="absolute flex gap-[7.31px] h-full items-start left-0 p-[5.49px] top-0 w-full">
         <div class="absolute flex flex-col gap-[7.31px] h-full items-end left-0 top-0 w-full">
           <div class="absolute left-1/2 -translate-x-1/2 h-full rounded-t-[7.31px] top-0 w-full overflow-hidden">
-            <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+            <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
           </div>
           @if (!empty($p['badge']))
           <div class="flex h-[26px] items-center justify-center p-[4.81px] relative rounded-bl-[6.41px] rounded-tr-[6.41px] shrink-0" style="background:var(--color-accent-yellow)">

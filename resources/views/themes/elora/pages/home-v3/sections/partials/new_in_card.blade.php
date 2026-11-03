@@ -2,7 +2,7 @@
 <div class="swiper-slide">
   <a href="{{ $p['url'] ?? '#' }}" class="group bg-[#FDFDFD] flex items-stretch gap-[3px] lg:gap-0 rounded-[6px] lg:rounded-[9px] h-[90px] max-h-[90px] lg:h-[129px] lg:max-h-[129px] shadow-sm overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:scale-[1.02]">
     <div class="relative shrink-0 aspect-square h-full bg-[var(--color-page-bg)]">
-      <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
+      <img loading="lazy" decoding="async" src="{{ $p['image'] }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
       @if (!empty($p['isOutOfStock']))
       <div class="absolute inset-0 bg-white/60 flex items-center justify-center z-[5] pointer-events-none"><span class="bg-neutral-800 text-white text-[10px] lg:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide">{{ __('Out of Stock') }}</span></div>
       @endif

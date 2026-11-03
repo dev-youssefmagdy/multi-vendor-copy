@@ -1,1 +1,0 @@
-import{t as e}from"./bell-IYc8wiJB.js";import{r as t}from"./events-Cyr27uQe.js";import{n}from"./toast-CI99b6U-.js";import{t as r}from"./echo-_3y63HKZ.js";function i(i){e(i,{getEcho:r,onToast:e=>n.info(e.message,e.title)});let a=()=>i.dispatchEvent(new Event(`notif:refresh`));t(`tenant:notification-read`,a),t(`tenant:notification-read-all`,a)}export{i as init};

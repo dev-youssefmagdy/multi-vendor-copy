@@ -12,7 +12,7 @@
       wire:ignore
     >
       <img
-        src="{{ asset('elora-4/assets/images/best-seller-texture.png') }}"
+        src="{{ asset('elora-4/assets/images/best-seller-texture.webp') }}"
         alt=""
         class="texture-overlay"
       />

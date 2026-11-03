@@ -16,7 +16,7 @@
     $_scRaw = (!empty($customerCountryId)) ? $product->fixedShippingCostForCountry((int) $customerCountryId) : null;
     $displayShipping = $_scRaw !== null ? '+ ' . $symbol . number_format($_scRaw * $rate, 2) . ' ' . __('shipping') : null;
 
-    $img = $product->primary_image_url ?? asset('souqify/assets/images/product-default.png');
+    $img = $product->primary_image_url ?? asset('souqify/assets/images/product-default.webp');
 
     // Slider: collect all gallery + primary image URLs from central & tenant files
     $_sliderSrcs = $product instanceof \App\Models\Tenant\Product
