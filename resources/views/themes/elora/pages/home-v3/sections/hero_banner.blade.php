@@ -2,7 +2,6 @@
     <section class="relative mb-[16px] lg:mb-[48px]" wire:ignore>
       <div class="swiper hero-swiper">
         <div class="swiper-wrapper">
-          @php $heroBadges = [__('NEW USER'), __('FLASH SALE'), __('NEW SEASON')]; @endphp
           @forelse ($banners as $banner)
             @php
               $img = $banner->image_path ?? null;
@@ -43,11 +42,6 @@
                 <div
                   class="relative flex flex-col gap-[8px] lg:gap-[21px] items-start justify-center w-full lg:w-[530px]"
                 >
-                  <span
-                    class="text-white font-black text-[12px] lg:text-[31px] tracking-[1px] lg:tracking-[2.6px] rounded-[4px] lg:rounded-[10px] px-[8px] lg:px-[21px] py-[2px] lg:py-[5px]"
-                    style="background: var(--color-brand-pink)"
-                    >{{ $heroBadges[$loop->index % count($heroBadges)] }}</span
-                  >
                   <h1
                     class="font-black text-[26px] lg:text-[68px] text-white leading-[1.1]"
                   >
