@@ -120,9 +120,13 @@ function mountFlashSale() {
     // force-hidden with opacity so exactly 3 cards are ever visible, never
     // a 4th sliver, regardless of how the container width and spaceBetween
     // happen to interact.
+    // Swiper lays slides out right-to-left under dir="rtl", so a higher index
+    // sits on the visual left; mirror the rotation so the fan keeps tilting
+    // outward on both sides.
+    const rtlSign = document.documentElement.getAttribute("dir") === "rtl" ? -1 : 1;
     const applyLayout = (sw) => {
         sw.slides.forEach((slideEl, i) => {
-            const distSigned = i - sw.activeIndex;
+            const distSigned = (i - sw.activeIndex) * rtlSign;
             const dist = Math.min(Math.abs(distSigned), 2);
             const scale = 1 - dist * 0.18;
             const rotate = Math.max(

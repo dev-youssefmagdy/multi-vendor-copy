@@ -69,7 +69,7 @@
     @endphp
     <section
     wire:ignore
-      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[24px] lg:py-[42px]"
+      class="mt-[16px] lg:mt-0 px-[16px] lg:px-[56px] py-[24px] lg:py-[42px] overflow-hidden"
       style="
         background: linear-gradient(
           180deg,
@@ -89,7 +89,7 @@
             class="flex flex-col items-center lg:items-start tracking-[1px] lg:tracking-[1.5px]"
           >
             <p
-              class="font-semibold text-white text-[40px] lg:text-[100px] leading-[1.1]"
+              class="font-semibold text-white text-[40px] lg:text-[100px] rtl:lg:text-[64px] leading-[1.1]"
             >
               {{ __('Flash Sale') }}
             </p>
@@ -127,7 +127,7 @@
           </a>
         </div>
 
-        <div class="swiper flash-sale-swiper w-full lg:w-auto lg:shrink-0">
+        <div class="swiper flash-sale-swiper w-full lg:w-auto min-w-0 lg:shrink">
           <div class="swiper-wrapper" id="flashSaleWrapper">
             @forelse ($flashSaleProducts as $p)
               <div class="swiper-slide flash-sale-slide">

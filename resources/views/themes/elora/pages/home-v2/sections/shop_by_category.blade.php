@@ -25,7 +25,7 @@
         </h2>
       </div>
 
-      <div class="flex flex-col lg:flex-row items-start gap-[12px] w-[343px] lg:w-[1328px] h-[486px] lg:h-[330px]">
+      <div class="flex flex-col lg:flex-row items-start gap-[12px] w-[343px] lg:w-full lg:max-w-[1328px] h-[486px] lg:h-[330px]">
         {{-- Block 1: large tile (left) + stacked pair (right) --}}
         <div class="flex flex-row items-center gap-[12px] w-[343px] lg:w-[658px] h-[237px] lg:h-[330px] lg:flex-1">
           <a

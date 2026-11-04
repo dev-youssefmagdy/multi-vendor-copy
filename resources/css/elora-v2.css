@@ -556,6 +556,7 @@ body {
    everything else, so the carousel never bleeds into the text column next
    to it and never shows a 4th card peeking in. */
 .flash-sale-swiper {
+  max-width: 100%;
   width: min(380px, 100%) !important;
   overflow: hidden;
   /* Extra padding on every side beyond the card's own box: rotating a tall
@@ -584,6 +585,7 @@ body {
 @media (min-width: 1024px) {
   .flash-sale-swiper {
     width: 760px !important;
+    max-width: 100%;
     padding: 60px 30px;
   }
   .flash-sale-slide {

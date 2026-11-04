@@ -2548,11 +2548,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-CbXiIMhC.css",
+    "file": "assets/app-Viyk3zuB.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DjkJq8_m.css",
+    "file": "assets/ecommet-Po0ZOahi.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2561,7 +2561,7 @@
     "isEntry": true
   },
   "resources/css/elora-v2.css": {
-    "file": "assets/elora-v2-C9-KURg3.css",
+    "file": "assets/elora-v2-CX85RHJg.css",
     "name": "elora-v2",
     "names": [
       "elora-v2.css"
@@ -2606,7 +2606,7 @@
     "isEntry": true
   },
   "resources/css/elora-variants.css": {
-    "file": "assets/souqify-variants-C124k6yG.css",
+    "file": "assets/souqify-variants-CUksAszv.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2845,7 +2845,7 @@
     "isEntry": true
   },
   "resources/css/souqify-variants.css": {
-    "file": "assets/souqify-variants-C124k6yG.css",
+    "file": "assets/souqify-variants-CUksAszv.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2855,7 +2855,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-DOt2bz6i.css",
+    "file": "assets/souqify-qZsYtCZQ.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2864,7 +2864,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-DGuscM9I.css",
+    "file": "assets/app-BEYrQWT-.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2872,7 +2872,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-CbXiIMhC.css"
+      "assets/app-Viyk3zuB.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3002,7 +3002,7 @@
     ]
   },
   "resources/js/elora-v2-carousels.js": {
-    "file": "assets/elora-v2-carousels-Nryx9Qb_.js",
+    "file": "assets/elora-v2-carousels-GD0dn0hG.js",
     "name": "elora-v2-carousels",
     "src": "resources/js/elora-v2-carousels.js",
     "isEntry": true
