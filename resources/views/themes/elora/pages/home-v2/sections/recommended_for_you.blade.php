@@ -80,7 +80,7 @@
       </div>
       <div
         id="recommendedWrapper"
-        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[12px] lg:gap-[24px]"
+        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-[12px] lg:gap-[24px]"
       >
         @forelse ($recommendedCards as $p)
           @php

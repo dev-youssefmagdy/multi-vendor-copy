@@ -214,7 +214,7 @@
         style="display:none; background:rgba(0,0,0,0.5);">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-                <h3 id="variant-modal-title" class="text-[15px] font-semibold text-[#242424] pr-4">
+                <h3 id="variant-modal-title" class="text-[15px] font-semibold text-[#242424] pe-4">
                     {{ __('Select a variant') }}
                 </h3>
                 <button onclick="closeVariantModal()" aria-label="{{ __('Close') }}"

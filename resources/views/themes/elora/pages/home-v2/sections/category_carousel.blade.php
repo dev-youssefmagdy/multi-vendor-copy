@@ -48,7 +48,7 @@ wire:ignore
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $bags['name'] }}
         </p>
-        <img src="{{ $bags['image'] }}" alt="{{ $bags['name'] }}" class="absolute z-[1] w-[71px] h-[77px] left-[18px] top-[43px] lg:w-[140.15px] lg:h-[151.99px] lg:left-[35.53px] lg:top-[84.88px] object-contain" />
+        <img src="{{ $bags['image'] }}" alt="{{ $bags['name'] }}" class="absolute z-[1] w-[71px] h-[77px] start-[18px] top-[43px] lg:w-[140.15px] lg:h-[151.99px] lg:start-[35.53px] lg:top-[84.88px] object-contain" />
       </a>
 
       {{-- 2: Gaming --}}
@@ -56,7 +56,7 @@ wire:ignore
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $gaming['name'] }}
         </p>
-        <img src="{{ $gaming['image'] }}" alt="{{ $gaming['name'] }}" class="absolute z-[1] w-[74.88px] h-[69.18px] left-[12px] top-[43px] lg:w-[147.81px] lg:h-[136.55px] lg:left-[23.69px] lg:top-[84.88px] object-contain [transform:matrix(-0.96,-0.26,-0.26,0.96,0,0)]" />
+        <img src="{{ $gaming['image'] }}" alt="{{ $gaming['name'] }}" class="absolute z-[1] w-[74.88px] h-[69.18px] start-[12px] top-[43px] lg:w-[147.81px] lg:h-[136.55px] lg:start-[23.69px] lg:top-[84.88px] object-contain [transform:matrix(-0.96,-0.26,-0.26,0.96,0,0)]" />
       </a>
 
       {{-- 3: Home Accessories + Electronics (stack) --}}
@@ -80,7 +80,7 @@ wire:ignore
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] text-center px-1 truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $bags['name'] }}
         </p>
-        <img src="{{ $bags['image'] }}" alt="{{ $bags['name'] }}" class="absolute z-[1] w-[71px] h-[77px] left-[18px] top-[43px] lg:w-[140.15px] lg:h-[151.99px] lg:left-[35.53px] lg:top-[84.88px] object-contain" />
+        <img src="{{ $bags['image'] }}" alt="{{ $bags['name'] }}" class="absolute z-[1] w-[71px] h-[77px] start-[18px] top-[43px] lg:w-[140.15px] lg:h-[151.99px] lg:start-[35.53px] lg:top-[84.88px] object-contain" />
       </a>
 
       {{-- 5: Home Accessories + Electronics (stack, repeat) --}}
@@ -104,7 +104,7 @@ wire:ignore
         <p class="font-semibold text-[12px] lg:text-[23.687px] leading-[150%] tracking-[0.5px] lg:tracking-[0.986957px] truncate max-w-full relative z-0" style="color: var(--color-accent-purple)">
           {{ $gaming['name'] }}
         </p>
-        <img src="{{ $gaming['image'] }}" alt="{{ $gaming['name'] }}" class="absolute z-[1] w-[74.88px] h-[69.18px] left-[12px] top-[43px] lg:w-[147.81px] lg:h-[136.55px] lg:left-[23.69px] lg:top-[84.88px] object-contain [transform:matrix(-0.96,-0.26,-0.26,0.96,0,0)]" />
+        <img src="{{ $gaming['image'] }}" alt="{{ $gaming['name'] }}" class="absolute z-[1] w-[74.88px] h-[69.18px] start-[12px] top-[43px] lg:w-[147.81px] lg:h-[136.55px] lg:start-[23.69px] lg:top-[84.88px] object-contain [transform:matrix(-0.96,-0.26,-0.26,0.96,0,0)]" />
       </a>
 
     </div>
