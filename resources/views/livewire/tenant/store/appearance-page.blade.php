@@ -346,6 +346,13 @@
                                 placeholder="https://" :error="$errors->has('promoBannerImageUrl')" />
                             @error('promoBannerImageUrl')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
+                        <div class="span-2">
+                            <label class="field-label">Featured Products Card Image (Souqify)</label>
+                            <x-input type="url" wire:model.defer="souqifyFeaturedPromoImageUrl"
+                                placeholder="https://" :error="$errors->has('souqifyFeaturedPromoImageUrl')" />
+                            <p class="panel-copy">Background of the discount card beside Featured Products on the Souqify home page. Leave empty to use the default.</p>
+                            @error('souqifyFeaturedPromoImageUrl')<div class="field-error">{{ $message }}</div>@enderror
+                        </div>
                     </div>
                 </section>
             </form>

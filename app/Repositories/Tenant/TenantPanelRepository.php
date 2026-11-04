@@ -2182,6 +2182,7 @@ class TenantPanelRepository
                 'promo_banner_link',
                 'promo_banner_cta_text',
                 'promo_banner_image_url',
+                'souqify_featured_promo_image_url',
                 'top_header_link_1_text',
                 'top_header_link_1_url',
                 'top_header_link_2_text',

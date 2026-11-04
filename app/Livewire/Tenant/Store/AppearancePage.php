@@ -163,6 +163,7 @@ class AppearancePage extends TenantPage
     public string $promoBannerLink = '';
     public string $promoBannerCtaText = '';
     public string $promoBannerImageUrl = '';
+    public string $souqifyFeaturedPromoImageUrl = '';
 
     // ── Footer ────────────────────────────────────────────────────────────────
     public string $footerText = '';
@@ -201,6 +202,7 @@ class AppearancePage extends TenantPage
         $this->promoBannerLink = $settings['promo_banner_link'] ?? '';
         $this->promoBannerCtaText = $settings['promo_banner_cta_text'] ?? '';
         $this->promoBannerImageUrl = $settings['promo_banner_image_url'] ?? '';
+        $this->souqifyFeaturedPromoImageUrl = $settings['souqify_featured_promo_image_url'] ?? '';
 
         // Build the per-locale matrix then overlay any saved translations.
         $this->footerTranslations = $languages->mapWithKeys(fn($l) => [
@@ -428,6 +430,7 @@ class AppearancePage extends TenantPage
             'promoBannerLink' => ['nullable', 'url', 'max:500'],
             'promoBannerCtaText' => ['nullable', 'string', 'max:40'],
             'promoBannerImageUrl' => ['nullable', 'url', 'max:1000'],
+            'souqifyFeaturedPromoImageUrl' => ['nullable', 'url', 'max:1000'],
         ]);
 
         $service->savePromoBannerSettings([
@@ -436,6 +439,7 @@ class AppearancePage extends TenantPage
             'promo_banner_link' => $this->promoBannerLink,
             'promo_banner_cta_text' => $this->promoBannerCtaText,
             'promo_banner_image_url' => $this->promoBannerImageUrl,
+            'souqify_featured_promo_image_url' => $this->souqifyFeaturedPromoImageUrl,
         ]);
 
         $this->toast('Promotional banner updated.');

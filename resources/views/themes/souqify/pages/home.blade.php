@@ -26,7 +26,8 @@ $specialProds = $topRatedProducts ?? collect();
 $recommendedProds = $recommendedProducts ?? collect();
 
 $promoCardBanner = $banners->skip(5)->first() ?? $promoBanners->first() ?? $heroBanner;
-$promoCardImage = $promoCardBanner?->image_path ??
+$__featuredPromoSetting = app(\App\Services\Tenant\HomeViewData::class)->settings(['souqify_featured_promo_image_url'])['souqify_featured_promo_image_url'] ?? null;
+$promoCardImage = ($__featuredPromoSetting ?: null) ?? $promoCardBanner?->image_path ??
 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80';
 
 // Promo card discount: highest active flash-sale % among featured products, else static 30
