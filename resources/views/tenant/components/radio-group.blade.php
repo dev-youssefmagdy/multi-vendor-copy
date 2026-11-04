@@ -29,9 +29,12 @@
                     @if((string) $option['value'] === (string) $resolved) checked @endif
                     @if($required) required @endif>
                 <span class="t-radio-card-body">
+                    @if(!empty($option['icon']))<span class="t-radio-card-icon" aria-hidden="true">{{ $option['icon'] }}</span>@endif
                     @if(!empty($option['image']))<img src="{{ $option['image'] }}" alt="" class="t-radio-card-image">@endif
-                    <span class="t-radio-card-label">{{ $option['label'] }}</span>
-                    @if(!empty($option['description']))<span class="t-radio-card-desc">{{ $option['description'] }}</span>@endif
+                    <span class="t-radio-card-text">
+                        <span class="t-radio-card-label">{{ $option['label'] }}</span>
+                        @if(!empty($option['description']))<span class="t-radio-card-desc">{{ $option['description'] }}</span>@endif
+                    </span>
                 </span>
             </label>
         @endforeach

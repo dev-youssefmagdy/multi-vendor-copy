@@ -24,7 +24,10 @@
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="code" label="Code" required maxlength="50" />
                 <x-tenant::input name="name_text" label="Name" required maxlength="255" />
-                <x-tenant::radio-group name="type" label="Type" variant="pills" required :options="['fixed' => 'Fixed amount', 'percentage' => 'Percentage']" value="fixed" />
+                <x-tenant::radio-group name="type" label="Type" variant="cards" required :options="[
+                    ['value' => 'fixed', 'label' => 'Fixed amount', 'icon' => '$', 'description' => 'Take a set amount off the order'],
+                    ['value' => 'percentage', 'label' => 'Percentage', 'icon' => '%', 'description' => 'Take a percent off the order'],
+                ]" value="fixed" wrapper-class="span-2" />
                 <x-tenant::input type="number" step="0.01" min="0" name="value" label="Value" required />
                 <x-tenant::input type="number" step="0.01" min="0" name="minimum_spend" label="Minimum Spend" />
                 <x-tenant::date name="start_date" label="Start Date" enable-time />

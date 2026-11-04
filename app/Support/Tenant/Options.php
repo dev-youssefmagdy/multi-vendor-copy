@@ -63,6 +63,12 @@ final class Options
                 $normalized['image'] = $row['image'];
             }
 
+            foreach (['description', 'icon'] as $extra) {
+                if (isset($row[$extra])) {
+                    $normalized[$extra] = $row[$extra];
+                }
+            }
+
             return $normalized;
         }
 
