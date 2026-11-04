@@ -1158,7 +1158,15 @@ class StorefrontRepository
             function () use ($theme, $country) {
                 $tenantChoice = null;
 
-                if ($country) {
+                // A country override only applies to visitors from a country that is
+                // enabled for this theme (the Countries modal's selection); any other
+                // visitor gets the store-wide choice for the active theme.
+                if ($country && \App\Models\Tenant\ThemeCountry::query()
+                    ->where('theme_id', $theme->id)
+                    ->where('country_id', $country->id)
+                    ->where('is_enabled', true)
+                    ->exists()
+                ) {
                     $tenantChoice = TenantHomeVariant::query()
                         ->where('theme_id', $theme->id)
                         ->where('country_id', $country->id)

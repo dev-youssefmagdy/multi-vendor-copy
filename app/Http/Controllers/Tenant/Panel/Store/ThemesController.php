@@ -252,7 +252,15 @@ final class ThemesController extends PanelController
                 ->update(['is_enabled' => true]);
         }
 
+        // Overrides only make sense for enabled countries; drop the ones left behind.
+        TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNotNull('country_id')
+            ->whereNotIn('country_id', $enabled)
+            ->delete();
+
         CacheVersion::bump('Theme');
+        CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
         return $this->success('Theme countries updated successfully.');
     }
