@@ -30,30 +30,30 @@
                     </svg>
                 </a>
             </div>
+            @php
+                // Row split: <=4 products => single row; 5-8 => 4 on the first row, the rest on the second; >8 => halved.
+                $featuredTotal = $featuredProds->count();
+                $featuredFirstRow = $featuredTotal <= 4 ? $featuredTotal : ($featuredTotal <= 8 ? 4 : (int) ceil($featuredTotal / 2));
+                $featuredRows = array_filter([
+                    $featuredProds->take($featuredFirstRow),
+                    $featuredProds->skip($featuredFirstRow),
+                ], fn ($row) => $row->isNotEmpty());
+            @endphp
             <div class="flex gap-6">
                 <div class="flex-1 max-w-full lg:max-w-[88%]">
-                    <div class="swiper featured-product-slide mb-7">
+                    @forelse ($featuredRows as $row)
+                    <div class="swiper featured-product-slide {{ $loop->last ? '' : 'mb-7' }}">
                         <div class="swiper-wrapper">
-                            @forelse ($featuredProds->take(3) as $product)
+                            @foreach ($row as $product)
                             <div class="swiper-slide  w-[calc(50%-6px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
                                 @include('themes.souqify.pages._product-card', [])
                             </div>
-                            @empty
-                            <p class="col-span-full text-center text-white/70 py-6">{{ __('No products yet.') }}</p>
-                            @endforelse
+                            @endforeach
                         </div>
                     </div>
-                    <div class="swiper featured-product-slide">
-                        <div class="swiper-wrapper">
-                            @forelse ($featuredProds->skip(3)->take(3) as $product)
-                            <div class="swiper-slide  w-[calc(50%-6px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
-                                @include('themes.souqify.pages._product-card', [])
-                            </div>
-                            @empty
-                            <p class="col-span-full text-center text-white/70 py-6">{{ __('No products yet.') }}</p>
-                            @endforelse
-                        </div>
-                    </div>
+                    @empty
+                    <p class="text-center text-white/70 py-6">{{ __('No products yet.') }}</p>
+                    @endforelse
                 </div>
                 <!-- large screen Promo card -->
                 <div class="hidden lg:flex flex-col items-center justify-center text-center rounded-2xl p-8 overflow-hidden bg-cover bg-center w-36"

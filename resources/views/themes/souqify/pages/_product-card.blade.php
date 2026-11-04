@@ -188,11 +188,20 @@
             </div>
         @endif
 
-        {{-- Badge (from product_badges) --}}
-        @if ($isOutOfStock || $badgeLabel)
-            <div
-                class="absolute top-0 start-0 {{ $isOutOfStock ? 'bg-neutral-700' : 'bg-[color:var(--sq-primary)]' }} text-white text-[10px] px-3 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
-                {{ $isOutOfStock ? __('Out of Stock') : '🔥 ' . $badgeLabel }}
+        {{-- Top badges: active badge (from product_badges) with the discount % side by side --}}
+        @if ($isOutOfStock || $badgeLabel || $discountPct > 0)
+            <div class="absolute top-0 start-0 flex items-start">
+                @if ($isOutOfStock || $badgeLabel)
+                    <div
+                        class="{{ $isOutOfStock ? 'bg-neutral-700' : 'bg-[color:var(--sq-primary)]' }} text-white text-[10px] px-3 py-1.5 {{ ($hasDiscount && !$isOutOfStock) ? '' : 'rounded-ee-lg' }} font-medium whitespace-nowrap">
+                        {{ $isOutOfStock ? __('Out of Stock') : '🔥 ' . $badgeLabel }}
+                    </div>
+                @endif
+                @if ($hasDiscount && $discountPct > 0 && !$isOutOfStock)
+                    <div class="{{ $discBadgeCls }} text-[10px] px-2 py-1.5 rounded-ee-lg font-medium whitespace-nowrap">
+                        {{ $discountPct }}% {{ __('off') }}
+                    </div>
+                @endif
             </div>
         @endif
     </div>
@@ -224,8 +233,6 @@
                 class="text-[color:var(--sq-primary)] text-base sm:text-xl font-semibold leading-none">{{ $symbol }}{{ $displaySell }}</span>
             @if ($displayReal)
                 <span class="text-neutral-400 text-sm line-through">{{ $symbol }}{{ $displayReal }}</span>
-                <span class="{{ $discBadgeCls }} text-xs px-1 sm:px-2 py-0.5 rounded font-medium">{{ $discountPct }}%
-                    {{ __('off') }}</span>
             @endif
         </div>
     </a>
