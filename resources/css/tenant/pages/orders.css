@@ -857,8 +857,9 @@
 
     [data-theme="dark"] .od-queue.rq-queue .rq-name { color: var(--ds-text); }
 
-    /* The mobile design has no Add Request button in the header. */
-    .rq-page > .db-welcome .rq-actions { display: none; }
+    /* Add Request stays visible on mobile: full-width button under the title. */
+    .rq-page > .db-welcome .rq-actions { display: flex; width: 100%; gap: 12px; }
+    .t-scope .rq-page > .db-welcome .rq-add { flex: 1; min-width: 0; width: 100%; height: 52px; font-size: 16px; }
 
     .od-queue.rq-queue td:last-child { grid-area: act; align-items: flex-end !important; }
 
