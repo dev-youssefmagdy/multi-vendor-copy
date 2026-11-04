@@ -1,1 +1,0 @@
-import{t as e}from"./forms-BAt7Ciw2.js";export{e as TenantForm};

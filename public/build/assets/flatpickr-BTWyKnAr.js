@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/flatpickr-CveviJq_.css"])))=>i.map(i=>d[i]);
+import{t as e}from"./preload-helper-Cdi5alSk.js";async function t(t=`en`){let{default:n}=await e(async()=>{let{default:e}=await import(`./esm-CgRIT-4p.js`);return{default:e}},[]);if(await e(()=>Promise.resolve({}),__vite__mapDeps([0])),String(t).startsWith(`ar`)){let{Arabic:t}=await e(async()=>{let{Arabic:e}=await import(`./ar-Bnz0-Bfr.js`);return{Arabic:e}},[]);n.l10ns.ar=t}return n}export{t};
