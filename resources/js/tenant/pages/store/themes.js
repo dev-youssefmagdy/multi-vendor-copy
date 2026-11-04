@@ -98,13 +98,20 @@ document.addEventListener('input', (event) => {
 
 let _cvActionUrl = '';
 
-function renderCvRows(countries, variants) {
+function renderCvRows(countries, variants, storeVariant) {
     if (!countries.length) {
-        return '<p class="theme-country-empty">No countries are configured for this theme.</p>';
+        return '<p class="theme-country-empty">No countries are enabled for this theme. Enable some from the Countries button first.</p>';
     }
 
-    const defaultOption = '<option value="">Default</option>';
+    // The empty option means "follow the store's variant". When that variant is
+    // the default one, it is the single "Default" entry; otherwise the default
+    // variant stays selectable and the empty option names what it follows.
+    const followsDefault = !storeVariant || storeVariant.is_default;
+    const defaultOption = followsDefault
+        ? '<option value="">Default</option>'
+        : `<option value="">Same as store (${escapeHtml(storeVariant.name)})</option>`;
     const variantOptions = variants
+        .filter((v) => !(followsDefault && v.is_default))
         .map((v) => `<option value="${v.id}">${escapeHtml(v.name)}</option>`)
         .join('');
 
@@ -159,6 +166,7 @@ async function openCvModal(trigger) {
         listEl.innerHTML = renderCvRows(
             response.data?.countries ?? [],
             response.data?.variants ?? [],
+            response.data?.store_variant ?? null,
         );
         hydrateCvSelects(listEl);
     }

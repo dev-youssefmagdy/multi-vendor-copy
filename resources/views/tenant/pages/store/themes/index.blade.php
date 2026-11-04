@@ -24,92 +24,99 @@
 
         <x-tenant::stats-grid :stats="$stats" />
 
-        @if($variantCards)
-            <section class="theme-grid">
-                @foreach($variantCards as $theme)
-                    <article class="theme-card {{ $theme['is_active'] ? 'is-active' : '' }} fu d{{ ($loop->index % 6) + 1 }}">
-                        <div class="theme-card-preview">
-                            <div class="theme-card-fallback">
-                                <span>{{ $theme['initials'] }}</span>
-                            </div>
+        @php
+            // One group (tab) per base theme; its home-page variants are the items.
+            $themeGroups = collect($variantCards)->groupBy('theme_id')->map(function ($cards) {
+                $first = $cards->first();
 
-                            @if($theme['is_active'])
-                                <div class="theme-card-status">Live Theme</div>
-                            @endif
-                        </div>
+                return [
+                    'theme_id' => $first['theme_id'],
+                    'name' => $first['theme_name'],
+                    'initials' => \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr((string) $first['theme_name'], 0, 2)),
+                    'is_universal' => $first['is_universal'],
+                    'scope_label' => $first['scope_label'],
+                    'countries_label' => $first['countries_label'],
+                    'has_countries' => $first['has_countries'],
+                    'has_active' => $cards->contains('is_active', true),
+                    'cards' => $cards->values(),
+                ];
+            })->values();
+        @endphp
 
-                        <div class="theme-card-body">
-                            <div class="theme-card-copy">
-                                <h3 class="theme-card-title">{{ $theme['name'] }}</h3>
-                                <div class="theme-card-subtitle">{{ $theme['theme_name'] }}</div>
-                                <div class="theme-card-subtitle">
-                                    <span class="theme-scope-badge theme-scope-{{ $theme['is_universal'] ? 'universal' : 'specific' }}">
-                                        {{ $theme['scope_label'] }}
-                                    </span>
-                                    <span>{{ $theme['countries_label'] }}</span>
+        @if($themeGroups->isNotEmpty())
+            <div class="theme-groups">
+                @foreach($themeGroups as $group)
+                    <section class="theme-group-panel" id="theme-{{ $group['theme_id'] }}" aria-labelledby="theme-title-{{ $group['theme_id'] }}">
+
+                        <header class="theme-group-header">
+                            <div class="theme-group-identity">
+                                <span class="theme-group-avatar" aria-hidden="true">{{ $group['initials'] }}</span>
+                                <div class="theme-group-copy">
+                                    <h3 class="theme-group-title" id="theme-title-{{ $group['theme_id'] }}">
+                                        {{ $group['name'] }}
+                                        @if($group['has_active'])
+                                            <span class="theme-group-live">Live</span>
+                                        @endif
+                                    </h3>
+                                    <div class="theme-group-meta">
+                                        <span class="theme-scope-badge theme-scope-{{ $group['is_universal'] ? 'universal' : 'specific' }}">{{ $group['scope_label'] }}</span>
+                                        <span>{{ $group['countries_label'] }}</span>
+                                        <span aria-hidden="true">·</span>
+                                        <span>{{ $group['cards']->count() }} {{ \Illuminate\Support\Str::plural('variant', $group['cards']->count()) }}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="theme-card-actions">
-                                @if($theme['action_method'] === 'activateVariant')
-                                    <button type="button" class="{{ $theme['action_class'] }}"
-                                        data-action-url="{{ route('tenant.store.themes.variants.activate', ['theme' => $theme['theme_id'], 'variant' => $theme['variant_id']]) }}"
-                                        data-action-method="POST"
-                                        data-success="emit:tenant:setup-progress:refresh reload-page">
-                                        {{ $theme['action_label'] }}
-                                    </button>
-                                @elseif($theme['action_method'] === 'activateTheme')
-                                    <button type="button" class="{{ $theme['action_class'] }}"
-                                        data-action-url="{{ route('tenant.store.themes.activate', $theme['theme_id']) }}"
-                                        data-action-method="POST"
-                                        data-success="emit:tenant:setup-progress:refresh reload-page">
-                                        {{ $theme['action_label'] }}
-                                    </button>
-                                @elseif($theme['action_method'] === 'deactivateTheme')
-                                    <button type="button" class="{{ $theme['action_class'] }}"
-                                        data-action-url="{{ route('tenant.store.themes.deactivate', $theme['theme_id']) }}"
-                                        data-action-method="POST"
-                                        data-success="emit:tenant:setup-progress:refresh reload-page">
-                                        {{ $theme['action_label'] }}
-                                    </button>
-                                @else
-                                    <button type="button" class="{{ $theme['action_class'] }}" disabled>
-                                        {{ $theme['action_label'] }}
-                                    </button>
-                                @endif
-
-                                <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer" class="theme-pill-btn">Preview</a>
-
-                                @if(!empty($theme['storefront_url']))
-                                    <a href="{{ $theme['storefront_url'] }}" target="_blank" rel="noopener noreferrer" class="theme-pill-btn theme-pill-btn-live">View Live</a>
-                                @endif
-
-                                @if($theme['has_countries'])
+                            @if($group['has_countries'])
+                                <div class="theme-group-actions">
                                     <button type="button" class="theme-pill-btn"
                                         data-theme-countries-open
-                                        data-theme-id="{{ $theme['theme_id'] }}"
-                                        data-theme-name="{{ $theme['theme_name'] }}"
-                                        data-countries-url="{{ route('tenant.store.themes.countries', $theme['theme_id']) }}"
-                                        data-countries-action="{{ route('tenant.store.themes.countries.update', $theme['theme_id']) }}">
+                                        data-theme-id="{{ $group['theme_id'] }}"
+                                        data-theme-name="{{ $group['name'] }}"
+                                        data-countries-url="{{ route('tenant.store.themes.countries', $group['theme_id']) }}"
+                                        data-countries-action="{{ route('tenant.store.themes.countries.update', $group['theme_id']) }}">
                                         Countries
                                     </button>
-                                @endif
-
-                                @if($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"
                                         data-theme-cv-open
-                                        data-theme-id="{{ $theme['theme_id'] }}"
-                                        data-theme-name="{{ $theme['theme_name'] }}"
-                                        data-cv-url="{{ route('tenant.store.themes.country-variants', $theme['theme_id']) }}"
-                                        data-cv-action="{{ route('tenant.store.themes.country-variants.update', $theme['theme_id']) }}">
+                                        data-theme-id="{{ $group['theme_id'] }}"
+                                        data-theme-name="{{ $group['name'] }}"
+                                        data-cv-url="{{ route('tenant.store.themes.country-variants', $group['theme_id']) }}"
+                                        data-cv-action="{{ route('tenant.store.themes.country-variants.update', $group['theme_id']) }}">
                                         Country Variants
                                     </button>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
+                        </header>
+
+                        <div class="theme-grid">
+                            @foreach($group['cards'] as $theme)
+                                <article class="theme-card {{ $theme['is_active'] ? 'is-active' : '' }} fu d{{ ($loop->index % 6) + 1 }}">
+                                    <div class="theme-card-preview">
+                                        <div class="theme-card-fallback">
+                                            <span>{{ $theme['initials'] }}</span>
+                                        </div>
+
+                                        @if($theme['is_active'])
+                                            <div class="theme-card-status">Live Theme</div>
+                                        @endif
+                                    </div>
+
+                                    <div class="theme-card-body">
+                                        <div class="theme-card-copy">
+                                            <h3 class="theme-card-title">{{ $theme['name'] }}</h3>
+                                        </div>
+
+                                        <div class="theme-card-actions">
+@include('tenant.pages.store.themes._variant-card-actions', ['theme' => $theme])
+                                        </div>
+                                    </div>
+                                </article>
+                            @endforeach
                         </div>
-                    </article>
+                    </section>
                 @endforeach
-            </section>
+            </div>
         @else
             <div class="theme-empty-state">
                 <div class="empty-state-title">No variants available</div>

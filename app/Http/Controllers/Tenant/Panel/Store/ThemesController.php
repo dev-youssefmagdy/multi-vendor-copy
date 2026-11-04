@@ -266,8 +266,15 @@ final class ThemesController extends PanelController
             ->where('is_active', true)
             ->orderByDesc('is_default')
             ->orderBy('name')
-            ->get(['id', 'name', 'key'])
+            ->get(['id', 'name', 'key', 'is_default'])
         );
+
+        // Variant a country follows when it has no override (the store-wide choice for this theme).
+        $storeVariantId = TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+        $storeVariant = $variantRows->firstWhere('id', $storeVariantId) ?? $variantRows->firstWhere('is_default', true);
 
         $assignments = TenantHomeVariant::query()
             ->where('theme_id', $theme->id)
@@ -276,7 +283,8 @@ final class ThemesController extends PanelController
             ->map(fn ($v) => (int) $v)
             ->all();
 
-        $countries = $theme->countries->map(fn (ThemeCountry $c) => [
+        // Same list as the Countries modal's selection: only countries enabled for this theme.
+        $countries = $theme->countries->where('is_enabled', true)->map(fn (ThemeCountry $c) => [
             'country_id'      => (int) $c->country_id,
             'name'            => $c->name,
             'iso2'            => $c->iso2,
@@ -288,7 +296,8 @@ final class ThemesController extends PanelController
             'data' => [
                 'theme_id'   => $theme->id,
                 'theme_name' => $theme->name,
-                'variants'   => $variantRows->map(fn ($v) => ['id' => $v->id, 'name' => $v->name])->values(),
+                'variants'   => $variantRows->map(fn ($v) => ['id' => $v->id, 'name' => $v->name, 'is_default' => (bool) $v->is_default])->values(),
+                'store_variant' => $storeVariant ? ['id' => $storeVariant->id, 'name' => $storeVariant->name, 'is_default' => (bool) $storeVariant->is_default] : null,
                 'countries'  => $countries,
             ],
         ]);
@@ -297,7 +306,7 @@ final class ThemesController extends PanelController
     public function updateCountryVariants(Request $request, Theme $theme): JsonResponse
     {
         $theme->load('countries');
-        $allowedCountryIds = $theme->countries->pluck('country_id')->map(fn ($v) => (int) $v)->all();
+        $allowedCountryIds = $theme->countries->where('is_enabled', true)->pluck('country_id')->map(fn ($v) => (int) $v)->all();
 
         $variantIds = tenancy()->central(fn () => HomeVariant::query()
             ->where('theme_slug', strtolower($theme->slug))

@@ -4171,7 +4171,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/themes.js": {
-    "file": "assets/themes-7CeZBdLO.js",
+    "file": "assets/themes-CbSceTOc.js",
     "name": "themes",
     "src": "resources/js/tenant/pages/store/themes.js",
     "isEntry": true,
@@ -4180,7 +4180,7 @@
       "_modals-CJ5V2yfz.js"
     ],
     "css": [
-      "assets/themes-CgXp04dW.css"
+      "assets/themes-VbLtjRBO.css"
     ]
   },
   "resources/js/tenant/pages/support/help.js": {

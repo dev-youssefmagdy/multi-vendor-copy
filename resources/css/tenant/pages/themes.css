@@ -392,3 +392,115 @@
 .theme-pill-btn.is-danger:hover {
     background: rgba(239, 68, 68, 0.2);
 }
+
+/* ── Theme groups (tabs) ──────────────────────────────────────────────────── */
+
+.theme-groups {
+    display: grid;
+    gap: 40px;
+}
+
+.theme-group-panel {
+    display: grid;
+    gap: 20px;
+}
+
+.theme-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, white 4%), color-mix(in srgb, var(--card2) 94%, black 6%));
+}
+
+.theme-group-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.theme-group-avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: var(--ds-gradient);
+    color: #F5F5F5;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.theme-group-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.theme-group-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.theme-group-live {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--green, #22c55e) 16%, transparent);
+    color: var(--green, #22c55e);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.theme-group-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    color: var(--t2);
+    font-size: 13px;
+}
+
+.theme-group-meta .theme-scope-badge {
+    margin-right: 0;
+}
+
+.theme-group-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.theme-group-actions .theme-pill-btn {
+    width: auto;
+    min-height: 42px;
+}
+
+@media (max-width: 720px) {
+    .theme-group-header {
+        padding: 14px;
+    }
+
+    .theme-group-actions {
+        width: 100%;
+    }
+
+    .theme-group-actions .theme-pill-btn {
+        flex: 1 1 0;
+    }
+}
