@@ -2548,11 +2548,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Viyk3zuB.css",
+    "file": "assets/app-IVYAGY9Q.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-Po0ZOahi.css",
+    "file": "assets/ecommet-Dqhxq36p.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2606,7 +2606,7 @@
     "isEntry": true
   },
   "resources/css/elora-variants.css": {
-    "file": "assets/souqify-variants-CUksAszv.css",
+    "file": "assets/souqify-variants-DVaBY5Qq.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2845,7 +2845,7 @@
     "isEntry": true
   },
   "resources/css/souqify-variants.css": {
-    "file": "assets/souqify-variants-CUksAszv.css",
+    "file": "assets/souqify-variants-DVaBY5Qq.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2855,7 +2855,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-qZsYtCZQ.css",
+    "file": "assets/souqify-BtNDdOBB.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2864,7 +2864,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-BEYrQWT-.css",
+    "file": "assets/app-C47CRl1a.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2872,7 +2872,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-Viyk3zuB.css"
+      "assets/app-IVYAGY9Q.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
