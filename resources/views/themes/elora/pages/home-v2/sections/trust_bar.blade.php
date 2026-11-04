@@ -1,8 +1,8 @@
     <section wire:ignore class="mt-0 overflow-hidden" style="background: var(--color-accent-yellow)">
       <div class="px-[16px] lg:px-[56px] py-[8px] lg:py-[13.0987px]">
         <div class="swiper card-swiper features-swiper">
-          <div class="swiper-wrapper !items-center" id="featuresWrapper">
-            <div class="swiper-slide flex items-center gap-[16px] lg:gap-[26.2px]">
+          <div class="swiper-wrapper !items-center lg:justify-between" id="featuresWrapper">
+            <div class="swiper-slide !w-auto shrink-0 flex items-center gap-[16px] lg:gap-[26.2px]">
               <img
                 src="{{ asset('elora-1/assets/icons/feature-truck.svg') }}"
                 alt=""
@@ -17,7 +17,7 @@
                 >
               </div>
             </div>
-            <div class="swiper-slide flex items-center gap-[16px] lg:gap-[26.2px]">
+            <div class="swiper-slide !w-auto shrink-0 flex items-center gap-[16px] lg:gap-[26.2px]">
               <img
                 src="{{ asset('elora-1/assets/icons/feature-headphones.svg') }}"
                 alt=""
@@ -32,7 +32,7 @@
                 >
               </div>
             </div>
-            <div class="swiper-slide flex items-center gap-[16px] lg:gap-[26.2px]">
+            <div class="swiper-slide !w-auto shrink-0 flex items-center gap-[16px] lg:gap-[26.2px]">
               <img
                 src="{{ asset('elora-1/assets/icons/feature-bag.svg') }}"
                 alt=""
@@ -47,7 +47,7 @@
                 >
               </div>
             </div>
-            <div class="swiper-slide flex items-center gap-[16px] lg:gap-[26.2px]">
+            <div class="swiper-slide !w-auto shrink-0 flex items-center gap-[16px] lg:gap-[26.2px]">
               <img
                 src="{{ asset('elora-1/assets/icons/feature-package.svg') }}"
                 alt=""

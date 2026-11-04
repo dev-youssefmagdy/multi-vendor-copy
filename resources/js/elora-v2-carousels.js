@@ -19,10 +19,12 @@ function mountFeatures() {
     if (!wrapper) return;
 
     return new Swiper(wrapper.closest(".swiper"), {
-        slidesPerView: 1.5,
+        // "auto": each slide sizes to its own (nowrap) content so longer
+        // translations (e.g. Arabic) never overflow into the next slide.
+        slidesPerView: "auto",
         spaceBetween: 32,
         breakpoints: {
-            1024: { slidesPerView: 3.5, spaceBetween: 52.39 },
+            1024: { spaceBetween: 24 },
         },
     });
 }
