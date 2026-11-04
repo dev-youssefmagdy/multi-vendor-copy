@@ -53,7 +53,7 @@
                         success="none"
                         files
                     >
-                        <x-tenant::textarea name="reply" label="Add a message" rows="4" required placeholder="Type your message&hellip;" />
+                        <x-tenant::textarea name="reply" label="Add a message" rows="4" required placeholder="Type your message…" />
                         <x-tenant::dropzone
                             name="attachments"
                             label="Attach a file"

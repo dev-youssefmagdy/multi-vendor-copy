@@ -4,6 +4,23 @@ function escapeHtml(value) {
     return div.innerHTML;
 }
 
+function attachmentsHtml(attachments) {
+    if (!Array.isArray(attachments) || !attachments.length) {
+        return '';
+    }
+
+    const items = attachments.map((a) => {
+        const url = escapeHtml(a.url);
+        const name = escapeHtml(a.name);
+
+        return a.image
+            ? `<a href="${url}" target="_blank" rel="noopener" title="${name}" class="t-chat-attachment-img"><img src="${url}" alt="${name}" loading="lazy"></a>`
+            : `<a href="${url}" target="_blank" class="t-chat-attachment">${name}</a>`;
+    });
+
+    return `<div class="t-chat-attachments">${items.join('')}</div>`;
+}
+
 export function appendMessage(el, message) {
     const thread = el.querySelector('[data-chat-thread]');
     if (!thread) {
@@ -22,6 +39,7 @@ export function appendMessage(el, message) {
             <span class="t-chat-time">${escapeHtml(message.at)}</span>
         </div>
         <div class="t-chat-body">${escapeHtml(message.body).replace(/\n/g, '<br>')}</div>
+        ${attachmentsHtml(message.attachments)}
     `;
 
     thread.appendChild(wrapper);

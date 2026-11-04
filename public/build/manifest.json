@@ -36,8 +36,8 @@
       "_vendor-swal-Bl7W2J8u.js"
     ]
   },
-  "_core-By6_ljsr.js": {
-    "file": "assets/core-By6_ljsr.js",
+  "_core-aMmtng0Y.js": {
+    "file": "assets/core-aMmtng0Y.js",
     "name": "core",
     "imports": [
       "_preload-helper-Cdi5alSk.js",
@@ -2864,7 +2864,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-C47CRl1a.css",
+    "file": "assets/app-CwDmaqZU.css",
     "name": "app",
     "names": [
       "app.css"
@@ -3213,12 +3213,12 @@
     "isEntry": true
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-BmfLFMtc.js",
+    "file": "assets/app-DvcJcATz.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-By6_ljsr.js",
+      "_core-aMmtng0Y.js",
       "_events-CFA2UmB3.js"
     ]
   },
@@ -3259,7 +3259,7 @@
     ]
   },
   "resources/js/tenant/components/chat.js": {
-    "file": "assets/chat-vaLN3EWd.js",
+    "file": "assets/chat-Zwnp1F89.js",
     "name": "chat",
     "src": "resources/js/tenant/components/chat.js",
     "isDynamicEntry": true
@@ -3277,7 +3277,7 @@
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/copy.js": {
-    "file": "assets/copy-HU3IFR8W.js",
+    "file": "assets/copy-B13AJZS8.js",
     "name": "copy",
     "src": "resources/js/tenant/components/copy.js",
     "isDynamicEntry": true,
@@ -3655,7 +3655,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-D7SdQkJ_.js",
+    "file": "assets/index-Ca7bNTvL.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3664,7 +3664,7 @@
       "_opportunities-BvruqvA7.js",
       "_swiper-BOBuzg4i.js",
       "_product-modals-D9j2fitf.js",
-      "_core-By6_ljsr.js",
+      "_core-aMmtng0Y.js",
       "_events-CFA2UmB3.js",
       "_registry-Br8BX5KI.js",
       "_toast-C9AHGbnE.js"
@@ -3913,12 +3913,12 @@
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-CcfDpzbn.js",
+    "file": "assets/order-show-DIlMzWTy.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-By6_ljsr.js",
+      "_core-aMmtng0Y.js",
       "_events-CFA2UmB3.js",
       "_forms-Dz3kSF5l.js",
       "_registry-Br8BX5KI.js"

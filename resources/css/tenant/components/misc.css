@@ -137,6 +137,8 @@
 .t-chat-body { font-size: 12.5px; color: var(--t1); }
 .t-chat-attachments { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
 .t-chat-attachment { font-size: 11px; color: var(--cyan); }
+.t-chat-attachment-img { display: block; width: 132px; height: 132px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border2); }
+.t-chat-attachment-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .t-chat-empty { text-align: center; color: var(--t3); font-size: 12.5px; padding: 20px 0; }
 .t-chat-composer { border-top: 1px solid var(--border2); padding-top: 10px; margin-top: 10px; }
 

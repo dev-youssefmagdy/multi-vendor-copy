@@ -12,7 +12,13 @@
                 @if(!empty($message['attachments']))
                     <div class="t-chat-attachments">
                         @foreach($message['attachments'] as $attachment)
-                            <a href="{{ $attachment['url'] }}" target="_blank" class="t-chat-attachment">{{ $attachment['name'] }}</a>
+                            @if(!empty($attachment['image']))
+                                <a href="{{ $attachment['url'] }}" target="_blank" rel="noopener" title="{{ $attachment['name'] }}" class="t-chat-attachment-img">
+                                    <img src="{{ $attachment['url'] }}" alt="{{ $attachment['name'] }}" loading="lazy">
+                                </a>
+                            @else
+                                <a href="{{ $attachment['url'] }}" target="_blank" class="t-chat-attachment">{{ $attachment['name'] }}</a>
+                            @endif
                         @endforeach
                     </div>
                 @endif

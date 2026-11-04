@@ -179,10 +179,7 @@ final class ProductRequestController extends PanelController
             'at' => $m->created_at->format('M d, Y H:i'),
             'body' => $m->body,
             'is_me' => $m->sender_type === 'tenant',
-            'attachments' => collect($m->attachments ?? [])->map(fn ($path) => [
-                'url' => asset('storage/'.$path),
-                'name' => basename($path),
-            ])->all(),
+            'attachments' => \App\Support\ProductRequestFiles::forTenant($m->attachments ?? [], $m->sender_type === 'tenant'),
         ];
     }
 }
