@@ -28,7 +28,9 @@ final class ProductRequestController extends PanelController
 
     public function index(Request $request): View
     {
-        $stats = tenancy()->central(fn () => $this->repo->productRequestStats());
+        // tenant('id') is empty inside central(): resolve the id first.
+        $tenantId = (string) tenant()->getTenantKey();
+        $stats = tenancy()->central(fn () => $this->repo->productRequestStats($tenantId));
 
         return view('tenant.pages.requests.product-requests.index', [
             'stats' => Metric::cards([
@@ -49,9 +51,10 @@ final class ProductRequestController extends PanelController
     public function data(Request $request): JsonResponse
     {
         $filters = $this->filters($request, ['status']);
+        $tenantId = (string) tenant()->getTenantKey();
 
-        return tenancy()->central(function () use ($filters) {
-            return DataTables::eloquent($this->repo->queryProductRequests($filters))
+        return tenancy()->central(function () use ($filters, $tenantId) {
+            return DataTables::eloquent($this->repo->queryProductRequests($filters, $tenantId))
                 ->addIndexColumn()
                 ->editColumn('request', fn (ProductRequest $r) => view('tenant.pages.requests.product-requests._cols.request', ['request' => $r])->render())
                 ->editColumn('status', fn (ProductRequest $r) => '<span class="'.$r->status->badgeClass().'">'.e($r->status->label()).'</span>')

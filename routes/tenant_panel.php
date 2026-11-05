@@ -185,6 +185,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::get('/data', [ProductsListController::class, 'data'])->name('data');
         // PANELS-UPDATES-NEW-PRODUCTS-SYNC: products added centrally after registration wait here until the tenant adds them.
         Route::get('/new', [ProductsListController::class, 'newProducts'])->name('new');
+        Route::get('/new/{centralProductId}', [ProductsListController::class, 'previewNew'])->whereNumber('centralProductId')->name('new.show');
         Route::post('/sync-new', [ProductsListController::class, 'syncNew'])->name('sync-new');
         Route::get('/sort', [ProductSortController::class, 'index'])->name('sort');
         Route::post('/sort', [ProductSortController::class, 'update'])->name('sort.save');

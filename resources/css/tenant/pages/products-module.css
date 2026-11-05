@@ -237,6 +237,24 @@
     .pm-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* New products page: keep 3 cards per row (clear images) until the container gets narrow */
+@container (max-width: 1100px) and (min-width: 761px) {
+    .pm-grid.pm-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+}
+@container (max-width: 760px) and (min-width: 641px) {
+    .pm-grid.pm-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.pm-grid-3 .pm-card .db-opp-media { display: block; }
+
+.pm-preview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; margin-top: 8px; }
+.pm-preview-gallery { display: grid; gap: 12px; }
+.pm-preview-gallery img { width: 100%; border-radius: 20px; background: var(--ds-surface); object-fit: contain; }
+.pm-preview-info h1 { margin: 0 0 12px; font-size: 26px; color: var(--ds-text); }
+.pm-preview-price { margin: 0 0 16px; font-size: 22px; font-weight: 700; }
+.pm-preview-price small { display: block; font-size: 13px; font-weight: 400; color: var(--ds-text-muted); }
+.pm-preview-desc { white-space: pre-line; color: var(--ds-text-muted); line-height: 1.7; margin: 0 0 24px; }
+@container (max-width: 760px) { .pm-preview { grid-template-columns: minmax(0, 1fr); } }
+
 /* ── Mobile (design: 375px) ───────────────────────────────────────────────
    Black top block (title, description, full-width "Add product") under the
    transparent header, then the tab pills and a 2-column card grid. The

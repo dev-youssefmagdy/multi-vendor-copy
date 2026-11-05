@@ -1538,11 +1538,15 @@ class TenantCatalogSyncService
     {
         $carried = $this->tenantCentralProductIds();
         $categoryIds = (array) (tenant()?->category_ids ?? []);
+        $tenantId = tenant()?->getTenantKey();
 
-        return $this->central(function () use ($carried, $categoryIds) {
+        return $this->central(function () use ($carried, $categoryIds, $tenantId) {
             $expanded = $categoryIds !== [] ? $this->expandCategoryIds($categoryIds) : [];
 
             return CentralProduct::query()
+                // Products an admin reserved for specific tenants are only offered to those tenants.
+                ->where(fn ($q) => $q->whereDoesntHave('tenantAssignments')
+                    ->orWhereHas('tenantAssignments', fn ($a) => $a->where('tenant_id', $tenantId)))
                 ->when($carried !== [], fn ($q) => $q->whereNotIn('id', $carried))
                 ->when($expanded !== [], fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $expanded)))
                 ->orderByDesc('id');

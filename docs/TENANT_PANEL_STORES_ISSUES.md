@@ -1,0 +1,29 @@
+# Tenant panel – issues reported by "Root" in the Stores WhatsApp group
+
+Source: Stores group, 2026-11-05 from 5:03 PM onward (text + 3 screenshots). Screenshots show the vendor panel
+"Products → New products from the platform" page (2 very large cards per row, "Sync all new products (3)").
+
+| # | Issue (Root's words, translated) | Area | Status |
+|---|----------------------------------|------|--------|
+| 1 | "Product request disappears after creation" (9:17 PM; Joe could not reproduce at 9:18 PM) | Tenant panel › Product requests list | Fixed – see below |
+| 2 | "In the vendor dashboard 'New in products', products assigned to one specific vendor must not appear to all vendors" (9:27 PM, screenshot) | Dashboard + New products page | Fixed – see below |
+| 3 | "On the products page put three products per row so it looks good and the image is clear" (9:34 PM, screenshot) | New products page grid | Fixed – see below |
+| 4 | "A product page must be created so the vendor can open a product" / "a page that describes the product before adding it" (9:35–9:57 PM) | New products page → product preview | Fixed – see below |
+
+Earlier messages (before 5:03 PM, not in scope, still unconfirmed): belly not showing, no place to create a new
+brand request, product/manufacturing request.
+
+## Root causes & fixes
+
+1. **Product requests vanish** – `ProductRequestController::index/data` call the repository inside
+   `tenancy()->central()`, and the repository filtered with `tenant('id')`, which is empty while tenancy is ended,
+   so the list/stat queries could match nothing. The tenant id is now captured *before* entering the central context
+   and passed to `queryProductRequests()` / `productRequestStats()`.
+2. **Assigned products leak to everyone** – `TenantCatalogSyncService::pendingNewProductsQuery()` listed every
+   central product not yet carried. Products with `ProductTenantAssignment` rows are reserved: now a pending product
+   is shown only if it has no assignments at all, or is assigned to the current tenant.
+3. **3 per row** – the New products grid used the shared `.pm-grid` breakpoint (2 columns under 1100px container).
+   Added `.pm-grid-3` modifier: 3 columns down to 760px.
+4. **Product preview page** – new route `tenant.products.new.show` (`/products/new/{id}`), view
+   `catalog/products/new-show.blade.php` with gallery, description, platform price and "Add to my store". Cards on the
+   New products page and the dashboard "New in" link to it. Only products still pending for the tenant can be opened.

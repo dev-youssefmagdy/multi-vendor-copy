@@ -2654,16 +2654,16 @@ class TenantPanelRepository
      * `tenancy()->central()`), matching the query the former
      * `RequestsList` Livewire component built.
      */
-    public function queryProductRequests(array $filters): Builder
+    public function queryProductRequests(array $filters, ?string $tenantId = null): Builder
     {
-        return ProductRequest::forTenant((string) tenant('id'))
+        return ProductRequest::forTenant($tenantId ?? (string) tenant('id'))
             ->when($filters['status'] ?? null, fn (Builder $q, $status) => $q->where('status', $status))
             ->orderByDesc('last_reply_at');
     }
 
-    public function productRequestStats(): array
+    public function productRequestStats(?string $tenantId = null): array
     {
-        $tenantId = (string) tenant('id');
+        $tenantId ??= (string) tenant('id');
 
         return [
             'total' => ProductRequest::forTenant($tenantId)->count(),
@@ -3006,6 +3006,7 @@ class TenantPanelRepository
             'title' => $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id),
             'description' => Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140),
             'cost' => '$'.number_format((float) $pricing->centralBasePrice($product), 2),
+            'url' => route('tenant.products.new.show', $product->id),
         ];
     }
 

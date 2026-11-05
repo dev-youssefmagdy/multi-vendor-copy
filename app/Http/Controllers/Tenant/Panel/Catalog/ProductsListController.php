@@ -84,6 +84,32 @@ final class ProductsListController extends PanelController
     }
 
     /**
+     * Read-only preview of a pending central product, so the tenant can review it before adding it.
+     */
+    public function previewNew(int $centralProductId, TenantCatalogSyncService $sync): View
+    {
+        $product = $sync->pendingNewProductsQuery()
+            ->with(['translations.language', 'files'])
+            ->whereKey($centralProductId)
+            ->firstOrFail();
+
+        $card = $this->repo->pendingProductCard($product);
+        $images = $product->files
+            ->filter(fn ($f) => in_array($f->key, ['primary_medium', 'primary_original', 'gallery'], true))
+            ->map(fn ($f) => $f->full_path)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return view('tenant.pages.catalog.products.new-show', [
+            'card' => $card,
+            'images' => $images ?: array_filter([$card['image']]),
+            'fullDescription' => trim(strip_tags((string) $product->translationValue('description'))),
+        ]);
+    }
+
+    /**
      * PANELS-UPDATES-NEW-PRODUCTS-SYNC: tenant-triggered sync. `product_ids[]` adds those central products;
      * no ids (the "Sync new products" button) adds every pending one. Existing products are never re-created
      * and keep the tenant's own prices/profit.

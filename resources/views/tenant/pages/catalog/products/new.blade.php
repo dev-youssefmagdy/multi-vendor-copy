@@ -40,15 +40,15 @@
                 <a href="{{ route('tenant.products.index') }}" class="btn btn-primary">Back to products</a>
             </div>
         @else
-            <div class="pm-grid fu d2">
+            <div class="pm-grid pm-grid-3 fu d2">
                 @foreach($cards as $card)
                     <article class="db-opp pm-card">
-                        <div class="db-opp-media" @if($card['image']) style="background-image:url('{{ $card['image'] }}')" @endif>
+                        <a href="{{ $card['url'] }}" class="db-opp-media" @if($card['image']) style="background-image:url('{{ $card['image'] }}')" @endif aria-label="{{ $card['title'] }}">
                             <span class="db-opp-added" style="background:#7c3aed;color:#fff">New</span>
-                        </div>
+                        </a>
                         <div class="db-opp-body">
                             <div>
-                                <h3 class="db-opp-title pm-card-title" title="{{ $card['title'] }}">{{ $card['title'] }}</h3>
+                                <h3 class="db-opp-title pm-card-title" title="{{ $card['title'] }}"><a href="{{ $card['url'] }}" style="color:inherit;text-decoration:none">{{ $card['title'] }}</a></h3>
                                 <p class="db-opp-desc pm-card-desc">{{ $card['description'] !== '' ? $card['description'] : 'No description yet.' }}</p>
                             </div>
                             <div class="db-opp-stats pm-card-stats">

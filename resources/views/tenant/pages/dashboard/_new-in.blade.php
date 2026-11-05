@@ -46,7 +46,7 @@
 
                     <div class="db-opp-body">
                         <div>
-                            <h3 class="db-opp-title">{{ $product['title'] }}</h3>
+                            <h3 class="db-opp-title">@if(!empty($product['url']))<a href="{{ $product['url'] }}" style="color:inherit;text-decoration:none">{{ $product['title'] }}</a>@else{{ $product['title'] }}@endif</h3>
                             <p class="db-opp-desc">{{ $product['description'] }}</p>
                         </div>
 
