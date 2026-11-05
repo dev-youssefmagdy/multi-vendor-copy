@@ -157,7 +157,7 @@ class ProductController extends Controller
                     $tenantId,
                     'product_assigned',
                     'New Product Added for You',
-                    'A new product has been added to your catalog.',
+                    'A new product is waiting in "New in products" - review it and add it to your store.',
                     ['product_id' => $savedProduct->id]
                 );
             }

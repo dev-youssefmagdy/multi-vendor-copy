@@ -892,6 +892,7 @@ class TenantCatalogSyncService
         // PANELS-UPDATES-NEW-PRODUCTS-SYNC: after the first sync, do not create rows for central products the
         // tenant does not carry yet; keep refreshing the ones it has (+ any it explicitly asked for).
         $catalogIds = $this->withoutUnrequestedNewProducts($catalogIds);
+        $assignedIds = $this->withoutUnrequestedNewProducts($assignedIds);
 
         $assignedFlip = array_flip($assignedIds);
         $allIds = array_merge($catalogIds, $assignedIds);
@@ -1523,10 +1524,8 @@ class TenantCatalogSyncService
             return true; // initial sync
         }
 
-        return (bool) $this->central(fn () => ProductTenantAssignment::query()
-            ->where('product_id', $centralProduct->id)
-            ->where('tenant_id', $tenant->id)
-            ->exists());
+        // An admin assignment only makes the product eligible; the tenant still accepts it from "New in products".
+        return false;
     }
 
     /**
@@ -1548,7 +1547,9 @@ class TenantCatalogSyncService
                 ->where(fn ($q) => $q->whereDoesntHave('tenantAssignments')
                     ->orWhereHas('tenantAssignments', fn ($a) => $a->where('tenant_id', $tenantId)))
                 ->when($carried !== [], fn ($q) => $q->whereNotIn('id', $carried))
-                ->when($expanded !== [], fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $expanded)))
+                ->when($expanded !== [], fn ($q) => $q->where(fn ($w) => $w
+                    ->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $expanded))
+                    ->orWhereHas('tenantAssignments', fn ($a) => $a->where('tenant_id', $tenantId))))
                 ->orderByDesc('id');
         });
     }

@@ -27,3 +27,9 @@ brand request, product/manufacturing request.
 4. **Product preview page** – new route `tenant.products.new.show` (`/products/new/{id}`), view
    `catalog/products/new-show.blade.php` with gallery, description, platform price and "Add to my store". Cards on the
    New products page and the dashboard "New in" link to it. Only products still pending for the tenant can be opened.
+
+5. **Admin-assigned products auto-synced (admin product 151)** – `mayCreateTenantProduct()` and the full sync
+   (`syncProducts()`) treated a `ProductTenantAssignment` as permission to create the tenant row, so a new/assigned
+   product was pushed straight into the tenant store. An assignment now only makes the product *eligible* (it appears
+   in dashboard "New in products" / New products page, even outside the tenant's categories); the row is created
+   only when the tenant adds it (or on the first registration sync). Products the tenant already carries keep updating.
