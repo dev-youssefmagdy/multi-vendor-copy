@@ -67,6 +67,16 @@
                         <small>Subscriptions &amp; history</small>
                     </div>
                 </button>
+                <button type="button" class="section-tab" :class="{ 'is-active': tab === 'mobile' }" @click="tab = 'mobile'">
+                    <svg class="tab-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                        <rect x="6" y="2" width="12" height="20" rx="2" />
+                        <line x1="11" y1="18" x2="13" y2="18" />
+                    </svg>
+                    <div>
+                        <span>Mobile App</span>
+                        <small>White-label app ids</small>
+                    </div>
+                </button>
             @endif
         </div>
 
@@ -400,6 +410,87 @@
                         </div>
                     @endif
                 </div>
+            </div>
+
+            {{-- ── Mobile App Tab ───────────────────────────────────────────────── --}}
+            @php
+                $m = fn(string $key) => old($key, $mobileApp?->{$key} ?? '');
+                $platformAppId = (string) config('mobile.ios_app_id');
+            @endphp
+            <div x-show="tab === 'mobile'" x-cloak>
+                <form method="POST" action="{{ route('admin.plans.users.mobile-app.update', $tenant) }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="_tab" value="mobile">
+
+                    <x-card-collapse title="White-label Mobile App"
+                        subtitle="Only for a store with its own app (application/tenants/{id}/tenant.json). Leave everything empty when the store only uses the platform app."
+                        class="form-card" :start-open="true">
+                        <p class="field-hint" style="font-size:12px;color:var(--t3);margin:0 0 12px">
+                            Used for <code>/.well-known/assetlinks.json</code> and <code>apple-app-site-association</code> on this
+                            store's domains (together with the platform app), the <code>/app</code> landing page and the in-app
+                            payment return. Platform app: <code>{{ config('mobile.android_package') ?: '—' }}</code> /
+                            <code>{{ $platformAppId ?: '—' }}</code>, scheme <code>{{ app(\App\Services\Mobile\MobileAppLinks::class)->platformScheme() }}</code> (server .env).
+                        </p>
+                        <div class="form-grid form-grid-2">
+                            <div>
+                                <label class="field-label">Android package (applicationId)</label>
+                                <x-input type="text" name="android_package" class="{{ $errors->has('android_package') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('android_package') }}" placeholder="com.brand.shop" />
+                                @error('android_package') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="field-label">URL scheme</label>
+                                <x-input type="text" name="url_scheme" class="{{ $errors->has('url_scheme') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('url_scheme') }}" placeholder="brandshop" />
+                                <p class="field-hint" style="font-size:11px;color:var(--t3);margin-top:4px">Same as
+                                    <code>android.urlScheme</code> / <code>ios.urlScheme</code>. Unique per store.</p>
+                                @error('url_scheme') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div style="grid-column:1 / -1">
+                                <label class="field-label">Android SHA-256 certificate fingerprints</label>
+                                <textarea name="android_sha256" rows="3"
+                                    class="field-control {{ $errors->has('android_sha256') ? 'is-invalid' : '' }}"
+                                    placeholder="One per line: Play App signing key, then the upload key">{{ old('android_sha256', implode("\n", $mobileApp?->fingerprints() ?? [])) }}</textarea>
+                                <p class="field-hint" style="font-size:11px;color:var(--t3);margin-top:4px">Play Console → Test and
+                                    release → App integrity. 64 hex characters each; colons optional (saved as <code>AA:BB:…</code>).</p>
+                                @error('android_sha256') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="field-label">Apple Team ID</label>
+                                <x-input type="text" name="ios_team_id" class="{{ $errors->has('ios_team_id') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('ios_team_id') }}" placeholder="ABCDE12345" />
+                                @error('ios_team_id') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="field-label">iOS bundle id</label>
+                                <x-input type="text" name="ios_bundle_id" class="{{ $errors->has('ios_bundle_id') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('ios_bundle_id') }}" placeholder="com.brand.shop" />
+                                @if ($mobileApp?->iosAppId())
+                                    <p class="field-hint" style="font-size:11px;color:var(--t3);margin-top:4px">App ID:
+                                        <code>{{ $mobileApp->iosAppId() }}</code></p>
+                                @endif
+                                @error('ios_bundle_id') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="field-label">Google Play URL</label>
+                                <x-input type="url" name="play_store_url" class="{{ $errors->has('play_store_url') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('play_store_url') }}" placeholder="https://play.google.com/store/apps/details?id=com.brand.shop" />
+                                @error('play_store_url') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="field-label">App Store URL</label>
+                                <x-input type="url" name="app_store_url" class="{{ $errors->has('app_store_url') ? 'is-invalid' : '' }}"
+                                    value="{{ $m('app_store_url') }}" placeholder="https://apps.apple.com/app/id6740000000" />
+                                @error('app_store_url') <div class="field-error">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                    </x-card-collapse>
+
+                    <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;padding-top:8px">
+                        <button type="submit" class="btn btn-primary">Save Mobile App</button>
+                    </div>
+                </form>
             </div>
         @endif
     </div>

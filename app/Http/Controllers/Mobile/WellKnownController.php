@@ -5,34 +5,30 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
+use App\Services\Mobile\MobileAppLinks;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-/** Deep-link verification files, configured via MOBILE_ANDROID_PACKAGE / MOBILE_ANDROID_SHA256 / MOBILE_IOS_APP_ID. */
+/**
+ * Deep-link verification files. On a tenant domain (subdomain or custom domain): that tenant's white-label app
+ * (central admin > Tenants > Edit > Mobile App) plus the generic platform app; on the central domain (or an
+ * unknown host): the platform app only (MOBILE_ANDROID_PACKAGE / MOBILE_ANDROID_SHA256 / MOBILE_IOS_APP_ID).
+ */
 class WellKnownController extends Controller
 {
-    public function assetLinks(): JsonResponse
+    public function assetLinks(Request $request, MobileAppLinks $links): JsonResponse
     {
-        $package = config('mobile.android_package');
-        $fingerprints = array_values(array_filter(array_map('trim', explode(',', (string) config('mobile.android_sha256')))));
-
-        if (!$package || !$fingerprints) {
-            return response()->json([]);
-        }
-
-        return response()->json([[
-            'relation' => ['delegate_permission/common.handle_all_urls'],
-            'target' => ['namespace' => 'android_app', 'package_name' => $package, 'sha256_cert_fingerprints' => $fingerprints],
-        ]]);
+        return response()->json($links->assetLinks($links->tenantForHost($request->getHost())));
     }
 
-    public function appleAssociation(): JsonResponse
+    public function appleAssociation(Request $request, MobileAppLinks $links): JsonResponse
     {
-        $appId = config('mobile.ios_app_id'); // "<TeamID>.<BundleID>"
-        $details = $appId ? [['appIDs' => [$appId], 'components' => [['/' => '/*']]]] : [];
+        $appIds = $links->iosAppIds($links->tenantForHost($request->getHost()));
+        $details = $appIds ? [['appIDs' => $appIds, 'components' => [['/' => '/*']]]] : [];
 
         return response()->json([
             'applinks' => ['details' => $details],
-            'webcredentials' => ['apps' => $appId ? [$appId] : []],
+            'webcredentials' => ['apps' => $appIds],
         ]);
     }
 }

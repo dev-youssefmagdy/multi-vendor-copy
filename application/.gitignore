@@ -46,3 +46,27 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# White-label tenant builds (tool/tenant_builder). Generated per-tenant Android resources live in
+# android/app/src/<tenant>/ and are recreated by `tenant_builder generate`.
+/dist/
+/android/app/src/*
+!/android/app/src/main/
+!/android/app/src/debug/
+!/android/app/src/profile/
+/android/keystores/
+
+# iOS white-label builds: per-tenant workspaces live in build/workspaces/<id>/ (ignored via /build/).
+# Local Apple credentials per tenant (KEY=VALUE, see tenants/README.md) and key files never go into git.
+/ios/signing/
+*.p8
+*.p12
+*.mobileprovision
+*.cer
+
+# fastlane outputs (application/fastlane/)
+/fastlane/report.xml
+/fastlane/Preview.html
+/fastlane/screenshots/
+/fastlane/test_output/
+/fastlane/README.md

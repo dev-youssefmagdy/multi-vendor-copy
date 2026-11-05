@@ -1,6 +1,7 @@
 # Mobile API contract (`/api/mobile/v1`, JSON, all responses `{success, data?, message?, errors?}`)
 
-Headers: `Accept: application/json`, `X-App-Version`, `X-Platform`. Tenant routes add `X-Tenant: <tenant_id>`;
+Headers: `Accept: application/json`, `X-App-Version`, `X-Platform`, `X-App-Scheme` (the app's custom URL scheme; used
+only to pick the payment return scheme, accepted only if it is the platform's or the store's own). Tenant routes add `X-Tenant: <tenant_id>`;
 protected add `Authorization: Bearer <mobile_token>`. Language `Accept-Language`, currency `X-Currency`.
 
 | Method | Path | Auth | Purpose |

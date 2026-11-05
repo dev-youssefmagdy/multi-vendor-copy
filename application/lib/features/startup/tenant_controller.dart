@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../core/errors/app_exception.dart';
+import '../../core/config/env.dart';
 import '../../core/network/api_client.dart';
 import '../deeplink/url_normalizer.dart';
 import '../tenant/tenant_models.dart';
@@ -9,13 +10,31 @@ import 'tenant_state.dart';
 
 /// Owns the active tenant + startup flow:
 /// deep link -> stored tenant -> validate -> bootstrap -> offline fallback.
+///
+/// White-label builds (`AppConfig.tenant.isWhiteLabel`) are locked to the
+/// build-time store: they always open `TENANT_HOST`, never enter
+/// [StartupPhase.needsStore], and hand links to other stores to the browser.
 class TenantController extends Notifier<TenantState> {
   @override
   TenantState build() => const TenantState();
 
+  TenantBinding get _binding => ref.read(appConfigProvider).tenant;
+
   Future<void> start() async {
     state = const TenantState(phase: StartupPhase.booting);
     final link = await ref.read(deepLinkServiceProvider).initialTarget();
+    final lock = _binding;
+    if (lock.isWhiteLabel) {
+      String? pending;
+      if (link != null) {
+        if (lock.ownsHost(link.host)) {
+          pending = link.location;
+        } else {
+          await _openElsewhere(link);
+        }
+      }
+      return _enter(host: lock.host, pending: pending);
+    }
     if (link != null) {
       return _enter(host: link.host, pending: link.location);
     }
@@ -41,6 +60,10 @@ class TenantController extends Notifier<TenantState> {
 
   /// Retry from invalid/offline screens: re-run the stored flow.
   Future<void> retry() async {
+    if (_binding.isWhiteLabel) {
+      state = const TenantState(phase: StartupPhase.booting);
+      return _enter(host: _binding.host);
+    }
     final stored = ref.read(tenantStorageProvider).loadActiveTenant();
     if (stored != null) {
       state = const TenantState(phase: StartupPhase.booting);
@@ -49,11 +72,15 @@ class TenantController extends Notifier<TenantState> {
     state = const TenantState(phase: StartupPhase.needsStore);
   }
 
-  void changeStore() =>
-      state = TenantState(phase: StartupPhase.needsStore, tenant: state.tenant);
+  /// Generic app only; a white-label binary has no other store to change to.
+  void changeStore() {
+    if (_binding.isWhiteLabel) return;
+    state = TenantState(phase: StartupPhase.needsStore, tenant: state.tenant);
+  }
 
   /// Store-entry submit (URL or code). Invalid text keeps the entry screen.
   Future<void> submitInput(String raw) async {
+    if (_binding.isWhiteLabel) return;
     final StoreInput input;
     try {
       input = ref.read(urlNormalizerProvider).classifyInput(raw);
@@ -68,10 +95,24 @@ class TenantController extends Notifier<TenantState> {
         code: input.isCode ? input.value : null);
   }
 
-  Future<void> selectRecent(Tenant t) => _enter(host: t.domain, viaRecent: true);
+  Future<void> selectRecent(Tenant t) async {
+    if (_binding.isWhiteLabel) return;
+    return _enter(host: t.domain, viaRecent: true);
+  }
 
   /// Incoming link while running (same tenant -> navigate; other -> switch).
+  /// White-label: own store -> navigate; another store -> browser, no switch.
   Future<void> handleDeepLink(DeepLinkTarget t) async {
+    final lock = _binding;
+    if (lock.isWhiteLabel) {
+      if (!lock.ownsHost(t.host)) return _openElsewhere(t);
+      if (state.phase == StartupPhase.ready) {
+        state = state.copyWith(pendingLocation: t.location);
+        return;
+      }
+      state = const TenantState(phase: StartupPhase.booting);
+      return _enter(host: lock.host, pending: t.location);
+    }
     final cur = state.tenant;
     if (state.phase == StartupPhase.ready && cur != null && cur.domain == t.host) {
       state = state.copyWith(pendingLocation: t.location);
@@ -82,6 +123,14 @@ class TenantController extends Notifier<TenantState> {
   }
 
   void consumePending() => state = state.copyWith(clearPending: true);
+
+  Future<void> _openElsewhere(DeepLinkTarget t) async {
+    try {
+      await ref.read(externalLinkOpenerProvider).open(t.webUri);
+    } catch (_) {
+      // Best effort; the app stays on its own store either way.
+    }
+  }
 
   Future<void> _enter({
     String? host,

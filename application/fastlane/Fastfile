@@ -1,0 +1,150 @@
+# Single canonical fastlane setup for the tenant apps. Called by tool/tenant_builder
+# (docs/mobile/WHITE_LABEL_BUILDS.md); every lane serves exactly one tenant per call.
+#
+# Lane options carry public identifiers only. Credentials come from the process
+# environment (CI: the tenant's GitHub Environment; locally: ios/signing/<id>.env or
+# PLAY_SERVICE_ACCOUNT_JSON_PATH) and are never printed.
+#
+# By design there is NO lane that submits for App Review, releases, or uploads to a
+# public/production track. Those stay manual decisions of the tenant (PUBLISH_TO_STORES.md).
+require "json"
+
+default_platform(:ios)
+
+def required(options, key)
+  value = options[key].to_s.strip
+  UI.user_error!("missing lane option #{key}:<value>") if value.empty?
+  value
+end
+
+def required_env(name)
+  value = ENV[name].to_s
+  UI.user_error!("#{name} is not set (tenant credentials, see PUBLISH_TO_STORES.md §11)") if value.empty?
+  value
+end
+
+def write_build_number(options, number)
+  text = number.to_s.strip
+  UI.user_error!("store returned build number '#{text}', expected an integer") unless text.match?(/\A\d+\z/)
+  File.write(required(options, :output), JSON.generate({ "buildNumber" => text }))
+end
+
+# App Store Connect API key (role App Manager) of the tenant's own account.
+def asc_api_key
+  key_id = required_env("ASC_KEY_ID")
+  issuer_id = required_env("ASC_ISSUER_ID")
+  if ENV["ASC_PRIVATE_KEY_P8_BASE64"].to_s.empty?
+    app_store_connect_api_key(
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_filepath: required_env("ASC_KEY_PATH"),
+      duration: 1200,
+      in_house: false
+    )
+  else
+    app_store_connect_api_key(
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_content: ENV["ASC_PRIVATE_KEY_P8_BASE64"],
+      is_key_content_base64: true,
+      duration: 1200,
+      in_house: false
+    )
+  end
+end
+
+TESTING_TRACKS = %w[internal alpha beta].freeze
+
+platform :ios do
+  desc "Latest build number uploaded for bundle_id (any version) -> output:<file> as JSON"
+  lane :latest_build_number do |options|
+    bundle_id = required(options, :bundle_id)
+    number = latest_testflight_build_number(
+      api_key: asc_api_key,
+      app_identifier: bundle_id,
+      initial_build_number: 0
+    )
+    UI.message("#{bundle_id}: latest uploaded build number #{number}")
+    write_build_number(options, number)
+  end
+
+  desc "Install the tenant's App Store certificate + profile from its own match storage (read-only)"
+  lane :match_readonly do |options|
+    required_env("MATCH_PASSWORD")
+    params = {
+      type: "appstore",
+      readonly: true,
+      app_identifier: required(options, :bundle_id),
+      team_id: required(options, :team_id),
+      git_url: required_env("MATCH_GIT_URL")
+    }
+    params[:git_branch] = ENV["MATCH_GIT_BRANCH"] unless ENV["MATCH_GIT_BRANCH"].to_s.empty?
+    unless ENV["MATCH_KEYCHAIN_NAME"].to_s.empty?
+      params[:keychain_name] = ENV["MATCH_KEYCHAIN_NAME"]
+      params[:keychain_password] = required_env("MATCH_KEYCHAIN_PASSWORD")
+    end
+    params[:api_key] = asc_api_key unless ENV["ASC_KEY_ID"].to_s.empty?
+    match(params)
+  end
+
+  desc "Upload a verified, signed IPA to the tenant's TestFlight (no review submission, no release)"
+  lane :upload_testflight do |options|
+    ipa = required(options, :ipa)
+    bundle_id = required(options, :bundle_id)
+    app_id = required(options, :app_id)
+    UI.user_error!("IPA not found: #{ipa}") unless File.exist?(ipa)
+    UI.message("Uploading #{File.basename(ipa)} (#{bundle_id}, App Store Connect app #{app_id}) to TestFlight")
+    upload_to_testflight(
+      api_key: asc_api_key,
+      ipa: ipa,
+      app_identifier: bundle_id,
+      apple_id: app_id,
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false
+    )
+  end
+end
+
+platform :android do
+  desc "Upload an AAB to a Play testing track (internal/alpha/beta only)"
+  lane :upload_testing do |options|
+    track = required(options, :track)
+    unless TESTING_TRACKS.include?(track)
+      UI.user_error!("track '#{track}' is not allowed; testing tracks only: #{TESTING_TRACKS.join(', ')}")
+    end
+    status = required(options, :release_status)
+    UI.user_error!("release_status must be draft or completed") unless %w[draft completed].include?(status)
+    upload_to_play_store(
+      package_name: required(options, :package_name),
+      track: track,
+      aab: required(options, :aab),
+      json_key: required_env("PLAY_SERVICE_ACCOUNT_JSON_PATH"),
+      release_status: status,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  desc "Highest versionCode on any Play track of package_name (read-only) -> output:<file> as JSON"
+  lane :latest_version_code do |options|
+    package = required(options, :package_name)
+    json_key = required_env("PLAY_SERVICE_ACCOUNT_JSON_PATH")
+    codes = []
+    readable = 0
+    (TESTING_TRACKS + ["production"]).each do |track|
+      begin
+        codes.concat(google_play_track_version_codes(package_name: package, track: track, json_key: json_key).map(&:to_i))
+        readable += 1
+      rescue StandardError => e
+        UI.important("#{package} track #{track}: #{e.message}")
+      end
+    end
+    UI.user_error!("could not read any Play track of #{package} (service account access / app record?)") if readable.zero?
+    number = codes.max || 0
+    UI.message("#{package}: highest versionCode #{number}")
+    write_build_number(options, number)
+  end
+end

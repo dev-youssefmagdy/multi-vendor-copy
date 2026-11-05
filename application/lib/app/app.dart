@@ -58,7 +58,10 @@ class _MobileAppState extends ConsumerState<MobileApp> {
     final theme = ref.watch(resolvedThemeProvider);
     return MaterialApp.router(
       title: ref.watch(tenantControllerProvider.select((s) => s.config?.displayName)) ??
-          'Store',
+          (ref.read(appConfigProvider).tenant.isWhiteLabel &&
+                  ref.read(appConfigProvider).tenant.name.isNotEmpty
+              ? ref.read(appConfigProvider).tenant.name
+              : 'Store'),
       theme: theme.tokens.toThemeData(),
       darkTheme: theme.tokens.toDarkThemeData(),
       themeMode: ref.watch(themeModeProvider),

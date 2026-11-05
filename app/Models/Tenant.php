@@ -10,6 +10,7 @@ use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
@@ -85,6 +86,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function tenantCountries(): HasMany
     {
         return $this->hasMany(TenantCountry::class);
+    }
+
+    /** Optional white-label mobile app (central table tenant_mobile_apps). */
+    public function mobileApp(): HasOne
+    {
+        return $this->hasOne(TenantMobileApp::class, 'tenant_id', 'id');
     }
 
     public function invoices(): HasMany

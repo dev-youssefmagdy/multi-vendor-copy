@@ -44,6 +44,7 @@ class TenantEditorController extends Controller
                 'categoryIds'    => is_array($loaded->category_ids) ? array_map('strval', $loaded->category_ids) : [],
                 'billingHistory' => $loaded->paymentLogs()->with('package')->latest()->get(),
                 'currentLogoUrl' => $loaded->logo,
+                'mobileApp'      => \App\Models\TenantMobileApp::query()->where('tenant_id', $loaded->getKey())->first(),
             ]
         ));
     }
@@ -173,6 +174,7 @@ class TenantEditorController extends Controller
             'categoryIds'    => [],
             'billingHistory' => collect(),
             'currentLogoUrl' => null,
+            'mobileApp'      => null,
         ];
     }
 }

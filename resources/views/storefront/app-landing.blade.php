@@ -20,7 +20,8 @@
     @if ($playUrl)<a class="btn alt" href="{{ $playUrl }}">Install on Google Play</a>@endif
     @if ($iosUrl)<a class="btn alt" href="{{ $iosUrl }}">Install on the App Store</a>@endif
     <a class="btn alt" href="{{ $webUrl }}">Continue in browser</a>
-    @if ($storeCode !== '')<small>Already installed? Enter this store code in the app: <strong>{{ $storeCode }}</strong></small>@endif
+    @if ($platformAppUrl)<small>Using our multi-store app instead? <a href="{{ $platformAppUrl }}">Open it there</a></small>@endif
+    @if ($storeCode !== '')<small>Already installed? Enter this store code in the {{ $platformAppUrl ? 'multi-store ' : '' }}app: <strong>{{ $storeCode }}</strong></small>@endif
 </main>
 </body>
 </html>

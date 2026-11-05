@@ -14,7 +14,10 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tenant = ref.watch(tenantControllerProvider.select((s) => s.brandingTenant));
     final cfg = tenant == null ? null : ref.read(tenantStorageProvider).loadConfig(tenant.id);
-    final name = cfg?.displayName ?? tenant?.name;
+    // White-label: the store's own name until its bootstrap is cached.
+    final lock = ref.read(appConfigProvider).tenant;
+    final lockedName = lock.isWhiteLabel && lock.name.isNotEmpty ? lock.name : null;
+    final name = cfg?.displayName ?? tenant?.name ?? lockedName;
     final image = cfg?.splashImageUrl ?? cfg?.logoUrl ?? tenant?.logo;
     final primary = ThemeTokens.parseColor(cfg?.colors['primary']);
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -77,6 +80,20 @@ class _SplashMark extends StatelessWidget {
   }
 }
 
+/// White-label builds are locked to one store: no "change store" anywhere.
+bool _canChangeStore(WidgetRef ref) =>
+    !ref.read(appConfigProvider).tenant.isWhiteLabel;
+
+Widget _changeStoreOrRetry(WidgetRef ref) => _canChangeStore(ref)
+    ? FilledButton(
+        key: const Key('change_store'),
+        onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+        child: const Text('Change store'))
+    : FilledButton(
+        key: const Key('retry'),
+        onPressed: ref.read(tenantControllerProvider.notifier).retry,
+        child: const Text('Retry'));
+
 class _StatusScreen extends ConsumerWidget {
   const _StatusScreen(
       {required this.icon,
@@ -115,12 +132,7 @@ class InvalidTenantScreen extends ConsumerWidget {
         icon: Icons.search_off,
         title: 'Store not found',
         body: 'We could not find this store. Check the address and try again.',
-        actions: [
-          FilledButton(
-              key: const Key('change_store'),
-              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-              child: const Text('Change store'))
-        ],
+        actions: [_changeStoreOrRetry(ref)],
       );
 }
 
@@ -131,12 +143,7 @@ class SuspendedTenantScreen extends ConsumerWidget {
         icon: Icons.pause_circle_outline,
         title: 'Store unavailable',
         body: 'This store is temporarily suspended.',
-        actions: [
-          FilledButton(
-              key: const Key('change_store'),
-              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-              child: const Text('Change store'))
-        ],
+        actions: [_changeStoreOrRetry(ref)],
       );
 }
 
@@ -152,9 +159,10 @@ class OfflineScreen extends ConsumerWidget {
               key: const Key('retry'),
               onPressed: ref.read(tenantControllerProvider.notifier).retry,
               child: const Text('Retry')),
-          TextButton(
-              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-              child: const Text('Change store')),
+          if (_canChangeStore(ref))
+            TextButton(
+                onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+                child: const Text('Change store')),
         ],
       );
 }
@@ -171,9 +179,10 @@ class MaintenanceScreen extends ConsumerWidget {
               key: const Key('retry'),
               onPressed: ref.read(tenantControllerProvider.notifier).retry,
               child: const Text('Retry')),
-          TextButton(
-              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-              child: const Text('Change store')),
+          if (_canChangeStore(ref))
+            TextButton(
+                onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+                child: const Text('Change store')),
         ],
       );
 }
@@ -186,10 +195,11 @@ class UpdateRequiredScreen extends ConsumerWidget {
         title: 'Update required',
         body: 'Please update the app to continue.',
         actions: [
-          TextButton(
-              key: const Key('change_store'),
-              onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
-              child: const Text('Change store')),
+          if (_canChangeStore(ref))
+            TextButton(
+                key: const Key('change_store'),
+                onPressed: ref.read(tenantControllerProvider.notifier).changeStore,
+                child: const Text('Change store')),
         ],
       );
 }

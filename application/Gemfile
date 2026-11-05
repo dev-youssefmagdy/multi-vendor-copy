@@ -1,0 +1,6 @@
+# fastlane for the white-label release tooling (application/fastlane/Fastfile).
+# Invoked by tool/tenant_builder as `bundle exec fastlane <platform> <lane>`.
+# Commit Gemfile.lock after the first `bundle install` on a Mac (see docs/mobile/WHITE_LABEL_BUILDS.md).
+source "https://rubygems.org"
+
+gem "fastlane", "~> 2.228"

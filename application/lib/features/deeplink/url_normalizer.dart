@@ -8,11 +8,27 @@ class DeepLinkTarget {
     required this.kind,
     this.id,
     this.query = const {},
+    this.source,
   });
   final String host;
   final DeepLinkKind kind;
   final String? id;
   final Map<String, String> query;
+
+  /// The link as received (not part of equality). Used to hand a link to
+  /// another store over to the browser in white-label builds.
+  final Uri? source;
+
+  /// Web URL of this link on [host] (`https`), for opening outside the app.
+  Uri get webUri {
+    final s = source;
+    if (s != null && s.scheme == 'https' && s.host.toLowerCase() == host) return s;
+    return Uri(
+        scheme: 'https',
+        host: host,
+        path: s?.path ?? '/',
+        queryParameters: query.isEmpty ? null : query);
+  }
 
   /// In-app go_router location (ids percent-encoded, query preserved).
   String get location {
@@ -105,7 +121,7 @@ class UrlNormalizer {
     final query = Map<String, String>.from(uri.queryParameters)
       ..remove('store');
     DeepLinkTarget t(DeepLinkKind k, [String? id]) =>
-        DeepLinkTarget(host: host, kind: k, id: id, query: query);
+        DeepLinkTarget(host: host, kind: k, id: id, query: query, source: uri);
     if (segs.isEmpty) return t(DeepLinkKind.home);
     final head = segs.first.toLowerCase();
     final id = segs.length > 1 ? segs[1] : null;

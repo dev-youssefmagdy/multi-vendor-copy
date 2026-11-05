@@ -29,12 +29,14 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Verified App Links for all tenant subdomains of the platform domain. -->
+            <!-- Verified App Links. ${appLinkHost} comes from the tenant flavor (build.gradle.kts):
+                 `platform` = "*.<platformDomain>" (all store subdomains); white-label = the store's own host.
+                 Extra custom-domain hosts are added by the generated src/<tenant>/AndroidManifest.xml. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="https" android:host="*.${platformDomain}"/>
+                <data android:scheme="https" android:host="${appLinkHost}"/>
             </intent-filter>
             <!-- Custom scheme: payment result + landing-page "Open in app" fallback. -->
             <intent-filter>
@@ -59,6 +61,11 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- White-label builds open links to other stores in the browser (url_launcher). -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
         </intent>
     </queries>
 </manifest>

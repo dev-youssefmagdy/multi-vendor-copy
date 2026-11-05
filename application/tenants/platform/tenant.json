@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "platform",
+  "type": "platform",
+  "displayName": "Store App",
+  "android": {
+    "enabled": true,
+    "applicationId": "com.yourcompany.storeapp",
+    "urlScheme": "storeapp",
+    "secretsEnvironment": "tenant-platform-android"
+  },
+  "ios": {
+    "enabled": true,
+    "bundleId": "com.yourcompany.storeapp",
+    "urlScheme": "storeapp",
+    "secretsEnvironment": "tenant-platform-ios"
+  },
+  "branding": {},
+  "push": { "enabled": false }
+}

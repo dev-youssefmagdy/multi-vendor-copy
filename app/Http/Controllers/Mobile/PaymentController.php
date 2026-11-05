@@ -11,6 +11,7 @@ use App\Models\Tenant\MobileCart;
 use App\Models\Tenant\Order;
 use App\PaymentGateway\DTOs\PaymentCharge;
 use App\PaymentGateway\PaymentManager;
+use App\Services\Mobile\MobileAppLinks;
 use App\Services\Tenant\OrderLifecycleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,14 +47,19 @@ class PaymentController extends Controller
         }
 
         $tenantId = (string) tenant('id');
+        // Return scheme of the app that started the payment (X-App-Scheme, validated against the platform scheme
+        // and this store's own app scheme). Only added to the return URLs when it is not the platform default.
+        $links = app(MobileAppLinks::class);
+        $scheme = $links->requestScheme($request, tenant()) ?? $links->platformScheme();
+        $schemeParam = $scheme !== $links->platformScheme() ? [MobileAppLinks::SCHEME_QUERY => $scheme] : [];
         $charge = PaymentCharge::fromArray([
             'amount' => $order->grand_total,
             'currency' => 'USD', // payment is always USD (display-only currency conversion)
             'description' => "Order #{$order->uuid}",
             'order_id' => $order->uuid,
             'email' => $request->user()->email,
-            'success_url' => route('mobile.payments.success', ['tenant' => $tenantId, 'gateway' => $gateway]),
-            'cancel_url' => URL::signedRoute('mobile.payments.cancel', ['tenant' => $tenantId, 'gateway' => $gateway, 'order' => $order->uuid]),
+            'success_url' => route('mobile.payments.success', ['tenant' => $tenantId, 'gateway' => $gateway] + $schemeParam),
+            'cancel_url' => URL::signedRoute('mobile.payments.cancel', ['tenant' => $tenantId, 'gateway' => $gateway, 'order' => $order->uuid] + $schemeParam),
         ]);
 
         $lifecycle->recordPaymentInitiated($order, $gateway);
@@ -90,25 +96,25 @@ class PaymentController extends Controller
         try {
             $result = $manager->gateway($gateway)->verify($request);
         } catch (\Throwable) {
-            return $this->back('failed');
+            return $this->back($request, 'failed');
         }
 
         $uuid = $result->extra['order_id'] ?? null;
         if (!$result->success || !$uuid) {
-            return $this->back('failed', $uuid);
+            return $this->back($request, 'failed', $uuid);
         }
 
         $order = Order::query()->where('uuid', $uuid)->first();
         // Only orders we actually started a payment for, with the same gateway, can be confirmed.
         if (!$order || $order->payment_method !== $gateway || Cache::get('mobile_pay_pending:'.$uuid) !== $gateway) {
-            return $this->back('failed', $uuid);
+            return $this->back($request, 'failed', $uuid);
         }
 
         if (!$order->paid) {
             $this->confirm($order, $gateway, $result->transactionId, $result->rawResponse);
         }
 
-        return $this->back('success', $uuid);
+        return $this->back($request, 'success', $uuid);
     }
 
     /** GET /payments/{tenant}/{gateway}/cancel?order=&signature= */
@@ -123,7 +129,7 @@ class PaymentController extends Controller
             Cache::forget('mobile_pay_pending:'.$uuid);
         }
 
-        return $this->back('cancelled', $uuid ?: null);
+        return $this->back($request, 'cancelled', $uuid ?: null);
     }
 
     /** GET /orders/{uuid}/payment-status (auth) : the only source of truth for the app. */
@@ -160,9 +166,11 @@ class PaymentController extends Controller
         MobileCart::query()->where('customer_id', $order->customer_id)->update(['items' => [], 'coupon_code' => null]);
     }
 
-    private function back(string $status, ?string $uuid = null): RedirectResponse
+    private function back(Request $request, string $status, ?string $uuid = null): RedirectResponse
     {
-        $scheme = (string) config('mobile.deep_link_scheme', 'storeapp');
+        // The return URL is not signed for every gateway: re-validate the scheme (platform or this store's app only).
+        $links = app(MobileAppLinks::class);
+        $scheme = $links->acceptScheme($request->query(MobileAppLinks::SCHEME_QUERY), tenant()) ?? $links->platformScheme();
 
         return redirect()->away($scheme.'://payment/result?'.http_build_query(array_filter(['status' => $status, 'order' => $uuid])));
     }

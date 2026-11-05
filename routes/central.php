@@ -360,6 +360,8 @@ Route::group([
         Route::post('/registered-users', [TenantEditorController::class, 'store'])->middleware('admin.permission:plans.tenants.manage')->name('users.store');
         Route::get('/registered-users/{tenant}/edit', [TenantEditorController::class, 'edit'])->middleware('admin.permission:plans.tenants.manage')->name('users.edit');
         Route::put('/registered-users/{tenant}', [TenantEditorController::class, 'update'])->middleware('admin.permission:plans.tenants.manage')->name('users.update');
+        // White-label mobile app ids of the tenant (well-known files, /app landing, payment return scheme).
+        Route::put('/registered-users/{tenant}/mobile-app', [\App\Http\Controllers\Admin\TenantMobileAppController::class, 'update'])->middleware('admin.permission:plans.tenants.manage')->name('users.mobile-app.update');
         // Central admin → Tenant admin panel (token-based impersonation login)
         Route::get('/registered-users/{tenantId}/impersonate', [TenantImpersonateController::class, 'generate'])
             ->middleware('admin.permission:plans.tenants.manage')

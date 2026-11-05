@@ -4,6 +4,7 @@ import '../core/config/env.dart';
 import '../core/logger/app_logger.dart';
 import '../core/network/api_client.dart';
 import '../core/network/connectivity_service.dart';
+import '../core/platform/external_links.dart';
 import '../core/storage/key_value_store.dart';
 import '../features/auth/auth_repository.dart';
 import '../features/auth/token_vault.dart';
@@ -28,6 +29,11 @@ final secureStoreProvider =
     Provider<SecureStore>((_) => FlutterSecureStore());
 final connectivityProvider =
     Provider<ConnectivityService>((_) => PlusConnectivityService());
+
+/// Opens links that this binary must not handle (another store in a
+/// white-label build) in the browser.
+final externalLinkOpenerProvider =
+    Provider<ExternalLinkOpener>((_) => const UrlLauncherOpener());
 
 final urlNormalizerProvider = Provider((_) => const UrlNormalizer());
 final apiSessionProvider = Provider<ApiSession>((_) => ApiSession());

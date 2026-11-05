@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "__TENANT_ID__",
+  "type": "store",
+  "displayName": "REPLACE Store Name",
+  "store": {
+    "host": "__TENANT_ID__.platform.example.com",
+    "extraLinkHosts": []
+  },
+  "android": {
+    "enabled": true,
+    "applicationId": "com.example.replace.__TENANT_ID__",
+    "urlScheme": "__TENANT_ID__shop",
+    "secretsEnvironment": "tenant-__TENANT_ID__-android"
+  },
+  "ios": {
+    "enabled": true,
+    "bundleId": "com.example.replace.__TENANT_ID__",
+    "urlScheme": "__TENANT_ID__shop",
+    "secretsEnvironment": "tenant-__TENANT_ID__-ios"
+  },
+  "branding": {
+    "appIcon": "assets/app_icon.png",
+    "adaptiveIconBackground": "#FFFFFF"
+  },
+  "push": { "enabled": false }
+}

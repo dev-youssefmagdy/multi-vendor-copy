@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "platformDomain": "platform.example.com",
+  "tenants": [
+    { "id": "platform", "enabled": true },
+    { "id": "demo", "enabled": true }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "demo",
+  "type": "store",
+  "displayName": "Demo Store",
+  "store": {
+    "host": "demo.platform.example.com",
+    "extraLinkHosts": ["shop.demo-brand.example.com"]
+  },
+  "android": {
+    "enabled": true,
+    "applicationId": "com.demobrand.example.shop",
+    "urlScheme": "demoshop",
+    "secretsEnvironment": "tenant-demo-android"
+  },
+  "ios": {
+    "enabled": true,
+    "bundleId": "com.demobrand.example.shop",
+    "urlScheme": "demoshop",
+    "secretsEnvironment": "tenant-demo-ios"
+  },
+  "branding": {
+    "appIcon": "assets/app_icon.png",
+    "appIconForeground": "assets/app_icon_foreground.png",
+    "adaptiveIconBackground": "#1E6B52"
+  },
+  "push": { "enabled": false }
+}

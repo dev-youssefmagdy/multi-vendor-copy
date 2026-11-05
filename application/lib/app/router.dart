@@ -43,9 +43,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: TenantGuard.splash,
           pageBuilder: (_, s) => _fade(s, const SplashScreen())),
-      GoRoute(
-          path: TenantGuard.storeEntry,
-          builder: (_, _) => const StoreEntryScreen()),
+      // Store entry / recents exist only in the generic platform app.
+      if (!ref.read(appConfigProvider).tenant.isWhiteLabel)
+        GoRoute(
+            path: TenantGuard.storeEntry,
+            builder: (_, _) => const StoreEntryScreen()),
       GoRoute(
           path: TenantGuard.invalid, builder: (_, _) => const InvalidTenantScreen()),
       GoRoute(

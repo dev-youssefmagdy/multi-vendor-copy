@@ -46,6 +46,9 @@ class HeaderInterceptor extends Interceptor {
     o.headers['Accept'] = 'application/json';
     o.headers['X-App-Version'] = config.appVersion;
     o.headers['X-Platform'] = config.platform;
+    if (config.urlScheme.isNotEmpty) {
+      o.headers['X-App-Scheme'] = config.urlScheme;
+    }
     o.headers['Accept-Language'] = session.locale;
     if (session.currency != null) o.headers['X-Currency'] = session.currency;
     if (session.countryId != null) o.headers['X-Country'] = session.countryId;
