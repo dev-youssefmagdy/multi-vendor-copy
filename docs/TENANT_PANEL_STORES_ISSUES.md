@@ -39,3 +39,8 @@ brand request, product/manufacturing request.
    Its "tenant has no central products yet = first sync" exception let any push create the product for a tenant with an
    empty catalog; it was removed (registration still builds the first catalog via the bulk `syncProducts()`), and the
    Livewire add/edit form's assignment notification now points to "New in products" too.
+   **"Assign to all tenants" on add product**: category/product section syncs queued by the add/edit form
+   (`syncAllTenants([... 'products'])` -> `syncProducts()`) still treated "tenant carries no central-linked product"
+   as the first sync and bulk-created everything. The first-catalog exception is now explicit:
+   `syncSection(..., initialCatalog: true)` is passed only by the onboarding chain (`SyncTenantSectionJob(onboarding: true)`);
+   every other sync only refreshes carried products and leaves new/assigned ones in "New in products".

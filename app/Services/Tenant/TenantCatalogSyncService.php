@@ -84,6 +84,9 @@ class TenantCatalogSyncService
      */
     protected bool $adoptNewProducts = false;
 
+    /** true only while the onboarding chain builds the tenant's very first catalog */
+    protected bool $initialCatalogSync = false;
+
     /** @var int[]|null central product ids the tenant explicitly asked to add (null = no explicit list) */
     protected ?array $adoptProductIds = null;
 
@@ -152,13 +155,23 @@ class TenantCatalogSyncService
         }
     }
 
-    public function syncSection(Tenant $tenant, string $section): int
+    /**
+     * @param  bool  $initialCatalog  true only for the post-registration (onboarding) chain: the tenant's first
+     *                                catalog is built in full. Every later sync only refreshes what it already has.
+     */
+    public function syncSection(Tenant $tenant, string $section, bool $initialCatalog = false): int
     {
         set_time_limit(0);
         $this->profitPercentage = max(0, (float) ($tenant->profit_percentage ?? 0));
         tenancy()->initialize($tenant);
 
-        return $this->runSection($tenant, $section);
+        $this->initialCatalogSync = $initialCatalog;
+
+        try {
+            return $this->runSection($tenant, $section);
+        } finally {
+            $this->initialCatalogSync = false;
+        }
     }
 
     /**
@@ -1496,15 +1509,11 @@ class TenantCatalogSyncService
      */
     protected function withoutUnrequestedNewProducts(array $catalogIds): array
     {
-        if ($this->adoptNewProducts) {
-            return $catalogIds;
+        if ($this->adoptNewProducts || $this->initialCatalogSync) {
+            return $catalogIds; // explicit "add everything" or the onboarding catalog build
         }
 
         $carried = $this->tenantCentralProductIds();
-
-        if ($carried === []) {
-            return $catalogIds; // initial sync at registration
-        }
 
         $allowed = array_flip(array_merge($carried, $this->adoptProductIds ?? []));
 

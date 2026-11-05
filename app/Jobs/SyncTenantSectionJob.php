@@ -33,7 +33,7 @@ class SyncTenantSectionJob implements ShouldQueue
             return;
         }
 
-        $syncService->syncSection($tenant, $this->section);
+        $syncService->syncSection($tenant, $this->section, initialCatalog: $this->onboarding ?? false);
 
         // Post-registration chain: profit is its own chained job, and the wizard shows progress.
         // `??` also covers jobs queued before $onboarding existed (property uninitialized after unserialize).
