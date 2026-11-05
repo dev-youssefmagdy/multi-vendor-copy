@@ -10,6 +10,8 @@ Source: Stores group, 2026-11-05 from 5:03 PM onward (text + 3 screenshots). Scr
 | 3 | "On the products page put three products per row so it looks good and the image is clear" (9:34 PM, screenshot) | New products page grid | Fixed – see below |
 | 4 | "A product page must be created so the vendor can open a product" / "a page that describes the product before adding it" (9:35–9:57 PM) | New products page → product preview | Fixed – see below |
 
+| 6 | "In Brand requests add the ability to delete requests that are pending" (11:15 PM) | Tenant panel › Brand requests | Fixed – `DELETE /brand-requests/{id}` (`BrandRequestController::destroy`), pending only; "Delete" action in the list dropdown |
+
 Earlier messages (before 5:03 PM, not in scope, still unconfirmed): belly not showing, no place to create a new
 brand request, product/manufacturing request.
 

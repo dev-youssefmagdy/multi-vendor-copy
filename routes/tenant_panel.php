@@ -247,6 +247,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::post('/', [BrandRequestController::class, 'store'])->name('store');
         Route::post('/validate', [BrandRequestController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
         Route::get('/{id}', [BrandRequestController::class, 'show'])->whereNumber('id')->name('show');
+        Route::delete('/{id}', [BrandRequestController::class, 'destroy'])->whereNumber('id')->name('destroy');
         Route::post('/{id}/messages', [BrandRequestController::class, 'sendMessage'])->whereNumber('id')->name('messages');
         Route::post('/{id}/messages/validate', [BrandRequestController::class, 'validateMessage'])->whereNumber('id')->name('messages.validate')->middleware('throttle:tenant-validate');
         Route::post('/{id}/pay', [BrandRequestController::class, 'pay'])->whereNumber('id')->name('pay');

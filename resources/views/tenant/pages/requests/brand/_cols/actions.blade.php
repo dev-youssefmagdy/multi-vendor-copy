@@ -3,4 +3,12 @@
 @endphp
 <x-tenant::dropdown align="end" :icon="$dots">
     <x-tenant::dropdown-item :href="route('tenant.brand-requests.show', $request->id)">View details</x-tenant::dropdown-item>
+    @if($request->status === \App\Enums\BrandRequestStatus::Pending)
+        <x-tenant::dropdown-item danger
+            data-action-url="{{ route('tenant.brand-requests.destroy', $request->id) }}"
+            data-action-method="DELETE"
+            data-confirm="Delete this pending brand request?"
+            data-confirm-danger
+            data-success="reload-table:#brand-requests-table">Delete</x-tenant::dropdown-item>
+    @endif
 </x-tenant::dropdown>

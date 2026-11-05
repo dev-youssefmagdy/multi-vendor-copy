@@ -152,6 +152,22 @@ final class BrandRequestController extends PanelController
         ]);
     }
 
+    /**
+     * Tenants may withdraw (delete) a brand request only while it is still pending admin review.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $brandRequest = BrandRequest::where('tenant_id', tenant('id'))->findOrFail($id);
+
+        if ($brandRequest->status !== BrandRequestStatus::Pending) {
+            return $this->failure('Only pending brand requests can be deleted.');
+        }
+
+        $brandRequest->delete(); // messages and payment requests cascade
+
+        return $this->success('Brand request deleted successfully.');
+    }
+
     public function sendMessage(SendBrandRequestMessageRequest $request, int $id): JsonResponse
     {
         $brandRequest = BrandRequest::where('tenant_id', tenant('id'))->findOrFail($id);
