@@ -379,7 +379,7 @@ class AddEditProduct extends Component
                     $tenantId,
                     'product_assigned',
                     'New Product Added for You',
-                    'A new product "' . $productName . '" has been added to your catalog.',
+                    'A new product "' . $productName . '" is waiting in "New in products" - review it and add it to your store.',
                     ['product_id' => $product->id, 'product_name' => $productName]
                 );
             }

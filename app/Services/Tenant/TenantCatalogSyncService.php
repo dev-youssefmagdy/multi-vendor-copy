@@ -1520,9 +1520,8 @@ class TenantCatalogSyncService
             return true;
         }
 
-        if ($this->tenantCentralProductIds() === []) {
-            return true; // initial sync
-        }
+        // No "tenant has no products yet" exception here: the registration sync creates the first catalog through
+        // syncProducts() (bulk), so a live push (admin add/edit) must never create a product on its own.
 
         // An admin assignment only makes the product eligible; the tenant still accepts it from "New in products".
         return false;

@@ -33,3 +33,7 @@ brand request, product/manufacturing request.
    product was pushed straight into the tenant store. An assignment now only makes the product *eligible* (it appears
    in dashboard "New in products" / New products page, even outside the tenant's categories); the row is created
    only when the tenant adds it (or on the first registration sync). Products the tenant already carries keep updating.
+   **Edit product** went through the same path (live push job `SyncCentralProductToTenantJob` -> `syncProductToTenant()`).
+   Its "tenant has no central products yet = first sync" exception let any push create the product for a tenant with an
+   empty catalog; it was removed (registration still builds the first catalog via the bulk `syncProducts()`), and the
+   Livewire add/edit form's assignment notification now points to "New in products" too.
