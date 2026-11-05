@@ -102,7 +102,7 @@ final class PartnerWalletController extends PanelController
 
         return $this->success(
             'Withdrawal request submitted. It will be reviewed shortly.',
-            redirect: route('tenant.finance.wallet', ['tab' => 'partner']),
+            redirect: route('tenant.partner-program'),
         );
     }
 

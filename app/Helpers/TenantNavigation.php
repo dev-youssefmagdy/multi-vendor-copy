@@ -77,7 +77,7 @@ class TenantNavigation
                             ['label' => 'Brand Requests', 'route' => 'tenant.brand-requests.index', 'permission' => 'catalog.products.manage'],
                         ],
                     ],
-                    ['type' => 'link', 'label' => 'Partner Program', 'route' => 'tenant.partner-program', 'icon' => 'plans', 'permission' => 'dashboard.view'],
+                    ['type' => 'link', 'label' => 'Partner Program', 'route' => 'tenant.partner-program', 'icon' => 'plans', 'permission' => 'finance.wallet.view'],
                     [
                         'type' => 'group',
                         'label' => 'Settings',

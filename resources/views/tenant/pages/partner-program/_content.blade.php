@@ -1,4 +1,4 @@
-{{-- Wallet "Partner Program" tab. Partner balance is separate from vendor order/subscription money. --}}
+{{-- Partner Program page content. Partner balance is separate from vendor order/subscription money. --}}
 @php
     $money = fn ($v) => '$' . number_format((float) $v, 2);
     $partnerCards = [

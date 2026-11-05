@@ -152,8 +152,8 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
     Route::get('/todays-chances', [TodayChancesController::class, 'index'])
         ->middleware('tenant.permission:dashboard.view')
         ->name('tenant.todays-chances');
-    Route::get('/partner-program', fn () => redirect()->route('tenant.finance.wallet', ['tab' => 'partner']))
-        ->middleware('tenant.permission:dashboard.view')
+    Route::get('/partner-program', [\App\Http\Controllers\Tenant\Panel\Finance\PartnerProgramController::class, 'index'])
+        ->middleware('tenant.permission:finance.wallet.view') // same permission as the partner data/withdraw endpoints
         ->name('tenant.partner-program');
 
     Route::get('/onboarding/{tab?}', [OnboardingController::class, 'show'])
