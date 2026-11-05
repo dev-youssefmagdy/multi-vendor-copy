@@ -40,28 +40,37 @@
                 <h2 class="text-lg font-extrabold text-gray-900 mb-1">{{ __('Target Countries') }}</h2>
                 <p class="text-sm text-gray-500 mb-5">{{ __('Select the countries you want to sell to. Free countries are pre-checked to get you started.') }}</p>
 
-                <label class="flex items-center gap-3 p-2.5 mb-2 rounded-lg cursor-pointer bg-gray-50 border border-gray-200">
-                    <input type="checkbox"
-                        wire:click="toggleAllCountries($event.target.checked)"
-                        @checked(count($countryIds) === count($allCountries))
-                        class="w-4 h-4 rounded text-primary">
-                    <span class="text-sm font-semibold text-gray-800 flex-1">{{ __('All Countries') }}</span>
-                </label>
+                {{-- Selection lives client-side (Alpine) and is only synced to Livewire with the next action (Continue),
+                     so ticking "All Countries" / single countries no longer waits for a server round trip. --}}
+                <div x-data="{
+                        ids: $wire.$entangle('countryIds'),
+                        all: @js($allCountries->pluck('id')->map(fn ($id) => (string) $id)->all()),
+                        get allChecked() { return this.ids.length === this.all.length; },
+                        toggleAll(checked) { this.ids = checked ? [...this.all] : []; },
+                    }">
+                    <label class="flex items-center gap-3 p-2.5 mb-2 rounded-lg cursor-pointer bg-gray-50 border border-gray-200">
+                        <input type="checkbox"
+                            :checked="allChecked"
+                            @change="toggleAll($event.target.checked)"
+                            class="w-4 h-4 rounded text-primary">
+                        <span class="text-sm font-semibold text-gray-800 flex-1">{{ __('All Countries') }}</span>
+                    </label>
 
-                <div class="space-y-2 max-h-72 overflow-y-auto border border-gray-200 rounded-xl p-3 mb-4">
-                    @foreach($allCountries as $country)
-                        <label class="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <input type="checkbox"
-                                value="{{ $country->id }}"
-                                wire:model="countryIds"
-                                class="w-4 h-4 rounded text-primary">
-                            <span class="text-lg leading-none">{{ $country->flag_emoji }}</span>
-                            <span class="text-sm text-gray-800 flex-1">{{ $country->translationValue('name') ?: $country->getRawOriginal('name') ?: $country->iso2 }}</span>
-                            @if($country->is_free)
-                                <span class="text-xs text-green-600 font-medium">{{ __('Free') }}</span>
-                            @endif
-                        </label>
-                    @endforeach
+                    <div class="space-y-2 max-h-72 overflow-y-auto border border-gray-200 rounded-xl p-3 mb-4">
+                        @foreach($allCountries as $country)
+                            <label class="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <input type="checkbox"
+                                    value="{{ $country->id }}"
+                                    x-model="ids"
+                                    class="w-4 h-4 rounded text-primary">
+                                <span class="text-lg leading-none">{{ $country->flag_emoji }}</span>
+                                <span class="text-sm text-gray-800 flex-1">{{ $country->translationValue('name') ?: $country->getRawOriginal('name') ?: $country->iso2 }}</span>
+                                @if($country->is_free)
+                                    <span class="text-xs text-green-600 font-medium">{{ __('Free') }}</span>
+                                @endif
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
 
                 @error('countryIds') <p class="text-red-500 text-xs mb-3">{{ $message }}</p> @enderror

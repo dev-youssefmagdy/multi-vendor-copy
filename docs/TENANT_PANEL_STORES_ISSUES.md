@@ -12,6 +12,7 @@ Source: Stores group, 2026-11-05 from 5:03 PM onward (text + 3 screenshots). Scr
 
 | 6 | "In Brand requests add the ability to delete requests that are pending" (11:15 PM) | Tenant panel › Brand requests | Fixed – `DELETE /brand-requests/{id}` (`BrandRequestController::destroy`), pending only; "Delete" action in the list dropdown |
 | 7 | "Clicking Partner Program opens a page inside Finance (Subscriptions & Balance tab); better an isolated page" (11:23 PM, screenshot) | Tenant panel › sidebar Partner Program | Fixed – own page `tenant.partner-program` (`PartnerProgramController`, view `partner-program/`), tab removed from the wallet page, `?tab=partner` redirects |
+| 8 | "The countries select (Set Up Your Store › Target Countries) still responds slowly" (11:33 PM, screenshot) | Website store onboarding wizard, step 1 | Fixed – selection is client-side (Alpine `$wire.$entangle`), "All Countries" no longer does a Livewire round trip + full re-render per click; synced on Continue |
 
 Earlier messages (before 5:03 PM, not in scope, still unconfirmed): belly not showing, no place to create a new
 brand request, product/manufacturing request.
