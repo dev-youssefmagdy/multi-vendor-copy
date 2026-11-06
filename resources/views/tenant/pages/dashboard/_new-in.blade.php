@@ -42,7 +42,7 @@
         <div class="swiper-wrapper">
             @foreach($newProducts as $product)
                 <article class="db-opp swiper-slide">
-                    <div class="db-opp-media" @if(!empty($product['image'])) style="background-image:url('{{ $product['image'] }}')" @endif></div>
+                    @if(!empty($product['url']))<a href="{{ $product['url'] }}" class="db-opp-media" style="display:block;@if(!empty($product['image']))background-image:url('{{ $product['image'] }}')@endif" aria-label="{{ $product['title'] }}"></a>@else<div class="db-opp-media" @if(!empty($product['image'])) style="background-image:url('{{ $product['image'] }}')" @endif></div>@endif
 
                     <div class="db-opp-body">
                         <div>
@@ -58,6 +58,9 @@
                             </div>
                         </div>
 
+                        @if(!empty($product['url']))
+                            <a href="{{ $product['url'] }}" class="btn btn-secondary btn-lg" style="width:100%;margin-bottom:8px;text-align:center">View details</a>
+                        @endif
                         <form method="POST" action="{{ route('tenant.products.sync-new') }}">
                             @csrf
                             <input type="hidden" name="product_ids[]" value="{{ $product['id'] }}">

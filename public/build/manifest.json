@@ -2606,7 +2606,7 @@
     "isEntry": true
   },
   "resources/css/elora-variants.css": {
-    "file": "assets/souqify-variants-DVaBY5Qq.css",
+    "file": "assets/souqify-variants-DwFVIWNO.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2845,7 +2845,7 @@
     "isEntry": true
   },
   "resources/css/souqify-variants.css": {
-    "file": "assets/souqify-variants-DVaBY5Qq.css",
+    "file": "assets/souqify-variants-DwFVIWNO.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -3587,12 +3587,12 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-4ufdlUcW.js",
+    "file": "assets/module-nav-BMlg1reZ.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
     "css": [
-      "assets/module-nav-DlarAGYF.css",
+      "assets/module-nav-V9Agd-qb.css",
       "assets/dashboard-CEEu0EE3.css"
     ]
   },

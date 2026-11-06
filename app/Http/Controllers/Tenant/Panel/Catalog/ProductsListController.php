@@ -89,7 +89,7 @@ final class ProductsListController extends PanelController
     public function previewNew(int $centralProductId, TenantCatalogSyncService $sync): View
     {
         $product = $sync->pendingNewProductsQuery()
-            ->with(['translations.language', 'files'])
+            ->with(['translations.language', 'files', 'categories.translations.language', 'variants.options.translations.language'])
             ->whereKey($centralProductId)
             ->firstOrFail();
 
@@ -106,6 +106,24 @@ final class ProductsListController extends PanelController
             'card' => $card,
             'images' => $images ?: array_filter([$card['image']]),
             'fullDescription' => trim(strip_tags((string) $product->translationValue('description'))),
+            'summary' => trim(strip_tags((string) $product->translationValue('summary'))),
+            'details' => array_filter([
+                'SKU' => $product->sku,
+                'Availability' => str_replace('_', ' ', ucfirst((string) $product->stockStatus())),
+                'Stock' => $product->manage_stock ? (int) $product->stock : null,
+                'Weight' => $product->weight_grams ? number_format((int) $product->weight_grams).' g' : null,
+                'Requires shipping' => $product->requires_shipping ? 'Yes' : 'No',
+                'Taxable' => $product->is_taxable ? 'Yes' : 'No',
+            ], fn ($v) => $v !== null && $v !== ''),
+            'categories' => $product->categories
+                ->map(fn ($c) => $c->translationValue('name') ?: $c->slug)
+                ->filter()->values()->all(),
+            'variants' => $product->variants->map(fn ($v) => [
+                'sku' => $v->sku,
+                'options' => $v->options->map(fn ($o) => $o->translationValue('name') ?: $o->slug ?? null)->filter()->implode(' / '),
+                'price' => '$'.number_format((float) $v->price, 2),
+                'stock' => (int) $v->stock,
+            ])->all(),
         ]);
     }
 

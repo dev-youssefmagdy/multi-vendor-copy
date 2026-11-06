@@ -252,6 +252,13 @@
 .pm-preview-info h1 { margin: 0 0 12px; font-size: 26px; color: var(--ds-text); }
 .pm-preview-price { margin: 0 0 16px; font-size: 22px; font-weight: 700; }
 .pm-preview-price small { display: block; font-size: 13px; font-weight: 400; color: var(--ds-text-muted); }
+.pm-preview-cats { margin: 0 0 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.pm-preview-details { margin: 0 0 20px; display: grid; gap: 8px; }
+.pm-preview-details > div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--ds-border, rgba(0,0,0,.08)); }
+.pm-preview-details dt { color: var(--ds-text-muted); }
+.pm-preview-details dd { margin: 0; font-weight: 600; color: var(--ds-text); }
+.pm-preview-variants { width: 100%; margin: 0 0 24px; border-collapse: collapse; font-size: 14px; }
+.pm-preview-variants th, .pm-preview-variants td { padding: 8px; text-align: left; border-bottom: 1px solid var(--ds-border, rgba(0,0,0,.08)); }
 .pm-preview-desc { white-space: pre-line; color: var(--ds-text-muted); line-height: 1.7; margin: 0 0 24px; }
 @container (max-width: 760px) { .pm-preview { grid-template-columns: minmax(0, 1fr); } }
 

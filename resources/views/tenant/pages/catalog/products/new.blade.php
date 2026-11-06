@@ -58,6 +58,7 @@
                                     <small>Before your profit margin</small>
                                 </div>
                             </div>
+                            <a href="{{ $card['url'] }}" class="btn btn-secondary btn-lg" style="width:100%;margin-bottom:8px;text-align:center">View details</a>
                             <form method="POST" action="{{ route('tenant.products.sync-new') }}">
                                 @csrf
                                 <input type="hidden" name="product_ids[]" value="{{ $card['id'] }}">

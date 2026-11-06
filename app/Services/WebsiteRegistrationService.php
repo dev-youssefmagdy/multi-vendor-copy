@@ -253,24 +253,35 @@ class WebsiteRegistrationService
             return;
         }
 
+        // Commission first, and isolated: a failing mail (SMTP down, bad template...) must never cost the
+        // referrer their commission, and a commission error must never block the activation mails.
+        $this->approveAffiliateCommission($tenant, $paymentLog, $payment);
+
         $this->templateMailService->sendAdminSubscriptionActivated($tenant, $package, $paymentLog);
         $this->templateMailService->sendTenantSubscriptionActivated($tenant, $package, $paymentLog, $locale);
+    }
 
-        $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
-        $affiliateCoupon   = null;
-        $couponAffiliateId = null;
+    protected function approveAffiliateCommission(Tenant $tenant, PaymentLog $paymentLog, array $payment): void
+    {
+        try {
+            $affiliateCouponId = (int) ($payment['applied_affiliate_coupon_id'] ?? 0);
+            $affiliateCoupon   = null;
+            $couponAffiliateId = null;
 
-        if ($affiliateCouponId) {
-            $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
-            $couponAffiliateId = $affiliateCoupon?->affiliate_id;
-        }
+            if ($affiliateCouponId) {
+                $affiliateCoupon   = \App\Models\AffiliateCoupon::query()->with('affiliate')->find($affiliateCouponId);
+                $couponAffiliateId = $affiliateCoupon?->affiliate_id;
+            }
 
-        // URL-referral commission — suppressed when an affiliate coupon was used
-        app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
+            // URL-referral commission — suppressed when an affiliate coupon was used
+            app(AffiliateService::class)->approveConversion($tenant->id, $paymentLog, $couponAffiliateId);
 
-        // Affiliate coupon commission — fires only when an affiliate coupon was applied
-        if ($affiliateCoupon) {
-            app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
+            // Affiliate coupon commission — fires only when an affiliate coupon was applied
+            if ($affiliateCoupon) {
+                app(AffiliateService::class)->approveCouponConversion($tenant->id, $paymentLog, $affiliateCoupon);
+            }
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 

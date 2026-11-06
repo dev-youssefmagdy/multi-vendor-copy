@@ -1,7 +1,7 @@
 # Tenant (vendor) affiliate — team plan & agent prompts
 
 Goal: a tenant (vendor store) can act as an affiliate. Same engine as `docs/AFFILIATE_SYSTEM.md`, no rule changes.
-Surfaces: vendor dashboard "Partner Program" banner + a new **Partner Program tab on `/finance/wallet`** (withdraw lives there).
+Surfaces: vendor dashboard "Partner Program" banner + a stand-alone **Partner Program page (`tenant.partner-program`, `/partner-program`)** (withdraw lives there; it used to be a tab on `/finance/wallet`, `?tab=partner` now redirects).
 
 Not an order/profit feature: **do NOT touch** `OrderPricing`, `OrderProfitCalculator`, `OrderPayoutLedger`, `OrderComposer`,
 `vendor_settlements`, `TenantPayout` or `docs/ORDER_FORMULAS.md`. Partner balance is a completely separate ledger
