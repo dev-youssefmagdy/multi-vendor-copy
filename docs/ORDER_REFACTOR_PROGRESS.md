@@ -19,6 +19,7 @@
 * Item `grand_total` = sub_total + fixed_shipping - discount + tax + shipping_fee; per-item `shipping_fee` stays 0 (shipping is order-level, as today).
 * `fixed_shipping` is per line, not x qty.
 * Partial refunds reduce vendor share only; void orders => all figures 0.
+* Tenant profit-% change (`ProductPriceCalculationService::applyProfitPercentage`, 2026-11-07): recalculates every central-linked tenant product, hidden (archived) ones included, from `TenantPricingService::centralBasePrice` (sale price if > 0, else base). Own products are left alone, so their typed price is never compounded. Pending "New products" are not stored per tenant: they're read live from central and priced with the current profit % when accepted.
 
 * Settlement ledger = existing central Settlement Payments (`vendor_settlements`) + `orders.payout_released`. NO `order_transactions` table (removed on user request).
 * Rounding: line discount is rounded to cents first, grand_total = components (docs example 181.935 -> 181.93 stored; order 183.13).

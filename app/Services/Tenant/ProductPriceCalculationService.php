@@ -29,7 +29,12 @@ class ProductPriceCalculationService
                 return FixedShippingCost::query()->where('is_active', true)->get()->keyBy('country_id');
             });
 
-            Product::query()
+            // Every central-linked product the tenant carries, including ones hidden by the
+            // centralVisible scope (archived centrally), so they come back with current prices.
+            // Own products (central_product_id NULL) are skipped: their default_price is the
+            // price the tenant typed, so re-marking it up would compound on every save.
+            Product::withoutGlobalScope('centralVisible')
+                ->whereNotNull('central_product_id')
                 ->with('variants')
                 ->chunkById(50, function ($products) use ($profitPercentage, $shippingCosts, &$productsUpdated, &$variantsUpdated) {
                     $centralProductIds = $products->pluck('central_product_id')->filter()->unique()->values();
@@ -49,9 +54,12 @@ class ProductPriceCalculationService
                     foreach ($products as $product) {
                         $central = $product->central_product_id ? $centralProducts->get($product->central_product_id) : null;
 
-                        $centralSalePrice = $central
-                            ? (float) ($central->sale_price ?? $central->base_price ?? 0)
-                            : (float) ($product->default_price ?? 0);
+                        if (! $central) {
+                            continue; // central product gone; leave the tenant row untouched
+                        }
+
+                        // Same base rule as the catalog sync: sale price when > 0, else base price.
+                        $centralSalePrice = app(TenantPricingService::class)->centralBasePrice($central);
 
                         $fixedJson = $central ? (array) ($central->fixed_shipping_costs ?? []) : [];
                         $weightGrams = $central ? (int) ($central->weight_grams ?? 0) : 0;
