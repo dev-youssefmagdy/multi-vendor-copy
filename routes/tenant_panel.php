@@ -780,13 +780,9 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::post('/ai-translation/{language}/run', [AiTranslationController::class, 'run'])->whereNumber('language')->name('ai-translation.run');
             Route::post('/ai-translation/{language}/purchase', [AiTranslationController::class, 'purchase'])->whereNumber('language')->name('ai-translation.purchase');
 
-            Route::get('/translations', [TranslationsController::class, 'index'])->name('translations');
-            Route::get('/translations/data', [TranslationsController::class, 'data'])->name('translations.data');
-            Route::post('/translations/{language}/keys', [TranslationsController::class, 'saveKey'])->name('translations.keys.update');
-            Route::post('/translations/{language}/keys/ai', [TranslationsController::class, 'translateKeyWithAi'])->name('translations.keys.ai');
-            Route::post('/translations/{language}/keys/ai-batch', [TranslationsController::class, 'translateSelectedWithAi'])->name('translations.keys.ai-bulk');
-            Route::post('/translations/{language}/translate-store', [TranslationsController::class, 'translateStore'])->name('translations.store-ai');
-            Route::get('/translations/{language}/status', [TranslationsController::class, 'status'])->name('translations.status');
+            // The "Translation Keys" editor is hidden from the tenant panel (static keys are managed by the
+            // marketplace admin). TranslationsController and its view are kept so it can be re-enabled.
+            Route::get('/translations', fn () => redirect()->route('tenant.settings.ai-translation'))->name('translations');
         });
 
         Route::middleware('tenant.permission:settings.admins.manage')->group(function () {

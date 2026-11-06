@@ -88,7 +88,6 @@ class TenantNavigation
                             ['label' => 'Currencies', 'route' => 'tenant.settings.currencies', 'permission' => 'settings.regional.manage'],
                             // ['label' => 'Languages', 'route' => 'tenant.settings.languages', 'permission' => 'settings.regional.manage'],
                             ['label' => 'Languages Manage', 'route' => 'tenant.settings.languages-manage', 'permission' => 'settings.regional.manage'],
-                            ['label' => 'Translations', 'route' => 'tenant.settings.translations', 'permission' => 'settings.translations.manage'],
                             ['label' => 'AI Translation', 'route' => 'tenant.settings.ai-translation', 'permission' => 'settings.translations.manage'],
                             ['label' => 'Tenant Admins', 'route' => 'tenant.settings.admins', 'permission' => 'settings.admins.manage'],
                             ['label' => 'Roles & Permissions', 'route' => 'tenant.settings.roles-permissions', 'permission' => 'settings.roles.manage'],
