@@ -77,11 +77,13 @@
     </x-tenant::form>
 
     {{-- ── Company Info ────────────────────────────────────────────────── --}}
+    {{-- Individual accounts have no company details, so the section is not rendered for them. --}}
+    @if($accountType === 'company')
     <x-tenant::form :action="route('tenant.settings.compliance.update')" method="POST"
         :validate="route('tenant.settings.compliance.validate')" success="redirect" files>
         <input type="hidden" name="section" value="company">
         <input type="hidden" name="from" value="{{ request('from') }}">
-        <section class="card form-card fu d3 section-gap" @if($accountType !== 'company') style="opacity:.55" @endif>
+        <section class="card form-card fu d3 section-gap">
             <div class="acct-section-head">
                 <div class="acct-section-icon-wrap">
                     <svg class="acct-section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,15 +92,13 @@
                 </div>
                 <div>
                     <h3 class="panel-title">Company Info (if applicable)</h3>
-                    <p class="panel-copy">Registered company details, if you operate under a legal entity.@if($accountType !== 'company') Disabled — set Account Type to Company in Business Info to fill this in.@endif</p>
+                    <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
                 </div>
                 <div class="acct-section-save">
-                    @if($accountType === 'company')
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    @endif
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
             </div>
-            <fieldset @disabled($accountType !== 'company') style="border:0;padding:0;margin:0;min-width:0">
+            <fieldset style="border:0;padding:0;margin:0;min-width:0">
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="companyName" label="Company Name" maxlength="255" :value="$companyName" />
                 <x-tenant::input name="registrationNumber" label="Commercial Registration Number" required maxlength="100" :value="$registrationNumber" />
@@ -121,6 +121,7 @@
             </fieldset>
         </section>
     </x-tenant::form>
+    @endif
 
     {{-- ── Bank Account ────────────────────────────────────────────────── --}}
     <x-tenant::form :action="route('tenant.settings.compliance.update')" method="POST"
@@ -187,9 +188,11 @@
                     @endif
                     <x-tenant::file name="docNationalIdUpload" />
                 </div>
+                {{-- Company-only document; the existing path still posts so an uploaded file is never dropped. --}}
+                <input type="hidden" name="existing_doc_commercial_registration_path" value="{{ $docCommercialRegistrationPath }}">
+                @if($accountType === 'company')
                 <div>
                     <label class="field-label">Commercial Registration</label>
-                    <input type="hidden" name="existing_doc_commercial_registration_path" value="{{ $docCommercialRegistrationPath }}">
                     @if ($docCommercialRegistrationPath)
                         <div class="compliance-current-doc">
                             <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
@@ -200,9 +203,12 @@
                     @endif
                     <x-tenant::file name="docCommercialRegistrationUpload" />
                 </div>
+                @endif
+                {{-- Company-only document; the existing path still posts so an uploaded file is never dropped. --}}
+                <input type="hidden" name="existing_doc_tax_certificate_path" value="{{ $docTaxCertificatePath }}">
+                @if($accountType === 'company')
                 <div>
                     <label class="field-label">Tax Certificate</label>
-                    <input type="hidden" name="existing_doc_tax_certificate_path" value="{{ $docTaxCertificatePath }}">
                     @if ($docTaxCertificatePath)
                         <div class="compliance-current-doc">
                             <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
@@ -213,6 +219,7 @@
                     @endif
                     <x-tenant::file name="docTaxCertificateUpload" />
                 </div>
+                @endif
                 <div class="acct-span-full">
                     <label class="field-label">Additional Documents</label>
                     @if (!empty($docAdditionalPaths))

@@ -41,7 +41,7 @@
                 <h3 class="panel-title">Categories</h3>
                 <p class="panel-copy">
                     @foreach($currentCategories as $category)
-                        <span class="badge mr-1">{{ $category->translations->first()?->name ?? $category->id }}</span>
+                        <span class="badge mr-1">{{ $category->translationValue('name') ?: $category->getRawOriginal('name') ?: $category->id }}</span>
                     @endforeach
                     @if($currentCategories->isEmpty())No categories configured yet.@endif
                 </p>
@@ -78,7 +78,7 @@
                 required
                 multiple
                 tree
-                :options="$allCategories->map(fn ($category) => ['value' => $category->id, 'label' => $category->translations->first()?->name ?? $category->id])->all()"
+                :options="$allCategories->map(fn ($category) => ['value' => $category->id, 'label' => $category->translationValue('name') ?: $category->getRawOriginal('name') ?: $category->id])->all()"
                 :value="$currentCategoryIds"
             />
 
