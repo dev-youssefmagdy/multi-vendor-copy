@@ -1,0 +1,1 @@
+import{n as e}from"./toast-COEXnqM9.js";import{t}from"./index-D5uE_cf0.js";function n(n){n.addEventListener(`click`,async()=>{await t(n.dataset.copyValue||``)?e.success(`Copied`):e.error(`Could not copy to clipboard.`)})}export{n as init};

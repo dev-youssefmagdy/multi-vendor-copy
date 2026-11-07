@@ -13,6 +13,7 @@ use App\Models\ReturnRequest;
 use App\Repositories\OrderRepository;
 use App\Services\Admin\OrderFulfillmentService;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
@@ -22,8 +23,11 @@ class InDeliveryOrderDetailPage extends AdminPage
     use InteractsWithAdminUi;
     use WithFileUploads;
 
+    #[Locked]
     public string $tenantId = '';
+    #[Locked]
     public string $orderNumber = '';
+    #[Locked]
     public array $order = [];
     public array $orderAttachments = [];
     public string $selectedOrderStatus = '';
@@ -75,11 +79,33 @@ class InDeliveryOrderDetailPage extends AdminPage
             'order' => $this->order,
             'orderAttachments' => $this->orderAttachments,
             'orderStatusOptions' => $orderStatusOptions,
+            'isOwnOrder' => $this->isOwnOrder(),
         ]);
+    }
+
+    /** Merchant-fulfilled (own products) order: read-only for platform admins. */
+    protected function isOwnOrder(): bool
+    {
+        return (bool) ($this->order['is_own_order'] ?? false);
+    }
+
+    protected function rejectOwnOrder(): bool
+    {
+        if (! $this->isOwnOrder()) {
+            return false;
+        }
+
+        $this->toast(OrderFulfillmentService::OWN_ORDER_MESSAGE, 'error');
+
+        return true;
     }
 
     public function updateOrderStatus(OrderFulfillmentService $service): void
     {
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         $orderStatus = OrderStatus::tryFrom($this->selectedOrderStatus);
 
         if (!$orderStatus) {
@@ -105,6 +131,10 @@ class InDeliveryOrderDetailPage extends AdminPage
 
     public function updateTrackingNumber(OrderFulfillmentService $service): void
     {
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         $this->validate([
             'trackingNumber' => ['nullable', 'string', 'max:255'],
         ]);
@@ -154,6 +184,10 @@ class InDeliveryOrderDetailPage extends AdminPage
 
     public function uploadAttachment(): void
     {
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         $this->validate([
             'attachmentFile' => 'required|file|max:5120|mimes:jpg,jpeg,png,gif,webp,avif,pdf,xlsx,xls,csv,doc,docx,mp4,mov,avi,mkv,webm,wmv,flv',
         ]);
@@ -184,6 +218,10 @@ class InDeliveryOrderDetailPage extends AdminPage
 
     public function deleteAttachment(int $id): void
     {
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         $attachment = OrderAttachment::query()
             ->where('id', $id)
             ->where('tenant_id', $this->tenantId)
@@ -203,6 +241,9 @@ class InDeliveryOrderDetailPage extends AdminPage
     public function createReturn(): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage', 'shipping.delivery.manage']);
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
         $this->validate([
             'returnReason' => ['required', 'string', 'min:10', 'max:1000'],
             'returnNotes'  => ['nullable', 'string', 'max:1000'],

@@ -18,7 +18,13 @@ order_grand_total   = items_grand_total + order.shipping_charge - order.coupon_d
 * `fixed_shipping` ("fixed cost price") is **per order line, not multiplied by qty**.
 * **Customer-facing display:** storefront order pages (all themes + starter kit) never show `fixed_shipping` as its own row; "Items subtotal" = `subtotal + items_fixed_shipping` (per line: `sub_total + fixed_shipping`). Stored columns and formulas are unchanged. Invoice and order emails follow the same rule (unit price = (sub_total + fixed_shipping) / qty).
 * **Storefront price filter** (min/max on category, search, best-selling, new-in...) compares against the *displayed* unit price, i.e. `price + fixed_shipping` with any flash-sale discount applied (`Product::storefrontPricing()['current_price']` x currency rate), not the bare sell price. Implemented in `StorefrontRepository::productIdsWithinDisplayedPrice()` (PHP, so the maths is not duplicated in SQL). Price *sorting* still orders by the SQL sell price.
-* `shipping_charge` comes from the existing weight/zone logic (unchanged).
+* `shipping_charge` comes from the existing weight/zone logic, computed from **catalog lines only**.
+* **Own products ship free (2026-11-07):** a product with `is_own_product = true` (vendor-created, no `central_product_id`) contributes 0 shipping:
+  `fixed_shipping = 0`, weight 0, excluded from the zone/rate weight sum and from every shipping-availability check ("select a country", "not available to your country").
+  An own-only cart therefore checks out with `shipping_charge = 0` and no shipping error; a mixed cart pays the zone rate for the catalog lines' weight only
+  (and mixed carts still split into two orders; the own companion order carries `shipping_charge = 0`). `is_tenant_owned` (central product assigned to one tenant) is a catalog product, NOT own, for shipping.
+  Predicate: `OrderComposer::isOwnProduct()` / `OrderComposer::isShippableCartItem()`; used by `PlacesOrders`, `CheckoutPage`, `CartPage`, `CalculatesFreeShipping` (mobile cart).
+* **Own-products orders are merchant-fulfilled (2026-11-08):** no stored column; discriminator = `Tenant\Order::isOwnProductsOrder()` (has items and every item's product is `is_own_product`; the companion order of a mixed cart and own-only carts). Platform (central admin) treats them read-only: excluded from the Delivery Queue / its counters, and status, tracking, attachments, cancel, refund, create-return, shipping label and receipt are rejected server-side (`OrderFulfillmentService::assertPlatformManageable`, Livewire pages, `OrderReceiptController`). Shipping stays on the catalog order only (`shipping_charge = 0` on the own order), so shipping/settlement lines come only from the catalog order. Formulas unchanged.
 * `tax` is 0 today; whatever is calculated per item is summed into `order.tax`.
 
 ### Worked example (storefront, UK, USD)
@@ -89,6 +95,7 @@ sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight,
 | Per-order platform/vendor figures, void/refund rules | `App\Support\OrderProfitCalculator` |
 | Paid / remaining ledger helpers | `App\Support\OrderPayoutLedger` (reads central `vendor_settlements` = Settlement Payments, and `orders.payout_released`) |
 | Cost / profit / fixed-shipping split of a unit price | `Product` / `ProductVariant::priceBreakdownForCountry()` |
+| Shipping eligibility (own = no shipping) | `OrderComposer::isOwnProduct()` / `isShippableCartItem()` |
 | Building lines + persisting orders (checkout, API) | `App\Services\Tenant\Checkout\OrderComposer` (used by `PlacesOrders` and `CheckoutPage`) |
 | Cart / checkout totals | `StorefrontRepository::cartItems()/cartTotal()` - priced with the **storefront (session) country**, identical in cart and checkout; the delivery-address country only selects the shipping zone fee |
 | Vendor -> platform payment | `VendorPurchaseService` + `VendorSettlementPaymentController` (creates a `VendorSettlement` record) |

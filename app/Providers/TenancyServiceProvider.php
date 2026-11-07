@@ -108,7 +108,11 @@ class TenancyServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        // Keep the vendor class resolving to our safe subclass (vendor code reads its originalPaths).
+        $this->app->singleton(
+            \Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
+            fn ($app) => $app->make(\App\Tenancy\Bootstrappers\SafeFilesystemTenancyBootstrapper::class)
+        );
     }
 
     public function boot()

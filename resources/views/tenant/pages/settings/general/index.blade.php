@@ -23,9 +23,13 @@
             <div>
                 <h3 class="panel-title">Target Countries</h3>
                 <p class="panel-copy">
-                    @foreach($currentCountries as $country)
-                        <span class="badge mr-1">{{ $country->flag_emoji }} {{ $country->name }}</span>
-                    @endforeach
+                    @if($currentCountries->isNotEmpty() && $currentCountries->count() >= $allCountries->count())
+                        <span class="badge mr-1">All countries</span>
+                    @else
+                        @foreach($currentCountries as $country)
+                            <span class="badge mr-1">{{ $country->flag_emoji }} {{ $country->name }}</span>
+                        @endforeach
+                    @endif
                     @if($currentCountries->isEmpty())No countries configured yet.@endif
                 </p>
                 @if($pendingCountryRequest)
@@ -59,6 +63,7 @@
                 label="Target Countries"
                 required
                 multiple
+                data-all-label="All countries"
                 :options="$allCountries->pluck('name', 'id')->all()"
                 :value="$currentCountryIds"
             />

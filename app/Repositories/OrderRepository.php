@@ -84,6 +84,8 @@ class OrderRepository
         }
 
         $records = $this->aggregateService->orders()
+            // Merchant-fulfilled (own products) orders never enter the platform delivery queue.
+            ->reject(fn (object $order) => (bool) ($order->is_own_order ?? false))
             ->filter(function (object $order) use ($filters) {
                 $search = trim((string) ($filters['search'] ?? ''));
 
@@ -115,7 +117,7 @@ class OrderRepository
         return [
             'total' => $orders->count(),
             'paid' => $orders->where('payment_status', OrderPaymentStatus::Paid)->count(),
-            'shipping' => $orders->filter(fn (object $order) => in_array($order->shipping_status, [OrderShippingStatus::Pending, OrderShippingStatus::InDelivery], true))->count(),
+            'shipping' => $orders->filter(fn (object $order) => ! ($order->is_own_order ?? false) && in_array($order->shipping_status, [OrderShippingStatus::Pending, OrderShippingStatus::InDelivery], true))->count(),
             'gross_revenue' => (float) $orders->sum('net_amount'),
             'platform_profit' => (float) $orders->sum('platform_profit'),
             'vendor_profit' => (float) $orders->sum('vendor_profit'),
@@ -166,6 +168,7 @@ class OrderRepository
             ],
             'tenant_id' => $order->tenant_id,
             'uuid' => $order->order_number,
+            'is_own_order' => (bool) ($order->is_own_order ?? false),
             'status_value' => $order->status->value,
             'shipping_status_value' => $order->shipping_status->value,
             'status' => $order->status->label(),

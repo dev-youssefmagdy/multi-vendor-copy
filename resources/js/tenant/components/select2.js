@@ -105,6 +105,36 @@ export async function init(el) {
         });
     }
 
+    // data-all-label="All countries": when every option is selected, show one
+    // chip instead of N. The individual options stay selectable; removing the
+    // chip clears the selection and un-selecting any option restores the chips.
+    const allLabel = el.dataset.allLabel;
+    if (allLabel && el.multiple) {
+        const syncAll = () => {
+            const container = $el.next('.select2-container');
+            const rendered = container.find('.select2-selection__rendered').first();
+            rendered.find('.tenant-all-chip').remove();
+            const total = Array.from(el.options).filter((o) => !o.disabled).length;
+            const all = total > 0 && Array.from(el.selectedOptions).length >= total;
+            container.toggleClass('tenant-select2-all', all);
+            if (all) {
+                const chip = $('<li class="select2-selection__choice tenant-all-chip"></li>');
+                chip.append($('<span class="select2-selection__choice__remove" role="presentation">&times;</span>'));
+                chip.append(document.createTextNode(allLabel));
+                chip.attr('title', allLabel);
+                rendered.prepend(chip);
+            }
+        };
+        // Namespaced + off() first so a second init() on the same element never stacks handlers.
+        $el.off('.tenantAll').on('change.tenantAll select2:open.tenantAll select2:close.tenantAll', syncAll);
+        $el.next('.select2-container').on('mousedown click', '.tenant-all-chip .select2-selection__choice__remove', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            $el.val(null).trigger('change');
+        });
+        syncAll();
+    }
+
     if (dependsOn) {
         const form = el.closest('form');
         const source = form?.querySelector(`[name="${CSS.escape(dependsOn)}"]`);

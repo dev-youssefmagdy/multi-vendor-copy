@@ -19,6 +19,7 @@ use App\Services\Refunds\RefundActor;
 use App\Services\ReturnRequestService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
 use Illuminate\Validation\Rule;
 
 class OrderDetailPage extends AdminPage
@@ -26,10 +27,13 @@ class OrderDetailPage extends AdminPage
     use InteractsWithAdminUi;
     use ManagesRefundActions;
 
+    #[Locked]
     public string $tenantId = '';
 
+    #[Locked]
     public string $orderNumber = '';
 
+    #[Locked]
     public array $order = [];
 
     public string $trackingNumber = '';
@@ -73,9 +77,30 @@ class OrderDetailPage extends AdminPage
         $this->trackingNumber = (string) ($this->order['tracking_number'] ?? '');
     }
 
+    /** Merchant-fulfilled (own products) order: platform admins get a read-only view. */
+    private function isOwnOrder(): bool
+    {
+        return (bool) ($this->order['is_own_order'] ?? false);
+    }
+
+    private function rejectOwnOrder(): bool
+    {
+        if (! $this->isOwnOrder()) {
+            return false;
+        }
+
+        $this->toast(OrderFulfillmentService::OWN_ORDER_MESSAGE, 'error');
+
+        return true;
+    }
+
     public function updateTrackingNumber(OrderFulfillmentService $service): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
+
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
 
         if ($this->shippingLocked()) {
             $this->toast(__('Shipping can no longer be updated for this order.'), 'error');
@@ -121,6 +146,9 @@ class OrderDetailPage extends AdminPage
     public function createReturn(): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
         $this->validate([
             'returnReason' => ['required', 'string', 'min:10', 'max:1000'],
             'returnNotes' => ['nullable', 'string', 'max:1000'],
@@ -155,6 +183,9 @@ class OrderDetailPage extends AdminPage
     public function openCancelModal(): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
 
         $this->resetValidation();
         $this->reset(['cancelStep', 'cancelReason', 'cancelNote']);
@@ -185,6 +216,9 @@ class OrderDetailPage extends AdminPage
     public function cancelOrder(OrderAfterSalesService $service): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
         $this->validateCancellation();
 
         try {
@@ -240,6 +274,9 @@ class OrderDetailPage extends AdminPage
     public function issueRefund(OrderAfterSalesService $service): void
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
 
         $refundable = round((float) ($this->afterSales()['refundable_amount'] ?? 0), 2);
 
@@ -311,8 +348,9 @@ class OrderDetailPage extends AdminPage
         return array_merge(parent::pageData(), [
             'order' => $this->order,
             'afterSales' => $this->afterSales(),
-            'shippingLocked' => $this->shippingLocked(),
-            'canManage' => $this->hasPermission('sales.orders.manage'),
+            'shippingLocked' => $this->shippingLocked() || $this->isOwnOrder(),
+            'isOwnOrder' => $this->isOwnOrder(),
+            'canManage' => $this->hasPermission('sales.orders.manage') && ! $this->isOwnOrder(),
         ]);
     }
 }

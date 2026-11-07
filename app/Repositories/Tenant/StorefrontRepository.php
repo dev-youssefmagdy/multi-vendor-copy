@@ -338,7 +338,7 @@ class StorefrontRepository
         return $excludeOutOfStock ? $this->excludeOutOfStock($query) : $query;
     }
 
-    protected function excludeOutOfStock(Builder $query): Builder
+    public static function excludeOutOfStock(Builder $query): Builder
     {
         return $query->where(function (Builder $q): void {
             $q->where(function (Builder $q): void {
@@ -670,7 +670,7 @@ class StorefrontRepository
             'ascending' => $query->orderByRaw($this->effectivePriceExpression() . ' asc')->orderByDesc('created_at'),
             'descending' => $query->orderByRaw($this->effectivePriceExpression() . ' desc')->orderByDesc('created_at'),
             'rating' => $query->orderByRaw($this->averageRatingExpression() . ' desc')->orderByDesc('created_at'),
-            'best_selling' => $query->orderByRaw('(SELECT COALESCE(SUM(oi.qty), 0) FROM order_items oi LEFT JOIN product_variants pv ON pv.id = oi.product_variant_id WHERE COALESCE(oi.product_id, pv.product_id) = products.id) DESC')->orderByDesc('created_at'),
+            'best_selling' => \App\Services\HomeProductService::applyBestSellingOrder($query),
             default => $query->orderByRaw($this->effectivePriceExpression() . ' asc')->orderByDesc('created_at'),
         };
     }
@@ -1718,31 +1718,131 @@ class StorefrontRepository
     }
 
     /**
-     * "Best Selling" listing: mirrors the home best-sellers section (same flow as New In) —
-     * merchandiser-badged products when any exist, otherwise the top ordered catalog products.
+     * "Best Selling" listing: ranked by REAL units sold (non-cancelled/rejected/refunded
+     * order lines, last $days days then lifetime) via HomeProductService::applyBestSellingOrder(),
+     * the same ranking as the home best-sellers section. The merchandiser "best-selling"
+     * badge only breaks ties between equally-sold products.
      */
     public function paginatedBestSellingProducts(?int $days = 30, array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
-        if ($this->productsByBadgeQuery('best-selling')->exists()) {
-            return $this->paginatedProductsByBadge('best-selling', $filters, $perPage);
-        }
-
         $query = $this->productBaseQuery(excludeOutOfStock: ($filters['availability'] ?? '') !== 'out_of_stock');
 
         $this->applyProductFilters($query, $filters);
         $this->applyCategoryFilter($query, $filters['category_id'] ?? null);
 
-        return $query
-            ->orderByDesc('products.orders_count')
-            ->orderByDesc('products.created_at')
+        return \App\Services\HomeProductService::applyBestSellingOrder($query, (int) ($days ?: 30))
             ->paginate($perPage)
             ->withQueryString();
     }
 
-    public function bestSellingProducts(int $perPage = 12, int $page = 1): LengthAwarePaginator
+    /**
+     * Offers page: every active product that currently has a real discount, i.e.
+     * Product::storefrontPricing(<card variant>)['has_discount'] (active flash sale
+     * or a vendor price drop; no formula is re-implemented here).
+     *
+     * Filters: category_id, flash_only (bool), min_discount (percent), sort =
+     * best_selling (default) | ascending | descending | discount | newest.
+     * best_selling = units sold (HomeProductService::salesSubquery) then newest.
+     * The discounted set is resolved in PHP (like productIdsWithinDisplayedPrice) and
+     * paginated from memory; $limit is the number of cards shown (load-more).
+     *
+     * @return array{products: Collection, total: int, has_more: bool, max_discount: int}
+     */
+    public function discountedProducts(array $filters = [], int $limit = 20): array
+    {
+        $sort = (string) ($filters['sort'] ?? 'best_selling');
+        $flashOnly = !empty($filters['flash_only']);
+        $minDiscount = (float) ($filters['min_discount'] ?? 0);
+        $categoryId = $filters['category_id'] ?? null;
+        $currencyRate = (float) ($this->currentCurrency()?->conversion_rate ?? 1.0);
+        $currencyRate = $currencyRate > 0 ? $currencyRate : 1.0;
+
+        $memoKey = 'discounted|' . md5(json_encode([$sort, $flashOnly, $minDiscount, $categoryId, $currencyRate, $this->customerCountryId()]));
+
+        $rows = $this->requestMemo($memoKey, function () use ($sort, $flashOnly, $categoryId) {
+            // Cheap SQL pre-selection (vendor price drop OR active flash sale), then exact PHP check.
+            $candidateIds = collect();
+            if (!$flashOnly) {
+                $candidateIds = $candidateIds->merge(
+                    $this->applyProductFilters($this->productBaseQuery(excludeOutOfStock: true), ['on_sale' => 'on_sale'])->pluck('products.id')
+                );
+            }
+            $candidateIds = $candidateIds->merge(
+                $this->applyProductFilters($this->productBaseQuery(excludeOutOfStock: true), ['on_sale' => 'flash_sale'])->pluck('products.id')
+            )->unique()->values();
+
+            if ($candidateIds->isEmpty()) {
+                return collect();
+            }
+
+            $query = $this->productBaseQuery(excludeOutOfStock: true)->whereIn('products.id', $candidateIds->all());
+            if (is_numeric($categoryId) && (int) $categoryId > 0) {
+                $ids = array_merge([(int) $categoryId], $this->categoryDescendantIds((int) $categoryId));
+                $query->whereHas('categories', fn(Builder $q) => $q->whereIn('categories.id', $ids));
+            }
+
+            $products = $query->get();
+            $products->each(fn(Product $product) => $product->variants->each(fn($variant) => $variant->setRelation('product', $product)));
+
+            $sold = DB::query()->fromSub(\App\Services\HomeProductService::salesSubquery(30), 's')
+                ->whereIn('sold_product_id', $products->pluck('id')->all())
+                ->get()->keyBy('sold_product_id');
+
+            return $products->map(function (Product $product) use ($sold) {
+                // Same variant the storefront cards price with (cheapest active variant).
+                $variant = $product->variants->where('active', true)->sortBy(
+                    fn($v) => $v->sellPriceForCountry((int) session('storefront_country_id') ?: null)
+                )->first() ?? $product->variants->first();
+                $pricing = $product->storefrontPricing($variant);
+
+                return [
+                    'product' => $product,
+                    'has_discount' => (bool) $pricing['has_discount'],
+                    'is_flash' => (bool) $pricing['is_flash_sale'],
+                    'pct' => (float) $pricing['discount_percentage'],
+                    'price' => (float) $pricing['current_price'],
+                    'qty_window' => (int) ($sold[$product->id]->qty_window ?? 0),
+                    'qty_all' => (int) ($sold[$product->id]->qty_all ?? 0),
+                    'created' => $product->created_at?->getTimestamp() ?? 0,
+                ];
+            })->filter(fn($r) => $r['has_discount'] && (!$flashOnly || $r['is_flash']))->values();
+        });
+
+        $maxDiscount = (int) round((float) $rows->max('pct'));
+
+        if ($minDiscount > 0) {
+            $rows = $rows->filter(fn($r) => $r['pct'] >= $minDiscount)->values();
+        }
+
+        // Deterministic: every ordering ends on newest, then id.
+        $rows = $rows->sort(function ($a, $b) use ($sort) {
+            $primary = match ($sort) {
+                'ascending' => $a['price'] <=> $b['price'],
+                'descending' => $b['price'] <=> $a['price'],
+                'discount' => $b['pct'] <=> $a['pct'],
+                'newest' => 0,
+                default => [$b['qty_window'], $b['qty_all']] <=> [$a['qty_window'], $a['qty_all']],
+            };
+
+            return $primary ?: ($b['created'] <=> $a['created']) ?: ($b['product']->id <=> $a['product']->id);
+        })->values();
+
+        $total = $rows->count();
+        $products = new Collection($rows->take($limit)->pluck('product')->all());
+        $this->hydrateProductCards($products);
+
+        return [
+            'products' => $products,
+            'total' => $total,
+            'has_more' => $total > $limit,
+            'max_discount' => $maxDiscount,
+        ];
+    }
+
+    public function bestSellingProducts(int $perPage = 12, int $page = 1, int $days = 30): LengthAwarePaginator
     {
         return $this->paginateFromService(
-            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->customerCountryId()),
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->customerCountryId(), $days),
             $perPage,
             $page,
         );

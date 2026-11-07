@@ -429,6 +429,18 @@ class AffiliateService
         }
     }
 
+    /** Human-readable reason a conversion is rejected (derived from current data). */
+    public function rejectionReason(AffiliateConversion $conversion): string
+    {
+        $affiliate = $conversion->affiliate ?? Affiliate::query()->find($conversion->affiliate_id);
+
+        if ($affiliate && $this->isSelfReferral($affiliate, (string) $conversion->tenant_id)) {
+            return 'Rejected: self-referral (affiliate and referred store share the same owner/email)';
+        }
+
+        return 'Rejected';
+    }
+
     /** An affiliate must not earn commission on their own signup. */
     private function isSelfReferral(Affiliate $affiliate, string $tenantId): bool
     {

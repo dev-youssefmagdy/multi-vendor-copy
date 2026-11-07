@@ -5,6 +5,7 @@ namespace App\Livewire\Tenant\Storefront;
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Repositories\Tenant\StorefrontRepository;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class OffersPage extends Component
@@ -50,6 +51,45 @@ class OffersPage extends Component
         $this->dispatch('storefront-cart-added');
     }
 
+    #[Url(except: 'best_selling')]
+    public string $sort = 'best_selling';
+
+    #[Url(as: 'category_id', except: '')]
+    public string $categoryId = '';
+
+    #[Url(as: 'flash', except: false)]
+    public bool $flashOnly = false;
+
+    // String so a hand-edited URL (?min_discount=abc) cannot throw a TypeError on hydration; normalised to an int in render().
+    #[Url(as: 'min_discount', except: '0')]
+    public string $minDiscount = '0';
+
+    public int $perPage = 20;
+
+    public function updating(string $property): void
+    {
+        if (in_array($property, ['sort', 'categoryId', 'flashOnly', 'minDiscount'], true)) {
+            $this->perPage = 20;
+        }
+    }
+
+    public function loadMore(): void
+    {
+        $this->perPage += 20;
+    }
+
+    public function setCategory(string $id): void
+    {
+        $this->categoryId = $id;
+        $this->perPage = 20;
+    }
+
+    public function clearFilters(): void
+    {
+        $this->reset(['sort', 'categoryId', 'flashOnly', 'minDiscount']);
+        $this->perPage = 20;
+    }
+
     public function render()
     {
         if (!view()->exists($this->pageView('offers'))) {
@@ -58,53 +98,33 @@ class OffersPage extends Component
 
         $repo = app(StorefrontRepository::class);
 
-        $banners = $repo->activeBanners();
-        $flashSales = $repo->activeFlashSales();
-        $flashBanner = optional($flashSales->first())->banner_url;
+        if (!in_array($this->sort, ['best_selling', 'ascending', 'descending', 'discount', 'newest'], true)) {
+            $this->sort = 'best_selling';
+        }
+        $minDiscount = (int) $this->minDiscount;
+        if (!in_array($minDiscount, [0, 10, 20, 30, 50], true)) {
+            $minDiscount = 0;
+        }
+        $this->minDiscount = (string) $minDiscount;
 
-        // Every section on this page is a genuine flash-sale offer — no fallback to
-        // latest/best-selling products that aren't actually discounted.
-        $allFlashProducts = $flashSales->flatMap(fn($fs) => $fs->products)->unique('id')->values();
-
-        // The cards render each product's own badges/labels, images, variants and ratings.
-        \Illuminate\Database\Eloquent\Collection::make($allFlashProducts)->loadMissing([
-            'badges',
-            'labels',
-            'rates',
-            'files',
-            'translations.language',
-            'variants.centralVariant',
-            'centralProduct.files',
-            'centralProduct.variants',
-        ]);
-
-        $flashDiscount = fn($product) => (float) optional($product->flashSales->first())->discount_percentage;
-        $soldCount = fn($product) => (int) ($product->centralProduct?->sold_count ?? 0);
-
-        // Mega Sale: the biggest active discounts.
-        $megaSaleProducts = $allFlashProducts->sortByDesc($flashDiscount)->take(10)->values();
-        $remaining = $allFlashProducts->reject(fn($p) => $megaSaleProducts->contains('id', $p->id));
-
-        // Super Sale: the best-selling among the remaining flash offers.
-        $superSaleProducts = $remaining->sortByDesc($soldCount)->take(10)->values();
-        $remaining = $remaining->reject(fn($p) => $superSaleProducts->contains('id', $p->id));
-
-        // Season Sale: whatever flash offers are left, most recent first.
-        $seasonSaleProducts = $remaining->sortByDesc('created_at')->take(10)->values();
-
-        // Real countdown target for the sale sections (null hides the timer instead
-        // of showing a static, non-counting clock).
-        $saleEndsAt = optional($flashSales->first())->end_date;
-        $saleEndsAtIso = $saleEndsAt ? \Carbon\Carbon::parse($saleEndsAt)->toIso8601String() : null;
+        // Every product with a real active discount (flash sale or price drop), best sellers first.
+        $result = $repo->discountedProducts([
+            'sort' => $this->sort,
+            'category_id' => $this->categoryId,
+            'flash_only' => $this->flashOnly,
+            'min_discount' => $minDiscount,
+        ], $this->perPage);
 
         $data = array_merge($this->sharedData(), [
-            'banners' => $banners,
-            'flashSales' => $flashSales,
-            'flashBanner' => $flashBanner,
-            'megaSaleProducts' => $megaSaleProducts,
-            'seasonSaleProducts' => $seasonSaleProducts,
-            'superSaleProducts' => $superSaleProducts,
-            'saleEndsAtIso' => $saleEndsAtIso,
+            'products' => $result['products'],
+            'totalItems' => $result['total'],
+            'hasMore' => $result['has_more'],
+            'maxDiscount' => $result['max_discount'],
+            'categories' => $repo->activeCategories(),
+            'currentCategoryId' => is_numeric($this->categoryId) && (int) $this->categoryId > 0 ? (int) $this->categoryId : null,
+            'sort' => $this->sort,
+            'flashOnly' => $this->flashOnly,
+            'minDiscount' => $minDiscount,
         ]);
 
         $storeName = $repo->storeName();

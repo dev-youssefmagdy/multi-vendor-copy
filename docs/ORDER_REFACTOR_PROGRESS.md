@@ -21,6 +21,8 @@
 * Partial refunds reduce vendor share only; void orders => all figures 0.
 * Tenant profit-% change (`ProductPriceCalculationService::applyProfitPercentage`, 2026-11-07): recalculates every central-linked tenant product, hidden (archived) ones included, from `TenantPricingService::centralBasePrice` (sale price if > 0, else base). Own products are left alone, so their typed price is never compounded. Pending "New products" are not stored per tenant: they're read live from central and priced with the current profit % when accepted.
 
+* Own-products shipping (2026-11-07): own products (`is_own_product`) carry no shipping (0 weight, no fixed shipping, exempt from zone/availability checks); mixed carts are charged by catalog-line weight only. Single predicate `OrderComposer::isShippableCartItem()`; test `tests/Unit/Orders/OwnProductShippingTest.php`. Note `CheckoutPage` and `PlacesOrders` still duplicate the zone/rate maths (pre-existing).
+* Admin isolation of own-products orders (2026-11-08): see ORDER_FORMULAS.md section 1; discriminator `Order::isOwnProductsOrder()`, aggregate/`OrderRepository` expose `is_own_order`. Admin Orders list still lists them (read-only detail).
 * Settlement ledger = existing central Settlement Payments (`vendor_settlements`) + `orders.payout_released`. NO `order_transactions` table (removed on user request).
 * Rounding: line discount is rounded to cents first, grand_total = components (docs example 181.935 -> 181.93 stored; order 183.13).
 * Legacy backfill: orders with real line cost are re-expressed with the new formula (order #4 -> platform 202.96 / vendor -19.78); others keep historical split.

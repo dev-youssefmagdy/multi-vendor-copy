@@ -11,6 +11,7 @@
         </div>
         <div class="page-actions">
             <a class="btn btn-secondary" href="{{ route('admin.shipping.in-delivery') }}">← Delivery Queue</a>
+            @empty($isOwnOrder)
             <a class="btn btn-secondary" target="_blank"
                 href="{{ route('admin.orders.shipping-label', ['tenantId' => $tenantId, 'orderNumber' => $orderNumber]) }}"
                 style="display:inline-flex;align-items:center;gap:7px">
@@ -20,6 +21,7 @@
                 </svg>
                 Shipping Label
             </a>
+            @empty($isOwnOrder)
             <button type="button" class="btn btn-secondary" wire:click="$set('showReturnModal', true)"
                 style="display:inline-flex;align-items:center;gap:7px">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -28,6 +30,7 @@
                 </svg>
                 Create Return
             </button>
+            @endempty
             <a class="btn btn-primary" target="_blank"
                 href="{{ route('admin.orders.receipt', ['tenantId' => $tenantId, 'orderNumber' => $orderNumber]) }}"
                 style="display:inline-flex;align-items:center;gap:7px">
@@ -39,10 +42,19 @@
                 </svg>
                 View Receipt
             </a>
+            @endempty
         </div>
     </div>
 
+    @if (!empty($isOwnOrder))
+        <div class="card fu d1 section-gap" role="note" style="border-left:3px solid var(--amber)">
+            <h4 class="panel-title" style="margin:0 0 4px">Merchant-fulfilled order (own products)</h4>
+            <p class="panel-copy" style="margin:0">This order contains only the store's own products. It is shipped and managed by the store, so status, tracking, shipping label, returns and receipt are not available to the platform. Shipping is charged on the catalog order of the same checkout, never on this one.</p>
+        </div>
+    @endif
+
     {{-- Status controls --}}
+    @empty($isOwnOrder)
     <div class="card fu d2 section-gap">
         <h4 class="panel-title">Status Controls</h4>
         <div class="form-grid form-grid-2" style="align-items:flex-end;gap:12px">
@@ -112,12 +124,13 @@
             </div>
         </div>
     </div>
+    @endempty
 
     <div class="page-stack section-gap">
         @include('livewire.admin.order.partials.order-details', [
             'order' => $order,
             'canManageShipping' => false,
-            'showAttachments' => true,
+            'showAttachments' => empty($isOwnOrder),
             'orderAttachments' => $orderAttachments,
         ])
     </div>

@@ -106,6 +106,11 @@ class InDeliveryOrdersList extends ListPage
             return;
         }
 
+        if ($order->is_own_order ?? false) {
+            $this->toast(OrderFulfillmentService::OWN_ORDER_MESSAGE, 'error');
+            return;
+        }
+
         // Keep the public (serialized every request) payload small: only what the modal shows.
         $this->selectedOrderForStatus = [
             'tenant_id' => $order->tenant_id,

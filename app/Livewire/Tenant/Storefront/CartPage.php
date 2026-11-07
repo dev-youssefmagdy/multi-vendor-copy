@@ -175,18 +175,11 @@ class CartPage extends Component
         }
 
         // Only count items that require physical shipping (same filter as CheckoutPage)
-        $shippableWeight = (float) collect($cartItems)->sum(function (array $item) {
-            $centralProduct = $item['product']?->centralProduct;
-            if (
-                !$centralProduct instanceof CentralProduct
-                || !(bool) $centralProduct->requires_shipping
-                || $centralProduct->delivery_scope === DeliveryScope::Digital
-            ) {
-                return 0.0;
-            }
-
-            return $this->cartItemWeightKg($item);
-        });
+        $shippableWeight = (float) collect($cartItems)->sum(
+            fn(array $item) => \App\Services\Tenant\Checkout\OrderComposer::isShippableCartItem($item)
+                ? $this->cartItemWeightKg($item)
+                : 0.0
+        );
         //        dd($shippableWeight);
         if ($shippableWeight <= 0) {
             return 0.0;

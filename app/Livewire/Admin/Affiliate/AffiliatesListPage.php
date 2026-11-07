@@ -4,28 +4,22 @@ namespace App\Livewire\Admin\Affiliate;
 
 use App\Livewire\Admin\Base\ListPage;
 use App\Livewire\Admin\Concerns\InteractsWithAdminUi;
+use App\Livewire\Admin\Concerns\ManagesAffiliateSettings;
 use App\Models\Affiliate;
 use App\Models\AffiliatePayoutRequest;
 use App\Services\AffiliateService;
-use App\Support\AffiliateSettings;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class AffiliatesListPage extends ListPage
 {
-    use InteractsWithAdminUi, WithPagination, WithFileUploads;
+    use InteractsWithAdminUi, ManagesAffiliateSettings, WithPagination, WithFileUploads;
 
     public bool $showFormModal   = false;
     public bool $showPayoutModal = false;
-    public bool $showSettingsModal = false;
     public ?int $payoutRequestId = null;
 
-    // Program settings
-    public string $settingCookieDays = '90';
-    public string $settingCommissionType = 'percentage';
-    public string $settingCommissionValue = '10';
-    public string $settingMinPayout = '0';
     public ?int $affiliateId     = null;
 
     // Edit fields
@@ -235,39 +229,6 @@ class AffiliatesListPage extends ListPage
             ->each(fn (AffiliatePayoutRequest $r) => $service->rejectPayoutRequest($r));
 
         $this->toast('Payout requests rejected.');
-    }
-
-    public function openSettingsModal(): void
-    {
-        $this->authorizePermission('affiliates.manage');
-
-        $settings = AffiliateSettings::all();
-        $this->settingCookieDays      = (string) $settings['cookie_days'];
-        $this->settingCommissionType  = $settings['default_commission_type'];
-        $this->settingCommissionValue = (string) $settings['default_commission_value'];
-        $this->settingMinPayout       = (string) $settings['min_payout'];
-        $this->showSettingsModal      = true;
-    }
-
-    public function saveSettings(): void
-    {
-        $this->authorizePermission('affiliates.manage');
-        $this->validate([
-            'settingCookieDays'      => 'required|integer|min:1|max:730',
-            'settingCommissionType'  => 'required|in:percentage,fixed',
-            'settingCommissionValue' => 'required|numeric|min:0' . ($this->settingCommissionType === 'percentage' ? '|max:100' : ''),
-            'settingMinPayout'       => 'required|numeric|min:0',
-        ]);
-
-        AffiliateSettings::save([
-            'cookie_days'              => $this->settingCookieDays,
-            'default_commission_type'  => $this->settingCommissionType,
-            'default_commission_value' => $this->settingCommissionValue,
-            'min_payout'               => $this->settingMinPayout,
-        ]);
-
-        $this->showSettingsModal = false;
-        $this->toast('Program settings saved.');
     }
 
     public function closeModal(): void

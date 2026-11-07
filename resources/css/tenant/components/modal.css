@@ -8,3 +8,17 @@
 }
 
 [dir="rtl"] [data-tenant-modal] .modal-close-btn { margin-right: auto; margin-left: 0; }
+
+/* Tall content (e.g. long multi-selects) scrolls inside the body; header and
+   action buttons stay visible. */
+[data-tenant-modal] .modal-card { display: flex; flex-direction: column; max-height: calc(100dvh - 3rem); }
+[data-tenant-modal] .modal-header-shell,
+[data-tenant-modal] .modal-footer-shell { flex: 0 0 auto; }
+[data-tenant-modal] .modal-body-shell { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+[data-tenant-modal] .modal-body-shell .page-actions {
+    position: sticky; bottom: -1.25rem; z-index: 2; background: var(--card);
+    margin-bottom: -1.25rem; padding: .75rem 0 1.25rem;
+}
+@media (max-width: 640px) {
+    [data-tenant-modal] .modal-card { max-height: 92dvh; }
+}

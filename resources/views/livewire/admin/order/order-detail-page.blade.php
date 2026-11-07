@@ -11,7 +11,7 @@
         </div>
         <div class="page-actions">
             <a class="btn btn-secondary" href="{{ route('admin.orders.index') }}">← Orders</a>
-            @if (!empty($afterSales['can_cancel']))
+            @if (!empty($afterSales['can_cancel']) && empty($isOwnOrder))
                 <button type="button" class="btn" wire:click="openCancelModal" id="admin-cancel-order"
                     style="background:var(--red);color:#fff;display:inline-flex;align-items:center;gap:7px">
                     Cancel Order
@@ -27,6 +27,7 @@
                 Create Return
             </button>
             @endif
+            @empty($isOwnOrder)
             <a class="btn btn-secondary" target="_blank"
                 href="{{ route('admin.orders.shipping-label', ['tenantId' => $tenantId, 'orderNumber' => $orderNumber]) }}"
                 style="display:inline-flex;align-items:center;gap:7px">
@@ -48,8 +49,16 @@
                 </svg>
                 View Receipt
             </a>
+            @endempty
         </div>
     </div>
+
+    @if (!empty($isOwnOrder))
+        <div class="card fu d1 section-gap" role="note" style="border-left:3px solid var(--amber)">
+            <h4 class="panel-title" style="margin:0 0 4px">Merchant-fulfilled order (own products)</h4>
+            <p class="panel-copy" style="margin:0">This order contains only the store's own products. It is shipped and managed by the store, so status, tracking, shipping label, returns and receipt are not available to the platform. Shipping is charged on the catalog order of the same checkout, never on this one.</p>
+        </div>
+    @endif
 
     {{-- Tracking Number (no fulfilment left on cancelled / rejected / refunded orders) --}}
     @unless ($shippingLocked)

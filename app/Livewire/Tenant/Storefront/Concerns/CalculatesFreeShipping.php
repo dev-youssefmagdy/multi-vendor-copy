@@ -62,6 +62,10 @@ trait CalculatesFreeShipping
         $variant = $cartItem['variant'] ?? null;
         $qty = max(1, (int) ($cartItem['qty'] ?? 1));
 
+        if (\App\Services\Tenant\Checkout\OrderComposer::isOwnProduct($product)) {
+            return 0.0; // own products carry no shipping weight
+        }
+
         $variantWeight = ($variant instanceof ProductVariant)
             ? (int) ($variant->centralVariant?->weight_grams ?? 0)
             : 0;

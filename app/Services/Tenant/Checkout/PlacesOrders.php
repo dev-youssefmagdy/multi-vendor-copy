@@ -180,13 +180,7 @@ class PlacesOrders
             ->all();
 
         $shippableItems = collect($cartItems)
-            ->filter(function (array $item): bool {
-                $centralProduct = $item['product']?->centralProduct;
-
-                return $centralProduct instanceof CentralProduct
-                    && (bool) $centralProduct->requires_shipping
-                    && $centralProduct->delivery_scope !== DeliveryScope::Digital;
-            })
+            ->filter(fn(array $item): bool => \App\Services\Tenant\Checkout\OrderComposer::isShippableCartItem($item))
             ->map(function (array $item) use ($lineWeights): array {
                 $item['line_weight'] = (float) ($lineWeights[$item['key']] ?? 0);
 
@@ -344,6 +338,10 @@ class PlacesOrders
         $product = $cartItem['product'] ?? null;
         $variant = $cartItem['variant'] ?? null;
         $qty = max(1, (int) ($cartItem['qty'] ?? 1));
+
+        if (\App\Services\Tenant\Checkout\OrderComposer::isOwnProduct($product)) {
+            return 0.0; // own products carry no shipping weight
+        }
 
         $variantWeight = ($variant instanceof TenantProductVariant)
             ? (int) ($variant->centralVariant?->weight_grams ?? 0)

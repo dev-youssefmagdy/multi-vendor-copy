@@ -12,6 +12,7 @@ class OrderReceiptController extends Controller
     {
         $record = $orders->find($tenantId, $orderNumber);
         abort_if(!$record, 404);
+        abort_if((bool) ($record->is_own_order ?? false), 403, 'Merchant-fulfilled order (own products) - managed by the store.');
 
         $order = $orders->orderDetail($record);
 
@@ -36,6 +37,7 @@ class OrderReceiptController extends Controller
     {
         $record = $orders->find($tenantId, $orderNumber);
         abort_if(!$record, 404);
+        abort_if((bool) ($record->is_own_order ?? false), 403, 'Merchant-fulfilled order (own products) - managed by the store.');
 
         $order = $orders->orderDetail($record);
 

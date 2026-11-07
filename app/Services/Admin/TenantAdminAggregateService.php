@@ -317,6 +317,7 @@ class TenantAdminAggregateService
             'tenant_id' => $tenant->getTenantKey(),
             'store_name' => $this->tenantStoreName($tenant),
             'order_number' => $order->uuid,
+            'is_own_order' => $order->isOwnProductsOrder(),
             'customer_name' => $shippingAddress['full_name'] ?? $shippingAddress['name'] ?? $order->customer?->full_name,
             'customer_email' => $shippingAddress['email'] ?? $order->customer?->email,
             'customer_phone' => $shippingAddress['phone'] ?? $order->customer?->phone,

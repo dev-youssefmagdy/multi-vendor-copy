@@ -111,6 +111,27 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * Merchant-fulfilled order: it has lines and every line is a vendor-created (own) product.
+     * This is the discriminator for the companion order of a mixed cart (OrderComposer::create) and for
+     * own-only carts; there is no stored column. Reads loaded relations when present (items.product /
+     * items.variant.product) so aggregate lists do not add queries. Platform admins must not manage these.
+     */
+    public function isOwnProductsOrder(): bool
+    {
+        $items = $this->relationLoaded('items') ? $this->items : $this->items()->with('product', 'variant.product')->get();
+
+        if ($items->isEmpty()) {
+            return false;
+        }
+
+        return $items->every(function ($item) {
+            $product = $item->product ?? $item->variant?->product;
+
+            return \App\Services\Tenant\Checkout\OrderComposer::isOwnProduct($product);
+        });
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(OrderActivity::class);

@@ -24,6 +24,37 @@ use Illuminate\Support\Str;
 class OrderComposer
 {
     /**
+     * Vendor-created product (is_own_product, no central link). Own products never carry shipping:
+     * they are excluded from weight / zone-rate / availability checks (docs/ORDER_FORMULAS.md section 1).
+     * NOTE: `is_tenant_owned` (central product assigned to one tenant) is NOT own for shipping.
+     */
+    public static function isOwnProduct(?object $product): bool
+    {
+        return $product !== null && (bool) ($product->is_own_product ?? false);
+    }
+
+    /**
+     * Whether a cart entry (['product' => ..., ...]) takes part in the order shipping charge:
+     * catalog (central-linked) physical products only.
+     *
+     * @param  array<string, mixed>  $item
+     */
+    public static function isShippableCartItem(array $item): bool
+    {
+        $product = $item['product'] ?? null;
+
+        if ($product === null || self::isOwnProduct($product)) {
+            return false;
+        }
+
+        $central = $product->centralProduct;
+
+        return $central instanceof \App\Models\Product
+            && (bool) $central->requires_shipping
+            && $central->delivery_scope !== \App\Enums\DeliveryScope::Digital;
+    }
+
+    /**
      * Priced order line for one cart entry (OrderPricing::item) plus an `is_own` flag.
      *
      * @return array<string, mixed>

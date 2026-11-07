@@ -40,6 +40,8 @@ class OrderFulfillmentService
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
 
+            self::assertPlatformManageable($order);
+
             $this->lifecycleService->updateShippingStatus($order, $shippingStatus, CancellationActor::Admin, $this->adminId());
         } finally {
             if ($initialized) {
@@ -67,6 +69,8 @@ class OrderFulfillmentService
             if (! $order) {
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
+
+            self::assertPlatformManageable($order);
 
             $this->lifecycleService->updateOrderStatus($order, $orderStatus, CancellationActor::Admin, $this->adminId());
 
@@ -104,6 +108,8 @@ class OrderFulfillmentService
                 throw new RuntimeException('Order could not be found in the tenant store.');
             }
 
+            self::assertPlatformManageable($order);
+
             $order->update(['tracking_number' => $trackingNumber ?: null]);
 
             $this->tenantNotifier->notify(
@@ -117,6 +123,16 @@ class OrderFulfillmentService
             if ($initialized) {
                 tenancy()->end();
             }
+        }
+    }
+
+    public const OWN_ORDER_MESSAGE = 'Merchant-fulfilled order (own products) - managed by the store, not the platform.';
+
+    /** Server-side guard: platform admins cannot change status / shipping / tracking of merchant-fulfilled orders. */
+    public static function assertPlatformManageable(Order $order): void
+    {
+        if ($order->isOwnProductsOrder()) {
+            throw new RuntimeException(self::OWN_ORDER_MESSAGE);
         }
     }
 

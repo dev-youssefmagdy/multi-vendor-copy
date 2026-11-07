@@ -16,19 +16,23 @@ use App\Models\ReturnRequestNote;
 use App\Models\Tenant;
 use App\Repositories\OrderRepository;
 use App\Services\Admin\OrderAfterSalesService;
+use App\Services\Admin\OrderFulfillmentService;
 use App\Services\Orders\OrderPolicyService;
 use App\Services\Refunds\RefundActor;
 use App\Services\ReturnRequestService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 
 class OrderReturnDetailPage extends AdminPage
 {
     use InteractsWithAdminUi;
     use ManagesRefundActions;
 
+    #[Locked]
     public int $returnId = 0;
 
+    #[Locked]
     public array $order = [];
 
     public string $noteText = '';
@@ -248,6 +252,10 @@ class OrderReturnDetailPage extends AdminPage
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
 
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         $max = round((float) ($this->returnRecord()['refund_breakdown']['max'] ?? 0), 2);
 
         $this->validate([
@@ -343,6 +351,10 @@ class OrderReturnDetailPage extends AdminPage
     {
         $this->authorizeAnyPermission(['sales.orders.manage']);
 
+        if ($this->rejectOwnOrder()) {
+            return;
+        }
+
         try {
             $action(app(ReturnRequestService::class), $this->record());
         } catch (ReturnActionException|RefundException|OrderActionException $e) {
@@ -362,6 +374,24 @@ class OrderReturnDetailPage extends AdminPage
         if ($successMessage) {
             $this->toast($successMessage);
         }
+    }
+
+    /**
+     * Returns/refunds/exchanges of merchant-fulfilled (own products) orders belong to the store, not the platform.
+     * Re-derived from the database on every call (never from client-visible state).
+     */
+    private function rejectOwnOrder(): bool
+    {
+        $record = $this->record();
+        $order = app(OrderRepository::class)->find($record->tenant_id, $record->order_number);
+
+        if (! $order || ! ($order->is_own_order ?? false)) {
+            return false;
+        }
+
+        $this->toast(OrderFulfillmentService::OWN_ORDER_MESSAGE, 'error');
+
+        return true;
     }
 
     private function actor(): RefundActor

@@ -40,18 +40,56 @@ class HomeProductService
         });
     }
 
-    public function getBestSelling(int $limit, ?int $countryId = null): Collection
+    /** Order statuses whose lines no longer count as a sale (see OrderStatus::isTerminal()). */
+    public const NON_SALE_STATUSES = ['cancelled', 'rejected', 'refunded'];
+
+    /**
+     * Units sold per product: SUM(order_items.qty) over orders that were not
+     * cancelled / rejected / refunded. `qty_window` only counts orders placed in
+     * the last $days days, `qty_all` is lifetime. Lines are matched to a product
+     * through order_items.product_id, falling back to the variant's product.
+     */
+    public static function salesSubquery(int $days = 30): \Illuminate\Database\Query\Builder
     {
-        return $this->cacheRemember("best_selling:{$limit}:" . ($countryId ?? 'default'), function () use ($limit, $countryId) {
-            $badged = $this->byBadge('best-selling', $limit, $countryId);
+        $since = now()->subDays(max(1, $days))->toDateTimeString();
 
-            if ($badged->isNotEmpty()) {
-                return $badged;
-            }
+        return DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
+            ->whereNotIn('orders.status', self::NON_SALE_STATUSES)
+            ->whereRaw('COALESCE(order_items.product_id, product_variants.product_id) IS NOT NULL')
+            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
+            ->selectRaw(
+                'COALESCE(order_items.product_id, product_variants.product_id) as sold_product_id,
+                 SUM(order_items.qty) as qty_all,
+                 SUM(CASE WHEN orders.created_at >= ? THEN order_items.qty ELSE 0 END) as qty_window',
+                [$since]
+            );
+    }
 
-            return $this->baseQuery()
-                ->orderByDesc('products.orders_count')
-                ->orderByDesc('products.created_at')
+    /**
+     * Real best-seller ranking shared by the home section and the listing page:
+     * units sold in the last $days days, then lifetime units, then merchandiser
+     * "best-selling" badge, then newest, then id (deterministic). Products with
+     * no sales therefore never outrank sold ones.
+     */
+    public static function applyBestSellingOrder($query, int $days = 30)
+    {
+        return $query
+            ->leftJoinSub(self::salesSubquery($days), 'bs_sales', 'bs_sales.sold_product_id', '=', 'products.id')
+            ->select('products.*')
+            ->orderByRaw('COALESCE(bs_sales.qty_window, 0) DESC')
+            ->orderByRaw('COALESCE(bs_sales.qty_all, 0) DESC')
+            ->orderByRaw("EXISTS (SELECT 1 FROM product_badge_product pbp JOIN product_badges pbd ON pbd.id = pbp.product_badge_id WHERE pbp.product_id = products.id AND pbd.text = 'best-selling' AND pbd.active = 1) DESC")
+            ->orderByDesc('products.created_at')
+            ->orderByDesc('products.id');
+    }
+
+    public function getBestSelling(int $limit, ?int $countryId = null, int $days = 30): Collection
+    {
+        return $this->cacheRemember("best_selling:{$limit}:{$days}:" . ($countryId ?? 'default'), function () use ($limit, $days) {
+            // Out-of-stock products are hidden here exactly like on the best-selling listing.
+            return self::applyBestSellingOrder(\App\Repositories\Tenant\StorefrontRepository::excludeOutOfStock($this->baseQuery()), $days)
                 ->limit($limit)
                 ->get();
         }, ['Order', 'OrderItem']);
