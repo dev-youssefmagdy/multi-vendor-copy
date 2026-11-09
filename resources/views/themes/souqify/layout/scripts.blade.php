@@ -129,7 +129,7 @@
                 if (outOfStock) {
                     var badge = document.createElement('span');
                     badge.className = 'shrink-0 text-[11px] uppercase tracking-wide px-2 py-0.5 rounded bg-neutral-200 text-neutral-600';
-                    badge.textContent = 'Out of stock';
+                    badge.textContent = @json(__('Out of stock'));
                     btn.appendChild(badge);
                 } else {
                     btn.addEventListener('click', function () {

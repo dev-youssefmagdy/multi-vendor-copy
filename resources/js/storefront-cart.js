@@ -42,7 +42,7 @@ window.storefrontCartAdd = function storefrontCartAdd({ url, slug, productId, va
         .then(async (res) => {
             const data = await res.json().catch(() => ({}));
             if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to add to cart');
+                throw new Error(data.message || (typeof window.trans === 'function' ? window.trans('Failed to add to cart') : 'Failed to add to cart'));
             }
             if (typeof Livewire !== 'undefined') {
                 Livewire.dispatch('cartUpdated');

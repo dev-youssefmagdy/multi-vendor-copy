@@ -1,3 +1,7 @@
+function storefrontText(key) {
+    return typeof window.trans === 'function' ? window.trans(key) : key;
+}
+
 if(typeof tailwind !== 'undefined') {
 tailwind.config = {
     theme: {
@@ -295,7 +299,7 @@ tailwind.config = {
             if (outOfStock) {
                 var badge = document.createElement('span');
                 badge.className = 'shrink-0 text-[11px] uppercase tracking-wide px-2 py-0.5 rounded bg-gray-200 text-gray-600';
-                badge.textContent = 'Out of stock';
+                badge.textContent = storefrontText('Out of stock');
                 btn.appendChild(badge);
             } else {
                 btn.addEventListener('click', function () {
@@ -486,20 +490,20 @@ tailwind.config = {
                         '<span class="text-[13px] text-[#333] flex-1 truncate">' + safeText(t) + '</span></div>';
                 }).join('');
                 show('<div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">' +
-                    '<span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent searches</span>' +
-                    '<button class="elora-clear-hist text-[12px] text-main hover:underline">Clear</button></div>' + items);
+                    '<span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">' + storefrontText('Recent searches') + '</span>' +
+                    '<button class="elora-clear-hist text-[12px] text-main hover:underline">' + storefrontText('Clear') + '</button></div>' + items);
                 bindHistoryEvents();
             }
 
             function renderLoading() {
                 show('<div class="flex items-center justify-center gap-2 px-4 py-5 text-[13px] text-gray-400">' +
                     '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>' +
-                    'Searching…</div>');
+                    storefrontText('Searching…') + '</div>');
             }
 
             function renderResults(products, kw) {
                 if (products.length === 0) {
-                    show('<div class="px-4 py-5 text-center text-[13px] text-gray-400">No products found for "<strong>' + safeText(kw) + '</strong>"</div>');
+                    show('<div class="px-4 py-5 text-center text-[13px] text-gray-400">' + storefrontText('No products found for') + ' "<strong>' + safeText(kw) + '</strong>"</div>');
                     return;
                 }
                 const placeholder = '<svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
@@ -514,10 +518,10 @@ tailwind.config = {
                         '<div class="flex items-center gap-1.5">' + priceHtml + '</div></div></a>';
                 }).join('');
                 const seeAll = form.action + '?q=' + encodeURIComponent(kw);
-                show('<div class="px-4 py-2 border-b border-gray-100"><span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Products</span></div>' +
+                show('<div class="px-4 py-2 border-b border-gray-100"><span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">' + storefrontText('Products') + '</span></div>' +
                     rows +
                     '<a href="' + seeAll + '" class="elora-see-all flex items-center justify-center gap-1 px-4 py-2.5 text-[12px] font-semibold text-main border-t border-gray-100 hover:bg-gray-50 transition">' +
-                    'See all results for"<strong>' + safeText(kw) + '</strong>"' +
+                    storefrontText('See all results for') + ' "<strong>' + safeText(kw) + '</strong>"' +
                     '</a>');
                     // '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>');
                 bindResultEvents(kw);

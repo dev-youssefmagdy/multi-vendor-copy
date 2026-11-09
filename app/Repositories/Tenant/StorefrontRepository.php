@@ -203,7 +203,7 @@ class StorefrontRepository
         return "COALESCE((SELECT AVG(product_rates.stars) FROM product_rates WHERE product_rates.product_id = products.id), 0)";
     }
 
-    protected function productRelations(bool $withCategories = false): array
+    public function productRelations(bool $withCategories = false): array
     {
         $relations = [
             'variants',

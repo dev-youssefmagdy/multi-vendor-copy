@@ -3,6 +3,7 @@
 namespace App\Livewire\Tenant\Storefront;
 
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
+use App\Livewire\Tenant\Storefront\Concerns\ProvidesFavoriteDisplayData;
 use App\Models\Tenant\Favorite;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Models\Tenant\Product;
@@ -12,6 +13,7 @@ use Livewire\Component;
 class FavoritesPage extends Component
 {
     use HasStorefrontLayout;
+    use ProvidesFavoriteDisplayData;
 
     public function render()
     {

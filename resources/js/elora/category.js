@@ -1,4 +1,12 @@
 (function() {
+    // Only ever releases a lock the drawer took: other overlays also lock <html>.
+    var scrollLocked = false;
+    function setScrollLock(locked) {
+        if (locked === scrollLocked) return;
+        scrollLocked = locked;
+        document.documentElement.style.overflow = locked ? 'hidden' : '';
+    }
+
     // Expose toggleMobileFilters globally
     window.toggleMobileFilters = function() {
         var el = document.getElementById('mobile-filter-drawer');
@@ -9,13 +17,13 @@
         if (isHidden) {
             el.classList.remove('-translate-x-full');
             if (backdrop) backdrop.classList.remove('hidden');
-            document.documentElement.style.overflow = 'hidden';
+            setScrollLock(true);
             if (btn) btn.setAttribute('aria-expanded', 'true');
             el.setAttribute('aria-hidden', 'false');
         } else {
             el.classList.add('-translate-x-full');
             if (backdrop) backdrop.classList.add('hidden');
-            document.documentElement.style.overflow = '';
+            setScrollLock(false);
             if (btn) btn.setAttribute('aria-expanded', 'false');
             el.setAttribute('aria-hidden', 'true');
         }
@@ -30,6 +38,22 @@
             }
         }
     });
+
+    // A Livewire morph puts the server's classes back (the drawer renders closed), so reopening
+    // during a request ends closed with the lock still held. Follow the drawer once it has morphed.
+    function syncScrollLock() {
+        var el = document.getElementById('mobile-filter-drawer');
+        setScrollLock(!!el && !el.classList.contains('-translate-x-full'));
+    }
+
+    function hookLivewire() {
+        window.Livewire.hook('commit', function (commit) {
+            commit.succeed(function () { setTimeout(syncScrollLock, 0); });
+        });
+    }
+
+    if (window.Livewire) hookLivewire();
+    else document.addEventListener('livewire:init', hookLivewire, { once: true });
 })();
 
 (function () {

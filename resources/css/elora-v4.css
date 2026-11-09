@@ -114,7 +114,7 @@ body {
    sets `.swiper { position: relative }`, which beats Tailwind's layered
    `absolute` utility on this element regardless of source order, so
    `inset-0` silently did nothing and the container collapsed to its
-   content's height instead of filling the 262x191 card. !important forces
+   content's height instead of filling the sized card. !important forces
    this past that tie. */
 .flash-mobile-swiper {
   position: absolute !important;

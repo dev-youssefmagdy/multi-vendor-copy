@@ -17,8 +17,8 @@ class NotFoundPage extends Component
 
         return view($this->pageView('404'), $this->sharedData())
             ->layout($this->storefrontLayout(), [
-                'title' => $storeName ? "404 — {$storeName}" : '404 — Page Not Found',
-                'metaDescription' => 'The page you are looking for could not be found.',
+                'title' => $storeName ? "404 — {$storeName}" : '404 — ' . __('Page Not Found'),
+                'metaDescription' => __('The page you are looking for could not be found.'),
             ])
             ->withHeaders(['X-Status-Code' => 404]);
     }

@@ -613,6 +613,8 @@
     // ── Wishlist ──────────────────────────────────────────────────────────────
     (function () {
 @include('components.storefront.favorites-pager-js')
+@include('components.storefront.favorites-display-js')
+        const display = window.StorefrontFavoritesDisplay;
 
         let currentSort = 'recent';
         let currentSearch = '';
@@ -623,30 +625,31 @@
 
         function buildCard(item, idx) {
             const img = item.image
-                ? `<img loading="lazy" src="${item.image}" alt="" class="w-full h-full object-cover">`
+                ? display.imgTag(item.image, 'w-full h-full object-cover')
                 : `<div class="w-full h-full flex items-center justify-center text-5xl text-neutral-400">🛍️</div>`;
-            const old = item.old_price
-                ? `<span class="text-xs text-neutral-400 line-through">$${parseFloat(item.old_price).toFixed(2)}</span>`
+            const oldPrice = display.num(item.old_price);
+            const old = oldPrice
+                ? `<span class="text-xs text-neutral-400 line-through">$${oldPrice.toFixed(2)}</span>`
                 : '';
             const stars = (() => {
                 let h = '';
                 for (let i = 1; i <= 5; i++) {
-                    h += `<svg class="w-3 h-3" fill="${i <= Math.round(item.rating || 0) ? '#FFE100' : '#E5E5E5'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
+                    h += `<svg class="w-3 h-3" fill="${i <= Math.round(display.num(item.rating)) ? '#FFE100' : '#E5E5E5'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
                 }
                 return h;
             })();
             return `<div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:shadow-lg transition group flex flex-col">
-                <a href="${item.url || '#'}" class="block relative aspect-square bg-zinc-50 overflow-hidden">${img}
+                <a href="${display.esc(display.link(item.url))}" class="block relative aspect-square bg-zinc-50 overflow-hidden">${img}
                     <button type="button" onclick="event.preventDefault(); souqifyRemoveFav(${idx})"
                         class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center hover:bg-red-50 transition" title="{{ __('Remove') }}">
                         <svg class="w-4 h-4" stroke-width="1.8" viewBox="0 0 24 24" style="fill: var(--sq-primary); stroke: var(--sq-primary)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </button>
                 </a>
                 <div class="p-3 flex flex-col gap-1.5">
-                    <a href="${item.url || '#'}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-[color:var(--sq-primary)]">${item.name || ''}</a>
+                    <a href="${display.esc(display.link(item.url))}" class="text-sm font-semibold text-slate-900 line-clamp-2 hover:text-[color:var(--sq-primary)]">${display.esc(item.name)}</a>
                     <div class="flex items-center gap-0.5">${stars}</div>
                     <div class="flex items-baseline gap-2 mt-1">
-                        <span class="text-base font-bold text-[color:var(--sq-primary)]">$${parseFloat(item.price || 0).toFixed(2)}</span>
+                        <span class="text-base font-bold text-[color:var(--sq-primary)]">$${display.num(item.price).toFixed(2)}</span>
                         ${old}
                     </div>
                 </div>
@@ -700,6 +703,8 @@
         window.addEventListener('storefront-favorites-changed', renderWishlist);
         Livewire.hook('commit', ({ succeed }) => { succeed(() => { setTimeout(renderWishlist, 50); }); });
         renderWishlist();
+        // The store's change event repaints the grid after a refresh.
+        display.refresh((slugs, ids) => @this.favoriteDisplayData(slugs, ids));
     })();
 
     // ── Order search ──────────────────────────────────────────────────────────

@@ -8,7 +8,7 @@
         <button
         type="button"
         id="mobileMenuBtn"
-        aria-label="Open menu"
+        aria-label="{{ __('Open menu') }}"
         aria-expanded="false"
         aria-controls="mobileDrawer"
         class="flex flex-col items-center justify-center cursor-pointer"
@@ -30,7 +30,7 @@
         </button>
         <button
             type="button"
-            aria-label="Notifications"
+            aria-label="{{ __('Notifications') }}"
             class="bg-white rounded-full size-[40px] flex items-center justify-center"
         >
             <img src="{{ asset('elora-1/assets/icons/bell.svg') }}" alt="" class="h-[15px] w-[14px]" />
@@ -85,7 +85,7 @@
     <button
         type="button"
         id="desktopMenuBtn"
-        aria-label="Open menu"
+        aria-label="{{ __('Open menu') }}"
         aria-controls="mobileDrawer"
         class="flex flex-col items-center justify-center cursor-pointer"
     >
@@ -162,7 +162,7 @@
         <a
         href="{{ route('tenant.storefront.favorites') }}"
         class="flex items-center gap-[8px] cursor-pointer"
-        aria-label="Favorites"
+        aria-label="{{ __('Favorites') }}"
         >
         <svg class="size-[24px]" viewBox="0 0 24 24" fill="none" stroke="#1B1B1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.62 20.81C12.28 20.93 11.72 20.93 11.38 20.81C8.48 19.82 2 15.69 2 8.69C2 5.6 4.49 3.1 7.56 3.1C9.38 3.1 10.99 3.98 12 5.34C13.01 3.98 14.63 3.1 16.44 3.1C19.51 3.1 22 5.6 22 8.69C22 15.69 15.52 19.82 12.62 20.81Z"/></svg>
         <span
@@ -174,7 +174,7 @@
         <a
         href="{{ route('tenant.storefront.cart') }}"
         class="flex items-center gap-[8px] cursor-pointer"
-        aria-label="Cart"
+        aria-label="{{ __('Cart') }}"
         >
         <img src="{{ asset('elora-1/assets/icons/cart.svg') }}" class="size-[24px]" alt="" />
         <span class="flex flex-col items-center">
@@ -195,7 +195,7 @@
         <a
         href="{{ route('tenant.storefront.profile') }}"
         class="flex items-center gap-[8px] cursor-pointer"
-        aria-label="Account"
+        aria-label="{{ __('Account') }}"
         >
         <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
         <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
@@ -209,7 +209,7 @@
         <a
         href="{{ route('tenant.storefront.login') }}"
         class="flex items-center gap-[8px] cursor-pointer"
-        aria-label="Account"
+        aria-label="{{ __('Account') }}"
         >
         <img src="{{ asset('elora-1/assets/icons/user.svg') }}" class="size-[24px]" alt="" />
         <span class="text-[14px] tracking-[0.5px] leading-tight text-left">
@@ -240,7 +240,7 @@
         <button
           type="button"
           id="drawerCloseBtn"
-          aria-label="Close menu"
+          aria-label="{{ __('Close menu') }}"
           class="flex items-center justify-center size-[32px] rounded-full cursor-pointer"
           style="background: var(--color-page-bg)"
         >
@@ -335,7 +335,7 @@
           <span
             class="text-[14px] tracking-[0.5px]"
             style="color: var(--color-black-alt)"
-            >Sign in / Register</span
+            >{{ __('Sign in / Register') }}</span
           >
         </a>
         @endauth

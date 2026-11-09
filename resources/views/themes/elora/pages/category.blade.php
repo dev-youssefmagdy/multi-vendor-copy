@@ -2,6 +2,27 @@
 
 @push('head')
     @vite('resources/css/elora/category.css')
+    {{-- Inline on purpose: shared by elora v1 (Tailwind 3) and v2-v6 (Tailwind 4), and needs no asset build. --}}
+    <style>
+        .elora-cat-scroller { display: none; position: relative; flex: 0 0 100%; width: 100%; min-width: 0; }
+        @media (min-width: 1024px) { .elora-cat-scroller { display: block; } }
+        .elora-cat-scroller .cat-circles-row { user-select: none; -webkit-user-select: none; }
+        .elora-cat-scroller.is-scrollable .cat-circles-row { cursor: grab; }
+        .elora-cat-scroller.is-dragging .cat-circles-row,
+        .elora-cat-scroller.is-dragging .cat-circles-row * { cursor: grabbing !important; }
+        .elora-cat-scroller__btn {
+            position: absolute; top: 14px; z-index: 2; display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; padding: 0; border-radius: 9999px; border: 1px solid #E5E7EB;
+            background: #fff; color: #242424; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+            transition: color .15s, border-color .15s;
+        }
+        .elora-cat-scroller__btn[hidden] { display: none; }
+        .elora-cat-scroller__btn:hover { color: var(--color-primary); border-color: var(--color-primary); }
+        .elora-cat-scroller__btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+        .elora-cat-scroller__btn--prev { inset-inline-start: 0; }
+        .elora-cat-scroller__btn--next { inset-inline-end: 0; }
+        [dir="rtl"] .elora-cat-scroller__btn svg { transform: scaleX(-1); }
+    </style>
 @endpush
 
 @php
@@ -365,7 +386,20 @@ $pageBase = $category
 
                 {{-- ── CATEGORY CIRCLES ── --}}
                 @if ($relatedCategories->isNotEmpty())
-                <div style="width: 100% !important;" class="cat-circles-row hidden lg:flex items-start gap-6 overflow-x-auto pb-1">
+                <div class="elora-cat-scroller" data-cat-scroller wire:key="elora-cat-scroller">
+                <button type="button" hidden wire:ignore.self data-cat-scroll="prev" aria-controls="elora-cat-circles"
+                    aria-label="{{ __('Previous categories') }}" class="elora-cat-scroller__btn elora-cat-scroller__btn--prev">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <button type="button" hidden wire:ignore.self data-cat-scroll="next" aria-controls="elora-cat-circles"
+                    aria-label="{{ __('Next categories') }}" class="elora-cat-scroller__btn elora-cat-scroller__btn--next">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div id="elora-cat-circles" style="width: 100% !important;" class="cat-circles-row hidden lg:flex items-start gap-6 overflow-x-auto pb-1">
 
                     @php
                         $parent = $category;
@@ -412,6 +446,7 @@ $pageBase = $category
                     </a>
                     @endforeach
                 </div>
+                </div>{{-- end .elora-cat-scroller --}}
                 @endif
 
                 {{-- ── PRODUCTS GRID ── --}}
@@ -468,4 +503,140 @@ $pageBase = $category
 
 @push('scripts')
 @vite('resources/js/elora/category.js')
+{{-- Desktop scroller for the category circles (hidden scrollbar): arrows, wheel, mouse drag. Touch stays native. --}}
+<script>
+(function () {
+    if (window.__eloraCatScroller) { window.__eloraCatScroller(); return; }
+
+    var lastPageWheel = 0;
+    document.addEventListener('wheel', function (e) {
+        if (!(e.target.closest && e.target.closest('[data-cat-scroller]'))) lastPageWheel = Date.now();
+    }, { passive: true });
+
+    function setup(w) {
+        var prev = w.querySelector('[data-cat-scroll="prev"]');
+        var next = w.querySelector('[data-cat-scroll="next"]');
+        var raf = 0, cur = 0, target = 0, queued = 0, drag = null, suppressClick = false;
+
+        function row() { return w.querySelector('.cat-circles-row'); }
+        function isRtl(r) { return getComputedStyle(r).direction === 'rtl'; }
+        function maxScroll(r) { return Math.max(0, r.scrollWidth - r.clientWidth); }
+        // Logical position: 0 at the reading start, max at the reading end (RTL scrollLeft is negative).
+        function getPos(r) { return Math.abs(r.scrollLeft); }
+        function setPos(r, p) { r.scrollLeft = isRtl(r) ? -p : p; }
+        function clamp(r, p) { return Math.min(maxScroll(r), Math.max(0, p)); }
+        function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+
+        function update() {
+            var r = row(), max = maxScroll(r), p = getPos(r);
+            var canPrev = max > 1 && p > 1, canNext = max > 1 && p < max - 1;
+            if (!canPrev && document.activeElement === prev && canNext) next.focus();
+            if (!canNext && document.activeElement === next && canPrev) prev.focus();
+            prev.hidden = !canPrev;
+            next.hidden = !canNext;
+            w.classList.toggle('is-scrollable', max > 1);
+        }
+        function queueUpdate() {
+            if (!queued) queued = requestAnimationFrame(function () { queued = 0; update(); });
+        }
+
+        function animateTo(r, p) {
+            target = clamp(r, p);
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stop(); setPos(r, target); return; }
+            if (raf) return;
+            cur = getPos(r);
+            (function step() {
+                var d = target - cur;
+                if (Math.abs(d) < 1) { setPos(r, target); raf = 0; return; }
+                cur += d * 0.22;
+                setPos(r, cur);
+                raf = requestAnimationFrame(step);
+            })();
+        }
+
+        w.addEventListener('click', function (e) {
+            if (suppressClick) { e.preventDefault(); e.stopPropagation(); suppressClick = false; return; }
+            var btn = e.target.closest('[data-cat-scroll]');
+            if (!btn) return;
+            var r = row(), from = raf ? target : getPos(r), step = Math.max(r.clientWidth * 0.8, 104);
+            animateTo(r, from + (btn === next ? step : -step));
+        }, true);
+
+        // Vertical wheel moves the row, except while the page is already scrolling past it or at the row's ends.
+        // Horizontal trackpad / shift+wheel stays native.
+        w.addEventListener('wheel', function (e) {
+            if (e.ctrlKey) return;
+            var r = row();
+            if (maxScroll(r) <= 1) return;
+            if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) { stop(); return; }
+            if (Date.now() - lastPageWheel < 250) { lastPageWheel = Date.now(); return; }
+            var unit = e.deltaMode === 1 ? 16 : (e.deltaMode === 2 ? r.clientWidth : 1);
+            var from = raf ? target : getPos(r), to = clamp(r, from + e.deltaY * unit);
+            if (to === from) return;
+            e.preventDefault();
+            animateTo(r, to);
+        }, { passive: false });
+
+        function onMove(e) {
+            if (!drag) return;
+            var dx = e.clientX - drag.x;
+            if (!drag.moved && Math.abs(dx) < 5) return;
+            drag.moved = true;
+            w.classList.add('is-dragging');
+            row().scrollLeft = drag.start - dx;
+        }
+        function onUp() {
+            document.removeEventListener('pointermove', onMove);
+            document.removeEventListener('pointerup', onUp);
+            document.removeEventListener('pointercancel', onUp);
+            if (drag && drag.moved) {
+                // The browser fires click right after pointerup; swallow only that one.
+                suppressClick = true;
+                setTimeout(function () { suppressClick = false; }, 50);
+            }
+            drag = null;
+            w.classList.remove('is-dragging');
+        }
+        w.addEventListener('pointerdown', function (e) {
+            var r = row();
+            if (e.pointerType !== 'mouse' || e.button !== 0 || maxScroll(r) <= 1 || e.target.closest('[data-cat-scroll]')) return;
+            stop();
+            drag = { x: e.clientX, start: r.scrollLeft, moved: false };
+            document.addEventListener('pointermove', onMove);
+            document.addEventListener('pointerup', onUp);
+            document.addEventListener('pointercancel', onUp);
+        });
+        // Links and images are natively draggable, which would abort the pointer drag.
+        w.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        // scroll doesn't bubble: capture it so this survives the row node being replaced.
+        w.addEventListener('scroll', queueUpdate, true);
+        // Also fires on window resize and when the breakpoint shows/hides the row.
+        if (window.ResizeObserver) new ResizeObserver(queueUpdate).observe(w);
+        else window.addEventListener('resize', queueUpdate);
+
+        w.__catScrollerUpdate = update;
+        update();
+    }
+
+    function scan() {
+        document.querySelectorAll('[data-cat-scroller]').forEach(function (w) {
+            if (w.__catScrollerUpdate) w.__catScrollerUpdate(); else setup(w);
+        });
+    }
+    window.__eloraCatScroller = scan;
+
+    function hookLivewire() {
+        if (hookLivewire.done || !window.Livewire || !window.Livewire.hook) return;
+        hookLivewire.done = true;
+        window.Livewire.hook('commit', function (c) {
+            c.succeed(function () { requestAnimationFrame(scan); });
+        });
+    }
+    document.addEventListener('livewire:init', hookLivewire);
+    document.addEventListener('livewire:navigated', scan);
+    hookLivewire();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
+})();
+</script>
 @endpush

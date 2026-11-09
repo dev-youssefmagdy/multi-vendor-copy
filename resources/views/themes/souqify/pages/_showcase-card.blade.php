@@ -95,7 +95,7 @@ Vars: $product (Product model), $badgeText (optional)
         @if ($hasDiscount && $discountPct > 0)
             <span
                 class="absolute top-0 left-0 bg-rose-700 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg leading-tight">
-                {{ $discountPct }}% OFF
+                {{ $discountPct }}{{ __('% OFF') }}
             </span>
         @endif
             <span

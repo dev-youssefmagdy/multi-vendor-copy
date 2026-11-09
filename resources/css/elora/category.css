@@ -38,6 +38,9 @@
     }
 
     [dir="rtl"] #mobile-filter-drawer.-translate-x-full {
-        transform: translateX(100%) !important;
+        /* Tailwind v4 (elora v2-v6) moves this class via `translate`, v3 (elora v1) via `transform`;
+           both read this variable, so flipping it works on either stack. Don't write `translate` and
+           `transform` together here: the minifier merges them and drops the `translate` longhand. */
+        --tw-translate-x: 100% !important;
     }
 }

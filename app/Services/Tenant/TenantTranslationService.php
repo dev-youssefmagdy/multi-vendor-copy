@@ -87,12 +87,28 @@ class TenantTranslationService
             throw new RuntimeException("The translation key \"{$key}\" is locked by the marketplace admin and cannot be edited.");
         }
 
-        TranslationOverride::query()->updateOrCreate(
-            ['language_id' => $languageId, 'key_hash' => hash('sha256', $key)],
-            ['key' => $key, 'value' => $value],
-        );
+        $localeCode = strtolower((string) Language::query()->whereKey($languageId)->value('code'));
+
+        if ($this->isUntranslatedValue($key, $value, $localeCode)) {
+            // A blank or English "translation" would hide the lang file value;
+            // no row is how this table says "use the default".
+            TranslationOverride::query()
+                ->where('language_id', $languageId)
+                ->where('key_hash', hash('sha256', $key))
+                ->delete();
+        } else {
+            TranslationOverride::query()->updateOrCreate(
+                ['language_id' => $languageId, 'key_hash' => hash('sha256', $key)],
+                ['key' => $key, 'value' => $value],
+            );
+        }
 
         TenantTranslator::flushCache();
+    }
+
+    private function isUntranslatedValue(string $key, string $value, string $localeCode): bool
+    {
+        return app('translator')->isUntranslatedValue($key, $value, $localeCode);
     }
 
     public function translateKeyWithAi(Language $language, string $key, OpenAiTranslationService $ai): string
@@ -115,7 +131,17 @@ class TenantTranslationService
             $this->storeContext->build($language->name),
         );
 
-        $value = trim((string) ($translated[0] ?? $default));
+        $value = trim((string) ($translated[0] ?? ''));
+
+        if ($value === '') {
+            throw new RuntimeException("AI did not return a translation for \"{$key}\". Please try again.");
+        }
+
+        // Same as the source: a valid cognate ("Menu") and a key the model dropped (translateGroupedPending()
+        // echoes those) look identical. Neither needs a row, and neither may disturb an existing translation.
+        if ($this->isUntranslatedValue($key, $value, strtolower((string) $language->code))) {
+            return $this->resolve($key, strtolower((string) $language->code));
+        }
 
         $this->saveOverride((string) $language->id, $key, $value);
 
@@ -124,7 +150,8 @@ class TenantTranslationService
 
     /**
      * Batch AI-translate a list of keys into the given language. Returns the
-     * number of keys actually translated (locked keys are skipped).
+     * number of keys that got a translation stored: locked keys are skipped, and
+     * so are results equal to the source, which need no row (see translateKeyWithAi()).
      */
     public function translateKeysWithAi(Language $language, array $keys, OpenAiTranslationService $ai): int
     {
@@ -166,7 +193,13 @@ class TenantTranslationService
 
         $count = 0;
         foreach ($pending as $offset => $item) {
-            $value = trim((string) ($translated[$offset] ?? $item['text']));
+            $value = trim((string) ($translated[$offset] ?? ''));
+
+            // Skip, so a dropped or echoed result cannot replace a real translation.
+            if ($this->isUntranslatedValue($item['group'], $value, strtolower((string) $language->code))) {
+                continue;
+            }
+
             $this->saveOverride((string) $language->id, $item['group'], $value);
             $count++;
         }

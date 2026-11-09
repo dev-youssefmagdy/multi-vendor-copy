@@ -316,7 +316,7 @@
                             wire:loading.attr="disabled" wire:target="placeOrder"
                             wire:loading.class="opacity-60 cursor-not-allowed" wire:target="placeOrder"
                             class="w-full bg-[var(--color-primary)] text-white rounded-full py-4 mt-6 text-[14px] font-[600] tracking-wide hover:opacity-90 transition {{ !$shippingAvailable || !$hasAddresses || !$hasGateways ? 'opacity-50 cursor-not-allowed' : '' }}">
-                            <span wire:loading.remove wire:target="placeOrder">Pay {{ $formattedFinalTotal }}</span>
+                            <span wire:loading.remove wire:target="placeOrder">{{ __('Pay') }} {{ $formattedFinalTotal }}</span>
                             <span wire:loading wire:target="placeOrder" class="flex items-center justify-center gap-2">
                                 <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>

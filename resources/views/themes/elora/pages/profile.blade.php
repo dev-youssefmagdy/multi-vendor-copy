@@ -24,6 +24,13 @@ $orderFilters = [
     'cancelled' => __('Cancelled'),
 ];
 $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
+
+// Same direction rule as <html dir> in layout/app.blade.php. `end-0` pins the drawer to the
+// left edge in RTL, so its closed offset there is -100%.
+$language = $currentLanguage ?? null;
+$drawerClosedClass = (($language?->direction?->value ?? null) === 'rtl' || in_array($language?->code ?? app()->getLocale(), ['ar', 'he', 'fa']))
+    ? '-translate-x-full'
+    : 'translate-x-full';
 @endphp
 <div class="elora-profile bg-white">
     <style>
@@ -44,8 +51,28 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
 
         .elora-profile .ep-mobile-tabs,
         .elora-profile .ep-mobile-filters { display: flex; }
+        .elora-profile .ep-mobile-tabs,
         .elora-profile .ep-mobile-filters { scrollbar-width: none; }
+        .elora-profile .ep-mobile-tabs::-webkit-scrollbar,
         .elora-profile .ep-mobile-filters::-webkit-scrollbar { display: none; }
+
+        /* Content-sized, single-line pills: spare width is shared, and the row scrolls if they cannot fit. */
+        .elora-profile .ep-mobile-tabs { overflow-x: auto; }
+        .elora-profile .ep-mobile-tab {
+            flex: 1 0 auto;
+            padding: 10px 16px;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        @media (max-width: 400px) {
+            .elora-profile .ep-mobile-tab { padding-inline: 10px; font-size: 13px; }
+        }
+        @media (max-width: 359px) {
+            .elora-profile .ep-mobile-tabs { gap: 6px; }
+            .elora-profile .ep-mobile-tab { padding-inline: 8px; font-size: 12px; }
+        }
 
         @media (min-width: 1024px) {
             .elora-profile .ep-mobile-tabs,
@@ -54,12 +81,14 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
     </style>
 
     {{-- ═══ Mobile sidebar drawer (hidden on desktop) ═══ --}}
-    <div id="elora-profile-drawer-overlay"
+    {{-- wire:ignore.self: open/closed lives in these two elements' classes and is owned by the
+         JS below, so a Livewire morph must not reset them. The drawer's children still morph. --}}
+    <div id="elora-profile-drawer-overlay" wire:ignore.self
         class="fixed inset-0 bg-black/40 z-[900] hidden lg:hidden"
         onclick="eloraProfileDrawerClose()"></div>
 
-    <div id="elora-profile-drawer"
-        class="fixed top-0 end-0 h-full w-[280px] bg-white z-[901] shadow-2xl flex flex-col overflow-y-auto translate-x-full lg:hidden transition-transform duration-300 ease-in-out">
+    <div id="elora-profile-drawer" wire:ignore.self
+        class="fixed top-0 end-0 h-full w-[280px] bg-white z-[901] shadow-2xl flex flex-col overflow-y-auto {{ $drawerClosedClass }} lg:hidden transition-transform duration-300 ease-in-out">
 
         {{-- Drawer header --}}
         <div class="flex items-center justify-between px-5 py-4 border-b border-[#F0F0F0]">
@@ -169,17 +198,20 @@ $filterLabel = $orderFilters[$statusFilter ?? ''] ?? __('All');
                 {{-- Mobile tab nav (visible below lg only) --}}
                 <div class="ep-mobile-tabs items-center gap-2 mb-5">
                     <a href="{{ $profileUrl() }}" wire:click.prevent="setTab('orders')"
-                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
+                        @if ($activeTab === 'orders') aria-current="page" @endif
+                        class="ep-mobile-tab font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'orders' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('My Orders') }}
                     </a>
                     <a href="{{ $profileUrl(['tab' => 'profile']) }}" wire:click.prevent="setTab('profile')"
-                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
+                        @if ($activeTab === 'profile') aria-current="page" @endif
+                        class="ep-mobile-tab font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'profile' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('Profile & Addresses') }}
                     </a>
                     <a href="{{ $profileUrl(['tab' => 'returns']) }}" wire:click.prevent="setTab('returns')"
-                        class="flex-1 text-center py-2.5 text-sm font-semibold rounded-full border transition cursor-pointer
+                        @if ($activeTab === 'returns') aria-current="page" @endif
+                        class="ep-mobile-tab font-semibold rounded-full border transition cursor-pointer
                                {{ $activeTab === 'returns' ? 'bg-[#171717] text-white border-[#171717]' : 'bg-white text-[#555] border-[#E0E0E0] hover:border-[#171717]' }}">
                         {{ __('Returns') }}
                     </a>
@@ -664,14 +696,6 @@ function eloraProfileDrawerClose() {
     overlay.classList.add('hidden');
     document.body.style.overflow = '';
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const drawer = document.getElementById('elora-profile-drawer');
-    if (drawer && document.documentElement.dir === 'rtl') {
-        drawer.classList.remove('translate-x-full');
-        drawer.classList.add('-translate-x-full');
-    }
-});
 </script>
 @endpush
 
@@ -707,7 +731,19 @@ function profileSwal(message, type) {
 Livewire.hook('commit', ({ component, succeed }) => {
     if (component.id !== $wire.$id) return;
     succeed(() => queueMicrotask(() => window.searchOrders?.()));
+    succeed(() => requestAnimationFrame(eloraProfileRevealActiveTab));
 });
+
+// ── Keep the active mobile tab in view when the tab row scrolls ──────────
+function eloraProfileRevealActiveTab() {
+    const row = $wire.$el.querySelector('.ep-mobile-tabs');
+    const active = row?.querySelector('[aria-current="page"]');
+    if (!active || row.scrollWidth <= row.clientWidth) return;
+    const rowBox = row.getBoundingClientRect();
+    const activeBox = active.getBoundingClientRect();
+    row.scrollLeft += (activeBox.left + activeBox.width / 2) - (rowBox.left + rowBox.width / 2);
+}
+eloraProfileRevealActiveTab();
 
 // ── Listen for profile-swal Livewire events ───────────────────────────────
 $wire.on('profile-swal', (event) => {

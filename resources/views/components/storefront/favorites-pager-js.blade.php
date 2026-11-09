@@ -34,7 +34,7 @@ window.StorefrontPager = window.StorefrontPager || {
             '<button type="button" data-pager-page="' + page + '"' + (disabled ? ' disabled' : '') + ' style="' + base + style + '">' + label + '</button>';
 
         el.innerHTML =
-            '<nav aria-label="Pagination" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:32px">' +
+            '<nav aria-label="' + @json(__('Pagination')) + '" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:32px">' +
             btn(@json(__('Previous')), state.page - 1, state.page === 1 ? off : '', state.page === 1) +
             numbers.map(n => n === '…'
                 ? '<span style="padding:0 4px;color:#999">…</span>'

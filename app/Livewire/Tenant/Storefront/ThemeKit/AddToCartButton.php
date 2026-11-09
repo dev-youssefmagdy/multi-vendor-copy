@@ -34,7 +34,7 @@ class AddToCartButton extends Component
             ->find($this->product);
 
         if (!$productModel) {
-            $this->dispatch('storefront-toast', message: 'Product not found.', type: 'error');
+            $this->dispatch('storefront-toast', message: __('Product not found.'), type: 'error');
             return;
         }
 

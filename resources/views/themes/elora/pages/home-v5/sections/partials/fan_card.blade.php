@@ -25,7 +25,8 @@
     $stockColor = 'var(--color-error)';
 @endphp
 <a href="{{ $p['url'] ?? '#' }}" class="fan-card group flex flex-col items-start w-full h-full rounded-[9.37px] lg:rounded-[11.65px] shadow-[0_4.63px_24.79px_rgba(0,0,0,0.25)] lg:shadow-[0_6.7px_35.86px_rgba(0,0,0,0.25)] transition-shadow duration-300 ease-out hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)]" style="background:var(--color-bg-main)">
-  <div class="relative shrink-0 w-full aspect-square">
+  {{-- Image yields height (min-h-0, no shrink-0) so the fixed-height slide never pushes the text below out of the card. --}}
+  <div class="relative min-h-0 w-full aspect-square">
     <div class="fan-image rounded-t-[7.86px] lg:rounded-t-[9.77px] absolute inset-0 overflow-hidden">
       <img loading="lazy" decoding="async" src="{{ $p['image'] ?? asset('elora-5/assets/images/product-placeholder.svg') }}" alt="{{ $p['name'] }}" class="absolute inset-0 h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
 @if (!empty($p['isOutOfStock']))
@@ -67,7 +68,7 @@
       </button>
     @endif
   </div>
-  <div class="fan-content flex flex-col gap-[6.25px] lg:gap-[7.77px] items-start p-[6.25px] lg:p-[7.77px] relative shrink-0 w-full flex-1 min-h-0">
+  <div class="fan-content flex flex-col gap-[6.25px] lg:gap-[7.77px] items-start p-[6.25px] lg:p-[7.77px] relative shrink-0 w-full">
     <div class="fan-info-block flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start w-full">
       <div class="fan-title-row flex items-center justify-between gap-[1.96px] lg:gap-[2.44px] w-full whitespace-nowrap">
         <p class="fan-name font-medium text-[18.75px] leading-[24px] lg:text-[23.31px] lg:leading-[29px] tracking-[0.49px] lg:tracking-[0.61px] truncate" style="color:var(--color-black)">{{ $p['name'] }}</p>
@@ -97,7 +98,7 @@
     </div>
     <div class="fan-delivery-block flex flex-col gap-[3.93px] lg:gap-[4.88px] items-start w-full">
         <div class="fan-delivery-row flex w-full flex-col items-start gap-[2px]">
-<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="gap-[3.93px] lg:gap-[7.77px] fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" :style="'color:' . ($deliveredColor)" icon-class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
+<x-storefront.product-labels :labels="$p['labels'] ?? []" tag="div" class="max-w-full gap-[3.93px] lg:gap-[7.77px] fan-delivery-text font-medium text-[11.78px] leading-[15px] lg:text-[15.54px] lg:leading-[20px] whitespace-nowrap" :style="'color:' . ($deliveredColor)" icon-class="fan-delivery-icon size-[17.68px] lg:size-[23.31px] shrink-0" />
 </div>
     </div>
   </div>

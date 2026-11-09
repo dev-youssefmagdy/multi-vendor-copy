@@ -20,6 +20,9 @@ class TenantTranslator extends Translator
     /** @var array<string, array<string, string>> Per-request cache of overrides, keyed by locale. */
     protected static array $overridesByLocale = [];
 
+    /** @var array<string, array<string, true>> Overrides already checked against the lang files this request. */
+    protected static array $verifiedOverrides = [];
+
     public function get($key, $replace = [], $locale = null, $fallback = true)
     {
         $locale = $locale ?: $this->getLocale();
@@ -43,7 +46,60 @@ class TenantTranslator extends Translator
             static::$overridesByLocale[$locale] = $this->loadOverrides($locale);
         }
 
-        return static::$overridesByLocale[$locale][$key] ?? null;
+        $override = static::$overridesByLocale[$locale][$key] ?? null;
+
+        if ($override === null || isset(static::$verifiedOverrides[$locale][$key])) {
+            return $override;
+        }
+
+        if ($this->shadowsRealTranslation($key, (string) $override, $locale)) {
+            unset(static::$overridesByLocale[$locale][$key]);
+
+            return null;
+        }
+
+        static::$verifiedOverrides[$locale][$key] = true;
+
+        return $override;
+    }
+
+    /**
+     * True when $value is not a real translation for a non-source locale: it
+     * is blank, or just repeats the English source (the key or its en lang
+     * file value), as left behind by a failed AI call or an unedited save.
+     */
+    public function isUntranslatedValue(string $key, string $value, string $locale): bool
+    {
+        $sourceLocale = $this->getFallback() ?: 'en';
+
+        if ($locale === $sourceLocale) {
+            return false;
+        }
+
+        $value = trim($value);
+
+        return $value === ''
+            || $value === trim($key)
+            || $value === trim((string) $this->fileLine($key, $sourceLocale));
+    }
+
+    protected function shadowsRealTranslation(string $key, string $override, string $locale): bool
+    {
+        if (!$this->isUntranslatedValue($key, $override, $locale)) {
+            return false;
+        }
+
+        $fileLine = trim((string) $this->fileLine($key, $locale));
+
+        return $fileLine !== '' && $fileLine !== trim($override);
+    }
+
+    /** The raw lang file line for this exact locale, or null when the file has none. */
+    protected function fileLine(string $key, string $locale): ?string
+    {
+        $line = parent::get($key, [], $locale, false);
+
+        return is_string($line) && $line !== $key ? $line : null;
     }
 
     /** @return array<string, string> */
@@ -69,5 +125,6 @@ class TenantTranslator extends Translator
     public static function flushCache(): void
     {
         static::$overridesByLocale = [];
+        static::$verifiedOverrides = [];
     }
 }

@@ -75,19 +75,33 @@ $orders Collection<Order>
                 <div class="flex-1 w-full flex flex-col gap-6 overflow-hidden">
 
                     {{-- Mobile tab nav (hidden on md+) --}}
-                    <div class="flex items-center gap-2 md:hidden">
+                    <div class="flex items-center gap-2 md:hidden overflow-x-auto no-scrollbar"
+                        x-data="{
+                            {{-- Moves this row only; scrollIntoView would also scroll the page sideways. --}}
+                            reveal(row, tab, behavior) {
+                                if (!tab || row.scrollWidth <= row.clientWidth) return;
+                                const rowBox = row.getBoundingClientRect();
+                                const tabBox = tab.getBoundingClientRect();
+                                row.scrollBy({ left: (tabBox.left + tabBox.width / 2) - (rowBox.left + rowBox.width / 2), behavior });
+                            },
+                        }"
+                        x-init="reveal($el, $el.querySelector('[aria-current=page]'), 'auto')"
+                        x-on:click="reveal($el, $event.target.closest('button'), 'smooth')">
                         <button wire:click="setTab('orders')"
-                            class="flex-1 py-2.5 text-[13px] font-semibold rounded-full border transition
+                            @if ($activeTab === 'orders') aria-current="page" @endif
+                            class="grow shrink-0 whitespace-nowrap px-3 py-2.5 text-[13px] font-semibold rounded-full border transition
                                    {{ $activeTab === 'orders' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
                             {{ __('My Orders') }}
                         </button>
                         <button wire:click="setTab('profile')"
-                            class="flex-1 py-2.5 text-[13px] font-semibold rounded-full border transition
+                            @if ($activeTab === 'profile') aria-current="page" @endif
+                            class="grow shrink-0 whitespace-nowrap px-3 py-2.5 text-[13px] font-semibold rounded-full border transition
                                    {{ $activeTab === 'profile' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
                             {{ __('Profile & Addresses') }}
                         </button>
                         <button wire:click="setTab('returns')"
-                            class="flex-1 py-2.5 text-[13px] font-semibold rounded-full border transition
+                            @if ($activeTab === 'returns') aria-current="page" @endif
+                            class="grow shrink-0 whitespace-nowrap px-3 py-2.5 text-[13px] font-semibold rounded-full border transition
                                    {{ $activeTab === 'returns' ? 'bg-[#242424] text-white border-[#242424]' : 'bg-white text-[#333] border-[#dcdcdc] hover:border-[#242424]' }}">
                             {{ __('Returns') }}
                         </button>

@@ -102,7 +102,7 @@
 
       {{-- "Only $X.XX" price pill --}}
       @if ($flashSaleMinPriceLabel)
-        <div class="absolute bottom-[-20px] left-0 -translate-x-[75%] z-10 bg-white border-black rounded-full h-[47.54px] flex items-center justify-center px-[24px]" style="border-width: 1.49px; border-style: solid;">
+        <div class="absolute bottom-[-20px] start-0 -translate-x-[75%] rtl:translate-x-[75%] z-10 bg-white border-black rounded-full h-[47.54px] flex items-center justify-center px-[24px]" style="border-width: 1.49px; border-style: solid;">
           <p class="font-bold text-[20px] whitespace-nowrap" style="color: var(--color-brand-orange)">
             {{ __('Only :price', ['price' => $flashSaleMinPriceLabel]) }}
           </p>
@@ -134,21 +134,21 @@
         aria-hidden="true"
       >{{ __('Ends in') }}</span>
 
-      <div class="flex items-center justify-center h-[49.87px] w-[52.13px] rounded-[7.93px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Hours') }}">
-        <span class="font-semibold text-[27.2px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-hh>00</span>
+      <div class="flex items-center justify-center h-[57px] w-[60px] rounded-[9px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Hours') }}">
+        <span class="font-semibold text-[31px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-hh>00</span>
       </div>
-      <div class="flex items-center justify-center h-[49.87px] w-[52.13px] rounded-[7.93px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Minutes') }}">
-        <span class="font-semibold text-[27.2px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-mm>00</span>
+      <div class="flex items-center justify-center h-[57px] w-[60px] rounded-[9px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Minutes') }}">
+        <span class="font-semibold text-[31px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-mm>00</span>
       </div>
-      <div class="flex items-center justify-center h-[49.87px] w-[52.13px] rounded-[7.93px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Seconds') }}">
-        <span class="font-semibold text-[27.2px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-ss>00</span>
+      <div class="flex items-center justify-center h-[57px] w-[60px] rounded-[9px] border shrink-0" style="background: #FFFFFF; border-color: var(--color-brand-orange)" role="timer" aria-label="{{ __('Seconds') }}">
+        <span class="font-semibold text-[31px] leading-none tabular-nums" style="color: var(--color-brand-orange)" data-flash-ss>00</span>
       </div>
     </div>
 
     {{-- Card-effect carousel: one product fully visible, a static card
          peeks from behind it, floating badge + price pill overlap its
          corners and swap to match the active product. --}}
-    <div class="relative z-[1] w-[262px] h-[191px] mt-[24px]">
+    <div class="relative z-[1] w-[min(85vw,340px)] aspect-[262/191] mt-[24px]">
       <div
         class="absolute inset-0 rounded-[16px]"
         style="background: #F4F4F4; box-shadow: 0 0 40px rgba(0,0,0,0.12); transform: rotate(-6deg) translate(6px, 4px)"

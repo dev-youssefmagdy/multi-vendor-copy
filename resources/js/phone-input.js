@@ -2,6 +2,10 @@ import intlTelInput from "intl-tel-input";
 import intlTelInputUtils from "intl-tel-input/utils";
 import "intl-tel-input/styles";
 
+function translate(key) {
+    return typeof window.trans === "function" ? window.trans(key) : key;
+}
+
 const instances = new WeakMap();
 const GEO_CACHE_KEY = "phone-input:country";
 
@@ -79,7 +83,7 @@ function ensureErrorSlot(input) {
 function showError(input, message) {
     const slot = ensureErrorSlot(input);
     input.classList.add("border-red-500");
-    input.setCustomValidity(message || "Invalid phone number");
+    input.setCustomValidity(message || translate("Invalid phone number"));
 
     if (message) {
         slot.textContent = message;
@@ -203,7 +207,7 @@ function validate(input, iti) {
         return true;
     }
 
-    showError(input, input.dataset.phoneInvalidMessage || "Please enter a valid phone number.");
+    showError(input, input.dataset.phoneInvalidMessage || translate("Please enter a valid phone number."));
     return false;
 }
 

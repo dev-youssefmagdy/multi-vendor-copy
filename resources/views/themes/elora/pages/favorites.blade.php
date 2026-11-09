@@ -90,6 +90,8 @@
     <script>
         (function () {
             @include('components.storefront.favorites-pager-js')
+            @include('components.storefront.favorites-display-js')
+            const display = window.StorefrontFavoritesDisplay;
 
             // ── helpers (shared store: resources/js/storefront-favorites.js) ──
             function getFavs() { return window.StorefrontFavorites.get(); }
@@ -98,20 +100,23 @@
             // ── build card HTML ───────────────────────────────────
             function buildCard(item, idx) {
                 const badge = item.badge ?
-                    `<span class="absolute top-0 right-0 text-xs px-2 py-1.5 font-normal tracking-wide" style="background:var(--color-primary);color:#fff;border-radius:0 8px 0 8px">${item.badge}</span>` :
+                    `<span class="absolute top-0 right-0 text-xs px-2 py-1.5 font-normal tracking-wide" style="background:var(--color-primary);color:#fff;border-radius:0 8px 0 8px">${display.esc(item.badge)}</span>` :
                     '';
                 const img = item.image ?
-                    `<img loading="lazy" src="${item.image}" alt="" class="w-full h-full object-cover"/>` :
+                    display.imgTag(item.image, 'w-full h-full object-cover') :
                     `<div class="w-full h-full bg-gray-100 flex items-center justify-center text-5xl">🛍️</div>`;
-                const stars = buildStars(item.rating || 0);
-                const oldPrice = item.old_price ?
-                    `<span class="text-sm text-[#ADADAD] line-through font-light">$${parseFloat(item.old_price).toFixed(2)}</span>` :
+                const rating = display.num(item.rating);
+                const reviews = display.num(item.reviews);
+                const stars = buildStars(rating);
+                const oldPriceValue = display.num(item.old_price);
+                const oldPrice = oldPriceValue ?
+                    `<span class="text-sm text-[#ADADAD] line-through font-light">$${oldPriceValue.toFixed(2)}</span>` :
                     '';
                 const discount = item.discount ?
-                    `<span class="text-xs text-[#FF522C] tracking-[0.5px]">${item.discount}</span>` :
+                    `<span class="text-xs text-[#FF522C] tracking-[0.5px]">${display.esc(item.discount)}</span>` :
                     '';
 
-                return `<div class="fav-card group relative cursor-pointer flex flex-col bg-[#FDFDFD] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-index="${idx}" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price || 0}" data-added="${item.added || 0}">
+                return `<div class="fav-card group relative cursor-pointer flex flex-col bg-[#FDFDFD] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" data-index="${idx}" data-name="${display.esc(String(item.name || '').toLowerCase())}" data-price="${display.num(item.price)}" data-added="${display.num(item.added)}">
               <div class="relative overflow-hidden aspect-square">
                 ${img}
                 ${badge}
@@ -124,12 +129,12 @@
               </div>
               <div class="p-3 flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-base font-medium text-[#171717] tracking-[0.5px] truncate max-w-[140px]">${item.name || ''}</span>
+                  <span class="text-base font-medium text-[#171717] tracking-[0.5px] truncate max-w-[140px]">${display.esc(item.name)}</span>
                 </div>
-                ${item.description ? `<p class="text-sm text-[#ADADAD] tracking-[0.5px] truncate">${item.description}</p>` : ''}
-                <div class="flex items-center gap-1">${stars}<span class="text-xs text-[#ADADAD] ml-1 tracking-[0.5px]">${item.rating || ''} ${item.reviews ? '(+' + item.reviews + ')' : ''}</span></div>
+                ${item.description ? `<p class="text-sm text-[#ADADAD] tracking-[0.5px] truncate">${display.esc(item.description)}</p>` : ''}
+                <div class="flex items-center gap-1">${stars}<span class="text-xs text-[#ADADAD] ml-1 tracking-[0.5px]">${rating || ''} ${reviews ? '(+' + reviews + ')' : ''}</span></div>
                 <div class="flex items-end gap-1.5 flex-wrap">
-                  <span class="text-lg font-medium text-[#171717]">$${parseFloat(item.price || 0).toFixed(2)}</span>
+                  <span class="text-lg font-medium text-[#171717]">$${display.num(item.price).toFixed(2)}</span>
                   ${oldPrice} ${discount}
                 </div>
               </div>
@@ -225,7 +230,8 @@
                 const card = e.target.closest('.fav-card');
                 if (!card) return;
                 const item = getFavs()[Number(card.dataset.index)];
-                if (item && item.url) window.location.href = item.url;
+                const url = item ? display.safeUrl(item.url) : '';
+                if (url) window.location.href = url;
             });
 
             // ── public functions ──────────────────────────────────
@@ -316,8 +322,12 @@
             };
 
             // Initial render (the shared store loads with the deferred module bundle)
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
-            else render();
+            function boot() {
+                render();
+                display.refresh((slugs, ids) => @this.favoriteDisplayData(slugs, ids), render);
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+            else boot();
 
             // Listen for favorites changes from other tabs
             window.addEventListener('storage', function (e) {

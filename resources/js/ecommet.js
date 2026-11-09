@@ -489,8 +489,8 @@ function initSearchHistory() {
 
             showDropdown(`
                 <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100">
-                    <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Recent searches</span>
-                    <button class="clear-history-btn text-[12px] text-primary hover:underline">Clear</button>
+                    <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">${window.trans('Recent searches')}</span>
+                    <button class="clear-history-btn text-[12px] text-primary hover:underline">${window.trans('Clear')}</button>
                 </div>
                 ${items}`);
             attachHistoryEvents();
@@ -503,7 +503,7 @@ function initSearchHistory() {
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                     </svg>
-                    Searching…
+                    ${window.trans('Searching…')}
                 </div>`);
         }
 
@@ -511,7 +511,7 @@ function initSearchHistory() {
             if (products.length === 0) {
                 showDropdown(`
                     <div class="px-4 py-5 text-center text-[13px] text-gray-400">
-                        No products found for "<strong>${safeText(keyword)}</strong>"
+                        ${window.trans('No products found for')} "<strong>${safeText(keyword)}</strong>"
                     </div>`);
                 return;
             }
@@ -538,11 +538,11 @@ function initSearchHistory() {
             const seeAllUrl = `${form.action}?q=${encodeURIComponent(keyword)}`;
             showDropdown(`
                 <div class="px-4 py-2 border-b border-gray-100">
-                    <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Products</span>
+                    <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">${window.trans('Products')}</span>
                 </div>
                 ${rows}
                 <a href="${seeAllUrl}" class="see-all-link flex items-center justify-center gap-1 px-4 py-2.5 text-[12px] font-semibold text-primary border-t border-gray-100 hover:bg-gray-50 transition no-underline">
-                    See all results for "<strong>${safeText(keyword)}</strong>"
+                    ${window.trans('See all results for')} "<strong>${safeText(keyword)}</strong>"
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (outOfStock) {
                 var badge = document.createElement('span');
                 badge.className = 'shrink-0 text-[11px] uppercase tracking-wide px-2 py-0.5 rounded bg-gray-200 text-gray-600';
-                badge.textContent = 'Out of stock';
+                badge.textContent = window.trans('Out of stock');
                 btn.appendChild(badge);
             } else {
                 btn.addEventListener('click', function () {

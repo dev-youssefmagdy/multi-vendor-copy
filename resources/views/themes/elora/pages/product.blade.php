@@ -67,7 +67,7 @@
                 'id'        => $product->id,
                 'slug'      => $product->slug,
                 'name'      => $product->translationValue('name') ?? $product->slug,
-                'image'     => $mediaItems->first()['src'] ?? null,
+                'image'     => $product->centralProduct?->primary_image_url ?? $product->primary_image_url, // not $mediaItems->first(): it can be a video
                 'url'       => url()->current(),
                 'price'     => $displaySell,
                 'old_price' => $displayReal,
@@ -1074,7 +1074,7 @@
                             <p style="font-family:'Outfit',sans-serif;font-weight:400;line-height:13px;letter-spacing:.5px;color:#121212;margin:0;order:1;flex-grow:1;"
                             class="text-[10px] lg:text-sm"
                             >
-                                {{ __('The above applies only to products not shipped from local warehouses.If delivery is made after April 20, you will receive a ') }}
+                                {{ __('The above applies only to products not shipped from local warehouses.If delivery is made after April 20, you will receive a') }}
                                 <span class="text-[var(--color-primary)]">
                                 {{ __('15$ credit') }}
                                 </span>
@@ -1155,8 +1155,7 @@
  </div>
  <!-- body -->
   <h4 class="text-center mb-[18px]">{{ __('Protection and privacy')}}</h4>
-   <div class="flex items-center gap-2 text-sm mb-[9px]"><span class="w-5 h-5 rounded-full flex items-center justify-center bg-[#2AAF2F]">1</span><p>{{ __(' Pay with confidence using our secure methods
-')}}</p></div>
+   <div class="flex items-center gap-2 text-sm mb-[9px]"><span class="w-5 h-5 rounded-full flex items-center justify-center bg-[#2AAF2F]">1</span><p>{{ __('Pay with confidence using our secure methods')}}</p></div>
 <!-- privacy list -->
  <ul class="flex flex-col gap-2">
     <li class="flex items-center gap-2"><span><svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1228,7 +1227,7 @@
   <!-- ////////////// -->
       <div class="flex items-center gap-2 text-sm mb-[9px]"><span class="w-5 h-5 rounded-full flex items-center justify-center bg-[#2AAF2F]">2</span><p>{{ __('We keep your personal data private and secure')}}</p></div>
 <p class="text-[10px]"><span class="text-[#2AAF2F]">{{ __('The security of your personal information is important to us.')}}</span><span>{{ __('we
-We are committed to maintaining transparency and reducing permission requests within Application. You can view our ')}}</span><span class="text-[var(--color-primary)]">{{ __('privacy policy')}}</span><span>{{ __('and')}}</span>
+We are committed to maintaining transparency and reducing permission requests within Application. You can view our')}} </span><span class="text-[var(--color-primary)]">{{ __('privacy policy')}}</span><span>{{ __('and')}}</span>
 <span class="text-[var(--color-primary)]">{{ __('similar kisses')}}</span><span>{{ __('to obtain the details.')}}</span></p>
 <p class="text-[10px]"><span>{{ __('In March 2026, we officially partnered with the security agency Cyber ​​HackerOne to create a bug bounty program that Offers rewards to the cybersecurity community for discovering vulnerabilities Possible security and successfully completed it. We are committed to preserving Seamless shopping experience on Temu. To learn more, visit')}}</span>
 <span class="text-[var(--color-primary)] mt-2">{{ __('https://hackerone.com/Elora')}}</span>

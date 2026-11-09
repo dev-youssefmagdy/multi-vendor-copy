@@ -9,6 +9,7 @@ use App\Enums\OrderStatus;
 use App\Exceptions\OrderActionException;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Livewire\Tenant\Storefront\Concerns\ManagesOrderCancellation;
+use App\Livewire\Tenant\Storefront\Concerns\ProvidesFavoriteDisplayData;
 use App\Models\Country;
 use App\Models\ReturnRequest;
 use App\Models\Tenant\Customer;
@@ -27,6 +28,7 @@ class ProfilePage extends Component
 {
     use HasStorefrontLayout;
     use ManagesOrderCancellation;
+    use ProvidesFavoriteDisplayData;
     use SanitizesPhoneNumber;
 
     /** Sidebar filter value => order statuses it covers (matches the badge grouping in the views). */

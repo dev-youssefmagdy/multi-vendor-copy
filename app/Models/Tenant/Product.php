@@ -528,11 +528,17 @@ class Product extends Model
      */
     public function storefrontFavData($currentCurrency = null): string
     {
+        return json_encode($this->storefrontFavPayload($currentCurrency), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+    }
+
+    /** Display snapshot a browser stores for a favorited product. */
+    public function storefrontFavPayload($currentCurrency = null): array
+    {
         $rate = (float) data_get($currentCurrency, 'conversion_rate', 1.0);
         $pricing = $this->storefrontPricing();
         $hasDiscount = (bool) $pricing['has_discount'];
 
-        return json_encode([
+        return [
             'slug' => $this->slug,
             'name' => $this->translationValue('name') ?? $this->slug,
             'price' => round((float) $pricing['current_price'] * $rate, 2),
@@ -542,7 +548,7 @@ class Product extends Model
             'image' => $this->centralProduct?->primary_image_url ?? $this->primary_image_url ?? null,
             'url' => route('tenant.storefront.product', $this->slug),
             'added' => time(),
-        ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+        ];
     }
 
     /**

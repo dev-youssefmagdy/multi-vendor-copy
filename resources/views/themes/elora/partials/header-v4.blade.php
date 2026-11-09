@@ -9,7 +9,7 @@
           <button
             type="button"
             id="mobileMenuBtn"
-            aria-label="Open menu"
+            aria-label="{{ __('Open menu') }}"
             aria-expanded="false"
             aria-controls="mobileDrawer"
             class="flex items-center justify-center shrink-0 size-[32px] rounded-full cursor-pointer"
@@ -70,7 +70,7 @@
         </button>
           <button
             type="button"
-            aria-label="Notifications"
+            aria-label="{{ __('Notifications') }}"
             class="flex items-center justify-center rounded-full size-[40px] shrink-0"
             style="background: var(--color-surface)"
           >
@@ -310,7 +310,7 @@
     <button
       type="button"
       id="drawerCloseBtn"
-      aria-label="Close menu"
+      aria-label="{{ __('Close menu') }}"
       class="flex items-center justify-center size-[32px] rounded-full cursor-pointer"
       style="background: var(--color-page-bg)"
     >
@@ -369,7 +369,7 @@
         href="#"
         class="flex items-center justify-between py-[12px] text-[15px] tracking-[0.3px]"
         style="color: var(--color-text-primary)"
-        >All Categories
+        >{{ __('All Categories') }}
         <img
           src="{{ asset('elora-4/assets/icons/arrow-down.svg') }}"
           class="size-[14px] -rotate-90 opacity-40"
