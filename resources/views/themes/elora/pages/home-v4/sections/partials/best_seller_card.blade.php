@@ -47,7 +47,6 @@
         <div class="h-[5.02px] w-full rounded-full" style="background:var(--color-stroke)">
           <div class="h-full rounded-full" style="background:var(--color-progress-red); width:{{ $p['progress'] ?? 83 }}%"></div>
         </div>
-        <p class="text-[10.03px] leading-[13px] tracking-[0.32px] w-full truncate" style="color:var(--color-progress-red)">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
       </div>
       <div class="flex flex-col gap-[3.66px] items-start">
         @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp

@@ -33,7 +33,6 @@
         <div class="h-[6.4px] w-full rounded-full" style="background:#D9D9D9">
           <div class="h-full rounded-full" style="background:#E40307; width:{{ $p['progress'] ?? 83 }}%"></div>
         </div>
-        <p class="font-normal text-[13px] tracking-[0.4px] truncate" style="color:#E40307">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
       </div>
 
       <div class="flex flex-col gap-[5px]">

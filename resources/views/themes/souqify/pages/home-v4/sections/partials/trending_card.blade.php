@@ -43,7 +43,6 @@
       <div class="sqv4-trend-card__track">
         <span class="sqv4-trend-card__fill" style="width:{{ $p['progress'] }}%"></span>
       </div>
-      <p class="sqv4-trend-card__ordered">{{ $p['ordered'] }}</p>
     </div>
 
     <div class="sqv4-trend-card__meta">

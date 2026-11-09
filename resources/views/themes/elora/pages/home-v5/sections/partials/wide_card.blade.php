@@ -54,7 +54,6 @@
       <div class="h-[6px] lg:h-[8.18px] w-full rounded-full" style="background:#D9D9D9">
         <div class="h-full rounded-full" style="background:var(--color-price-blue); width:{{ $p['progress'] ?? 83 }}%"></div>
       </div>
-      <p class="text-[10px] lg:text-[16.37px] lg:leading-[21px] lg:tracking-[0.51px]" style="color:var(--color-price-blue)">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
     </div>
     <div class="flex flex-col gap-[2px] lg:gap-[4.11px] items-start">
       @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp

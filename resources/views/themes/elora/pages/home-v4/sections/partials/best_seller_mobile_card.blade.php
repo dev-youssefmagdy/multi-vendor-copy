@@ -70,7 +70,6 @@
       <div class="h-[4.26px] w-full rounded-full" style="background: var(--color-stroke)">
         <div class="h-full rounded-full" style="background: var(--color-progress-red); width: {{ $p['progress'] ?? 83 }}%"></div>
       </div>
-      <p class="text-[8.52px] leading-[11px] tracking-[0.27px] w-full truncate" style="color: var(--color-progress-red)">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
     </div>
 
     <div class="flex flex-col gap-[3.1px] items-start">

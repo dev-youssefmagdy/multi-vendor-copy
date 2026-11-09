@@ -1,4 +1,4 @@
-{{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/progress/ordered/sold/stockLeft optional --}}
+{{-- Expects $p: image, name, price, oldPrice, discount, rating, url; weight/desc/progress/sold/stockLeft optional --}}
 {{-- No w-full! here: Tailwind puts that important utility in a layer, which
      beats even an id rule, so the phone width is left to the section CSS. --}}
 <div class="swiper-slide h-auto lg:w-[309px]!">
@@ -35,7 +35,6 @@
         <div class="h-[4.26px] lg:h-[8px] w-full rounded-full" style="background:#D9D9D9">
           <div class="h-full rounded-full" style="background:#E40307; width:{{ $p['progress'] ?? 83 }}%"></div>
         </div>
-        <p class="font-normal text-[8.52px] lg:text-[16px] leading-[11px] tracking-[0.27px] lg:tracking-[0.5px] truncate" style="color:#E40307">{{ $p['ordered'] ?? __('5 ordered last 30 min') }}</p>
       </div>
 
       <div class="flex flex-col gap-[3.1px] lg:gap-[6px]">

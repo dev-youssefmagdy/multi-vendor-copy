@@ -22,6 +22,8 @@
         .elora-cat-scroller__btn--prev { inset-inline-start: 0; }
         .elora-cat-scroller__btn--next { inset-inline-end: 0; }
         [dir="rtl"] .elora-cat-scroller__btn svg { transform: scaleX(-1); }
+        /* Filter sections: same height open, long lists scroll inside. Padding keeps focus rings from being clipped. */
+        .elora-filter-body { height: 160px; overflow-y: auto; padding: 2px; padding-inline-end: 6px; }
     </style>
 @endpush
 
@@ -70,7 +72,7 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    <div class="flex flex-col gap-2">
+                    <div class="elora-filter-body flex flex-col gap-2">
                         @foreach ($allCategories as $rc)
                         @php
                             $isCat = $slug == null ? false : ($rc->id === $category->id);
@@ -127,7 +129,7 @@ $pageBase = $category
                             aria-label="{{ __('Search (:name)', ['name' => $group['name']]) }}"
                             class="mt-3 w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
                         @endif
-                        <div class="mt-3 flex flex-col gap-2 max-h-[220px] overflow-y-auto pe-1">
+                        <div class="elora-filter-body mt-3 flex flex-col gap-2">
                             <template x-for="o in shown" :key="o[0]">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" :checked="picked.includes(o[0])" @click="$wire.toggleOption(o[0])"
@@ -154,7 +156,7 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    <div class="mt-3 flex flex-col gap-2">
+                    <div class="elora-filter-body mt-3 flex flex-col gap-2">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                 {{ $sale === 'on_sale' ? 'checked' : '' }}
@@ -188,7 +190,7 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    <div class="mt-3 flex gap-2">
+                    <div class="elora-filter-body mt-3 flex gap-2">
                         <input type="number" wire:model.lazy="min" data-f="min" min="0" step="0.01" value="{{ $min }}"
                             placeholder="{{ __('Min') }}"
                             class="w-full h-[34px] px-3 border border-[#D1D5DC] rounded-[4px] text-[13px] text-[#242424] focus:outline-none focus:border-[#0A0A0A]">
@@ -208,7 +210,7 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    <div class="mt-3 flex flex-col gap-2">
+                    <div class="elora-filter-body mt-3 flex flex-col gap-2">
                         @foreach([4,3,2,1] as $star)
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="ratings_sidebar" value="{{ $star }}"
@@ -247,7 +249,7 @@ $pageBase = $category
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </summary>
-                    <div class="mt-3 flex flex-col gap-2">
+                    <div class="elora-filter-body mt-3 flex flex-col gap-2">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="availability_sidebar" value="in_stock"
                                 {{ $availability === 'in_stock' ? 'checked' : '' }}

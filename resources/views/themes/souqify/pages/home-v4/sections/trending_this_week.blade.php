@@ -37,7 +37,6 @@
             'weight' => null,
             'sold' => ($__sp = $product->soldPercent()) ? $__sp . '% ' . __('Sold') : null,
             'progress' => 82.8,          // 190.79 / 230.41 in the comp
-            'ordered' => __('5 ordered last 30 min'),
         ];
     });
 @endphp
@@ -276,16 +275,6 @@
         background: #5A9B00;
         border-radius: 35.2222px;
     }
-    .sqv4-trend-card__ordered {
-        font-family: 'Outfit', sans-serif;
-        font-weight: 400;
-        font-size: 10px;
-        line-height: 1.2265;            /* 18 / 14.6759 */
-        letter-spacing: 0.461243px;
-        color: #5A9B00;
-        margin: 0;
-        white-space: nowrap;
-    }
 
     .sqv4-trend-card__rating {
         display: flex;
@@ -422,7 +411,6 @@
             /* 7.34px tall */
             height: clamp(5px, 0.5097vw, 7.34px);
         }
-        .sqv4-trend-card__ordered { font-size: clamp(10px, 1.0192vw, 14.6759px); }
         .sqv4-trend-card__stars {
             /* 63.18 x 9.22 */
             width: clamp(46px, 4.3875vw, 63.18px);
