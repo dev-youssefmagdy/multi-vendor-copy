@@ -154,10 +154,13 @@
             background: #FFDB4C;
         }
     }
+    #bestSellerWrapper .elora-v3-best__rating-price { gap: 7px; }
     @media (min-width: 1024px) {
         /* Desktop card text is larger than its phone-sized line height, and truncate clips to that box. */
         #bestSellerWrapper p.truncate,
-        #bestSellerWrapper .product-label { line-height: 1.3; }
+        #bestSellerWrapper .product-label,
+        #bestSellerWrapper .elora-v3-best__rating-price :is(p, span) { line-height: 1.3; }
+        #bestSellerWrapper .elora-v3-best__rating-price { gap: 10px; }
         .elora-v3-best__fade { display: none; }
         /* Same Swiper .swiper-pagination-horizontal bleed-through as the
            mobile #bestSellerDotsV3 block above (bottom: 10px; left: 0;

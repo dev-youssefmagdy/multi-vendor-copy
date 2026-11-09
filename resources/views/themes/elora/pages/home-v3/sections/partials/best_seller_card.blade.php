@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-[3.1px] lg:gap-[6px]">
+      <div class="elora-v3-best__rating-price flex flex-col gap-[3.1px] lg:gap-[6px]">
         @php $__rv = (float)($p['ratingValue'] ?? $p['rating'] ?? 0); $__fs = (int)round(min(5, max(0, $__rv))); @endphp
         <div class="flex items-center gap-[6.21px] lg:gap-[9px]">
           <div class="flex items-center gap-[1px]" style="height:8px">
