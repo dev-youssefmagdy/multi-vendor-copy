@@ -2528,7 +2528,13 @@ class TenantPanelRepository
 
         return [
             'total' => ReturnRequest::where('tenant_id', $tenantId)->count(),
-            'pending' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Pending->value)->count(),
+            // Every request still waiting for a decision (same set as the admin "Pending Review" card):
+            // new customer requests, requests the platform forwarded to the merchant, and ones waiting on customer info.
+            'pending' => ReturnRequest::where('tenant_id', $tenantId)->whereIn('status', [
+                ReturnStatus::Pending->value,
+                ReturnStatus::AwaitingMerchantReview->value,
+                ReturnStatus::AwaitingInfo->value,
+            ])->count(),
             'approved' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Approved->value)->count(),
             'refunded' => ReturnRequest::where('tenant_id', $tenantId)->where('status', ReturnStatus::Refunded->value)->count(),
         ];

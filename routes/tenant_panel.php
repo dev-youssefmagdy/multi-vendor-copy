@@ -113,6 +113,11 @@ Route::middleware('guest:tenant')->group(function () {
         ->name('tenant.password.update');
 });
 
+// Vendor panel UI language (header switcher); also reachable from the login page.
+Route::post('/locale/{locale}', \App\Http\Controllers\Tenant\Panel\Shell\LocaleController::class)
+    ->where('locale', '[a-z]{2}')
+    ->name('tenant.locale.switch');
+
 Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth:tenant')
     ->name('tenant.logout');

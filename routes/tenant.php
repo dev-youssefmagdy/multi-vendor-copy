@@ -167,5 +167,6 @@ Route::middleware([
 
     // ─── Admin panel (all under /admin) ─────────────────────────────────────
 
-    Route::prefix('admin')->group(base_path('routes/tenant_panel.php'));
+    // SetTenantPanelLocale: vendor-panel UI language from the header switcher (cookie).
+    Route::prefix('admin')->middleware(\App\Http\Middleware\SetTenantPanelLocale::class)->group(base_path('routes/tenant_panel.php'));
 });

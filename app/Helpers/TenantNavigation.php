@@ -510,9 +510,19 @@ class TenantNavigation
     /** Text direction for the active locale, read from the tenant's `languages` table. */
     public static function direction(): string
     {
-        $direction = Language::query()->where('code', app()->getLocale())->value('direction');
+        $locale = app()->getLocale();
+        $direction = Language::query()->where('code', $locale)->value('direction');
+        if ($direction instanceof \BackedEnum) {
+            $direction = $direction->value;
+        }
 
-        return in_array($direction, ['ltr', 'rtl'], true) ? $direction : 'ltr';
+        if (in_array($direction, ['ltr', 'rtl'], true)) {
+            return $direction;
+        }
+
+        // Panel language without a row in the tenant's `languages` table (e.g. Arabic UI
+        // chosen from the header switcher): fall back to the locale's natural direction.
+        return \App\Support\Tenant\PanelLocale::isRtl($locale) ? 'rtl' : 'ltr';
     }
 
     public static function href(array $item): string

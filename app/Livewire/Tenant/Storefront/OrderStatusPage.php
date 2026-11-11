@@ -225,11 +225,14 @@ class OrderStatusPage extends Component
         }
 
         $cart = session('storefront_cart', []);
+        $addedQty = 0;
 
         foreach ($order->items as $item) {
             if (! $item->product_id) {
                 continue;
             }
+
+            $addedQty += max(1, (int) $item->qty);
 
             $key = $item->product_variant_id
                 ? 'v_'.$item->product_variant_id
@@ -246,9 +249,18 @@ class OrderStatusPage extends Component
             }
         }
 
+        if ($addedQty === 0) {
+            $this->dispatch('order-status-swal', message: __('None of the items in this order can be added to the cart.'), type: 'error');
+
+            return;
+        }
+
         session(['storefront_cart' => $cart]);
+        // Same events as the regular add-to-cart: `cartUpdated` refreshes Livewire cart widgets and
+        // `storefront-cart-added` bumps the theme header/footer badges (elora.js, souqify scripts,
+        // ecommet.js) by `qty` and shows the standard "added to cart" toast.
         $this->dispatch('cartUpdated');
-        $this->dispatch('order-status-swal', message: __('Items added to your cart.'), type: 'success');
+        $this->dispatch('storefront-cart-added', itemName: '', qty: $addedQty);
     }
 
     public function render()

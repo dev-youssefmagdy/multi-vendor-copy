@@ -15,6 +15,7 @@ use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -31,8 +32,14 @@ final class ProductController extends PanelController
         return $this->form();
     }
 
-    public function edit(Product $product): View
+    public function edit(Product $product): View|RedirectResponse
     {
+        // The vendor's OWN products have their own form (base/sale/cost price, stock, min stock);
+        // this form is for platform-catalog products, which only allow a sale price.
+        if ($product->is_own_product) {
+            return redirect()->route('tenant.own-products.edit', $product);
+        }
+
         return $this->form($product);
     }
 
@@ -130,6 +137,9 @@ final class ProductController extends PanelController
 
     public function update(SaveProductRequest $request, Product $product): JsonResponse
     {
+        // Own products are saved through OwnProductController (full pricing + stock).
+        abort_if($product->is_own_product, 404);
+
         return $this->save($request, $product);
     }
 

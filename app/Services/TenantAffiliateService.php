@@ -129,6 +129,7 @@ class TenantAffiliateService
             'pending_requested' => (float) $a->payoutRequests()->where('status', 'pending')->sum('amount'),
             'requestable'       => $this->affiliates->requestableAmount($a),
             'min_payout'        => AffiliateSettings::minPayout(),
+            'can_request'       => $this->affiliates->canRequestPayout($a),
         ];
     }
 }

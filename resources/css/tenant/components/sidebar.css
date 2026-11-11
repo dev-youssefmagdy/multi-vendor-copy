@@ -344,3 +344,29 @@
 
     html.sb-rail .t-scope #sb:not(:hover):not(:focus-within) .su-inner { justify-content: center; padding-inline: 0; }
 }
+
+/* ── RTL shell (Arabic panel language) ──────────────────────────────────────
+   The shell is positioned with physical left offsets (app.css + above), so
+   mirror it: sidebar on the right, header/main offset from the right. */
+[dir="rtl"] .t-scope #sb { left: auto; right: 0; }
+[dir="rtl"] .t-scope #sb.sb-hide { transform: translateX(256px); }
+[dir="rtl"] .t-scope #nav { left: 0; right: var(--ds-sb-width, 236px); transition: right .3s cubic-bezier(.4, 0, .2, 1), background .3s, border-color .3s; }
+[dir="rtl"] .t-scope #nav.nav-full { right: 0; }
+[dir="rtl"] .t-scope #mn { margin-left: 0; margin-right: 236px; transition: margin-right .3s cubic-bezier(.4, 0, .2, 1); }
+[dir="rtl"] .t-scope #mn.mn-full { margin-right: 0; }
+[dir="rtl"] .t-scope .t-dropdown-item { text-align: right; }
+
+@media (min-width: 1024px) {
+    html.sb-rail[dir="rtl"] .t-scope #nav { right: 88px; }
+    html.sb-rail[dir="rtl"] .t-scope #mn { margin-right: 88px; }
+    html.sb-rail[dir="rtl"] .t-scope #sb:hover,
+    html.sb-rail[dir="rtl"] .t-scope #sb:focus-within { box-shadow: -12px 0 32px rgba(0, 0, 0, .12); }
+    html.sb-rail[dir="rtl"] .t-scope #sb:not(:hover):not(:focus-within) .sb-logo { object-position: right center; }
+}
+
+@media (max-width: 1023px) {
+    [dir="rtl"] .t-scope #sb { transform: translateX(256px); }
+    [dir="rtl"] .t-scope #sb.sb-open { transform: translateX(0); }
+    [dir="rtl"] .t-scope #nav { right: 0 !important; }
+    [dir="rtl"] .t-scope #mn { margin-right: 0 !important; }
+}

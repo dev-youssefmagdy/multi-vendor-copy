@@ -30,8 +30,8 @@
         <div class="card w-full {{ $maxWidthClass }} relative z-10 p-0 modal-card">
             <div class="p-5 border-b flex justify-between items-center modal-header-shell">
                 <div>
-                    <h3 class="panel-title modal-title" id="{{ $id }}-title">{{ $title }}</h3>
-                    @if($description)<p class="panel-copy">{{ $description }}</p>@endif
+                    <h3 class="panel-title modal-title" id="{{ $id }}-title">{{ is_string($title) ? __($title) : $title }}</h3>
+                    @if($description)<p class="panel-copy">{{ is_string($description) ? __($description) : $description }}</p>@endif
                 </div>
                 <div class="flex items-center gap-2">
                     @isset($headerActions){{ $headerActions }}@endisset

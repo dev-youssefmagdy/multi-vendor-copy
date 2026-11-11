@@ -138,6 +138,13 @@ class OrderLifecycleService
         $updatedOrder = $order->fresh(['activities']);
         $this->templateMailService->sendTenantShippingUpdate($updatedOrder, $shippingStatus);
 
+        // The tenant (vendor) bell is for changes made by someone else (the platform). When the
+        // vendor changed the status themselves the panel already confirms it with a toast, so a
+        // second realtime notification to the same vendor is noise.
+        if ($actor === CancellationActor::Vendor) {
+            return $updatedOrder;
+        }
+
         $this->tenantNotifier->notify(
             tenant: tenant(),
             type: 'order',

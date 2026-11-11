@@ -202,11 +202,16 @@ class ProductPage extends Component
         $mediaItems = collect();
         $imageKeys = ['primary_medium', 'primary_original', 'gallery'];
 
+        // Gallery uploads may be videos (MP4/WEBM/MOV): render them as video slides, not <img>.
         $mediaItems = $product->files->whereIn('key', $imageKeys)
             ->whereIn('file_type', [FileType::Image, FileType::Video])
+            ->filter(fn($f) => filled($f->full_path))
             ->map(function ($f) use ($product) {
-                return ['type' => 'image', 'src' => $f->full_path, 'alt' => $product->translationValue('name') ?? ''];
-            });
+                return $f->file_type === FileType::Video
+                    ? ['type' => 'video', 'src' => $f->full_path, 'poster' => '']
+                    : ['type' => 'image', 'src' => $f->full_path, 'alt' => $product->translationValue('name') ?? ''];
+            })
+            ->values();
 
         if ($mediaItems->isEmpty() && $central) {
             $centralFiles = $central->files->whereIn('key', $imageKeys)
@@ -464,7 +469,7 @@ class ProductPage extends Component
             'reviewsLimit' => $this->reviewsLimit,
         ]);
 
-        $productImage = $mediaItems->first()['src'] ?? null;
+        $productImage = $mediaItems->firstWhere('type', 'image')['src'] ?? null;
         $storeName = $repo->storeName();
         $currencyCode = data_get($shared['currentCurrency'] ?? null, 'code', '');
 

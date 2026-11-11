@@ -33,7 +33,7 @@ class HomeProductService
                 return $badged;
             }
 
-            return $this->baseQuery()
+            return $this->baseQuery($countryId)
                 ->orderByDesc('products.created_at')
                 ->limit($limit)
                 ->get();
@@ -87,9 +87,9 @@ class HomeProductService
 
     public function getBestSelling(int $limit, ?int $countryId = null, int $days = 30): Collection
     {
-        return $this->cacheRemember("best_selling:{$limit}:{$days}:" . ($countryId ?? 'default'), function () use ($limit, $days) {
+        return $this->cacheRemember("best_selling:{$limit}:{$days}:" . ($countryId ?? 'default'), function () use ($limit, $days, $countryId) {
             // Out-of-stock products are hidden here exactly like on the best-selling listing.
-            return self::applyBestSellingOrder(\App\Repositories\Tenant\StorefrontRepository::excludeOutOfStock($this->baseQuery()), $days)
+            return self::applyBestSellingOrder(\App\Repositories\Tenant\StorefrontRepository::excludeOutOfStock($this->baseQuery($countryId)), $days)
                 ->limit($limit)
                 ->get();
         }, ['Order', 'OrderItem']);
@@ -106,7 +106,7 @@ class HomeProductService
 
             $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
 
-            return $this->baseQuery()
+            return $this->baseQuery($countryId)
                 ->whereNotIn('products.id', $excludeIds)
                 ->orderByDesc('products.created_at')
                 ->limit($limit)
@@ -149,7 +149,7 @@ class HomeProductService
             return $this->getStaticFallback($limit, $countryId);
         }
 
-        $products = $this->baseQuery()
+        $products = $this->baseQuery($countryId)
             ->whereNotIn('products.id', $interactedIds)
             ->whereHas('categories', fn($q) => $q->whereIn('id', $categoryIds))
             ->orderByDesc('products.orders_count')
@@ -171,7 +171,7 @@ class HomeProductService
                 ->pluck('id')
                 ->merge($this->getFeatured($limit, $countryId)->pluck('id'));
 
-            return $this->baseQuery()
+            return $this->baseQuery($countryId)
                 ->whereNotIn('products.id', $excludeIds)
                 ->orderByDesc('products.created_at')
                 ->limit($limit)
@@ -198,7 +198,7 @@ class HomeProductService
                 return $badged;
             }
 
-            $trending = $this->trendingByVelocity($limit);
+            $trending = $this->trendingByVelocity($limit, $countryId);
 
             if ($trending->isNotEmpty()) {
                 return $trending;
@@ -206,7 +206,7 @@ class HomeProductService
 
             $excludeIds = $this->getNewIn($limit, $countryId)->pluck('id');
 
-            return $this->baseQuery()
+            return $this->baseQuery($countryId)
                 ->whereNotIn('products.id', $excludeIds)
                 ->orderByDesc('products.created_at')
                 ->limit($limit)
@@ -218,7 +218,7 @@ class HomeProductService
      * Sales-velocity score over a short recent window, decayed by recency so an
      * order placed an hour ago outweighs one from three days ago.
      */
-    protected function trendingByVelocity(int $limit, int $windowHours = 72): Collection
+    protected function trendingByVelocity(int $limit, ?int $countryId = null, int $windowHours = 72): Collection
     {
         $now = now();
         $windowStart = (clone $now)->subHours($windowHours);
@@ -238,7 +238,7 @@ class HomeProductService
             ->where('orders.created_at', '>=', $windowStart)
             ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'));
 
-        return $this->baseQuery()
+        return $this->baseQuery($countryId)
             ->joinSub($salesQuery, 'trend_totals', fn($join) => $join->on('trend_totals.product_id', '=', 'products.id'))
             ->select('products.*')
             ->orderByDesc('trend_totals.trend_score')
@@ -261,12 +261,12 @@ class HomeProductService
             }
         }
 
-        return $this->queryBadge($badgeText, $limit, null);
+        return $this->queryBadge($badgeText, $limit, null, $countryId);
     }
 
-    private function queryBadge(string $badgeText, int $limit, ?int $countryId): Collection
+    private function queryBadge(string $badgeText, int $limit, ?int $countryId, ?int $visitorCountryId = null): Collection
     {
-        return $this->baseQuery()
+        return $this->baseQuery($visitorCountryId ?? $countryId)
             ->join('product_badge_product', 'product_badge_product.product_id', '=', 'products.id')
             ->join('product_badges', function ($join) use ($badgeText) {
                 $join->on('product_badges.id', '=', 'product_badge_product.product_badge_id')
@@ -284,8 +284,9 @@ class HomeProductService
             ->get();
     }
 
-    protected function baseQuery()
+    /** Active products the visitor's country may see (own products' "sold in" targeting). */
+    protected function baseQuery(?int $countryId = null)
     {
-        return Product::query()->where('products.active', true);
+        return Product::query()->where('products.active', true)->availableInCountry($countryId);
     }
 }

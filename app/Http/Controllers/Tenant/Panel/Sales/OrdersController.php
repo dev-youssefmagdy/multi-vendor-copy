@@ -63,10 +63,8 @@ final class OrdersController extends PanelController
                 TableColumn::make('uuid', 'Order'),
                 TableColumn::make('customer', 'Customer')->orderable(false),
                 TableColumn::make('value', 'Value')->name('grand_total'),
-                TableColumn::make('vendor_profit', 'Vendor Profit')->orderable(false)->searchable(false),
-                TableColumn::make('platform_profit', 'Platform Profit')->orderable(false)->searchable(false),
-                TableColumn::make('vendor_own_platform', 'You Owe Platform')->orderable(false)->searchable(false),
-                TableColumn::make('platform_own_vendor', 'Platform Owes You')->orderable(false)->searchable(false),
+                // Vendor-facing queue: only what the vendor owes the platform (client request).
+                TableColumn::make('vendor_own_platform', __('Platform Dues'))->orderable(false)->searchable(false),
                 TableColumn::make('status', 'Status')->orderable(false),
                 TableColumn::make('gateway', 'Gateway')->orderable(false)->searchable(false),
                 TableColumn::make('placed_at', 'Placed At')->name('created_at'),
@@ -84,10 +82,7 @@ final class OrdersController extends PanelController
             ->editColumn('uuid', fn (Order $order) => view('tenant.pages.sales.orders._cols.order', ['order' => $order])->render())
             ->editColumn('customer', fn (Order $order) => view('tenant.pages.sales.orders._cols.customer', ['order' => $order])->render())
             ->editColumn('value', fn (Order $order) => view('tenant.pages.sales.orders._cols.value', ['order' => $order])->render())
-            ->addColumn('vendor_profit', fn (Order $order) => '$'.number_format(OrderProfitCalculator::vendorProfitForOrder($order), 2))
-            ->addColumn('platform_profit', fn (Order $order) => '$'.number_format(OrderProfitCalculator::platformProfitForOrder($order), 2))
             ->addColumn('vendor_own_platform', fn (Order $order) => view('tenant.pages.sales.orders._cols.vendor-own-platform', ['order' => $order])->render())
-            ->addColumn('platform_own_vendor', fn (Order $order) => '$'.number_format(OrderProfitCalculator::platformOwnVendorForOrder($order), 2))
             ->editColumn('status', fn (Order $order) => view('tenant::components.status-badge', ['status' => $order->status])->render())
             ->editColumn('gateway', fn (Order $order) => view('tenant.pages.sales.orders._cols.gateway', ['order' => $order])->render())
             ->editColumn('placed_at', fn (Order $order) => $order->created_at ? strtoupper($order->created_at->format('D')).$order->created_at->format(', d M,Y') : null)
@@ -164,6 +159,8 @@ final class OrdersController extends PanelController
                 'cancelled_by' => $order->cancelled_by_type?->label(),
             ] : null,
             'can_manage_refunds' => $canManageRefunds,
+            // Manual "Refund" button: not offered on orders of the vendor's own products (client rule).
+            'can_issue_refund' => $canManageRefunds && ! $order->isOwnProductsOrder(),
             'refundable_amount' => app(RefundService::class)->refundableAmount($order),
             'refunded_amount' => round((float) $order->refunded_amount, 2),
             'payment_state' => $paymentState->value,
@@ -272,6 +269,7 @@ final class OrdersController extends PanelController
     public function storeRefund(StoreManualRefundRequest $request, int $orderId, RefundService $refunds): JsonResponse
     {
         $order = Order::query()->with('items')->findOrFail($orderId);
+        $this->assertManualRefundAllowed($order);
         $admin = auth('tenant')->user();
         $actor = RefundActor::vendor($admin?->id, $admin?->name);
 
@@ -297,6 +295,14 @@ final class OrdersController extends PanelController
             ['refund' => RefundPresenter::panel($refund)],
             $this->orderRefundState($order->refresh()->load('items')),
         ));
+    }
+
+    /** Manual refunds are not available on orders of the vendor's own products. */
+    private function assertManualRefundAllowed(Order $order): void
+    {
+        if ($order->isOwnProductsOrder()) {
+            throw new PanelActionException(__('Refunds cannot be issued from here for orders of your own products.'), 403);
+        }
     }
 
     private function adminId(): ?int

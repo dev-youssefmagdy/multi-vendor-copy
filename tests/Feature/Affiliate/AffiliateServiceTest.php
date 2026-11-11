@@ -23,6 +23,8 @@ class AffiliateServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // These scenarios use small amounts; the shipped default minimum withdrawal (50) is covered in AdminAffiliatePayoutRequestsTest.
+        config(['affiliate.min_payout' => 0]);
         $this->service = app(AffiliateService::class);
     }
 

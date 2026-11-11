@@ -664,7 +664,7 @@
 
     .od-queue.is-orders td:nth-child(2)::before { content: "Name"; }
     .od-queue.is-orders td:nth-child(3)::before { content: "Value"; }
-    .od-queue.is-orders td:nth-child(4)::before { content: "Commission"; }
+    .od-queue.is-orders td:nth-child(4)::before { content: "Platform Dues"; }
     .od-queue.is-orders td:nth-child(5)::before { content: "Status"; }
     .od-queue.is-orders td:nth-child(6)::before { content: "Gateway"; }
     .od-queue.is-orders td:nth-child(7)::before { content: "Date"; }

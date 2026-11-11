@@ -83,11 +83,12 @@ class VendorAfterSalesPanelTest extends TestCase
             ->assertDontSee('order-cancellation-panel', false)
             ->assertDontSee('order-refund-modal', false);
 
-        // ── Processing + paid: manual refund modal offered ──────────────────
+        // ── Processing + paid own-products order: refund summary, but no manual refund button
+        //    (not offered on the vendor's own products; catalog orders keep it, see VendorOrdersPanelDisplayTest) ─
         $this->page("/orders/{$processing->id}")
             ->assertOk()
             ->assertSee('cancel-order-modal', false)
-            ->assertSee('order-refund-modal', false)
+            ->assertDontSee('order-refund-modal', false)
             ->assertSee('Still refundable');
 
         // ── Cancel through the panel → cancelled page with refund + cancellation info ─

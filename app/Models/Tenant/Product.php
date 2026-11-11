@@ -356,10 +356,90 @@ class Product extends Model
     }
 
     /**
+     * Vendor-created product (own catalog, no central link). Its price is what the vendor
+     * typed on the own-product form; central cost, profit rows and fixed shipping never apply.
+     */
+    public function isVendorOwnProduct(): bool
+    {
+        return (bool) $this->is_own_product && blank($this->central_product_id);
+    }
+
+    /** Own product's regular (base) price: per-country override, then "default", then default_price. */
+    public function ownRegularPrice(?int $countryId): float
+    {
+        return $this->priceForCountry($countryId);
+    }
+
+    /**
+     * Own product's selling price: the vendor's Sale Price when set (> 0), else the base price
+     * (same "sale if > 0, else base" rule as TenantPricingService::centralBasePrice). A variant's
+     * own price wins for variant products. Identical in every country (docs/ORDER_FORMULAS.md).
+     */
+    public function ownSellPrice(?ProductVariant $variant, ?int $countryId): float
+    {
+        if ($variant !== null) {
+            return $variant->sellPriceForCountry($countryId);
+        }
+
+        $sale = (float) ($this->sale_price ?? 0);
+
+        return $sale > 0 ? $sale : $this->ownRegularPrice($countryId);
+    }
+
+    /**
+     * Own product: cost 0, the whole sell price is vendor profit, no fixed shipping
+     * (matches OrderComposer::line()'s own branch).
+     *
+     * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
+     */
+    public function ownPriceBreakdownForCountry(?ProductVariant $variant, ?int $countryId): array
+    {
+        return static::priceBreakdown(0.0, 'fixed', $this->ownSellPrice($variant, $countryId), 0.0);
+    }
+
+    /**
+     * Country targeting ("sold in") of vendor-own products: an own product with a non-empty
+     * allowed_country_ids list is only listed / shown to visitors from one of those countries
+     * (an unknown visitor country hides it). Catalog products are never filtered here: for
+     * them allowed_country_ids is only a ranking preference (StorefrontRepository::countryPriorityExpression()).
+     */
+    public function scopeAvailableInCountry(Builder $query, ?int $countryId): Builder
+    {
+        $table = $query->getModel()->getTable();
+
+        return $query->where(function (Builder $q) use ($table, $countryId): void {
+            $q->whereRaw("COALESCE({$table}.is_own_product, 0) = 0")
+                ->orWhereNotNull("{$table}.central_product_id")
+                ->orWhereNull("{$table}.allowed_country_ids")
+                ->orWhereRaw("JSON_LENGTH({$table}.allowed_country_ids) = 0");
+
+            if ($countryId) {
+                $q->orWhereRaw("JSON_CONTAINS({$table}.allowed_country_ids, ?)", [(string) (int) $countryId]);
+            }
+        });
+    }
+
+    /** In-memory twin of scopeAvailableInCountry(). */
+    public function isAvailableInCountry(?int $countryId): bool
+    {
+        $allowed = array_map('intval', (array) ($this->allowed_country_ids ?? []));
+
+        if (!$this->isVendorOwnProduct() || $allowed === []) {
+            return true;
+        }
+
+        return $countryId !== null && in_array((int) $countryId, $allowed, true);
+    }
+
+    /**
      * @return array{cost: float, profit_amount: float, price: float, fixed_shipping: float}
      */
     public function priceBreakdownForCountry(?int $countryId): array
     {
+        if ($this->isVendorOwnProduct()) {
+            return $this->ownPriceBreakdownForCountry(null, $countryId);
+        }
+
         $basePrice = (float) ($this->centralProduct?->sale_price ?? $this->centralProduct?->base_price ?? 0);
 
         $profitRows = $this->profit ?? [];
@@ -478,7 +558,10 @@ class Product extends Model
 
     private function computeStorefrontPricing(?ProductVariant $variant, ?int $resolvedCountryId): array
     {
-        $breakdown = ($variant ?? $this)->priceBreakdownForCountry($resolvedCountryId);
+        $isOwn = $this->isVendorOwnProduct();
+        $breakdown = $isOwn
+            ? $this->ownPriceBreakdownForCountry($variant, $resolvedCountryId)
+            : ($variant ?? $this)->priceBreakdownForCountry($resolvedCountryId);
         $_basePrice = round($breakdown['price'] + $breakdown['fixed_shipping'], 2);
 
         $basePrice = $_basePrice;
@@ -489,6 +572,11 @@ class Product extends Model
         $originalPrice = ($variant?->real_price !== null && (float) $variant->real_price > $basePrice)
             ? (float) $variant->real_price
             : null;
+
+        // Own product without variants sold at its Sale Price: the base price is the strikethrough.
+        if ($isOwn && $variant === null && ($regular = $this->ownRegularPrice($resolvedCountryId)) > $basePrice) {
+            $originalPrice = $regular;
+        }
 
         $flashSale = $this->activeStorefrontFlashSale();
         $flashDiscountPercentage = (float) ($flashSale?->discount_percentage ?? 0);

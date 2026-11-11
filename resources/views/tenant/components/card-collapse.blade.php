@@ -3,8 +3,8 @@
 <details class="card ds-card overflow-hidden collapse-card" @if($open) open @endif>
     <summary class="panel-head cursor-pointer select-none mb-0 pb-0 collapse-trigger">
         <div>
-            <h3 class="panel-title">{{ $title }}</h3>
-            @if($subtitle)<p class="panel-copy">{{ $subtitle }}</p>@endif
+            <h3 class="panel-title">{{ is_string($title) ? __($title) : $title }}</h3>
+            @if($subtitle)<p class="panel-copy">{{ is_string($subtitle) ? __($subtitle) : $subtitle }}</p>@endif
         </div>
         <div class="collapse-icon transition-transform duration-300">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>

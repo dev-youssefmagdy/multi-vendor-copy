@@ -16,7 +16,7 @@ trait ManagesAffiliateSettings
     public string $settingCookieDays = '90';
     public string $settingCommissionType = 'percentage';
     public string $settingCommissionValue = '10';
-    public string $settingMinPayout = '0';
+    public string $settingMinPayout = '50';
 
     public function openSettingsModal(): void
     {

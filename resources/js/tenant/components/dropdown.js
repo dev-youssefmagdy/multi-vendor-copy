@@ -9,8 +9,10 @@ function closeAll() {
 function positionMenu(el) {
     const menu = el.querySelector('[data-dropdown-menu]');
     if (el.dataset.align === 'end') {
-        menu.style.right = '0';
-        menu.style.left = 'auto';
+        // "end" is the inline end: the right edge in LTR, the left edge in RTL.
+        const rtl = getComputedStyle(el).direction === 'rtl';
+        menu.style.right = rtl ? 'auto' : '0';
+        menu.style.left = rtl ? '0' : 'auto';
     }
 
     const rect = menu.getBoundingClientRect();

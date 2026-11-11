@@ -379,6 +379,12 @@ class AffiliateService
         });
     }
 
+    /** Whether the affiliate can submit a payout request right now (requestable amount reaches the minimum). */
+    public function canRequestPayout(Affiliate $affiliate): bool
+    {
+        return $this->requestableAmount($affiliate) >= max(AffiliateSettings::minPayout(), 0.01);
+    }
+
     /** Amount the affiliate may still request (balance minus requests already pending). */
     public function requestableAmount(Affiliate $affiliate): float
     {
@@ -396,6 +402,9 @@ class AffiliateService
 
             if (!$affiliate->isActive()) {
                 throw new \InvalidArgumentException(__('Your account is not active.'));
+            }
+            if ($this->requestableAmount($affiliate) < max($min, 0.01)) {
+                throw new \InvalidArgumentException(__('Your available balance is below the minimum withdrawal amount of $:amount.', ['amount' => number_format($min, 2)]));
             }
             if ($amount <= 0 || $amount < $min) {
                 throw new \InvalidArgumentException(__('The minimum payout is $:amount.', ['amount' => number_format($min, 2)]));

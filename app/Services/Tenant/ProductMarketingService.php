@@ -41,12 +41,7 @@ final class ProductMarketingService
         $posts = $product->social_posts ?? [];
         $activeLang = !empty($posts) ? array_key_first($posts) : app()->getLocale();
 
-        $storefrontUrl = '';
-        try {
-            $storefrontUrl = route('tenant.storefront.product', $product->slug ?? $product->id);
-        } catch (\Throwable) {
-            $storefrontUrl = '';
-        }
+        $storefrontUrl = $this->storefrontProductUrl($product);
 
         return [
             'productId' => $product->id,
@@ -154,12 +149,7 @@ final class ProductMarketingService
             $caption = $description ?: $name;
         }
 
-        $shareUrl = '';
-        try {
-            $shareUrl = route('tenant.storefront.product', $product->slug ?? $product->id);
-        } catch (\Throwable) {
-            $shareUrl = '';
-        }
+        $shareUrl = $this->storefrontProductUrl($product);
 
         return [
             'title' => $name,
@@ -168,5 +158,24 @@ final class ProductMarketingService
             'image_url' => $product->primary_image_url ?? null,
             'has_ai_content' => $hasAiContent,
         ];
+    }
+
+    /**
+     * Absolute storefront URL of the product page on this vendor's store
+     * (current tenant host + /products/{slug}). The storefront resolves products by
+     * slug only, so a product without a slug has no shareable link ('').
+     */
+    public function storefrontProductUrl(Product $product): string
+    {
+        $slug = trim((string) $product->slug);
+        if ($slug === '') {
+            return '';
+        }
+
+        try {
+            return route('tenant.storefront.product', ['slug' => $slug]);
+        } catch (\Throwable) {
+            return '';
+        }
     }
 }

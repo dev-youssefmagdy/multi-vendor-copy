@@ -4,8 +4,8 @@
     @if($title || isset($actions))
         <div class="panel-head">
             <div>
-                @if($title)<h3 class="panel-title">{{ $title }}</h3>@endif
-                @if($subtitle)<p class="panel-copy">{{ $subtitle }}</p>@endif
+                @if($title)<h3 class="panel-title">{{ is_string($title) ? __($title) : $title }}</h3>@endif
+                @if($subtitle)<p class="panel-copy">{{ is_string($subtitle) ? __($subtitle) : $subtitle }}</p>@endif
             </div>
             @isset($actions)
                 <div class="flex items-center gap-2">{{ $actions }}</div>

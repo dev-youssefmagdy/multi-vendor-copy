@@ -18,7 +18,7 @@
 <div class="t-field {{ $inline ? 't-field--inline' : '' }} {{ $wrapperClass }}" @if($dot) data-field="{{ $dot }}" @endif>
     @if($label)
         <label for="{{ $fieldId }}" class="field-label">
-            {{ $label }}
+            {{ is_string($label) ? __($label) : $label }}
             @if($required)<span class="t-req">*</span>@endif
         </label>
     @endif
@@ -26,7 +26,7 @@
     {{ $slot }}
 
     @if($help)
-        <p class="t-help">{{ $help }}</p>
+        <p class="t-help">{{ is_string($help) ? __($help) : $help }}</p>
     @endif
 
     @if($dot)

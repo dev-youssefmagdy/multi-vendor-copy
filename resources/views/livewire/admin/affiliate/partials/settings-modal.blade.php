@@ -7,7 +7,7 @@
                     @error('settingCookieDays') <span class="field-error">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <label class="field-label">Minimum payout ($)</label>
+                    <label class="field-label">Minimum withdrawal amount ($)</label>
                     <x-input type="number" step="0.01" min="0" wire:model="settingMinPayout" />
                     @error('settingMinPayout') <span class="field-error">{{ $message }}</span> @enderror
                 </div>

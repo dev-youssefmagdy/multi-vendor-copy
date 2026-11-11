@@ -14,18 +14,21 @@
         <h2 class="D section-title">{{ __('Request a payout') }}</h2>
         <p class="section-copy">
             {{ __('Available to request') }}: <strong>${{ number_format($requestable, 2) }}</strong>
-            @if ($minPayout > 0) · {{ __('Minimum') }}: ${{ number_format($minPayout, 2) }} @endif
+            @if ($minPayout > 0) · {{ __('Minimum withdrawal amount') }}: <strong>${{ number_format($minPayout, 2) }}</strong> @endif
         </p>
+        @unless ($canRequest)
+            <p class="field-hint">{{ __('You can request a withdrawal once your available balance reaches the minimum withdrawal amount of :amount.', ['amount' => '$' . number_format($minPayout, 2)]) }}</p>
+        @endunless
         <form wire:submit="requestPayout" class="form-grid-2">
             <div>
-                <input type="number" step="0.01" min="0.01" wire:model="requestAmount" class="field-control" placeholder="0.00">
+                <input type="number" step="0.01" min="{{ number_format(max($minPayout, 0.01), 2, '.', '') }}" max="{{ number_format($requestable, 2, '.', '') }}" wire:model="requestAmount" class="field-control" placeholder="0.00" @disabled(! $canRequest)>
                 @error('requestAmount') <span class="field-error">{{ $message }}</span> @enderror
             </div>
             <div>
                 <input type="text" wire:model="requestNote" class="field-control" placeholder="{{ __('Note (optional)') }}">
             </div>
             <div>
-                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">{{ __('Request payout') }}</button>
+                <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" @disabled(! $canRequest)>{{ __('Request payout') }}</button>
             </div>
         </form>
 
@@ -37,7 +40,7 @@
                         @foreach ($requests as $request)
                             <tr>
                                 <td>${{ number_format((float) $request->amount, 2) }}</td>
-                                <td>{{ ucfirst($request->status) }}</td>
+                                <td>{{ ucfirst($request->status) }}@if ($request->admin_note)<div class="section-copy">{{ $request->admin_note }}</div>@endif</td>
                                 <td>{{ $request->created_at->format('M d, Y') }}</td>
                             </tr>
                         @endforeach

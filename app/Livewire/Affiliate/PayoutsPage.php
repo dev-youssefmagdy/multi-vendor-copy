@@ -20,7 +20,7 @@ class PayoutsPage extends Component
         $affiliate = Auth::guard('affiliate')->user();
 
         $this->validate([
-            'requestAmount' => ['required', 'numeric', 'min:0.01'],
+            'requestAmount' => ['required', 'numeric', 'min:' . max(AffiliateSettings::minPayout(), 0.01)],
             'requestNote'   => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -50,6 +50,7 @@ class PayoutsPage extends Component
             'requests'    => $requests,
             'requestable' => $service->requestableAmount($affiliate),
             'minPayout'   => AffiliateSettings::minPayout(),
+            'canRequest'  => $service->canRequestPayout($affiliate),
         ])->layout('layouts.affiliate');
     }
 }

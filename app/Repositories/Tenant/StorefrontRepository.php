@@ -333,6 +333,7 @@ class StorefrontRepository
         $query = Product::query()
             ->where('active', true)
             // ->whereRaw($this->basePriceExpression() . ' > 0')
+            ->availableInCountry($this->customerCountryId())
             ->with($this->productRelations($withCategories));
 
         return $excludeOutOfStock ? $this->excludeOutOfStock($query) : $query;
@@ -1544,6 +1545,7 @@ class StorefrontRepository
             Product::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
+                ->availableInCountry($this->customerCountryId())
                 ->whereHas('translations', fn($q) => $q
                     ->where('field', 'name')
                     ->where('value', 'like', '%' . $query . '%'))
@@ -1564,6 +1566,7 @@ class StorefrontRepository
             Product::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
+                ->availableInCountry($this->customerCountryId())
                 ->with($this->productRelations())
         )
             ->where(function (Builder $q) use ($keyword, $matchingCentralProductIds): void {
@@ -1617,6 +1620,8 @@ class StorefrontRepository
             Product::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
+                // Own products limited to other countries 404 like an inactive product.
+                ->availableInCountry($this->customerCountryId())
                 ->where('slug', $slug)
                 ->with($this->productRelations(true))
         )
@@ -1985,6 +1990,7 @@ class StorefrontRepository
             ->whereIn('id', $picked)
             // Re-checked: the pool may predate a deactivation not yet bumped.
             ->where('active', true)
+            ->availableInCountry($this->customerCountryId())
             ->get()
             ->sortBy(fn(Product $product) => $position[$product->getKey()] ?? PHP_INT_MAX)
             ->values();
@@ -2006,6 +2012,13 @@ class StorefrontRepository
         }
 
         $flashSales = $this->activeFlashSaleRows();
+
+        // Own products limited to other countries are not shown (Product::isAvailableInCountry()).
+        $countryId = $this->customerCountryId();
+        $flashSales->each(fn(FlashSale $flashSale) => $flashSale->setRelation(
+            'products',
+            $flashSale->products->filter(fn(Product $product) => $product->isAvailableInCountry($countryId))->values()
+        ));
 
         $this->hydrateProductCards(new Collection(
             $flashSales->flatMap(fn(FlashSale $flashSale) => $flashSale->products->all())->all()

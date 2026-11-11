@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Tenant\Panel\Sales;
 
+use App\Exceptions\Tenant\PanelActionException;
 use App\Http\Requests\Tenant\Panel\TenantFormRequest;
 use App\Models\Tenant\Order;
 use App\Services\Refunds\RefundService;
@@ -12,6 +13,18 @@ use Illuminate\Validation\Validator;
 /** Tenant panel: a manual refund on an order (amount ≤ what is still refundable, reason required). */
 final class StoreManualRefundRequest extends TenantFormRequest
 {
+    /** Manual refunds are not offered on orders of the vendor's own products (checked before validation). */
+    public function authorize(): bool
+    {
+        $order = Order::query()->find((int) $this->route('orderId'));
+
+        if ($order?->isOwnProductsOrder()) {
+            throw new PanelActionException(__('Refunds cannot be issued from here for orders of your own products.'), 403);
+        }
+
+        return parent::authorize();
+    }
+
     public function rules(): array
     {
         return [

@@ -70,7 +70,7 @@ final class PartnerWalletController extends PanelController
                 'type'       => 'Request',
                 'amount'     => (float) $r->amount,
                 'status'     => (string) $r->status,
-                'reference'  => '—',
+                'reference'  => (string) ($r->admin_note ?: '—'),
                 'attachment' => null,
                 'at'         => $r->created_at,
             ])

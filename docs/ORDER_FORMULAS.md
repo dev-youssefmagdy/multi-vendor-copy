@@ -24,6 +24,15 @@ order_grand_total   = items_grand_total + order.shipping_charge - order.coupon_d
   An own-only cart therefore checks out with `shipping_charge = 0` and no shipping error; a mixed cart pays the zone rate for the catalog lines' weight only
   (and mixed carts still split into two orders; the own companion order carries `shipping_charge = 0`). `is_tenant_owned` (central product assigned to one tenant) is a catalog product, NOT own, for shipping.
   Predicate: `OrderComposer::isOwnProduct()` / `OrderComposer::isShippableCartItem()`; used by `PlacesOrders`, `CheckoutPage`, `CartPage`, `CalculatesFreeShipping` (mobile cart).
+* **Own products are priced from the vendor's form (2026-11-11):** for `is_own_product` without `central_product_id`
+  `cost = 0`, `profit_amount = sell price`, `fixed_shipping = 0`, where sell price = the variant's `sell_price` (country key, then `default`)
+  for variant products, else `sale_price` when > 0, else the base price (`price` JSON country key, then `default`, then `default_price`).
+  Same price in every country (only currency conversion differs); central cost, `profit` rows and `FixedShippingCost` never apply
+  (they used to: the storefront showed only the weight-based fixed shipping, e.g. $20 in Morocco and $0.00 where none is configured).
+  A no-variant product sold at its Sale Price shows the base price as the strikethrough. Code: `Product::ownSellPrice()` /
+  `ownPriceBreakdownForCountry()`, used by `Product::priceBreakdownForCountry()`, `storefrontPricing()` and own `ProductVariant::priceBreakdownForCountry()`.
+  Country targeting ("sold in" = `products.allowed_country_ids`) hides an own product from visitors of other countries (listings, search, home sections,
+  flash-sale strips, product page 404) via `Product::scopeAvailableInCountry()` / `isAvailableInCountry()`; for catalog products the column stays a ranking preference only.
 * **Own-products orders are merchant-fulfilled (2026-11-08):** no stored column; discriminator = `Tenant\Order::isOwnProductsOrder()` (has items and every item's product is `is_own_product`; the companion order of a mixed cart and own-only carts). Platform (central admin) treats them read-only: excluded from the Delivery Queue / its counters, and status, tracking, attachments, cancel, refund, create-return, shipping label and receipt are rejected server-side (`OrderFulfillmentService::assertPlatformManageable`, Livewire pages, `OrderReceiptController`). Shipping stays on the catalog order only (`shipping_charge = 0` on the own order), so shipping/settlement lines come only from the catalog order. Formulas unchanged.
 * `tax` is 0 today; whatever is calculated per item is summed into `order.tax`.
 

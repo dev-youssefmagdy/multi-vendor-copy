@@ -211,6 +211,11 @@ class ProductVariant extends Model
      */
     public function priceBreakdownForCountry(?int $countryId): array
     {
+        // Variant of a vendor-own product: the vendor's typed variant price, no profit/shipping.
+        if (blank($this->central_product_variant_id) && $this->product?->isVendorOwnProduct()) {
+            return $this->product->ownPriceBreakdownForCountry($this, $countryId);
+        }
+
         $basePrice = (float) ($this->real_price ?? 0);
 
         $profitRows = $this->profit ?? [];

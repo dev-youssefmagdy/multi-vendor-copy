@@ -8,7 +8,8 @@
     <meta name="tenant-broadcast-auth" content="{{ route('tenant.broadcasting.auth') }}">
     <meta name="tenant-login-url" content="{{ route('tenant.login') }}">
     <meta name="tenant-id" content="{{ tenant('id') }}">
-    <title>@yield('title', 'Dashboard') · {{ tenant('name') ? tenant('name').' Vendor Panel' : 'Vendor Panel' }}</title>
+    @php($pageTitle = html_entity_decode(trim($__env->yieldContent('title', 'Dashboard')), ENT_QUOTES | ENT_HTML5))
+    <title>{{ __($pageTitle) }} · {{ tenant('name') ? tenant('name').' '.__('Vendor Panel') : __('Vendor Panel') }}</title>
     {{-- Restore the collapsed (icon rail) sidebar before first paint, so it doesn't flash open --}}
     <script>
         try {

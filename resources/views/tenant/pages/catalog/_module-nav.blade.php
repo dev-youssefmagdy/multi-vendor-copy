@@ -3,7 +3,9 @@
     Products module (products, own products, categories, edit requests and
     the product badge lists). Pass $activeTab (a key of $tabs below).
     The header shows the active tab's title + description beside the search box.
-    Optional $addUrl / $addLabel override the add button (e.g. Own products, Categories).
+    The add button is shown only when a page passes $addUrl (Own products, Categories); platform
+    products are added from the dashboard / "New products" page, so the other tabs have none.
+    $addLabel overrides its label (default "Add product").
     The strip behaviour (drag, wheel, fades) lives in resources/js/tenant/pages/catalog/module-nav.js.
 --}}
 
@@ -27,13 +29,13 @@
 <div class="pm-nav fu d0" data-products-module>
     <div class="db-welcome">
         <div class="db-welcome-copy">
-            <h1 class="db-welcome-title">{{ $heading }}</h1>
-            <p class="db-welcome-sub">{{ $current[2] }}</p>
+            <h1 class="db-welcome-title">{{ __($heading) }}</h1>
+            <p class="db-welcome-sub">{{ __($current[2]) }}</p>
         </div>
 
         <form class="pm-search" method="GET" action="{{ route('tenant.products.index') }}" role="search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
-            <input type="search" name="search" value="{{ request('search') }}" placeholder="Search" aria-label="Search products">
+            <input type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('Search') }}" aria-label="{{ __('Search products') }}">
             {{-- PANELS-UPDATES-REMOVE-IMAGE-SEARCH: image search was removed from the merchant side --}}
         </form>
     </div>
@@ -41,14 +43,16 @@
     <div class="pm-bar">
         <nav class="pm-tabs" data-pm-tabs aria-label="Products module">
             @foreach($tabs as $key => [$label, $url])
-                <a href="{{ $url }}" class="pm-tab {{ ($activeTab ?? '') === $key ? 'is-active' : '' }}" draggable="false" @if(($activeTab ?? '') === $key) aria-current="page" @endif>{{ $label }}</a>
+                <a href="{{ $url }}" class="pm-tab {{ ($activeTab ?? '') === $key ? 'is-active' : '' }}" draggable="false" @if(($activeTab ?? '') === $key) aria-current="page" @endif>{{ __($label) }}</a>
             @endforeach
         </nav>
 
-        <a href="{{ $addUrl ?? route('tenant.products.create') }}" class="btn btn-primary btn-lg pm-add">
+        @isset($addUrl)
+        <a href="{{ $addUrl }}" class="btn btn-primary btn-lg pm-add">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v8M16 12H8"/><path d="M2.5 12c0-4.48 0-6.72 1.39-8.11C5.28 2.5 7.52 2.5 12 2.5s6.72 0 8.11 1.39C21.5 5.28 21.5 7.52 21.5 12s0 6.72-1.39 8.11C18.72 21.5 16.48 21.5 12 21.5s-6.72 0-8.11-1.39C2.5 18.72 2.5 16.48 2.5 12z"/></svg>
-            {{ $addLabel ?? 'Add product' }}
+            {{ __($addLabel ?? 'Add product') }}
         </a>
+        @endisset
     </div>
 </div>
 

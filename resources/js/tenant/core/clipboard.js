@@ -10,11 +10,16 @@ export async function copyText(value) {
         }
     }
 
+    // Keep the textarea inside an open modal (if any) so focus/selection is not blocked, and
+    // give focus back to the clicked control afterwards.
+    const previousFocus = document.activeElement;
+    const host = previousFocus?.closest?.('[role="dialog"], .modal, [data-modal]') || document.body;
     const area = document.createElement('textarea');
     area.value = value;
     area.setAttribute('readonly', '');
     area.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
-    document.body.appendChild(area);
+    host.appendChild(area);
+    area.focus({ preventScroll: true });
     area.select();
     area.setSelectionRange(0, value.length);
 
@@ -24,5 +29,6 @@ export async function copyText(value) {
         return false;
     } finally {
         area.remove();
+        previousFocus?.focus?.({ preventScroll: true });
     }
 }

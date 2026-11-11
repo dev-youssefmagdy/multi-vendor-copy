@@ -30,7 +30,7 @@
             @php($active = $isActive($item))
             <a href="{{ route($item['route']) }}" class="mnav-item {{ $active ? 'is-active' : '' }}" @if($active) aria-current="page" @endif>
                 {!! $item['icon'] !!}
-                <span>{{ $item['label'] }}</span>
+                <span>{{ __($item['label']) }}</span>
             </a>
         @endforeach
     </div>
@@ -38,7 +38,7 @@
     @if($storefrontUrl)
         <a href="{{ $storefrontUrl }}" class="mnav-store" target="_blank" rel="noopener noreferrer" aria-label="Open your store">
             <x-tenant::nav-icons.store />
-            <span>Store</span>
+            <span>{{ __('Store') }}</span>
         </a>
     @endif
 </nav>

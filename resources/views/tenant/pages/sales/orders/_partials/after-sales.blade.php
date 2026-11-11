@@ -4,7 +4,7 @@
     $afterSales = $afterSales ?? [];
     $cancellation = $afterSales['cancellation'] ?? null;
     $refundable = (float) ($afterSales['refundable_amount'] ?? 0);
-    $canRefund = !empty($afterSales['can_manage_refunds']) && $refundable > 0;
+    $canRefund = !empty($afterSales['can_issue_refund']) && $refundable > 0;
 @endphp
 
 @if($cancellation)
