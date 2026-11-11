@@ -31,7 +31,13 @@ use Throwable;
  */
 class TenantMailHealth
 {
-    public const SETTING = 'mail_status';
+    /** Stored as separate rows: settings.value is varchar(255). */
+    public const SETTINGS = [
+        'state' => 'mail_status_state',
+        'error' => 'mail_status_error',
+        'checked_at' => 'mail_status_checked_at',
+        'fingerprint' => 'mail_status_fingerprint',
+    ];
     public const GROUP = 'mail_health';
 
     public const CENTRAL = 'central';
@@ -121,7 +127,7 @@ class TenantMailHealth
 
     public function clear(): void
     {
-        Setting::query()->where('name', self::SETTING)->delete();
+        Setting::query()->whereIn('name', self::SETTINGS)->delete();
         CacheVersion::bump('Setting');
     }
 
@@ -170,23 +176,35 @@ class TenantMailHealth
     {
         $error = trim(preg_replace('/\s+/', ' ', $error) ?? '');
 
-        return Str::limit($error !== '' ? $error : __('Unknown mail error'), 300);
+        return Str::limit($error !== '' ? $error : __('Unknown mail error'), 240);
     }
 
     protected function stored(): array
     {
-        $raw = Setting::query()->where('name', self::SETTING)->value('value');
-        $decoded = is_string($raw) ? json_decode($raw, true) : null;
+        $values = Setting::query()->whereIn('name', self::SETTINGS)->pluck('value', 'name')->all();
 
-        return is_array($decoded) ? $decoded : [];
+        $stored = [];
+        foreach (self::SETTINGS as $key => $name) {
+            $stored[$key] = $values[$name] ?? null;
+        }
+
+        return $stored;
     }
 
     protected function store(array $payload): void
     {
-        Setting::query()->updateOrCreate(
-            ['name' => self::SETTING],
-            ['value' => json_encode($payload), 'type' => SettingType::String->value, 'group' => self::GROUP],
-        );
+        foreach (self::SETTINGS as $key => $name) {
+            if (($payload[$key] ?? null) === null) {
+                Setting::query()->where('name', $name)->delete();
+                continue;
+            }
+
+            Setting::query()->updateOrCreate(
+                ['name' => $name],
+                ['value' => (string) $payload[$key], 'type' => SettingType::String->value, 'group' => self::GROUP],
+            );
+        }
+
         CacheVersion::bump('Setting');
     }
 }

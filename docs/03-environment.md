@@ -78,6 +78,6 @@ Settings → Mail Configurations (`/admin/settings/mail`). The rules
   fails the same email is retried through central, the store flips to `failed` and is notified once.
   `failed` stores use central only (no repeated SMTP timeouts) until the vendor saves again or a
   "Send Test Email" succeeds.
-- The health state lives in the tenant `settings` table (`mail_status`, group `mail_health`) with a
+- The health state lives in the tenant `settings` table (`mail_status_*` rows, group `mail_health`) with a
   fingerprint of the settings, so editing them resets the state to `unverified`. Configs saved before
   verification existed start as `unverified` and verify themselves on their first successful send.
