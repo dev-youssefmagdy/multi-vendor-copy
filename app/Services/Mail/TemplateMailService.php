@@ -32,6 +32,7 @@ class TemplateMailService
         private readonly MailConfigurationResolver $configurationResolver,
         private readonly MailManager $mailManager,
         private readonly AdminNotificationService $adminNotificationService,
+        private readonly TenantMailHealth $mailHealth,
     ) {}
 
     public function sendCentralInvoice(Invoice $invoice, string $pdfBinary, ?string $locale = null): bool
@@ -269,13 +270,7 @@ class TemplateMailService
 
         $body = $this->applyDirection($body, $locale);
 
-        if ($this->tryDeliver($tenantConfig, $recipient, $subject, $body, $attachments)) {
-            return true;
-        }
-
-        $centralConfig = $this->configurationResolver->central();
-
-        if ($centralConfig !== $tenantConfig && $this->tryDeliver($centralConfig, $recipient, $subject, $body, $attachments)) {
+        if ($this->tryDeliverAsTenant($recipient, $subject, $body, $attachments)) {
             return true;
         }
 
@@ -293,15 +288,104 @@ class TemplateMailService
         try {
             return $this->deliver($config, $recipient, $subject, $body, $attachments);
         } catch (Throwable $e) {
-            Log::warning('Mail delivery attempt failed', [
-                'mailer' => $config['mailer'] ?? null,
-                'host' => $config['host'] ?? null,
-                'recipient' => $recipient,
-                'error' => $e->getMessage(),
-            ]);
+            $this->logDeliveryFailure($config, $recipient, $e);
 
             return false;
         }
+    }
+
+    /**
+     * Send as the current store: through its own mail server when it has a complete,
+     * healthy config, otherwise through the central configuration. When the store's
+     * server fails the email still goes out via central, the store is marked "failed"
+     * (so later emails skip straight to central) and the vendor is notified once.
+     * Throws the central error when nothing could deliver.
+     */
+    protected function deliverAsTenant(string $recipient, string $subject, string $body, array $attachments = [], ?array $replyTo = null): void
+    {
+        $custom = tenant() ? $this->mailHealth->usableCustomConfig() : null;
+
+        if ($custom !== null) {
+            try {
+                $this->deliver($custom, $recipient, $subject, $body, $attachments, $replyTo);
+                $this->mailHealth->recordSuccess($custom);
+
+                return;
+            } catch (Throwable $e) {
+                $this->logDeliveryFailure($custom, $recipient, $e);
+                $this->mailHealth->markFailed($custom, $e->getMessage(), onlyOnChange: true);
+            }
+        }
+
+        $central = $this->configurationResolver->central();
+
+        try {
+            $this->deliver($central, $recipient, $subject, $body, $attachments, $replyTo);
+        } catch (Throwable $e) {
+            $this->logDeliveryFailure($central, $recipient, $e);
+
+            throw $e;
+        }
+    }
+
+    protected function tryDeliverAsTenant(string $recipient, string $subject, string $body, array $attachments = []): bool
+    {
+        try {
+            $this->deliverAsTenant($recipient, $subject, $body, $attachments);
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /** Send a plain message through the central (platform) mail configuration. */
+    public function sendCentralMessage(string $recipient, string $subject, string $body): bool
+    {
+        if (! filled($recipient)) {
+            return false;
+        }
+
+        return $this->tryDeliver($this->configurationResolver->central(), $recipient, $subject, $body);
+    }
+
+    /**
+     * Prove a store mail config works by sending a real email through it (short
+     * timeout so the settings page does not hang on an unreachable host).
+     *
+     * @return array{success: bool, message: string, error: ?string}
+     */
+    public function verifyConfig(array $config, ?string $recipient = null): array
+    {
+        $recipient = $recipient ?: $config['from_address'];
+        $storeName = tenant()?->name ?: config('app.name', 'Multi Vendor');
+
+        try {
+            $this->deliver(
+                $config + ['timeout' => 15],
+                $recipient,
+                __('Your mail settings for :store are working', ['store' => $storeName]),
+                '<p>'.e(__('This email confirms that :store can send emails through your own mail server.', ['store' => $storeName])).'</p>'
+                    .$this->testEmailBody($config),
+            );
+
+            return ['success' => true, 'message' => __('Connected. A confirmation email was sent to :email.', ['email' => $recipient]), 'error' => null];
+        } catch (Throwable $e) {
+            $this->logDeliveryFailure($config, $recipient, $e);
+
+            return ['success' => false, 'message' => $e->getMessage(), 'error' => $e->getMessage()];
+        }
+    }
+
+    protected function logDeliveryFailure(array $config, string $recipient, Throwable $e): void
+    {
+        Log::warning('Mail delivery attempt failed', [
+            'tenant_id' => tenant()?->getTenantKey(),
+            'mailer' => $config['mailer'] ?? null,
+            'host' => $config['host'] ?? null,
+            'recipient' => $recipient,
+            'error' => $e->getMessage(),
+        ]);
     }
 
     protected function notifyAdminOfDeliveryFailure(EmailTemplateAction $action, string $recipient): void
@@ -374,28 +458,8 @@ class TemplateMailService
     public function sendTenantMessage(string $recipient, string $subject, string $body, ?string $replyToAddress = null, ?string $replyToName = null): void
     {
         $replyTo = filled($replyToAddress) ? [$replyToAddress, $replyToName] : null;
-        $tenantConfig = $this->configurationResolver->tenant();
-        $centralConfig = $this->configurationResolver->central();
-        $configs = $centralConfig !== $tenantConfig ? [$tenantConfig, $centralConfig] : [$tenantConfig];
-        $lastError = null;
 
-        foreach ($configs as $config) {
-            try {
-                $this->deliver($config, $recipient, $subject, $body, [], $replyTo);
-
-                return;
-            } catch (Throwable $e) {
-                $lastError = $e;
-                Log::warning('Mail delivery attempt failed', [
-                    'mailer' => $config['mailer'] ?? null,
-                    'host' => $config['host'] ?? null,
-                    'recipient' => $recipient,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-
-        throw $lastError;
+        $this->deliverAsTenant($recipient, $subject, $body, [], $replyTo);
     }
 
     protected function deliver(array $config, string $recipient, string $subject, string $body, array $attachments = [], ?array $replyTo = null): bool
@@ -434,7 +498,9 @@ class TemplateMailService
             return $base;
         }
 
-        return array_merge($base, [
+        return array_merge($base, array_filter([
+            'timeout' => $config['timeout'] ?? null,
+        ]), [
             'transport' => 'smtp',
             'host' => $config['host'],
             'port' => (int) ($config['port'] ?: 587),
@@ -1002,15 +1068,7 @@ class TemplateMailService
             .'<p><a href="'.e($verifyUrl).'" style="display:inline-block;padding:10px 18px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;">Verify Email Address</a></p>'
             .'<p style="color:#6b7280;font-size:12px;">If you did not create this account, no further action is required. This link expires in 60 minutes.</p>';
 
-        $tenantConfig = $this->configurationResolver->tenant();
-
-        if ($this->tryDeliver($tenantConfig, $email, $subject, $body)) {
-            return true;
-        }
-
-        $centralConfig = $this->configurationResolver->central();
-
-        return $centralConfig !== $tenantConfig && $this->tryDeliver($centralConfig, $email, $subject, $body);
+        return $this->tryDeliverAsTenant($email, $subject, $body);
     }
 
     protected function centralAdminEmail(): ?string

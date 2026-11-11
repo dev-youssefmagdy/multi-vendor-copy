@@ -46,8 +46,12 @@ class TenantMailSettingsTest extends TestCase
         $mailer = $this->tenant->run(function () {
             $this->setSetting('mail_mailer', 'issamakassimi@gmail.com');
             $this->setSetting('mail_host', 'smtp.gmail.com');
+            $this->setSetting('mail_port', '465');
+            $this->setSetting('mail_username', 'issamakassimi@gmail.com');
+            $this->setSetting('mail_password', 'app-password');
+            $this->setSetting('mail_from_address', 'issamakassimi@gmail.com');
 
-            return app(MailConfigurationResolver::class)->tenant()['mailer'];
+            return app(MailConfigurationResolver::class)->tenantCustom()['mailer'];
         });
 
         $this->assertSame('smtp', $mailer);
@@ -60,10 +64,18 @@ class TenantMailSettingsTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors('mail_mailer');
 
-        // Any mailer configured in config/mail.php can be picked.
+        // Any mailer configured in config/mail.php can be picked (validation only: saving
+        // sends a real verification email through the chosen mailer).
         foreach (array_keys(MailConfigurationResolver::availableMailers()) as $mailer) {
             $this->actingAsTenantAdmin()
-                ->json('put', $this->tenantUrl('/admin/settings/mail'), ['mail_mailer' => $mailer])
+                ->json('post', $this->tenantUrl('/admin/settings/mail/validate'), [
+                    'mail_mailer' => $mailer,
+                    'mail_host' => 'smtp.gmail.com',
+                    'mail_port' => '465',
+                    'mail_username' => 'shop@gmail.com',
+                    'mail_password' => 'abcd efgh ijkl mnop',
+                    'mail_from_address' => 'shop@gmail.com',
+                ])
                 ->assertSuccessful();
         }
         $this->assertArrayHasKey('sendmail', MailConfigurationResolver::availableMailers());

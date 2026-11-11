@@ -3,7 +3,6 @@
 namespace App\Services\Mail;
 
 use App\Models\AppSetting;
-use App\Models\Tenant;
 use App\Models\Tenant\Setting;
 
 class MailConfigurationResolver
@@ -72,29 +71,80 @@ class MailConfigurationResolver
         ];
     }
 
-    public function tenant(?Tenant $tenant = null): array
+    /**
+     * The config the current store's emails are sent with: its own complete, healthy
+     * mail settings, otherwise the central configuration as a whole. Settings are never
+     * mixed field by field (e.g. central SMTP sending "from" the vendor's Gmail address
+     * is rejected by receiving servers).
+     */
+    public function tenant(): array
     {
-        $central = $this->central();
-
-        if (!tenant() && !$tenant) {
-            return $central;
+        if (! tenant()) {
+            return $this->central();
         }
 
-        $overrides = Setting::query()
-            ->whereIn('name', $this->mailKeys())
-            ->pluck('value', 'name')
-            ->all();
+        return app(TenantMailHealth::class)->usableCustomConfig() ?? $this->central();
+    }
+
+    /**
+     * The current store's own mail config, or null when it has none / it is incomplete
+     * (then the store uses the central config). Health is tracked by TenantMailHealth.
+     */
+    public function tenantCustom(): ?array
+    {
+        if (! tenant()) {
+            return null;
+        }
+
+        $values = array_map(
+            fn ($value) => trim((string) $value),
+            Setting::query()->whereIn('name', $this->mailKeys())->pluck('value', 'name')->all(),
+        );
+
+        return self::completeCustomConfig([
+            'mailer' => $values['mail_mailer'] ?? '',
+            'host' => $values['mail_host'] ?? '',
+            'port' => $values['mail_port'] ?? '',
+            'username' => $values['mail_username'] ?? '',
+            'password' => $values['mail_password'] ?? '',
+            'encryption' => $values['mail_encryption'] ?? '',
+            'from_address' => $values['mail_from_address'] ?? '',
+            'from_name' => $values['mail_from_name'] ?? '',
+        ]);
+    }
+
+    /** Fields a store must fill for its own mail config to be used, per mailer. */
+    public static function requiredCustomFields(string $mailer): array
+    {
+        return self::normalizeMailer($mailer) === 'smtp'
+            ? ['host', 'port', 'username', 'password', 'from_address']
+            : ['from_address'];
+    }
+
+    /**
+     * Normalise raw store values into a sendable config, or null when they do not
+     * describe a complete custom config.
+     */
+    public static function completeCustomConfig(array $values): ?array
+    {
+        $mailer = self::normalizeMailer($values['mailer'] ?? '');
+
+        foreach (self::requiredCustomFields($mailer) as $field) {
+            if (trim((string) ($values[$field] ?? '')) === '') {
+                return null;
+            }
+        }
 
         return [
-            'mailer' => self::normalizeMailer($this->tenantOverride($overrides, 'mail_mailer', $central['mailer'])),
-            'host' => $this->tenantOverride($overrides, 'mail_host', $central['host']),
-            'port' => $this->tenantOverride($overrides, 'mail_port', $central['port']),
-            'username' => $this->tenantOverride($overrides, 'mail_username', $central['username']),
-            'password' => $this->tenantOverride($overrides, 'mail_password', $central['password']),
-            'encryption' => $this->tenantOverride($overrides, 'mail_encryption', $central['encryption']),
-            'from_address' => $this->tenantOverride($overrides, 'mail_from_address', $central['from_address']),
-            'from_name' => $this->tenantOverride($overrides, 'mail_from_name', $central['from_name']),
-            'queue' => $central['queue'],
+            'mailer' => $mailer,
+            'host' => $mailer === 'smtp' ? $values['host'] : null,
+            'port' => $mailer === 'smtp' ? $values['port'] : null,
+            'username' => $mailer === 'smtp' ? $values['username'] : null,
+            'password' => $mailer === 'smtp' ? $values['password'] : null,
+            'encryption' => $mailer === 'smtp' ? (strtolower((string) ($values['encryption'] ?? '')) ?: null) : null,
+            'from_address' => $values['from_address'],
+            'from_name' => trim((string) ($values['from_name'] ?? '')) ?: (tenant()?->name ?: config('app.name')),
+            'queue' => false,
         ];
     }
 

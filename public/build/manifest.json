@@ -2545,11 +2545,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-HNRR4bjS.css",
+    "file": "assets/app-aurvqjIK.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-DOM3NwPf.css",
+    "file": "assets/ecommet-e2MXVcy6.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2603,7 +2603,7 @@
     "isEntry": true
   },
   "resources/css/elora-variants.css": {
-    "file": "assets/souqify-variants-Cb1s6vmB.css",
+    "file": "assets/souqify-variants-CaXzqR-n.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2842,7 +2842,7 @@
     "isEntry": true
   },
   "resources/css/souqify-variants.css": {
-    "file": "assets/souqify-variants-Cb1s6vmB.css",
+    "file": "assets/souqify-variants-CaXzqR-n.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2852,7 +2852,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-Da89wXYz.css",
+    "file": "assets/souqify-Bq8L3YQA.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2861,7 +2861,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-Br8Y9LEl.css",
+    "file": "assets/app-DjZNaSit.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2869,7 +2869,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-HNRR4bjS.css"
+      "assets/app-aurvqjIK.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -4034,10 +4034,13 @@
     ]
   },
   "resources/js/tenant/pages/settings/mail.js": {
-    "file": "assets/mail-D1oT8YmU.js",
+    "file": "assets/mail-BebeOxjf.js",
     "name": "mail",
     "src": "resources/js/tenant/pages/settings/mail.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_events-CFA2UmB3.js"
+    ]
   },
   "resources/js/tenant/pages/settings/payment-gateways.js": {
     "file": "assets/payment-gateways-BtfJARlZ.js",

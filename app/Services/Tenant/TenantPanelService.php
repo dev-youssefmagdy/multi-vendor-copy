@@ -2,7 +2,6 @@
 
 namespace App\Services\Tenant;
 
-use App\Models\AppSetting as CentralAppSetting;
 use App\Models\DefaultBanner;
 use App\Models\ProductEditRequest;
 use App\Models\Tenant\AdminRole;
@@ -695,27 +694,24 @@ class TenantPanelService
         });
     }
 
+    /**
+     * Store the vendor's mail settings exactly as entered (blank = not set). They are
+     * used all-or-nothing, so they must not be thinned out against the central values.
+     */
     public function saveMailSettings(array $attributes): void
     {
-        $centralMailSettings = tenant()
-            ? tenancy()->central(fn() => CentralAppSetting::query()
-                ->whereIn('key', array_keys($attributes))
-                ->pluck('value', 'key')
-                ->all())
-            : [];
-
         foreach ($attributes as $name => $value) {
             $normalizedValue = trim((string) ($value ?? ''));
-            $centralValue = trim((string) ($centralMailSettings[$name] ?? ''));
 
-            if ($normalizedValue === '' || $normalizedValue === $centralValue) {
+            if ($normalizedValue === '') {
                 Setting::query()->where('name', $name)->delete();
-                CacheVersion::bump('Setting');
                 continue;
             }
 
             Setting::query()->updateOrCreate(['name' => $name], ['value' => $normalizedValue, 'type' => 'string', 'group' => 'mail']);
         }
+
+        CacheVersion::bump('Setting');
     }
 
     public function saveEmailTemplate(array $attributes, EmailTemplate $template): EmailTemplate

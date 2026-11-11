@@ -17,6 +17,7 @@ use App\Http\Requests\Tenant\Panel\Settings\SendTestEmailRequest;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Mail\MailConfigurationResolver;
 use App\Services\Mail\TemplateMailService;
+use App\Services\Mail\TenantMailHealth;
 use App\Services\Tenant\TenantPanelService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -40,7 +41,7 @@ final class MailConfigurationsController extends PanelController
             'mail_port' => (string) ($settings['mail_port'] ?? ''),
             'mail_username' => (string) ($settings['mail_username'] ?? ''),
             'mail_password' => (string) ($settings['mail_password'] ?? ''),
-            'mail_encryption' => (string) ($settings['mail_encryption'] ?? ''),
+            'mail_encryption' => strtolower((string) ($settings['mail_encryption'] ?? '')),
             'mail_from_address' => (string) ($settings['mail_from_address'] ?? ''),
             'mail_from_name' => (string) ($settings['mail_from_name'] ?? ''),
         ];
@@ -48,7 +49,7 @@ final class MailConfigurationsController extends PanelController
         $groups = [
             [
                 'title' => 'SMTP Settings',
-                'description' => 'Only fill the values you want this tenant to override. Blank values automatically fall back to the central configuration.',
+                'description' => __('Fill in your own mail server to send store emails from your address, or leave every field blank to use the platform mail server. When you save, we send a confirmation email through your server; if it fails, your emails keep going out through the platform mail server and you are notified.'),
                 'gridClass' => 'form-grid-2',
                 'fields' => [
                     [
@@ -60,7 +61,12 @@ final class MailConfigurationsController extends PanelController
                     ],
                     ['label' => 'Host', 'model' => 'mail_host', 'placeholder' => 'smtp.gmail.com'],
                     ['label' => 'Port', 'model' => 'mail_port', 'placeholder' => '465 / 587'],
-                    ['label' => 'Encryption', 'model' => 'mail_encryption', 'placeholder' => 'ssl / tls'],
+                    [
+                        'label' => 'Encryption',
+                        'model' => 'mail_encryption',
+                        'type' => 'select',
+                        'options' => ['' => __('None'), 'ssl' => 'SSL (port 465)', 'tls' => 'TLS / STARTTLS (port 587)'],
+                    ],
                     ['label' => 'Username', 'model' => 'mail_username'],
                     [
                         'label' => 'Password',
@@ -77,17 +83,23 @@ final class MailConfigurationsController extends PanelController
         return view('tenant.pages.settings.mail.index', [
             'groups' => $groups,
             'values' => $values,
+            'mailStatus' => $this->health()->status(),
         ]);
     }
 
-    public function update(SaveMailSettingsRequest $request, TenantPanelService $service): JsonResponse
+    /**
+     * Save the vendor's settings, then prove them by sending a confirmation email through
+     * their server. On failure the settings stay saved (so they can be corrected), the
+     * store is marked "failed", the vendor is notified and emails keep using central mail.
+     */
+    public function update(SaveMailSettingsRequest $request, TenantPanelService $service, TemplateMailService $mailService): JsonResponse
     {
         $validated = $request->validated();
 
         $service->saveMailSettings([
             'mail_mailer' => $validated['mail_mailer'] ?? '',
             'mail_host' => $validated['mail_host'] ?? '',
-            'mail_port' => $validated['mail_port'] ?? '',
+            'mail_port' => (string) ($validated['mail_port'] ?? ''),
             'mail_username' => $validated['mail_username'] ?? '',
             'mail_password' => $validated['mail_password'] ?? '',
             'mail_encryption' => $validated['mail_encryption'] ?? '',
@@ -95,7 +107,37 @@ final class MailConfigurationsController extends PanelController
             'mail_from_name' => $validated['mail_from_name'] ?? '',
         ]);
 
-        return $this->success('Mail configuration overrides saved successfully. Blank fields will continue using the central mail configuration.');
+        $health = $this->health();
+        $custom = app(MailConfigurationResolver::class)->tenantCustom();
+
+        if ($custom === null) {
+            $health->clear();
+
+            return $this->success(
+                __('Mail settings saved. Your store emails are sent through the platform mail server.'),
+                $this->statusPayload(),
+            );
+        }
+
+        $result = $mailService->verifyConfig($custom);
+
+        if ($result['success']) {
+            $health->markVerified($custom);
+
+            return $this->success(
+                __('Mail settings saved and verified. Your store emails are now sent from :email.', ['email' => $custom['from_address']]),
+                $this->statusPayload(),
+            );
+        }
+
+        $health->markFailed($custom, (string) $result['error']);
+
+        return response()->json([
+            'success' => false,
+            'message' => __('Settings saved, but we could not send through your mail server: :error. Your store emails will keep going out through the platform mail server until this is fixed.', ['error' => $health->status()['error']]),
+            'errors' => [],
+            'data' => $this->statusPayload(),
+        ], 422);
     }
 
     public function validateUpdate(SaveMailSettingsRequest $request): JsonResponse
@@ -103,31 +145,62 @@ final class MailConfigurationsController extends PanelController
         return $this->validFormResponse();
     }
 
+    /**
+     * Send a test email with the saved settings: through the store's own server when it
+     * has a complete config (a success or failure updates its health, so a vendor can
+     * recover after fixing their mailbox without editing anything), otherwise through
+     * the platform mail server.
+     */
     public function sendTest(SendTestEmailRequest $request, TemplateMailService $mailService, MailConfigurationResolver $resolver): JsonResponse
     {
-        $settings = $this->repo->emailSettings();
-        $central = $resolver->central();
+        $recipient = $request->validated()['email'];
+        $custom = $resolver->tenantCustom();
 
-        $result = $mailService->sendTest([
-            'mailer' => MailConfigurationResolver::normalizeMailer((string) ($settings['mail_mailer'] ?? '') ?: $central['mailer']),
-            'host' => (string) ($settings['mail_host'] ?? '') ?: $central['host'],
-            'port' => (string) ($settings['mail_port'] ?? '') ?: $central['port'],
-            'username' => (string) ($settings['mail_username'] ?? '') ?: $central['username'],
-            'password' => (string) ($settings['mail_password'] ?? '') ?: $central['password'],
-            'encryption' => (string) ($settings['mail_encryption'] ?? '') ?: $central['encryption'],
-            'from_address' => (string) ($settings['mail_from_address'] ?? '') ?: $central['from_address'],
-            'from_name' => (string) ($settings['mail_from_name'] ?? '') ?: $central['from_name'],
-        ], $request->validated()['email']);
+        if ($custom === null) {
+            $sent = $mailService->sendCentralMessage(
+                $recipient,
+                __('Test email from :store', ['store' => tenant()?->name ?: config('app.name')]),
+                '<p>'.e(__('Your store has no own mail server configured, so this test was sent through the platform mail server.')).'</p>',
+            );
 
-        if (! $result['success']) {
-            return $this->failure($result['message'], 422);
+            return $sent
+                ? $this->success(__('Test email sent to :email through the platform mail server (your store has no own mail server configured).', ['email' => $recipient]))
+                : $this->failure(__('The platform mail server could not send the test email. Please contact support.'));
         }
 
-        return $this->success($result['message']);
+        $result = $mailService->verifyConfig($custom, $recipient);
+        $health = $this->health();
+
+        if ($result['success']) {
+            $health->markVerified($custom);
+
+            return $this->success(__('Test email sent to :email through your mail server.', ['email' => $recipient]), $this->statusPayload());
+        }
+
+        $health->markFailed($custom, (string) $result['error']);
+
+        return response()->json([
+            'success' => false,
+            'message' => __('Your mail server could not send the test email: :error. Store emails are being sent through the platform mail server.', ['error' => $health->status()['error']]),
+            'errors' => [],
+            'data' => $this->statusPayload(),
+        ], 422);
     }
 
     public function validateSendTest(SendTestEmailRequest $request): JsonResponse
     {
         return $this->validFormResponse();
+    }
+
+    private function health(): TenantMailHealth
+    {
+        return app(TenantMailHealth::class);
+    }
+
+    private function statusPayload(): array
+    {
+        return [
+            'mail_status_html' => view('tenant.pages.settings.mail.partials.status', ['mailStatus' => $this->health()->status()])->render(),
+        ];
     }
 }
