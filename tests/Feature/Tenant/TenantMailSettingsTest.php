@@ -60,9 +60,14 @@ class TenantMailSettingsTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors('mail_mailer');
 
-        $this->actingAsTenantAdmin()
-            ->json('put', $this->tenantUrl('/admin/settings/mail'), ['mail_mailer' => 'smtp'])
-            ->assertSuccessful();
+        // Any mailer configured in config/mail.php can be picked.
+        foreach (array_keys(MailConfigurationResolver::availableMailers()) as $mailer) {
+            $this->actingAsTenantAdmin()
+                ->json('put', $this->tenantUrl('/admin/settings/mail'), ['mail_mailer' => $mailer])
+                ->assertSuccessful();
+        }
+        $this->assertArrayHasKey('sendmail', MailConfigurationResolver::availableMailers());
+        $this->assertSame('smtp', array_key_first(MailConfigurationResolver::availableMailers()));
 
         // A value saved before the fix (mail group, as the panel stores it) renders as SMTP in the dropdown.
         $this->tenant->run(fn () => \App\Models\Tenant\Setting::query()
@@ -77,6 +82,7 @@ class TenantMailSettingsTest extends TestCase
         $this->assertMatchesRegularExpression('/<select[^>]*name="mail_mailer"/s', $html);
         $this->assertMatchesRegularExpression('/<option[^>]*value="smtp"[^>]*selected/s', $html);
         $this->assertStringNotContainsString('value="issamakassimi@gmail.com"', $html);
+        $this->assertMatchesRegularExpression('/<option[^>]*value="sendmail"/s', $html);
         $this->assertStringContainsString('App Password', $html);
     }
 

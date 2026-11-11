@@ -13,7 +13,7 @@ final class SaveMailSettingsRequest extends TenantFormRequest
     public function rules(): array
     {
         return [
-            'mail_mailer' => ['nullable', 'string', Rule::in(array_keys(MailConfigurationResolver::TENANT_MAILERS))],
+            'mail_mailer' => ['nullable', 'string', Rule::in(array_keys(MailConfigurationResolver::availableMailers()))],
             'mail_host' => ['nullable', 'string', 'max:255'],
             'mail_port' => ['nullable', 'string', 'max:10'],
             'mail_username' => ['nullable', 'string', 'max:255'],

@@ -8,12 +8,36 @@ use App\Models\Tenant\Setting;
 
 class MailConfigurationResolver
 {
-    /** Mailers a tenant may pick in the panel (value => label). */
-    public const TENANT_MAILERS = [
+    /** Friendly labels for well-known mailers; any other configured mailer shows its own name. */
+    private const MAILER_LABELS = [
         'smtp' => 'SMTP',
         'sendmail' => 'Sendmail',
+        'ses' => 'Amazon SES',
+        'postmark' => 'Postmark',
+        'resend' => 'Resend',
+        'mailgun' => 'Mailgun',
         'log' => 'Log (no real email, for testing)',
+        'array' => 'Array (no real email, for testing)',
+        'failover' => 'Failover',
+        'roundrobin' => 'Round robin',
     ];
+
+    /**
+     * Every mailer configured in config/mail.php that a tenant can pick in the panel
+     * (value => label), SMTP first.
+     */
+    public static function availableMailers(): array
+    {
+        $names = array_keys(array_filter((array) config('mail.mailers', []), 'is_array'));
+        usort($names, fn ($a, $b) => ($b === 'smtp') <=> ($a === 'smtp'));
+
+        $options = [];
+        foreach ($names as $name) {
+            $options[$name] = self::MAILER_LABELS[$name] ?? str($name)->headline()->toString();
+        }
+
+        return $options;
+    }
 
     /**
      * A saved mailer that is not a configured transport (e.g. an email address typed

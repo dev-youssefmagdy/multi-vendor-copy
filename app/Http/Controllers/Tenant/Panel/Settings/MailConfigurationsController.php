@@ -55,7 +55,7 @@ final class MailConfigurationsController extends PanelController
                         'label' => 'Mailer',
                         'model' => 'mail_mailer',
                         'type' => 'select',
-                        'options' => ['' => __('Use central default')] + array_map(fn ($label) => __($label), MailConfigurationResolver::TENANT_MAILERS),
+                        'options' => ['' => __('Use central default')] + array_map(fn ($label) => __($label), MailConfigurationResolver::availableMailers()),
                         'help' => __('Choose SMTP to send through your own mail account (e.g. Gmail).'),
                     ],
                     ['label' => 'Host', 'model' => 'mail_host', 'placeholder' => 'smtp.gmail.com'],
