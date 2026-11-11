@@ -36,8 +36,8 @@
       "_vendor-swal-Bl7W2J8u.js"
     ]
   },
-  "_core-CJo7mNta.js": {
-    "file": "assets/core-CJo7mNta.js",
+  "_core-D40cGUwQ.js": {
+    "file": "assets/core-D40cGUwQ.js",
     "name": "core",
     "imports": [
       "_preload-helper-Cdi5alSk.js",
@@ -553,9 +553,9 @@
       "_modals-DTuRHv6K.js"
     ]
   },
-  "_orders-DJmPphHT.css": {
-    "file": "assets/orders-DJmPphHT.css",
-    "src": "_orders-DJmPphHT.css"
+  "_orders-CF6Vfa0G.css": {
+    "file": "assets/orders-CF6Vfa0G.css",
+    "src": "_orders-CF6Vfa0G.css"
   },
   "_phone-input-Bzh8CZvt.js": {
     "file": "assets/phone-input-Bzh8CZvt.js",
@@ -2545,11 +2545,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-WpCQU0Vn.css",
+    "file": "assets/app-HNRR4bjS.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-JoyS2pCh.css",
+    "file": "assets/ecommet-DOM3NwPf.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2852,7 +2852,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-CiEWkZy8.css",
+    "file": "assets/souqify-Da89wXYz.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2861,7 +2861,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-Cty5FqZv.css",
+    "file": "assets/app-Br8Y9LEl.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2869,7 +2869,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-WpCQU0Vn.css"
+      "assets/app-HNRR4bjS.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3210,12 +3210,12 @@
     "isEntry": true
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-Dj-2NJbG.js",
+    "file": "assets/app-BETR4XRh.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-CJo7mNta.js",
+      "_core-D40cGUwQ.js",
       "_events-CFA2UmB3.js"
     ]
   },
@@ -3274,7 +3274,7 @@
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/copy.js": {
-    "file": "assets/copy-DLwRUobx.js",
+    "file": "assets/copy-Dooeg5Ah.js",
     "name": "copy",
     "src": "resources/js/tenant/components/copy.js",
     "isDynamicEntry": true,
@@ -3328,7 +3328,7 @@
     ]
   },
   "resources/js/tenant/components/dropdown.js": {
-    "file": "assets/dropdown-B5AfoorN.js",
+    "file": "assets/dropdown-DArd8IBi.js",
     "name": "dropdown",
     "src": "resources/js/tenant/components/dropdown.js",
     "isDynamicEntry": true
@@ -3652,7 +3652,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-D5uE_cf0.js",
+    "file": "assets/index-BIpRCKXD.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3661,7 +3661,7 @@
       "_opportunities-CerZYHtD.js",
       "_swiper-BOBuzg4i.js",
       "_product-modals-ChvpEOxN.js",
-      "_core-CJo7mNta.js",
+      "_core-D40cGUwQ.js",
       "_events-CFA2UmB3.js",
       "_registry-Br8BX5KI.js",
       "_toast-COEXnqM9.js"
@@ -3771,17 +3771,17 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-Coy92XHJ.js",
+    "file": "assets/brand-create-C3ACEoBw.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
     "isEntry": true,
     "css": [
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-5gitIbTD.js",
+    "file": "assets/brand-index-BuDiFtMW.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
@@ -3791,7 +3791,7 @@
     "css": [
       "assets/analytics-BeA5e-tf.css",
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-show.js": {
@@ -3806,7 +3806,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-eB8u1L0d.js",
+    "file": "assets/manufacturing-create-C-FpPyvO.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
     "isEntry": true,
@@ -3816,11 +3816,11 @@
     ],
     "css": [
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index-id1a9jUP.js",
+    "file": "assets/manufacturing-index-BefLWzWb.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
@@ -3830,7 +3830,7 @@
     "css": [
       "assets/analytics-BeA5e-tf.css",
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-show.js": {
@@ -3845,13 +3845,13 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-D4DFTu0D.js",
+    "file": "assets/product-request-create-B5RGKJ1s.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css",
+      "assets/orders-CF6Vfa0G.css",
       "assets/requests-CJpz01p_.css"
     ]
   },
@@ -3869,7 +3869,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-DfvgqI-w.js",
+    "file": "assets/product-requests-index-DA7y9ZyZ.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
@@ -3879,7 +3879,7 @@
     "css": [
       "assets/analytics-BeA5e-tf.css",
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css",
+      "assets/orders-CF6Vfa0G.css",
       "assets/requests-CJpz01p_.css"
     ]
   },
@@ -3896,7 +3896,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-DwAjA5Zo.js",
+    "file": "assets/customers-index-1qnhMcHl.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
@@ -3906,16 +3906,16 @@
     "css": [
       "assets/analytics-BeA5e-tf.css",
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-DAdjIbXk.js",
+    "file": "assets/order-show-CFb1mtcR.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-CJo7mNta.js",
+      "_core-D40cGUwQ.js",
       "_events-CFA2UmB3.js",
       "_forms-BAt7Ciw2.js",
       "_registry-Br8BX5KI.js"
@@ -3925,7 +3925,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-CsEdI2Ef.js",
+    "file": "assets/orders-index-MpSnemBi.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
@@ -3935,7 +3935,7 @@
     "css": [
       "assets/analytics-BeA5e-tf.css",
       "assets/dashboard-CEEu0EE3.css",
-      "assets/orders-DJmPphHT.css"
+      "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/sales/return-show.js": {
