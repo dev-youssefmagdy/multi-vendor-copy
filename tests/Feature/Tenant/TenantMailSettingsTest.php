@@ -82,9 +82,10 @@ class TenantMailSettingsTest extends TestCase
         $this->assertSame('smtp', array_key_first(MailConfigurationResolver::availableMailers()));
 
         // A value saved before the fix (mail group, as the panel stores it) renders as SMTP in the dropdown.
-        $this->tenant->run(fn () => \App\Models\Tenant\Setting::query()
-            ->where('name', 'mail_mailer')
-            ->update(['value' => 'issamakassimi@gmail.com', 'group' => 'mail']));
+        $this->tenant->run(fn () => \App\Models\Tenant\Setting::query()->updateOrCreate(
+            ['name' => 'mail_mailer'],
+            ['value' => 'issamakassimi@gmail.com', 'type' => 'string', 'group' => 'mail'],
+        ));
 
         $html = $this->actingAsTenantAdmin()
             ->get($this->tenantUrl('/admin/settings/mail'))
