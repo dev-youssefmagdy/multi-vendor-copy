@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Tenant\Storefront;
 
-use App\Mail\HtmlTemplateMail;
 use App\Models\Tenant\AdminUser;
 use App\Repositories\Tenant\StorefrontRepository;
-use Illuminate\Support\Facades\Mail;
+use App\Services\Mail\TemplateMailService;
 use Livewire\Component;
 use Throwable;
 
@@ -66,9 +65,14 @@ class SupportRequestForm extends Component
             . '<p>' . nl2br(e($data['message'])) . '</p>';
 
         try {
-            $mail = new HtmlTemplateMail(trim("{$storeName} — {$typeLabel}", ' —'), $body);
-            $mail->replyTo($data['email'], $data['name']);
-            Mail::to($recipient)->send($mail);
+            // Through the store's own mail settings (panel → Mail Configurations), then central.
+            app(TemplateMailService::class)->sendTenantMessage(
+                $recipient,
+                trim("{$storeName} — {$typeLabel}", ' —'),
+                $body,
+                $data['email'],
+                $data['name'],
+            );
         } catch (Throwable $exception) {
             report($exception);
             $this->addError('message', __('Unable to send your message right now. Please try again later.'));

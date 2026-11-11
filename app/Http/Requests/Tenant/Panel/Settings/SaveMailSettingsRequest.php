@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Http\Requests\Tenant\Panel\Settings;
 
 use App\Http\Requests\Tenant\Panel\TenantFormRequest;
+use App\Services\Mail\MailConfigurationResolver;
+use Illuminate\Validation\Rule;
 
 final class SaveMailSettingsRequest extends TenantFormRequest
 {
     public function rules(): array
     {
         return [
-            'mail_mailer' => ['nullable', 'string', 'max:50'],
+            'mail_mailer' => ['nullable', 'string', Rule::in(array_keys(MailConfigurationResolver::TENANT_MAILERS))],
             'mail_host' => ['nullable', 'string', 'max:255'],
             'mail_port' => ['nullable', 'string', 'max:10'],
             'mail_username' => ['nullable', 'string', 'max:255'],

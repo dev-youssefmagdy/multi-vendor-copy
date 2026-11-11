@@ -74,7 +74,7 @@ class MailConfigurationsPage extends ContentPage
     public function save(TenantPanelService $service): void
     {
         $validated = $this->validate([
-            'mailMailer' => ['nullable', 'string', 'max:50'],
+            'mailMailer' => ['nullable', 'string', 'in:'.implode(',', array_keys(\App\Services\Mail\MailConfigurationResolver::TENANT_MAILERS))],
             'mailHost' => ['nullable', 'string', 'max:255'],
             'mailPort' => ['nullable', 'string', 'max:10'],
             'mailUsername' => ['nullable', 'string', 'max:255'],

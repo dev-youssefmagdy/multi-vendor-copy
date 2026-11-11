@@ -31,8 +31,11 @@ final class MailConfigurationsController extends PanelController
     {
         $settings = $this->repo->emailSettings();
 
+        $savedMailer = trim((string) ($settings['mail_mailer'] ?? ''));
+
         $values = [
-            'mail_mailer' => (string) ($settings['mail_mailer'] ?? ''),
+            // An invalid saved value (e.g. an email typed in the old free-text field) shows as SMTP.
+            'mail_mailer' => $savedMailer === '' ? '' : MailConfigurationResolver::normalizeMailer($savedMailer),
             'mail_host' => (string) ($settings['mail_host'] ?? ''),
             'mail_port' => (string) ($settings['mail_port'] ?? ''),
             'mail_username' => (string) ($settings['mail_username'] ?? ''),
@@ -48,12 +51,23 @@ final class MailConfigurationsController extends PanelController
                 'description' => 'Only fill the values you want this tenant to override. Blank values automatically fall back to the central configuration.',
                 'gridClass' => 'form-grid-2',
                 'fields' => [
-                    ['label' => 'Mailer', 'model' => 'mail_mailer'],
-                    ['label' => 'Host', 'model' => 'mail_host'],
-                    ['label' => 'Port', 'model' => 'mail_port'],
-                    ['label' => 'Encryption', 'model' => 'mail_encryption'],
+                    [
+                        'label' => 'Mailer',
+                        'model' => 'mail_mailer',
+                        'type' => 'select',
+                        'options' => ['' => __('Use central default')] + array_map(fn ($label) => __($label), MailConfigurationResolver::TENANT_MAILERS),
+                        'help' => __('Choose SMTP to send through your own mail account (e.g. Gmail).'),
+                    ],
+                    ['label' => 'Host', 'model' => 'mail_host', 'placeholder' => 'smtp.gmail.com'],
+                    ['label' => 'Port', 'model' => 'mail_port', 'placeholder' => '465 / 587'],
+                    ['label' => 'Encryption', 'model' => 'mail_encryption', 'placeholder' => 'ssl / tls'],
                     ['label' => 'Username', 'model' => 'mail_username'],
-                    ['label' => 'Password', 'model' => 'mail_password', 'type' => 'password'],
+                    [
+                        'label' => 'Password',
+                        'model' => 'mail_password',
+                        'type' => 'password',
+                        'help' => __('For Gmail, use a 16-character App Password (Google Account → Security → 2-Step Verification → App passwords), not your normal password.'),
+                    ],
                     ['label' => 'From Address', 'model' => 'mail_from_address'],
                     ['label' => 'From Name', 'model' => 'mail_from_name'],
                 ],
@@ -95,7 +109,7 @@ final class MailConfigurationsController extends PanelController
         $central = $resolver->central();
 
         $result = $mailService->sendTest([
-            'mailer' => (string) ($settings['mail_mailer'] ?? '') ?: $central['mailer'],
+            'mailer' => MailConfigurationResolver::normalizeMailer((string) ($settings['mail_mailer'] ?? '') ?: $central['mailer']),
             'host' => (string) ($settings['mail_host'] ?? '') ?: $central['host'],
             'port' => (string) ($settings['mail_port'] ?? '') ?: $central['port'],
             'username' => (string) ($settings['mail_username'] ?? '') ?: $central['username'],

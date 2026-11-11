@@ -366,7 +366,39 @@ class TemplateMailService
             .'<br>Encryption: '.e($config['encryption'] ?: 'none').'</p>';
     }
 
-    protected function deliver(array $config, string $recipient, string $subject, string $body, array $attachments = []): bool
+    /**
+     * Send a non-template message (e.g. the storefront contact form) through the current
+     * tenant's mail settings, falling back to the central configuration. Throws the last
+     * transport error when neither configuration can deliver, so callers can tell the user.
+     */
+    public function sendTenantMessage(string $recipient, string $subject, string $body, ?string $replyToAddress = null, ?string $replyToName = null): void
+    {
+        $replyTo = filled($replyToAddress) ? [$replyToAddress, $replyToName] : null;
+        $tenantConfig = $this->configurationResolver->tenant();
+        $centralConfig = $this->configurationResolver->central();
+        $configs = $centralConfig !== $tenantConfig ? [$tenantConfig, $centralConfig] : [$tenantConfig];
+        $lastError = null;
+
+        foreach ($configs as $config) {
+            try {
+                $this->deliver($config, $recipient, $subject, $body, [], $replyTo);
+
+                return;
+            } catch (Throwable $e) {
+                $lastError = $e;
+                Log::warning('Mail delivery attempt failed', [
+                    'mailer' => $config['mailer'] ?? null,
+                    'host' => $config['host'] ?? null,
+                    'recipient' => $recipient,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        throw $lastError;
+    }
+
+    protected function deliver(array $config, string $recipient, string $subject, string $body, array $attachments = [], ?array $replyTo = null): bool
     {
         $mailerName = 'runtime_'.Str::random(12);
 
@@ -380,6 +412,10 @@ class TemplateMailService
                 $mailable->from($config['from_address'], $config['from_name'] ?: null);
             }
 
+            if ($replyTo !== null) {
+                $mailable->replyTo($replyTo[0], $replyTo[1] ?: null);
+            }
+
             $mailer->to($recipient)->send($mailable);
 
             return true;
@@ -391,7 +427,7 @@ class TemplateMailService
 
     protected function runtimeMailerConfig(array $config): array
     {
-        $mailer = strtolower(trim((string) ($config['mailer'] ?? 'smtp'))) ?: 'smtp';
+        $mailer = MailConfigurationResolver::normalizeMailer($config['mailer'] ?? 'smtp');
         $base = config('mail.mailers.'.$mailer, ['transport' => $mailer]);
 
         if ($mailer !== 'smtp') {

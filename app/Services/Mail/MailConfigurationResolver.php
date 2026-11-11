@@ -8,12 +8,35 @@ use App\Models\Tenant\Setting;
 
 class MailConfigurationResolver
 {
+    /** Mailers a tenant may pick in the panel (value => label). */
+    public const TENANT_MAILERS = [
+        'smtp' => 'SMTP',
+        'sendmail' => 'Sendmail',
+        'log' => 'Log (no real email, for testing)',
+    ];
+
+    /**
+     * A saved mailer that is not a configured transport (e.g. an email address typed
+     * into the old free-text "Mailer" field) would make every send fail with
+     * "Unsupported mail transport". Treat it as SMTP, which the SMTP fields describe.
+     */
+    public static function normalizeMailer(mixed $mailer): string
+    {
+        $mailer = strtolower(trim((string) $mailer));
+
+        if ($mailer === '' || !is_array(config('mail.mailers.'.$mailer))) {
+            return 'smtp';
+        }
+
+        return $mailer;
+    }
+
     public function central(): array
     {
         $settings = $this->centralSettings();
 
         return [
-            'mailer' => $this->tenantOverride($settings, 'mail_mailer', config('mail.default', 'smtp')),
+            'mailer' => self::normalizeMailer($this->tenantOverride($settings, 'mail_mailer', config('mail.default', 'smtp'))),
             'host' => $settings['mail_host'] ?? config('mail.mailers.smtp.host'),
             'port' => $settings['mail_port'] ?? config('mail.mailers.smtp.port'),
             'username' => $settings['mail_username'] ?? config('mail.mailers.smtp.username'),
@@ -39,7 +62,7 @@ class MailConfigurationResolver
             ->all();
 
         return [
-            'mailer' => $this->tenantOverride($overrides, 'mail_mailer', $central['mailer']),
+            'mailer' => self::normalizeMailer($this->tenantOverride($overrides, 'mail_mailer', $central['mailer'])),
             'host' => $this->tenantOverride($overrides, 'mail_host', $central['host']),
             'port' => $this->tenantOverride($overrides, 'mail_port', $central['port']),
             'username' => $this->tenantOverride($overrides, 'mail_username', $central['username']),
