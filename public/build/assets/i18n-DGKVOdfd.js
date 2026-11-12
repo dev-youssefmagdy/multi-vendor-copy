@@ -1,0 +1,1 @@
+function e(e,t={}){let n=window.__tenantI18n||{},r=Object.prototype.hasOwnProperty.call(n,e)?n[e]:e;return Object.keys(t).sort((e,t)=>t.length-e.length).forEach(e=>{r=r.split(`:${e}`).join(String(t[e]??``))}),r}export{e as t};
